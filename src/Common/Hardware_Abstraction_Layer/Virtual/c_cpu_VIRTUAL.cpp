@@ -28,7 +28,7 @@ s_Buffer c_cpu_VIRTUAL::rxBuffer[COM_PORT_COUNT];
 
 int8_t c_cpu_VIRTUAL::Axis_Incrimenter[MACHINE_AXIS_COUNT];
 int32_t c_cpu_VIRTUAL::Axis_Positions[MACHINE_AXIS_COUNT];
-bool c_cpu_VIRTUAL::feedback_is_dirty=false;
+bool c_cpu_VIRTUAL::feedback_is_dirty = false;
 
 void c_cpu_VIRTUAL::driver_drive()
 {
@@ -49,49 +49,59 @@ void c_cpu_VIRTUAL::add_to_buffer(uint8_t port, const char * data)
 {
 	while (*data != 0)
 	{
-		c_cpu_VIRTUAL::_add(port,*data++, rxBuffer[port].Head++);
+		c_cpu_VIRTUAL::_add(port, *data++, rxBuffer[port].Head++);
 	}
-	rxBuffer[port].Buffer[rxBuffer[port].Head++] = 13;
-	rxBuffer[port].EOL++;
+	/*rxBuffer[port].Buffer[rxBuffer[port].Head++] = 13;
+	rxBuffer[port].EOL++;*/
 }
 
 void c_cpu_VIRTUAL::_add(uint8_t port, char byte, uint16_t position)
 {
 	rxBuffer[port].Buffer[position] = byte;
 	if (rxBuffer[port].Buffer[position] == 13)
-	rxBuffer[port].EOL++;
+		rxBuffer[port].EOL++;
 }
 
 void c_cpu_VIRTUAL::feedback_pulse_isr()
 {
 	if (PULSE_INPUT_PINS & (1 << X_AXIS_PULSE_BIT))
-	{if (Axis_Incrimenter[MACHINE_X_AXIS]==1)Axis_Positions[MACHINE_X_AXIS]++; else Axis_Positions[MACHINE_X_AXIS]--;}
+	{
+		if (Axis_Incrimenter[MACHINE_X_AXIS] == 1)Axis_Positions[MACHINE_X_AXIS]++; else Axis_Positions[MACHINE_X_AXIS]--;
+	}
 
 	if (PULSE_INPUT_PINS & (1 << Y_AXIS_PULSE_BIT))
-	{if (Axis_Incrimenter[MACHINE_Y_AXIS]==1)Axis_Positions[MACHINE_Y_AXIS]++; else Axis_Positions[MACHINE_Y_AXIS]--;}
+	{
+		if (Axis_Incrimenter[MACHINE_Y_AXIS] == 1)Axis_Positions[MACHINE_Y_AXIS]++; else Axis_Positions[MACHINE_Y_AXIS]--;
+	}
 
 	if (PULSE_INPUT_PINS & (1 << Z_AXIS_PULSE_BIT))
-	{if (Axis_Incrimenter[MACHINE_Z_AXIS]==1)Axis_Positions[MACHINE_Z_AXIS]++; else Axis_Positions[MACHINE_Z_AXIS]--;}
+	{
+		if (Axis_Incrimenter[MACHINE_Z_AXIS] == 1)Axis_Positions[MACHINE_Z_AXIS]++; else Axis_Positions[MACHINE_Z_AXIS]--;
+	}
 
 	if (PULSE_INPUT_PINS & (1 << A_AXIS_PULSE_BIT))
-	{if (Axis_Incrimenter[MACHINE_A_AXIS]==1)Axis_Positions[MACHINE_A_AXIS]++; else Axis_Positions[MACHINE_A_AXIS]--;}
+	{
+		if (Axis_Incrimenter[MACHINE_A_AXIS] == 1)Axis_Positions[MACHINE_A_AXIS]++; else Axis_Positions[MACHINE_A_AXIS]--;
+	}
 
 	if (PULSE_INPUT_PINS & (1 << B_AXIS_PULSE_BIT))
-	{if (Axis_Incrimenter[MACHINE_C_AXIS]==1)Axis_Positions[MACHINE_C_AXIS]++; else Axis_Positions[MACHINE_C_AXIS]--;}
+	{
+		if (Axis_Incrimenter[MACHINE_C_AXIS] == 1)Axis_Positions[MACHINE_C_AXIS]++; else Axis_Positions[MACHINE_C_AXIS]--;
+	}
 	return;
 
 
 	int8_t bit_mask = 1;
 	int8_t port = 3;
-	for (uint8_t bit_to_check =0; bit_to_check < MACHINE_AXIS_COUNT;bit_to_check ++)
+	for (uint8_t bit_to_check = 0; bit_to_check < MACHINE_AXIS_COUNT; bit_to_check++)
 	{
 		if ((bit_mask & port))
 		{
-			c_cpu_VIRTUAL::Axis_Positions[bit_to_check]+=Axis_Incrimenter[bit_to_check];
+			c_cpu_VIRTUAL::Axis_Positions[bit_to_check] += Axis_Incrimenter[bit_to_check];
 		}
 		// Unset current bit and set the next bit in bit_mask
 		bit_mask = bit_mask << 1;
-		
+
 	}
 	c_cpu_VIRTUAL::feedback_is_dirty = true;
 	return;
