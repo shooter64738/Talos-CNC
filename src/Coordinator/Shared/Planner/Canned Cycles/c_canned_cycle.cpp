@@ -27,6 +27,17 @@ Then the machine will go to the next hole. Generally, G99 is used for the first 
 for the last drilling operation
 */
 
+/*
+!!!!!!!!!!!!!!!!!!!!!!
+Throughout this code and especially in these methods you see that axis words are not specified.
+Instead the axis plane is configured in the interpreter so that X,Y,Z (for G17) are horizontal (X)
+vertical (Y), and normal (Z). If a different plane is selected (G18,G19) the letter values for the
+axis change in the plane axis configuration. In other words, regardless of what plane is selected
+the correct axis should be engaged without having to figure out which plane you are in.
+!!!!!!!!!!!!!!!!!!!!!!
+*/
+
+
 #include "c_canned_cycle.h"
 #include "..\..\c_processor.h"
 #include <string.h>
@@ -48,28 +59,39 @@ This stores the values at the start of a canned cycle in case they are replaced 
 */
 void c_canned_cycle::initialize(c_block *local_block, float old_Z)
 {
-	c_canned_cycle::Z_at_start = old_Z;
-
-	c_canned_cycle::Q_peck_step_depth = *local_block->canned_values.Q_peck_step_depth;
-	c_canned_cycle::R_retract_position = *local_block->canned_values.R_retract_position;
+	//When the canned cycle is started, record the last z position. This will all get reset on a G81
+	if (c_canned_cycle::active_cycle_code == 0)
+		c_canned_cycle::Z_at_start = old_Z;
+	//Only update these values if they were specified. Otherwise keep them the same as they were when the cycle started
+	c_canned_cycle::Q_peck_step_depth = (local_block->get_defined('Q') ? *local_block->canned_values.Q_peck_step_depth : c_canned_cycle::Q_peck_step_depth);
+	c_canned_cycle::R_retract_position = (local_block->get_defined('R') ? *local_block->canned_values.R_retract_position : c_canned_cycle::R_retract_position);
 	//L value for repeats must be set on each line, otherwise 1 is assumed
 	c_canned_cycle::L_repeat_count = (local_block->get_defined('L') ? (uint16_t)*local_block->canned_values.L_repeat_count : 1);
-	c_canned_cycle::P_dwell_time_at_bottom = *local_block->canned_values.P_dwell_time_at_bottom;
-	c_canned_cycle::Z_depth_of_hole = *local_block->canned_values.Z_depth_of_hole;
+	c_canned_cycle::P_dwell_time_at_bottom = (local_block->get_defined('P') ? *local_block->canned_values.P_dwell_time_at_bottom : c_canned_cycle::P_dwell_time_at_bottom);
+	c_canned_cycle::Z_depth_of_hole = (local_block->get_defined('Z') ? *local_block->canned_values.Z_depth_of_hole : c_canned_cycle::Z_depth_of_hole);
 	c_canned_cycle::active_cycle_code = local_block->g_group[NGC_Gcode_Groups::MOTION];
 	c_canned_cycle::state = 0;
 
-	local_block->canned_values.PNTR_RECALLS = c_canned_cycle::cycle_to_pointer;
-	//change the block from a canned cycle to standard rapid motion line
+	c_canned_cycle::cycle_to_pointer(local_block);
+
+	//local_block->canned_values.PNTR_RECALLS = c_canned_cycle::cycle_to_pointer;
+	//change the block from a canned cycle to standard rapid motion line (for initial position)
 	local_block->g_group[NGC_Gcode_Groups::MOTION] = NGC_Gcodes_X::RAPID_POSITIONING;
+	local_block->set_defined_gcode(NGC_Gcode_Groups::MOTION);
 
 	//clear the parameter flags so when this block converts back to plain text, those values arent in there.
 	local_block->clear_defined_word('Q');
 	local_block->clear_defined_word('R');
 	local_block->clear_defined_word('L');
 	local_block->clear_defined_word('P');
-	//Since feed rate is ignored on a G0 we can leave the F word set as defined.
 
+	/*
+	Clear the normal axis (this is the axis that would be drilling). Its ok to move
+	into position, but we cannot move to position and drill at the same time.
+	*/
+	local_block->clear_defined_word(local_block->plane_axis.normal_axis.name);
+
+	//Since feed rate is ignored on a G0 we can leave the F word set as defined.
 }
 
 /*
@@ -81,32 +103,32 @@ void c_canned_cycle::cycle_to_pointer(c_block *local_block)
 	We are going to keep re-configuring this block as we go through the steps of the cycle. Its cheaper than creating a new block for each cycle step
 	*/
 
-	//If the L count is 0 we are done repeating this cycle. Clear the call back function because the retract just ran.
-	if (!c_canned_cycle::L_repeat_count)
-	{
-		//Return Z to original location
-		local_block->g_group[NGC_Gcode_Groups::MOTION] = NGC_Gcodes_X::RAPID_POSITIONING;
-		local_block->define_value(local_block->plane_axis.normal_axis.name, c_canned_cycle::Z_at_start);
-		local_block->canned_values.PNTR_RECALLS = NULL;
-		return;//<--We are done here now. When we return the machine will stop executing the cycle steps.
-	}
+	////If the L count is 0 we are done repeating this cycle. Clear the call back function because the retract just ran.
+	//if (!c_canned_cycle::L_repeat_count)
+	//{
+	//	//Return Z to original location
+	//	local_block->g_group[NGC_Gcode_Groups::MOTION] = NGC_Gcodes_X::RAPID_POSITIONING;
+	//	local_block->define_value(local_block->plane_axis.normal_axis.name, c_canned_cycle::Z_at_start);
+	//	local_block->canned_values.PNTR_RECALLS = NULL;
+	//	return;//<--We are done here now. When we return the machine will stop executing the cycle steps.
+	//}
 
-	//The machine class would have executed the preliminary motion already (whatever was specified in the cycle start block)
-	//This method decides which cycle function pointer to assign. Then that function is called by the machine when this returns.
-	//X and Y should be in position if they were specified. Clear their bit flags now
-	local_block->clear_defined_word(local_block->plane_axis.horizontal_axis.name);
-	local_block->clear_defined_word(local_block->plane_axis.vertical_axis.name);
-	//Clear the axis values so that when the block converts to a line only the values we specify are in the line.
-	local_block->clear_axis_values();
+	////The machine class would have executed the preliminary motion already (whatever was specified in the cycle start block)
+	////This method decides which cycle function pointer to assign. Then that function is called by the machine when this returns.
+	////X and Y should be in position if they were specified. Clear their bit flags now
+	/*local_block->clear_defined_word(local_block->plane_axis.horizontal_axis.name);
+	local_block->clear_defined_word(local_block->plane_axis.vertical_axis.name);*/
+	////Clear the axis values so that when the block converts to a line only the values we specify are in the line.
+	//local_block->clear_axis_values();
 
-	//regardless of cycle, first step is to rapid to the specified R position
-	//depending on G98/99, set the Z position
-	if (c_canned_cycle::R_retract_position < c_canned_cycle::Z_at_start)
-	{
-		//rapid position Z to the R location
-		local_block->g_group[NGC_Gcode_Groups::MOTION] = NGC_Gcodes_X::RAPID_POSITIONING;
-		local_block->define_value(local_block->plane_axis.normal_axis.name, c_canned_cycle::R_retract_position);
-	}
+	////regardless of cycle, first step is to rapid to the specified R position
+	////depending on G98/99, set the Z position
+	//if (c_canned_cycle::R_retract_position < c_canned_cycle::Z_at_start)
+	//{
+	//	//rapid position Z to the R location
+	//	//local_block->g_group[NGC_Gcode_Groups::MOTION] = NGC_Gcodes_X::RAPID_POSITIONING;
+	//	//local_block->define_value(local_block->plane_axis.normal_axis.name, c_canned_cycle::R_retract_position);
+	//}
 
 	//if relative positioning is active then each count of L should cause a move when the cycle completes.
 	//if absolute positioning is active then each count of L should cause the cycle to repeat without moving.
@@ -185,6 +207,11 @@ void c_canned_cycle::cycle_to_pointer(c_block *local_block)
 
 }
 
+void c_canned_cycle::clear_positioning_axis(c_block *local_block)
+{
+	local_block->clear_defined_word(local_block->plane_axis.horizontal_axis.name);
+	local_block->clear_defined_word(local_block->plane_axis.vertical_axis.name);
+}
 
 float c_canned_cycle::retract_position(c_block *local_block)
 {
@@ -198,8 +225,13 @@ float c_canned_cycle::retract_position(c_block *local_block)
 void c_canned_cycle::set_axis_feed(c_block *local_block, uint16_t feed_mode, char axis, float value)
 {
 	local_block->set_defined_gcode(NGC_Gcode_Groups::MOTION);
-	local_block->g_group[NGC_Gcode_Groups::MOTION] = feed_mode,
-		local_block->define_value(axis, value);
+	local_block->g_group[NGC_Gcode_Groups::MOTION] = feed_mode;
+	local_block->define_value(axis, value);
+	if (feed_mode == NGC_Gcodes_X::LINEAR_INTERPOLATION || feed_mode == NGC_Gcodes_X::CIRCULAR_INTERPOLATION_CCW || feed_mode == NGC_Gcodes_X::CIRCULAR_INTERPOLATION_CW)
+		local_block->define_value('F', local_block->get_value('F'));
+	else
+		local_block->clear_defined_word('F');
+
 }
 
 void c_canned_cycle::set_dwell(c_block *local_block, float value)
@@ -212,6 +244,7 @@ void c_canned_cycle::set_dwell(c_block *local_block, float value)
 
 void c_canned_cycle::clear_callback(c_block *local_block)
 {
+
 	local_block->canned_values.PNTR_RECALLS = NULL;
 }
 
@@ -219,6 +252,7 @@ void c_canned_cycle::clear_start(c_block *local_block)
 {
 	//clear all bits so it appears no gcodes we in the block
 	local_block->g_code_defined_in_block = 0;
+	c_canned_cycle::clear_positioning_axis(local_block);
 }
 
 void c_canned_cycle::CANNED_CYCLE_DRILLING(c_block *local_block)

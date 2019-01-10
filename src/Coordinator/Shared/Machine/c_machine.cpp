@@ -274,6 +274,13 @@ void c_machine::start_motion(c_block * local_block)
 			c_processor::host_serial.Write("output:"); c_processor::host_serial.Write(c_interpreter::Line);
 			c_processor::host_serial.Write(CR);
 			c_motion_controller::send_motion(c_interpreter::Line, local_block->is_motion_block); //<--send to motion controller
+
+			//If the pointer is null, the cycle is finished this round. Set the motion mode back to the original cycle motion
+			if (local_block->canned_values.PNTR_RECALLS == NULL)
+				/*
+				Since we have changed the state of this block, we need to re-establish its original motion mode
+				*/
+				local_block->g_group[NGC_Gcode_Groups::MOTION] = c_canned_cycle::active_cycle_code;
 		}
 
 

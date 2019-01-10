@@ -44,7 +44,7 @@ int c_interpreter::process_serial(c_block *plan_block)
 	//Clear the bit flags for everything in the word list
 	local_block->word_defined_in_block_A_Z = 0;
 	//Clear all the value words in the array
-	local_block->clear_word_values();
+	//local_block->clear_word_values();
 	c_interpreter::local_block->g_code_defined_in_block = 0;
 	c_interpreter::local_block->g_group[NGC_Gcode_Groups::NON_MODAL] = 0;
 	c_interpreter::local_block->is_motion_block = false;

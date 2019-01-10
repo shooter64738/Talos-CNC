@@ -45,6 +45,7 @@ class c_canned_cycle
 	public:
 	static void initialize(c_block *local_block, float old_Z);
 	static void cycle_to_pointer(c_block *local_block);
+	static void clear_positioning_axis(c_block * local_block);
 	//Some cycles (especially lathe threading) must be stopped in a safe way. THe unwinder is intended to do that.
 	static void (*PNTR_UNWINDER)(c_block*);
 	static float retract_position(c_block *local_block);

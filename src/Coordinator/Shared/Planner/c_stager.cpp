@@ -417,14 +417,18 @@ int16_t c_stager::stage_block_motion()
 	*/
 	if (c_block_events::get_event(Block_Events::MOTION)) //<--block has a motion command that is different than the previous block
 	{
-		c_block_events::clear_event(Block_Events::MOTION); //<--clear the motion event.
+		//This is only here in case we need to do something special when a motion type changes. 
+		c_block_events::clear_event(Block_Events::MOTION); //<--clear the motion event.	
 
-		//is the motion a canned cycle?
-		if (local_block->g_group[NGC_Gcode_Groups::MOTION] >= NGC_Gcodes_X::CANNED_CYCLE_DRILLING
-			&& local_block->g_group[NGC_Gcode_Groups::MOTION] <= NGC_Gcodes_X::CANNED_CYCLE_BORING_DWELL_FEED_OUT)
-		{
-			c_canned_cycle::initialize(local_block, *c_stager::previous_block->canned_values.Z_depth_of_hole);
-		}
+		//If motion type has changed and a canned cycle was running, we need to reset it
+		c_canned_cycle::active_cycle_code = 0; //<--If this is zero when a cycle start, the cycle will re-initialize.
+	}
+
+	//is the motion a canned cycle? (But NOT cancel_cycle)
+	if (local_block->g_group[NGC_Gcode_Groups::MOTION] >= NGC_Gcodes_X::CANNED_CYCLE_DRILLING
+		&& local_block->g_group[NGC_Gcode_Groups::MOTION] <= NGC_Gcodes_X::CANNED_CYCLE_BORING_DWELL_FEED_OUT)
+	{
+		c_canned_cycle::initialize(local_block, *c_stager::previous_block->plane_axis.normal_axis.value);
 	}
 
 	return_value = c_stager::update_cutter_compensation(local_block);
