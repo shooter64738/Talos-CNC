@@ -332,3 +332,23 @@ ASALocalRun/
 
 # Local History for Visual Studio
 .localhistory/
+src/Talos_c++ AVR_MotionDriver.atsln
+src/MotionDriver/Shared/Speed Ramping/c_speed_ramp.h
+src/MotionDriver/Shared/Speed Ramping/c_speed_ramp.cpp
+src/MotionDriver/Shared/c_processor.h
+src/MotionDriver/Shared/c_processor.cpp
+src/MotionDriver/PC_MotionDriver/targetver.h
+src/MotionDriver/PC_MotionDriver/stdafx.h
+src/MotionDriver/PC_MotionDriver/PC_MotionDriver.vcxproj.filters
+src/MotionDriver/PC_MotionDriver/PC_MotionDriver.vcxproj
+src/MotionDriver/PC_MotionDriver/main.cpp
+src/MotionDriver/AVR_MotionDriver/Shared/Move To Shared When Done/c_target.h
+src/MotionDriver/AVR_MotionDriver/Shared/Move To Shared When Done/c_target.cpp
+src/MotionDriver/AVR_MotionDriver/Shared/Move To Shared When Done/c_segment.h
+src/MotionDriver/AVR_MotionDriver/Shared/Move To Shared When Done/c_segment.cpp
+src/MotionDriver/AVR_MotionDriver/Shared/Move To Shared When Done/c_Axis_Drive_Data.h
+src/MotionDriver/AVR_MotionDriver/Shared/Move To Shared When Done/c_Axis_Drive_Data.cpp
+src/MotionDriver/AVR_MotionDriver/main.cpp
+src/MotionDriver/AVR_MotionDriver/c_processor.h
+src/MotionDriver/AVR_MotionDriver/AVR_MotionDriver.cppproj
+src/MotionDriver/AVR_MotionDriver/AVR_MotionDriver.componentinfo.xml

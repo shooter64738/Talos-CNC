@@ -38,7 +38,7 @@ class c_motion_controller
 public:
 	enum class e_controller_responses :uint8_t
 	{
-		NO_RESPONSE, OK, PROCEDE, CONNECT_FAIL, TIMEOUT, HAULT
+		NO_RESPONSE, OK, PROCEDE, CONNECT_FAIL, TIMEOUT, HALT
 	};
 
 	static void send_motion(char * line_data, bool is_motion);
