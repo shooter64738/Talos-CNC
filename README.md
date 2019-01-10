@@ -1,7 +1,7 @@
 # Talos-CNC
 Complete CNC Control (Thats the goal)
 
-Taking a break through November and December fo 2018. The code is mostly in place to control grbl using crc, canned cycles still need a little work. Eventing is in place for motion controllers. 
+Somehow the repository got corrupted and would not upload my changes so I had to delete and re-upload the repo. 
 
 This has been a 2 year project. This is only one third of the entire project. This code is written in C++11 using Atmel Studio version 7.
 
@@ -13,7 +13,7 @@ on the Arduino 2560 development board. This code is completley hardware independ
 
 It is currently compliant with 99% of the gcode standard, including tool offsets, cutter radius compensation, all feedrate modes, etc.. 
 
-I will be updating this often, and if anyone would like to lend a hand it would be greatly appreciated. 
+# I will be updating this often, and if anyone would like to lend a hand it would be greatly appreciated. 
 
 I have recently made chagnes to this project to allow it to run in Microsoft Visual Studio 2017. It is much easier to debug in that environment. If you want a preconfigured project for Visual Studio I have uploaded it into the test app folder. 
 
