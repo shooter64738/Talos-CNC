@@ -1,0 +1,249 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Common">
+      <UniqueIdentifier>{6d745b62-6d6a-40d8-ad37-6af3843faeb3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common\HardwareAbstractionLayer">
+      <UniqueIdentifier>{232de083-2457-41b7-98bf-54ebc387e031}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common\Serial">
+      <UniqueIdentifier>{d0b16748-04ac-4965-8230-16bea26d999e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shared">
+      <UniqueIdentifier>{f07fb087-5757-4e9a-9f04-a4e828496f47}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shared\Events">
+      <UniqueIdentifier>{536a5bf9-1d41-43f9-9fb7-ae25ecc2042d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shared\Interpolation">
+      <UniqueIdentifier>{684d7297-3a94-4d96-8310-d226521f8aa8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shared\Interpreter">
+      <UniqueIdentifier>{5eb13b4e-f50e-4b73-ab05-cf2c33630a4a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shared\Machine">
+      <UniqueIdentifier>{aa09069c-8f6d-48a6-85f4-07c58d99ce9e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shared\MotionControllerInterface">
+      <UniqueIdentifier>{12c609fd-9e37-4f9e-a188-cba4900d20ce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shared\Planner">
+      <UniqueIdentifier>{23617352-8b80-48e4-b8ee-eecdcf149c33}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shared\Settings">
+      <UniqueIdentifier>{9cbab282-f2c4-48d6-884f-ebfb4ec5d991}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shared\Status">
+      <UniqueIdentifier>{931ae04d-15c8-4751-b4b2-c2295833a4f2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shared\System">
+      <UniqueIdentifier>{9ec3425b-bf4e-4500-9ece-48dec439b01e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shared\MotionControllerInterface\ExternalControllers">
+      <UniqueIdentifier>{4e835056-c2f6-4073-820d-4f4ccb2cfe61}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shared\MotionControllerInterface\ExternalControllers\GRBL">
+      <UniqueIdentifier>{31cd1831-bee0-4dbe-a39c-fa268de3cae5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shared\Planner\Canned Cycles">
+      <UniqueIdentifier>{de8f1248-bb15-4796-9b58-ece15bcf05a6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shared\Planner\Compensation">
+      <UniqueIdentifier>{6abe2726-2615-4891-a95f-0bc88ce38e92}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common\Bresenham">
+      <UniqueIdentifier>{71be910f-b113-40b2-be23-589c0907d26e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common\NGC_RS274">
+      <UniqueIdentifier>{6c95ade1-f1fc-4032-b08e-e3bbaabd8b30}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\Common\Hardware_Abstraction_Layer\c_hal.cpp">
+      <Filter>Common\HardwareAbstractionLayer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Common\Serial\c_Serial.cpp">
+      <Filter>Common\Serial</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Shared\c_processor.cpp">
+      <Filter>Shared</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Shared\Events\c_block_events.cpp">
+      <Filter>Shared\Events</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Shared\Events\c_data_events.cpp">
+      <Filter>Shared\Events</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Shared\Events\c_events.cpp">
+      <Filter>Shared\Events</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Shared\Events\c_motion_control_events.cpp">
+      <Filter>Shared\Events</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Shared\Events\c_motion_events.cpp">
+      <Filter>Shared\Events</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Shared\Interpolation\c_closed_loop.cpp">
+      <Filter>Shared\Interpolation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Shared\Interpreter\c_interpreter.cpp">
+      <Filter>Shared\Interpreter</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Shared\Machine\c_machine.cpp">
+      <Filter>Shared\Machine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Shared\MotionControllerInterface\ExternalControllers\GRBL\c_Grbl.cpp">
+      <Filter>Shared\MotionControllerInterface\ExternalControllers\GRBL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Common\MotionControllerInterface\c_motion_controller.cpp">
+      <Filter>Shared\MotionControllerInterface</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Common\MotionControllerInterface\c_motion_controller_settings.cpp">
+      <Filter>Shared\MotionControllerInterface</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Shared\Planner\Canned Cycles\c_canned_cycle.cpp">
+      <Filter>Shared\Planner\Canned Cycles</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Shared\Planner\Compensation\c_cutter_comp.cpp">
+      <Filter>Shared\Planner\Compensation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Shared\Planner\Compensation\c_path.cpp">
+      <Filter>Shared\Planner\Compensation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Shared\Planner\c_block.cpp">
+      <Filter>Shared\Planner</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Shared\Planner\c_gcode_buffer.cpp">
+      <Filter>Shared\Planner</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Shared\Planner\c_mirror.cpp">
+      <Filter>Shared\Planner</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Shared\Planner\c_stager.cpp">
+      <Filter>Shared\Planner</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Shared\Settings\c_settings.cpp">
+      <Filter>Shared\Settings</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Shared\Status\c_status.cpp">
+      <Filter>Shared\Status</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Shared\System\c_parameter_table.cpp">
+      <Filter>Shared\System</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="..\..\Common\Bresenham\c_Bresenham.cpp">
+      <Filter>Common\Bresenham</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\Common\Hardware_Abstraction_Layer\c_hal.h">
+      <Filter>Common\HardwareAbstractionLayer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\Serial\c_Serial.h">
+      <Filter>Common\Serial</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\Serial\s_buffer.h">
+      <Filter>Common\Serial</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\helpers.h" />
+    <ClInclude Include="..\..\MSVC++.h" />
+    <ClInclude Include="..\..\numeric_converters.h" />
+    <ClInclude Include="..\..\std_types.h" />
+    <ClInclude Include="..\..\Talos.h" />
+    <ClInclude Include="..\Shared\c_processor.h">
+      <Filter>Shared</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shared\Events\c_block_events.h">
+      <Filter>Shared\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shared\Events\c_data_events.h">
+      <Filter>Shared\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shared\Events\c_events.h">
+      <Filter>Shared\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shared\Events\c_motion_control_events.h">
+      <Filter>Shared\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shared\Events\c_motion_events.h">
+      <Filter>Shared\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shared\Interpolation\c_closed_loop.h">
+      <Filter>Shared\Interpolation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shared\Interpreter\c_interpreter.h">
+      <Filter>Shared\Interpreter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shared\Machine\c_machine.h">
+      <Filter>Shared\Machine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shared\MotionControllerInterface\ExternalControllers\GRBL\c_Grbl.h">
+      <Filter>Shared\MotionControllerInterface\ExternalControllers\GRBL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shared\MotionControllerInterface\ExternalControllers\GRBL\c_Grbl_Settings.h">
+      <Filter>Shared\MotionControllerInterface\ExternalControllers\GRBL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\MotionControllerInterface\c_motion_controller.h">
+      <Filter>Shared\MotionControllerInterface</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\MotionControllerInterface\c_motion_controller_settings.h">
+      <Filter>Shared\MotionControllerInterface</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shared\Planner\Canned Cycles\c_canned_cycle.h">
+      <Filter>Shared\Planner\Canned Cycles</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shared\Planner\Compensation\c_cutter_comp.h">
+      <Filter>Shared\Planner\Compensation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shared\Planner\Compensation\c_path.h">
+      <Filter>Shared\Planner\Compensation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shared\Planner\Compensation\shared.h">
+      <Filter>Shared\Planner\Compensation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shared\Planner\c_block.h">
+      <Filter>Shared\Planner</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shared\Planner\c_gcode_buffer.h">
+      <Filter>Shared\Planner</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shared\Planner\c_mirror.h">
+      <Filter>Shared\Planner</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shared\Planner\c_stager.h">
+      <Filter>Shared\Planner</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shared\Planner\Stager_Errors.h">
+      <Filter>Shared\Planner</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shared\Settings\c_settings.h">
+      <Filter>Shared\Settings</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shared\Status\c_status.h">
+      <Filter>Shared\Status</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shared\System\c_parameter_table.h">
+      <Filter>Shared\System</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shared\System\tool_table.h">
+      <Filter>Shared\System</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\Bresenham\c_Bresenham.h">
+      <Filter>Common\Bresenham</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\NGC_RS274\NGC_Codes.h">
+      <Filter>Common\NGC_RS274</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\NGC_RS274\NGC_Errors.h">
+      <Filter>Common\NGC_RS274</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\NGC_RS274\NGC_Groups.h">
+      <Filter>Common\NGC_RS274</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\NGC_RS274\NGC_Parameters.h">
+      <Filter>Common\NGC_RS274</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

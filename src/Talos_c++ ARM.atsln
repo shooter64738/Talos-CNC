@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Atmel Studio Solution File, Format Version 11.00
+VisualStudioVersion = 14.0.23107.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{E66E83B9-2572-4076-B26E-6BE79FF3018A}") = "ARM_SAM3X8E_HAL", "Common\Hardware_Abstraction_Layer\ARM_SAM3X8E\ARM_SAM3X8E_HAL.cppproj", "{FF62433B-B18D-42CF-8A17-481E24E0328A}"
+EndProject
+Project("{E66E83B9-2572-4076-B26E-6BE79FF3018A}") = "ARM_Coordinator", "Coordinator\ARM_Coordinator\ARM_Coordinator.cppproj", "{DCE6C7E3-EE26-4D79-826B-08594B9AD897}"
+	ProjectSection(ProjectDependencies) = postProject
+		{FF62433B-B18D-42CF-8A17-481E24E0328A} = {FF62433B-B18D-42CF-8A17-481E24E0328A}
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|ARM = Debug|ARM
+		Release|ARM = Release|ARM
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FF62433B-B18D-42CF-8A17-481E24E0328A}.Debug|ARM.ActiveCfg = Debug|ARM
+		{FF62433B-B18D-42CF-8A17-481E24E0328A}.Debug|ARM.Build.0 = Debug|ARM
+		{FF62433B-B18D-42CF-8A17-481E24E0328A}.Release|ARM.ActiveCfg = Release|ARM
+		{FF62433B-B18D-42CF-8A17-481E24E0328A}.Release|ARM.Build.0 = Release|ARM
+		{DCE6C7E3-EE26-4D79-826B-08594B9AD897}.Debug|ARM.ActiveCfg = Debug|ARM
+		{DCE6C7E3-EE26-4D79-826B-08594B9AD897}.Debug|ARM.Build.0 = Debug|ARM
+		{DCE6C7E3-EE26-4D79-826B-08594B9AD897}.Release|ARM.ActiveCfg = Release|ARM
+		{DCE6C7E3-EE26-4D79-826B-08594B9AD897}.Release|ARM.Build.0 = Release|ARM
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,22 @@
+All code is still currently CPU agnostic. Some work is still needed in the HAL
+to fully impliment the 32 bit ARM hardware.
+1. Open the "Talos_c++ All" solution in Atmel studio
+2. If you are building for an AVR (2560,328P,etc..)
+	a. Right click the "Talos_c++_AVR" project
+	b. Click on "Clean Solution" to clear all prebuilt .obj files
+	c. Right click the "Talos_c++_AVR" project again, and click "Build"
+3. If you are building for an ARM/SAM (SAM3X8E,SAM3X8A,etc..)
+	a. Right click the "Talos_c++_SAM" project
+	b. Click on "Clean Solution" to clear all prebuilt .obj files
+	c. Right click the "Talos_c++_SAM" project again, and click "Build"
+
+The solution is just a convenient way to group the projects and code together.
+There are no differences in the code. It is all the same, in the same fodlers.
+When the HAL is updated with all the SAM processor changes I will upload it
+and anyone should be able to build for either platform in one convenient place.
+
+Note:The code has grown beyond the limits of the smaller 328P. I may create a 
+lightweight version of this for the 328, but there is no way to get the full
+feature set on the 328 now. The code excedes the memory capcaity by 233%.
+
+The old AVR only Talos_c++ project has been removed. 

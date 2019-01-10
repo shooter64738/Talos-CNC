@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.21005.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PC_Coordinator", "Coordinator\PC_Coordinator\PC_Coordinator.vcxproj", "{E84FFE07-C518-4C45-B385-7431F1A99F18}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Virtual_HAL", "Common\Hardware_Abstraction_Layer\Virtual\Virtual_HAL.vcxproj", "{12E9995C-E23A-4B5A-9884-DEB11AC068DD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E84FFE07-C518-4C45-B385-7431F1A99F18}.Debug|Win32.ActiveCfg = Debug|Win32
+		{E84FFE07-C518-4C45-B385-7431F1A99F18}.Debug|Win32.Build.0 = Debug|Win32
+		{E84FFE07-C518-4C45-B385-7431F1A99F18}.Release|Win32.ActiveCfg = Release|Win32
+		{E84FFE07-C518-4C45-B385-7431F1A99F18}.Release|Win32.Build.0 = Release|Win32
+		{12E9995C-E23A-4B5A-9884-DEB11AC068DD}.Debug|Win32.ActiveCfg = Debug|Win32
+		{12E9995C-E23A-4B5A-9884-DEB11AC068DD}.Debug|Win32.Build.0 = Debug|Win32
+		{12E9995C-E23A-4B5A-9884-DEB11AC068DD}.Release|Win32.ActiveCfg = Release|Win32
+		{12E9995C-E23A-4B5A-9884-DEB11AC068DD}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
