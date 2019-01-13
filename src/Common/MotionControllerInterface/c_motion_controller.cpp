@@ -59,7 +59,7 @@ void c_motion_controller::Initialize()
 	//We dont know which motion controller is connected, so we are just going to take a stab at it, one at a time.
 
 	//When we connected serial on the motion controller, it may have given us a hello message that we can use to determine its type.
-	if (c_motion_controller::Check_Response("grbl"))
+	//if (c_motion_controller::Check_Response("grbl"))
 	c_grbl::Initialize();
 
 	//c_tiny_g::Initialize();
