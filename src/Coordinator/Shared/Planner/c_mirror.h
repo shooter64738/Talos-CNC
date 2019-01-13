@@ -2,7 +2,7 @@
 *  c_mirror.h - NGC_RS274 controller.
 *  A component of Talos
 *
-*  Copyright (c) 2016-2018 Jeff Dill
+*  Copyright (c) 2016-2019 Jeff Dill
 *
 *  Talos is free software: you can redistribute it and/or modify
 *  it under the terms of the GNU LPLPv3 License as published by

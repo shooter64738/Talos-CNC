@@ -15,6 +15,8 @@ Project("{E66E83B9-2572-4076-B26E-6BE79FF3018A}") = "AVR_MotionDriver", "MotionD
 		{796624E7-70C6-4C4C-ABD4-AA391CED2B48} = {796624E7-70C6-4C4C-ABD4-AA391CED2B48}
 	EndProjectSection
 EndProject
+Project("{E66E83B9-2572-4076-B26E-6BE79FF3018A}") = "AVR_Torch_Height_Control", "Torch Height Control\AVR_THC\AVR_Torch_Height_Control\AVR_Torch_Height_Control.cppproj", "{DCE6C7E3-EE26-4D79-826B-08594B9AD897}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|AVR = Debug|AVR
@@ -33,6 +35,10 @@ Global
 		{7ECCFA6D-D802-4EEB-AE26-9CD544023A34}.Debug|AVR.Build.0 = Debug|AVR
 		{7ECCFA6D-D802-4EEB-AE26-9CD544023A34}.Release|AVR.ActiveCfg = Release|AVR
 		{7ECCFA6D-D802-4EEB-AE26-9CD544023A34}.Release|AVR.Build.0 = Release|AVR
+		{DCE6C7E3-EE26-4D79-826B-08594B9AD897}.Debug|AVR.ActiveCfg = Debug|AVR
+		{DCE6C7E3-EE26-4D79-826B-08594B9AD897}.Debug|AVR.Build.0 = Debug|AVR
+		{DCE6C7E3-EE26-4D79-826B-08594B9AD897}.Release|AVR.ActiveCfg = Release|AVR
+		{DCE6C7E3-EE26-4D79-826B-08594B9AD897}.Release|AVR.Build.0 = Release|AVR
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

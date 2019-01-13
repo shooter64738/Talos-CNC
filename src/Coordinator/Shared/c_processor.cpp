@@ -2,7 +2,7 @@
 *  c_processor.cpp - NGC_RS274 controller.
 *  A component of Talos
 *
-*  Copyright (c) 2016-2018 Jeff Dill
+*  Copyright (c) 2016-2019 Jeff Dill
 *
 *  Talos is free software: you can redistribute it and/or modify
 *  it under the terms of the GNU LPLPv3 License as published by
@@ -99,14 +99,6 @@ void c_processor::startup()
 	*/
 	c_motion_controller_settings::position_reported = c_machine::axis_position;
 	c_motion_controller::Initialize();
-	/*
-	probably should break the controller initialize into a different method. I am assuming GRBL
-	as the motion controller, but it could be one of several controllers. 
-	*/
-	//c_grbl::Initialize();
-
-	//if (c_motion_controller_settings::axis_count_reported == 0) //<-- no axis found on the controller
-	//	c_motion_controller_settings::axis_count_reported = 8;//<--Default axis count to 8.
 
 	if (c_motion_control_events::get_event(Motion_Control_Events::CONTROL_ONLINE))
 	{
@@ -223,8 +215,8 @@ uint16_t c_processor::prep_input()
 			line data, and the machine. If the machine is not consuming buffer
 			data, then the ngc buffer can fill. There was/is a provision for
 			a stager buffer, but I have removed that for the moment. That was
-			in place when all machine control was on one CPU and I have decided
-			to split the CPU processing into 2 separate modules.
+			in place when all machine control was on one mPU and I have decided
+			to split the mPU processing into 2 separate modules.
 			The coordinator (this firmware) is on one mCU and the motion control
 			(grbl,tinyG,smoothie,G2, etc...) is on another mCU
 			*/
@@ -248,7 +240,7 @@ uint16_t c_processor::prep_input()
 					}
 				}
 			}
-			//Block was interpreted, staed, and sent to the machine (which sent it to the motion controller).
+			//Block was interpreted, staged, and sent to the machine (which sent it to the motion controller).
 			//The line should be complete now and the current serial buffer moved to the next eol position. 
 			//Tell the host we did good!
 			host_serial.print_string("ok:\r");

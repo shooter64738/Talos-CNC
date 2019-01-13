@@ -1,5 +1,5 @@
 /*
-*  MSVC++.h - NGC_RS274 controller.
+*  AVR_Torch_Height_Control.cpp - NGC_RS274 controller.
 *  A component of Talos
 *
 *  Copyright (c) 2016-2019 Jeff Dill
@@ -17,14 +17,13 @@
 *  You should have received a copy of the GNU General Public License
 *  along with Talos.  If not, see <http://www.gnu.org/licenses/>.
 */
-#pragma once
-#define _USE_MATH_DEFINES
-#include <cmath>
-#ifndef ___MSVisualStudio__
-#define ___MSVisualStudio__
-static float square(float X)
+
+#include <avr/io.h>
+
+
+/* Replace with your library code */
+int myfunc(void)
 {
-	return X*X;
+	return 0;
 }
 
-#endif // !MSVisualStudio__
