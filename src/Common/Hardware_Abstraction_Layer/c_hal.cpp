@@ -19,7 +19,8 @@
 */
 
 #include "c_hal.h"
-#include "../..\Talos.h"
+#include "..\..\talos.h"
+
 /*
 This might be confusing to some, especially if you are not familiar with function pointers.
 1. The function pointers in the HAL (hardware abstraction layer) are assigned to ACTUAL functions
@@ -106,7 +107,6 @@ void c_hal::initialize()
 	c_hal::comm.PNTR_SERIAL_TX = &c_cpu_VIRTUAL::serial_send;
 	c_hal::comm.PNTR_SERIAL_RX_BUFFER = c_cpu_VIRTUAL::rxBuffer;
 	c_hal::comm.PNTR_VIRTUAL_BUFFER_WRITE = &c_cpu_VIRTUAL::add_to_buffer;
-
 	c_hal::feedback.PNTR_PULSE_ISR =  & c_cpu_VIRTUAL::feedback_pulse_isr;
 	//c_hal::feedback.PNTR_POSITION_DATA = c_cpu_VIRTUAL::Axis_Positions;
 	#endif

@@ -82,7 +82,7 @@ void c_grbl::output_to_host()
 		{
 			if (c_grbl::Check_Response(c_grbl::OK_RESP) == c_motion_controller::e_controller_responses::OK)
 				break;
-			if (c_grbl::Check_Response(c_grbl::ERROR_RESP) == c_motion_controller::e_controller_responses::HAULT)
+			if (c_grbl::Check_Response(c_grbl::ERROR_RESP) == c_motion_controller::e_controller_responses::HALT)
 				break;
 
 			char Byte = c_processor::controller_serial.Get();
@@ -230,7 +230,7 @@ c_motion_controller::e_controller_responses c_grbl::Check_Response(const char * 
 		{
 			//Was there an err response?
 			if (c_motion_controller::Check_Response(c_grbl::ERROR_RESP))
-				return c_motion_controller::e_controller_responses::HAULT;
+				return c_motion_controller::e_controller_responses::HALT;
 
 			//Was there an ok response?
 			if (c_motion_controller::Check_Response(c_grbl::OK_RESP))

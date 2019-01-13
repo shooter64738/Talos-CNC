@@ -151,7 +151,7 @@ void c_motion_controller::read_controller_data()
 				break;
 				case c_motion_controller::e_controller_responses::TIMEOUT:
 				break;
-				case c_motion_controller::e_controller_responses::HAULT:
+				case c_motion_controller::e_controller_responses::HALT:
 				/*
 				We dont expect errors so when these pop up, bad things must have happened. Abandon ship!
 				*/
