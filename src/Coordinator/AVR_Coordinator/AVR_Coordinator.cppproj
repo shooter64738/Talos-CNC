@@ -44,7 +44,7 @@
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <ToolchainSettings>
       <AvrGccCpp>
-  <avrgcc.common.Device>-mmcu=atmega2560 -B "%24(PackRepoDir)\atmel\ATmega_DFP\1.2.150\gcc\dev\atmega2560"</avrgcc.common.Device>
+  <avrgcc.common.Device>-mmcu=atmega2560 -B "%24(PackRepoDir)\atmel\ATmega_DFP\1.2.209\gcc\dev\atmega2560"</avrgcc.common.Device>
   <avrgcc.common.optimization.RelaxBranches>True</avrgcc.common.optimization.RelaxBranches>
   <avrgcc.common.outputfiles.hex>True</avrgcc.common.outputfiles.hex>
   <avrgcc.common.outputfiles.lss>True</avrgcc.common.outputfiles.lss>
@@ -60,7 +60,7 @@
   </avrgcc.compiler.symbols.DefSymbols>
   <avrgcc.compiler.directories.IncludePaths>
     <ListValues>
-      <Value>%24(PackRepoDir)\atmel\ATmega_DFP\1.2.150\include</Value>
+      <Value>%24(PackRepoDir)\atmel\ATmega_DFP\1.2.209\include</Value>
     </ListValues>
   </avrgcc.compiler.directories.IncludePaths>
   <avrgcc.compiler.optimization.level>Optimize for size (-Os)</avrgcc.compiler.optimization.level>
@@ -76,7 +76,7 @@
   </avrgcccpp.compiler.symbols.DefSymbols>
   <avrgcccpp.compiler.directories.IncludePaths>
     <ListValues>
-      <Value>%24(PackRepoDir)\atmel\ATmega_DFP\1.2.150\include</Value>
+      <Value>%24(PackRepoDir)\atmel\ATmega_DFP\1.2.209\include</Value>
     </ListValues>
   </avrgcccpp.compiler.directories.IncludePaths>
   <avrgcccpp.compiler.optimization.level>Optimize for size (-Os)</avrgcccpp.compiler.optimization.level>
@@ -99,7 +99,7 @@
   </avrgcccpp.linker.libraries.LibrarySearchPaths>
   <avrgcccpp.assembler.general.IncludePaths>
     <ListValues>
-      <Value>%24(PackRepoDir)\atmel\ATmega_DFP\1.2.150\include</Value>
+      <Value>%24(PackRepoDir)\atmel\ATmega_DFP\1.2.209\include</Value>
     </ListValues>
   </avrgcccpp.assembler.general.IncludePaths>
 </AvrGccCpp>
@@ -108,7 +108,7 @@
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <ToolchainSettings>
       <AvrGccCpp>
-  <avrgcc.common.Device>-mmcu=atmega2560 -B "%24(PackRepoDir)\atmel\ATmega_DFP\1.2.150\gcc\dev\atmega2560"</avrgcc.common.Device>
+  <avrgcc.common.Device>-mmcu=atmega2560 -B "%24(PackRepoDir)\atmel\ATmega_DFP\1.2.209\gcc\dev\atmega2560"</avrgcc.common.Device>
   <avrgcc.common.optimization.RelaxBranches>True</avrgcc.common.optimization.RelaxBranches>
   <avrgcc.common.outputfiles.hex>True</avrgcc.common.outputfiles.hex>
   <avrgcc.common.outputfiles.lss>True</avrgcc.common.outputfiles.lss>
@@ -124,7 +124,7 @@
   </avrgcc.compiler.symbols.DefSymbols>
   <avrgcc.compiler.directories.IncludePaths>
     <ListValues>
-      <Value>%24(PackRepoDir)\atmel\ATmega_DFP\1.2.150\include</Value>
+      <Value>%24(PackRepoDir)\atmel\ATmega_DFP\1.2.209\include</Value>
     </ListValues>
   </avrgcc.compiler.directories.IncludePaths>
   <avrgcc.compiler.optimization.level>Optimize (-O1)</avrgcc.compiler.optimization.level>
@@ -141,7 +141,7 @@
   </avrgcccpp.compiler.symbols.DefSymbols>
   <avrgcccpp.compiler.directories.IncludePaths>
     <ListValues>
-      <Value>%24(PackRepoDir)\atmel\ATmega_DFP\1.2.150\include</Value>
+      <Value>%24(PackRepoDir)\atmel\ATmega_DFP\1.2.209\include</Value>
     </ListValues>
   </avrgcccpp.compiler.directories.IncludePaths>
   <avrgcccpp.compiler.optimization.level>Optimize (-O1)</avrgcccpp.compiler.optimization.level>
@@ -163,7 +163,7 @@
   </avrgcccpp.linker.libraries.LibrarySearchPaths>
   <avrgcccpp.assembler.general.IncludePaths>
     <ListValues>
-      <Value>%24(PackRepoDir)\atmel\ATmega_DFP\1.2.150\include</Value>
+      <Value>%24(PackRepoDir)\atmel\ATmega_DFP\1.2.209\include</Value>
     </ListValues>
   </avrgcccpp.assembler.general.IncludePaths>
   <avrgcccpp.assembler.debugging.DebugLevel>Default (-Wa,-g)</avrgcccpp.assembler.debugging.DebugLevel>
@@ -382,13 +382,45 @@
       <SubType>compile</SubType>
       <Link>AVR_Coordinator\Planner\Stager_Errors.h</Link>
     </Compile>
-    <Compile Include="..\Shared\Settings\c_settings.cpp">
+    <Compile Include="..\Shared\Settings\c_Edm.cpp">
       <SubType>compile</SubType>
-      <Link>AVR_Coordinator\Settings\c_settings.cpp</Link>
+      <Link>AVR_Coordinator\Settings\c_Edm.cpp</Link>
     </Compile>
-    <Compile Include="..\Shared\Settings\c_settings.h">
+    <Compile Include="..\Shared\Settings\c_Edm.h">
       <SubType>compile</SubType>
-      <Link>AVR_Coordinator\Settings\c_settings.h</Link>
+      <Link>AVR_Coordinator\Settings\c_Edm.h</Link>
+    </Compile>
+    <Compile Include="..\Shared\Settings\c_general.cpp">
+      <SubType>compile</SubType>
+      <Link>AVR_Coordinator\Settings\c_general.cpp</Link>
+    </Compile>
+    <Compile Include="..\Shared\Settings\c_general.h">
+      <SubType>compile</SubType>
+      <Link>AVR_Coordinator\Settings\c_general.h</Link>
+    </Compile>
+    <Compile Include="..\Shared\Settings\c_Mill.cpp">
+      <SubType>compile</SubType>
+      <Link>AVR_Coordinator\Settings\c_Mill.cpp</Link>
+    </Compile>
+    <Compile Include="..\Shared\Settings\c_Mill.h">
+      <SubType>compile</SubType>
+      <Link>AVR_Coordinator\Settings\c_Mill.h</Link>
+    </Compile>
+    <Compile Include="..\Shared\Settings\c_Plasma.cpp">
+      <SubType>compile</SubType>
+      <Link>AVR_Coordinator\Settings\c_Plasma.cpp</Link>
+    </Compile>
+    <Compile Include="..\Shared\Settings\c_Plasma.h">
+      <SubType>compile</SubType>
+      <Link>AVR_Coordinator\Settings\c_Plasma.h</Link>
+    </Compile>
+    <Compile Include="..\Shared\Settings\c_Turn.cpp">
+      <SubType>compile</SubType>
+      <Link>AVR_Coordinator\Settings\c_Turn.cpp</Link>
+    </Compile>
+    <Compile Include="..\Shared\Settings\c_Turn.h">
+      <SubType>compile</SubType>
+      <Link>AVR_Coordinator\Settings\c_Turn.h</Link>
     </Compile>
     <Compile Include="..\Shared\Status\c_status.cpp">
       <SubType>compile</SubType>

@@ -20,7 +20,7 @@
 
 
 #include "c_stager.h"
-#include "../Settings/c_settings.h"
+//#include "../Settings/c_general.h"
 #include "../Events/c_motion_events.h"
 #include "../c_processor.h"
 #include "../Events/c_data_events.h"

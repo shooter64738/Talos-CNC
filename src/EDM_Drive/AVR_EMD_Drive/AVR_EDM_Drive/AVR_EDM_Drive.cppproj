@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectVersion>7.0</ProjectVersion>
     <ToolchainName>com.Atmel.AVRGCC8.CPP</ToolchainName>
-    <ProjectGuid>{796624e7-70c6-4c4c-abd4-aa391ced2b48}</ProjectGuid>
+    <ProjectGuid>{dc35d00c-ac83-48d7-8a15-a1c82b20a12c}</ProjectGuid>
     <avrdevice>ATmega2560</avrdevice>
     <avrdeviceseries>none</avrdeviceseries>
     <OutputType>StaticLibrary</OutputType>
@@ -14,9 +14,9 @@
     <OutputDirectory>$(MSBuildProjectDirectory)\$(Configuration)</OutputDirectory>
     <AvrGccProjectExtensions>
     </AvrGccProjectExtensions>
-    <AssemblyName>AVR_2560</AssemblyName>
-    <Name>AVR_2560_HAL</Name>
-    <RootNamespace>AVR_2560</RootNamespace>
+    <AssemblyName>AVR_EDM_Drive</AssemblyName>
+    <Name>AVR_EDM_Drive</Name>
+    <RootNamespace>AVR_EDM_Drive</RootNamespace>
     <ToolchainFlavour>Native</ToolchainFlavour>
     <KeepTimersRunning>true</KeepTimersRunning>
     <OverrideVtor>false</OverrideVtor>
@@ -32,15 +32,15 @@
     <EraseKey />
     <AsfFrameworkConfig>
       <framework-data xmlns="">
-        <options />
-        <configurations />
-        <files />
-        <documentation help="" />
-        <offline-documentation help="" />
-        <dependencies>
-          <content-extension eid="atmel.asf" uuidref="Atmel.ASF" version="3.35.1" />
-        </dependencies>
-      </framework-data>
+  <options />
+  <configurations />
+  <files />
+  <documentation help="" />
+  <offline-documentation help="" />
+  <dependencies>
+    <content-extension eid="atmel.asf" uuidref="Atmel.ASF" version="3.40.0" />
+  </dependencies>
+</framework-data>
     </AsfFrameworkConfig>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
@@ -90,11 +90,6 @@
       <Value>libm</Value>
     </ListValues>
   </avrgcccpp.linker.libraries.Libraries>
-  <avrgcccpp.linker.libraries.LibrarySearchPaths>
-    <ListValues>
-      <Value>C:\GitHub\Talos-CNC\src\Hardware_Abstraction_Layer\AVR_2560\Debug</Value>
-    </ListValues>
-  </avrgcccpp.linker.libraries.LibrarySearchPaths>
   <avrgcccpp.assembler.general.IncludePaths>
     <ListValues>
       <Value>%24(PackRepoDir)\atmel\ATmega_DFP\1.2.209\include</Value>
@@ -152,11 +147,6 @@
       <Value>libm</Value>
     </ListValues>
   </avrgcccpp.linker.libraries.Libraries>
-  <avrgcccpp.linker.libraries.LibrarySearchPaths>
-    <ListValues>
-      <Value>C:\GitHub\Talos-CNC\src\Hardware_Abstraction_Layer\AVR_2560\Debug</Value>
-    </ListValues>
-  </avrgcccpp.linker.libraries.LibrarySearchPaths>
   <avrgcccpp.assembler.general.IncludePaths>
     <ListValues>
       <Value>%24(PackRepoDir)\atmel\ATmega_DFP\1.2.209\include</Value>
@@ -167,61 +157,12 @@
     </ToolchainSettings>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\..\..\Talos.h">
-      <SubType>compile</SubType>
-      <Link>Talos.h</Link>
-    </Compile>
-    <Compile Include="..\c_hal.cpp">
-      <SubType>compile</SubType>
-      <Link>c_hal.cpp</Link>
-    </Compile>
-    <Compile Include="..\c_hal.h">
-      <SubType>compile</SubType>
-      <Link>c_hal.h</Link>
-    </Compile>
-    <Compile Include="c_cpu_AVR_2560.cpp">
-      <SubType>compile</SubType>
-      <Link>c_cpu_AVR_2560.cpp</Link>
-    </Compile>
-    <Compile Include="c_cpu_AVR_2560.h">
-      <SubType>compile</SubType>
-      <Link>c_cpu_AVR_2560.h</Link>
-    </Compile>
-    <Compile Include="driver_direction.h">
-      <SubType>compile</SubType>
-      <Link>driver_direction.h</Link>
-    </Compile>
-    <Compile Include="driver_enable.h">
-      <SubType>compile</SubType>
-      <Link>driver_enable.h</Link>
-    </Compile>
-    <Compile Include="driver_pulse.h">
-      <SubType>compile</SubType>
-      <Link>driver_pulse.h</Link>
-    </Compile>
-    <Compile Include="I2C\c_i2cMaster.cpp">
+    <Compile Include="c_edm.cpp">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="I2C\c_i2cMaster.h">
+    <Compile Include="c_edm.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="lcd\c_LcdPcf8574.cpp">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="lcd\c_LcdPcf8574.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="pcf8574\c_pcf8574.cpp">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="pcf8574\c_pcf8574.h">
-      <SubType>compile</SubType>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="I2C\" />
-    <Folder Include="lcd\" />
-    <Folder Include="pcf8574\" />
   </ItemGroup>
   <Import Project="$(AVRSTUDIO_EXE_PATH)\\Vs\\Compiler.targets" />
 </Project>

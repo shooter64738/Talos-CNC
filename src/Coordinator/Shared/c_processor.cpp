@@ -27,7 +27,7 @@
 #include "Interpreter/c_interpreter.h"
 #include "Planner/c_stager.h"
 #include "Planner/c_gcode_buffer.h"
-#include "Settings/c_settings.h"
+#include "Settings/c_general.h"
 #include "Planner/c_block.h"
 #include "Events/c_events.h"
 #include "Events/c_data_events.h"
@@ -43,6 +43,7 @@
 #include "../../Common/AVR_Terminal_IO/c_lcd_display.h"
 #include "Events/c_block_events.h"
 
+
 c_Serial c_processor::host_serial;
 c_Serial c_processor::controller_serial;
 c_Serial c_processor::spindle_serial;
@@ -51,6 +52,7 @@ c_Bresenham bres;
 //If running this on a pc through microsoft visual C++, uncomment the MSVC define in Talos.h and recompile.
 void c_processor::startup()
 {
+Settings:
 	//hal must init first.
 	c_hal::initialize();
 	//if (c_hal::lcd.PNTR_INITIALIZE != NULL)
@@ -67,7 +69,7 @@ void c_processor::startup()
 	c_processor::controller_serial = c_Serial(1, 115200);//<--Connect to motion board
 	c_processor::spindle_serial = c_Serial(2, 115200);//<--Connect to spindle board
 
-	c_settings::initialize();
+	Settings::c_general::initialize();
 	c_interpreter::initialize();
 	c_machine::initialize();
 	c_stager::initialize();

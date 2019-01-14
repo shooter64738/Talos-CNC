@@ -22,7 +22,7 @@
 #include "c_machine.h"
 #include "..\Planner\c_stager.h"
 #include "..\c_processor.h"
-#include "..\Settings\c_settings.h"
+//#include "..\Settings\c_general.h"
 
 #include "..\Planner\Compensation\c_cutter_comp.h"
 //#include "..\MotionControllerInterface\c_motion_controller.h"
