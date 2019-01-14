@@ -485,6 +485,10 @@ void c_cpu_AVR_2560::lcd_update_axis(uint8_t axis_id, float value)
 		c_cpu_AVR_2560::lcd_print_float(value);
 	}
 }
+void c_cpu_AVR_2560::lcd_update_edm()
+{
+	//what do we want to display on the lcd for edm?
+}
 void c_cpu_AVR_2560::lcd_print_float(float n)
 {
 	c_cpu_AVR_2560::lcd_print_float(n,3);
@@ -546,6 +550,23 @@ void c_cpu_AVR_2560::lcd_print_float(float n, uint8_t decimal_places)
 		c_LcdPcf8574::lcd_putc(' ');
 	}
 	//this->Write(CR);
+}
+
+void c_cpu_AVR_2560::edm_initializer()
+{
+//Configure input pin for gap voltage
+//Configure output pin for pulse signal
+//Configure stepper drive/direction pins
+}
+
+float c_cpu_AVR_2560::edm_get_gap_voltage()
+{
+//Read the gap voltage from the input pin
+}
+
+void c_cpu_AVR_2560::edm_set_pulse_frequency()
+{
+//Pulse the output pin. Possibly drive a mosfet gate with this to control pulse frequency on the edm head
 }
 
 //private methods

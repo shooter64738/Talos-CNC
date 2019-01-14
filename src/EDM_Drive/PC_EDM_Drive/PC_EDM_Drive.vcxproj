@@ -127,7 +127,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <Text Include="ReadMe.txt" />
+    <ClInclude Include="..\..\MSVC++.h" />
+    <ClInclude Include="..\..\std_types.h" />
+    <ClInclude Include="..\..\Talos.h" />
+    <ClInclude Include="..\Common\c_edm_driver.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Common\Hardware_Abstraction_Layer\Virtual\Virtual_HAL.vcxproj">
+      <Project>{12e9995c-e23a-4b5a-9884-deb11ac068dd}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\Common\c_edm_driver.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

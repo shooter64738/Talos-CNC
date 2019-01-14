@@ -1,3 +1,4 @@
+
 /*
 *  c_edm.h - NGC_RS274 controller.
 *  A component of Talos
@@ -19,15 +20,17 @@
 */
 
 
+
 #ifndef C_EDM_H_
 #define C_EDM_H_
 
-#include <avr/io.h>
+#include "..\..\Talos.h"
 
-class c_edm
+class c_edm_driver
 {
 	public:
-	uint16_t Set_ArcVoltage(float voltage);
+	static void initialize();
+	static float Get_ArcVoltage();
 };
 
 #endif /* C_EDM_H_ */

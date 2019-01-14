@@ -118,6 +118,24 @@ void c_cpu_VIRTUAL::feedback_pulse_isr()
 	//++pos;
 }
 
+void c_cpu_VIRTUAL::edm_initializer()
+{
+	//Configure input pin for gap voltage
+	//Configure output pin for pulse signal
+	//Configure stepper drive/direction pins
+}
+
+float c_cpu_VIRTUAL::edm_get_gap_voltage()
+{
+	//Read the gap voltage from the input pin
+	return 0;
+}
+
+void c_cpu_VIRTUAL::edm_set_pulse_frequency()
+{
+	//Pulse the output pin. Possibly drive a mosfet gate with this to control pulse frequency on the edm head
+}
+
 // default constructor
 //c_cpu_VIRTUAL::c_cpu_VIRTUAL()
 //{

@@ -104,8 +104,18 @@ class c_hal
 		void (*PNTR_ENABLE)(void);
 		void (*PNTR_DISABLE)(void);
 		void (*PNTR_UPDATE_AXIS_DISPLAY)(uint8_t,float);
+		void (*PNTR_UPDATE_EDM_DISPLAY)(uint8_t,float);
 	}s_lcd_function_pointers;
 	static s_lcd_function_pointers lcd;
+
+	//edm struct refers to anything related to edm control.
+	typedef struct
+	{
+		void (*PNTR_INITIALIZE)(void);
+		float (*PNTR_GET_ARC_VOLTAGE)(void);
+		void (*PNTR_SET_ARC_DRIVE_FREQUENCY)(void);
+	}s_edm_function_pointers;
+	static s_edm_function_pointers edm;
 	
 	public:
 	protected:

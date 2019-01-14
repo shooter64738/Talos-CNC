@@ -156,6 +156,9 @@
     <ProjectReference Include="..\..\Common\Hardware_Abstraction_Layer\Virtual\Virtual_HAL.vcxproj">
       <Project>{12e9995c-e23a-4b5a-9884-deb11ac068dd}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\..\EDM_Drive\PC_EDM_Drive\PC_EDM_Drive.vcxproj">
+      <Project>{ff015cc6-d175-4a70-9ef8-0ce456f678ae}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

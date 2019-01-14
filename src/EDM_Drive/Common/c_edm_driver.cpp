@@ -24,11 +24,21 @@
 2. We need to determine a feed rate appropriate to maintain that gap voltage
 (The gap voltage is the voltage that the EDM should maintain during a cutting operation.
 If the voltage drops to far, then we must slow down, if the voltage rises we msut speed up.)
-3. If at some point X/Y axis are added for a full EDM system, they will also have to fall 
+3. If at some point X/Y axis are added for a full EDM system, they will also have to fall
 within these speed parameters. Everything in motion is tied to the gap voltage.
 */
 
-uint16_t c_edm::Set_ArcVoltage(float voltage)
-{
+#include "c_edm_driver.h"
+#include "..\..\common\Hardware_Abstraction_Layer\c_hal.h"
 
+void c_edm_driver::initialize()
+{
+	c_hal::edm.PNTR_INITIALIZE();
+}
+
+//Call into HAL and read the arc voltage on the analog pin
+float c_edm_driver::Get_ArcVoltage()
+{
+	c_hal::edm.PNTR_GET_ARC_VOLTAGE();
+	return 0;
 }

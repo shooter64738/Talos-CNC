@@ -71,6 +71,10 @@ public:
 	static void feedback_pulse_isr();
 	static bool feedback_dirty();
 
+	static void edm_initializer();
+	static float edm_get_gap_voltage();
+	static void edm_set_pulse_frequency();
+
 	static void driver_drive();
 	
 protected:

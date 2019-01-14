@@ -13,12 +13,12 @@ void Settings::c_Edm::initialize()
 
 }
 
-//// default constructor
-//c_edm::c_edm()
-//{
-//} //c_edm
-//
-//// default destructor
-//c_edm::~c_edm()
-//{
-//} //~c_edm
+// default constructor
+Settings::c_Edm::c_Edm()
+{
+} //c_edm
+
+// default destructor
+Settings::c_Edm::~c_Edm()
+{
+} //~c_edm

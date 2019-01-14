@@ -94,9 +94,15 @@ static s_Buffer rxBuffer[];
 	static void lcd_initializer();
 	static void lcd_show_coordinates();
 	static void lcd_update_axis(uint8_t axis_id, float value);
+	static void lcd_update_edm();
 	static void lcd_print_float(float n);
 	static void lcd_print_float(float n, uint8_t decimal_places);
-static void _incoming_serial_isr(uint8_t Port, char Byte);
+
+	static void edm_initializer();
+	static float edm_get_gap_voltage();
+	static void edm_set_pulse_frequency();
+
+	static void _incoming_serial_isr(uint8_t Port, char Byte);
 protected:
 private:
 //c_cpu_AVR_2560();

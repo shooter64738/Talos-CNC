@@ -42,6 +42,7 @@
 #include "../../Common/Bresenham/c_Bresenham.h"
 #include "../../Common/AVR_Terminal_IO/c_lcd_display.h"
 #include "Events/c_block_events.h"
+#include "../../EDM_Drive/Common/c_edm_driver.h"
 
 
 c_Serial c_processor::host_serial;
@@ -70,6 +71,12 @@ Settings:
 	c_processor::spindle_serial = c_Serial(2, 115200);//<--Connect to spindle board
 
 	Settings::c_general::initialize();
+
+	if (Settings::c_general::machine.machine_type == Settings::c_general::e_machine_types::EDM)
+	{
+		c_edm_driver::initialize();
+	}
+
 	c_interpreter::initialize();
 	c_machine::initialize();
 	c_stager::initialize();

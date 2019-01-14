@@ -158,7 +158,7 @@
   </avrgcccpp.linker.libraries.Libraries>
   <avrgcccpp.linker.libraries.LibrarySearchPaths>
     <ListValues>
-      <Value>C:\GitHub\Talos-CNC\src\Common\Hardware_Abstraction_Layer\AVR_2560\Debug</Value>
+      <Value>../../../Common/Hardware_Abstraction_Layer/AVR_2560/Debug</Value>
     </ListValues>
   </avrgcccpp.linker.libraries.LibrarySearchPaths>
   <avrgcccpp.assembler.general.IncludePaths>

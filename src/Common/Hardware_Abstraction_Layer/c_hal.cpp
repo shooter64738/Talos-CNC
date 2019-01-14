@@ -34,6 +34,7 @@ c_hal::s_core_function_pointers c_hal::core;
 c_hal::s_comm_function_pointers c_hal::comm;
 c_hal::s_feedback_function_pointers c_hal::feedback;
 c_hal::s_lcd_function_pointers c_hal::lcd;
+c_hal::s_edm_function_pointers c_hal::edm;
 
 
 void c_hal::initialize()
@@ -64,6 +65,10 @@ void c_hal::initialize()
 	
 	c_hal::lcd.PNTR_UPDATE_AXIS_DISPLAY = c_cpu_AVR_2560::lcd_update_axis;
 	c_hal::lcd.PNTR_INITIALIZE = c_cpu_AVR_2560::lcd_initializer;
+
+	c_hal::edm.PNTR_GET_ARC_VOLTAGE = &c_cpu_AVR_2560::edm_get_gap_voltage;
+	c_hal::edm.PNTR_INITIALIZE = &c_cpu_AVR_2560::edm_set_pulse_frequency ;
+	c_hal::edm.PNTR_SET_ARC_DRIVE_FREQUENCY = &c_cpu_AVR_2560::edm_set_pulse_frequency;
 	#endif
 
 	#ifdef __SAM3X8E__
@@ -109,6 +114,10 @@ void c_hal::initialize()
 	c_hal::comm.PNTR_VIRTUAL_BUFFER_WRITE = &c_cpu_VIRTUAL::add_to_buffer;
 	c_hal::feedback.PNTR_PULSE_ISR =  & c_cpu_VIRTUAL::feedback_pulse_isr;
 	//c_hal::feedback.PNTR_POSITION_DATA = c_cpu_VIRTUAL::Axis_Positions;
+
+	c_hal::edm.PNTR_GET_ARC_VOLTAGE = &c_cpu_VIRTUAL::edm_get_gap_voltage;
+	c_hal::edm.PNTR_INITIALIZE = &c_cpu_VIRTUAL::edm_set_pulse_frequency;
+	c_hal::edm.PNTR_SET_ARC_DRIVE_FREQUENCY = &c_cpu_VIRTUAL::edm_set_pulse_frequency;
 	#endif
 
 }

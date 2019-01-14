@@ -45,7 +45,7 @@ namespace Settings
 
 		enum class e_machine_sub_types:int8_t
 		{
-			GANTRY,SLANT_BED,RF45,ROUTER,WIRE,BLOCK
+			GANTRY,SLANT_BED,RF45,ROUTER,WIRE,PLUNGER
 		};
 
 		/*
