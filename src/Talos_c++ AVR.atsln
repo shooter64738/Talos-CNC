@@ -17,7 +17,7 @@ Project("{E66E83B9-2572-4076-B26E-6BE79FF3018A}") = "AVR_MotionDriver", "MotionD
 EndProject
 Project("{E66E83B9-2572-4076-B26E-6BE79FF3018A}") = "AVR_Torch_Height_Control", "Torch Height Control\AVR_THC\AVR_Torch_Height_Control\AVR_Torch_Height_Control.cppproj", "{DCE6C7E3-EE26-4D79-826B-08594B9AD897}"
 EndProject
-Project("{E66E83B9-2572-4076-B26E-6BE79FF3018A}") = "AVR_EDM_Drive", "EDM_Drive\AVR_EMD_Drive\AVR_EDM_Drive\AVR_EDM_Drive.cppproj", "{DC35D00C-AC83-48D7-8A15-A1C82B20A12C}"
+Project("{E66E83B9-2572-4076-B26E-6BE79FF3018A}") = "AVR_EDM_Drive", "EDM_Drive\AVR_EDM_Drive\AVR_EDM_Drive.cppproj", "{DC35D00C-AC83-48D7-8A15-A1C82B20A12C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

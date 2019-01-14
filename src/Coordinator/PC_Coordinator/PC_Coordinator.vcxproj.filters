@@ -123,9 +123,6 @@
     <ClCompile Include="..\Shared\Planner\c_stager.cpp">
       <Filter>Shared\Planner</Filter>
     </ClCompile>
-    <ClCompile Include="..\Shared\Settings\c_settings.cpp">
-      <Filter>Shared\Settings</Filter>
-    </ClCompile>
     <ClCompile Include="..\Shared\Status\c_status.cpp">
       <Filter>Shared\Status</Filter>
     </ClCompile>
@@ -135,6 +132,21 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="..\..\Common\Bresenham\c_Bresenham.cpp">
       <Filter>Common\Bresenham</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Shared\Settings\c_Edm.cpp">
+      <Filter>Shared\Settings</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Shared\Settings\c_general.cpp">
+      <Filter>Shared\Settings</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Shared\Settings\c_Mill.cpp">
+      <Filter>Shared\Settings</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Shared\Settings\c_Plasma.cpp">
+      <Filter>Shared\Settings</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Shared\Settings\c_Turn.cpp">
+      <Filter>Shared\Settings</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -218,9 +230,6 @@
     <ClInclude Include="..\Shared\Planner\Stager_Errors.h">
       <Filter>Shared\Planner</Filter>
     </ClInclude>
-    <ClInclude Include="..\Shared\Settings\c_settings.h">
-      <Filter>Shared\Settings</Filter>
-    </ClInclude>
     <ClInclude Include="..\Shared\Status\c_status.h">
       <Filter>Shared\Status</Filter>
     </ClInclude>
@@ -244,6 +253,21 @@
     </ClInclude>
     <ClInclude Include="..\..\Common\NGC_RS274\NGC_Parameters.h">
       <Filter>Common\NGC_RS274</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shared\Settings\c_Edm.h">
+      <Filter>Shared\Settings</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shared\Settings\c_general.h">
+      <Filter>Shared\Settings</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shared\Settings\c_Mill.h">
+      <Filter>Shared\Settings</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shared\Settings\c_Plasma.h">
+      <Filter>Shared\Settings</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shared\Settings\c_Turn.h">
+      <Filter>Shared\Settings</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
