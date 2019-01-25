@@ -21,23 +21,26 @@
 
 #ifndef NGC_PARAMETERS_H_
 #define NGC_PARAMETERS_H_
-class NGC_Parmeters
+#include "NGC_G_Codes.h"
+namespace NGC_RS274
 {
+	class Parmeters
+	{
 	public:
-	static const unsigned int L2 = 2;
-	static const unsigned int L20 = 20;
-	static const unsigned int P0_ACTIVE_COORDINATE_SYSTEM = NGC_Gcodes_X::MOTION_IN_MACHINE_COORDINATE_SYSTEM;
-	static const unsigned int P1_ACTIVE_COORDINATE_SYSTEM = NGC_Gcodes_X::WORK_OFFSET_POSITION_1_G54;
-	static const unsigned int P2_ACTIVE_COORDINATE_SYSTEM = NGC_Gcodes_X::WORK_OFFSET_POSITION_2_G55;
-	static const unsigned int P3_ACTIVE_COORDINATE_SYSTEM = NGC_Gcodes_X::WORK_OFFSET_POSITION_3_G56;
-	static const unsigned int P4_ACTIVE_COORDINATE_SYSTEM = NGC_Gcodes_X::WORK_OFFSET_POSITION_4_G57;
-	static const unsigned int P5_ACTIVE_COORDINATE_SYSTEM = NGC_Gcodes_X::WORK_OFFSET_POSITION_5_G58;
-	static const unsigned int P6_ACTIVE_COORDINATE_SYSTEM = NGC_Gcodes_X::WORK_OFFSET_POSITION_6_G59;
-	static const unsigned int P7_ACTIVE_COORDINATE_SYSTEM = NGC_Gcodes_X::WORK_OFFSET_POSITION_6_G59_1;
-	static const unsigned int P8_ACTIVE_COORDINATE_SYSTEM = NGC_Gcodes_X::WORK_OFFSET_POSITION_6_G59_2;
-	static const unsigned int P9_ACTIVE_COORDINATE_SYSTEM = NGC_Gcodes_X::WORK_OFFSET_POSITION_6_G59_3;
+		static const unsigned int L2 = 2;
+		static const unsigned int L20 = 20;
+		static const unsigned int P0_ACTIVE_COORDINATE_SYSTEM = NGC_RS274::G_codes::MOTION_IN_MACHINE_COORDINATE_SYSTEM;
+		static const unsigned int P1_ACTIVE_COORDINATE_SYSTEM = NGC_RS274::G_codes::WORK_OFFSET_POSITION_1_G54;
+		static const unsigned int P2_ACTIVE_COORDINATE_SYSTEM = NGC_RS274::G_codes::WORK_OFFSET_POSITION_2_G55;
+		static const unsigned int P3_ACTIVE_COORDINATE_SYSTEM = NGC_RS274::G_codes::WORK_OFFSET_POSITION_3_G56;
+		static const unsigned int P4_ACTIVE_COORDINATE_SYSTEM = NGC_RS274::G_codes::WORK_OFFSET_POSITION_4_G57;
+		static const unsigned int P5_ACTIVE_COORDINATE_SYSTEM = NGC_RS274::G_codes::WORK_OFFSET_POSITION_5_G58;
+		static const unsigned int P6_ACTIVE_COORDINATE_SYSTEM = NGC_RS274::G_codes::WORK_OFFSET_POSITION_6_G59;
+		static const unsigned int P7_ACTIVE_COORDINATE_SYSTEM = NGC_RS274::G_codes::WORK_OFFSET_POSITION_6_G59_1;
+		static const unsigned int P8_ACTIVE_COORDINATE_SYSTEM = NGC_RS274::G_codes::WORK_OFFSET_POSITION_6_G59_2;
+		static const unsigned int P9_ACTIVE_COORDINATE_SYSTEM = NGC_RS274::G_codes::WORK_OFFSET_POSITION_6_G59_3;
+	};
 };
-
 
 
 

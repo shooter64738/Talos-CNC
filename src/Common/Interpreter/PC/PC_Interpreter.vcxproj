@@ -11,10 +11,18 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\c_interpreter.cpp" />
+    <ClCompile Include="..\..\NGC_RS274\NGC_Block.cpp" />
+    <ClCompile Include="..\..\NGC_RS274\NGC_Interpreter.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\c_interpreter.h" />
+    <ClInclude Include="..\..\NGC_RS274\NGC_Block.h" />
+    <ClInclude Include="..\..\NGC_RS274\NGC_Interpreter.h" />
+    <ClInclude Include="..\..\NGC_RS274\NGC_Errors.h" />
+    <ClInclude Include="..\..\NGC_RS274\NGC_G_Codes.h" />
+    <ClInclude Include="..\..\NGC_RS274\NGC_G_Groups.h" />
+    <ClInclude Include="..\..\NGC_RS274\NGC_M_Codes.h" />
+    <ClInclude Include="..\..\NGC_RS274\NGC_M_Groups.h" />
+    <ClInclude Include="..\..\NGC_RS274\NGC_Parameters.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{D8CD0074-2E2A-4957-A3F7-A3BEBCF704E4}</ProjectGuid>

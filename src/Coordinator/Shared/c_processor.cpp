@@ -27,7 +27,7 @@
 #include "Planner/c_stager.h"
 #include "Planner/c_gcode_buffer.h"
 #include "Settings/c_general.h"
-#include "Planner/c_block.h"
+#include "../../Common/NGC_RS274/NGC_Block.h"
 #include "Events/c_events.h"
 #include "Events/c_data_events.h"
 #include "Events/c_motion_events.h"
@@ -42,7 +42,7 @@
 #include "../../Common/AVR_Terminal_IO/c_lcd_display.h"
 #include "Events/c_block_events.h"
 //#include "../../EDM_Drive/Common/c_edm_driver.h"
-#include "../../Common/Interpreter/c_interpreter.h"
+#include "../../Common/NGC_RS274/NGC_Interpreter.h"
 
 
 
@@ -78,7 +78,7 @@ void c_processor::startup()
 		//c_edm_driver::initialize();
 	}
 
-	NGC_interpreter::initialize();
+	NGC_RS274::Interpreter::Processor::initialize();
 	c_machine::initialize();
 	c_stager::initialize();
 	c_gcode_buffer::initialize();
@@ -212,7 +212,7 @@ uint16_t c_processor::prep_input()
 		return_value = c_gcode_buffer::add(); //<--interpret and add this block, or fail it with an error
 
 
-		if (return_value == NGC_Interpreter_Errors::OK)
+		if (return_value ==  NGC_RS274::Interpreter::Errors::OK)
 		{
 			/*
 			This will read a block from the NGC_BUFFER and 'stage' it.

@@ -395,8 +395,8 @@ void c_Cutter_Comp::set_outside_corner_arc(c_Path current_path, c_Path forward_p
 	corner_path.define_value(corner_path.arc_values.vertical_center.name, current_path.programmed.target.Y); //center point Y (plane agnostic)
 	
    //only change these values if they were defined. otherwise leave them alone.
-	corner_path.set_defined_gcode(NGC_Gcode_Groups::MOTION);
-	corner_path.g_group[NGC_Gcode_Groups::MOTION] = NGC_Gcodes_X::CIRCULAR_INTERPOLATION_CCW;
+	corner_path.set_defined_gcode(NGC_RS274::Groups::G::MOTION);
+	corner_path.g_group[NGC_RS274::Groups::G::MOTION] = NGC_RS274::G_codes::CIRCULAR_INTERPOLATION_CCW;
 	//do we need a CW arc instead?
 	float c = (current_path.compensated.target.X - current_path.programmed.target.X)
 		*(forward_path.compensated.origin.Y - current_path.programmed.target.Y)
@@ -404,7 +404,7 @@ void c_Cutter_Comp::set_outside_corner_arc(c_Path current_path, c_Path forward_p
 		*(forward_path.compensated.origin.X - current_path.programmed.target.X);
 	if (signbit(c))
 	{
-		corner_path.g_group[NGC_Gcode_Groups::MOTION] = NGC_Gcodes_X::CIRCULAR_INTERPOLATION_CW;
+		corner_path.g_group[NGC_RS274::Groups::G::MOTION] = NGC_RS274::G_codes::CIRCULAR_INTERPOLATION_CW;
 		c_Cutter_Comp::previous_block_pointer->appended_block_pointer->set_state(BLOCK_STATE_PLANNED);
 	}
 	else if (c == 0)
@@ -485,16 +485,16 @@ void c_Cutter_Comp::calculate()
 
 void c_Cutter_Comp::set_object_type(c_block * local_block, c_Path & local_path)
 {
-	if (local_block->g_group[NGC_Gcode_Groups::MOTION] == NGC_Gcodes_X::LINEAR_INTERPOLATION
-		|| local_block->g_group[NGC_Gcode_Groups::MOTION] == NGC_Gcodes_X::RAPID_POSITIONING)
+	if (local_block->g_group[NGC_RS274::Groups::G::MOTION] == NGC_RS274::G_codes::LINEAR_INTERPOLATION
+		|| local_block->g_group[NGC_RS274::Groups::G::MOTION] == NGC_RS274::G_codes::RAPID_POSITIONING)
 	{
 		local_path.object_type = e_object_type::LINE;
 	}
-	else if (local_block->g_group[NGC_Gcode_Groups::MOTION] == NGC_Gcodes_X::CIRCULAR_INTERPOLATION_CCW
-		|| local_block->g_group[NGC_Gcode_Groups::MOTION] == NGC_Gcodes_X::CIRCULAR_INTERPOLATION_CW)
+	else if (local_block->g_group[NGC_RS274::Groups::G::MOTION] == NGC_RS274::G_codes::CIRCULAR_INTERPOLATION_CCW
+		|| local_block->g_group[NGC_RS274::Groups::G::MOTION] == NGC_RS274::G_codes::CIRCULAR_INTERPOLATION_CW)
 	{
 		c_Cutter_Comp::_current_path.programmed.arc_direction =
-			(local_block->g_group[NGC_Gcode_Groups::MOTION] == NGC_Gcodes_X::CIRCULAR_INTERPOLATION_CW
+			(local_block->g_group[NGC_RS274::Groups::G::MOTION] == NGC_RS274::G_codes::CIRCULAR_INTERPOLATION_CW
 				? e_arc_winding_direction::CW : e_arc_winding_direction::CCW);
 
 		local_path.object_type = e_object_type::ARC;

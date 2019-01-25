@@ -200,17 +200,21 @@
       <SubType>compile</SubType>
       <Link>AVR_Coordinator\MotionControllerInterface\c_motion_controller_settings.h</Link>
     </Compile>
-    <Compile Include="..\..\Common\NGC_RS274\NGC_Codes.h">
-      <SubType>compile</SubType>
-      <Link>Common\NGC_RS274\NGC_Codes.h</Link>
-    </Compile>
     <Compile Include="..\..\Common\NGC_RS274\NGC_Errors.h">
       <SubType>compile</SubType>
       <Link>Common\NGC_RS274\NGC_Errors.h</Link>
     </Compile>
+    <Compile Include="..\..\Common\NGC_RS274\NGC_GCodes.h">
+      <SubType>compile</SubType>
+      <Link>Common\NGC_RS274\NGC_GCodes.h</Link>
+    </Compile>
     <Compile Include="..\..\Common\NGC_RS274\NGC_Groups.h">
       <SubType>compile</SubType>
       <Link>Common\NGC_RS274\NGC_Groups.h</Link>
+    </Compile>
+    <Compile Include="..\..\Common\NGC_RS274\NGC_MCodes.h">
+      <SubType>compile</SubType>
+      <Link>Common\NGC_RS274\NGC_MCodes.h</Link>
     </Compile>
     <Compile Include="..\..\Common\NGC_RS274\NGC_Parameters.h">
       <SubType>compile</SubType>
@@ -339,14 +343,6 @@
     <Compile Include="..\Shared\Planner\Compensation\shared.h">
       <SubType>compile</SubType>
       <Link>AVR_Coordinator\Planner\Compensation\shared.h</Link>
-    </Compile>
-    <Compile Include="..\Shared\Planner\c_block.cpp">
-      <SubType>compile</SubType>
-      <Link>AVR_Coordinator\Planner\c_block.cpp</Link>
-    </Compile>
-    <Compile Include="..\Shared\Planner\c_block.h">
-      <SubType>compile</SubType>
-      <Link>AVR_Coordinator\Planner\c_block.h</Link>
     </Compile>
     <Compile Include="..\Shared\Planner\c_gcode_buffer.cpp">
       <SubType>compile</SubType>

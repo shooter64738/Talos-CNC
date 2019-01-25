@@ -23,7 +23,7 @@
 #define __C_CANNED_CYCLE_H__
 
 #include <stdint.h>
-#include "..\c_block.h"
+#include "../../../../Common/NGC_RS274/NGC_Block.h"
 class c_canned_cycle
 {
 	//variables

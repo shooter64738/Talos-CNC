@@ -20,7 +20,7 @@
 
 #pragma once
 #include "c_Path.h"
-#include "..\c_block.h"
+#include "../../../../Common/NGC_RS274/NGC_Block.h"
 #include "stdint.h"
 
 /*

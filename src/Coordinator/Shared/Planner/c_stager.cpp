@@ -32,7 +32,7 @@
 #include "../../../Common/MotionControllerInterface/c_motion_controller_settings.h"
 #include "../Status/c_status.h"
 #include "c_gcode_buffer.h"
-#include "../../../Common/Interpreter/c_interpreter.h"
+#include "../../../Common/NGC_RS274/NGC_Interpreter.h"
 
 
 //uint16_t c_stager::stager_state_g_group[COUNT_OF_G_CODE_GROUPS_ARRAY]; //There are 14 groups of gcodes (0-13)
@@ -125,8 +125,8 @@ void c_stager::report()
 				c_processor::host_serial.Write(CR);
 		}
 
-		NGC_interpreter::convert_to_line_index(i);
-		c_processor::host_serial.Write("\tString "); c_processor::host_serial.Write(NGC_interpreter::Line);
+		NGC_RS274::Interpreter::Processor::convert_to_line_index(i);
+		c_processor::host_serial.Write("\tString "); c_processor::host_serial.Write(NGC_RS274::Interpreter::Processor::Line);
 		c_processor::host_serial.Write(CR);
 		c_processor::host_serial.Write("\tPos @ exe: ");
 		c_processor::host_serial.Write(CR);
@@ -178,7 +178,7 @@ uint8_t c_stager::post_stage_check()
 		if (c_machine::machine_block != NULL)
 		{
 			//No g41 or g42 allowed
-			c_machine::machine_block->clear_defined_gcode(NGC_Gcode_Groups::CUTTER_RADIUS_COMPENSATION);
+			c_machine::machine_block->clear_defined_gcode(NGC_RS274::Groups::G::CUTTER_RADIUS_COMPENSATION);
 			c_machine::machine_block->clear_defined_word('P');
 		}
 	}
@@ -215,7 +215,7 @@ int16_t c_stager::stage_block_motion()
 	memcpy(c_stager::start_motion_position, c_stager::end_motion_position, MACHINE_AXIS_COUNT*(sizeof(float)));
 
 	//Update non modal gcodes if they were defined.
-	if (BitTst(local_block->g_code_defined_in_block, NGC_Gcode_Groups::NON_MODAL))
+	if (BitTst(local_block->g_code_defined_in_block, NGC_RS274::Groups::G::NON_MODAL))
 	{
 		c_block_events::set_event(Block_Events::NON_MODAL);
 		c_stager::update_non_modals(local_block);
@@ -228,17 +228,17 @@ int16_t c_stager::stage_block_motion()
 		if (BitTst(local_block->g_code_defined_in_block, group))
 		{
 			//Set events for the g groups that changed in this block
-			if (group == NGC_Gcode_Groups::MOTION && local_block->g_group[NGC_Gcode_Groups::MOTION] != previous_block->g_group[NGC_Gcode_Groups::MOTION])
+			if (group == NGC_RS274::Groups::G::MOTION && local_block->g_group[NGC_RS274::Groups::G::MOTION] != previous_block->g_group[NGC_RS274::Groups::G::MOTION])
 			{
 				c_block_events::set_event(Block_Events::MOTION);
 			}
-			if (group == NGC_Gcode_Groups::CUTTER_RADIUS_COMPENSATION)
+			if (group == NGC_RS274::Groups::G::CUTTER_RADIUS_COMPENSATION)
 				c_block_events::set_event(Block_Events::CUTTER_RADIUS_COMPENSATION);
-			if (group == NGC_Gcode_Groups::TOOL_LENGTH_OFFSET)
+			if (group == NGC_RS274::Groups::G::TOOL_LENGTH_OFFSET)
 				c_block_events::set_event(Block_Events::TOOL_LENGTH_OFFSET);
-			if (group == NGC_Gcode_Groups::FEED_RATE_MODE)
+			if (group == NGC_RS274::Groups::G::FEED_RATE_MODE)
 				c_block_events::set_event(Block_Events::FEED_RATE_MODE);
-			if (group == NGC_Gcode_Groups::UNITS)
+			if (group == NGC_RS274::Groups::G::UNITS)
 				c_block_events::set_event(Block_Events::UNITS);
 
 
@@ -250,7 +250,7 @@ int16_t c_stager::stage_block_motion()
 	{
 		c_processor::host_serial.print_string("units changed\r");
 		c_machine::unit_scaler = 1;
-		if (local_block->g_group[NGC_Gcode_Groups::UNITS] == NGC_Gcodes_X::INCH_SYSTEM_SELECTION)
+		if (local_block->g_group[NGC_RS274::Groups::G::UNITS] == NGC_RS274::G_codes::INCH_SYSTEM_SELECTION)
 		{
 			c_machine::unit_scaler = 25.4;
 		}
@@ -267,13 +267,13 @@ int16_t c_stager::stage_block_motion()
 		if (BitTst(local_block->m_code_defined_in_block, group))
 		{
 			//Set events for the m groups that changed in this block
-			//if (group == NGC_Gcode_Groups::MOTION && local_block->g_group[NGC_Gcode_Groups::MOTION]	!= previous_block->g_group[NGC_Gcode_Groups::MOTION])
+			//if (group == NGC_RS274::Groups::G::MOTION && local_block->g_group[NGC_RS274::Groups::G::MOTION]	!= previous_block->g_group[NGC_RS274::Groups::G::MOTION])
 			//c_block_events::set_event(Block_Events::MOTION);
-			//if (group == NGC_Gcode_Groups::CUTTER_RADIUS_COMPENSATION)
+			//if (group == NGC_RS274::Groups::G::CUTTER_RADIUS_COMPENSATION)
 			//c_block_events::set_event(Block_Events::CUTTER_RADIUS_COMPENSATION);
-			//if (group == NGC_Gcode_Groups::TOOL_LENGTH_OFFSET)
+			//if (group == NGC_RS274::Groups::G::TOOL_LENGTH_OFFSET)
 			//c_block_events::set_event(Block_Events::TOOL_LENGTH_OFFSET);
-			//if (group == NGC_Gcode_Groups::FEED_RATE_MODE)
+			//if (group == NGC_RS274::Groups::G::FEED_RATE_MODE)
 			//c_block_events::set_event(Block_Events::FEED_RATE_MODE);
 			//c_stager::stager_state_m_group[group] = local_block->m_group[group];
 		}
@@ -427,8 +427,8 @@ int16_t c_stager::stage_block_motion()
 	}
 
 	//is the motion a canned cycle? (But NOT cancel_cycle)
-	if (local_block->g_group[NGC_Gcode_Groups::MOTION] >= NGC_Gcodes_X::CANNED_CYCLE_DRILLING
-		&& local_block->g_group[NGC_Gcode_Groups::MOTION] <= NGC_Gcodes_X::CANNED_CYCLE_BORING_DWELL_FEED_OUT)
+	if (local_block->g_group[NGC_RS274::Groups::G::MOTION] >= NGC_RS274::G_codes::CANNED_CYCLE_DRILLING
+		&& local_block->g_group[NGC_RS274::Groups::G::MOTION] <= NGC_RS274::G_codes::CANNED_CYCLE_BORING_DWELL_FEED_OUT)
 	{
 		c_canned_cycle::initialize(local_block, *c_stager::previous_block->plane_axis.normal_axis.value);
 	}
@@ -446,7 +446,7 @@ int16_t c_stager::stage_block_motion()
 	}
 
 	//see if the motion state requires motion and a non modal was not on the local block.
-	if (local_block->g_group[NGC_Gcode_Groups::MOTION] != NGC_Gcodes_X::MOTION_CANCELED
+	if (local_block->g_group[NGC_RS274::Groups::G::MOTION] != NGC_RS274::G_codes::MOTION_CANCELED
 		&& !c_block_events::get_event(Block_Events::NON_MODAL))
 	{
 		if (!c_data_events::get_event(Data_Events::STAGING_BUFFER_FULL) && local_block->any_axis_was_defined())
@@ -486,8 +486,8 @@ int16_t c_stager::update_cutter_compensation(c_block * local_block)
 	if (c_block_events::get_event(Block_Events::CUTTER_RADIUS_COMPENSATION))
 	{
 		c_block_events::clear_event(Block_Events::CUTTER_RADIUS_COMPENSATION);
-		if (local_block->g_group[NGC_Gcode_Groups::CUTTER_RADIUS_COMPENSATION] ==
-			NGC_Gcodes_X::START_CUTTER_RADIUS_COMPENSATION_LEFT)
+		if (local_block->g_group[NGC_RS274::Groups::G::CUTTER_RADIUS_COMPENSATION] ==
+			NGC_RS274::G_codes::START_CUTTER_RADIUS_COMPENSATION_LEFT)
 		{
 
 			//c_stager::update_cutter_compensation(local_block);
@@ -495,8 +495,8 @@ int16_t c_stager::update_cutter_compensation(c_block * local_block)
 			c_Cutter_Comp::side = e_compensation_side::LEFT;
 			//return NGC_Planner_Errors::OK;
 		}
-		else if (local_block->g_group[NGC_Gcode_Groups::CUTTER_RADIUS_COMPENSATION] ==
-			NGC_Gcodes_X::START_CUTTER_RADIUS_COMPENSATION_RIGHT)
+		else if (local_block->g_group[NGC_RS274::Groups::G::CUTTER_RADIUS_COMPENSATION] ==
+			NGC_RS274::G_codes::START_CUTTER_RADIUS_COMPENSATION_RIGHT)
 		{
 
 			//c_stager::update_cutter_compensation(local_block);
@@ -510,8 +510,8 @@ int16_t c_stager::update_cutter_compensation(c_block * local_block)
 	//if comp is on generate a compensated path
 	if (c_Cutter_Comp::state == e_compensation_state::ON)
 	{
-		if (local_block->g_group[NGC_Gcode_Groups::CUTTER_RADIUS_COMPENSATION] ==
-			NGC_Gcodes_X::CANCEL_CUTTER_RADIUS_COMPENSATION)
+		if (local_block->g_group[NGC_RS274::Groups::G::CUTTER_RADIUS_COMPENSATION] ==
+			NGC_RS274::G_codes::CANCEL_CUTTER_RADIUS_COMPENSATION)
 		{
 			c_Cutter_Comp::state = e_compensation_state::OFF;
 		}
@@ -531,9 +531,9 @@ int16_t c_stager::update_cutter_compensation(c_block * local_block)
 void c_stager::update_non_modals(c_block * local_block)
 {
 	//I know a non modal was defined but dont yet know which one.
-	switch (local_block->g_group[NGC_Gcode_Groups::NON_MODAL])
+	switch (local_block->g_group[NGC_RS274::Groups::G::NON_MODAL])
 	{
-	case NGC_Gcodes_X::G10_PARAM_WRITE:
+	case NGC_RS274::G_codes::G10_PARAM_WRITE:
 	{
 		c_stager::parmeter_write(local_block);
 	}
@@ -551,8 +551,8 @@ void c_stager::parmeter_write(c_block * local_block)
 	switch ((uint16_t)local_block->get_value('L'))
 	{
 		//Using L2 and L20 as the same thing.. I'm kind of lazy these days.
-	case NGC_Parmeters::L2:
-	case NGC_Parmeters::L20:
+	case NGC_RS274::Parmeters::L2:
+	case NGC_RS274::Parmeters::L20:
 	{
 		//Get values for coordinate system origin G10 L/P/axis values
 		c_stager::update_coordinate_datum((uint16_t)local_block->get_value('P'));
@@ -606,7 +606,7 @@ int16_t c_stager::calculate_vector_distance(c_block *plan_block)
 		{
 			//If distance mode is absolute, we need to check to see if there is a
 			//difference in the last position and the new position
-			if (plan_block->g_group[NGC_Gcode_Groups::DISTANCE_MODE] == NGC_Gcodes_X::ABSOLUTE_DISANCE_MODE)
+			if (plan_block->g_group[NGC_RS274::Groups::G::DISTANCE_MODE] == NGC_RS274::G_codes::ABSOLUTE_DISANCE_MODE)
 			{
 
 				plan_block->motion_direction[axis_id] = address - c_stager::start_motion_position[axis_id] < 0
@@ -616,7 +616,7 @@ int16_t c_stager::calculate_vector_distance(c_block *plan_block)
 				plan_block->unit_target_positions[axis_id] = address;
 			}
 			//If distance mode is incremental, we need to check to see if there is a value set
-			else if (plan_block->g_group[NGC_Gcode_Groups::DISTANCE_MODE] == NGC_Gcodes_X::INCREMENTAL_DISTANCE_MODE)
+			else if (plan_block->g_group[NGC_RS274::Groups::G::DISTANCE_MODE] == NGC_RS274::G_codes::INCREMENTAL_DISTANCE_MODE)
 			{
 				plan_block->motion_direction[axis_id] = address < 0 ? -1 : (address == 0 ? 0 : 1);
 

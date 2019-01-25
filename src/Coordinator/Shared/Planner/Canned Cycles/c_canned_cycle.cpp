@@ -69,15 +69,15 @@ void c_canned_cycle::initialize(c_block *local_block, float old_Z)
 	c_canned_cycle::L_repeat_count = (local_block->get_defined('L') ? (uint16_t)*local_block->canned_values.L_repeat_count : 1);
 	c_canned_cycle::P_dwell_time_at_bottom = (local_block->get_defined('P') ? *local_block->canned_values.P_dwell_time_at_bottom : c_canned_cycle::P_dwell_time_at_bottom);
 	c_canned_cycle::Z_depth_of_hole = (local_block->get_defined('Z') ? *local_block->canned_values.Z_depth_of_hole : c_canned_cycle::Z_depth_of_hole);
-	c_canned_cycle::active_cycle_code = local_block->g_group[NGC_Gcode_Groups::MOTION];
+	c_canned_cycle::active_cycle_code = local_block->g_group[NGC_RS274::Groups::G::MOTION];
 	c_canned_cycle::state = 0;
 
 	c_canned_cycle::cycle_to_pointer(local_block);
 
 	//local_block->canned_values.PNTR_RECALLS = c_canned_cycle::cycle_to_pointer;
 	//change the block from a canned cycle to standard rapid motion line (for initial position)
-	local_block->g_group[NGC_Gcode_Groups::MOTION] = NGC_Gcodes_X::RAPID_POSITIONING;
-	local_block->set_defined_gcode(NGC_Gcode_Groups::MOTION);
+	local_block->g_group[NGC_RS274::Groups::G::MOTION] = NGC_RS274::G_codes::RAPID_POSITIONING;
+	local_block->set_defined_gcode(NGC_RS274::Groups::G::MOTION);
 
 	//clear the parameter flags so when this block converts back to plain text, those values arent in there.
 	local_block->clear_defined_word('Q');
@@ -107,7 +107,7 @@ void c_canned_cycle::cycle_to_pointer(c_block *local_block)
 	//if (!c_canned_cycle::L_repeat_count)
 	//{
 	//	//Return Z to original location
-	//	local_block->g_group[NGC_Gcode_Groups::MOTION] = NGC_Gcodes_X::RAPID_POSITIONING;
+	//	local_block->g_group[NGC_RS274::Groups::G::MOTION] = NGC_RS274::G_codes::RAPID_POSITIONING;
 	//	local_block->define_value(local_block->plane_axis.normal_axis.name, c_canned_cycle::Z_at_start);
 	//	local_block->canned_values.PNTR_RECALLS = NULL;
 	//	return;//<--We are done here now. When we return the machine will stop executing the cycle steps.
@@ -126,7 +126,7 @@ void c_canned_cycle::cycle_to_pointer(c_block *local_block)
 	//if (c_canned_cycle::R_retract_position < c_canned_cycle::Z_at_start)
 	//{
 	//	//rapid position Z to the R location
-	//	//local_block->g_group[NGC_Gcode_Groups::MOTION] = NGC_Gcodes_X::RAPID_POSITIONING;
+	//	//local_block->g_group[NGC_RS274::Groups::G::MOTION] = NGC_RS274::G_codes::RAPID_POSITIONING;
 	//	//local_block->define_value(local_block->plane_axis.normal_axis.name, c_canned_cycle::R_retract_position);
 	//}
 
@@ -134,67 +134,67 @@ void c_canned_cycle::cycle_to_pointer(c_block *local_block)
 	//if absolute positioning is active then each count of L should cause the cycle to repeat without moving.
 	switch (c_canned_cycle::active_cycle_code)
 	{
-	case NGC_Gcodes_X::CANNED_CYCLE_DRILLING:
+	case NGC_RS274::G_codes::CANNED_CYCLE_DRILLING:
 	{
 		local_block->canned_values.PNTR_RECALLS = c_canned_cycle::CANNED_CYCLE_DRILLING;
 		break;
 	}
-	case NGC_Gcodes_X::CANNED_CYCLE_DRILLING_WITH_DWELL:
+	case NGC_RS274::G_codes::CANNED_CYCLE_DRILLING_WITH_DWELL:
 	{
 		local_block->canned_values.PNTR_RECALLS = c_canned_cycle::CANNED_CYCLE_DRILLING_WITH_DWELL;
 		break;
 	}
-	case NGC_Gcodes_X::CANNED_CYCLE_PECK_DRILLING:
+	case NGC_RS274::G_codes::CANNED_CYCLE_PECK_DRILLING:
 	{
 		local_block->canned_values.PNTR_RECALLS = c_canned_cycle::CANNED_CYCLE_PECK_DRILLING;
 		break;
 	}
-	case NGC_Gcodes_X::CANNED_CYCLE_RIGHT_HAND_TAPPING:
+	case NGC_RS274::G_codes::CANNED_CYCLE_RIGHT_HAND_TAPPING:
 	{
 		local_block->canned_values.PNTR_RECALLS = c_canned_cycle::CANNED_CYCLE_RIGHT_HAND_TAPPING;
 		break;
 	}
-	case NGC_Gcodes_X::CANNED_CYCLE_BORING_NO_DWELL_FEED_OUT:
+	case NGC_RS274::G_codes::CANNED_CYCLE_BORING_NO_DWELL_FEED_OUT:
 	{
 		local_block->canned_values.PNTR_RECALLS = c_canned_cycle::CANNED_CYCLE_BORING_NO_DWELL_FEED_OUT;
 		break;
 	}
-	case NGC_Gcodes_X::CANNED_CYCLE_BORING_SPINDLE_STOP_RAPID_OUT:
+	case NGC_RS274::G_codes::CANNED_CYCLE_BORING_SPINDLE_STOP_RAPID_OUT:
 	{
 		local_block->canned_values.PNTR_RECALLS = c_canned_cycle::CANNED_CYCLE_BORING_SPINDLE_STOP_RAPID_OUT;
 		break;
 	}
-	case NGC_Gcodes_X::CANNED_CYCLE_BACK_BORING:
+	case NGC_RS274::G_codes::CANNED_CYCLE_BACK_BORING:
 	{
 		local_block->canned_values.PNTR_RECALLS = c_canned_cycle::CANNED_CYCLE_BACK_BORING;
 		break;
 	}
-	case NGC_Gcodes_X::CANNED_CYCLE_BORING_SPINDLE_STOP_MANUAL_OUT:
+	case NGC_RS274::G_codes::CANNED_CYCLE_BORING_SPINDLE_STOP_MANUAL_OUT:
 	{
 		local_block->canned_values.PNTR_RECALLS = c_canned_cycle::CANNED_CYCLE_BORING_SPINDLE_STOP_MANUAL_OUT;
 		break;
 	}
-	case NGC_Gcodes_X::CANNED_CYCLE_BORING_DWELL_FEED_OUT:
+	case NGC_RS274::G_codes::CANNED_CYCLE_BORING_DWELL_FEED_OUT:
 	{
 		local_block->canned_values.PNTR_RECALLS = c_canned_cycle::CANNED_CYCLE_BORING_DWELL_FEED_OUT;
 		break;
 	}
-	case NGC_Gcodes_X::CANNED_CYCLE_RIGHT_HAND_TAPPING_RIGID_HOLDER:
+	case NGC_RS274::G_codes::CANNED_CYCLE_RIGHT_HAND_TAPPING_RIGID_HOLDER:
 	{
 		local_block->canned_values.PNTR_RECALLS = c_canned_cycle::CANNED_CYCLE_RIGHT_HAND_TAPPING_RIGID_HOLDER;
 		break;
 	}
-	case NGC_Gcodes_X::CANNED_CYCLE_LEFT_HAND_TAPPING_RIGID_HOLDER:
+	case NGC_RS274::G_codes::CANNED_CYCLE_LEFT_HAND_TAPPING_RIGID_HOLDER:
 	{
 		local_block->canned_values.PNTR_RECALLS = c_canned_cycle::CANNED_CYCLE_LEFT_HAND_TAPPING_RIGID_HOLDER;
 		break;
 	}
-	case NGC_Gcodes_X::CANNED_CYCLE_PECK_DRILLING_HIGH_SPEED:
+	case NGC_RS274::G_codes::CANNED_CYCLE_PECK_DRILLING_HIGH_SPEED:
 	{
 		local_block->canned_values.PNTR_RECALLS = c_canned_cycle::CANNED_CYCLE_PECK_DRILLING_HIGH_SPEED;
 		break;
 	}
-	case NGC_Gcodes_X::CANNED_CYCLE_FINE_BORING:
+	case NGC_RS274::G_codes::CANNED_CYCLE_FINE_BORING:
 	{
 		local_block->canned_values.PNTR_RECALLS = c_canned_cycle::CANNED_CYCLE_FINE_BORING;
 		break;
@@ -216,18 +216,18 @@ void c_canned_cycle::clear_positioning_axis(c_block *local_block)
 float c_canned_cycle::retract_position(c_block *local_block)
 {
 	//Return R or old Z. depending on G98/99
-	return local_block->g_group[NGC_Gcode_Groups::RETURN_MODE_CANNED_CYCLE] ==
-		NGC_Gcodes_X::CANNED_CYCLE_RETURN_TO_R
+	return local_block->g_group[NGC_RS274::Groups::G::RETURN_MODE_CANNED_CYCLE] ==
+		NGC_RS274::G_codes::CANNED_CYCLE_RETURN_TO_R
 		? c_canned_cycle::R_retract_position
 		: c_canned_cycle::Z_at_start;
 }
 
 void c_canned_cycle::set_axis_feed(c_block *local_block, uint16_t feed_mode, char axis, float value)
 {
-	local_block->set_defined_gcode(NGC_Gcode_Groups::MOTION);
-	local_block->g_group[NGC_Gcode_Groups::MOTION] = feed_mode;
+	local_block->set_defined_gcode(NGC_RS274::Groups::G::MOTION);
+	local_block->g_group[NGC_RS274::Groups::G::MOTION] = feed_mode;
 	local_block->define_value(axis, value);
-	if (feed_mode == NGC_Gcodes_X::LINEAR_INTERPOLATION || feed_mode == NGC_Gcodes_X::CIRCULAR_INTERPOLATION_CCW || feed_mode == NGC_Gcodes_X::CIRCULAR_INTERPOLATION_CW)
+	if (feed_mode == NGC_RS274::G_codes::LINEAR_INTERPOLATION || feed_mode == NGC_RS274::G_codes::CIRCULAR_INTERPOLATION_CCW || feed_mode == NGC_RS274::G_codes::CIRCULAR_INTERPOLATION_CW)
 		local_block->define_value('F', local_block->get_value('F'));
 	else
 		local_block->clear_defined_word('F');
@@ -236,8 +236,8 @@ void c_canned_cycle::set_axis_feed(c_block *local_block, uint16_t feed_mode, cha
 
 void c_canned_cycle::set_dwell(c_block *local_block, float value)
 {
-	local_block->set_defined_gcode(NGC_Gcode_Groups::NON_MODAL);
-	local_block->g_group[NGC_Gcode_Groups::NON_MODAL] = NGC_Gcodes_X::DWELL;
+	local_block->set_defined_gcode(NGC_RS274::Groups::G::NON_MODAL);
+	local_block->g_group[NGC_RS274::Groups::G::NON_MODAL] = NGC_RS274::G_codes::DWELL;
 
 	local_block->define_value('P', value);
 }
@@ -264,7 +264,7 @@ void c_canned_cycle::CANNED_CYCLE_DRILLING(c_block *local_block)
 	case 1: //<--Step one for drill cycle
 	{
 		//feed Z to specified depth
-		c_canned_cycle::set_axis_feed(local_block, NGC_Gcodes_X::LINEAR_INTERPOLATION
+		c_canned_cycle::set_axis_feed(local_block, NGC_RS274::G_codes::LINEAR_INTERPOLATION
 			, local_block->plane_axis.normal_axis.name, c_canned_cycle::Z_depth_of_hole);
 
 		c_canned_cycle::state++;
@@ -273,7 +273,7 @@ void c_canned_cycle::CANNED_CYCLE_DRILLING(c_block *local_block)
 	case 2: //<--Step two for drill cycle
 	{
 		//rapid Z to specified point
-		c_canned_cycle::set_axis_feed(local_block, NGC_Gcodes_X::RAPID_POSITIONING
+		c_canned_cycle::set_axis_feed(local_block, NGC_RS274::G_codes::RAPID_POSITIONING
 			, local_block->plane_axis.normal_axis.name, c_canned_cycle::retract_position(local_block));
 		c_canned_cycle::state++;
 		//This is the last step for the drill cycle. Clear the callback if we are pointed to this cycle.
@@ -323,7 +323,7 @@ void c_canned_cycle::CANNED_CYCLE_PECK_DRILLING(c_block *local_block)
 		float max_peck = min(c_canned_cycle::Q_peck_step_depth, c_canned_cycle::Z_step - c_canned_cycle::Z_depth_of_hole);
 		c_canned_cycle::Z_step += max_peck;
 		//feed Z to specified peck depth
-		c_canned_cycle::set_axis_feed(local_block, NGC_Gcodes_X::LINEAR_INTERPOLATION, 'Z', max_peck);
+		c_canned_cycle::set_axis_feed(local_block, NGC_RS274::G_codes::LINEAR_INTERPOLATION, 'Z', max_peck);
 		c_canned_cycle::state++;//<--set setp to 2
 		if (c_canned_cycle::Z_step == c_canned_cycle::Z_depth_of_hole)
 		{
@@ -334,7 +334,7 @@ void c_canned_cycle::CANNED_CYCLE_PECK_DRILLING(c_block *local_block)
 	case 2: //<--Step two for peck drill cycle
 	{
 		//rapid Z to R point
-		c_canned_cycle::set_axis_feed(local_block, NGC_Gcodes_X::RAPID_POSITIONING, 'Z', c_canned_cycle::R_retract_position);
+		c_canned_cycle::set_axis_feed(local_block, NGC_RS274::G_codes::RAPID_POSITIONING, 'Z', c_canned_cycle::R_retract_position);
 		c_canned_cycle::state--;//<--move state back after we retract so that step 1, runs again.
 		break;
 	}
@@ -342,7 +342,7 @@ void c_canned_cycle::CANNED_CYCLE_PECK_DRILLING(c_block *local_block)
 	{
 		c_canned_cycle::state++;
 		//rapid Z to specified point
-		c_canned_cycle::set_axis_feed(local_block, NGC_Gcodes_X::RAPID_POSITIONING, 'Z', c_canned_cycle::retract_position(local_block));
+		c_canned_cycle::set_axis_feed(local_block, NGC_RS274::G_codes::RAPID_POSITIONING, 'Z', c_canned_cycle::retract_position(local_block));
 		//This is the last step for the drill cycle. Clear the callback if we are pointed to this cycle.
 		//Otherwise leave it, because something else is calling the drill cycle as a shared function
 		if (local_block->canned_values.PNTR_RECALLS == c_canned_cycle::CANNED_CYCLE_PECK_DRILLING)

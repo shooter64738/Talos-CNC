@@ -22,7 +22,7 @@
 #ifndef TALOS_H_
 #define TALOS_H_
 //To enable compilation and debugging in Microsoft Visual C++ define MSCV
-#define MSVC 1
+//#define MSVC 1
 
 #include <stdio.h>
 #include <ctype.h>
@@ -68,8 +68,10 @@
 //#define LONGBIT(x) ((unsigned long)0x00000001 << (x))
 
 
-#include "common/NGC_RS274/NGC_Groups.h"
-#include "common/NGC_RS274/NGC_Codes.h"
+#include "common/NGC_RS274/NGC_G_Groups.h"
+#include "common/NGC_RS274/NGC_M_Groups.h"
+#include "common/NGC_RS274/NGC_G_Codes.h"
+#include "common/NGC_RS274/NGC_M_Codes.h"
 #include "common/NGC_RS274/NGC_Errors.h"
 #include "common/NGC_RS274/NGC_Parameters.h"
 //#include "Serial/c_Serial.h"

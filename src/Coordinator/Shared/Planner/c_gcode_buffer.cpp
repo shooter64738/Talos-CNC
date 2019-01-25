@@ -23,7 +23,7 @@
 #include "..\c_processor.h"
 #include "Stager_Errors.h"
 #include "..\status\c_status.h"
-#include "..\..\..\Common\Interpreter\c_interpreter.h"
+#include "..\..\..\Common\NGC_RS274\NGC_Interpreter.h"
 #include "c_stager.h"
 c_block c_gcode_buffer::collection[NGC_BUFFER_SIZE];
 uint8_t c_gcode_buffer::buffer_head=0;
@@ -138,7 +138,7 @@ int16_t c_gcode_buffer::add()
 	memcpy(local_block->block_word_values, c_stager::previous_block->block_word_values, COUNT_OF_BLOCK_WORDS_ARRAY * sizeof(float));
 	
 	//Clear the non modal codes if there were any. These would have been carried over by the stager, and non modals are 'not modal' obviously
-	local_block->g_group[NGC_Gcode_Groups::NON_MODAL] = 0;
+	local_block->g_group[NGC_RS274::Groups::G::NON_MODAL] = 0;
 	
 	//Process data and convert it into NGC binary data.
 	//The data will go into the buffer head position
@@ -147,21 +147,21 @@ int16_t c_gcode_buffer::add()
 	uint8_t index = 0;
 	while (c_processor::host_serial.Peek() != CR && c_processor::host_serial.Peek() != NULL)
 	{
-		NGC_interpreter::Line[index] =  toupper(c_processor::host_serial.Get());
+		NGC_RS274::Interpreter::Processor::Line[index] =  toupper(c_processor::host_serial.Get());
 		index++;
 	}
 	//did the buffer end with CR or NULL?
 	if (c_processor::host_serial.Peek() == CR)
 		c_processor::host_serial.Get();
 
-	uint16_t return_value = NGC_interpreter::process_line(local_block);
+	uint16_t return_value = NGC_RS274::Interpreter::Processor::process_line(local_block);
 	
 	//Did the interpreter have any errors with this block of data?
-	if (return_value!=NGC_Interpreter_Errors::OK)
+	if (return_value!= NGC_RS274::Interpreter::Errors::OK)
 	{
 		//We had an interpreter error.
 		//send the error code
-		c_status::error('i',return_value,NGC_interpreter::Line);
+		c_status::error('i',return_value,NGC_RS274::Interpreter::Processor::Line);
 		/*
 		since we could not process this block theres nothing else for us to do with it.
 		we should notify the host of the error though.

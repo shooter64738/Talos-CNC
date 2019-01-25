@@ -1,5 +1,5 @@
 /*
-*  c_block.cpp - NGC_RS274 controller.
+*  NGC_Block.cpp - NGC_RS274 controller.
 *  A component of Talos
 *
 *  Copyright (c) 2016-2019 Jeff Dill
@@ -19,7 +19,7 @@
 */
 
 
-#include "c_block.h"
+#include "NGC_Block.h"
 
 
 c_block::c_block()

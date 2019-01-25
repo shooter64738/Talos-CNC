@@ -20,7 +20,7 @@
 
 #ifndef __C_BUFFER_H__
 #define __C_BUFFER_H__
-#include "c_block.h"
+#include "../../../Common/NGC_RS274/NGC_Block.h"
 
 
 class c_gcode_buffer

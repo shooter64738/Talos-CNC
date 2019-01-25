@@ -55,9 +55,6 @@
     <Filter Include="Common\Bresenham">
       <UniqueIdentifier>{71be910f-b113-40b2-be23-589c0907d26e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Common\NGC_RS274">
-      <UniqueIdentifier>{6c95ade1-f1fc-4032-b08e-e3bbaabd8b30}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Common\Hardware_Abstraction_Layer\c_hal.cpp">
@@ -107,9 +104,6 @@
     </ClCompile>
     <ClCompile Include="..\Shared\Planner\Compensation\c_path.cpp">
       <Filter>Shared\Planner\Compensation</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Shared\Planner\c_block.cpp">
-      <Filter>Shared\Planner</Filter>
     </ClCompile>
     <ClCompile Include="..\Shared\Planner\c_gcode_buffer.cpp">
       <Filter>Shared\Planner</Filter>
@@ -209,9 +203,6 @@
     <ClInclude Include="..\Shared\Planner\Compensation\shared.h">
       <Filter>Shared\Planner\Compensation</Filter>
     </ClInclude>
-    <ClInclude Include="..\Shared\Planner\c_block.h">
-      <Filter>Shared\Planner</Filter>
-    </ClInclude>
     <ClInclude Include="..\Shared\Planner\c_gcode_buffer.h">
       <Filter>Shared\Planner</Filter>
     </ClInclude>
@@ -235,18 +226,6 @@
     </ClInclude>
     <ClInclude Include="..\..\Common\Bresenham\c_Bresenham.h">
       <Filter>Common\Bresenham</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Common\NGC_RS274\NGC_Codes.h">
-      <Filter>Common\NGC_RS274</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Common\NGC_RS274\NGC_Errors.h">
-      <Filter>Common\NGC_RS274</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Common\NGC_RS274\NGC_Groups.h">
-      <Filter>Common\NGC_RS274</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Common\NGC_RS274\NGC_Parameters.h">
-      <Filter>Common\NGC_RS274</Filter>
     </ClInclude>
     <ClInclude Include="..\Shared\Settings\c_Edm.h">
       <Filter>Shared\Settings</Filter>

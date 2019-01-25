@@ -93,7 +93,6 @@
     <ClCompile Include="..\Shared\Planner\Canned Cycles\c_canned_cycle.cpp" />
     <ClCompile Include="..\Shared\Planner\Compensation\c_cutter_comp.cpp" />
     <ClCompile Include="..\Shared\Planner\Compensation\c_path.cpp" />
-    <ClCompile Include="..\Shared\Planner\c_block.cpp" />
     <ClCompile Include="..\Shared\Planner\c_gcode_buffer.cpp" />
     <ClCompile Include="..\Shared\Planner\c_mirror.cpp" />
     <ClCompile Include="..\Shared\Planner\c_stager.cpp" />
@@ -111,10 +110,6 @@
     <ClInclude Include="..\..\Common\Hardware_Abstraction_Layer\c_hal.h" />
     <ClInclude Include="..\..\Common\MotionControllerInterface\c_motion_controller.h" />
     <ClInclude Include="..\..\Common\MotionControllerInterface\c_motion_controller_settings.h" />
-    <ClInclude Include="..\..\Common\NGC_RS274\NGC_Codes.h" />
-    <ClInclude Include="..\..\Common\NGC_RS274\NGC_Errors.h" />
-    <ClInclude Include="..\..\Common\NGC_RS274\NGC_Groups.h" />
-    <ClInclude Include="..\..\Common\NGC_RS274\NGC_Parameters.h" />
     <ClInclude Include="..\..\Common\Serial\c_Serial.h" />
     <ClInclude Include="..\..\Common\Serial\s_buffer.h" />
     <ClInclude Include="..\..\helpers.h" />
@@ -136,7 +131,6 @@
     <ClInclude Include="..\Shared\Planner\Compensation\c_cutter_comp.h" />
     <ClInclude Include="..\Shared\Planner\Compensation\c_path.h" />
     <ClInclude Include="..\Shared\Planner\Compensation\shared.h" />
-    <ClInclude Include="..\Shared\Planner\c_block.h" />
     <ClInclude Include="..\Shared\Planner\c_gcode_buffer.h" />
     <ClInclude Include="..\Shared\Planner\c_mirror.h" />
     <ClInclude Include="..\Shared\Planner\c_stager.h" />

@@ -23,12 +23,9 @@
 #define __C_NGC_INTERPRETER_H__
 
 #define CYCLE_LINE_LENGTH 256
-//#include "..\..\Talos.h"
 #include "..\NGC_RS274_Block\c_block.h"
-//#include "../Planner/c_stager.h"
-//#include "../Planner/c_gcode_buffer.h"
 #ifdef MSVC
-//#include "../../../MSVC++.h"
+#include "../../MSVC++.h"
 #endif // MSVC++
 	class NGC_interpreter
 	{

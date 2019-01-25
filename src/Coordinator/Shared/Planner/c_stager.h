@@ -21,7 +21,7 @@
 
 #ifndef __C_STAGER_H__
 #define __C_STAGER_H__
-#include "c_block.h"
+#include "../../../Common/NGC_RS274/NGC_Block.h"
 #include "../Machine/c_machine.h"
 #include "../../../talos.h"
 #include "../system/tool_table.h"

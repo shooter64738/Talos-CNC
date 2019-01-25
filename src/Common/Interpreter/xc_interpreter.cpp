@@ -137,12 +137,12 @@ int NGC_interpreter::error_check_main()
 			//If cutter radius compensation compensation is on, selecting a new coordinate
 			//system should produce an error
 			if (NGC_interpreter::local_block.g_group[NGC_Gcode_Groups::CUTTER_RADIUS_COMPENSATION]
-	> NGC_Gcodes_X::CANCEL_CUTTER_RADIUS_COMPENSATION)
+	> NGC_RS274::G_codes::CANCEL_CUTTER_RADIUS_COMPENSATION)
 			{
 				return NGC_Interpreter_Errors::COORDINATE_SETTING_INVALID_DURING_COMPENSATION;
 			}
 			//If G53 has been specified, clear the working offset value
-			if (NGC_interpreter::local_block.g_group[NGC_Gcode_Groups::COORDINATE_SYSTEM_SELECTION] == NGC_Gcodes_X::MOTION_IN_MACHINE_COORDINATE_SYSTEM)
+			if (NGC_interpreter::local_block.g_group[NGC_Gcode_Groups::COORDINATE_SYSTEM_SELECTION] == NGC_RS274::G_codes::MOTION_IN_MACHINE_COORDINATE_SYSTEM)
 			{
 				NGC_interpreter::local_block.g_group[NGC_Gcode_Groups::COORDINATE_SYSTEM_SELECTION] = 0;
 			}
@@ -184,14 +184,14 @@ int NGC_interpreter::error_check_main()
 			}
 
 			//If G80 is active, motion is canceled. If an axis is defined for motion, thats an error
-			if (NGC_interpreter::local_block.g_group[NGC_Gcode_Groups::MOTION] == NGC_Gcodes_X::MOTION_CANCELED
+			if (NGC_interpreter::local_block.g_group[NGC_Gcode_Groups::MOTION] == NGC_RS274::G_codes::MOTION_CANCELED
 				&&  NGC_interpreter::local_block.any_axis_was_defined())
 			{
 				return NGC_Interpreter_Errors::MOTION_CANCELED_AXIS_VALUES_INVALID;
 			}
 
 			//Last check before we continue. If G80 is set, we just return from here. There is no motion mode
-			if (NGC_interpreter::local_block.g_group[NGC_Gcode_Groups::MOTION] == NGC_Gcodes_X::MOTION_CANCELED)
+			if (NGC_interpreter::local_block.g_group[NGC_Gcode_Groups::MOTION] == NGC_RS274::G_codes::MOTION_CANCELED)
 				return NGC_Interpreter_Errors::OK;
 
 			//We must have at least one axis defined for a motion command
@@ -200,7 +200,7 @@ int NGC_interpreter::error_check_main()
 				return NGC_Interpreter_Errors::NO_AXIS_DEFINED_FOR_MOTION;
 
 			//When we are in time per unit feed rate mode (also known as inverse time), a feed rate must be set per line, for any motion command
-			if (NGC_interpreter::local_block.get_g_code_value_x(NGC_Gcode_Groups::FEED_RATE_MODE) == NGC_Gcodes_X::FEED_RATE_MINUTES_PER_UNIT_MODE
+			if (NGC_interpreter::local_block.get_g_code_value_x(NGC_Gcode_Groups::FEED_RATE_MODE) == NGC_RS274::G_codes::FEED_RATE_MINUTES_PER_UNIT_MODE
 				&& !NGC_interpreter::local_block.get_defined(('F')))
 				return NGC_Interpreter_Errors::NO_FEED_RATE_SPECIFIED_FOR_G93;
 
@@ -226,8 +226,8 @@ int NGC_interpreter::error_check_main()
 
 			switch (gCode)
 			{
-			case NGC_Gcodes_X::CIRCULAR_INTERPOLATION_CW:
-			case NGC_Gcodes_X::CIRCULAR_INTERPOLATION_CCW:
+			case NGC_RS274::G_codes::CIRCULAR_INTERPOLATION_CW:
+			case NGC_RS274::G_codes::CIRCULAR_INTERPOLATION_CCW:
 			{
 				ReturnValue = error_check_arc();
 				if (ReturnValue != NGC_Interpreter_Errors::OK)
@@ -240,18 +240,18 @@ int NGC_interpreter::error_check_main()
 				//normalize_distance_units('R');
 			}
 			break;
-			case NGC_Gcodes_X::MOTION_CANCELED:
-				NGC_interpreter::local_block.g_group[NGC_Gcode_Groups::MOTION] = NGC_Gcodes_X::MOTION_CANCELED;
+			case NGC_RS274::G_codes::MOTION_CANCELED:
+				NGC_interpreter::local_block.g_group[NGC_Gcode_Groups::MOTION] = NGC_RS274::G_codes::MOTION_CANCELED;
 				break;
-			case NGC_Gcodes_X::CANNED_CYCLE_DRILLING: //<--G81 drilling cycle
-			case NGC_Gcodes_X::CANNED_CYCLE_DRILLING_WITH_DWELL: //<--G82
-			case NGC_Gcodes_X::CANNED_CYCLE_PECK_DRILLING: //<--G83
-			case NGC_Gcodes_X::CANNED_CYCLE_RIGHT_HAND_TAPPING: //<--G84
-			case NGC_Gcodes_X::CANNED_CYCLE_BORING_NO_DWELL_FEED_OUT: //<--G85
-			case NGC_Gcodes_X::CANNED_CYCLE_BORING_SPINDLE_STOP_RAPID_OUT: //<--G86
-			case NGC_Gcodes_X::CANNED_CYCLE_BACK_BORING: //<--G87
-			case NGC_Gcodes_X::CANNED_CYCLE_BORING_SPINDLE_STOP_MANUAL_OUT: //<--G88
-			case NGC_Gcodes_X::CANNED_CYCLE_BORING_DWELL_FEED_OUT: //<--G89
+			case NGC_RS274::G_codes::CANNED_CYCLE_DRILLING: //<--G81 drilling cycle
+			case NGC_RS274::G_codes::CANNED_CYCLE_DRILLING_WITH_DWELL: //<--G82
+			case NGC_RS274::G_codes::CANNED_CYCLE_PECK_DRILLING: //<--G83
+			case NGC_RS274::G_codes::CANNED_CYCLE_RIGHT_HAND_TAPPING: //<--G84
+			case NGC_RS274::G_codes::CANNED_CYCLE_BORING_NO_DWELL_FEED_OUT: //<--G85
+			case NGC_RS274::G_codes::CANNED_CYCLE_BORING_SPINDLE_STOP_RAPID_OUT: //<--G86
+			case NGC_RS274::G_codes::CANNED_CYCLE_BACK_BORING: //<--G87
+			case NGC_RS274::G_codes::CANNED_CYCLE_BORING_SPINDLE_STOP_MANUAL_OUT: //<--G88
+			case NGC_RS274::G_codes::CANNED_CYCLE_BORING_DWELL_FEED_OUT: //<--G89
 			{
 				ReturnValue = error_check_canned_cycle();
 				if (ReturnValue != NGC_Interpreter_Errors::OK)
@@ -327,7 +327,7 @@ int NGC_interpreter::error_check_plane_select()
 	//Use the switch case to assign the named values.
 	switch (NGC_interpreter::local_block.g_group[NGC_Gcode_Groups::PLANE_SELECTION])
 	{
-	case NGC_Gcodes_X::XY_PLANE_SELECTION:
+	case NGC_RS274::G_codes::XY_PLANE_SELECTION:
 	{
 		NGC_interpreter::local_block.plane_axis.horizontal_axis.name = 'X';
 		NGC_interpreter::local_block.plane_axis.vertical_axis.name = 'Y';
@@ -339,7 +339,7 @@ int NGC_interpreter::error_check_plane_select()
 		NGC_interpreter::local_block.arc_values.plane_error = NGC_Interpreter_Errors::MISSING_CIRCLE_OFFSET_IJ;
 	}
 	break;
-	case NGC_Gcodes_X::XZ_PLANE_SELECTION:
+	case NGC_RS274::G_codes::XZ_PLANE_SELECTION:
 	{
 		NGC_interpreter::local_block.plane_axis.horizontal_axis.name = 'X';
 		NGC_interpreter::local_block.plane_axis.vertical_axis.name = 'Z';
@@ -351,7 +351,7 @@ int NGC_interpreter::error_check_plane_select()
 		NGC_interpreter::local_block.arc_values.plane_error = NGC_Interpreter_Errors::MISSING_CIRCLE_OFFSET_IK;
 	}
 	break;
-	case NGC_Gcodes_X::YZ_PLANE_SELECTION:
+	case NGC_RS274::G_codes::YZ_PLANE_SELECTION:
 	{
 		NGC_interpreter::local_block.plane_axis.horizontal_axis.name = 'Y';
 		NGC_interpreter::local_block.plane_axis.vertical_axis.name = 'Z';
@@ -478,7 +478,7 @@ int NGC_interpreter::error_check_radius_format_arc(uint8_t horizontal_axis, uint
 		// Finish computing h_x2_div_d.
 	h_x2_div_d = -sqrt(h_x2_div_d) / hypot_f(x, y); // == -(h * 2 / d)
 	// Invert the sign of h_x2_div_d if the circle is counter clockwise (see sketch below)
-	if (NGC_interpreter::local_block.get_g_code_value_x(NGC_Gcode_Groups::MOTION) == NGC_Gcodes_X::CIRCULAR_INTERPOLATION_CCW)
+	if (NGC_interpreter::local_block.get_g_code_value_x(NGC_Gcode_Groups::MOTION) == NGC_RS274::G_codes::CIRCULAR_INTERPOLATION_CCW)
 		h_x2_div_d = -h_x2_div_d;
 
 	/* The counter clockwise circle lies to the left of the target direction. When offset is positive,
@@ -523,7 +523,7 @@ int NGC_interpreter::error_check_non_modal()
 	//Check individual gcodes for their specific values
 	switch (NGC_interpreter::local_block.g_group[NGC_Gcode_Groups::NON_MODAL])
 	{
-	case NGC_Gcodes_X::G10_PARAM_WRITE: //<-G10
+	case NGC_RS274::G_codes::G10_PARAM_WRITE: //<-G10
 	{
 		/*
 		L1 - Tool offset,radius,orientation settings - requires P,Q,R,X,W,Z
@@ -598,8 +598,8 @@ only to canned cycles.
 int NGC_interpreter::error_check_canned_cycle()
 {
 	//Verify there is a retraction mode specified
-	if (NGC_interpreter::local_block.g_group[NGC_Gcode_Groups::RETURN_MODE_CANNED_CYCLE] != NGC_Gcodes_X::CANNED_CYCLE_RETURN_TO_R
-		&& NGC_interpreter::local_block.g_group[NGC_Gcode_Groups::RETURN_MODE_CANNED_CYCLE] != NGC_Gcodes_X::CANNED_CYCLE_RETURN_TO_Z)
+	if (NGC_interpreter::local_block.g_group[NGC_Gcode_Groups::RETURN_MODE_CANNED_CYCLE] != NGC_RS274::G_codes::CANNED_CYCLE_RETURN_TO_R
+		&& NGC_interpreter::local_block.g_group[NGC_Gcode_Groups::RETURN_MODE_CANNED_CYCLE] != NGC_RS274::G_codes::CANNED_CYCLE_RETURN_TO_Z)
 	{
 		return NGC_Interpreter_Errors::CAN_CYCLE_RETURN_MODE_UNDEFINED;
 	}
@@ -615,7 +615,7 @@ int NGC_interpreter::error_check_canned_cycle()
 		return NGC_Interpreter_Errors::CAN_CYLCE_ROTATIONAL_AXIS_C_DEFINED;
 
 	//Cutter radius compensation cannot be active in a canned cycle.
-	if (NGC_interpreter::local_block.g_group[NGC_Gcode_Groups::CUTTER_RADIUS_COMPENSATION] != NGC_Gcodes_X::CANCEL_CUTTER_RADIUS_COMPENSATION)
+	if (NGC_interpreter::local_block.g_group[NGC_Gcode_Groups::CUTTER_RADIUS_COMPENSATION] != NGC_RS274::G_codes::CANCEL_CUTTER_RADIUS_COMPENSATION)
 		return NGC_Interpreter_Errors::CAN_CYLCE_CUTTER_RADIUS_COMPENSATION_ACTIVE;
 
 	//if L word specified it must be a positive integer > 1 (L is not required, only use it to repeat a cycle at the present location)
@@ -637,7 +637,7 @@ int NGC_interpreter::error_check_canned_cycle()
 		return NGC_Interpreter_Errors::CAN_CYCLE_LINEAR_AXIS_UNDEFINED;
 
 	//if Using R retract method (G99), make sure R was set.
-	if (NGC_interpreter::local_block.g_group[NGC_Gcode_Groups::RETURN_MODE_CANNED_CYCLE] == NGC_Gcodes_X::CANNED_CYCLE_RETURN_TO_R)
+	if (NGC_interpreter::local_block.g_group[NGC_Gcode_Groups::RETURN_MODE_CANNED_CYCLE] == NGC_RS274::G_codes::CANNED_CYCLE_RETURN_TO_R)
 	{
 		if (!BitTst(NGC_interpreter::local_block.word_defined_in_block_A_Z, R_WORD_BIT) && NGC_interpreter::local_block.get_value('R') == 0)
 			return NGC_Interpreter_Errors::CAN_CYCLE_MISSING_R_VALUE;
@@ -648,7 +648,7 @@ int NGC_interpreter::error_check_canned_cycle()
 	}
 
 	//if dwell cycle make sure P is set
-	if (NGC_interpreter::local_block.g_group[NGC_Gcode_Groups::MOTION] == NGC_Gcodes_X::CANNED_CYCLE_DRILLING_WITH_DWELL)
+	if (NGC_interpreter::local_block.g_group[NGC_Gcode_Groups::MOTION] == NGC_RS274::G_codes::CANNED_CYCLE_DRILLING_WITH_DWELL)
 	{
 		if (!BitTst(NGC_interpreter::local_block.word_defined_in_block_A_Z, P_WORD_BIT) && NGC_interpreter::local_block.get_value('P') == 0)
 			return NGC_Interpreter_Errors::CAN_CYCLE_MISSING_P_VALUE;
@@ -705,10 +705,10 @@ int NGC_interpreter::error_check_cutter_compensation()
 	but it will calculate offset based on the related planes.
 
 	*/
-	if (NGC_interpreter::local_block.g_group[NGC_Gcode_Groups::PLANE_SELECTION] != NGC_Gcodes_X::XY_PLANE_SELECTION)
+	if (NGC_interpreter::local_block.g_group[NGC_Gcode_Groups::PLANE_SELECTION] != NGC_RS274::G_codes::XY_PLANE_SELECTION)
 		return NGC_Interpreter_Errors::CUTTER_RADIUS_COMP_NOT_XY_PLANE;
 
-	if (NGC_interpreter::local_block.g_group[NGC_Gcode_Groups::MOTION] == NGC_Gcodes_X::MOTION_CANCELED)
+	if (NGC_interpreter::local_block.g_group[NGC_Gcode_Groups::MOTION] == NGC_RS274::G_codes::MOTION_CANCELED)
 		return NGC_Interpreter_Errors::CUTTER_RADIUS_COMP_WHEN_MOTION_CANCELED;
 
 	//If cutter radius compensation was already active, it cannot be set active again, or change sides
@@ -717,13 +717,13 @@ int NGC_interpreter::error_check_cutter_compensation()
 	{
 		//Since cutter comp was defined in the block, we must determine if it was already on
 		//by looking in the stagers g code group states.
-		if (stager_block->g_group[NGC_Gcode_Groups::CUTTER_RADIUS_COMPENSATION] > NGC_Gcodes_X::CANCEL_CUTTER_RADIUS_COMPENSATION
-			&& NGC_interpreter::local_block.g_group[NGC_Gcode_Groups::CUTTER_RADIUS_COMPENSATION] > NGC_Gcodes_X::CANCEL_CUTTER_RADIUS_COMPENSATION)
+		if (stager_block->g_group[NGC_Gcode_Groups::CUTTER_RADIUS_COMPENSATION] > NGC_RS274::G_codes::CANCEL_CUTTER_RADIUS_COMPENSATION
+			&& NGC_interpreter::local_block.g_group[NGC_Gcode_Groups::CUTTER_RADIUS_COMPENSATION] > NGC_RS274::G_codes::CANCEL_CUTTER_RADIUS_COMPENSATION)
 			return NGC_Interpreter_Errors::CUTTER_RADIUS_COMP_ALREADY_ACTIVE;
 	}
 
 	//Compensation was off and we are turning it on.
-	if ((local_block.g_group[NGC_Gcode_Groups::CUTTER_RADIUS_COMPENSATION] > NGC_Gcodes_X::CANCEL_CUTTER_RADIUS_COMPENSATION))
+	if ((local_block.g_group[NGC_Gcode_Groups::CUTTER_RADIUS_COMPENSATION] > NGC_RS274::G_codes::CANCEL_CUTTER_RADIUS_COMPENSATION))
 	{
 
 		//See if P was defined.
@@ -894,62 +894,62 @@ int NGC_interpreter::_gWord(float Address)
 
 	switch (iAddress)
 	{
-	case NGC_Gcodes_X::RAPID_POSITIONING: //<-G00
-	case NGC_Gcodes_X::LINEAR_INTERPOLATION: //<-G01
-	case NGC_Gcodes_X::CIRCULAR_INTERPOLATION_CCW: //<-G02
-	case NGC_Gcodes_X::CIRCULAR_INTERPOLATION_CW: //<-G03
+	case NGC_RS274::G_codes::RAPID_POSITIONING: //<-G00
+	case NGC_RS274::G_codes::LINEAR_INTERPOLATION: //<-G01
+	case NGC_RS274::G_codes::CIRCULAR_INTERPOLATION_CCW: //<-G02
+	case NGC_RS274::G_codes::CIRCULAR_INTERPOLATION_CW: //<-G03
 		ngc_working_g_group = NGC_Gcode_Groups::MOTION;
 		NGC_interpreter::local_block.g_group[NGC_Gcode_Groups::MOTION] = (iAddress);
 		break;
 
-	case NGC_Gcodes_X::G10_PARAM_WRITE: //<-G10
+	case NGC_RS274::G_codes::G10_PARAM_WRITE: //<-G10
 		ngc_working_g_group = NGC_Gcode_Groups::NON_MODAL;//<-G4,G10,G28,G30,G53,G92,92.2,G92.3
 		NGC_interpreter::local_block.g_group[NGC_Gcode_Groups::NON_MODAL] = (iAddress);
 		break;
 
-	case NGC_Gcodes_X::RECTANGULAR_COORDINATE_SYSTEM: //<-G15
-	case NGC_Gcodes_X::POLAR_COORDINATE_SYSTEM: //<-G16
+	case NGC_RS274::G_codes::RECTANGULAR_COORDINATE_SYSTEM: //<-G15
+	case NGC_RS274::G_codes::POLAR_COORDINATE_SYSTEM: //<-G16
 		ngc_working_g_group = NGC_Gcode_Groups::RECTANGLAR_POLAR_COORDS_SELECTION;
 		NGC_interpreter::local_block.g_group[NGC_Gcode_Groups::RECTANGLAR_POLAR_COORDS_SELECTION] = (iAddress);
 		break;
 
-	case NGC_Gcodes_X::XY_PLANE_SELECTION: //<-G17
+	case NGC_RS274::G_codes::XY_PLANE_SELECTION: //<-G17
 
 		ngc_working_g_group = NGC_Gcode_Groups::PLANE_SELECTION;
 		NGC_interpreter::local_block.g_group[NGC_Gcode_Groups::PLANE_SELECTION] = (iAddress);
 		NGC_interpreter::error_check_plane_select();
 		break;
 
-	case NGC_Gcodes_X::XZ_PLANE_SELECTION: //<-G18
+	case NGC_RS274::G_codes::XZ_PLANE_SELECTION: //<-G18
 
 		ngc_working_g_group = NGC_Gcode_Groups::PLANE_SELECTION;
 		NGC_interpreter::local_block.g_group[NGC_Gcode_Groups::PLANE_SELECTION] = (iAddress);
 		NGC_interpreter::error_check_plane_select();
 		break;
 
-	case NGC_Gcodes_X::YZ_PLANE_SELECTION: //<-G19
+	case NGC_RS274::G_codes::YZ_PLANE_SELECTION: //<-G19
 
 		ngc_working_g_group = NGC_Gcode_Groups::PLANE_SELECTION;
 		NGC_interpreter::local_block.g_group[NGC_Gcode_Groups::PLANE_SELECTION] = (iAddress);
 		NGC_interpreter::error_check_plane_select();
 		break;
 
-	case NGC_Gcodes_X::INCH_SYSTEM_SELECTION: //<-G20
-	case NGC_Gcodes_X::MILLIMETER_SYSTEM_SELECTION: //<-G21
+	case NGC_RS274::G_codes::INCH_SYSTEM_SELECTION: //<-G20
+	case NGC_RS274::G_codes::MILLIMETER_SYSTEM_SELECTION: //<-G21
 		ngc_working_g_group = NGC_Gcode_Groups::UNITS;
 		//If units are changing, update the feed rate in the interpreter
 		if (NGC_interpreter::local_block.g_group[NGC_Gcode_Groups::UNITS] != (iAddress))
 		{
 			//currently we are in inches and going to mm
 			if (NGC_interpreter::local_block.g_group[NGC_Gcode_Groups::UNITS]
-				== NGC_Gcodes_X::INCH_SYSTEM_SELECTION)
+				== NGC_RS274::G_codes::INCH_SYSTEM_SELECTION)
 			{
 				NGC_interpreter::local_block.set_value
 				('F', NGC_interpreter::local_block.get_value('F')*25.4);
 			}
 			//currently we are in mm and going to inches
 			if (NGC_interpreter::local_block.g_group[NGC_Gcode_Groups::UNITS]
-				== NGC_Gcodes_X::MILLIMETER_SYSTEM_SELECTION)
+				== NGC_RS274::G_codes::MILLIMETER_SYSTEM_SELECTION)
 			{
 				NGC_interpreter::local_block.set_value
 				('F', NGC_interpreter::local_block.get_value('F') / 25.4);
@@ -958,70 +958,70 @@ int NGC_interpreter::_gWord(float Address)
 		NGC_interpreter::local_block.g_group[NGC_Gcode_Groups::UNITS] = (iAddress);
 		break;
 
-	case NGC_Gcodes_X::CANCEL_CUTTER_RADIUS_COMPENSATION: //<-G40
-	case NGC_Gcodes_X::START_CUTTER_RADIUS_COMPENSATION_LEFT: //<-G41
-	case NGC_Gcodes_X::START_CUTTER_RADIUS_COMPENSATION_RIGHT: //<-G42
+	case NGC_RS274::G_codes::CANCEL_CUTTER_RADIUS_COMPENSATION: //<-G40
+	case NGC_RS274::G_codes::START_CUTTER_RADIUS_COMPENSATION_LEFT: //<-G41
+	case NGC_RS274::G_codes::START_CUTTER_RADIUS_COMPENSATION_RIGHT: //<-G42
 		ngc_working_g_group = NGC_Gcode_Groups::CUTTER_RADIUS_COMPENSATION;
 		NGC_interpreter::local_block.g_group[NGC_Gcode_Groups::CUTTER_RADIUS_COMPENSATION] = (iAddress);
 		break;
 
 
-	case NGC_Gcodes_X::MOTION_IN_MACHINE_COORDINATE_SYSTEM: //<-G53
+	case NGC_RS274::G_codes::MOTION_IN_MACHINE_COORDINATE_SYSTEM: //<-G53
 		ngc_working_g_group = NGC_Gcode_Groups::COORDINATE_SYSTEM_SELECTION;
 		NGC_interpreter::local_block.g_group[NGC_Gcode_Groups::COORDINATE_SYSTEM_SELECTION] = (iAddress);
 		break;
 
-	case NGC_Gcodes_X::WORK_OFFSET_POSITION_1_G54: //<-G54, G55, G56, G57, G58, G59, G59.1, G59.2, G59.3
-	case NGC_Gcodes_X::WORK_OFFSET_POSITION_2_G55:
-	case NGC_Gcodes_X::WORK_OFFSET_POSITION_3_G56:
-	case NGC_Gcodes_X::WORK_OFFSET_POSITION_4_G57:
-	case NGC_Gcodes_X::WORK_OFFSET_POSITION_5_G58:
-	case NGC_Gcodes_X::WORK_OFFSET_POSITION_6_G59:
-	case NGC_Gcodes_X::WORK_OFFSET_POSITION_6_G59_1:
-	case NGC_Gcodes_X::WORK_OFFSET_POSITION_6_G59_2:
-	case NGC_Gcodes_X::WORK_OFFSET_POSITION_6_G59_3:
+	case NGC_RS274::G_codes::WORK_OFFSET_POSITION_1_G54: //<-G54, G55, G56, G57, G58, G59, G59.1, G59.2, G59.3
+	case NGC_RS274::G_codes::WORK_OFFSET_POSITION_2_G55:
+	case NGC_RS274::G_codes::WORK_OFFSET_POSITION_3_G56:
+	case NGC_RS274::G_codes::WORK_OFFSET_POSITION_4_G57:
+	case NGC_RS274::G_codes::WORK_OFFSET_POSITION_5_G58:
+	case NGC_RS274::G_codes::WORK_OFFSET_POSITION_6_G59:
+	case NGC_RS274::G_codes::WORK_OFFSET_POSITION_6_G59_1:
+	case NGC_RS274::G_codes::WORK_OFFSET_POSITION_6_G59_2:
+	case NGC_RS274::G_codes::WORK_OFFSET_POSITION_6_G59_3:
 		//this->WorkOffsetValue = iAddress;
 		ngc_working_g_group = NGC_Gcode_Groups::COORDINATE_SYSTEM_SELECTION;
 		NGC_interpreter::local_block.g_group[NGC_Gcode_Groups::COORDINATE_SYSTEM_SELECTION] = (iAddress);
 		break;
 
-	case NGC_Gcodes_X::MOTION_CANCELED: //<-G80
-	case NGC_Gcodes_X::CANNED_CYCLE_BACK_BORING: //<-G87
-	case NGC_Gcodes_X::CANNED_CYCLE_BORING_DWELL_FEED_OUT: //<-G89
-	case NGC_Gcodes_X::CANNED_CYCLE_BORING_NO_DWELL_FEED_OUT: //<-G85
-	case NGC_Gcodes_X::CANNED_CYCLE_BORING_SPINDLE_STOP_MANUAL_OUT: //<-G88
-	case NGC_Gcodes_X::CANNED_CYCLE_BORING_SPINDLE_STOP_RAPID_OUT: //<-G86
-	case NGC_Gcodes_X::CANNED_CYCLE_DRILLING: //<-G81
-	case NGC_Gcodes_X::CANNED_CYCLE_DRILLING_WITH_DWELL: //<-G82
-	case NGC_Gcodes_X::CANNED_CYCLE_PECK_DRILLING: //<-G83
-	case NGC_Gcodes_X::CANNED_CYCLE_RIGHT_HAND_TAPPING: //<-G84
+	case NGC_RS274::G_codes::MOTION_CANCELED: //<-G80
+	case NGC_RS274::G_codes::CANNED_CYCLE_BACK_BORING: //<-G87
+	case NGC_RS274::G_codes::CANNED_CYCLE_BORING_DWELL_FEED_OUT: //<-G89
+	case NGC_RS274::G_codes::CANNED_CYCLE_BORING_NO_DWELL_FEED_OUT: //<-G85
+	case NGC_RS274::G_codes::CANNED_CYCLE_BORING_SPINDLE_STOP_MANUAL_OUT: //<-G88
+	case NGC_RS274::G_codes::CANNED_CYCLE_BORING_SPINDLE_STOP_RAPID_OUT: //<-G86
+	case NGC_RS274::G_codes::CANNED_CYCLE_DRILLING: //<-G81
+	case NGC_RS274::G_codes::CANNED_CYCLE_DRILLING_WITH_DWELL: //<-G82
+	case NGC_RS274::G_codes::CANNED_CYCLE_PECK_DRILLING: //<-G83
+	case NGC_RS274::G_codes::CANNED_CYCLE_RIGHT_HAND_TAPPING: //<-G84
 		ngc_working_g_group = NGC_Gcode_Groups::MOTION;
 		NGC_interpreter::local_block.g_group[NGC_Gcode_Groups::MOTION] = (iAddress);
 		break;
 
-	case NGC_Gcodes_X::ABSOLUTE_DISANCE_MODE: //<-G90
-	case NGC_Gcodes_X::INCREMENTAL_DISTANCE_MODE: //<-G91
+	case NGC_RS274::G_codes::ABSOLUTE_DISANCE_MODE: //<-G90
+	case NGC_RS274::G_codes::INCREMENTAL_DISTANCE_MODE: //<-G91
 		ngc_working_g_group = NGC_Gcode_Groups::DISTANCE_MODE;
 		NGC_interpreter::local_block.g_group[NGC_Gcode_Groups::DISTANCE_MODE] = (iAddress);
 		break;
 
-	case NGC_Gcodes_X::FEED_RATE_MINUTES_PER_UNIT_MODE: //<-G93
-	case NGC_Gcodes_X::FEED_RATE_UNITS_PER_MINUTE_MODE: //<-G94
-	case NGC_Gcodes_X::FEED_RATE_UNITS_PER_ROTATION: //<-G95
+	case NGC_RS274::G_codes::FEED_RATE_MINUTES_PER_UNIT_MODE: //<-G93
+	case NGC_RS274::G_codes::FEED_RATE_UNITS_PER_MINUTE_MODE: //<-G94
+	case NGC_RS274::G_codes::FEED_RATE_UNITS_PER_ROTATION: //<-G95
 		ngc_working_g_group = NGC_Gcode_Groups::FEED_RATE_MODE;
 		NGC_interpreter::local_block.g_group[NGC_Gcode_Groups::FEED_RATE_MODE] = (iAddress);
 		break;
 
-	case NGC_Gcodes_X::CANNED_CYCLE_RETURN_TO_R: //<-G99
-	case NGC_Gcodes_X::CANNED_CYCLE_RETURN_TO_Z: //<-G98
+	case NGC_RS274::G_codes::CANNED_CYCLE_RETURN_TO_R: //<-G99
+	case NGC_RS274::G_codes::CANNED_CYCLE_RETURN_TO_Z: //<-G98
 		ngc_working_g_group = NGC_Gcode_Groups::RETURN_MODE_CANNED_CYCLE;
 		NGC_interpreter::local_block.g_group[NGC_Gcode_Groups::RETURN_MODE_CANNED_CYCLE] = (iAddress);
 		break;
 
-	case NGC_Gcodes_X::CANCEL_TOOL_LENGTH_OFFSET: //<-G49
-	case NGC_Gcodes_X::POSITIVE_TOOL_LENGTH_OFFSET: //<-G43
-	case NGC_Gcodes_X::USE_TOOL_LENGTH_OFFSET_FOR_TRANSIENT_TOOL: //<-G43.1
-	case NGC_Gcodes_X::NEGATIVE_TOOL_LENGTH_OFFSET: //<-G44
+	case NGC_RS274::G_codes::CANCEL_TOOL_LENGTH_OFFSET: //<-G49
+	case NGC_RS274::G_codes::POSITIVE_TOOL_LENGTH_OFFSET: //<-G43
+	case NGC_RS274::G_codes::USE_TOOL_LENGTH_OFFSET_FOR_TRANSIENT_TOOL: //<-G43.1
+	case NGC_RS274::G_codes::NEGATIVE_TOOL_LENGTH_OFFSET: //<-G44
 
 		ngc_working_g_group = NGC_Gcode_Groups::TOOL_LENGTH_OFFSET;
 		NGC_interpreter::local_block.g_group[NGC_Gcode_Groups::TOOL_LENGTH_OFFSET] = (iAddress);
@@ -1276,7 +1276,7 @@ int NGC_interpreter::convert_to_line(c_block *local_block)
 int NGC_interpreter::normalize_distance_units()
 {
 	//If already in MM mode return;
-	if (NGC_interpreter::local_block.get_g_code_value_x(NGC_Gcode_Groups::UNITS) == NGC_Gcodes_X::MILLIMETER_SYSTEM_SELECTION)
+	if (NGC_interpreter::local_block.get_g_code_value_x(NGC_Gcode_Groups::UNITS) == NGC_RS274::G_codes::MILLIMETER_SYSTEM_SELECTION)
 	{
 		return NGC_Interpreter_Errors::OK;
 	}

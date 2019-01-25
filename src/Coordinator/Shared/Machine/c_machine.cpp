@@ -33,7 +33,7 @@
 #include "..\..\..\Common\MotionControllerInterface\c_motion_controller_settings.h"
 #include "..\..\..\Common\MotionControllerInterface\c_motion_controller.h"
 #include "..\..\..\Common\Bresenham\c_Bresenham.h"
-#include "..\..\..\Common\Interpreter\c_interpreter.h"
+#include "..\..\..\Common\NGC_RS274\NGC_Interpreter.h"
 #include "..\Planner\c_gcode_buffer.h"
 
 
@@ -78,29 +78,29 @@ void c_machine::initialize()
 	*/
 
 	//default the motion state to canceled
-	c_machine::machine_state_g_group[NGC_Gcode_Groups::MOTION] = NGC_Gcodes_X::MOTION_CANCELED;
+	c_machine::machine_state_g_group[NGC_RS274::Groups::G::MOTION] = NGC_RS274::G_codes::MOTION_CANCELED;
 	//default plane selection
-	c_machine::machine_state_g_group[NGC_Gcode_Groups::PLANE_SELECTION] = NGC_Gcodes_X::XY_PLANE_SELECTION;
+	c_machine::machine_state_g_group[NGC_RS274::Groups::G::PLANE_SELECTION] = NGC_RS274::G_codes::XY_PLANE_SELECTION;
 	//default the machines distance mode to absolute
-	c_machine::machine_state_g_group[NGC_Gcode_Groups::DISTANCE_MODE] = NGC_Gcodes_X::ABSOLUTE_DISANCE_MODE;
+	c_machine::machine_state_g_group[NGC_RS274::Groups::G::DISTANCE_MODE] = NGC_RS274::G_codes::ABSOLUTE_DISANCE_MODE;
 	//default feed rate mode
-	c_machine::machine_state_g_group[NGC_Gcode_Groups::FEED_RATE_MODE] = NGC_Gcodes_X::FEED_RATE_UNITS_PER_MINUTE_MODE;
+	c_machine::machine_state_g_group[NGC_RS274::Groups::G::FEED_RATE_MODE] = NGC_RS274::G_codes::FEED_RATE_UNITS_PER_MINUTE_MODE;
 	//default the machines units to inches
-	c_machine::machine_state_g_group[NGC_Gcode_Groups::UNITS] = NGC_Gcodes_X::MILLIMETER_SYSTEM_SELECTION;
+	c_machine::machine_state_g_group[NGC_RS274::Groups::G::UNITS] = NGC_RS274::G_codes::MILLIMETER_SYSTEM_SELECTION;
 	//default the machines cutter comp to off
-	c_machine::machine_state_g_group[NGC_Gcode_Groups::CUTTER_RADIUS_COMPENSATION] = NGC_Gcodes_X::CANCEL_CUTTER_RADIUS_COMPENSATION;
+	c_machine::machine_state_g_group[NGC_RS274::Groups::G::CUTTER_RADIUS_COMPENSATION] = NGC_RS274::G_codes::CANCEL_CUTTER_RADIUS_COMPENSATION;
 	//default tool length offset
-	c_machine::machine_state_g_group[NGC_Gcode_Groups::TOOL_LENGTH_OFFSET] = NGC_Gcodes_X::CANCEL_TOOL_LENGTH_OFFSET;
+	c_machine::machine_state_g_group[NGC_RS274::Groups::G::TOOL_LENGTH_OFFSET] = NGC_RS274::G_codes::CANCEL_TOOL_LENGTH_OFFSET;
 	//default tool length offset
-	c_machine::machine_state_g_group[NGC_Gcode_Groups::RETURN_MODE_CANNED_CYCLE] = NGC_Gcodes_X::CANNED_CYCLE_RETURN_TO_Z;
+	c_machine::machine_state_g_group[NGC_RS274::Groups::G::RETURN_MODE_CANNED_CYCLE] = NGC_RS274::G_codes::CANNED_CYCLE_RETURN_TO_Z;
 	//default coordinate system selection
-	c_machine::machine_state_g_group[NGC_Gcode_Groups::COORDINATE_SYSTEM_SELECTION] = NGC_Gcodes_X::MOTION_IN_MACHINE_COORDINATE_SYSTEM;
+	c_machine::machine_state_g_group[NGC_RS274::Groups::G::COORDINATE_SYSTEM_SELECTION] = NGC_RS274::G_codes::MOTION_IN_MACHINE_COORDINATE_SYSTEM;
 	//default path control mode
-	c_machine::machine_state_g_group[NGC_Gcode_Groups::PATH_CONTROL_MODE] = NGC_Gcodes_X::PATH_CONTROL_EXACT_PATH;
+	c_machine::machine_state_g_group[NGC_RS274::Groups::G::PATH_CONTROL_MODE] = NGC_RS274::G_codes::PATH_CONTROL_EXACT_PATH;
 	//default coordinate system type
-	c_machine::machine_state_g_group[NGC_Gcode_Groups::RECTANGLAR_POLAR_COORDS_SELECTION] = NGC_Gcodes_X::RECTANGULAR_COORDINATE_SYSTEM;
+	c_machine::machine_state_g_group[NGC_RS274::Groups::G::RECTANGLAR_POLAR_COORDS_SELECTION] = NGC_RS274::G_codes::RECTANGULAR_COORDINATE_SYSTEM;
 	//default canned cycle return mode
-	c_machine::machine_state_g_group[NGC_Gcode_Groups::RETURN_MODE_CANNED_CYCLE] = NGC_Gcodes_X::CANNED_CYCLE_RETURN_TO_R;
+	c_machine::machine_state_g_group[NGC_RS274::Groups::G::RETURN_MODE_CANNED_CYCLE] = NGC_RS274::G_codes::CANNED_CYCLE_RETURN_TO_R;
 }
 
 //Synch the machine position with the reported feedback.
@@ -238,9 +238,9 @@ void c_machine::start_motion(c_block * local_block)
 	//If the block is set to 'planned' then its ready to execute
 	if (local_block->state & (1 << BLOCK_STATE_PLANNED))
 	{
-		NGC_interpreter::convert_to_line(local_block);
+		NGC_RS274::Interpreter::Processor::convert_to_line(local_block);
 
-		c_processor::host_serial.Write("output:"); c_processor::host_serial.Write(NGC_interpreter::Line);
+		c_processor::host_serial.Write("output:"); c_processor::host_serial.Write(NGC_RS274::Interpreter::Processor::Line);
 		c_processor::host_serial.Write(CR);
 		if (!c_motion_control_events::get_event(Motion_Control_Events::CONTROL_ONLINE))
 		{
@@ -248,7 +248,7 @@ void c_machine::start_motion(c_block * local_block)
 		}
 		else
 		{
-			c_motion_controller::send_motion(NGC_interpreter::Line, local_block->is_motion_block); //<--send to motion controller
+			c_motion_controller::send_motion(NGC_RS274::Interpreter::Processor::Line, local_block->is_motion_block); //<--send to motion controller
 		}
 		//See if there is appended motion (cutter comp may have set one for an outside corner)
 		if (local_block->appended_block_pointer != NULL)
@@ -272,17 +272,17 @@ void c_machine::start_motion(c_block * local_block)
 		while (local_block->canned_values.PNTR_RECALLS != NULL)
 		{
 			local_block->canned_values.PNTR_RECALLS(local_block);
-			NGC_interpreter::convert_to_line(local_block);
-			c_processor::host_serial.Write("output:"); c_processor::host_serial.Write(NGC_interpreter::Line);
+			NGC_RS274::Interpreter::Processor::convert_to_line(local_block);
+			c_processor::host_serial.Write("output:"); c_processor::host_serial.Write(NGC_RS274::Interpreter::Processor::Line);
 			c_processor::host_serial.Write(CR);
-			c_motion_controller::send_motion(NGC_interpreter::Line, local_block->is_motion_block); //<--send to motion controller
+			c_motion_controller::send_motion(NGC_RS274::Interpreter::Processor::Line, local_block->is_motion_block); //<--send to motion controller
 
 			//If the pointer is null, the cycle is finished this round. Set the motion mode back to the original cycle motion
 			if (local_block->canned_values.PNTR_RECALLS == NULL)
 				/*
 				Since we have changed the state of this block, we need to re-establish its original motion mode
 				*/
-				local_block->g_group[NGC_Gcode_Groups::MOTION] = c_canned_cycle::active_cycle_code;
+				local_block->g_group[NGC_RS274::Groups::G::MOTION] = c_canned_cycle::active_cycle_code;
 		}
 
 
