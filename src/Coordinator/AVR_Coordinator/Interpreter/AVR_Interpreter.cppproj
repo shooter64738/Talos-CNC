@@ -163,37 +163,41 @@
     </ToolchainSettings>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\..\..\Common\Interpreter\c_interpreter.cpp">
+    <Compile Include="..\..\..\Common\NGC_RS274\NGC_Block.cpp">
       <SubType>compile</SubType>
-      <Link>c_interpreter.cpp</Link>
+      <Link>NGC_Block.cpp</Link>
     </Compile>
-    <Compile Include="..\..\..\Common\Interpreter\c_interpreter.h">
+    <Compile Include="..\..\..\Common\NGC_RS274\NGC_Block.h">
       <SubType>compile</SubType>
-      <Link>c_interpreter.h</Link>
-    </Compile>
-    <Compile Include="..\..\..\Common\NGC_RS274\c_block.cpp">
-      <SubType>compile</SubType>
-      <Link>c_block.cpp</Link>
-    </Compile>
-    <Compile Include="..\..\..\Common\NGC_RS274\c_block.h">
-      <SubType>compile</SubType>
-      <Link>c_block.h</Link>
+      <Link>NGC_Block.h</Link>
     </Compile>
     <Compile Include="..\..\..\Common\NGC_RS274\NGC_Errors.h">
       <SubType>compile</SubType>
       <Link>NGC_Errors.h</Link>
     </Compile>
-    <Compile Include="..\..\..\Common\NGC_RS274\NGC_GCodes.h">
+    <Compile Include="..\..\..\Common\NGC_RS274\NGC_G_Codes.h">
       <SubType>compile</SubType>
-      <Link>NGC_GCodes.h</Link>
+      <Link>NGC_G_Codes.h</Link>
     </Compile>
-    <Compile Include="..\..\..\Common\NGC_RS274\NGC_Groups.h">
+    <Compile Include="..\..\..\Common\NGC_RS274\NGC_G_Groups.h">
       <SubType>compile</SubType>
-      <Link>NGC_Groups.h</Link>
+      <Link>NGC_G_Groups.h</Link>
     </Compile>
-    <Compile Include="..\..\..\Common\NGC_RS274\NGC_MCodes.h">
+    <Compile Include="..\..\..\Common\NGC_RS274\NGC_Interpreter.cpp">
       <SubType>compile</SubType>
-      <Link>NGC_MCodes.h</Link>
+      <Link>NGC_Interpreter.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\Common\NGC_RS274\NGC_Interpreter.h">
+      <SubType>compile</SubType>
+      <Link>NGC_Interpreter.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Common\NGC_RS274\NGC_M_Codes.h">
+      <SubType>compile</SubType>
+      <Link>NGC_M_Codes.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Common\NGC_RS274\NGC_M_Groups.h">
+      <SubType>compile</SubType>
+      <Link>NGC_M_Groups.h</Link>
     </Compile>
     <Compile Include="..\..\..\Common\NGC_RS274\NGC_Parameters.h">
       <SubType>compile</SubType>
