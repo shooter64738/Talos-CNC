@@ -31,6 +31,8 @@ class c_edm_driver
 	public:
 	static void initialize();
 	static float Get_ArcVoltage();
+	static void Find_Part_Zero();
+	static void Dither();
 };
 
 #endif /* C_EDM_H_ */

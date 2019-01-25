@@ -22,7 +22,6 @@
 #ifndef __C_STAGER_H__
 #define __C_STAGER_H__
 #include "c_block.h"
-#include "../Interpreter/c_interpreter.h"
 #include "../Machine/c_machine.h"
 #include "../../../talos.h"
 #include "../system/tool_table.h"

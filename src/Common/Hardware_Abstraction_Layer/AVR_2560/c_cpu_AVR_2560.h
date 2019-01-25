@@ -73,8 +73,8 @@ static s_Buffer rxBuffer[];
 	static void core_initializer();
 	static void core_start_interrupts();
 	static void core_stop_interrupts();
-	
 	static uint32_t core_get_cpu_clock_rate();
+
 	static void driver_timer_initializer();
 	static void driver_timer_deactivate();
 	static void driver_timer_activate();

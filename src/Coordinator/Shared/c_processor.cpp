@@ -24,7 +24,6 @@
 
 #include "../../talos.h"
 #include "Machine/c_machine.h"
-#include "Interpreter/c_interpreter.h"
 #include "Planner/c_stager.h"
 #include "Planner/c_gcode_buffer.h"
 #include "Settings/c_general.h"
@@ -42,7 +41,9 @@
 #include "../../Common/Bresenham/c_Bresenham.h"
 #include "../../Common/AVR_Terminal_IO/c_lcd_display.h"
 #include "Events/c_block_events.h"
-#include "../../EDM_Drive/Common/c_edm_driver.h"
+//#include "../../EDM_Drive/Common/c_edm_driver.h"
+#include "../../Common/Interpreter/c_interpreter.h"
+
 
 
 c_Serial c_processor::host_serial;
@@ -53,7 +54,7 @@ c_Bresenham bres;
 //If running this on a pc through microsoft visual C++, uncomment the MSVC define in Talos.h and recompile.
 void c_processor::startup()
 {
-Settings:
+
 	//hal must init first.
 	c_hal::initialize();
 	//if (c_hal::lcd.PNTR_INITIALIZE != NULL)
@@ -74,10 +75,10 @@ Settings:
 
 	if (Settings::c_general::machine.machine_type == Settings::c_general::e_machine_types::EDM)
 	{
-		c_edm_driver::initialize();
+		//c_edm_driver::initialize();
 	}
 
-	c_interpreter::initialize();
+	NGC_interpreter::initialize();
 	c_machine::initialize();
 	c_stager::initialize();
 	c_gcode_buffer::initialize();
@@ -111,7 +112,7 @@ Settings:
 
 	if (c_motion_control_events::get_event(Motion_Control_Events::CONTROL_ONLINE))
 	{
-		c_interpreter::normalize_distance_units_to_mm = false;
+		//c_interpreter::normalize_distance_units_to_mm = false;
 		//Now synch the pulse values in the HAL feedback with the pulse counts the machine is reportedly at
 		if (c_hal::feedback.PNTR_POSITION_DATA != NULL)
 		{

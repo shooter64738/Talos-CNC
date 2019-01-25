@@ -1,13 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.271
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PC_Coordinator", "Coordinator\PC_Coordinator\PC_Coordinator.vcxproj", "{E84FFE07-C518-4C45-B385-7431F1A99F18}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Virtual_HAL", "Common\Hardware_Abstraction_Layer\Virtual\Virtual_HAL.vcxproj", "{12E9995C-E23A-4B5A-9884-DEB11AC068DD}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PC_EDM_Drive", "EDM_Drive\PC_EDM_Drive\PC_EDM_Drive.vcxproj", "{FF015CC6-D175-4A70-9EF8-0CE456F678AE}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PC_Interpreter", "Common\Interpreter\PC\PC_Interpreter.vcxproj", "{D8CD0074-2E2A-4957-A3F7-A3BEBCF704E4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -37,8 +39,17 @@ Global
 		{FF015CC6-D175-4A70-9EF8-0CE456F678AE}.Release|Win32.Build.0 = Release|Win32
 		{FF015CC6-D175-4A70-9EF8-0CE456F678AE}.Release|x64.ActiveCfg = Release|x64
 		{FF015CC6-D175-4A70-9EF8-0CE456F678AE}.Release|x64.Build.0 = Release|x64
+		{D8CD0074-2E2A-4957-A3F7-A3BEBCF704E4}.Debug|Win32.ActiveCfg = Debug|Win32
+		{D8CD0074-2E2A-4957-A3F7-A3BEBCF704E4}.Debug|Win32.Build.0 = Debug|Win32
+		{D8CD0074-2E2A-4957-A3F7-A3BEBCF704E4}.Debug|x64.ActiveCfg = Debug|Win32
+		{D8CD0074-2E2A-4957-A3F7-A3BEBCF704E4}.Release|Win32.ActiveCfg = Release|Win32
+		{D8CD0074-2E2A-4957-A3F7-A3BEBCF704E4}.Release|Win32.Build.0 = Release|Win32
+		{D8CD0074-2E2A-4957-A3F7-A3BEBCF704E4}.Release|x64.ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {7F8EEB47-E35A-4329-94B0-B68140093241}
 	EndGlobalSection
 EndGlobal

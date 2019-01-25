@@ -21,7 +21,7 @@
 #ifndef __C_BUFFER_H__
 #define __C_BUFFER_H__
 #include "c_block.h"
-#include "../Interpreter/c_interpreter.h"
+
 
 class c_gcode_buffer
 {

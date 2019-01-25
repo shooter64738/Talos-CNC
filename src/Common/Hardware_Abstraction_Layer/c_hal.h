@@ -69,6 +69,20 @@ class c_hal
 	}s_comm_function_pointers;
 	static s_comm_function_pointers comm;	
 	
+	////driver struct refers to actions to run stepper or servo drivers
+	//typedef struct
+	//{
+	//	void(*PNTR_INITIALIZE)(void);
+	//	void(*PNTR_ENABLE)(void);
+	//	void(*PNTR_DISABLE)(void);
+	//	void(*PNTR_DRIVE)(void);
+	//	void(*PNTR_RESET)(void);
+	//	void(*PNTR_SET_PRESCALER)(uint16_t);
+	//	void(*PNTR_SET_TIMER_RATE)(uint16_t);
+
+	//}s_driver_function_pointers;
+	//static s_driver_function_pointers driver;
+
 	//driver struct refers to actions to run stepper or servo drivers
 	typedef struct
 	{
@@ -79,7 +93,12 @@ class c_hal
 		void (*PNTR_RESET)(void);
 		void(*PNTR_SET_PRESCALER)(uint16_t);
 		void(*PNTR_SET_TIMER_RATE)(uint16_t);
-		
+		struct s_pntr_motion
+		{
+			uint32_t PNTR_STEPS;
+			uint8_t PNTR_DIRECTIONS;
+		};
+		s_pntr_motion PNTR_STEPPER;
 	}s_driver_function_pointers;
 	static s_driver_function_pointers driver;
 

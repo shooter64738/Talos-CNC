@@ -20,11 +20,10 @@
 
 
 #include "c_block.h"
-#include "../c_processor.h"
+
+
 c_block::c_block()
 {
-	c_block::reset();
-
 	this->axis_values.X = &this->block_word_values[X_WORD_BIT];
 	this->axis_values.Y = &this->block_word_values[Y_WORD_BIT];
 	this->axis_values.Z = &this->block_word_values[Z_WORD_BIT];
@@ -35,8 +34,8 @@ c_block::c_block()
 	this->axis_values.V = &this->block_word_values[V_WORD_BIT];
 	
 	this->arc_values.horizontal_center.value =&this->block_word_values[I_WORD_BIT];
-	this->arc_values.horizontal_center.name = 'I';
-	this->arc_values.vertical_center.value =&this->block_word_values[J_WORD_BIT];	
+	this->arc_values.vertical_center.value =&this->block_word_values[J_WORD_BIT];
+	this->arc_values.horizontal_center.name='I';
 	this->arc_values.vertical_center.name='J';
 	this->arc_values.R = &this->block_word_values[R_WORD_BIT];
 
@@ -47,50 +46,17 @@ c_block::c_block()
 	this->canned_values.Z_depth_of_hole = &this->block_word_values[Z_WORD_BIT];
 
 	this->plane_axis.horizontal_axis.value = &this->block_word_values[X_WORD_BIT];
-	this->plane_axis.horizontal_axis.name = 'X';
-
 	this->plane_axis.vertical_axis.value = &this->block_word_values[Y_WORD_BIT];
-	this->plane_axis.vertical_axis.name = 'Y';
 	this->plane_axis.normal_axis.value = &this->block_word_values[Z_WORD_BIT];
+
+	this->plane_axis.horizontal_axis.name = 'X';
+	this->plane_axis.vertical_axis.name = 'Y';
 	this->plane_axis.normal_axis.name = 'Z';
 	
 }
 c_block::~c_block()
 {
 } //~c_Block
-
-void c_block::copy(c_block *source_block)
-{
-	this->axis_values.X = &source_block->block_word_values[X_WORD_BIT];
-	this->axis_values.Y = &source_block->block_word_values[Y_WORD_BIT];
-	this->axis_values.Z = &source_block->block_word_values[Z_WORD_BIT];
-	this->axis_values.A = &source_block->block_word_values[A_WORD_BIT];
-	this->axis_values.B = &source_block->block_word_values[B_WORD_BIT];
-	this->axis_values.C = &source_block->block_word_values[C_WORD_BIT];
-	this->axis_values.U = &source_block->block_word_values[U_WORD_BIT];
-	this->axis_values.V = &source_block->block_word_values[V_WORD_BIT];
-
-	this->arc_values.horizontal_center.value = &source_block->block_word_values[I_WORD_BIT];
-	this->arc_values.horizontal_center.name = 'I';
-	this->arc_values.vertical_center.value = &source_block->block_word_values[J_WORD_BIT];
-	this->arc_values.vertical_center.name = 'J';
-	this->arc_values.R = &source_block->block_word_values[R_WORD_BIT];
-
-	this->canned_values.L_repeat_count = &source_block->block_word_values[L_WORD_BIT];
-	this->canned_values.P_dwell_time_at_bottom = &source_block->block_word_values[P_WORD_BIT];
-	this->canned_values.Q_peck_step_depth = &source_block->block_word_values[Q_WORD_BIT];
-	this->canned_values.R_retract_position = &source_block->block_word_values[R_WORD_BIT];
-	this->canned_values.Z_depth_of_hole = &source_block->block_word_values[Z_WORD_BIT];
-
-	this->plane_axis.horizontal_axis.value = &source_block->block_word_values[X_WORD_BIT];
-	this->plane_axis.horizontal_axis.name = 'X';
-
-	this->plane_axis.vertical_axis.value = &source_block->block_word_values[Y_WORD_BIT];
-	this->plane_axis.vertical_axis.name = 'Y';
-	this->plane_axis.normal_axis.value = &source_block->block_word_values[Z_WORD_BIT];
-	this->plane_axis.normal_axis.name = 'Z';
-
-}
 
 void c_block::reset()
 {

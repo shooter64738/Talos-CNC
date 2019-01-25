@@ -87,9 +87,6 @@
     <ClCompile Include="..\Shared\Interpolation\c_closed_loop.cpp">
       <Filter>Shared\Interpolation</Filter>
     </ClCompile>
-    <ClCompile Include="..\Shared\Interpreter\c_interpreter.cpp">
-      <Filter>Shared\Interpreter</Filter>
-    </ClCompile>
     <ClCompile Include="..\Shared\Machine\c_machine.cpp">
       <Filter>Shared\Machine</Filter>
     </ClCompile>
@@ -184,9 +181,6 @@
     </ClInclude>
     <ClInclude Include="..\Shared\Interpolation\c_closed_loop.h">
       <Filter>Shared\Interpolation</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Shared\Interpreter\c_interpreter.h">
-      <Filter>Shared\Interpreter</Filter>
     </ClInclude>
     <ClInclude Include="..\Shared\Machine\c_machine.h">
       <Filter>Shared\Machine</Filter>

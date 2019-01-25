@@ -31,6 +31,8 @@
 #include "Canned Cycles/c_canned_cycle.h"
 #include "../../../Common/MotionControllerInterface/c_motion_controller_settings.h"
 #include "../Status/c_status.h"
+#include "c_gcode_buffer.h"
+#include "../../../Common/Interpreter/c_interpreter.h"
 
 
 //uint16_t c_stager::stager_state_g_group[COUNT_OF_G_CODE_GROUPS_ARRAY]; //There are 14 groups of gcodes (0-13)
@@ -123,8 +125,8 @@ void c_stager::report()
 				c_processor::host_serial.Write(CR);
 		}
 
-		c_interpreter::convert_to_line_index(i);
-		c_processor::host_serial.Write("\tString "); c_processor::host_serial.Write(c_interpreter::Line);
+		NGC_interpreter::convert_to_line_index(i);
+		c_processor::host_serial.Write("\tString "); c_processor::host_serial.Write(NGC_interpreter::Line);
 		c_processor::host_serial.Write(CR);
 		c_processor::host_serial.Write("\tPos @ exe: ");
 		c_processor::host_serial.Write(CR);

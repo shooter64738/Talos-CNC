@@ -33,6 +33,8 @@
 #include "..\..\..\Common\MotionControllerInterface\c_motion_controller_settings.h"
 #include "..\..\..\Common\MotionControllerInterface\c_motion_controller.h"
 #include "..\..\..\Common\Bresenham\c_Bresenham.h"
+#include "..\..\..\Common\Interpreter\c_interpreter.h"
+#include "..\Planner\c_gcode_buffer.h"
 
 
 uint16_t *c_machine::machine_state_g_group; //There are 14 groups of gcodes (0-13)
@@ -236,9 +238,9 @@ void c_machine::start_motion(c_block * local_block)
 	//If the block is set to 'planned' then its ready to execute
 	if (local_block->state & (1 << BLOCK_STATE_PLANNED))
 	{
-		c_interpreter::convert_to_line(local_block);
+		NGC_interpreter::convert_to_line(local_block);
 
-		c_processor::host_serial.Write("output:"); c_processor::host_serial.Write(c_interpreter::Line);
+		c_processor::host_serial.Write("output:"); c_processor::host_serial.Write(NGC_interpreter::Line);
 		c_processor::host_serial.Write(CR);
 		if (!c_motion_control_events::get_event(Motion_Control_Events::CONTROL_ONLINE))
 		{
@@ -246,7 +248,7 @@ void c_machine::start_motion(c_block * local_block)
 		}
 		else
 		{
-			c_motion_controller::send_motion(c_interpreter::Line, local_block->is_motion_block); //<--send to motion controller
+			c_motion_controller::send_motion(NGC_interpreter::Line, local_block->is_motion_block); //<--send to motion controller
 		}
 		//See if there is appended motion (cutter comp may have set one for an outside corner)
 		if (local_block->appended_block_pointer != NULL)
@@ -270,10 +272,10 @@ void c_machine::start_motion(c_block * local_block)
 		while (local_block->canned_values.PNTR_RECALLS != NULL)
 		{
 			local_block->canned_values.PNTR_RECALLS(local_block);
-			c_interpreter::convert_to_line(local_block);
-			c_processor::host_serial.Write("output:"); c_processor::host_serial.Write(c_interpreter::Line);
+			NGC_interpreter::convert_to_line(local_block);
+			c_processor::host_serial.Write("output:"); c_processor::host_serial.Write(NGC_interpreter::Line);
 			c_processor::host_serial.Write(CR);
-			c_motion_controller::send_motion(c_interpreter::Line, local_block->is_motion_block); //<--send to motion controller
+			c_motion_controller::send_motion(NGC_interpreter::Line, local_block->is_motion_block); //<--send to motion controller
 
 			//If the pointer is null, the cycle is finished this round. Set the motion mode back to the original cycle motion
 			if (local_block->canned_values.PNTR_RECALLS == NULL)

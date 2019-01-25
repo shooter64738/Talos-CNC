@@ -23,6 +23,8 @@
 #include "..\c_processor.h"
 #include "Stager_Errors.h"
 #include "..\status\c_status.h"
+#include "..\..\..\Common\Interpreter\c_interpreter.h"
+#include "c_stager.h"
 c_block c_gcode_buffer::collection[NGC_BUFFER_SIZE];
 uint8_t c_gcode_buffer::buffer_head=0;
 uint8_t c_gcode_buffer::buffer_tail=0;
@@ -140,14 +142,26 @@ int16_t c_gcode_buffer::add()
 	
 	//Process data and convert it into NGC binary data.
 	//The data will go into the buffer head position
-	uint16_t return_value = c_interpreter::process_serial(local_block);
+	//uint16_t return_value = c_interpreter::process_serial(local_block);
+	//prime the interpreter 'Line' value
+	uint8_t index = 0;
+	while (c_processor::host_serial.Peek() != CR && c_processor::host_serial.Peek() != NULL)
+	{
+		NGC_interpreter::Line[index] =  toupper(c_processor::host_serial.Get());
+		index++;
+	}
+	//did the buffer end with CR or NULL?
+	if (c_processor::host_serial.Peek() == CR)
+		c_processor::host_serial.Get();
+
+	uint16_t return_value = NGC_interpreter::process_line(local_block);
 	
 	//Did the interpreter have any errors with this block of data?
 	if (return_value!=NGC_Interpreter_Errors::OK)
 	{
 		//We had an interpreter error.
 		//send the error code
-		c_status::error('i',return_value,c_interpreter::Line);
+		c_status::error('i',return_value,NGC_interpreter::Line);
 		/*
 		since we could not process this block theres nothing else for us to do with it.
 		we should notify the host of the error though.

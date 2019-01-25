@@ -49,7 +49,7 @@
 #define Y_WORD_BIT 24
 #define Z_WORD_BIT 25
 
-#include "../../../talos.h"
+#include "..\..\Talos.h"
 #define COMP_SET_BIT 1
 #define BLOCK_STATE_PLANNED 0
 #define BLOCK_STATE_HELD 1
@@ -60,7 +60,7 @@ class c_block
 	c_block();
 	~c_block();
 	
-	struct s_persisted_values
+	typedef struct s_persisted_values
 	{
 		float feed_rate;
 		uint16_t active_t;
@@ -72,7 +72,7 @@ class c_block
 	};
 	s_persisted_values persisted_values;
 
-	struct s_axis_values
+	typedef struct s_axis_values
 	{
 		float *X;
 		float *Y;
@@ -92,7 +92,7 @@ class c_block
 		bool defined;
 	}s_axis_property;
 
-	struct s_arc_values
+	typedef struct s_arc_values
 	{
 		s_axis_property horizontal_center;
 		s_axis_property vertical_center;
@@ -104,7 +104,7 @@ class c_block
 	};
 	s_arc_values arc_values;
 
-	struct s_canned_values
+	typedef struct s_canned_values
 	{
 		float *Q_peck_step_depth; //<--Depth increase per peck
 		float *R_retract_position; //<--Retract. Z to R at rapid speed. R to bottom is feed speed
@@ -182,6 +182,5 @@ class c_block
 	void reset();
 	void clear_axis_values();
 	void clear_word_values();
-	void copy(c_block *source_block);
 };
 #endif /* S_BLOCK_H_ */

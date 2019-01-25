@@ -88,7 +88,6 @@
     <ClCompile Include="..\Shared\Events\c_motion_control_events.cpp" />
     <ClCompile Include="..\Shared\Events\c_motion_events.cpp" />
     <ClCompile Include="..\Shared\Interpolation\c_closed_loop.cpp" />
-    <ClCompile Include="..\Shared\Interpreter\c_interpreter.cpp" />
     <ClCompile Include="..\Shared\Machine\c_machine.cpp" />
     <ClCompile Include="..\Shared\MotionControllerInterface\ExternalControllers\GRBL\c_Grbl.cpp" />
     <ClCompile Include="..\Shared\Planner\Canned Cycles\c_canned_cycle.cpp" />
@@ -130,7 +129,6 @@
     <ClInclude Include="..\Shared\Events\c_motion_control_events.h" />
     <ClInclude Include="..\Shared\Events\c_motion_events.h" />
     <ClInclude Include="..\Shared\Interpolation\c_closed_loop.h" />
-    <ClInclude Include="..\Shared\Interpreter\c_interpreter.h" />
     <ClInclude Include="..\Shared\Machine\c_machine.h" />
     <ClInclude Include="..\Shared\MotionControllerInterface\ExternalControllers\GRBL\c_Grbl.h" />
     <ClInclude Include="..\Shared\MotionControllerInterface\ExternalControllers\GRBL\c_Grbl_Settings.h" />
@@ -155,6 +153,9 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Common\Hardware_Abstraction_Layer\Virtual\Virtual_HAL.vcxproj">
       <Project>{12e9995c-e23a-4b5a-9884-deb11ac068dd}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common\Interpreter\PC\PC_Interpreter.vcxproj">
+      <Project>{d8cd0074-2e2a-4957-a3f7-a3bebcf704e4}</Project>
     </ProjectReference>
     <ProjectReference Include="..\..\EDM_Drive\PC_EDM_Drive\PC_EDM_Drive.vcxproj">
       <Project>{ff015cc6-d175-4a70-9ef8-0ce456f678ae}</Project>
