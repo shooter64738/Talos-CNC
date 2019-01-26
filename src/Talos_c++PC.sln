@@ -11,6 +11,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PC_EDM_Drive", "EDM_Drive\P
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PC_Interpreter", "Common\NGC_RS274\Projects\PC\PC_Interpreter.vcxproj", "{D8CD0074-2E2A-4957-A3F7-A3BEBCF704E4}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PC_Torch_Control", "Torch Height Control\Projects\PC\PC_Torch_Control.vcxproj", "{7441F880-C918-411F-BC16-17BF9F62D426}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -45,6 +47,12 @@ Global
 		{D8CD0074-2E2A-4957-A3F7-A3BEBCF704E4}.Release|Win32.ActiveCfg = Release|Win32
 		{D8CD0074-2E2A-4957-A3F7-A3BEBCF704E4}.Release|Win32.Build.0 = Release|Win32
 		{D8CD0074-2E2A-4957-A3F7-A3BEBCF704E4}.Release|x64.ActiveCfg = Release|Win32
+		{7441F880-C918-411F-BC16-17BF9F62D426}.Debug|Win32.ActiveCfg = Debug|Win32
+		{7441F880-C918-411F-BC16-17BF9F62D426}.Debug|Win32.Build.0 = Debug|Win32
+		{7441F880-C918-411F-BC16-17BF9F62D426}.Debug|x64.ActiveCfg = Debug|Win32
+		{7441F880-C918-411F-BC16-17BF9F62D426}.Release|Win32.ActiveCfg = Release|Win32
+		{7441F880-C918-411F-BC16-17BF9F62D426}.Release|Win32.Build.0 = Release|Win32
+		{7441F880-C918-411F-BC16-17BF9F62D426}.Release|x64.ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

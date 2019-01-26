@@ -57,7 +57,7 @@ float c_canned_cycle::Z_step = 0;
 /*
 This stores the values at the start of a canned cycle in case they are replaced later in the program.
 */
-void c_canned_cycle::initialize(c_block *local_block, float old_Z)
+void c_canned_cycle::initialize(NGC_RS274::NGC_Binary_Block*local_block, float old_Z)
 {
 	//When the canned cycle is started, record the last z position. This will all get reset on a G81
 	if (c_canned_cycle::active_cycle_code == 0)
@@ -97,7 +97,7 @@ void c_canned_cycle::initialize(c_block *local_block, float old_Z)
 /*
 Convert a canned cycle number to a function pointer that runs the cycle.
 */
-void c_canned_cycle::cycle_to_pointer(c_block *local_block)
+void c_canned_cycle::cycle_to_pointer(NGC_RS274::NGC_Binary_Block*local_block)
 {
 	/*
 	We are going to keep re-configuring this block as we go through the steps of the cycle. Its cheaper than creating a new block for each cycle step
@@ -207,13 +207,13 @@ void c_canned_cycle::cycle_to_pointer(c_block *local_block)
 
 }
 
-void c_canned_cycle::clear_positioning_axis(c_block *local_block)
+void c_canned_cycle::clear_positioning_axis(NGC_RS274::NGC_Binary_Block*local_block)
 {
 	local_block->clear_defined_word(local_block->plane_axis.horizontal_axis.name);
 	local_block->clear_defined_word(local_block->plane_axis.vertical_axis.name);
 }
 
-float c_canned_cycle::retract_position(c_block *local_block)
+float c_canned_cycle::retract_position(NGC_RS274::NGC_Binary_Block*local_block)
 {
 	//Return R or old Z. depending on G98/99
 	return local_block->g_group[NGC_RS274::Groups::G::RETURN_MODE_CANNED_CYCLE] ==
@@ -222,7 +222,7 @@ float c_canned_cycle::retract_position(c_block *local_block)
 		: c_canned_cycle::Z_at_start;
 }
 
-void c_canned_cycle::set_axis_feed(c_block *local_block, uint16_t feed_mode, char axis, float value)
+void c_canned_cycle::set_axis_feed(NGC_RS274::NGC_Binary_Block*local_block, uint16_t feed_mode, char axis, float value)
 {
 	local_block->set_defined_gcode(NGC_RS274::Groups::G::MOTION);
 	local_block->g_group[NGC_RS274::Groups::G::MOTION] = feed_mode;
@@ -234,7 +234,7 @@ void c_canned_cycle::set_axis_feed(c_block *local_block, uint16_t feed_mode, cha
 
 }
 
-void c_canned_cycle::set_dwell(c_block *local_block, float value)
+void c_canned_cycle::set_dwell(NGC_RS274::NGC_Binary_Block*local_block, float value)
 {
 	local_block->set_defined_gcode(NGC_RS274::Groups::G::NON_MODAL);
 	local_block->g_group[NGC_RS274::Groups::G::NON_MODAL] = NGC_RS274::G_codes::DWELL;
@@ -242,20 +242,20 @@ void c_canned_cycle::set_dwell(c_block *local_block, float value)
 	local_block->define_value('P', value);
 }
 
-void c_canned_cycle::clear_callback(c_block *local_block)
+void c_canned_cycle::clear_callback(NGC_RS274::NGC_Binary_Block*local_block)
 {
 
 	local_block->canned_values.PNTR_RECALLS = NULL;
 }
 
-void c_canned_cycle::clear_start(c_block *local_block)
+void c_canned_cycle::clear_start(NGC_RS274::NGC_Binary_Block*local_block)
 {
 	//clear all bits so it appears no gcodes we in the block
 	local_block->g_code_defined_in_block = 0;
 	c_canned_cycle::clear_positioning_axis(local_block);
 }
 
-void c_canned_cycle::CANNED_CYCLE_DRILLING(c_block *local_block)
+void c_canned_cycle::CANNED_CYCLE_DRILLING(NGC_RS274::NGC_Binary_Block*local_block)
 {
 	c_canned_cycle::clear_start(local_block);
 
@@ -288,7 +288,7 @@ void c_canned_cycle::CANNED_CYCLE_DRILLING(c_block *local_block)
 
 }
 
-void c_canned_cycle::CANNED_CYCLE_DRILLING_WITH_DWELL(c_block *local_block)
+void c_canned_cycle::CANNED_CYCLE_DRILLING_WITH_DWELL(NGC_RS274::NGC_Binary_Block*local_block)
 {
 	c_canned_cycle::clear_start(local_block);
 
@@ -313,7 +313,7 @@ void c_canned_cycle::CANNED_CYCLE_DRILLING_WITH_DWELL(c_block *local_block)
 
 }
 
-void c_canned_cycle::CANNED_CYCLE_PECK_DRILLING(c_block *local_block)
+void c_canned_cycle::CANNED_CYCLE_PECK_DRILLING(NGC_RS274::NGC_Binary_Block*local_block)
 {
 	c_canned_cycle::clear_start(local_block);
 	switch (c_canned_cycle::state)
@@ -355,55 +355,55 @@ void c_canned_cycle::CANNED_CYCLE_PECK_DRILLING(c_block *local_block)
 
 }
 
-void c_canned_cycle::CANNED_CYCLE_RIGHT_HAND_TAPPING(c_block *local_block)
+void c_canned_cycle::CANNED_CYCLE_RIGHT_HAND_TAPPING(NGC_RS274::NGC_Binary_Block*local_block)
 {
 	c_canned_cycle::clear_start(local_block);
 
 }
 
-void c_canned_cycle::CANNED_CYCLE_BORING_NO_DWELL_FEED_OUT(c_block *local_block)
+void c_canned_cycle::CANNED_CYCLE_BORING_NO_DWELL_FEED_OUT(NGC_RS274::NGC_Binary_Block*local_block)
 {
 	c_canned_cycle::clear_start(local_block);
 
 }
 
-void c_canned_cycle::CANNED_CYCLE_BORING_SPINDLE_STOP_RAPID_OUT(c_block *local_block)
+void c_canned_cycle::CANNED_CYCLE_BORING_SPINDLE_STOP_RAPID_OUT(NGC_RS274::NGC_Binary_Block*local_block)
 {
 	c_canned_cycle::clear_start(local_block);
 
 }
 
-void c_canned_cycle::CANNED_CYCLE_BACK_BORING(c_block *local_block)
+void c_canned_cycle::CANNED_CYCLE_BACK_BORING(NGC_RS274::NGC_Binary_Block*local_block)
 {
 	c_canned_cycle::clear_start(local_block);
 
 }
 
-void c_canned_cycle::CANNED_CYCLE_BORING_SPINDLE_STOP_MANUAL_OUT(c_block *local_block)
+void c_canned_cycle::CANNED_CYCLE_BORING_SPINDLE_STOP_MANUAL_OUT(NGC_RS274::NGC_Binary_Block*local_block)
 {
 	c_canned_cycle::clear_start(local_block);
 
 }
 
-void c_canned_cycle::CANNED_CYCLE_BORING_DWELL_FEED_OUT(c_block *local_block)
+void c_canned_cycle::CANNED_CYCLE_BORING_DWELL_FEED_OUT(NGC_RS274::NGC_Binary_Block*local_block)
 {
 	c_canned_cycle::clear_start(local_block);
 
 }
 
-void c_canned_cycle::CANNED_CYCLE_RIGHT_HAND_TAPPING_RIGID_HOLDER(c_block *local_block)
+void c_canned_cycle::CANNED_CYCLE_RIGHT_HAND_TAPPING_RIGID_HOLDER(NGC_RS274::NGC_Binary_Block*local_block)
 {
 	c_canned_cycle::clear_start(local_block);
 
 }
 
-void c_canned_cycle::CANNED_CYCLE_LEFT_HAND_TAPPING_RIGID_HOLDER(c_block *local_block)
+void c_canned_cycle::CANNED_CYCLE_LEFT_HAND_TAPPING_RIGID_HOLDER(NGC_RS274::NGC_Binary_Block*local_block)
 {
 	c_canned_cycle::clear_start(local_block);
 
 }
 
-void c_canned_cycle::CANNED_CYCLE_PECK_DRILLING_HIGH_SPEED(c_block *local_block)
+void c_canned_cycle::CANNED_CYCLE_PECK_DRILLING_HIGH_SPEED(NGC_RS274::NGC_Binary_Block*local_block)
 {
 	//This requires a retract distance set via parameter..
 	//Retract distance set in parameter 5114
@@ -429,7 +429,7 @@ void c_canned_cycle::CANNED_CYCLE_PECK_DRILLING_HIGH_SPEED(c_block *local_block)
 	}
 }
 
-void c_canned_cycle::CANNED_CYCLE_FINE_BORING(c_block *local_block)
+void c_canned_cycle::CANNED_CYCLE_FINE_BORING(NGC_RS274::NGC_Binary_Block*local_block)
 {
 	c_canned_cycle::clear_start(local_block);
 

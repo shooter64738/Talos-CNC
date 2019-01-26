@@ -39,7 +39,7 @@
 
 uint16_t *c_machine::machine_state_g_group; //There are 14 groups of gcodes (0-13)
 uint16_t *c_machine::machine_state_m_group; //There are 5 groups of mcodes (0-4)
-c_block *c_machine::machine_block;
+NGC_RS274::NGC_Binary_Block*c_machine::machine_block;
 float c_machine::axis_position[MACHINE_AXIS_COUNT];
 float c_machine::unit_scaler = 1;
 char c_machine::machine_axis_names[MACHINE_AXIS_COUNT];
@@ -235,7 +235,7 @@ void c_machine::run_block()
 
 	c_machine::machine_block = NULL;
 }
-void c_machine::start_motion(c_block * local_block)
+void c_machine::start_motion(NGC_RS274::NGC_Binary_Block* local_block)
 {
 	//If the block is set to 'planned' then its ready to execute
 	if (local_block->state & (1 << BLOCK_STATE_PLANNED))

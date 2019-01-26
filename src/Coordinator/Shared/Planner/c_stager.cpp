@@ -44,7 +44,7 @@ uint32_t c_stager::line_number;
 c_stager::s_coord_datum c_stager::coordinate_datum[9];
 c_Path c_stager::current_path;
 c_Path c_stager::forward_path;
-c_block *c_stager::previous_block;
+NGC_RS274::NGC_Binary_Block*c_stager::previous_block;
 
 /*
 Where were the axis's located before we executed this block?
@@ -187,7 +187,7 @@ uint8_t c_stager::post_stage_check()
 }
 
 
-c_block *c_stager::get_added_block()
+NGC_RS274::NGC_Binary_Block*c_stager::get_added_block()
 {
 	//buffer_head-1 is the last block we added. Tail may still be way behind, but the machine executes the tail
 	if (c_gcode_buffer::buffer_head == 0)
@@ -206,7 +206,7 @@ int16_t c_stager::stage_block_motion()
 	complexities of cutter radius compensation.
 	*/
 
-	c_block * local_block = c_stager::get_added_block();
+	NGC_RS274::NGC_Binary_Block* local_block = c_stager::get_added_block();
 
 	int16_t return_value = 0;
 	uint8_t group = 1;
@@ -471,7 +471,7 @@ int16_t c_stager::stage_block_motion()
 	return return_value;
 }
 
-int16_t c_stager::update_cutter_compensation(c_block * local_block)
+int16_t c_stager::update_cutter_compensation(NGC_RS274::NGC_Binary_Block* local_block)
 {
 	uint16_t return_value = NGC_Planner_Errors::OK;
 
@@ -528,7 +528,7 @@ int16_t c_stager::update_cutter_compensation(c_block * local_block)
 	return return_value;
 }
 
-void c_stager::update_non_modals(c_block * local_block)
+void c_stager::update_non_modals(NGC_RS274::NGC_Binary_Block* local_block)
 {
 	//I know a non modal was defined but dont yet know which one.
 	switch (local_block->g_group[NGC_RS274::Groups::G::NON_MODAL])
@@ -545,7 +545,7 @@ void c_stager::update_non_modals(c_block * local_block)
 
 }
 
-void c_stager::parmeter_write(c_block * local_block)
+void c_stager::parmeter_write(NGC_RS274::NGC_Binary_Block* local_block)
 {
 	//Which parameter are we going to update
 	switch ((uint16_t)local_block->get_value('L'))
@@ -593,7 +593,7 @@ void c_stager::update_coordinate_datum(uint16_t parameter_slot)
 		c_stager::coordinate_datum[parameter_slot].V = i_Address;
 }
 
-int16_t c_stager::calculate_vector_distance(c_block *plan_block)
+int16_t c_stager::calculate_vector_distance(NGC_RS274::NGC_Binary_Block*plan_block)
 {
 
 	for (int axis_id = 0; axis_id < c_motion_controller_settings::axis_count_reported; axis_id++)

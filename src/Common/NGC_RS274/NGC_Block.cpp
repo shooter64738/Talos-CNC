@@ -22,7 +22,7 @@
 #include "NGC_Block.h"
 
 
-c_block::c_block()
+NGC_RS274::NGC_Binary_Block::NGC_Binary_Block()
 {
 	this->axis_values.X = &this->block_word_values[X_WORD_BIT];
 	this->axis_values.Y = &this->block_word_values[Y_WORD_BIT];
@@ -54,11 +54,11 @@ c_block::c_block()
 	this->plane_axis.normal_axis.name = 'Z';
 	
 }
-c_block::~c_block()
+NGC_RS274::NGC_Binary_Block::~NGC_Binary_Block()
 {
 } //~c_Block
 
-void c_block::reset()
+void NGC_RS274::NGC_Binary_Block::reset()
 {
 	
 	word_defined_in_block_A_Z = 0;
@@ -73,7 +73,7 @@ void c_block::reset()
 	//memset(vector_distance, 0, sizeof(vector_distance));
 }
 
-void c_block::clear_axis_values()
+void NGC_RS274::NGC_Binary_Block::clear_axis_values()
 {
 	this->axis_values.A = 0;
 	this->axis_values.B = 0;
@@ -85,13 +85,13 @@ void c_block::clear_axis_values()
 	this->axis_values.V = 0;
 }
 
-void c_block::clear_word_values()
+void NGC_RS274::NGC_Binary_Block::clear_word_values()
 {
 	memset(block_word_values, 0, sizeof(block_word_values));
 }
 
 /*Return the active G code value for the specified group*/
-float c_block::get_g_code_value(int GroupNumber)
+float NGC_RS274::NGC_Binary_Block::get_g_code_value(int GroupNumber)
 {
 	/*
 	Codes are stored as whole (integer) values.
@@ -102,7 +102,7 @@ float c_block::get_g_code_value(int GroupNumber)
 }
 
 /*Return the active M code value for the specified group*/
-float c_block::get_m_code_value(int GroupNumber)
+float NGC_RS274::NGC_Binary_Block::get_m_code_value(int GroupNumber)
 {
 	/*
 	Codes are stored as whole (integer) values.
@@ -113,7 +113,7 @@ float c_block::get_m_code_value(int GroupNumber)
 }
 
 /*Return the active G code value for the specified group*/
-uint16_t c_block::get_g_code_value_x(int GroupNumber)
+uint16_t NGC_RS274::NGC_Binary_Block::get_g_code_value_x(int GroupNumber)
 {
 	/*
 	Codes are stored as whole (integer) values.
@@ -122,7 +122,7 @@ uint16_t c_block::get_g_code_value_x(int GroupNumber)
 }
 
 /*Return the active M code value for the specified group*/
-uint16_t c_block::get_m_code_value_x(int GroupNumber)
+uint16_t NGC_RS274::NGC_Binary_Block::get_m_code_value_x(int GroupNumber)
 {
 	/*
 	Codes are stored as whole (integer) values.
@@ -134,7 +134,7 @@ uint16_t c_block::get_m_code_value_x(int GroupNumber)
 Returns TRUE if specified word was set. Returns FALSE if the specified word was not set.
 Sets the Address parameter to the INTEGER value of the specified word, even if it was not set.
 */
-uint8_t c_block::get_value_defined(char Word, int& Address)
+uint8_t NGC_RS274::NGC_Binary_Block::get_value_defined(char Word, int& Address)
 {
 	/*
 	|***************************************************************************************|
@@ -156,7 +156,7 @@ uint8_t c_block::get_value_defined(char Word, int& Address)
 Returns TRUE if specified word was set. Returns FALSE if the specified word was not set.
 Sets the Address parameter to the DOUBLE value of the specified word, even if it was not set.
 */
-uint8_t c_block::get_value_defined(char Word, float& Address)
+uint8_t NGC_RS274::NGC_Binary_Block::get_value_defined(char Word, float& Address)
 {
 	/*
 	|***************************************************************************************|
@@ -177,7 +177,7 @@ uint8_t c_block::get_value_defined(char Word, float& Address)
 /*
 Returns TRUE if specified word was set. Returns FALSE if the specified word was not set.
 */
-uint8_t c_block::get_defined(char Word)
+uint8_t NGC_RS274::NGC_Binary_Block::get_defined(char Word)
 {
 	/*
 	|***************************************************************************************|
@@ -193,7 +193,7 @@ uint8_t c_block::get_defined(char Word)
 /*
 Returns the DOUBLE value of the specified word
 */
-float c_block::get_value(char Word)
+float NGC_RS274::NGC_Binary_Block::get_value(char Word)
 {
 	/*
 	|***************************************************************************************|
@@ -208,7 +208,7 @@ float c_block::get_value(char Word)
 /*
 Sets the DOUBLE value of the specified word
 */
-void c_block::set_value(char Word, float Value)
+void NGC_RS274::NGC_Binary_Block::set_value(char Word, float Value)
 {
 	/*
 	|***************************************************************************************|
@@ -220,7 +220,7 @@ void c_block::set_value(char Word, float Value)
 	this->block_word_values[Word - 65] = Value;
 }
 
-void c_block::set_group_value(uint8_t G_Group, uint16_t Value)
+void NGC_RS274::NGC_Binary_Block::set_group_value(uint8_t G_Group, uint16_t Value)
 {
 	/*
 	|***************************************************************************************|
@@ -235,7 +235,7 @@ void c_block::set_group_value(uint8_t G_Group, uint16_t Value)
 /*
 Sets the DOUBLE value of the specified word
 */
-void c_block::define_value(char Word, float Value)
+void NGC_RS274::NGC_Binary_Block::define_value(char Word, float Value)
 {
 	/*
 	|***************************************************************************************|
@@ -250,7 +250,7 @@ void c_block::define_value(char Word, float Value)
 /*
 Clears the bit flag for the specified word
 */
-void c_block::clear_defined_word(char Word)
+void NGC_RS274::NGC_Binary_Block::clear_defined_word(char Word)
 {
 	/*
 	|***************************************************************************************|
@@ -264,7 +264,7 @@ void c_block::clear_defined_word(char Word)
 /*
 Clears the bit flag for the specified gcode
 */
-void c_block::clear_defined_gcode(uint8_t gcode_group)
+void NGC_RS274::NGC_Binary_Block::clear_defined_gcode(uint8_t gcode_group)
 {
 	/*
 	|***************************************************************************************|
@@ -278,7 +278,7 @@ void c_block::clear_defined_gcode(uint8_t gcode_group)
 /*
 Sets the bit flag for the specified gcode
 */
-void c_block::set_defined_gcode(uint8_t gcode_group)
+void NGC_RS274::NGC_Binary_Block::set_defined_gcode(uint8_t gcode_group)
 {
 	/*
 	|***************************************************************************************|
@@ -292,7 +292,7 @@ void c_block::set_defined_gcode(uint8_t gcode_group)
 /*
 Returns TRUE if any axis words were set in the block. Returns FALSE if none were.
 */
-uint8_t c_block::any_axis_was_defined()
+uint8_t NGC_RS274::NGC_Binary_Block::any_axis_was_defined()
 {
 	//Quick test here, if NO WORD values were set in the block at all, then we know there couldnt be an axis defined
 	if (this->word_defined_in_block_A_Z == 0)
@@ -307,7 +307,7 @@ uint8_t c_block::any_axis_was_defined()
 /*
 Returns TRUE if any LINEAR axis words were set in the block. Returns FALSE if none were.
 */
-uint8_t c_block::any_linear_axis_was_defined()
+uint8_t NGC_RS274::NGC_Binary_Block::any_linear_axis_was_defined()
 {
 	//Quick test here, if NO WORD values were set in the block at all, then we know there couldnt be an axis defined
 	if (this->word_defined_in_block_A_Z == 0)
@@ -326,7 +326,7 @@ uint8_t c_block::any_linear_axis_was_defined()
 /*
 Returns TRUE if any ROTATIONAL axis words were set in the block. Returns FALSE if none were.
 */
-uint8_t c_block::any_rotational_axis_was_defined()
+uint8_t NGC_RS274::NGC_Binary_Block::any_rotational_axis_was_defined()
 {
 	//Quick test here, if NO WORD values were set in the block at all, then we know there couldnt be an axis defined
 	if (this->word_defined_in_block_A_Z == 0)
@@ -339,7 +339,7 @@ uint8_t c_block::any_rotational_axis_was_defined()
 	return TRUE;
 }
 
-void c_block::set_state(uint8_t bit_flag)
+void NGC_RS274::NGC_Binary_Block::set_state(uint8_t bit_flag)
 {
 	this->state= BitSet(this->state,bit_flag);
 }

@@ -25,7 +25,7 @@
 #include "..\status\c_status.h"
 #include "..\..\..\Common\NGC_RS274\NGC_Interpreter.h"
 #include "c_stager.h"
-c_block c_gcode_buffer::collection[NGC_BUFFER_SIZE];
+NGC_RS274::NGC_Binary_Block c_gcode_buffer::collection[NGC_BUFFER_SIZE];
 uint8_t c_gcode_buffer::buffer_head=0;
 uint8_t c_gcode_buffer::buffer_tail=0;
 uint8_t c_gcode_buffer::queued_count = 0;
@@ -58,7 +58,7 @@ uint8_t c_gcode_buffer::count()
 *
 * \return int8_t
 */
-c_block *c_gcode_buffer::get()
+NGC_RS274::NGC_Binary_Block*c_gcode_buffer::get()
 {
 	
 	//Do we have anything queued right now?
@@ -72,7 +72,7 @@ c_block *c_gcode_buffer::get()
 	//its faster to just run this instead of an if operation to check, then conditionally call it.
 	c_data_events::clear_event(Data_Events::NGC_BUFFER_FULL);
 	//return what is at the tail and move the tail forward one. If we are on the last item, we will reset the tail
-	c_block *data = &collection[c_gcode_buffer::buffer_tail];
+	NGC_RS274::NGC_Binary_Block*data = &collection[c_gcode_buffer::buffer_tail];
 	c_gcode_buffer::buffer_tail++;
 	if (c_gcode_buffer::buffer_tail == NGC_BUFFER_SIZE)
 	c_gcode_buffer::buffer_tail=0;
@@ -121,7 +121,7 @@ int8_t c_gcode_buffer::can_add()
 */
 int16_t c_gcode_buffer::add()
 {
-	c_block * local_block = &c_gcode_buffer::collection[c_gcode_buffer::buffer_head];
+	NGC_RS274::NGC_Binary_Block* local_block = &c_gcode_buffer::collection[c_gcode_buffer::buffer_head];
 
 	/*
 	Copy forward the states into the next block from the last modal states, and persisted values
@@ -134,7 +134,7 @@ int16_t c_gcode_buffer::add()
 	*/
 	memcpy(local_block->g_group, c_stager::previous_block->g_group, COUNT_OF_G_CODE_GROUPS_ARRAY*sizeof(uint16_t));
 	memcpy(local_block->m_group, c_stager::previous_block->m_group, COUNT_OF_M_CODE_GROUPS_ARRAY*sizeof(uint16_t));
-	memcpy(&local_block->persisted_values, &c_stager::previous_block->persisted_values, sizeof(c_block::s_persisted_values));
+	memcpy(&local_block->persisted_values, &c_stager::previous_block->persisted_values, sizeof(NGC_RS274::NGC_Binary_Block::s_persisted_values));
 	memcpy(local_block->block_word_values, c_stager::previous_block->block_word_values, COUNT_OF_BLOCK_WORDS_ARRAY * sizeof(float));
 	
 	//Clear the non modal codes if there were any. These would have been carried over by the stager, and non modals are 'not modal' obviously

@@ -67,7 +67,7 @@ class c_Cutter_Comp
 	static c_Path _forward_path;
 
 	//static int16_t gen_comp(c_Path & current_path, c_Path & forward_path);
-	static int16_t gen_comp(c_block * local_block);
+	static int16_t gen_comp(NGC_RS274::NGC_Binary_Block* local_block);
 	//how short can a segment be, before we consider it eliminated
 	static float minimum_seg_length_for_elimination;
 	//how far can the compensation target be from the program target before we call it an error
@@ -91,14 +91,14 @@ class c_Cutter_Comp
 	static e_corner_type get_corner_type(c_Path current_path, c_Path forward_path);
 	static void set_outside_corner_arc(c_Path current_path, c_Path forward_path, s_point arc_center);
 
-	static int16_t set_path(c_block * local_block);
+	static int16_t set_path(NGC_RS274::NGC_Binary_Block* local_block);
 
 	static void calculate();
 
-	static void set_object_type(c_block *local_block, c_Path & local_path);
+	static void set_object_type(NGC_RS274::NGC_Binary_Block*local_block, c_Path & local_path);
 
-	static c_block *previous_block_pointer;
-	static c_block corner_path;
+	static NGC_RS274::NGC_Binary_Block*previous_block_pointer;
+	static NGC_RS274::NGC_Binary_Block corner_path;
 	
 	
 

@@ -23,8 +23,8 @@
 
 char NGC_RS274::Interpreter::Processor::Line[CYCLE_LINE_LENGTH];
 int NGC_RS274::Interpreter::Processor::HasErrors = 0;
-c_block NGC_RS274::Interpreter::Processor::local_block = c_block();
-c_block *NGC_RS274::Interpreter::Processor::stager_block;
+NGC_RS274::NGC_Binary_Block NGC_RS274::Interpreter::Processor::local_block = NGC_RS274::NGC_Binary_Block();
+NGC_RS274::NGC_Binary_Block*NGC_RS274::Interpreter::Processor::stager_block;
 bool NGC_RS274::Interpreter::Processor::normalize_distance_units_to_mm = true;
 uint16_t ngc_working_g_group = 0;
 
@@ -39,10 +39,13 @@ void NGC_RS274::Interpreter::Processor::clear_line()
 	memset(NGC_RS274::Interpreter::Processor::Line, 0, CYCLE_LINE_LENGTH * sizeof(char));
 }
 
-int NGC_RS274::Interpreter::Processor::process_line(c_block *plan_block)
+int NGC_RS274::Interpreter::Processor::process_line(NGC_RS274::NGC_Binary_Block*plan_block)
 {
 	//NGC_RS274::Interpreter::Processor::local_block is the block that the intepreter uses for work. If an error is found processing the line, this block will be cleared.
 	//plan_block, is the block that the local_block will be copied to, if interpretation is successful. 
+
+	//We need to know the state of the latest processed block. We will point the stager_block to the block sent in to us
+	NGC_RS274::Interpreter::Processor::stager_block = plan_block;
 
 	NGC_RS274::Interpreter::Processor::local_block.reset(); //<-- Clear EVERYTHING from the local block
 
@@ -50,10 +53,10 @@ int NGC_RS274::Interpreter::Processor::process_line(c_block *plan_block)
 	memcpy(NGC_RS274::Interpreter::Processor::local_block.unit_target_positions, plan_block->unit_target_positions, MACHINE_AXIS_COUNT * sizeof(float));
 	memcpy(NGC_RS274::Interpreter::Processor::local_block.g_group, plan_block->g_group, COUNT_OF_G_CODE_GROUPS_ARRAY * sizeof(uint16_t));
 	memcpy(NGC_RS274::Interpreter::Processor::local_block.m_group, plan_block->m_group, COUNT_OF_M_CODE_GROUPS_ARRAY * sizeof(uint16_t));
-	memcpy(&NGC_RS274::Interpreter::Processor::local_block.persisted_values, &plan_block->persisted_values, sizeof(c_block::s_persisted_values));
+	memcpy(&NGC_RS274::Interpreter::Processor::local_block.persisted_values, &plan_block->persisted_values, sizeof(NGC_RS274::NGC_Binary_Block::s_persisted_values));
 	memcpy(NGC_RS274::Interpreter::Processor::local_block.block_word_values, plan_block->block_word_values, COUNT_OF_BLOCK_WORDS_ARRAY * sizeof(float));
-	memcpy(&NGC_RS274::Interpreter::Processor::local_block.plane_axis, &plan_block->plane_axis, sizeof(c_block::s_plane_axis));
-	memcpy(&NGC_RS274::Interpreter::Processor::local_block.arc_values, &plan_block->arc_values, sizeof(c_block::s_arc_values));
+	memcpy(&NGC_RS274::Interpreter::Processor::local_block.plane_axis, &plan_block->plane_axis, sizeof(NGC_RS274::NGC_Binary_Block::s_plane_axis));
+	memcpy(&NGC_RS274::Interpreter::Processor::local_block.arc_values, &plan_block->arc_values, sizeof(NGC_RS274::NGC_Binary_Block::s_arc_values));
 
 	HasErrors = 0;
 
@@ -97,10 +100,10 @@ int NGC_RS274::Interpreter::Processor::process_line(c_block *plan_block)
 	//This line interpreted without errors. Move the new values into 'plan_block' which will be updated for use by the calling method. 
 	memcpy(plan_block->g_group, NGC_RS274::Interpreter::Processor::local_block.g_group, COUNT_OF_G_CODE_GROUPS_ARRAY * sizeof(uint16_t));
 	memcpy(plan_block->m_group, NGC_RS274::Interpreter::Processor::local_block.m_group, COUNT_OF_M_CODE_GROUPS_ARRAY * sizeof(uint16_t));
-	memcpy(&plan_block->persisted_values, &NGC_RS274::Interpreter::Processor::local_block.persisted_values, sizeof(c_block::s_persisted_values));
+	memcpy(&plan_block->persisted_values, &NGC_RS274::Interpreter::Processor::local_block.persisted_values, sizeof(NGC_RS274::NGC_Binary_Block::s_persisted_values));
 	memcpy(plan_block->block_word_values, NGC_RS274::Interpreter::Processor::local_block.block_word_values, COUNT_OF_BLOCK_WORDS_ARRAY * sizeof(float));
-	memcpy(&plan_block->plane_axis, &NGC_RS274::Interpreter::Processor::local_block.plane_axis, sizeof(c_block::s_plane_axis));
-	memcpy(&plan_block->arc_values, &NGC_RS274::Interpreter::Processor::local_block.arc_values, sizeof(c_block::s_arc_values));
+	memcpy(&plan_block->plane_axis, &NGC_RS274::Interpreter::Processor::local_block.plane_axis, sizeof(NGC_RS274::NGC_Binary_Block::s_plane_axis));
+	memcpy(&plan_block->arc_values, &NGC_RS274::Interpreter::Processor::local_block.arc_values, sizeof(NGC_RS274::NGC_Binary_Block::s_arc_values));
 	memcpy(&plan_block->word_defined_in_block_A_Z, &NGC_RS274::Interpreter::Processor::local_block.word_defined_in_block_A_Z, sizeof(uint32_t));
 
 	//Clear the line data so its ready for next time. 
@@ -1201,7 +1204,7 @@ int NGC_RS274::Interpreter::Processor::convert_to_line_index(uint8_t BlockNumber
 	return 1;
 }
 
-int NGC_RS274::Interpreter::Processor::convert_to_line(c_block *local_block)
+int NGC_RS274::Interpreter::Processor::convert_to_line(NGC_RS274::NGC_Binary_Block*local_block)
 {
 	memset(Line, 0, 256);
 	char *line_pointer = Line;//<--creating a pointer to an array to simplify building the array data in the loops

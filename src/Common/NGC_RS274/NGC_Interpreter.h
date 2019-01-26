@@ -37,13 +37,13 @@ namespace NGC_RS274
 		public:
 			static char Line[CYCLE_LINE_LENGTH];
 			static int HasErrors;
-			static c_block local_block;
-			static c_block *stager_block;
+			static NGC_RS274::NGC_Binary_Block local_block;
+			static NGC_RS274::NGC_Binary_Block *stager_block;
 			static bool normalize_distance_units_to_mm;
 
 			static void initialize();
 			static void clear_line();
-			static int process_line(c_block *plan_block);
+			static int process_line(NGC_RS274::NGC_Binary_Block*plan_block);
 			static float evaluate_address(char* Data);
 			//Move G and M codes to the respective groups
 			static int group_word(char Word, float Address);
@@ -55,7 +55,7 @@ namespace NGC_RS274
 			static int _pWord(char Word, float iAddress);
 			static int process_word_values(char Word, float iAddress);
 			static int convert_to_line_index(uint8_t BlockNumber);
-			static int convert_to_line(c_block *local_block);	
+			static int convert_to_line(NGC_RS274::NGC_Binary_Block*local_block);	
 
 			private:
 			static int parse_values();

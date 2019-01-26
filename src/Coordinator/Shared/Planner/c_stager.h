@@ -44,9 +44,9 @@ class c_stager
 		float V;
 	}s_coord_datum;
 	//variables
-	
-	
-	public:
+
+
+public:
 	//typedef struct s_persisted_values
 	//{
 		//float feed_rate;
@@ -65,34 +65,32 @@ class c_stager
 	static float start_motion_position[];
 	static uint32_t line_number;
 	static s_coord_datum coordinate_datum[9];
-	static c_block *previous_block;
+	static NGC_RS274::NGC_Binary_Block*previous_block;
 
-	protected:
-	private:
+protected:
+private:
 
 	//functions
-	public:
+public:
 	static void initialize();
 	static int16_t stage_block_motion();
-	static int16_t update_cutter_compensation(c_block * local_block);
-	static void update_non_modals(c_block * block);
-	static void parmeter_write(c_block * local_block );
+	static int16_t update_cutter_compensation(NGC_RS274::NGC_Binary_Block* local_block);
+	static void update_non_modals(NGC_RS274::NGC_Binary_Block* block);
+	static void parmeter_write(NGC_RS274::NGC_Binary_Block* local_block);
 	static void update_coordinate_datum(uint16_t parameter_slot);
-	static int16_t plan_block_motion_old();
-	static int16_t calculate_vector_distance(c_block * plan_block);
+	static int16_t calculate_vector_distance(NGC_RS274::NGC_Binary_Block* plan_block);
 	static void report();
 	static uint8_t pre_stage_check();
 	static uint8_t post_stage_check();
-	static c_block *get_added_block();
-	static int32_t previous_axis_step_positions(uint8_t axis_id);
+	static NGC_RS274::NGC_Binary_Block*get_added_block();
 	static c_Path current_path;
 	static c_Path forward_path;
-	protected:
-	
-	private:
-	
-	
-	
+protected:
+
+private:
+
+
+
 	//c_stager( const c_planner &c );
 	//c_stager& operator=( const c_planner &c );
 	//c_stager();

@@ -135,6 +135,17 @@ class c_hal
 		void (*PNTR_SET_ARC_DRIVE_FREQUENCY)(void);
 	}s_edm_function_pointers;
 	static s_edm_function_pointers edm;
+
+	//io struct refers to anything related to reading input and output
+	typedef struct
+	{
+		void(*PNTR_INITIALIZE)(void);
+		int16_t(*PNTR_GET_ANALOG)(int16_t);
+		uint8_t(*PNTR_GET_DIGITAL)(uint8_t);
+		void(*PNTR_SET_ANALOG)(int16_t);
+		void(*PNTR_SET_DIGITAL)(uint8_t);
+	}s_input_function_pointers;
+	static s_input_function_pointers io;
 	
 	public:
 	protected:

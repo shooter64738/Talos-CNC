@@ -30,12 +30,12 @@ e_compensation_side c_Cutter_Comp::side;
 float c_Cutter_Comp::tool_radius = 0;
 e_compensation_state c_Cutter_Comp::state;
 bool c_Cutter_Comp::comp_activated = false;
-c_block  c_Cutter_Comp::corner_path = c_block();
+NGC_RS274::NGC_Binary_Block c_Cutter_Comp::corner_path = NGC_RS274::NGC_Binary_Block();
 float c_Cutter_Comp::minimum_seg_length_for_elimination = 0.001;
 float c_Cutter_Comp::maximum_deviation_from_program_point = 0.01;
 c_Path c_Cutter_Comp::_current_path;
 c_Path c_Cutter_Comp::_forward_path;
-c_block *c_Cutter_Comp::previous_block_pointer;
+NGC_RS274::NGC_Binary_Block*c_Cutter_Comp::previous_block_pointer;
 
 
 int8_t c_Cutter_Comp::pointCircle(float px, float py, float cx, float cy, float r) {
@@ -415,7 +415,7 @@ void c_Cutter_Comp::set_outside_corner_arc(c_Path current_path, c_Path forward_p
 }
 
 
-int16_t c_Cutter_Comp::set_path(c_block * local_block)
+int16_t c_Cutter_Comp::set_path(NGC_RS274::NGC_Binary_Block* local_block)
 {
 	//Finished  making all of cutter compensation plane agnostic.
 
@@ -483,7 +483,7 @@ void c_Cutter_Comp::calculate()
 		? c_Cutter_Comp::_forward_path.calculate_line() : c_Cutter_Comp::_forward_path.calculate_arc();
 }
 
-void c_Cutter_Comp::set_object_type(c_block * local_block, c_Path & local_path)
+void c_Cutter_Comp::set_object_type(NGC_RS274::NGC_Binary_Block* local_block, c_Path & local_path)
 {
 	if (local_block->g_group[NGC_RS274::Groups::G::MOTION] == NGC_RS274::G_codes::LINEAR_INTERPOLATION
 		|| local_block->g_group[NGC_RS274::Groups::G::MOTION] == NGC_RS274::G_codes::RAPID_POSITIONING)
@@ -506,7 +506,7 @@ void c_Cutter_Comp::set_object_type(c_block * local_block, c_Path & local_path)
 }
 
 //int16_t c_Cutter_Comp::gen_comp(c_Path &current_path, c_Path &forward_path)
-int16_t c_Cutter_Comp::gen_comp(c_block * local_block)
+int16_t c_Cutter_Comp::gen_comp(NGC_RS274::NGC_Binary_Block* local_block)
 {
 	/*
 	if this is called, then we assume compensation is starting/stopping.

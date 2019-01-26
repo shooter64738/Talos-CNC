@@ -41,7 +41,7 @@ class c_machine
 	static void update_position(uint8_t,int8_t);
 	static float axis_position[MACHINE_AXIS_COUNT];
 	static float unit_scaler;
-	static c_block *machine_block;
+	static NGC_RS274::NGC_Binary_Block*machine_block;
 
 	protected:
 	private:
@@ -56,14 +56,13 @@ class c_machine
 	static void synch_machine_state_g_code();
 	static void synch_machine_state_m_code();
 	static uint8_t machine_block_buffer_tail;
-	//static void synch_machine_state_g_code(c_block *local_block);
-	//static void synch_machine_state_m_code(c_block *local_block);
+	//static void synch_machine_state_g_code(NGC_RS274::c_block*local_block);
+	//static void synch_machine_state_m_code(NGC_RS274::c_block*local_block);
 	static void check_panel_input();
 	static void report();
 
 	static void run_block();
-	static void start_motion(c_block * local_block);
-	static void check_canned_cycle(c_block * local_block);
+	static void start_motion(NGC_RS274::NGC_Binary_Block* local_block);
 	protected:
 	private:
 

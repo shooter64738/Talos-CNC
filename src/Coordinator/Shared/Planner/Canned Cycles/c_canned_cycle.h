@@ -43,30 +43,30 @@ class c_canned_cycle
 
 	//functions
 	public:
-	static void initialize(c_block *local_block, float old_Z);
-	static void cycle_to_pointer(c_block *local_block);
-	static void clear_positioning_axis(c_block * local_block);
+	static void initialize(NGC_RS274::NGC_Binary_Block*local_block, float old_Z);
+	static void cycle_to_pointer(NGC_RS274::NGC_Binary_Block*local_block);
+	static void clear_positioning_axis(NGC_RS274::NGC_Binary_Block* local_block);
 	//Some cycles (especially lathe threading) must be stopped in a safe way. THe unwinder is intended to do that.
-	static void (*PNTR_UNWINDER)(c_block*);
-	static float retract_position(c_block *local_block);
-	static void set_axis_feed(c_block *local_block, uint16_t feed_mode, char axis, float value);
-	static void set_dwell(c_block *local_block, float value);
-	static void clear_callback(c_block *local_block);
-	static void clear_start(c_block *local_block);
+	static void (*PNTR_UNWINDER)(NGC_RS274::NGC_Binary_Block*);
+	static float retract_position(NGC_RS274::NGC_Binary_Block*local_block);
+	static void set_axis_feed(NGC_RS274::NGC_Binary_Block*local_block, uint16_t feed_mode, char axis, float value);
+	static void set_dwell(NGC_RS274::NGC_Binary_Block*local_block, float value);
+	static void clear_callback(NGC_RS274::NGC_Binary_Block*local_block);
+	static void clear_start(NGC_RS274::NGC_Binary_Block*local_block);
 
-	static void CANNED_CYCLE_DRILLING(c_block *local_block);
-	static void CANNED_CYCLE_DRILLING_WITH_DWELL(c_block *local_block);
-	static void CANNED_CYCLE_PECK_DRILLING(c_block *local_block);
-	static void CANNED_CYCLE_RIGHT_HAND_TAPPING(c_block *local_block);
-	static void CANNED_CYCLE_BORING_NO_DWELL_FEED_OUT(c_block *local_block);
-	static void CANNED_CYCLE_BORING_SPINDLE_STOP_RAPID_OUT(c_block *local_block);
-	static void CANNED_CYCLE_BACK_BORING(c_block *local_block);
-	static void CANNED_CYCLE_BORING_SPINDLE_STOP_MANUAL_OUT(c_block *local_block);
-	static void CANNED_CYCLE_BORING_DWELL_FEED_OUT(c_block *local_block);
-	static void CANNED_CYCLE_RIGHT_HAND_TAPPING_RIGID_HOLDER(c_block *local_block);
-	static void CANNED_CYCLE_LEFT_HAND_TAPPING_RIGID_HOLDER(c_block *local_block);
-	static void CANNED_CYCLE_PECK_DRILLING_HIGH_SPEED(c_block *local_block);
-	static void CANNED_CYCLE_FINE_BORING(c_block *local_block);
+	static void CANNED_CYCLE_DRILLING(NGC_RS274::NGC_Binary_Block*local_block);
+	static void CANNED_CYCLE_DRILLING_WITH_DWELL(NGC_RS274::NGC_Binary_Block*local_block);
+	static void CANNED_CYCLE_PECK_DRILLING(NGC_RS274::NGC_Binary_Block*local_block);
+	static void CANNED_CYCLE_RIGHT_HAND_TAPPING(NGC_RS274::NGC_Binary_Block*local_block);
+	static void CANNED_CYCLE_BORING_NO_DWELL_FEED_OUT(NGC_RS274::NGC_Binary_Block*local_block);
+	static void CANNED_CYCLE_BORING_SPINDLE_STOP_RAPID_OUT(NGC_RS274::NGC_Binary_Block*local_block);
+	static void CANNED_CYCLE_BACK_BORING(NGC_RS274::NGC_Binary_Block*local_block);
+	static void CANNED_CYCLE_BORING_SPINDLE_STOP_MANUAL_OUT(NGC_RS274::NGC_Binary_Block*local_block);
+	static void CANNED_CYCLE_BORING_DWELL_FEED_OUT(NGC_RS274::NGC_Binary_Block*local_block);
+	static void CANNED_CYCLE_RIGHT_HAND_TAPPING_RIGID_HOLDER(NGC_RS274::NGC_Binary_Block*local_block);
+	static void CANNED_CYCLE_LEFT_HAND_TAPPING_RIGID_HOLDER(NGC_RS274::NGC_Binary_Block*local_block);
+	static void CANNED_CYCLE_PECK_DRILLING_HIGH_SPEED(NGC_RS274::NGC_Binary_Block*local_block);
+	static void CANNED_CYCLE_FINE_BORING(NGC_RS274::NGC_Binary_Block*local_block);
 	
 
 	protected:

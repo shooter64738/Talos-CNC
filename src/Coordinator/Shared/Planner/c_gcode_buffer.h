@@ -27,7 +27,7 @@ class c_gcode_buffer
 {
 	//variables
 	public:
-	static c_block collection[NGC_BUFFER_SIZE];
+	static NGC_RS274::NGC_Binary_Block collection[NGC_BUFFER_SIZE];
 	static uint8_t buffer_head;
 	static uint8_t buffer_tail;
 
@@ -39,7 +39,7 @@ class c_gcode_buffer
 	//functions
 	public:	
 	//static int8_t get_previous_queued_index(uint8_t from);
-	static c_block *get();
+	static NGC_RS274::NGC_Binary_Block*get();
 	static int8_t can_add();
 	static int16_t add();
 	static uint8_t count();
