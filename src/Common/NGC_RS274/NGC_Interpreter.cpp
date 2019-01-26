@@ -23,7 +23,7 @@
 
 char NGC_RS274::Interpreter::Processor::Line[CYCLE_LINE_LENGTH];
 int NGC_RS274::Interpreter::Processor::HasErrors = 0;
-c_block NGC_RS274::Interpreter::Processor::local_block;
+c_block NGC_RS274::Interpreter::Processor::local_block = c_block();
 c_block *NGC_RS274::Interpreter::Processor::stager_block;
 bool NGC_RS274::Interpreter::Processor::normalize_distance_units_to_mm = true;
 uint16_t ngc_working_g_group = 0;
@@ -31,7 +31,7 @@ uint16_t ngc_working_g_group = 0;
 void NGC_RS274::Interpreter::Processor::initialize()
 {
 	clear_line();
-	NGC_RS274::Interpreter::Processor::local_block = c_block();
+	//NGC_RS274::Interpreter::Processor::local_block = c_block();
 }
 
 void NGC_RS274::Interpreter::Processor::clear_line()

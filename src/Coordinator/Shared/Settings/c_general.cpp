@@ -32,8 +32,8 @@ void Settings::c_general::initialize()
 {
 	c_general::machine.interpolation_error_distance = .01;
 	//Had code machine type for now.
-	c_general::machine.machine_type = e_machine_types::EDM;
-	c_general::machine.machine_sub_type = e_machine_sub_types::PLUNGER;
+	c_general::machine.machine_type = e_machine_types::MILLING;
+	c_general::machine.machine_sub_type = e_machine_sub_types::RF45;
 	
 	for (int axis_id = 0;axis_id<c_motion_controller_settings::axis_count_reported;axis_id++)
 	c_general::machine.backlash_error[axis_id] = 0; //<-- number of STEPS, not distance for backlash comp.

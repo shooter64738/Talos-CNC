@@ -230,6 +230,8 @@ void c_machine::run_block()
 	c_machine::start_motion(c_machine::machine_block);
 	//When we are done with the block, move the tail forward.
 	c_gcode_buffer::buffer_tail++;
+	//Since Line in interpreter is used for input and output we should clear it, so that its empty if we use it for input again.
+	NGC_RS274::Interpreter::Processor::clear_line();
 
 	c_machine::machine_block = NULL;
 }

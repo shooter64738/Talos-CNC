@@ -19,9 +19,6 @@
     <Filter Include="Shared\Interpolation">
       <UniqueIdentifier>{684d7297-3a94-4d96-8310-d226521f8aa8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Shared\Interpreter">
-      <UniqueIdentifier>{5eb13b4e-f50e-4b73-ab05-cf2c33630a4a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Shared\Machine">
       <UniqueIdentifier>{aa09069c-8f6d-48a6-85f4-07c58d99ce9e}</UniqueIdentifier>
     </Filter>

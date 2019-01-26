@@ -69,7 +69,7 @@ class c_block
 		uint16_t active_s;
 		uint8_t overrides_enabled;
 		uint16_t line_number;
-	};
+	}s_persisted_values;
 	s_persisted_values persisted_values;
 
 	typedef struct s_axis_values
@@ -82,7 +82,7 @@ class c_block
 		float *C;
 		float *U;
 		float *V;
-	};
+	}s_axis_values;
 	s_axis_values axis_values;
 
 	typedef struct s_axis_property
@@ -101,7 +101,7 @@ class c_block
 		//float *J;
 		//float *K;
 		float *R;
-	};
+	}s_arc_values;
 	s_arc_values arc_values;
 
 	typedef struct s_canned_values
@@ -112,7 +112,7 @@ class c_block
 		float *P_dwell_time_at_bottom; //<--Dwell time at bottom of hole.
 		float *Z_depth_of_hole; //<--Hole Bottom
 		void (*PNTR_RECALLS)(c_block*);
-	};
+	}s_canned_values;
 	s_canned_values canned_values;
 
 	uint8_t state;
