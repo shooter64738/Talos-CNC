@@ -10,7 +10,7 @@
 #include "..\Common\Hardware_Abstraction_Layer\c_hal.h"
 uint8_t Plasma_Control::c_torch_height::move_head(Plasma_Control::e_torch_positions Target)
 {
-	//driver the torch height stepper
+	//drive the torch height stepper
 	c_hal::driver.PNTR_SET_PRESCALER(8);
 	c_hal::driver.PNTR_SET_TIMER_RATE(24000);
 	c_hal::driver.PNTR_DRIVE(); //<--activate the driver.
@@ -24,7 +24,7 @@ uint8_t Plasma_Control::c_torch_height::move_head(Plasma_Control::e_torch_positi
 			|| result & (1 << MATERIAL_SWITCH_INPUT_PIN))
 		{
 			c_hal::driver.PNTR_DISABLE();//<--turn off the stepper;
-			//determine which condition we detected. IF we hit the limit switch before the material, then its an error
+			//determine which condition we detected. If we hit the limit switch before the material, then its an error
 			if (result &(1 << LOWER_LIMIT_SWITCH_INPUT_PIN))
 			{
 				//Move the torch back to the top
@@ -42,12 +42,13 @@ uint8_t Plasma_Control::c_torch_height::move_head(Plasma_Control::e_torch_positi
 		}
 		return Plasma_Control::Errors::OK;
 	}
-	//// default constructor
-	//c_torch_height::c_torch_height()
-	//{
-	//} //c_torch_height
-	//
-	//// default destructor
-	//c_torch_height::~c_torch_height()
-	//{
-	//} //~c_torch_height
+}
+//// default constructor
+//c_torch_height::c_torch_height()
+//{
+//} //c_torch_height
+//
+//// default destructor
+//c_torch_height::~c_torch_height()
+//{
+//} //~c_torch_height
