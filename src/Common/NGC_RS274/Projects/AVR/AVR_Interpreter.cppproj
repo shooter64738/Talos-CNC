@@ -163,43 +163,43 @@
     </ToolchainSettings>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\..\..\Common\NGC_RS274\NGC_Block.cpp">
+    <Compile Include="..\..\NGC_Block.cpp">
       <SubType>compile</SubType>
       <Link>NGC_Block.cpp</Link>
     </Compile>
-    <Compile Include="..\..\..\Common\NGC_RS274\NGC_Block.h">
+    <Compile Include="..\..\NGC_Block.h">
       <SubType>compile</SubType>
       <Link>NGC_Block.h</Link>
     </Compile>
-    <Compile Include="..\..\..\Common\NGC_RS274\NGC_Errors.h">
+    <Compile Include="..\..\NGC_Errors.h">
       <SubType>compile</SubType>
       <Link>NGC_Errors.h</Link>
     </Compile>
-    <Compile Include="..\..\..\Common\NGC_RS274\NGC_G_Codes.h">
+    <Compile Include="..\..\NGC_G_Codes.h">
       <SubType>compile</SubType>
       <Link>NGC_G_Codes.h</Link>
     </Compile>
-    <Compile Include="..\..\..\Common\NGC_RS274\NGC_G_Groups.h">
+    <Compile Include="..\..\NGC_G_Groups.h">
       <SubType>compile</SubType>
       <Link>NGC_G_Groups.h</Link>
     </Compile>
-    <Compile Include="..\..\..\Common\NGC_RS274\NGC_Interpreter.cpp">
+    <Compile Include="..\..\NGC_Interpreter.cpp">
       <SubType>compile</SubType>
       <Link>NGC_Interpreter.cpp</Link>
     </Compile>
-    <Compile Include="..\..\..\Common\NGC_RS274\NGC_Interpreter.h">
+    <Compile Include="..\..\NGC_Interpreter.h">
       <SubType>compile</SubType>
       <Link>NGC_Interpreter.h</Link>
     </Compile>
-    <Compile Include="..\..\..\Common\NGC_RS274\NGC_M_Codes.h">
+    <Compile Include="..\..\NGC_M_Codes.h">
       <SubType>compile</SubType>
       <Link>NGC_M_Codes.h</Link>
     </Compile>
-    <Compile Include="..\..\..\Common\NGC_RS274\NGC_M_Groups.h">
+    <Compile Include="..\..\NGC_M_Groups.h">
       <SubType>compile</SubType>
       <Link>NGC_M_Groups.h</Link>
     </Compile>
-    <Compile Include="..\..\..\Common\NGC_RS274\NGC_Parameters.h">
+    <Compile Include="..\..\NGC_Parameters.h">
       <SubType>compile</SubType>
       <Link>NGC_Parameters.h</Link>
     </Compile>

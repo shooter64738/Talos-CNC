@@ -11,18 +11,18 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\NGC_RS274\NGC_Block.cpp" />
-    <ClCompile Include="..\..\NGC_RS274\NGC_Interpreter.cpp" />
+    <ClCompile Include="..\..\NGC_Block.cpp" />
+    <ClCompile Include="..\..\NGC_Interpreter.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\NGC_RS274\NGC_Block.h" />
-    <ClInclude Include="..\..\NGC_RS274\NGC_Interpreter.h" />
-    <ClInclude Include="..\..\NGC_RS274\NGC_Errors.h" />
-    <ClInclude Include="..\..\NGC_RS274\NGC_G_Codes.h" />
-    <ClInclude Include="..\..\NGC_RS274\NGC_G_Groups.h" />
-    <ClInclude Include="..\..\NGC_RS274\NGC_M_Codes.h" />
-    <ClInclude Include="..\..\NGC_RS274\NGC_M_Groups.h" />
-    <ClInclude Include="..\..\NGC_RS274\NGC_Parameters.h" />
+    <ClInclude Include="..\..\NGC_Block.h" />
+    <ClInclude Include="..\..\NGC_Errors.h" />
+    <ClInclude Include="..\..\NGC_G_Codes.h" />
+    <ClInclude Include="..\..\NGC_G_Groups.h" />
+    <ClInclude Include="..\..\NGC_Interpreter.h" />
+    <ClInclude Include="..\..\NGC_M_Codes.h" />
+    <ClInclude Include="..\..\NGC_M_Groups.h" />
+    <ClInclude Include="..\..\NGC_Parameters.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{D8CD0074-2E2A-4957-A3F7-A3BEBCF704E4}</ProjectGuid>

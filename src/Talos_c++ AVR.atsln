@@ -19,9 +19,7 @@ Project("{E66E83B9-2572-4076-B26E-6BE79FF3018A}") = "AVR_Torch_Height_Control", 
 EndProject
 Project("{E66E83B9-2572-4076-B26E-6BE79FF3018A}") = "AVR_EDM_Drive", "EDM_Drive\AVR_EDM_Drive\AVR_EDM_Drive.cppproj", "{DC35D00C-AC83-48D7-8A15-A1C82B20A12C}"
 EndProject
-Project("{E66E83B9-2572-4076-B26E-6BE79FF3018A}") = "AVR_Interpreter", "Coordinator\AVR_Coordinator\Interpreter\AVR_Interpreter.cppproj", "{6F418098-0549-470D-B04D-930EAC6D80E9}"
-EndProject
-Project("{E66E83B9-2572-4076-B26E-6BE79FF3018A}") = "AVR_NGC_RS274_Block", "Coordinator\AVR_Coordinator\NGC_Block\AVR_NGC_RS274_Block.cppproj", "{7D2B9CF8-12E4-4618-99EB-092A29E868D1}"
+Project("{E66E83B9-2572-4076-B26E-6BE79FF3018A}") = "AVR_Interpreter", "Common\NGC_RS274\Projects\AVR\AVR_Interpreter.cppproj", "{6F418098-0549-470D-B04D-930EAC6D80E9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -53,10 +51,6 @@ Global
 		{6F418098-0549-470D-B04D-930EAC6D80E9}.Debug|AVR.Build.0 = Debug|AVR
 		{6F418098-0549-470D-B04D-930EAC6D80E9}.Release|AVR.ActiveCfg = Release|AVR
 		{6F418098-0549-470D-B04D-930EAC6D80E9}.Release|AVR.Build.0 = Release|AVR
-		{7D2B9CF8-12E4-4618-99EB-092A29E868D1}.Debug|AVR.ActiveCfg = Debug|AVR
-		{7D2B9CF8-12E4-4618-99EB-092A29E868D1}.Debug|AVR.Build.0 = Debug|AVR
-		{7D2B9CF8-12E4-4618-99EB-092A29E868D1}.Release|AVR.ActiveCfg = Release|AVR
-		{7D2B9CF8-12E4-4618-99EB-092A29E868D1}.Release|AVR.Build.0 = Release|AVR
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

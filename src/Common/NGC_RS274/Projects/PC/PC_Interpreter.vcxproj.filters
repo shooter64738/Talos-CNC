@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="..\..\NGC_Block.cpp" />
+    <ClCompile Include="..\..\NGC_Interpreter.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\NGC_Block.h" />
+    <ClInclude Include="..\..\NGC_Errors.h" />
+    <ClInclude Include="..\..\NGC_G_Codes.h" />
+    <ClInclude Include="..\..\NGC_G_Groups.h" />
+    <ClInclude Include="..\..\NGC_Interpreter.h" />
+    <ClInclude Include="..\..\NGC_M_Codes.h" />
+    <ClInclude Include="..\..\NGC_M_Groups.h" />
+    <ClInclude Include="..\..\NGC_Parameters.h" />
+  </ItemGroup>
+</Project>

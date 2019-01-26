@@ -27,23 +27,21 @@
 #include "Planner/c_stager.h"
 #include "Planner/c_gcode_buffer.h"
 #include "Settings/c_general.h"
-#include "../../Common/NGC_RS274/NGC_Block.h"
 #include "Events/c_events.h"
+#include "Events/c_block_events.h"
 #include "Events/c_data_events.h"
 #include "Events/c_motion_events.h"
+#include "Events/c_motion_control_events.h"
 #include "Planner/Stager_Errors.h"
 #include "MotionControllerInterface/ExternalControllers/GRBL/c_Grbl.h"
-#include "Events/c_motion_control_events.h"
 #include "Status/c_status.h"
+#include "../../Common/NGC_RS274/NGC_Block.h"
 #include "../../Common/Hardware_Abstraction_Layer/c_hal.h"
 #include "../../Common/MotionControllerInterface/c_motion_controller_settings.h"
 #include "../../Common/MotionControllerInterface/c_motion_controller.h"
 #include "../../Common/Bresenham/c_Bresenham.h"
 #include "../../Common/AVR_Terminal_IO/c_lcd_display.h"
-#include "Events/c_block_events.h"
-//#include "../../EDM_Drive/Common/c_edm_driver.h"
 #include "../../Common/NGC_RS274/NGC_Interpreter.h"
-
 
 
 c_Serial c_processor::host_serial;
@@ -57,12 +55,7 @@ void c_processor::startup()
 
 	//hal must init first.
 	c_hal::initialize();
-	//if (c_hal::lcd.PNTR_INITIALIZE != NULL)
-	//{
-		//c_processor::host_serial.print_string("lcd not null\r");
-		//c_hal::lcd.PNTR_INITIALIZE();
-	//}
-	//
+
 	//This MUST be called first (especially for the ARM processors)
 	c_hal::core.PNTR_INITIALIZE != NULL ? c_hal::core.PNTR_INITIALIZE() : void();
 	c_hal::lcd.PNTR_INITIALIZE != NULL ? c_hal::lcd.PNTR_INITIALIZE() : void();
@@ -101,10 +94,10 @@ void c_processor::startup()
 #endif
 
 	/*
-	If a controller is connected the axis count for the controller will be used.
+	If a controller is connected, the axis count for the controller will be used.
 	Just in case the motion controller is not at zero when the coordinator starts up, synch positions
 	by pointing the machine position array to the controller reported position array. This way when
-	we connect to the controller and get the position data for it, the machine will aready be pointed
+	we connect to the controller and get the position data for it, the machine will already be pointed
 	to the array we set the data in.
 	*/
 	c_motion_controller_settings::position_reported = c_machine::axis_position;
@@ -116,7 +109,6 @@ void c_processor::startup()
 		//Now synch the pulse values in the HAL feedback with the pulse counts the machine is reportedly at
 		if (c_hal::feedback.PNTR_POSITION_DATA != NULL)
 		{
-
 			for (uint8_t axis_id = 0;axis_id < MACHINE_AXIS_COUNT;axis_id++)
 			{
 				c_hal::feedback.PNTR_POSITION_DATA[axis_id] = (c_machine::axis_position[axis_id] * c_motion_controller_settings::configuration_settings.steps_per_mm[axis_id]);
