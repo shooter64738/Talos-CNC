@@ -157,17 +157,21 @@
     </ToolchainSettings>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="c_processor.cpp">
+    <Compile Include="..\..\c_processor.cpp">
       <SubType>compile</SubType>
+      <Link>c_processor.cpp</Link>
     </Compile>
-    <Compile Include="c_processor.h">
+    <Compile Include="..\..\c_processor.h">
       <SubType>compile</SubType>
+      <Link>c_processor.h</Link>
     </Compile>
-    <Compile Include="c_torch_height.cpp">
+    <Compile Include="..\..\c_torch_height.cpp">
       <SubType>compile</SubType>
+      <Link>c_torch_height.cpp</Link>
     </Compile>
-    <Compile Include="c_torch_height.h">
+    <Compile Include="..\..\c_torch_height.h">
       <SubType>compile</SubType>
+      <Link>c_torch_height.h</Link>
     </Compile>
   </ItemGroup>
   <Import Project="$(AVRSTUDIO_EXE_PATH)\\Vs\\Compiler.targets" />
