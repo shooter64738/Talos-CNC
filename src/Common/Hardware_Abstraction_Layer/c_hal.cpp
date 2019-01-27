@@ -69,6 +69,11 @@ void c_hal::initialize()
 	c_hal::edm.PNTR_GET_ARC_VOLTAGE = &c_cpu_AVR_2560::edm_get_gap_voltage;
 	c_hal::edm.PNTR_INITIALIZE = &c_cpu_AVR_2560::edm_set_pulse_frequency ;
 	c_hal::edm.PNTR_SET_ARC_DRIVE_FREQUENCY = &c_cpu_AVR_2560::edm_set_pulse_frequency;
+
+	c_hal::storage.PNTR_GET_BYTE  = &c_cpu_AVR_2560::eeprom_get_byte;
+	c_hal::storage.PNTR_GET_WORD = &c_cpu_AVR_2560::eeprom_get_word;
+	c_hal::storage.PNTR_GET_DWORD = &c_cpu_AVR_2560::eeprom_get_dword;
+	c_hal::storage.PNTR_GET_FLOAT= &c_cpu_AVR_2560::eeprom_get_float;
 	#endif
 
 	#ifdef __SAM3X8E__

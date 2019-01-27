@@ -27,6 +27,8 @@
 #include "lcd\c_LcdPcf8574.h"
 #include <util\delay.h>
 #include "..\..\Bresenham\c_Bresenham.h"
+#include <avr/eeprom.h>
+
 //#include "..\..\..\Coordinator\Shared\Machine\c_machine.h"
 //#include "../../Driver/driver_pulse.h"
 //#include "../../Driver/driver_direction.h"
@@ -554,19 +556,50 @@ void c_cpu_AVR_2560::lcd_print_float(float n, uint8_t decimal_places)
 
 void c_cpu_AVR_2560::edm_initializer()
 {
-//Configure input pin for gap voltage
-//Configure output pin for pulse signal
-//Configure stepper drive/direction pins
+	//Configure input pin for gap voltage
+	//Configure output pin for pulse signal
+	//Configure stepper drive/direction pins
 }
-
 float c_cpu_AVR_2560::edm_get_gap_voltage()
 {
-//Read the gap voltage from the input pin
+	//Read the gap voltage from the input pin
 }
-
 void c_cpu_AVR_2560::edm_set_pulse_frequency()
 {
-//Pulse the output pin. Possibly drive a mosfet gate with this to control pulse frequency on the edm head
+	//Pulse the output pin. Possibly drive a mosfet gate with this to control pulse frequency on the edm head
+}
+
+void c_cpu_AVR_2560::eeprom_get_byte(uint8_t address,uint8_t *data)
+{
+	*data =  eeprom_read_byte((uint8_t*)address);
+}
+void c_cpu_AVR_2560::eeprom_get_dword(uint32_t address,uint32_t *data)
+{
+	*data =  eeprom_read_dword((uint32_t*)address);
+}
+void c_cpu_AVR_2560::eeprom_get_float(float address,float *data)
+{
+	*data =  eeprom_read_float((float*)address);
+}
+void c_cpu_AVR_2560::eeprom_get_word(uint16_t address,uint16_t *data)
+{
+	*data =  eeprom_read_word((uint16_t*)address);
+}
+void c_cpu_AVR_2560::eeprom_set_byte(uint8_t *address,uint8_t data)
+{
+	eeprom_update_byte(address,data);
+}
+void c_cpu_AVR_2560::eeprom_set_dword(uint32_t *address,uint32_t data)
+{
+	eeprom_update_dword(address,data);
+}
+void c_cpu_AVR_2560::eeprom_set_float(float *address,float data)
+{
+	eeprom_update_float(address,data);
+}
+void c_cpu_AVR_2560::eeprom_set_word(uint16_t *address,uint16_t data)
+{
+	eeprom_update_word(address,data);
 }
 
 //private methods

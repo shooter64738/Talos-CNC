@@ -146,6 +146,20 @@ class c_hal
 		void(*PNTR_SET_DIGITAL)(uint8_t);
 	}s_input_function_pointers;
 	static s_input_function_pointers io;
+
+	typedef struct
+	{
+		void(*PNTR_INITIALIZE)(void);
+		void(*PNTR_GET_BYTE)(uint8_t,uint8_t*);
+		void(*PNTR_GET_WORD)(uint16_t,uint16_t*);
+		void(*PNTR_GET_DWORD)(uint32_t,uint32_t*);
+		void(*PNTR_GET_FLOAT)(float,float*);
+		void(*PNTR_SET_BYTE)(uint8_t*,uint8_t*);
+		void(*PNTR_SET_WORD)(uint16_t*,uint16_t*);
+		void(*PNTR_SET_DWORD)(uint32_t*,uint32_t*);
+		void(*PNTR_SET_FLOAT)(float*,float);
+	}s_storage_function_pointers;
+	static s_storage_function_pointers storage;
 	
 	public:
 	protected:

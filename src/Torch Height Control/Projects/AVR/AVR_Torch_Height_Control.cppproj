@@ -157,6 +157,14 @@
     </ToolchainSettings>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="..\..\c_configuration.cpp">
+      <SubType>compile</SubType>
+      <Link>c_configuration.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\c_configuration.h">
+      <SubType>compile</SubType>
+      <Link>c_configuration.h</Link>
+    </Compile>
     <Compile Include="..\..\c_processor.cpp">
       <SubType>compile</SubType>
       <Link>c_processor.cpp</Link>

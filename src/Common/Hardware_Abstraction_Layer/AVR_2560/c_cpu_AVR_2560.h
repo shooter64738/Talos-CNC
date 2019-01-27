@@ -102,6 +102,17 @@ static s_Buffer rxBuffer[];
 	static float edm_get_gap_voltage();
 	static void edm_set_pulse_frequency();
 
+	static void eeprom_get_byte(uint8_t address,uint8_t *data);
+	static void eeprom_get_word(uint16_t address,uint16_t *data);
+	static void eeprom_get_dword(uint32_t address,uint32_t *data);
+	static void eeprom_get_float(float address,float *data);
+	
+	static void eeprom_set_byte(uint8_t *address,uint8_t data);
+	static void eeprom_set_word(uint16_t *address,uint16_t data);
+	static void eeprom_set_dword(uint32_t *address,uint32_t data);
+	static void eeprom_set_float(float *address,float data);
+	
+
 	static void _incoming_serial_isr(uint8_t Port, char Byte);
 protected:
 private:

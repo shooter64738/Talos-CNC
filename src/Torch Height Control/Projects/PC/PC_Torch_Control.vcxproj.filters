@@ -3,9 +3,11 @@
   <ItemGroup>
     <ClCompile Include="..\..\c_processor.cpp" />
     <ClCompile Include="..\..\c_torch_height.cpp" />
+    <ClCompile Include="..\..\c_configuration.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\c_processor.h" />
     <ClInclude Include="..\..\c_torch_height.h" />
+    <ClInclude Include="..\..\c_configuration.h" />
   </ItemGroup>
 </Project>
