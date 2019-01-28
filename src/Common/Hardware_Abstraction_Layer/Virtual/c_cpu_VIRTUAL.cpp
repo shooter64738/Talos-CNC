@@ -136,6 +136,39 @@ void c_cpu_VIRTUAL::edm_set_pulse_frequency()
 	//Pulse the output pin. Possibly drive a mosfet gate with this to control pulse frequency on the edm head
 }
 
+void c_cpu_VIRTUAL::eeprom_get_byte(uint8_t address, uint8_t *data)
+{
+	*data = 123;
+}
+void c_cpu_VIRTUAL::eeprom_get_dword(uint32_t address, uint32_t *data)
+{
+	//*data = eeprom_read_dword((uint32_t*)address);
+}
+void c_cpu_VIRTUAL::eeprom_get_float(float address, float *data)
+{
+	//*data = eeprom_read_float((float*)address);
+}
+void c_cpu_VIRTUAL::eeprom_get_word(uint16_t address, uint16_t *data)
+{
+	//*data = eeprom_read_word((uint16_t*)address);
+}
+void c_cpu_VIRTUAL::eeprom_set_byte(uint8_t *address, uint8_t data)
+{
+	//eeprom_update_byte(address, data);
+}
+void c_cpu_VIRTUAL::eeprom_set_dword(uint32_t *address, uint32_t data)
+{
+	//eeprom_update_dword(address, data);
+}
+void c_cpu_VIRTUAL::eeprom_set_float(float *address, float data)
+{
+	//eeprom_update_float(address, data);
+}
+void c_cpu_VIRTUAL::eeprom_set_word(uint16_t *address, uint16_t data)
+{
+	//eeprom_update_word(address, data);
+}
+
 // default constructor
 //c_cpu_VIRTUAL::c_cpu_VIRTUAL()
 //{

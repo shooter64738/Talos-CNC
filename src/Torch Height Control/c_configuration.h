@@ -11,8 +11,6 @@
 #include <stdint.h>
 namespace Plasma_Control
 {
-	class c_configuration
-	{
 	enum class e_functions:uint8_t
 	{
 		LOW_LIMIT_SWITCH,
@@ -22,8 +20,13 @@ namespace Plasma_Control
 		CUT,
 		SPEED_CONTROL
 	};
+	class c_configuration
+	{
+		public:
+
+		
 		//variables
-	public:
+		
 		struct s_address
 		{
 			int8_t port;
@@ -33,15 +36,15 @@ namespace Plasma_Control
 		static s_address input;
 		static s_address output;
 
-	protected:
-	private:
+		protected:
+		private:
 
 		//functions
-	public:
+		public:
 		static void initialize();
 
-	protected:
-	private:
+		protected:
+		private:
 		c_configuration(const c_configuration &c);
 		c_configuration& operator=(const c_configuration &c);
 		c_configuration();

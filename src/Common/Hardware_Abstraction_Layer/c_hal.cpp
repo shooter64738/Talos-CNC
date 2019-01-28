@@ -20,6 +20,7 @@
 
 #include "c_hal.h"
 #include "..\..\talos.h"
+#include "..\..\Coordinator\Shared\Settings\c_general.h"
 
 /*
 This might be confusing to some, especially if you are not familiar with function pointers.
@@ -35,11 +36,52 @@ c_hal::s_comm_function_pointers c_hal::comm;
 c_hal::s_feedback_function_pointers c_hal::feedback;
 c_hal::s_lcd_function_pointers c_hal::lcd;
 c_hal::s_edm_function_pointers c_hal::edm;
+c_hal::s_storage_function_pointers c_hal::storage;
 
+
+void c_hal::initialize(Settings::e_machine_types machine_type, Settings::e_machine_sub_types sub_type)
+{
+	c_hal::initialize();
+	switch (machine_type)
+	{
+		case Settings::e_machine_types::MILLING:
+	{
+		//Nothing HAL specific more milling yet
+		break;
+	}
+	case Settings::e_machine_types::PLASMA:
+	{
+		switch (sub_type)
+		{
+		case Settings::e_machine_sub_types::TORCH_HEIGHT:
+		{
+			//for torch height control, we need to do some specific HAL changes
+			/*
+			First, there will be no feedback as there is in a typical cnc application. But the pin change interrupts will be used to
+			monitor limit pins, and material touch off.
+			*/
+
+			//This will give us access to a total of 16 pin change inputs. These are digital pins. Map them to the input functions.
+#ifdef __AVR_ATmega2560__
+			c_cpu_AVR_2560::PNTR_INTERNAL_PCINT0 = &c_cpu_AVR_2560::feedback_pin0_change_isr;
+			c_cpu_AVR_2560::PNTR_INTERNAL_PCINT2 = &c_cpu_AVR_2560::feedback_pin2_change_isr;
+#endif
+			break;
+		}
+		default:
+			break;
+		}
+
+		break;
+	}
+	default:
+		break;
+	}
+}
 
 void c_hal::initialize()
 {
-	#ifdef __AVR_ATmega2560__
+#ifdef __AVR_ATmega2560__
 
 	//c_hal::core.PNTR_BASE = &cpu_AVR_2560::initialize;
 	c_hal::core.PNTR_INITIALIZE = &c_cpu_AVR_2560::core_initializer;
@@ -62,21 +104,24 @@ void c_hal::initialize()
 	c_hal::feedback.PNTR_INITIALIZE = &c_cpu_AVR_2560::feedback_initializer;
 	c_hal::feedback.PNTR_IS_DIRTY = &c_cpu_AVR_2560::feedback_dirty;
 	c_hal::feedback.PNTR_POSITION_DATA = c_cpu_AVR_2560::Axis_Positions;
-	
+	//These are default function mappings, but will/can be reconfigured depending on machine type.
+	c_cpu_AVR_2560::PNTR_INTERNAL_PCINT2 = &c_cpu_AVR_2560::feedback_pulse_isr;
+	c_cpu_AVR_2560::PNTR_INTERNAL_PCINT0 = &c_cpu_AVR_2560::feedback_direction_isr;
+
 	c_hal::lcd.PNTR_UPDATE_AXIS_DISPLAY = c_cpu_AVR_2560::lcd_update_axis;
 	c_hal::lcd.PNTR_INITIALIZE = c_cpu_AVR_2560::lcd_initializer;
 
 	c_hal::edm.PNTR_GET_ARC_VOLTAGE = &c_cpu_AVR_2560::edm_get_gap_voltage;
-	c_hal::edm.PNTR_INITIALIZE = &c_cpu_AVR_2560::edm_set_pulse_frequency ;
+	c_hal::edm.PNTR_INITIALIZE = &c_cpu_AVR_2560::edm_set_pulse_frequency;
 	c_hal::edm.PNTR_SET_ARC_DRIVE_FREQUENCY = &c_cpu_AVR_2560::edm_set_pulse_frequency;
 
-	c_hal::storage.PNTR_GET_BYTE  = &c_cpu_AVR_2560::eeprom_get_byte;
+	c_hal::storage.PNTR_GET_BYTE = &c_cpu_AVR_2560::eeprom_get_byte;
 	c_hal::storage.PNTR_GET_WORD = &c_cpu_AVR_2560::eeprom_get_word;
 	c_hal::storage.PNTR_GET_DWORD = &c_cpu_AVR_2560::eeprom_get_dword;
-	c_hal::storage.PNTR_GET_FLOAT= &c_cpu_AVR_2560::eeprom_get_float;
-	#endif
+	c_hal::storage.PNTR_GET_FLOAT = &c_cpu_AVR_2560::eeprom_get_float;
+#endif
 
-	#ifdef __SAM3X8E__
+#ifdef __SAM3X8E__
 
 	//c_hal::core.PNTR_BASE = &c_cpu_ARM_SAM3X8E::initialize;
 	c_hal::core.PNTR_INITIALIZE = &c_cpu_ARM_SAM3X8E::core_initializer;
@@ -97,9 +142,9 @@ void c_hal::initialize()
 	c_hal::feedback.PNTR_INITIALIZE = &c_cpu_ARM_SAM3X8E::feedback_initializer;
 	//c_hal::feedback.PNTR_IS_DIRTY = &c_cpu_ARM_SAM3X8E::feedback_dirty;
 	c_hal::feedback.PNTR_POSITION_DATA = c_cpu_ARM_SAM3X8E::Axis_Positions;
-	#endif
+#endif
 
-	#ifdef MSVC
+#ifdef MSVC
 
 	//c_hal::core.PNTR_BASE = &cpu_AVR_2560::initialize;
 	//c_hal::core.PNTR_INITIALIZE = &c_cpu_VIRTUAL::core_initializer;
@@ -117,13 +162,15 @@ void c_hal::initialize()
 	c_hal::comm.PNTR_SERIAL_TX = &c_cpu_VIRTUAL::serial_send;
 	c_hal::comm.PNTR_SERIAL_RX_BUFFER = c_cpu_VIRTUAL::rxBuffer;
 	c_hal::comm.PNTR_VIRTUAL_BUFFER_WRITE = &c_cpu_VIRTUAL::add_to_buffer;
-	c_hal::feedback.PNTR_PULSE_ISR =  & c_cpu_VIRTUAL::feedback_pulse_isr;
+	c_hal::feedback.PNTR_PULSE_ISR = &c_cpu_VIRTUAL::feedback_pulse_isr;
 	//c_hal::feedback.PNTR_POSITION_DATA = c_cpu_VIRTUAL::Axis_Positions;
 
 	c_hal::edm.PNTR_GET_ARC_VOLTAGE = &c_cpu_VIRTUAL::edm_get_gap_voltage;
 	c_hal::edm.PNTR_INITIALIZE = &c_cpu_VIRTUAL::edm_set_pulse_frequency;
 	c_hal::edm.PNTR_SET_ARC_DRIVE_FREQUENCY = &c_cpu_VIRTUAL::edm_set_pulse_frequency;
-	#endif
+
+	c_hal::storage.PNTR_GET_BYTE = &c_cpu_VIRTUAL::eeprom_get_byte;
+#endif
 
 }
 

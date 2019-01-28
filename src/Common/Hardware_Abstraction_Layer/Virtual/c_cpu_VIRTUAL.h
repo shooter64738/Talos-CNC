@@ -76,6 +76,16 @@ public:
 	static void edm_set_pulse_frequency();
 
 	static void driver_drive();
+
+	static void eeprom_get_byte(uint8_t address, uint8_t *data);
+	static void eeprom_get_word(uint16_t address, uint16_t *data);
+	static void eeprom_get_dword(uint32_t address, uint32_t *data);
+	static void eeprom_get_float(float address, float *data);
+
+	static void eeprom_set_byte(uint8_t *address, uint8_t data);
+	static void eeprom_set_word(uint16_t *address, uint16_t data);
+	static void eeprom_set_dword(uint32_t *address, uint32_t data);
+	static void eeprom_set_float(float *address, float data);
 	
 protected:
 private:

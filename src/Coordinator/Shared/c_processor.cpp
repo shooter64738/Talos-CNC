@@ -42,6 +42,7 @@
 #include "../../Common/Bresenham/c_Bresenham.h"
 #include "../../Common/AVR_Terminal_IO/c_lcd_display.h"
 #include "../../Common/NGC_RS274/NGC_Interpreter.h"
+#include "../../Torch Height Control/c_configuration.h"
 
 
 c_Serial c_processor::host_serial;
@@ -56,6 +57,8 @@ void c_processor::startup()
 	//hal must init first.
 	c_hal::initialize();
 
+	//Plasma_Control::c_configuration::initialize();
+
 	//This MUST be called first (especially for the ARM processors)
 	c_hal::core.PNTR_INITIALIZE != NULL ? c_hal::core.PNTR_INITIALIZE() : void();
 	c_hal::lcd.PNTR_INITIALIZE != NULL ? c_hal::lcd.PNTR_INITIALIZE() : void();
@@ -66,7 +69,7 @@ void c_processor::startup()
 
 	Settings::c_general::initialize();
 
-	if (Settings::c_general::machine.machine_type == Settings::c_general::e_machine_types::EDM)
+	if (Settings::c_general::machine.machine_type == Settings::e_machine_types::EDM)
 	{
 		//c_edm_driver::initialize();
 	}

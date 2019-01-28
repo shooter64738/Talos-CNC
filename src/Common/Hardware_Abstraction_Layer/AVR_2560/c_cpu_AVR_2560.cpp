@@ -43,7 +43,10 @@ int32_t c_cpu_AVR_2560::Axis_Positions[MACHINE_AXIS_COUNT];
 s_Buffer c_cpu_AVR_2560::rxBuffer[COM_PORT_COUNT];
 bool c_cpu_AVR_2560::feedback_is_dirty=false;
 bool c_cpu_AVR_2560::timer_busy = false;
+uint8_t *c_cpu_AVR_2560::driver_lock=NULL;
 
+void (*c_cpu_AVR_2560::PNTR_INTERNAL_PCINT0)(void);
+void (*c_cpu_AVR_2560::PNTR_INTERNAL_PCINT2)(void);
 
 /*
 All cpu specific functions should take place in here. There should be no logic
@@ -111,10 +114,18 @@ void c_cpu_AVR_2560::driver_drive()
 {
 	if (c_cpu_AVR_2560::timer_busy)
 	return;
-	c_Bresenham::step();
+	//c_Bresenham::step();
 	//c_cpu_AVR_2560::driver_step++;
-	STEP_PORT = (1<<X_STEP_BIT);
+	STEP_PORT = (1<<c_hal::driver::PNTR_STEPPER.Step_Pins);
 	c_cpu_AVR_2560::timer_busy = true;
+	if (c_hal::driver::PNTR_STEPPER.Coninuous_Motion == 0)
+	{
+		c_hal::driver::PNTR_STEPPER.Step_Count--;
+		if (c_hal::driver::PNTR_STEPPER.Step_Count<=0)
+		{
+			c_cpu_AVR_2560::driver_timer_deactivate(); //<--turn off this timer to stop stepper motions
+		}
+	}
 	//if (c_speed::busy) return;
 	//set direction
 	//DIRECTION_PORT = (DIRECTION_PORT & ~DIRECTION_MASK) | (c_speed::executing_profile->direction_bits & DIRECTION_MASK);
@@ -267,6 +278,42 @@ void c_cpu_AVR_2560::feedback_pulse_isr()
 	}
 	c_cpu_AVR_2560::feedback_is_dirty = true;
 	return;
+}
+void c_cpu_AVR_2560::feedback_pin0_change_isr()
+{
+	uint8_t port_value = DIRECTION_INPUT_PINS;
+
+	int8_t bit_mask = 1;
+	//for (uint8_t bit_to_check =0; bit_to_check < 8;bit_to_check ++)
+	//{
+	//if ((bit_mask & port_value))
+	//{
+	//c_cpu_AVR_2560::Axis_Incrimenter[bit_to_check]   = -1;
+	//}
+	////Shift left and see if the next bit is set.
+	//bit_mask = bit_mask << 1;
+	//}
+	//return;
+};
+void c_cpu_AVR_2560::feedback_pin2_change_isr()
+{
+
+	//It might save a little time on the isr, if we return when all bits are 0
+	uint8_t port_value = PULSE_INPUT_PINS;
+	if (port_value ==0){return;}
+
+	int8_t bit_mask = 1;
+	//for (uint8_t bit_to_check =0; bit_to_check < 8;bit_to_check ++)
+	//{
+	//if ((bit_mask & port_value))
+	//{
+	//c_cpu_AVR_2560::Axis_Positions[bit_to_check]+=Axis_Incrimenter[bit_to_check];
+	//}
+	////Shift left and see if the next bit is set.
+	//bit_mask = bit_mask << 1;
+	//
+	//}
+	//return;
 }
 
 void c_cpu_AVR_2560::serial_initializer(uint8_t Port, uint32_t BaudRate)
@@ -579,7 +626,7 @@ void c_cpu_AVR_2560::eeprom_get_dword(uint32_t address,uint32_t *data)
 }
 void c_cpu_AVR_2560::eeprom_get_float(float address,float *data)
 {
-	*data =  eeprom_read_float((float*)address);
+	//*data =  eeprom_read_float((float*)address);
 }
 void c_cpu_AVR_2560::eeprom_get_word(uint16_t address,uint16_t *data)
 {
@@ -637,14 +684,16 @@ ISR(PCINT2_vect)
 {
 	//ISR_dirty=true;
 	//when the interrupt fires we call the static method inside the class.
-	c_cpu_AVR_2560::feedback_pulse_isr();
+	//c_cpu_AVR_2560::feedback_pulse_isr();
+	c_cpu_AVR_2560::PNTR_INTERNAL_PCINT2 != NULL ? c_cpu_AVR_2560::PNTR_INTERNAL_PCINT2() : void();
 };
 
 ISR(PCINT0_vect)
 {
 	
 	//when the interrupt fires we call the static method inside the class.
-	c_cpu_AVR_2560::feedback_direction_isr();
+	//c_cpu_AVR_2560::feedback_direction_isr();
+	c_cpu_AVR_2560::PNTR_INTERNAL_PCINT0 != NULL ? c_cpu_AVR_2560::PNTR_INTERNAL_PCINT0() : void();
 };
 
 #ifdef USART_RX_vect

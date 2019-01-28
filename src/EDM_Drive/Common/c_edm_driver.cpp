@@ -44,7 +44,7 @@ float c_edm_driver::Get_ArcVoltage()
 	return 0;
 }
 
-//Locate the part edge/top. Whatever the starting postion is
+//Locate the part edge/top. Whatever the starting position is
 void c_edm_driver::Find_Part_Zero()
 {
 
@@ -53,8 +53,8 @@ void c_edm_driver::Find_Part_Zero()
 //For plunge edm, this causes the tool to retract some distance for flushing
 void c_edm_driver::Dither()
 {
-	c_hal::driver.PNTR_STEPPER.PNTR_DIRECTIONS = 1;
-	c_hal::driver.PNTR_STEPPER.PNTR_STEPS = 1;
+	c_hal::driver.PNTR_STEPPER.Step_Directions = 1;
+	c_hal::driver.PNTR_STEPPER.Step_Count = 1;
 	c_hal::driver.PNTR_DRIVE();
 }
 

@@ -34,24 +34,27 @@
 
 namespace Settings
 {
+	
+	enum class e_machine_types :int8_t
+	{
+		PLASMA,
+		TURNING,
+		MILLING,
+		EDM
+	};
 
+	enum class e_machine_sub_types :int8_t
+	{
+		GANTRY, SLANT_BED, RF45, ROUTER, WIRE, PLUNGER, TORCH_HEIGHT
+	};
 	class c_general
 	{
-		public:
-		enum class e_machine_types:int8_t
-		{
-			PLASMA,TURNING,MILLING,EDM
-		};
-
-		enum class e_machine_sub_types:int8_t
-		{
-			GANTRY,SLANT_BED,RF45,ROUTER,WIRE,PLUNGER
-		};
+	public:
 
 		/*
 		need to come up with a clean way to group settings so they are easier to read and follow.
 		*/
-		
+
 		struct s_machine_settings
 		{
 			float interpolation_error_distance; //<--how far out of synch can interpolation become before faulting?
@@ -63,7 +66,7 @@ namespace Settings
 
 		//Settings specific to milling
 		static Settings::c_Mill MILLING;
-		
+
 		//Settings specific to electrical discharge machining (EDM)
 		static Settings::c_Edm EDM;
 
@@ -72,10 +75,10 @@ namespace Settings
 
 		//Settings specific to lathe Turning
 		static Settings::c_Turn TURNING;
-		
+
 		static void initialize();
-		protected:
-		private:
+	protected:
+	private:
 	};
 };
 #endif //__C_SETTINGS_H__

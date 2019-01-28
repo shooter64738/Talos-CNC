@@ -154,6 +154,9 @@
     <ProjectReference Include="..\..\EDM_Drive\PC_EDM_Drive\PC_EDM_Drive.vcxproj">
       <Project>{ff015cc6-d175-4a70-9ef8-0ce456f678ae}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\..\Torch Height Control\Projects\PC\PC_Torch_Control.vcxproj">
+      <Project>{7441f880-c918-411f-bc16-17bf9f62d426}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

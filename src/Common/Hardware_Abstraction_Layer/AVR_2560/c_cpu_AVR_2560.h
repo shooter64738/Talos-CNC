@@ -82,12 +82,18 @@ static s_Buffer rxBuffer[];
 	static void driver_reset();
 	static void driver_set_prescaler(uint16_t pre_scaler);
 	static void driver_dset_timer_rate(uint16_t delay);
+	static uint8_t *driver_lock;
 	
 	static void feedback_initializer();
 	static void feedback_direction_isr();
 	static void feedback_pulse_isr();
+	static void feedback_pin0_change_isr();
+	static void feedback_pin2_change_isr();
 	static bool feedback_dirty();
 
+	static void (*PNTR_INTERNAL_PCINT0)(void);
+	static void (*PNTR_INTERNAL_PCINT2)(void);
+	
 	static void serial_initializer(uint8_t Port, uint32_t BaudRate);
 	static void serial_send(uint8_t Port, char byte);
 

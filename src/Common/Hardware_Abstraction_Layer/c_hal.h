@@ -33,6 +33,7 @@
 #ifdef __SAM3X8E__
 #include "ARM_SAM3X8E/c_cpu_ARM_SAM3X8E.h"
 #endif
+#include "../../Coordinator/Shared/Settings/c_general.h"
 
 class c_hal
 {
@@ -44,6 +45,7 @@ class c_hal
 	
 	public:
 	static void initialize();
+	static void initialize(Settings::e_machine_types, Settings::e_machine_sub_types sub_type);
 	//core struct refers to actions that give basic function
 	typedef struct
 	{
@@ -95,8 +97,10 @@ class c_hal
 		void(*PNTR_SET_TIMER_RATE)(uint16_t);
 		struct s_pntr_motion
 		{
-			uint32_t PNTR_STEPS;
-			uint8_t PNTR_DIRECTIONS;
+			uint8_t Step_Pins; //<--which pins on the port will be stepping
+			uint8_t Step_Directions; //<--directions to step
+			uint8_t Coninuous_Motion; //<--If set to 1, stepper will move until stopped for another reason.
+			uint8_t Step_Count; //<-- how many steps are we moving. 
 		};
 		s_pntr_motion PNTR_STEPPER;
 	}s_driver_function_pointers;
@@ -115,6 +119,8 @@ class c_hal
 		
 	}s_feedback_function_pointers;
 	static s_feedback_function_pointers feedback;
+	static void (*PNTR_INTERNAL_PCINT0)(void);
+	static void (*PNTR_INTERNAL_PCINT2)(void);
 	
 	//lcd struct refers to anything related to lcd display
 	typedef struct
