@@ -18,7 +18,7 @@
 *  along with Talos.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifdef __AVR_ATmega2560__//<--This will stop the multiple ISR definition error 
+#ifdef __AVR_ATmega2560__//<--This will stop the multiple ISR definition error
 
 #ifndef __C_CPU_AVR_2560_H__
 #define __C_CPU_AVR_2560_H__
@@ -55,20 +55,20 @@
 
 class c_cpu_AVR_2560
 {
-//variables
-public:
-protected:
-private:
-static bool timer_busy;
+	//variables
+	public:
+	protected:
+	private:
+	static bool timer_busy;
 
-//functions
-public:
-static s_Buffer rxBuffer[];
+	//functions
+	public:
+	static s_Buffer rxBuffer[];
 	//These may need to be volatile
 	static int8_t Axis_Incrimenter[MACHINE_AXIS_COUNT];
 	static int32_t Axis_Positions[MACHINE_AXIS_COUNT];
 	static bool feedback_is_dirty;
-		
+	
 	public:
 	static void core_initializer();
 	static void core_start_interrupts();
@@ -78,11 +78,22 @@ static s_Buffer rxBuffer[];
 	static void driver_timer_initializer();
 	static void driver_timer_deactivate();
 	static void driver_timer_activate();
+	static uint8_t driver_aux_controller(uint8_t check_mask);
 	static void driver_drive();
 	static void driver_reset();
 	static void driver_set_prescaler(uint16_t pre_scaler);
 	static void driver_dset_timer_rate(uint16_t delay);
 	static uint8_t *driver_lock;
+	struct s_pntr_motion
+	{
+		uint8_t Step_Pins; //<--which pins on the port will be stepping
+		uint8_t Step_Directions; //<--directions to step
+		uint8_t Coninuous_Motion; //<--If set to 1, stepper will move until stopped for another reason.
+		uint32_t Step_Count; //<-- how many steps are we moving.
+	};
+
+	static s_pntr_motion PNTR_STEPPER;
+	static void driver_configure_step_data(uint8_t Pins,uint8_t Directions,uint8_t Continuous,uint32_t Count);
 	
 	static void feedback_initializer();
 	static void feedback_direction_isr();
@@ -120,10 +131,10 @@ static s_Buffer rxBuffer[];
 	
 
 	static void _incoming_serial_isr(uint8_t Port, char Byte);
-protected:
-private:
-//c_cpu_AVR_2560();
-//~c_cpu_AVR_2560();
+	protected:
+	private:
+	//c_cpu_AVR_2560();
+	//~c_cpu_AVR_2560();
 	//c_cpu_AVR_2560( const c_cpu_AVR_2560 &c );
 	//c_cpu_AVR_2560& operator=( const c_cpu_AVR_2560 &c );
 

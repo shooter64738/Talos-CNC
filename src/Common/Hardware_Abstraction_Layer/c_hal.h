@@ -95,14 +95,8 @@ class c_hal
 		void (*PNTR_RESET)(void);
 		void(*PNTR_SET_PRESCALER)(uint16_t);
 		void(*PNTR_SET_TIMER_RATE)(uint16_t);
-		struct s_pntr_motion
-		{
-			uint8_t Step_Pins; //<--which pins on the port will be stepping
-			uint8_t Step_Directions; //<--directions to step
-			uint8_t Coninuous_Motion; //<--If set to 1, stepper will move until stopped for another reason.
-			uint8_t Step_Count; //<-- how many steps are we moving. 
-		};
-		s_pntr_motion PNTR_STEPPER;
+		uint8_t(*PNTR_AUX_DRIVE_CONTROLER)(uint8_t);
+		void (*PNTR_CONFIGURE_STEPPER)(uint8_t,uint8_t,uint8_t,uint32_t);
 	}s_driver_function_pointers;
 	static s_driver_function_pointers driver;
 

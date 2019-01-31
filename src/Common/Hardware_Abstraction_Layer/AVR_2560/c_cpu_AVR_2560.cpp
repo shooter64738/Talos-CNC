@@ -28,15 +28,7 @@
 #include <util\delay.h>
 #include "..\..\Bresenham\c_Bresenham.h"
 #include <avr/eeprom.h>
-
-//#include "..\..\..\Coordinator\Shared\Machine\c_machine.h"
-//#include "../../Driver/driver_pulse.h"
-//#include "../../Driver/driver_direction.h"
-//#include "../../Driver/driver_enable.h"
-//#include "../../../Talos.h"
-//#include "../../../c_processor.h"
-//#include "../../../MotionControllerInterface/c_motion_controller.h"
-//#include "../../../Machine/c_machine.h"
+#include "..\c_hal.h"
 
 int8_t c_cpu_AVR_2560::Axis_Incrimenter[MACHINE_AXIS_COUNT];
 int32_t c_cpu_AVR_2560::Axis_Positions[MACHINE_AXIS_COUNT];
@@ -44,6 +36,7 @@ s_Buffer c_cpu_AVR_2560::rxBuffer[COM_PORT_COUNT];
 bool c_cpu_AVR_2560::feedback_is_dirty=false;
 bool c_cpu_AVR_2560::timer_busy = false;
 uint8_t *c_cpu_AVR_2560::driver_lock=NULL;
+c_cpu_AVR_2560::s_pntr_motion c_cpu_AVR_2560::PNTR_STEPPER;
 
 void (*c_cpu_AVR_2560::PNTR_INTERNAL_PCINT0)(void);
 void (*c_cpu_AVR_2560::PNTR_INTERNAL_PCINT2)(void);
@@ -110,18 +103,28 @@ void c_cpu_AVR_2560::driver_timer_activate()
 {
 	TIMSK1 |= (1 << OCIE1A);
 }
+/*
+When the stepper drive timer is in a state (presumably on) this function CAN be called via pointer and configured to
+stop the stepper timer. This can happen on a pin change, a timer interval, or called via main loop. Alternately it
+can also be called to turn the drive timer off (stopping the stepper motor) as well.
+*/
+uint8_t c_cpu_AVR_2560::driver_aux_controller(uint8_t check_mask)
+{
+	
+}
+
 void c_cpu_AVR_2560::driver_drive()
 {
 	if (c_cpu_AVR_2560::timer_busy)
 	return;
 	//c_Bresenham::step();
 	//c_cpu_AVR_2560::driver_step++;
-	STEP_PORT = (1<<c_hal::driver::PNTR_STEPPER.Step_Pins);
+	STEP_PORT = (1<<c_cpu_AVR_2560::PNTR_STEPPER.Step_Pins);
 	c_cpu_AVR_2560::timer_busy = true;
-	if (c_hal::driver::PNTR_STEPPER.Coninuous_Motion == 0)
+	if (c_cpu_AVR_2560::PNTR_STEPPER.Coninuous_Motion == 0)
 	{
-		c_hal::driver::PNTR_STEPPER.Step_Count--;
-		if (c_hal::driver::PNTR_STEPPER.Step_Count<=0)
+		c_cpu_AVR_2560::PNTR_STEPPER.Step_Count--;
+		if (c_cpu_AVR_2560::PNTR_STEPPER.Step_Count<=0)
 		{
 			c_cpu_AVR_2560::driver_timer_deactivate(); //<--turn off this timer to stop stepper motions
 		}
@@ -186,6 +189,14 @@ void c_cpu_AVR_2560::driver_set_prescaler(uint16_t pre_scaler)
 void c_cpu_AVR_2560::driver_dset_timer_rate(uint16_t delay_period)
 {
 	OCR1A = delay_period;
+}
+void c_cpu_AVR_2560::driver_configure_step_data(uint8_t Pins,uint8_t Directions,uint8_t Continuous,uint32_t Count)
+{
+
+	c_cpu_AVR_2560::PNTR_STEPPER.Coninuous_Motion = Continuous;
+	c_cpu_AVR_2560::PNTR_STEPPER.Step_Count = Count;
+	c_cpu_AVR_2560::PNTR_STEPPER.Step_Directions = Directions;
+	c_cpu_AVR_2560::PNTR_STEPPER.Step_Pins = Pins;
 }
 
 bool c_cpu_AVR_2560::feedback_dirty()

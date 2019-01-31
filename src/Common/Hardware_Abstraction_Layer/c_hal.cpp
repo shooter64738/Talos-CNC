@@ -96,6 +96,7 @@ void c_hal::initialize()
 	c_hal::driver.PNTR_DRIVE = &c_cpu_AVR_2560::driver_drive;
 	c_hal::driver.PNTR_SET_PRESCALER = &c_cpu_AVR_2560::driver_set_prescaler;
 	c_hal::driver.PNTR_SET_TIMER_RATE = &c_cpu_AVR_2560::driver_dset_timer_rate;
+	c_hal::driver.PNTR_CONFIGURE_STEPPER = &c_cpu_AVR_2560::driver_configure_step_data;
 
 	c_hal::comm.PNTR_INITIALIZE = &c_cpu_AVR_2560::serial_initializer;
 	c_hal::comm.PNTR_SERIAL_TX = &c_cpu_AVR_2560::serial_send;

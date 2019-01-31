@@ -81,6 +81,7 @@
     <ClCompile Include="..\..\Common\MotionControllerInterface\c_motion_controller.cpp" />
     <ClCompile Include="..\..\Common\MotionControllerInterface\c_motion_controller_settings.cpp" />
     <ClCompile Include="..\..\Common\Serial\c_Serial.cpp" />
+    <ClCompile Include="..\..\Spindle\c_spindle.cpp" />
     <ClCompile Include="..\Shared\c_processor.cpp" />
     <ClCompile Include="..\Shared\Events\c_block_events.cpp" />
     <ClCompile Include="..\Shared\Events\c_data_events.cpp" />
@@ -115,6 +116,7 @@
     <ClInclude Include="..\..\helpers.h" />
     <ClInclude Include="..\..\MSVC++.h" />
     <ClInclude Include="..\..\numeric_converters.h" />
+    <ClInclude Include="..\..\Spindle\c_spindle.h" />
     <ClInclude Include="..\..\std_types.h" />
     <ClInclude Include="..\..\Talos.h" />
     <ClInclude Include="..\Shared\c_processor.h" />
@@ -150,9 +152,6 @@
     </ProjectReference>
     <ProjectReference Include="..\..\Common\NGC_RS274\Projects\PC\PC_Interpreter.vcxproj">
       <Project>{d8cd0074-2e2a-4957-a3f7-a3bebcf704e4}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\EDM_Drive\PC_EDM_Drive\PC_EDM_Drive.vcxproj">
-      <Project>{ff015cc6-d175-4a70-9ef8-0ce456f678ae}</Project>
     </ProjectReference>
     <ProjectReference Include="..\..\Torch Height Control\Projects\PC\PC_Torch_Control.vcxproj">
       <Project>{7441f880-c918-411f-bc16-17bf9f62d426}</Project>

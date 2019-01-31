@@ -24,7 +24,7 @@
 #ifndef C_EDM_H_
 #define C_EDM_H_
 
-#include "..\..\Talos.h"
+#include "..\Talos.h"
 
 class c_edm_driver
 {

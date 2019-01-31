@@ -43,7 +43,7 @@
 #include "../../Common/AVR_Terminal_IO/c_lcd_display.h"
 #include "../../Common/NGC_RS274/NGC_Interpreter.h"
 #include "../../Torch Height Control/c_configuration.h"
-
+#include "../../Spindle/c_spindle.h"
 
 c_Serial c_processor::host_serial;
 c_Serial c_processor::controller_serial;
@@ -53,7 +53,18 @@ c_Bresenham bres;
 //If running this on a pc through microsoft visual C++, uncomment the MSVC define in Talos.h and recompile.
 void c_processor::startup()
 {
-
+	c_spindle::u_spindle_data tdata;
+	memset(tdata.stream, 0, sizeof(c_spindle::Spindle_Data.stream));
+	tdata.s_spindle_detail.direction = 1;
+	tdata.s_spindle_detail.rpm = 1234;
+	tdata.s_spindle_detail.state = 1;
+	
+	for (uint8_t i = 0; i<sizeof(tdata.stream) - sizeof(tdata.s_spindle_detail.check_sum); i++)
+	{
+		tdata.s_spindle_detail.check_sum += tdata.stream[i];
+	}
+	
+	c_spindle::ReadStream(tdata.stream);
 	//hal must init first.
 	c_hal::initialize();
 

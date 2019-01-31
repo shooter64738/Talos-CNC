@@ -24,15 +24,17 @@
 
 class c_processor
 {
-//variables
+	//variables
 public:
-static c_Serial host_serial;
-static c_Serial controller_serial;
-static c_Serial spindle_serial;
+	
+
+	static c_Serial host_serial;
+	static c_Serial controller_serial;
+	static c_Serial spindle_serial;
 protected:
 private:
 
-//functions
+	//functions
 public:
 	static void startup();
 	static uint16_t prep_input();
@@ -40,8 +42,8 @@ protected:
 private:
 	c_processor();
 	~c_processor();
-	c_processor( const c_processor &c );
-	c_processor& operator=( const c_processor &c );
+	c_processor(const c_processor &c);
+	c_processor& operator=(const c_processor &c);
 
 }; //c_processor
 

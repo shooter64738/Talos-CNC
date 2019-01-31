@@ -52,6 +52,9 @@
     <Filter Include="Common\Bresenham">
       <UniqueIdentifier>{71be910f-b113-40b2-be23-589c0907d26e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Common\Spindle">
+      <UniqueIdentifier>{fae15e68-424a-4c76-973c-3f107f9cc2d3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Common\Hardware_Abstraction_Layer\c_hal.cpp">
@@ -135,6 +138,9 @@
     </ClCompile>
     <ClCompile Include="..\Shared\Settings\c_Turn.cpp">
       <Filter>Shared\Settings</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Spindle\c_spindle.cpp">
+      <Filter>Common\Spindle</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -238,6 +244,9 @@
     </ClInclude>
     <ClInclude Include="..\Shared\Settings\c_Turn.h">
       <Filter>Shared\Settings</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Spindle\c_spindle.h">
+      <Filter>Common\Spindle</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
