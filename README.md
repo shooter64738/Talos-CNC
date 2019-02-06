@@ -3,7 +3,8 @@ Complete CNC Control (Thats the goal)
 
 Somehow the repository got corrupted and would not upload my changes so I had to delete and re-upload the repo. 
 
-# Refactoring this project again. It has become apparent that this project should be split into more than one section. I am changing several portions of it into libraries. I should have an update pushed to github around the end of January 2019.
+# Refactoring is mostly complete.
+# There are quite a few that have cloned the repo. If you would care to help with some portions of it, I woudl greatly aprpeciate it. 
 
 This has been a 2 year project. This is only one third of the entire project. This code is written in C++11 using Atmel Studio version 7.
 
