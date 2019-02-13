@@ -21,6 +21,10 @@
 #include "c_hal.h"
 #include "..\..\talos.h"
 #include "..\..\Coordinator\Shared\Settings\c_general.h"
+#ifdef CONTROL_TYPE_SPINDLE
+#include "AVR_328\control_type_spindle.h"
+#endif
+
 
 /*
 This might be confusing to some, especially if you are not familiar with function pointers.
@@ -37,51 +41,28 @@ c_hal::s_feedback_function_pointers c_hal::feedback;
 c_hal::s_lcd_function_pointers c_hal::lcd;
 c_hal::s_edm_function_pointers c_hal::edm;
 c_hal::s_storage_function_pointers c_hal::storage;
+c_hal::s_spindle_function_pointers c_hal::spindle;
 
-
-void c_hal::initialize(Settings::e_machine_types machine_type, Settings::e_machine_sub_types sub_type)
-{
-	c_hal::initialize();
-	switch (machine_type)
-	{
-		case Settings::e_machine_types::MILLING:
-	{
-		//Nothing HAL specific more milling yet
-		break;
-	}
-	case Settings::e_machine_types::PLASMA:
-	{
-		switch (sub_type)
-		{
-		case Settings::e_machine_sub_types::TORCH_HEIGHT:
-		{
-			//for torch height control, we need to do some specific HAL changes
-			/*
-			First, there will be no feedback as there is in a typical cnc application. But the pin change interrupts will be used to
-			monitor limit pins, and material touch off.
-			*/
-
-			//This will give us access to a total of 16 pin change inputs. These are digital pins. Map them to the input functions.
-#ifdef __AVR_ATmega2560__
-			c_cpu_AVR_2560::PNTR_INTERNAL_PCINT0 = &c_cpu_AVR_2560::feedback_pin0_change_isr;
-			c_cpu_AVR_2560::PNTR_INTERNAL_PCINT2 = &c_cpu_AVR_2560::feedback_pin2_change_isr;
-#endif
-			break;
-		}
-		default:
-			break;
-		}
-
-		break;
-	}
-	default:
-		break;
-	}
-}
 
 void c_hal::initialize()
 {
-#ifdef __AVR_ATmega2560__
+	#ifdef __AVR_ATmega328P__
+	//Functions called from program->hal
+	c_hal::core.PNTR_INITIALIZE = &c_cpu_AVR_328::core_initializer;
+	c_hal::core.PNTR_START_INTERRUPTS = &c_cpu_AVR_328::core_start_interrupts;
+	c_hal::core.PNTR_STOP_INTERRUPTS = &c_cpu_AVR_328::core_stop_interrupts;
+	c_hal::core.PNTR_GET_CPU_SPEED = &c_cpu_AVR_328::core_get_cpu_clock_rate;
+
+	c_hal::comm.PNTR_INITIALIZE = &c_cpu_AVR_328::serial_initializer;
+	c_hal::comm.PNTR_SERIAL_TX = &c_cpu_AVR_328::serial_send;
+	c_hal::comm.PNTR_SERIAL_RX_BUFFER = c_cpu_AVR_328::rxBuffer;
+	//#ifdef CONTROL_TYPE_SPINDLE
+	control_type::initialize();
+	//#endif
+	
+	#endif
+
+	#ifdef __AVR_ATmega2560__
 
 	//c_hal::core.PNTR_BASE = &cpu_AVR_2560::initialize;
 	c_hal::core.PNTR_INITIALIZE = &c_cpu_AVR_2560::core_initializer;
@@ -120,9 +101,9 @@ void c_hal::initialize()
 	c_hal::storage.PNTR_GET_WORD = &c_cpu_AVR_2560::eeprom_get_word;
 	c_hal::storage.PNTR_GET_DWORD = &c_cpu_AVR_2560::eeprom_get_dword;
 	c_hal::storage.PNTR_GET_FLOAT = &c_cpu_AVR_2560::eeprom_get_float;
-#endif
+	#endif
 
-#ifdef __SAM3X8E__
+	#ifdef __SAM3X8E__
 
 	//c_hal::core.PNTR_BASE = &c_cpu_ARM_SAM3X8E::initialize;
 	c_hal::core.PNTR_INITIALIZE = &c_cpu_ARM_SAM3X8E::core_initializer;
@@ -143,9 +124,9 @@ void c_hal::initialize()
 	c_hal::feedback.PNTR_INITIALIZE = &c_cpu_ARM_SAM3X8E::feedback_initializer;
 	//c_hal::feedback.PNTR_IS_DIRTY = &c_cpu_ARM_SAM3X8E::feedback_dirty;
 	c_hal::feedback.PNTR_POSITION_DATA = c_cpu_ARM_SAM3X8E::Axis_Positions;
-#endif
+	#endif
 
-#ifdef MSVC
+	#ifdef MSVC
 
 	//c_hal::core.PNTR_BASE = &cpu_AVR_2560::initialize;
 	//c_hal::core.PNTR_INITIALIZE = &c_cpu_VIRTUAL::core_initializer;
@@ -171,7 +152,7 @@ void c_hal::initialize()
 	c_hal::edm.PNTR_SET_ARC_DRIVE_FREQUENCY = &c_cpu_VIRTUAL::edm_set_pulse_frequency;
 
 	c_hal::storage.PNTR_GET_BYTE = &c_cpu_VIRTUAL::eeprom_get_byte;
-#endif
+	#endif
 
 }
 

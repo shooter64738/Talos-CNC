@@ -27,6 +27,9 @@
 #ifdef __AVR_ATmega2560__
 #include "AVR_2560\c_cpu_AVR_2560.h"
 #endif
+#ifdef __AVR_ATmega328P__
+#include "AVR_328\c_cpu_AVR_328.h"
+#endif
 #ifdef MSVC
 #include "Virtual/c_cpu_VIRTUAL.h"
 #endif
@@ -45,7 +48,19 @@ class c_hal
 	
 	public:
 	static void initialize();
-	static void initialize(Settings::e_machine_types, Settings::e_machine_sub_types sub_type);
+
+	typedef struct
+	{
+		void (*TIMER1_COMPA_vect)(void);
+		void (*TIMER1_CAPT_vect)(uint16_t,uint8_t);
+		void (*TIMER0_OVF_vect)(void);
+		void (*PCINT0_vect)(void);
+		void (*PCINT2_vect)(void);
+		void (*INT0_vect)(uint16_t,uint8_t);
+		void (*INT1_vect)(uint16_t,uint8_t);
+	}s_isr_pointers;
+	static s_isr_pointers ISR_Pointers;
+
 	//core struct refers to actions that give basic function
 	typedef struct
 	{
@@ -92,6 +107,11 @@ class c_hal
 		void (*PNTR_ENABLE)(void);
 		void (*PNTR_DISABLE)(void);
 		void (*PNTR_DRIVE)(void);
+		void (*PNTR_BRAKE)(void);
+		void (*PNTR_FORWARD)(void);
+		void (*PNTR_REVERSE)(void);
+		void (*PNTR_RELEASE)(void);
+		void (*PNTR_DRIVE_ANALOG)(uint16_t);
 		void (*PNTR_RESET)(void);
 		void(*PNTR_SET_PRESCALER)(uint16_t);
 		void(*PNTR_SET_TIMER_RATE)(uint16_t);
@@ -146,6 +166,15 @@ class c_hal
 		void(*PNTR_SET_DIGITAL)(uint8_t);
 	}s_input_function_pointers;
 	static s_input_function_pointers io;
+
+	//io struct refers to anything related to reading input and output
+	typedef struct
+	{
+		void(*PNTR_INITIALIZE)(void);
+		void(*PNTR_ENCODER_TIME_CAPTURE)();
+		void(*PNTR_ENCODER_QUADRATURE)();
+	}s_spindle_function_pointers;
+	static s_spindle_function_pointers spindle;
 
 	typedef struct
 	{
