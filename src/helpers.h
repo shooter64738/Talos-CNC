@@ -29,6 +29,8 @@
 #define BitGet(p,m) bool((p) & (1UL << (m)))
 
 #define BitFlp(arg,posn) ((arg) ^ (1UL << (posn))
+#define Bit(x) (0x01 << (x))
+#define LongBit(x) ((unsigned long)0x00000001 << (x))
 
 //#define bit_get(p,m) ((p) & (m))
 //#define bit_set(p,m) ((p) |= (m))

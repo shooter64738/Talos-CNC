@@ -40,7 +40,8 @@ namespace Settings
 		PLASMA,
 		TURNING,
 		MILLING,
-		EDM
+		EDM,
+		SPINDLE
 	};
 
 	enum class e_machine_sub_types :int8_t
