@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Encoder">
+      <UniqueIdentifier>{e8c44fb5-12ab-440a-9779-067f95646e31}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common">
+      <UniqueIdentifier>{b127d703-5b6c-49da-8a8c-92285d1e5664}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Driver">
+      <UniqueIdentifier>{7f8d9df7-39f5-4956-8a6c-6804e5ae1856}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Control">
+      <UniqueIdentifier>{7e53b627-8207-46eb-8c0c-dbe23ca70d3c}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\c_processor.cpp" />
+    <ClCompile Include="..\..\c_driver.cpp">
+      <Filter>Driver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\c_encoder.cpp">
+      <Filter>Encoder</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\main.cpp" />
+    <ClCompile Include="..\..\..\Common\Serial\c_Serial.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\c_processor.h" />
+    <ClInclude Include="..\..\c_driver.h">
+      <Filter>Driver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\c_encoder.h">
+      <Filter>Encoder</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Talos.h" />
+    <ClInclude Include="..\..\..\Common\Serial\c_Serial.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Common\Serial\s_buffer.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
