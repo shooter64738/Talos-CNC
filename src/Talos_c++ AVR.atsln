@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Atmel Studio Solution File, Format Version 11.00
-VisualStudioVersion = 14.0.23107.0
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{E66E83B9-2572-4076-B26E-6BE79FF3018A}") = "AVR_2560_HAL", "Common\Hardware_Abstraction_Layer\AVR_2560\AVR_2560_HAL.cppproj", "{796624E7-70C6-4C4C-ABD4-AA391CED2B48}"
 EndProject
@@ -22,6 +22,13 @@ EndProject
 Project("{E66E83B9-2572-4076-B26E-6BE79FF3018A}") = "AVR_EDM_Drive", "EDM_Drive\Projects\AVR\AVR_EDM_Drive.cppproj", "{DC35D00C-AC83-48D7-8A15-A1C82B20A12C}"
 EndProject
 Project("{E66E83B9-2572-4076-B26E-6BE79FF3018A}") = "spinMan", "..\..\spinMAN\src\spinMan.cppproj", "{0FF8CE98-64C7-41AE-8C3E-1B504C1824F3}"
+EndProject
+Project("{E66E83B9-2572-4076-B26E-6BE79FF3018A}") = "AVR_328_HAL", "Common\Hardware_Abstraction_Layer\AVR_328\AVR_328_HAL.cppproj", "{6219001D-0880-4B71-BF90-CBEA8DD44E48}"
+EndProject
+Project("{E66E83B9-2572-4076-B26E-6BE79FF3018A}") = "AVR_328_Spindle", "Spindle\Projects\AVR\AVR_328_Spindle\AVR_328_Spindle.cppproj", "{30833530-04CD-46C5-ACF9-1109B1D0FC0D}"
+	ProjectSection(ProjectDependencies) = postProject
+		{6219001D-0880-4B71-BF90-CBEA8DD44E48} = {6219001D-0880-4B71-BF90-CBEA8DD44E48}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -57,6 +64,14 @@ Global
 		{0FF8CE98-64C7-41AE-8C3E-1B504C1824F3}.Debug|AVR.Build.0 = Debug|AVR
 		{0FF8CE98-64C7-41AE-8C3E-1B504C1824F3}.Release|AVR.ActiveCfg = Release|AVR
 		{0FF8CE98-64C7-41AE-8C3E-1B504C1824F3}.Release|AVR.Build.0 = Release|AVR
+		{6219001D-0880-4B71-BF90-CBEA8DD44E48}.Debug|AVR.ActiveCfg = Debug|AVR
+		{6219001D-0880-4B71-BF90-CBEA8DD44E48}.Debug|AVR.Build.0 = Debug|AVR
+		{6219001D-0880-4B71-BF90-CBEA8DD44E48}.Release|AVR.ActiveCfg = Release|AVR
+		{6219001D-0880-4B71-BF90-CBEA8DD44E48}.Release|AVR.Build.0 = Release|AVR
+		{30833530-04CD-46C5-ACF9-1109B1D0FC0D}.Debug|AVR.ActiveCfg = Debug|AVR
+		{30833530-04CD-46C5-ACF9-1109B1D0FC0D}.Debug|AVR.Build.0 = Debug|AVR
+		{30833530-04CD-46C5-ACF9-1109B1D0FC0D}.Release|AVR.ActiveCfg = Release|AVR
+		{30833530-04CD-46C5-ACF9-1109B1D0FC0D}.Release|AVR.Build.0 = Release|AVR
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
