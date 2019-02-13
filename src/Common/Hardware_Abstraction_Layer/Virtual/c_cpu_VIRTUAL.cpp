@@ -19,7 +19,7 @@
 */
 
 #include "c_cpu_VIRTUAL.h"
-#include "..\..\Bresenham\c_Bresenham.h"
+
 #ifdef MSVC
 
 #include <iostream>
@@ -32,7 +32,7 @@ bool c_cpu_VIRTUAL::feedback_is_dirty = false;
 
 void c_cpu_VIRTUAL::driver_drive()
 {
-	c_Bresenham::step();
+
 }
 
 void c_cpu_VIRTUAL::serial_initializer(uint8_t Port, uint32_t BaudRate)
