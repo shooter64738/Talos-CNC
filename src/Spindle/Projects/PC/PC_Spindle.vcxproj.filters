@@ -29,6 +29,9 @@
     <ClCompile Include="..\..\..\Common\Serial\c_Serial.cpp">
       <Filter>Common\Serial</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\c_state_manager.cpp">
+      <Filter>Control</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\c_processor.h" />
@@ -44,6 +47,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\Common\Serial\s_buffer.h">
       <Filter>Common\Serial</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\c_state_manager.h">
+      <Filter>Control</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

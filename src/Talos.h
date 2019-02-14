@@ -22,8 +22,30 @@
 #ifndef TALOS_H_
 #define TALOS_H_
 //To enable compilation and debugging in Microsoft Visual C++ define MSCV
-#define MSVC
+//#define MSVC
+/*
+Setting this will determine how the HAL compiles, and what control type it will control.
+In each HAL project there is an #ifdef for the control type. Within each control type
+there is an additional #ifdef for the processor. This prevents compilation for any other
+machine type and processor combination. More control types are planned in the future. 
+To set compilation for a particular machine type, uncomment the define
+*/
+//ONLY ONE CONTROL TYPE CAN BE DEFINED FOR EACH COMPILE
 #define CONTROL_TYPE_SPINDLE
+//#define CONTROL_TYPE_LATHE_FLAT
+//#define CONTROL_TYPE_LATHE_SLANT
+//#define CONTROL_TYPE_MILL_RF45
+//#define CONTROL_TYPE_MILL_GANTRY
+//#define CONTROL_TYPE_MILL_ROUTER
+//#define CONTROL_TYPE_MILL_LASER
+//#define CONTROL_TYPE_PLASMA
+//#define CONTROL_TYPE_EDM_WIRE
+//#define CONTROL_TYPE_EDM_PLUNGE
+//#define CONTROL_TYPE_STOCK_FEEDER
+//#define CONTROL_TYPE_TOOL_CHANGER
+//#define CONTROL_TYPE_GRINDER
+//#define CONTROL_TYPE_TORCH_HEIGHT
+
 
 #include <stdio.h>
 #include <ctype.h>

@@ -5,6 +5,7 @@
 * Author: jeff_d
 */
 
+#include "..\Talos.h"
 
 #ifndef __C_STATE_H__
 #define __C_STATE_H__

@@ -20,6 +20,7 @@
     <ClCompile Include="..\..\c_driver.cpp" />
     <ClCompile Include="..\..\c_encoder.cpp" />
     <ClCompile Include="..\..\c_processor.cpp" />
+    <ClCompile Include="..\..\c_state_manager.cpp" />
     <ClCompile Include="..\..\main.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -29,6 +30,7 @@
     <ClInclude Include="..\..\c_driver.h" />
     <ClInclude Include="..\..\c_encoder.h" />
     <ClInclude Include="..\..\c_processor.h" />
+    <ClInclude Include="..\..\c_state_manager.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{604D9DD2-8922-4CA8-8CA2-085B354BA482}</ProjectGuid>

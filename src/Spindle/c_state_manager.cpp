@@ -7,6 +7,8 @@
 
 
 #include "c_state_manager.h"
+#include "c_driver.h"
+#include "c_encoder.h"
 
 uint8_t Spindle_Controller::c_state_manager::check_driver_state()
 {

@@ -21,9 +21,6 @@
 #ifdef __AVR_ATmega328P__//<--This will stop the multiple ISR definition error
 
 #include "c_cpu_AVR_328.h"
-#include "driver_pulse.h"
-#include "driver_enable.h"
-#include "driver_direction.h"
 #include "lcd\c_LcdPcf8574.h"
 #include <util\delay.h>
 #include "..\..\Bresenham\c_Bresenham.h"
