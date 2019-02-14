@@ -21,9 +21,12 @@ void Spindle_Controller::c_processor::startup()
 	Spindle_Controller::c_encoder::initialize(400);
 	Spindle_Controller::c_processor::host_serial.print_string("spindle on line");
 	
+	
 	while (1)
 	{
-		Spindle_Controller::c_encoder::current_rpm();
+		Spindle_Controller::c_processor::host_serial.print_float(Spindle_Controller::c_encoder::current_rpm());
+		Spindle_Controller::c_processor::host_serial.print_string("rpm  ");
+		Spindle_Controller::c_processor::host_serial.Write(CR);
 	}
 }
 

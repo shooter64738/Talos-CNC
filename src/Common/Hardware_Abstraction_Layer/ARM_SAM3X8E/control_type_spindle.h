@@ -4,7 +4,7 @@
 * Created: 2/12/2019 10:10:23 PM
 * Author: jeff_d
 */
-#ifdef __AVR_ATmega328P__
+
 
 #ifndef __CONTROL_TYPE_SPINDLE_H__
 #define __CONTROL_TYPE_SPINDLE_H__
@@ -15,7 +15,7 @@
 #define DIRECTION_PIN PD7 //(pin 7)
 #define CONTROL_PORT PORTD
 //This class name will be re-used for every different type of control. That way one define includes the correct class file
-//and then that control_type::initialize will be called in the c_hal::initialize function.
+//and then that control_type::initialize will be called in the c_hal::initialize function. 
 class control_type
 {
 	//variables
@@ -50,4 +50,3 @@ class control_type
 }; //control_type_spindle
 
 #endif //__CONTROL_TYPE_SPINDLE_H__
-#endif

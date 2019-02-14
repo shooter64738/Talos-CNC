@@ -23,7 +23,11 @@
 #include "..\..\Coordinator\Shared\Settings\c_general.h"
 #ifdef CONTROL_TYPE_SPINDLE
 #include "AVR_328\control_type_spindle.h"
+#include "VIRTUAL\control_type_spindle.h"
 #endif
+#ifdef MSVC
+#include <thread>
+#endif // MSVC
 
 
 /*
@@ -152,6 +156,14 @@ void c_hal::initialize()
 	c_hal::edm.PNTR_SET_ARC_DRIVE_FREQUENCY = &c_cpu_VIRTUAL::edm_set_pulse_frequency;
 
 	c_hal::storage.PNTR_GET_BYTE = &c_cpu_VIRTUAL::eeprom_get_byte;
+
+	control_type::initialize();
+	//simulate timers for easier debug
+	std::thread timer1_capture(control_type::isr_threads::TIMER1_CAPT_vect);
+	std::thread timer1_overflow(control_type::isr_threads::TIMER1_OVF_vect);
+	timer1_capture.detach();
+	timer1_overflow.detach();
+	
 	#endif
 
 }

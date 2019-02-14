@@ -4,8 +4,8 @@
 * Created: 2/12/2019 10:10:23 PM
 * Author: jeff_d
 */
-#ifdef __AVR_ATmega328P__
 
+#ifdef __AVR_ATmega2560__
 #ifndef __CONTROL_TYPE_SPINDLE_H__
 #define __CONTROL_TYPE_SPINDLE_H__
 

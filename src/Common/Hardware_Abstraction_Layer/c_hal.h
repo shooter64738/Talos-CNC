@@ -53,6 +53,7 @@ class c_hal
 	{
 		void (*TIMER1_COMPA_vect)(void);
 		void (*TIMER1_CAPT_vect)(uint16_t,uint8_t);
+		void(*TIMER1_OVF_vect)(void);
 		void (*TIMER0_OVF_vect)(void);
 		void (*PCINT0_vect)(void);
 		void (*PCINT2_vect)(void);

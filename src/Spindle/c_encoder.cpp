@@ -47,6 +47,11 @@ void Spindle_Controller::c_encoder::hal_callbacks::timer_capture(uint16_t time_a
 	Spindle_Controller::c_encoder::update_time(time_at_vector);
 }
 
+void Spindle_Controller::c_encoder::hal_callbacks::timer_overflow()
+{
+	over_flows++;
+}
+
 void Spindle_Controller::c_encoder::initialize(uint16_t encoder_ticks_per_rev)
 {
 Spindle_Controller::c_encoder::encoder_rpm_multiplier = TIME_FACTOR * (float)encoder_ticks_per_rev;
@@ -73,6 +78,12 @@ float Spindle_Controller::c_encoder::current_rpm()
 	}
 	if (avg == 0)
 		return 0.0;
+#ifdef MSVC
+	//If debugging on a pc the rpm will not be very stable. 
+	//The pc processor is not dedicated to only one thing. This is only an approximation for testing. 
+	encoder_rpm_multiplier = .000000021;
+#endif // MSVC
+
 
 	float seconds = 60/((((((float)avg)/((float)TIME_ARRAY_SIZE))*encoder_rpm_multiplier)));
 	return  seconds/4;

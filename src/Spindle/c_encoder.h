@@ -21,6 +21,7 @@ namespace Spindle_Controller
 		{
 			public:
 			static void timer_capture(uint16_t time_at_vector,uint8_t port_values);
+			static void timer_overflow();
 			static void position_change(uint16_t time_at_vector,uint8_t port_values);
 		};
 		

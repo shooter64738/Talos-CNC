@@ -3,10 +3,12 @@
   <ItemGroup>
     <ClCompile Include="c_cpu_VIRTUAL.cpp" />
     <ClCompile Include="..\c_hal.cpp" />
+    <ClCompile Include="control_type_spindle.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="c_cpu_VIRTUAL.h" />
     <ClInclude Include="..\c_hal.h" />
     <ClInclude Include="..\..\..\Talos.h" />
+    <ClInclude Include="control_type_spindle.h" />
   </ItemGroup>
 </Project>

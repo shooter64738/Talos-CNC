@@ -13,6 +13,9 @@
     <Filter Include="Control">
       <UniqueIdentifier>{7e53b627-8207-46eb-8c0c-dbe23ca70d3c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Common\Serial">
+      <UniqueIdentifier>{69cdc5ef-6b2b-4029-b4fc-1066dc6660e7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\c_processor.cpp" />
@@ -24,7 +27,7 @@
     </ClCompile>
     <ClCompile Include="..\..\main.cpp" />
     <ClCompile Include="..\..\..\Common\Serial\c_Serial.cpp">
-      <Filter>Common</Filter>
+      <Filter>Common\Serial</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -37,10 +40,10 @@
     </ClInclude>
     <ClInclude Include="..\..\..\Talos.h" />
     <ClInclude Include="..\..\..\Common\Serial\c_Serial.h">
-      <Filter>Common</Filter>
+      <Filter>Common\Serial</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Common\Serial\s_buffer.h">
-      <Filter>Common</Filter>
+      <Filter>Common\Serial</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
