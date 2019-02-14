@@ -30,6 +30,8 @@ Project("{E66E83B9-2572-4076-B26E-6BE79FF3018A}") = "AVR_328_Spindle", "Spindle\
 		{6219001D-0880-4B71-BF90-CBEA8DD44E48} = {6219001D-0880-4B71-BF90-CBEA8DD44E48}
 	EndProjectSection
 EndProject
+Project("{E66E83B9-2572-4076-B26E-6BE79FF3018A}") = "AVR_328_Interpreter", "Common\NGC_RS274\Projects\AVR_328\AVR_328_Interpreter.cppproj", "{5CFFBEEA-BD15-4702-9D9C-42D20953B053}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|AVR = Debug|AVR
@@ -72,6 +74,10 @@ Global
 		{30833530-04CD-46C5-ACF9-1109B1D0FC0D}.Debug|AVR.Build.0 = Debug|AVR
 		{30833530-04CD-46C5-ACF9-1109B1D0FC0D}.Release|AVR.ActiveCfg = Release|AVR
 		{30833530-04CD-46C5-ACF9-1109B1D0FC0D}.Release|AVR.Build.0 = Release|AVR
+		{5CFFBEEA-BD15-4702-9D9C-42D20953B053}.Debug|AVR.ActiveCfg = Debug|AVR
+		{5CFFBEEA-BD15-4702-9D9C-42D20953B053}.Debug|AVR.Build.0 = Debug|AVR
+		{5CFFBEEA-BD15-4702-9D9C-42D20953B053}.Release|AVR.ActiveCfg = Release|AVR
+		{5CFFBEEA-BD15-4702-9D9C-42D20953B053}.Release|AVR.Build.0 = Release|AVR
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

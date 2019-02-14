@@ -4,47 +4,51 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectVersion>7.0</ProjectVersion>
     <ToolchainName>com.Atmel.AVRGCC8.CPP</ToolchainName>
-    <ProjectGuid>{30833530-04cd-46c5-acf9-1109b1d0fc0d}</ProjectGuid>
+    <ProjectGuid>{5cffbeea-bd15-4702-9d9c-42d20953b053}</ProjectGuid>
     <avrdevice>ATmega328P</avrdevice>
     <avrdeviceseries>none</avrdeviceseries>
-    <OutputType>Executable</OutputType>
+    <OutputType>StaticLibrary</OutputType>
     <Language>CPP</Language>
-    <OutputFileName>$(MSBuildProjectName)</OutputFileName>
-    <OutputFileExtension>.elf</OutputFileExtension>
+    <OutputFileName>lib$(MSBuildProjectName)</OutputFileName>
+    <OutputFileExtension>.a</OutputFileExtension>
     <OutputDirectory>$(MSBuildProjectDirectory)\$(Configuration)</OutputDirectory>
-    <AssemblyName>AVR_328_Spindle</AssemblyName>
-    <Name>AVR_328_Spindle</Name>
-    <RootNamespace>AVR_328_Spindle</RootNamespace>
+    <AvrGccProjectExtensions>
+    </AvrGccProjectExtensions>
+    <AssemblyName>Interpreter</AssemblyName>
+    <Name>AVR_Interpreter</Name>
+    <RootNamespace>Interpreter</RootNamespace>
     <ToolchainFlavour>Native</ToolchainFlavour>
     <KeepTimersRunning>true</KeepTimersRunning>
     <OverrideVtor>false</OverrideVtor>
     <CacheFlash>true</CacheFlash>
     <ProgFlashFromRam>true</ProgFlashFromRam>
-    <RamSnippetAddress />
+    <RamSnippetAddress>0x20000000</RamSnippetAddress>
     <UncachedRange />
     <preserveEEPROM>true</preserveEEPROM>
-    <OverrideVtorValue />
+    <OverrideVtorValue>exception_table</OverrideVtorValue>
     <BootSegment>2</BootSegment>
     <ResetRule>0</ResetRule>
     <eraseonlaunchrule>0</eraseonlaunchrule>
     <EraseKey />
     <AsfFrameworkConfig>
-      <framework-data xmlns="">
+      <framework-data>
         <options />
         <configurations />
         <files />
         <documentation help="" />
         <offline-documentation help="" />
         <dependencies>
-          <content-extension eid="atmel.asf" uuidref="Atmel.ASF" version="3.40.0" />
+          <content-extension eid="atmel.asf" uuidref="Atmel.ASF" version="3.34.1" />
         </dependencies>
       </framework-data>
     </AsfFrameworkConfig>
+    <avrtool />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <ToolchainSettings>
       <AvrGccCpp>
   <avrgcc.common.Device>-mmcu=atmega328p -B "%24(PackRepoDir)\atmel\ATmega_DFP\1.2.209\gcc\dev\atmega328p"</avrgcc.common.Device>
+  <avrgcc.common.optimization.RelaxBranches>True</avrgcc.common.optimization.RelaxBranches>
   <avrgcc.common.outputfiles.hex>True</avrgcc.common.outputfiles.hex>
   <avrgcc.common.outputfiles.lss>True</avrgcc.common.outputfiles.lss>
   <avrgcc.common.outputfiles.eep>True</avrgcc.common.outputfiles.eep>
@@ -85,17 +89,8 @@
   <avrgcccpp.linker.libraries.Libraries>
     <ListValues>
       <Value>libm</Value>
-      <Value>libAVR_328_HAL.a</Value>
-      <Value>libAVR_328_Interpreter.a</Value>
     </ListValues>
   </avrgcccpp.linker.libraries.Libraries>
-  <avrgcccpp.linker.libraries.LibrarySearchPaths>
-    <ListValues>
-      <Value>C:\GitHub\Talos-CNC\src\Common\Hardware_Abstraction_Layer\AVR_328\Debug</Value>
-      <Value>C:\GitHub\Talos-CNC\src\Common\NGC_RS274\Projects\AVR\Debug</Value>
-      <Value>C:\GitHub\Talos-CNC\src\Common\NGC_RS274\Projects\AVR_328\Debug</Value>
-    </ListValues>
-  </avrgcccpp.linker.libraries.LibrarySearchPaths>
   <avrgcccpp.assembler.general.IncludePaths>
     <ListValues>
       <Value>%24(PackRepoDir)\atmel\ATmega_DFP\1.2.209\include</Value>
@@ -108,6 +103,7 @@
     <ToolchainSettings>
       <AvrGccCpp>
   <avrgcc.common.Device>-mmcu=atmega328p -B "%24(PackRepoDir)\atmel\ATmega_DFP\1.2.209\gcc\dev\atmega328p"</avrgcc.common.Device>
+  <avrgcc.common.optimization.RelaxBranches>True</avrgcc.common.optimization.RelaxBranches>
   <avrgcc.common.outputfiles.hex>True</avrgcc.common.outputfiles.hex>
   <avrgcc.common.outputfiles.lss>True</avrgcc.common.outputfiles.lss>
   <avrgcc.common.outputfiles.eep>True</avrgcc.common.outputfiles.eep>
@@ -151,14 +147,12 @@
   <avrgcccpp.linker.libraries.Libraries>
     <ListValues>
       <Value>libm</Value>
-      <Value>libAVR_328_HAL.a</Value>
-      <Value>libAVR_328_Interpreter.a</Value>
+      <Value>libAVR_NGC_RS274_Block.a</Value>
     </ListValues>
   </avrgcccpp.linker.libraries.Libraries>
   <avrgcccpp.linker.libraries.LibrarySearchPaths>
     <ListValues>
-      <Value>../../../../../Common/Hardware_Abstraction_Layer/AVR_328/Debug</Value>
-      <Value>../../../../../Common/NGC_RS274/Projects/AVR_328/Debug</Value>
+      <Value>../../NGC_Block/Debug</Value>
     </ListValues>
   </avrgcccpp.linker.libraries.LibrarySearchPaths>
   <avrgcccpp.assembler.general.IncludePaths>
@@ -171,69 +165,46 @@
     </ToolchainSettings>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\..\..\..\Common\Serial\c_Serial.cpp">
+    <Compile Include="..\..\NGC_Block.cpp">
       <SubType>compile</SubType>
-      <Link>Common\Serial\c_Serial.cpp</Link>
+      <Link>NGC_Block.cpp</Link>
     </Compile>
-    <Compile Include="..\..\..\..\Common\Serial\c_Serial.h">
+    <Compile Include="..\..\NGC_Block.h">
       <SubType>compile</SubType>
-      <Link>Common\Serial\c_Serial.h</Link>
+      <Link>NGC_Block.h</Link>
     </Compile>
-    <Compile Include="..\..\..\..\Common\Serial\s_buffer.h">
+    <Compile Include="..\..\NGC_Errors.h">
       <SubType>compile</SubType>
-      <Link>Common\Serial\s_buffer.h</Link>
+      <Link>NGC_Errors.h</Link>
     </Compile>
-    <Compile Include="..\..\..\..\helpers.h">
+    <Compile Include="..\..\NGC_G_Codes.h">
       <SubType>compile</SubType>
-      <Link>helpers.h</Link>
+      <Link>NGC_G_Codes.h</Link>
     </Compile>
-    <Compile Include="..\..\..\..\Talos.h">
+    <Compile Include="..\..\NGC_G_Groups.h">
       <SubType>compile</SubType>
-      <Link>Talos.h</Link>
+      <Link>NGC_G_Groups.h</Link>
     </Compile>
-    <Compile Include="..\..\..\c_driver.cpp">
+    <Compile Include="..\..\NGC_Interpreter.cpp">
       <SubType>compile</SubType>
-      <Link>Driver\c_driver.cpp</Link>
+      <Link>NGC_Interpreter.cpp</Link>
     </Compile>
-    <Compile Include="..\..\..\c_driver.h">
+    <Compile Include="..\..\NGC_Interpreter.h">
       <SubType>compile</SubType>
-      <Link>Driver\c_driver.h</Link>
+      <Link>NGC_Interpreter.h</Link>
     </Compile>
-    <Compile Include="..\..\..\c_encoder.cpp">
+    <Compile Include="..\..\NGC_M_Codes.h">
       <SubType>compile</SubType>
-      <Link>Encoder\c_encoder.cpp</Link>
+      <Link>NGC_M_Codes.h</Link>
     </Compile>
-    <Compile Include="..\..\..\c_encoder.h">
+    <Compile Include="..\..\NGC_M_Groups.h">
       <SubType>compile</SubType>
-      <Link>Encoder\c_encoder.h</Link>
+      <Link>NGC_M_Groups.h</Link>
     </Compile>
-    <Compile Include="..\..\..\c_processor.cpp">
+    <Compile Include="..\..\NGC_Parameters.h">
       <SubType>compile</SubType>
-      <Link>c_processor.cpp</Link>
+      <Link>NGC_Parameters.h</Link>
     </Compile>
-    <Compile Include="..\..\..\c_processor.h">
-      <SubType>compile</SubType>
-      <Link>c_processor.h</Link>
-    </Compile>
-    <Compile Include="..\..\..\c_state_manager.cpp">
-      <SubType>compile</SubType>
-      <Link>Control\c_state_manager.cpp</Link>
-    </Compile>
-    <Compile Include="..\..\..\c_state_manager.h">
-      <SubType>compile</SubType>
-      <Link>Control\c_state_manager.h</Link>
-    </Compile>
-    <Compile Include="..\..\..\main.cpp">
-      <SubType>compile</SubType>
-      <Link>main.cpp</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Common" />
-    <Folder Include="Common\Serial" />
-    <Folder Include="Encoder" />
-    <Folder Include="Driver" />
-    <Folder Include="Control" />
   </ItemGroup>
   <Import Project="$(AVRSTUDIO_EXE_PATH)\\Vs\\Compiler.targets" />
 </Project>

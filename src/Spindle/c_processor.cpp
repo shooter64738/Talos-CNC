@@ -10,6 +10,7 @@
 #include "../Common/Hardware_Abstraction_Layer/c_hal.h"
 #include "c_encoder.h"
 #include "c_driver.h"
+#include "../Common/NGC_RS274/NGC_Interpreter.h"
 #define CONTROL_TYPE_SPINDLE
 c_Serial Spindle_Controller::c_processor::host_serial;
 
@@ -21,6 +22,7 @@ void Spindle_Controller::c_processor::startup()
 	Spindle_Controller::c_encoder::initialize(400);
 	Spindle_Controller::c_processor::host_serial.print_string("spindle on line");
 	
+	NGC_RS274::Interpreter::Processor::initialize();
 	
 	while (1)
 	{

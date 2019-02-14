@@ -21,7 +21,8 @@ namespace Spindle_Controller
 
 		//functions
 		public:
-		
+		static uint8_t check_driver_state();
+
 		protected:
 		private:
 		//c_state_manager( const c_state_manager &c );
@@ -29,6 +30,8 @@ namespace Spindle_Controller
 		//c_state_manager();
 		//~c_state_manager();
 
+	
+		
 	}; //c_state
 };
 #endif //__C_STATE_H__
