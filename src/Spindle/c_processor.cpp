@@ -1,9 +1,23 @@
 /*
-* c_processor.cpp
+*  c_processor.cpp - NGC_RS274 controller.
+*  A component of Talos
 *
-* Created: 2/12/2019 3:40:46 PM
-* Author: jeff_d
+*  Copyright (c) 2016-2019 Jeff Dill
+*
+*  Talos is free software: you can redistribute it and/or modify
+*  it under the terms of the GNU LPLPv3 License as published by
+*  the Free Software Foundation, either version 3 of the License, or
+*  (at your option) any later version.
+*
+*  Talos is distributed in the hope that it will be useful,
+*  but WITHOUT ANY WARRANTY; without even the implied warranty of
+*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*  GNU General Public License for more details.
+*
+*  You should have received a copy of the GNU General Public License
+*  along with Talos.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 
 
 #include "c_processor.h"
@@ -32,7 +46,7 @@ void Spindle_Controller::c_processor::startup()
 		//If running this on a pc, use this line to fill the serial buffer as if it
 		//were sent from a terminal to the micro controller over a serial connection
 		//c_hal::comm.PNTR_VIRTUAL_BUFFER_WRITE(0, "g41p.25G0X1Y1F100\rX2Y2\rX3Y3\r"); //<--data from host
-		c_hal::comm.PNTR_VIRTUAL_BUFFER_WRITE(0, "M3s2000\r\0");
+		c_hal::comm.PNTR_VIRTUAL_BUFFER_WRITE(0, "M4s2000\r\0");
 		
 	}
 	#endif
@@ -57,18 +71,7 @@ void Spindle_Controller::c_processor::startup()
 				
 				Spindle_Controller::c_processor::host_serial.SkipToEOL();
 			}
-			//else if (c_motion_control_events::get_event(Motion_Control_Events::CONTROL_ONLINE))
-			//{
-				//if (c_motion_controller::PNTR_COMMAND_CHECK_CALLBACK != NULL)
-				//{
-					////Check to see if the value sent via serial was a command for the controller that is connected
-					//Control_Command = c_motion_controller::PNTR_COMMAND_CHECK_CALLBACK(host_serial.Peek());
-					//if (Control_Command) //<--Was it a control command, or regular g/m code?
-					//{
-						//c_motion_controller::PNTR_INQUIRY_CALLBACK(); //<-- Let the motion controller respond to the request
-					//}
-				//}
-			//}
+			
 			/*
 			We may have processed this already as a controller command.
 			If this wasnt a control command, and not an inquiry command, then it is expected to be a g/m code value.
@@ -79,6 +82,8 @@ void Spindle_Controller::c_processor::startup()
 
 			}
 		}
+
+		Spindle_Controller::c_state_manager::check_driver_state();
 	}
 }
 

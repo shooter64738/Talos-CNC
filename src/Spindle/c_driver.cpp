@@ -1,8 +1,21 @@
 /*
-* c_driver.cpp
+*  c_driver.cpp - NGC_RS274 controller.
+*  A component of Talos
 *
-* Created: 2/12/2019 4:38:36 PM
-* Author: jeff_d
+*  Copyright (c) 2016-2019 Jeff Dill
+*
+*  Talos is free software: you can redistribute it and/or modify
+*  it under the terms of the GNU LPLPv3 License as published by
+*  the Free Software Foundation, either version 3 of the License, or
+*  (at your option) any later version.
+*
+*  Talos is distributed in the hope that it will be useful,
+*  but WITHOUT ANY WARRANTY; without even the implied warranty of
+*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*  GNU General Public License for more details.
+*
+*  You should have received a copy of the GNU General Public License
+*  along with Talos.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 
@@ -87,19 +100,19 @@ void Spindle_Controller::c_driver::Forward_Drive()
 
 void Spindle_Controller::c_driver::Set_State(uint8_t State_Bit_Flag)
 {
-	(BitSet(Spindle_Controller::c_driver::Drive_Control.State, Bit(State_Bit_Flag)));
+	 Spindle_Controller::c_driver::Drive_Control.State = (BitSet(Spindle_Controller::c_driver::Drive_Control.State, Bit(State_Bit_Flag)));
 	//c_Spindle_Drive::Drive_Control.State = (1<<State_Bit_Flag);
 }
 
 uint8_t Spindle_Controller::c_driver::Get_State(uint8_t State_Bit_Flag)
 {
-	return (BitSet(Spindle_Controller::c_driver::Drive_Control.State, Bit(State_Bit_Flag)));
+	return (BitTst(Spindle_Controller::c_driver::Drive_Control.State, Bit(State_Bit_Flag)));
 	//return bit_get(c_Spindle_Drive::Drive_Control.State,BIT(State_Bit_Flag));
 }
 
 void Spindle_Controller::c_driver::Clear_State(uint8_t State_Bit_Flag)
 {
-	BitClr(Spindle_Controller::c_driver::Drive_Control.State, Bit(State_Bit_Flag));
+	Spindle_Controller::c_driver::Drive_Control.State = BitClr(Spindle_Controller::c_driver::Drive_Control.State, Bit(State_Bit_Flag));
 	//c_Spindle_Drive::Drive_Control.State &= ~(1<<State_Bit_Flag);
 }
 //
