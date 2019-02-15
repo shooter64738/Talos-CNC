@@ -99,7 +99,9 @@ int NGC_RS274::Interpreter::Processor::process_line(NGC_RS274::NGC_Binary_Block*
 
 	//This line interpreted without errors. Move the new values into 'plan_block' which will be updated for use by the calling method. 
 	memcpy(plan_block->g_group, NGC_RS274::Interpreter::Processor::local_block.g_group, COUNT_OF_G_CODE_GROUPS_ARRAY * sizeof(uint16_t));
+	memcpy(&plan_block->g_code_defined_in_block, &NGC_RS274::Interpreter::Processor::local_block.g_code_defined_in_block, sizeof(uint16_t));
 	memcpy(plan_block->m_group, NGC_RS274::Interpreter::Processor::local_block.m_group, COUNT_OF_M_CODE_GROUPS_ARRAY * sizeof(uint16_t));
+	memcpy(&plan_block->m_code_defined_in_block, &NGC_RS274::Interpreter::Processor::local_block.m_code_defined_in_block, sizeof(uint16_t));
 	memcpy(&plan_block->persisted_values, &NGC_RS274::Interpreter::Processor::local_block.persisted_values, sizeof(NGC_RS274::NGC_Binary_Block::s_persisted_values));
 	memcpy(plan_block->block_word_values, NGC_RS274::Interpreter::Processor::local_block.block_word_values, COUNT_OF_BLOCK_WORDS_ARRAY * sizeof(float));
 	memcpy(&plan_block->plane_axis, &NGC_RS274::Interpreter::Processor::local_block.plane_axis, sizeof(NGC_RS274::NGC_Binary_Block::s_plane_axis));
