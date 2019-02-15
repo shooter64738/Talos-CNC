@@ -41,7 +41,6 @@
     <ClInclude Include="..\..\c_encoder.h">
       <Filter>Encoder</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Talos.h" />
     <ClInclude Include="..\..\..\Common\Serial\c_Serial.h">
       <Filter>Common\Serial</Filter>
     </ClInclude>
@@ -51,5 +50,6 @@
     <ClInclude Include="..\..\c_state_manager.h">
       <Filter>Control</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\Talos.h" />
   </ItemGroup>
 </Project>

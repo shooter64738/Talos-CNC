@@ -26,7 +26,7 @@ int NGC_RS274::Interpreter::Processor::HasErrors = 0;
 NGC_RS274::NGC_Binary_Block NGC_RS274::Interpreter::Processor::local_block = NGC_RS274::NGC_Binary_Block();
 NGC_RS274::NGC_Binary_Block*NGC_RS274::Interpreter::Processor::stager_block;
 bool NGC_RS274::Interpreter::Processor::normalize_distance_units_to_mm = true;
-uint16_t ngc_working_g_group = 0;
+uint16_t ngc_working_group = 0;
 
 void NGC_RS274::Interpreter::Processor::initialize()
 {
@@ -855,7 +855,7 @@ int NGC_RS274::Interpreter::Processor::group_word(char Word, float Address)
 		return _gWord(Address);
 		break;
 	case 'M': //<--Process words for M (M3,M90,M5, etc..)
-	//return _mWord(plan_block, Address);
+	return _mWord( Address);
 		break;
 	default:
 		return _pWord(Word, Address); //<--Process words for Everything else (X__,Y__,Z__,I__,D__, etc..)
@@ -901,45 +901,45 @@ int NGC_RS274::Interpreter::Processor::_gWord(float Address)
 	case NGC_RS274::G_codes::LINEAR_INTERPOLATION: //<-G01
 	case NGC_RS274::G_codes::CIRCULAR_INTERPOLATION_CCW: //<-G02
 	case NGC_RS274::G_codes::CIRCULAR_INTERPOLATION_CW: //<-G03
-		ngc_working_g_group = NGC_RS274::Groups::G::MOTION;
+		ngc_working_group = NGC_RS274::Groups::G::MOTION;
 		NGC_RS274::Interpreter::Processor::local_block.g_group[NGC_RS274::Groups::G::MOTION] = (iAddress);
 		break;
 
 	case NGC_RS274::G_codes::G10_PARAM_WRITE: //<-G10
-		ngc_working_g_group = NGC_RS274::Groups::G::NON_MODAL;//<-G4,G10,G28,G30,G53,G92,92.2,G92.3
+		ngc_working_group = NGC_RS274::Groups::G::NON_MODAL;//<-G4,G10,G28,G30,G53,G92,92.2,G92.3
 		NGC_RS274::Interpreter::Processor::local_block.g_group[NGC_RS274::Groups::G::NON_MODAL] = (iAddress);
 		break;
 
 	case NGC_RS274::G_codes::RECTANGULAR_COORDINATE_SYSTEM: //<-G15
 	case NGC_RS274::G_codes::POLAR_COORDINATE_SYSTEM: //<-G16
-		ngc_working_g_group = NGC_RS274::Groups::G::RECTANGLAR_POLAR_COORDS_SELECTION;
+		ngc_working_group = NGC_RS274::Groups::G::RECTANGLAR_POLAR_COORDS_SELECTION;
 		NGC_RS274::Interpreter::Processor::local_block.g_group[NGC_RS274::Groups::G::RECTANGLAR_POLAR_COORDS_SELECTION] = (iAddress);
 		break;
 
 	case NGC_RS274::G_codes::XY_PLANE_SELECTION: //<-G17
 
-		ngc_working_g_group = NGC_RS274::Groups::G::PLANE_SELECTION;
+		ngc_working_group = NGC_RS274::Groups::G::PLANE_SELECTION;
 		NGC_RS274::Interpreter::Processor::local_block.g_group[NGC_RS274::Groups::G::PLANE_SELECTION] = (iAddress);
 		NGC_RS274::Interpreter::Processor::error_check_plane_select();
 		break;
 
 	case NGC_RS274::G_codes::XZ_PLANE_SELECTION: //<-G18
 
-		ngc_working_g_group = NGC_RS274::Groups::G::PLANE_SELECTION;
+		ngc_working_group = NGC_RS274::Groups::G::PLANE_SELECTION;
 		NGC_RS274::Interpreter::Processor::local_block.g_group[NGC_RS274::Groups::G::PLANE_SELECTION] = (iAddress);
 		NGC_RS274::Interpreter::Processor::error_check_plane_select();
 		break;
 
 	case NGC_RS274::G_codes::YZ_PLANE_SELECTION: //<-G19
 
-		ngc_working_g_group = NGC_RS274::Groups::G::PLANE_SELECTION;
+		ngc_working_group = NGC_RS274::Groups::G::PLANE_SELECTION;
 		NGC_RS274::Interpreter::Processor::local_block.g_group[NGC_RS274::Groups::G::PLANE_SELECTION] = (iAddress);
 		NGC_RS274::Interpreter::Processor::error_check_plane_select();
 		break;
 
 	case NGC_RS274::G_codes::INCH_SYSTEM_SELECTION: //<-G20
 	case NGC_RS274::G_codes::MILLIMETER_SYSTEM_SELECTION: //<-G21
-		ngc_working_g_group = NGC_RS274::Groups::G::UNITS;
+		ngc_working_group = NGC_RS274::Groups::G::UNITS;
 		//If units are changing, update the feed rate in the interpreter
 		if (NGC_RS274::Interpreter::Processor::local_block.g_group[NGC_RS274::Groups::G::UNITS] != (iAddress))
 		{
@@ -964,13 +964,13 @@ int NGC_RS274::Interpreter::Processor::_gWord(float Address)
 	case NGC_RS274::G_codes::CANCEL_CUTTER_RADIUS_COMPENSATION: //<-G40
 	case NGC_RS274::G_codes::START_CUTTER_RADIUS_COMPENSATION_LEFT: //<-G41
 	case NGC_RS274::G_codes::START_CUTTER_RADIUS_COMPENSATION_RIGHT: //<-G42
-		ngc_working_g_group = NGC_RS274::Groups::G::CUTTER_RADIUS_COMPENSATION;
+		ngc_working_group = NGC_RS274::Groups::G::CUTTER_RADIUS_COMPENSATION;
 		NGC_RS274::Interpreter::Processor::local_block.g_group[NGC_RS274::Groups::G::CUTTER_RADIUS_COMPENSATION] = (iAddress);
 		break;
 
 
 	case NGC_RS274::G_codes::MOTION_IN_MACHINE_COORDINATE_SYSTEM: //<-G53
-		ngc_working_g_group = NGC_RS274::Groups::G::COORDINATE_SYSTEM_SELECTION;
+		ngc_working_group = NGC_RS274::Groups::G::COORDINATE_SYSTEM_SELECTION;
 		NGC_RS274::Interpreter::Processor::local_block.g_group[NGC_RS274::Groups::G::COORDINATE_SYSTEM_SELECTION] = (iAddress);
 		break;
 
@@ -984,7 +984,7 @@ int NGC_RS274::Interpreter::Processor::_gWord(float Address)
 	case NGC_RS274::G_codes::WORK_OFFSET_POSITION_6_G59_2:
 	case NGC_RS274::G_codes::WORK_OFFSET_POSITION_6_G59_3:
 		//this->WorkOffsetValue = iAddress;
-		ngc_working_g_group = NGC_RS274::Groups::G::COORDINATE_SYSTEM_SELECTION;
+		ngc_working_group = NGC_RS274::Groups::G::COORDINATE_SYSTEM_SELECTION;
 		NGC_RS274::Interpreter::Processor::local_block.g_group[NGC_RS274::Groups::G::COORDINATE_SYSTEM_SELECTION] = (iAddress);
 		break;
 
@@ -998,26 +998,26 @@ int NGC_RS274::Interpreter::Processor::_gWord(float Address)
 	case NGC_RS274::G_codes::CANNED_CYCLE_DRILLING_WITH_DWELL: //<-G82
 	case NGC_RS274::G_codes::CANNED_CYCLE_PECK_DRILLING: //<-G83
 	case NGC_RS274::G_codes::CANNED_CYCLE_RIGHT_HAND_TAPPING: //<-G84
-		ngc_working_g_group = NGC_RS274::Groups::G::MOTION;
+		ngc_working_group = NGC_RS274::Groups::G::MOTION;
 		NGC_RS274::Interpreter::Processor::local_block.g_group[NGC_RS274::Groups::G::MOTION] = (iAddress);
 		break;
 
 	case NGC_RS274::G_codes::ABSOLUTE_DISANCE_MODE: //<-G90
 	case NGC_RS274::G_codes::INCREMENTAL_DISTANCE_MODE: //<-G91
-		ngc_working_g_group = NGC_RS274::Groups::G::DISTANCE_MODE;
+		ngc_working_group = NGC_RS274::Groups::G::DISTANCE_MODE;
 		NGC_RS274::Interpreter::Processor::local_block.g_group[NGC_RS274::Groups::G::DISTANCE_MODE] = (iAddress);
 		break;
 
 	case NGC_RS274::G_codes::FEED_RATE_MINUTES_PER_UNIT_MODE: //<-G93
 	case NGC_RS274::G_codes::FEED_RATE_UNITS_PER_MINUTE_MODE: //<-G94
 	case NGC_RS274::G_codes::FEED_RATE_UNITS_PER_ROTATION: //<-G95
-		ngc_working_g_group = NGC_RS274::Groups::G::FEED_RATE_MODE;
+		ngc_working_group = NGC_RS274::Groups::G::FEED_RATE_MODE;
 		NGC_RS274::Interpreter::Processor::local_block.g_group[NGC_RS274::Groups::G::FEED_RATE_MODE] = (iAddress);
 		break;
 
 	case NGC_RS274::G_codes::CANNED_CYCLE_RETURN_TO_R: //<-G99
 	case NGC_RS274::G_codes::CANNED_CYCLE_RETURN_TO_Z: //<-G98
-		ngc_working_g_group = NGC_RS274::Groups::G::RETURN_MODE_CANNED_CYCLE;
+		ngc_working_group = NGC_RS274::Groups::G::RETURN_MODE_CANNED_CYCLE;
 		NGC_RS274::Interpreter::Processor::local_block.g_group[NGC_RS274::Groups::G::RETURN_MODE_CANNED_CYCLE] = (iAddress);
 		break;
 
@@ -1026,7 +1026,7 @@ int NGC_RS274::Interpreter::Processor::_gWord(float Address)
 	case NGC_RS274::G_codes::USE_TOOL_LENGTH_OFFSET_FOR_TRANSIENT_TOOL: //<-G43.1
 	case NGC_RS274::G_codes::NEGATIVE_TOOL_LENGTH_OFFSET: //<-G44
 
-		ngc_working_g_group = NGC_RS274::Groups::G::TOOL_LENGTH_OFFSET;
+		ngc_working_group = NGC_RS274::Groups::G::TOOL_LENGTH_OFFSET;
 		NGC_RS274::Interpreter::Processor::local_block.g_group[NGC_RS274::Groups::G::TOOL_LENGTH_OFFSET] = (iAddress);
 		break;
 
@@ -1040,13 +1040,13 @@ int NGC_RS274::Interpreter::Processor::_gWord(float Address)
 	We can make the error more meaningful if we tell it WHICH group
 	was specified more than once.
 	*/
-	if (BitTst(NGC_RS274::Interpreter::Processor::local_block.g_code_defined_in_block, ngc_working_g_group))
+	if (BitTst(NGC_RS274::Interpreter::Processor::local_block.g_code_defined_in_block, ngc_working_group))
 		/*
 		Since _working_g_group is the 'group' number we can add it to the base error
 		value and give the user a more specific error so they know what needs
 		to be corrected
 		*/
-		return  NGC_RS274::Interpreter::Errors::G_CODE_GROUP_NON_MODAL_ALREADY_SPECIFIED + ngc_working_g_group; //<--Start with group 0 and add the Group to it. Never mind, _working_g_group IS the group number
+		return  NGC_RS274::Interpreter::Errors::G_CODE_GROUP_NON_MODAL_ALREADY_SPECIFIED + ngc_working_group; //<--Start with group 0 and add the Group to it. Never mind, _working_g_group IS the group number
 
 		/*
 		If we havent already returned from a duplicate group being specified, set the bit flag for this
@@ -1054,7 +1054,7 @@ int NGC_RS274::Interpreter::Processor::_gWord(float Address)
 		group is on the line again, the logic above will catch it and return an error
 		*/
 	NGC_RS274::Interpreter::Processor::local_block.g_code_defined_in_block =
-		BitSet(NGC_RS274::Interpreter::Processor::local_block.g_code_defined_in_block, ngc_working_g_group);
+		BitSet(NGC_RS274::Interpreter::Processor::local_block.g_code_defined_in_block, ngc_working_group);
 	return  NGC_RS274::Interpreter::Errors::OK;
 }
 
@@ -1079,12 +1079,76 @@ int NGC_RS274::Interpreter::Processor::_mWord(float Address)
 
 	switch (iAddress)
 	{
-
-	default:
-		return  NGC_RS274::Interpreter::Errors::INTERPRETER_DOES_NOT_UNDERSTAND_M_WORD_VALUE;
+	case NGC_RS274::M_codes::SPINDLE_ON_CW: //<-M03
+	case NGC_RS274::M_codes::SPINDLE_ON_CCW: //<-M04
+	case NGC_RS274::M_codes::SPINDLE_STOP: //<-M05
+	{
+		ngc_working_group = NGC_RS274::Groups::M::SPINDLE;
+		NGC_RS274::Interpreter::Processor::local_block.m_group[NGC_RS274::Groups::M::SPINDLE] = (iAddress);
 		break;
 	}
+	
+	case NGC_RS274::M_codes::PROGRAM_PAUSE: //<-M00
+	case NGC_RS274::M_codes::PROGRAM_PAUSE_OPTIONAL: //<-M01
+	case NGC_RS274::M_codes::TOOL_CHANGE_PAUSE: //<-M06
+	case NGC_RS274::M_codes::PALLET_CHANGE_PAUSE: //<-M60
+	{
+		ngc_working_group = NGC_RS274::Groups::M::STOPPING;
+		NGC_RS274::Interpreter::Processor::local_block.m_group[NGC_RS274::Groups::M::STOPPING] = (iAddress);
+		break;
+	}
+
+	case NGC_RS274::M_codes::COLLANT_MIST: //<-M07
+	case NGC_RS274::M_codes::COOLANT_FLOOD: //<-M08
+	case NGC_RS274::M_codes::COOLANT_OFF: //<-M09
+	{
+		ngc_working_group = NGC_RS274::Groups::M::COOLANT;
+		NGC_RS274::Interpreter::Processor::local_block.m_group[NGC_RS274::Groups::M::COOLANT] = (iAddress);
+		//Since we DO allow multiple coolant modes at the same time, we are just going to return here
+		//No need to check if this modal group was already set on the line. 
+		return  NGC_RS274::Interpreter::Errors::OK;
+		break;
+	}
+
+	case NGC_RS274::M_codes::ENABLE_FEED_SPEED_OVERRIDE: //<-M48
+	case NGC_RS274::M_codes::DISABLE_FEED_SPEED_OVERRIDE: //<-M49
+	{
+		ngc_working_group = NGC_RS274::Groups::M::OVERRIDE;
+		NGC_RS274::Interpreter::Processor::local_block.m_group[NGC_RS274::Groups::M::OVERRIDE] = (iAddress);
+		break;
+	}
+
+	default:
+		if (iAddress>=100 && iAddress<=199)
+		{
+			ngc_working_group = NGC_RS274::Groups::M::USER_DEFINED;
+			NGC_RS274::Interpreter::Processor::local_block.m_group[NGC_RS274::Groups::M::USER_DEFINED] = (iAddress);
+		}
+		else
+		{
+			return  NGC_RS274::Interpreter::Errors::INTERPRETER_DOES_NOT_UNDERSTAND_M_WORD_VALUE;
+		}
+		
+		break;
+	}
+
+	/*
+	See if we have already processed an m command from this group.
+	We can make the error more meaningful if we tell it WHICH group
+	was specified more than once.
+	*/
+	if (BitTst(NGC_RS274::Interpreter::Processor::local_block.m_code_defined_in_block, ngc_working_group))
+		return  NGC_RS274::Interpreter::Errors::M_CODE_GROUP_STOPPING_ALREADY_SPECIFIED + ngc_working_group;
+
+	/*
+	If we havent already returned from a duplicate group being specified, set the bit flag for this
+	mcode group. This will get checked if this method is called again but if a mcode for the same
+	group is on the line again, the logic above will catch it and return an error
+	*/
+	NGC_RS274::Interpreter::Processor::local_block.m_code_defined_in_block =
+		BitSet(NGC_RS274::Interpreter::Processor::local_block.m_code_defined_in_block, ngc_working_group);
 	return  NGC_RS274::Interpreter::Errors::OK;
+
 }
 
 /*
@@ -1307,10 +1371,10 @@ int NGC_RS274::Interpreter::Processor::normalize_distance_units()
 	NGC_RS274::Interpreter::Processor::local_block.block_word_values[Y_WORD_BIT] *= MM_CONVERSION;
 	NGC_RS274::Interpreter::Processor::local_block.block_word_values[Z_WORD_BIT] *= MM_CONVERSION;
 
-	NGC_RS274::Interpreter::Processor::local_block.persisted_values.feed_rate *= MM_CONVERSION;
+	//NGC_RS274::Interpreter::Processor::local_block.persisted_values.feed_rate *= MM_CONVERSION;
 	//TODO:: need a way to determine the units of D/H in the tool table.
-	NGC_RS274::Interpreter::Processor::local_block.persisted_values.active_h *= MM_CONVERSION;
-	NGC_RS274::Interpreter::Processor::local_block.persisted_values.active_d *= MM_CONVERSION;
+	//NGC_RS274::Interpreter::Processor::local_block.persisted_values.active_h *= MM_CONVERSION;
+	//NGC_RS274::Interpreter::Processor::local_block.persisted_values.active_d *= MM_CONVERSION;
 
 	return  NGC_RS274::Interpreter::Errors::OK;
 }

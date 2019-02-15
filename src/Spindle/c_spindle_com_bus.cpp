@@ -19,7 +19,7 @@
 */
 
 
-#include "c_spindle.h"
+#include "c_spindle_com_bus.h"
 
 float c_spindle::Rpm;
 uint8_t c_spindle::Direction;

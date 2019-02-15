@@ -13,7 +13,7 @@
     <OutputFileExtension>.elf</OutputFileExtension>
     <OutputDirectory>$(MSBuildProjectDirectory)\$(Configuration)</OutputDirectory>
     <AssemblyName>AVR_Coordinator</AssemblyName>
-    <Name>AVR_Coordinator</Name>
+    <Name>AVR_2560_Coordinator</Name>
     <RootNamespace>AVR_Coordinator</RootNamespace>
     <ToolchainFlavour>Native</ToolchainFlavour>
     <KeepTimersRunning>true</KeepTimersRunning>
@@ -88,7 +88,7 @@
       <Value>libm</Value>
       <Value>libAVR_2560.a</Value>
       <Value>libAVR_2560_HAL.a</Value>
-      <Value>libAVR_Interpreter.a</Value>
+      <Value>libAVR_2560_Interpreter.a</Value>
     </ListValues>
   </avrgcccpp.linker.libraries.Libraries>
   <avrgcccpp.linker.libraries.LibrarySearchPaths>
@@ -99,6 +99,7 @@
       <Value>C:\GitHub\Talos-CNC\src\Common\Interpreter\AVR\Debug</Value>
       <Value>C:\GitHub\Talos-CNC\src\Common\NGC_RS274\Projects\AVR</Value>
       <Value>C:\GitHub\Talos-CNC\src\Common\NGC_RS274\Projects\AVR\Debug</Value>
+      <Value>C:\GitHub\Talos-CNC\src\Common\NGC_RS274\Projects\AVR_2560\Debug</Value>
     </ListValues>
   </avrgcccpp.linker.libraries.LibrarySearchPaths>
   <avrgcccpp.assembler.general.IncludePaths>
@@ -158,15 +159,13 @@
     <ListValues>
       <Value>libm</Value>
       <Value>libAVR_2560_HAL.a</Value>
-      <Value>libAVR_Interpreter.a</Value>
+      <Value>libAVR_2560_Interpreter.a</Value>
     </ListValues>
   </avrgcccpp.linker.libraries.Libraries>
   <avrgcccpp.linker.libraries.LibrarySearchPaths>
     <ListValues>
       <Value>../../../Common/Hardware_Abstraction_Layer/AVR_2560/Debug</Value>
-      <Value>../../../Common/Interpreter/AVR/Debug</Value>
-      <Value>C:\GitHub\Talos-CNC\src\Common\NGC_RS274\Projects\AVR</Value>
-      <Value>C:\GitHub\Talos-CNC\src\Common\NGC_RS274\Projects\AVR\Debug</Value>
+      <Value>../../../Common/NGC_RS274/Projects/AVR_2560/Debug</Value>
     </ListValues>
   </avrgcccpp.linker.libraries.LibrarySearchPaths>
   <avrgcccpp.assembler.general.IncludePaths>
@@ -222,13 +221,13 @@
       <SubType>compile</SubType>
       <Link>msvc++.h</Link>
     </Compile>
-    <Compile Include="..\..\Spindle\c_spindle.cpp">
+    <Compile Include="..\..\Spindle\c_spindle_com_bus.cpp">
       <SubType>compile</SubType>
-      <Link>AVR_Coordinator\Spindle\c_spindle.cpp</Link>
+      <Link>AVR_Coordinator\Spindle\c_spindle_com_bus.cpp</Link>
     </Compile>
-    <Compile Include="..\..\Spindle\c_spindle.h">
+    <Compile Include="..\..\Spindle\c_spindle_com_bus.h">
       <SubType>compile</SubType>
-      <Link>AVR_Coordinator\Spindle\c_spindle.h</Link>
+      <Link>AVR_Coordinator\Spindle\c_spindle_com_bus.h</Link>
     </Compile>
     <Compile Include="..\..\Talos.h">
       <SubType>compile</SubType>

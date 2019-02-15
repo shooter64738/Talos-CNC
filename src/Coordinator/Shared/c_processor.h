@@ -31,6 +31,7 @@ public:
 	static c_Serial host_serial;
 	static c_Serial controller_serial;
 	static c_Serial spindle_serial;
+	
 protected:
 private:
 

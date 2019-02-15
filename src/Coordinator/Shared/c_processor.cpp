@@ -43,7 +43,7 @@
 #include "../../Common/AVR_Terminal_IO/c_lcd_display.h"
 #include "../../Common/NGC_RS274/NGC_Interpreter.h"
 #include "../../Torch Height Control/c_configuration.h"
-#include "../../Spindle/c_spindle.h"
+#include "../../Spindle/c_spindle_com_bus.h"
 
 c_Serial c_processor::host_serial;
 c_Serial c_processor::controller_serial;

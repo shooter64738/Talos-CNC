@@ -288,21 +288,21 @@ int16_t c_stager::stage_block_motion()
 	if (local_block->get_defined('F'))
 	{
 		c_block_events::set_event(Block_Events::FEED_RATE);
-		local_block->persisted_values.feed_rate = local_block->get_value('F');
+		//local_block->persisted_values.feed_rate = local_block->get_value('F');
 	}
 
 	//// [4. Set spindle speed ]:
 	if (local_block->get_defined('S'))
 	{
 		c_block_events::set_event(Block_Events::SPINDLE_RATE);
-		local_block->persisted_values.active_s = local_block->get_value('S');
+		//local_block->persisted_values.active_s = local_block->get_value('S');
 	}
 
 	// [5. Select tool ]: NOT SUPPORTED. Only tracks tool value.
 	if (local_block->get_defined('T'))
 	{
 		c_block_events::set_event(Block_Events::TOOL_ID);
-		local_block->persisted_values.active_t = local_block->get_value('T');
+		//local_block->persisted_values.active_t = local_block->get_value('T');
 	}
 
 	// [6. Change tool ]: NOT SUPPORTED
@@ -377,7 +377,7 @@ int16_t c_stager::stage_block_motion()
 			c_stager::tool_table[0].diameter = local_block->get_value('P');
 		//If D was not set, or it specified D0 we will now use the P value
 		//If D = 0 and a previous P value was set, that previous value now becomes active
-		local_block->persisted_values.active_d = local_block->get_value('D');
+		//local_block->persisted_values.active_d = local_block->get_value('D');
 
 	}
 	if (c_block_events::get_event(Block_Events::TOOL_LENGTH_OFFSET)) //<--block has a tool length command
@@ -406,7 +406,7 @@ int16_t c_stager::stage_block_motion()
 			c_stager::tool_table[0].height = local_block->get_value('P');
 		//If H was not set, or it specified H0 we will now use the P value
 		//If H = 0 and a previous P value was set, that previous value now becomes active
-		local_block->persisted_values.active_h = local_block->get_value('H');
+		//local_block->persisted_values.active_h = local_block->get_value('H');
 	}
 
 	/*
@@ -480,7 +480,7 @@ int16_t c_stager::update_cutter_compensation(NGC_RS274::NGC_Binary_Block* local_
 		c_Cutter_Comp::set_path(local_block);
 	}
 
-	c_Cutter_Comp::tool_radius = tool_table[local_block->persisted_values.active_d].diameter;
+	c_Cutter_Comp::tool_radius = tool_table[(uint16_t)local_block->get_value('D')].diameter;
 
 	//was cutter compensation flagged as changed
 	if (c_block_events::get_event(Block_Events::CUTTER_RADIUS_COMPENSATION))

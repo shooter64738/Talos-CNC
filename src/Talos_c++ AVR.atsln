@@ -5,8 +5,9 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{E66E83B9-2572-4076-B26E-6BE79FF3018A}") = "AVR_2560_HAL", "Common\Hardware_Abstraction_Layer\AVR_2560\AVR_2560_HAL.cppproj", "{796624E7-70C6-4C4C-ABD4-AA391CED2B48}"
 EndProject
-Project("{E66E83B9-2572-4076-B26E-6BE79FF3018A}") = "AVR_Coordinator", "Coordinator\AVR_Coordinator\AVR_Coordinator.cppproj", "{A43646D7-207B-4974-A4C7-D1F89198FF8A}"
+Project("{E66E83B9-2572-4076-B26E-6BE79FF3018A}") = "AVR_2560_Coordinator", "Coordinator\AVR_Coordinator\AVR_2560_Coordinator.cppproj", "{A43646D7-207B-4974-A4C7-D1F89198FF8A}"
 	ProjectSection(ProjectDependencies) = postProject
+		{6F418098-0549-470D-B04D-930EAC6D80E9} = {6F418098-0549-470D-B04D-930EAC6D80E9}
 		{796624E7-70C6-4C4C-ABD4-AA391CED2B48} = {796624E7-70C6-4C4C-ABD4-AA391CED2B48}
 	EndProjectSection
 EndProject
@@ -14,8 +15,6 @@ Project("{E66E83B9-2572-4076-B26E-6BE79FF3018A}") = "AVR_MotionDriver", "MotionD
 	ProjectSection(ProjectDependencies) = postProject
 		{796624E7-70C6-4C4C-ABD4-AA391CED2B48} = {796624E7-70C6-4C4C-ABD4-AA391CED2B48}
 	EndProjectSection
-EndProject
-Project("{E66E83B9-2572-4076-B26E-6BE79FF3018A}") = "AVR_Interpreter", "Common\NGC_RS274\Projects\AVR\AVR_Interpreter.cppproj", "{6F418098-0549-470D-B04D-930EAC6D80E9}"
 EndProject
 Project("{E66E83B9-2572-4076-B26E-6BE79FF3018A}") = "AVR_Torch_Height_Control", "Torch Height Control\Projects\AVR\AVR_Torch_Height_Control.cppproj", "{DCE6C7E3-EE26-4D79-826B-08594B9AD897}"
 EndProject
@@ -28,9 +27,12 @@ EndProject
 Project("{E66E83B9-2572-4076-B26E-6BE79FF3018A}") = "AVR_328_Spindle", "Spindle\Projects\AVR\AVR_328_Spindle\AVR_328_Spindle.cppproj", "{30833530-04CD-46C5-ACF9-1109B1D0FC0D}"
 	ProjectSection(ProjectDependencies) = postProject
 		{6219001D-0880-4B71-BF90-CBEA8DD44E48} = {6219001D-0880-4B71-BF90-CBEA8DD44E48}
+		{5CFFBEEA-BD15-4702-9D9C-42D20953B053} = {5CFFBEEA-BD15-4702-9D9C-42D20953B053}
 	EndProjectSection
 EndProject
 Project("{E66E83B9-2572-4076-B26E-6BE79FF3018A}") = "AVR_328_Interpreter", "Common\NGC_RS274\Projects\AVR_328\AVR_328_Interpreter.cppproj", "{5CFFBEEA-BD15-4702-9D9C-42D20953B053}"
+EndProject
+Project("{E66E83B9-2572-4076-B26E-6BE79FF3018A}") = "AVR_2560_Interpreter", "Common\NGC_RS274\Projects\AVR_2560\AVR_2560_Interpreter.cppproj", "{6F418098-0549-470D-B04D-930EAC6D80E9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -50,10 +52,6 @@ Global
 		{7ECCFA6D-D802-4EEB-AE26-9CD544023A34}.Debug|AVR.Build.0 = Debug|AVR
 		{7ECCFA6D-D802-4EEB-AE26-9CD544023A34}.Release|AVR.ActiveCfg = Release|AVR
 		{7ECCFA6D-D802-4EEB-AE26-9CD544023A34}.Release|AVR.Build.0 = Release|AVR
-		{6F418098-0549-470D-B04D-930EAC6D80E9}.Debug|AVR.ActiveCfg = Debug|AVR
-		{6F418098-0549-470D-B04D-930EAC6D80E9}.Debug|AVR.Build.0 = Debug|AVR
-		{6F418098-0549-470D-B04D-930EAC6D80E9}.Release|AVR.ActiveCfg = Release|AVR
-		{6F418098-0549-470D-B04D-930EAC6D80E9}.Release|AVR.Build.0 = Release|AVR
 		{DCE6C7E3-EE26-4D79-826B-08594B9AD897}.Debug|AVR.ActiveCfg = Debug|AVR
 		{DCE6C7E3-EE26-4D79-826B-08594B9AD897}.Debug|AVR.Build.0 = Debug|AVR
 		{DCE6C7E3-EE26-4D79-826B-08594B9AD897}.Release|AVR.ActiveCfg = Release|AVR
@@ -78,6 +76,10 @@ Global
 		{5CFFBEEA-BD15-4702-9D9C-42D20953B053}.Debug|AVR.Build.0 = Debug|AVR
 		{5CFFBEEA-BD15-4702-9D9C-42D20953B053}.Release|AVR.ActiveCfg = Release|AVR
 		{5CFFBEEA-BD15-4702-9D9C-42D20953B053}.Release|AVR.Build.0 = Release|AVR
+		{6F418098-0549-470D-B04D-930EAC6D80E9}.Debug|AVR.ActiveCfg = Debug|AVR
+		{6F418098-0549-470D-B04D-930EAC6D80E9}.Debug|AVR.Build.0 = Debug|AVR
+		{6F418098-0549-470D-B04D-930EAC6D80E9}.Release|AVR.ActiveCfg = Release|AVR
+		{6F418098-0549-470D-B04D-930EAC6D80E9}.Release|AVR.Build.0 = Release|AVR
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -23,6 +23,7 @@
 #define TALOS_H_
 //To enable compilation and debugging in Microsoft Visual C++ define MSCV
 //#define MSVC
+
 /*
 Setting this will determine how the HAL compiles, and what control type it will control.
 In each HAL project there is an #ifdef for the control type. Within each control type

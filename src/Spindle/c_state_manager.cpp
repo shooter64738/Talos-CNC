@@ -17,6 +17,7 @@ uint8_t Spindle_Controller::c_state_manager::check_driver_state()
 	uint16_t illegal_rotations = 0;
 	
 	this_rpm = Spindle_Controller::c_encoder::current_rpm();
+
 	uint8_t test = Spindle_Controller::c_driver::Get_State(STATE_BIT_ENABLE) & Spindle_Controller::c_driver::Get_State(STATE_BIT_DIRECTION_CW);
 	//Check for a direction change
 	//while (c_Parser::spindle_input.rotation_direction != Spindle_Controller::c_driver::Drive_Control.direction)

@@ -139,7 +139,7 @@
     <ClCompile Include="..\Shared\Settings\c_Turn.cpp">
       <Filter>Shared\Settings</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Spindle\c_spindle.cpp">
+    <ClCompile Include="..\..\Spindle\c_spindle_com_bus.cpp">
       <Filter>Common\Spindle</Filter>
     </ClCompile>
   </ItemGroup>
@@ -245,7 +245,7 @@
     <ClInclude Include="..\Shared\Settings\c_Turn.h">
       <Filter>Shared\Settings</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Spindle\c_spindle.h">
+    <ClInclude Include="..\..\Spindle\c_spindle_com_bus.h">
       <Filter>Common\Spindle</Filter>
     </ClInclude>
   </ItemGroup>

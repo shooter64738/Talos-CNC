@@ -19,8 +19,8 @@
 */
 
 
-#ifndef NGC_Gcode_Groups_h
-#define NGC_Gcode_Groups_h
+#ifndef NGC_Mcode_Groups_h
+#define NGC_Mcode_Groups_h
 
 #include <stdint.h>
 namespace NGC_RS274
@@ -32,9 +32,10 @@ namespace NGC_RS274
 		public:
 			static const uint8_t STOPPING = 4;
 			static const uint8_t TOOL_CHANGE = 6;
-			static const uint8_t SPINDLE_TURNING = 7;
+			static const uint8_t SPINDLE = 7;
 			static const uint8_t COOLANT = 8;
-			static const uint8_t FEED_SPEED_OVERRIDE = 9;
+			static const uint8_t OVERRIDE = 9;
+			static const uint8_t USER_DEFINED = 10;
 		};
 	};
 }

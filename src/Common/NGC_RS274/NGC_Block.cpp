@@ -32,6 +32,13 @@ NGC_RS274::NGC_Binary_Block::NGC_Binary_Block()
 	this->axis_values.C = &this->block_word_values[C_WORD_BIT];
 	this->axis_values.U = &this->block_word_values[U_WORD_BIT];
 	this->axis_values.V = &this->block_word_values[V_WORD_BIT];
+
+	this->persisted_values.feed_rate_F = &this->block_word_values[F_WORD_BIT];
+	this->persisted_values.active_tool_T = &this->block_word_values[T_WORD_BIT];
+	this->persisted_values.active_diameter_D = &this->block_word_values[D_WORD_BIT];
+	this->persisted_values.active_height_H = &this->block_word_values[H_WORD_BIT];
+	this->persisted_values.active_spindle_speed_S = &this->block_word_values[S_WORD_BIT];
+	this->persisted_values.active_line_number_N = &this->block_word_values[N_WORD_BIT];
 	
 	this->arc_values.horizontal_center.value =&this->block_word_values[I_WORD_BIT];
 	this->arc_values.vertical_center.value =&this->block_word_values[J_WORD_BIT];

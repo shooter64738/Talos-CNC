@@ -64,13 +64,20 @@ namespace NGC_RS274
 
 		typedef struct s_persisted_values
 		{
-			float feed_rate;
-			uint16_t active_t;
-			uint8_t active_d;
-			uint8_t active_h;
-			uint16_t active_s;
-			uint8_t overrides_enabled;
-			uint16_t line_number;
+			//float feed_rate;
+			//uint16_t active_t;
+			//uint8_t active_d;
+			//uint8_t active_h;
+			//uint16_t active_s;
+			//uint8_t overrides_enabled;
+			//uint16_t line_number;
+			//float spindle_speed;
+			float *feed_rate_F;
+			float *active_tool_T;
+			float *active_diameter_D;
+			float *active_height_H;
+			float *active_spindle_speed_S;
+			float *active_line_number_N;
 		}s_persisted_values;
 		s_persisted_values persisted_values;
 
@@ -126,8 +133,8 @@ namespace NGC_RS274
 		uint32_t word_defined_in_block_A_Z;
 		//This is a 2 byte (16 bit) variable. If a G command was defined for a G group we store its bits in here.
 		uint16_t g_code_defined_in_block;
-		//This is a 1 byte (8 bit) variable. If a M command was defined for an M group we store its bits in here.
-		uint8_t m_code_defined_in_block;
+		//This is a 2 byte (16 bit) variable. If a M command was defined for an M group we store its bits in here.
+		uint16_t m_code_defined_in_block;
 		//These initialize with -1 values. 0 is a valid value for some blocks, so setting them to -1 indicates the value was never explicitly set.
 		uint16_t g_group[COUNT_OF_G_CODE_GROUPS_ARRAY]; //There are 14 groups of gcodes (0-13)
 		uint16_t m_group[COUNT_OF_M_CODE_GROUPS_ARRAY]; //There are 5 groups of mcodes (0-4)

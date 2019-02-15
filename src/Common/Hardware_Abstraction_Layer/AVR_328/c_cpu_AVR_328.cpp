@@ -23,7 +23,6 @@
 #include "c_cpu_AVR_328.h"
 #include "lcd\c_LcdPcf8574.h"
 #include <util\delay.h>
-#include "..\..\Bresenham\c_Bresenham.h"
 #include <avr/eeprom.h>
 #include "..\c_hal.h"
 
@@ -31,6 +30,8 @@
 #ifdef CONTROL_TYPE_SPINDLE //<--If the control_type.h file contains a control specific type, act on it here.
 #include "..\..\..\Spindle\c_encoder.h"
 #endif
+//this can be set in  talos, but since the 328 only has one com port im redefining it here. 
+#define COM_PORT_COUNT 1
 
 s_Buffer c_cpu_AVR_328::rxBuffer[COM_PORT_COUNT];
 c_hal::s_isr_pointers c_hal::ISR_Pointers;
@@ -195,6 +196,7 @@ void c_cpu_AVR_328::serial_send(uint8_t Port, char byte)
 	}
 }
 
+
 void c_cpu_AVR_328::lcd_initializer()
 {
 	c_LcdPcf8574::lcd_init(LCD_DISP_ON);
@@ -347,8 +349,6 @@ void c_cpu_AVR_328::lcd_print_float(float n, uint8_t decimal_places)
 	}
 	//this->Write(CR);
 }
-
-
 
 //private methods
 void c_cpu_AVR_328::_incoming_serial_isr(uint8_t Port, char Byte)

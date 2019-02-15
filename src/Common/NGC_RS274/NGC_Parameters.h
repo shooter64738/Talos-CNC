@@ -18,7 +18,6 @@
 *  along with Talos.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
 #ifndef NGC_PARAMETERS_H_
 #define NGC_PARAMETERS_H_
 #include "NGC_G_Codes.h"
