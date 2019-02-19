@@ -21,6 +21,8 @@
 
 #ifdef __AVR_ATmega328P__
 
+#include <stdint.h>
+
 #ifndef __CONTROL_TYPE_SPINDLE_H__
 #define __CONTROL_TYPE_SPINDLE_H__
 
@@ -49,6 +51,7 @@ class control_type
 	static void _disable_drive();
 	static void _brake_drive();
 	static void _release_drive();
+	static void _drive_analog(uint16_t current_output);
 	static void _set_inbound_function_pointers();
 	static void _reverse_drive();
 	static void _forward_drive();

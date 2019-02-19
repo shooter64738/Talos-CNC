@@ -39,6 +39,7 @@ namespace Spindle_Controller
 		//functions
 		public:
 		static uint8_t check_driver_state();
+		static uint8_t process_state(float CurrentRPM);
 
 		protected:
 		private:

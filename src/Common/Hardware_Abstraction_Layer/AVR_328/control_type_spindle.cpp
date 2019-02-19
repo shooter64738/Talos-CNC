@@ -43,6 +43,7 @@ void control_type::_set_inbound_function_pointers()
 	c_hal::driver.PNTR_FORWARD= &control_type::_forward_drive;
 	c_hal::driver.PNTR_REVERSE= &control_type::_reverse_drive;
 	c_hal::driver.PNTR_RELEASE= &control_type::_release_drive;
+	c_hal::driver.PNTR_DRIVE_ANALOG = &control_type::_drive_analog;
 }
 
 
@@ -92,6 +93,11 @@ void control_type::_release_drive()
 	CONTROL_PORT &= ~(1<<BRAKE_PIN); //(uno pin 6)
 }
 
+void control_type::_drive_analog(uint16_t current_output)
+{
+	OCR0A = current_output;
+}
+
 void control_type::_reverse_drive()
 {
 	CONTROL_PORT |= (1<<DIRECTION_PIN); //(uno pin 13)
@@ -106,6 +112,7 @@ void control_type::_set_outbound_isr_pointers()
 {
 	//Functions called from hal->progam
 	c_hal::ISR_Pointers.TIMER1_CAPT_vect = &Spindle_Controller::c_encoder::hal_callbacks::timer_capture;
+	c_hal::ISR_Pointers.TIMER1_OVF_vect = &Spindle_Controller::c_encoder::hal_callbacks::timer_overflow;
 	c_hal::ISR_Pointers.INT0_vect = &Spindle_Controller::c_encoder::hal_callbacks::position_change;
 	c_hal::ISR_Pointers.INT1_vect = &Spindle_Controller::c_encoder::hal_callbacks::position_change;
 }
@@ -119,6 +126,8 @@ void control_type::_set_encoder_inputs()
 
 	EICRA |= (1 << ISC00);	// Trigger on any change on INT0
 	EICRA |= (1 << ISC10);	// Trigger on any change on INT1
+	
+	EIMSK |= (1 << INT0) | (1 << INT1);     // Enable external interrupt INT0, INT1
 }
 void control_type::_set_timer1_capture_input()
 {
@@ -170,10 +179,10 @@ void control_type::_set_control_outputs()
 	*/
 }
 
-ISR(TIMER1_COMPA_vect)
-{
-}
 
+/*
+Captures the time count in ICR1 when the index pulse came in. This should be used to measure RPM
+*/
 ISR(TIMER1_CAPT_vect)
 {
 	uint8_t port_values = PIND;
@@ -182,8 +191,12 @@ ISR(TIMER1_CAPT_vect)
 	TCNT1 = 0;
 }
 
-ISR(TIMER0_OVF_vect)
+/*
+Increments the over flow counter. Over flows occur every .0001 seconds
+*/
+ISR(TIMER1_OVF_vect)
 {
+	c_hal::ISR_Pointers.TIMER1_OVF_vect != NULL ? c_hal::ISR_Pointers.TIMER1_OVF_vect() : void();
 }
 
 ISR(PCINT0_vect)
@@ -196,6 +209,9 @@ ISR(PCINT2_vect)
 	c_hal::ISR_Pointers.PCINT2_vect != NULL ? c_hal::ISR_Pointers.PCINT2_vect() : void();
 };
 
+/*
+INT0 and INT1, capture the values when the encoder channels changed state. Used for shaft position
+*/
 ISR (INT0_vect)
 {
 	uint8_t port_values = PIND;
@@ -209,8 +225,7 @@ ISR(INT1_vect)
 {
 	uint8_t port_values = PIND;
 	uint16_t time_at_vector = TCNT1;
+
 	c_hal::ISR_Pointers.INT1_vect != NULL ? c_hal::ISR_Pointers.INT1_vect(time_at_vector,port_values) : void();
-	#ifdef CONTROL_TYPE_SPINDLE
 	TCNT1 = 0;
-	#endif
 }

@@ -53,6 +53,7 @@ namespace Spindle_Controller
 		//variables
 		static s_drive_control Drive_Control;
 		static uint8_t current_output;
+		static uint8_t accel_output;
 		protected:
 		private:
 

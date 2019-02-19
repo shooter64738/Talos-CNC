@@ -37,6 +37,7 @@ uint16_t Spindle_Controller::c_encoder::encoder_ticks_per_rev = 0;
 
 void Spindle_Controller::c_encoder::hal_callbacks::position_change(uint16_t time_at_vector,uint8_t port_values)
 {
+	
 	/*
 	If using a 3 channel encoder (or 2 channel with an index pulse) we dont need this code
 	section to calculate the RPM. the timer capture should do that for us.
