@@ -34,7 +34,6 @@
 #define COM_PORT_COUNT 1
 
 s_Buffer c_cpu_AVR_328::rxBuffer[COM_PORT_COUNT];
-c_hal::s_isr_pointers c_hal::ISR_Pointers;
 
 /*
 All cpu specific functions should take place in here. There should be no logic

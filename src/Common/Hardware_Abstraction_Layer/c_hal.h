@@ -49,18 +49,6 @@ class c_hal
 	public:
 	static void initialize();
 
-	typedef struct
-	{
-		void (*TIMER1_COMPA_vect)(void);
-		void (*TIMER1_CAPT_vect)(uint16_t,uint8_t);
-		void(*TIMER1_OVF_vect)(void);
-		void (*TIMER0_OVF_vect)(void);
-		void (*PCINT0_vect)(void);
-		void (*PCINT2_vect)(void);
-		void (*INT0_vect)(uint16_t,uint8_t);
-		void (*INT1_vect)(uint16_t,uint8_t);
-	}s_isr_pointers;
-	static s_isr_pointers ISR_Pointers;
 
 	//core struct refers to actions that give basic function
 	typedef struct
@@ -87,20 +75,6 @@ class c_hal
 	}s_comm_function_pointers;
 	static s_comm_function_pointers comm;	
 	
-	////driver struct refers to actions to run stepper or servo drivers
-	//typedef struct
-	//{
-	//	void(*PNTR_INITIALIZE)(void);
-	//	void(*PNTR_ENABLE)(void);
-	//	void(*PNTR_DISABLE)(void);
-	//	void(*PNTR_DRIVE)(void);
-	//	void(*PNTR_RESET)(void);
-	//	void(*PNTR_SET_PRESCALER)(uint16_t);
-	//	void(*PNTR_SET_TIMER_RATE)(uint16_t);
-
-	//}s_driver_function_pointers;
-	//static s_driver_function_pointers driver;
-
 	//driver struct refers to actions to run stepper or servo drivers
 	typedef struct
 	{
@@ -120,22 +94,6 @@ class c_hal
 		void (*PNTR_CONFIGURE_STEPPER)(uint8_t,uint8_t,uint8_t,uint32_t);
 	}s_driver_function_pointers;
 	static s_driver_function_pointers driver;
-
-	//feedback struct refers to actions to implement closed loop control
-	typedef struct
-	{
-		void (*PNTR_INITIALIZE)(void);
-		void (*PNTR_ENABLE)(void);
-		void (*PNTR_DISABLE)(void);
-		bool (*PNTR_IS_DIRTY)(void);
-		void (*PNTR_PULSE_ISR)(void);
-		int32_t *PNTR_POSITION_DATA;
-		//void (*PNTR_RESET)(void);
-		
-	}s_feedback_function_pointers;
-	static s_feedback_function_pointers feedback;
-	static void (*PNTR_INTERNAL_PCINT0)(void);
-	static void (*PNTR_INTERNAL_PCINT2)(void);
 	
 	//lcd struct refers to anything related to lcd display
 	typedef struct
@@ -147,35 +105,6 @@ class c_hal
 		void (*PNTR_UPDATE_EDM_DISPLAY)(uint8_t,float);
 	}s_lcd_function_pointers;
 	static s_lcd_function_pointers lcd;
-
-	//edm struct refers to anything related to edm control.
-	typedef struct
-	{
-		void (*PNTR_INITIALIZE)(void);
-		float (*PNTR_GET_ARC_VOLTAGE)(void);
-		void (*PNTR_SET_ARC_DRIVE_FREQUENCY)(void);
-	}s_edm_function_pointers;
-	static s_edm_function_pointers edm;
-
-	//io struct refers to anything related to reading input and output
-	typedef struct
-	{
-		void(*PNTR_INITIALIZE)(void);
-		int16_t(*PNTR_GET_ANALOG)(int16_t);
-		uint8_t(*PNTR_GET_DIGITAL)(uint8_t);
-		void(*PNTR_SET_ANALOG)(int16_t);
-		void(*PNTR_SET_DIGITAL)(uint8_t);
-	}s_input_function_pointers;
-	static s_input_function_pointers io;
-
-	//io struct refers to anything related to reading input and output
-	typedef struct
-	{
-		void(*PNTR_INITIALIZE)(void);
-		void(*PNTR_ENCODER_TIME_CAPTURE)();
-		void(*PNTR_ENCODER_QUADRATURE)();
-	}s_spindle_function_pointers;
-	static s_spindle_function_pointers spindle;
 
 	typedef struct
 	{

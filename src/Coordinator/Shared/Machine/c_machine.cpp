@@ -35,6 +35,7 @@
 #include "..\..\..\Common\Bresenham\c_Bresenham.h"
 #include "..\..\..\Common\NGC_RS274\NGC_Interpreter.h"
 #include "..\Planner\c_gcode_buffer.h"
+#include "..\Encoder\c_encoder.h"
 
 
 uint16_t *c_machine::machine_state_g_group; //There are 14 groups of gcodes (0-13)
@@ -107,7 +108,7 @@ void c_machine::initialize()
 void c_machine::synch_position()
 {
 	//if feedback monitor isnt enabled, just use axis target data
-	if (c_hal::feedback.PNTR_POSITION_DATA == NULL)
+	#ifdef MSVC
 	{
 		if (c_machine::machine_block != NULL)
 		{
@@ -121,40 +122,39 @@ void c_machine::synch_position()
 			c_machine::axis_position[MACHINE_V_AXIS] = *c_machine::machine_block->axis_values.V;
 		}
 	}
-	else if (c_hal::feedback.PNTR_IS_DIRTY != NULL)
+	#endif
+	//if (c_hal::feedback.PNTR_IS_DIRTY())
 	{
-		if (c_hal::feedback.PNTR_IS_DIRTY())
+		/*
+		If feedback is in use then each step of interpolation should match the Bresenham algorithm.
+		If it does not then there was an axis fault somewhere. Find ouu which axis faulted based on
+		position error and report it to the user.
+		*/
+
+		//TODO
+		//Disabling this since I dont have my machine assembled to test with.
+		//uint16_t return_code = c_Bresenham::calculate_line(c_hal::feedback.PNTR_POSITION_DATA);
+		//if (return_code!=NGC_Machine_Errors::OK)
 		{
 			/*
-			If feedback is in use then each step of interpolation should match the Bresenham algorithm.
-			If it does not then there was an axis fault somewhere. Find ouu which axis faulted based on
-			position error and report it to the user.
+			Axis fault detected..
+			1. We need to stop motion on the controller.
+			2. Spindle should remain active.
+			3. Assume the position we are in is wrong.
 			*/
 
-			//TODO
-			//Disabling this since I dont have my machine assembled to test with. 
-			//uint16_t return_code = c_Bresenham::calculate_line(c_hal::feedback.PNTR_POSITION_DATA);
-			//if (return_code!=NGC_Machine_Errors::OK)
-			{
-				/*
-				Axis fault detected..
-				1. We need to stop motion on the controller.
-				2. Spindle should remain active.
-				3. Assume the position we are in is wrong.
-				*/
-
-				//c_motion_controller::PNTR_RESET();
-			}
-
-			for (uint8_t axis = 0;axis < c_motion_controller_settings::axis_count_reported;axis++)
-			{
-				c_machine::axis_position[axis] = ((float)(c_hal::feedback.PNTR_POSITION_DATA[axis]))
-					/ ((float)(c_motion_controller_settings::configuration_settings.steps_per_mm[axis]));
-			}
-			c_status::axis_values(c_machine::axis_position, c_motion_controller_settings::axis_count_reported, c_machine::unit_scaler);
-			c_processor::host_serial.Write(CR);
+			//c_motion_controller::PNTR_RESET();
 		}
+
+		for (uint8_t axis = 0;axis < c_motion_controller_settings::axis_count_reported;axis++)
+		{
+			c_machine::axis_position[axis] = ((float)(Coordinator::c_encoder::Axis_Positions[axis]))
+			/ ((float)(c_motion_controller_settings::configuration_settings.steps_per_mm[axis]));
+		}
+		c_status::axis_values(c_machine::axis_position, c_motion_controller_settings::axis_count_reported, c_machine::unit_scaler);
+		c_processor::host_serial.Write(CR);
 	}
+	
 }
 
 
@@ -188,32 +188,32 @@ void c_machine::report()
 
 	switch (c_processor::host_serial.Peek())
 	{
-	case 'G'://<--request is for a detail of all gcode states.
-	{
-		c_processor::host_serial.Write("Mac G St:");
-		c_status::modal_codes(c_machine::machine_state_g_group, COUNT_OF_G_CODE_GROUPS_ARRAY);
-		c_processor::host_serial.Write(CR);
-	}
-	break;
-	case 'M'://<--request is for a detail of all mcode states.
-	{
-		c_processor::host_serial.Write("Mac M St:");
-		c_status::modal_codes(c_machine::machine_state_m_group, COUNT_OF_M_CODE_GROUPS_ARRAY);
-		c_processor::host_serial.Write(CR);
-	}
-	break;
-	//If Cr or LF, its just a regular old position query
-	case 10:
-	case 13:
-	{
-		c_status::axis_values(c_machine::axis_position, c_motion_controller_settings::axis_count_reported, c_machine::unit_scaler);
-		c_processor::host_serial.Write(CR);
-	}
-	break;
-	default:
-	{
-	}
-	break;
+		case 'G'://<--request is for a detail of all gcode states.
+		{
+			c_processor::host_serial.Write("Mac G St:");
+			c_status::modal_codes(c_machine::machine_state_g_group, COUNT_OF_G_CODE_GROUPS_ARRAY);
+			c_processor::host_serial.Write(CR);
+		}
+		break;
+		case 'M'://<--request is for a detail of all mcode states.
+		{
+			c_processor::host_serial.Write("Mac M St:");
+			c_status::modal_codes(c_machine::machine_state_m_group, COUNT_OF_M_CODE_GROUPS_ARRAY);
+			c_processor::host_serial.Write(CR);
+		}
+		break;
+		//If Cr or LF, its just a regular old position query
+		case 10:
+		case 13:
+		{
+			c_status::axis_values(c_machine::axis_position, c_motion_controller_settings::axis_count_reported, c_machine::unit_scaler);
+			c_processor::host_serial.Write(CR);
+		}
+		break;
+		default:
+		{
+		}
+		break;
 	}
 
 	//update the machine position for the axis_id sent.
@@ -222,7 +222,7 @@ void c_machine::report()
 void c_machine::run_block()
 {
 	if (c_machine::machine_block == NULL)
-		return;
+	return;
 	//synchronize the machine g/m code states with the block we are going to execute.
 	c_machine::synch_machine_state_g_code();
 	c_machine::synch_machine_state_m_code();
@@ -281,10 +281,10 @@ void c_machine::start_motion(NGC_RS274::NGC_Binary_Block* local_block)
 
 			//If the pointer is null, the cycle is finished this round. Set the motion mode back to the original cycle motion
 			if (local_block->canned_values.PNTR_RECALLS == NULL)
-				/*
-				Since we have changed the state of this block, we need to re-establish its original motion mode
-				*/
-				local_block->g_group[NGC_RS274::Groups::G::MOTION] = c_canned_cycle::active_cycle_code;
+			/*
+			Since we have changed the state of this block, we need to re-establish its original motion mode
+			*/
+			local_block->g_group[NGC_RS274::Groups::G::MOTION] = c_canned_cycle::active_cycle_code;
 		}
 
 

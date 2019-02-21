@@ -29,7 +29,6 @@ s_Buffer c_cpu_VIRTUAL::rxBuffer[COM_PORT_COUNT];
 
 int8_t c_cpu_VIRTUAL::Axis_Incrimenter[MACHINE_AXIS_COUNT];
 int32_t c_cpu_VIRTUAL::Axis_Positions[MACHINE_AXIS_COUNT];
-c_hal::s_isr_pointers c_hal::ISR_Pointers;
 
 bool c_cpu_VIRTUAL::feedback_is_dirty = false;
 

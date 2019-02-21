@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Atmel Studio Solution File, Format Version 11.00
-VisualStudioVersion = 14.0.23107.0
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{E66E83B9-2572-4076-B26E-6BE79FF3018A}") = "AVR_2560_HAL", "Common\Hardware_Abstraction_Layer\AVR_2560\AVR_2560_HAL.cppproj", "{796624E7-70C6-4C4C-ABD4-AA391CED2B48}"
 EndProject
@@ -16,7 +16,7 @@ Project("{E66E83B9-2572-4076-B26E-6BE79FF3018A}") = "AVR_MotionDriver", "MotionD
 		{796624E7-70C6-4C4C-ABD4-AA391CED2B48} = {796624E7-70C6-4C4C-ABD4-AA391CED2B48}
 	EndProjectSection
 EndProject
-Project("{E66E83B9-2572-4076-B26E-6BE79FF3018A}") = "AVR_328_THC", "Torch Height Control\Projects\AVR\AVR_328_THC.cppproj", "{DCE6C7E3-EE26-4D79-826B-08594B9AD897}"
+Project("{E66E83B9-2572-4076-B26E-6BE79FF3018A}") = "AVR_Torch_Height_Control", "Torch Height Control\Projects\AVR\AVR_Torch_Height_Control.cppproj", "{DCE6C7E3-EE26-4D79-826B-08594B9AD897}"
 EndProject
 Project("{E66E83B9-2572-4076-B26E-6BE79FF3018A}") = "AVR_EDM_Drive", "EDM_Drive\Projects\AVR\AVR_EDM_Drive.cppproj", "{DC35D00C-AC83-48D7-8A15-A1C82B20A12C}"
 EndProject

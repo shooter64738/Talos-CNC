@@ -26,8 +26,6 @@
 
 void control_type::initialize()
 {
-	
-	control_type::_set_outbound_isr_pointers();
 	control_type::_set_inbound_function_pointers();
 	control_type::_set_encoder_inputs();
 	control_type::_set_timer1_capture_input();
@@ -108,14 +106,6 @@ void control_type::_forward_drive()
 	CONTROL_PORT &= ~(1<<DIRECTION_PIN); //(uno pin 13)
 }
 
-void control_type::_set_outbound_isr_pointers()
-{
-	//Functions called from hal->progam
-	c_hal::ISR_Pointers.TIMER1_CAPT_vect = &Spindle_Controller::c_encoder::hal_callbacks::timer_capture;
-	c_hal::ISR_Pointers.TIMER1_OVF_vect = &Spindle_Controller::c_encoder::hal_callbacks::timer_overflow;
-	c_hal::ISR_Pointers.INT0_vect = &Spindle_Controller::c_encoder::hal_callbacks::position_change;
-	c_hal::ISR_Pointers.INT1_vect = &Spindle_Controller::c_encoder::hal_callbacks::position_change;
-}
 void control_type::_set_encoder_inputs()
 {
 	//Following code enables interrupts to determine direction of motor rotation
@@ -187,7 +177,8 @@ ISR(TIMER1_CAPT_vect)
 {
 	uint8_t port_values = PIND;
 	uint16_t time_at_vector = ICR1;
-	c_hal::ISR_Pointers.TIMER1_CAPT_vect != NULL ? c_hal::ISR_Pointers.TIMER1_CAPT_vect(time_at_vector, port_values) : void();
+	//c_hal::ISR_Pointers.TIMER1_CAPT_vect != NULL ? c_hal::ISR_Pointers.TIMER1_CAPT_vect(time_at_vector, port_values) : void();
+	Spindle_Controller::c_encoder::hal_callbacks::timer_capture(time_at_vector, port_values);
 	TCNT1 = 0;
 }
 
@@ -196,17 +187,18 @@ Increments the over flow counter. Over flows occur every .0001 seconds
 */
 ISR(TIMER1_OVF_vect)
 {
-	c_hal::ISR_Pointers.TIMER1_OVF_vect != NULL ? c_hal::ISR_Pointers.TIMER1_OVF_vect() : void();
+	//c_hal::ISR_Pointers.TIMER1_OVF_vect != NULL ? c_hal::ISR_Pointers.TIMER1_OVF_vect() : void();
+	Spindle_Controller::c_encoder::hal_callbacks::timer_overflow();
 }
 
 ISR(PCINT0_vect)
 {
-	c_hal::ISR_Pointers.PCINT0_vect != NULL ? c_hal::ISR_Pointers.PCINT0_vect() : void();
+	//c_hal::ISR_Pointers.PCINT0_vect != NULL ? c_hal::ISR_Pointers.PCINT0_vect() : void();
 };
 
 ISR(PCINT2_vect)
 {
-	c_hal::ISR_Pointers.PCINT2_vect != NULL ? c_hal::ISR_Pointers.PCINT2_vect() : void();
+	//c_hal::ISR_Pointers.PCINT2_vect != NULL ? c_hal::ISR_Pointers.PCINT2_vect() : void();
 };
 
 /*
@@ -217,7 +209,8 @@ ISR (INT0_vect)
 	uint8_t port_values = PIND;
 	uint16_t time_at_vector = TCNT1;
 	
-	c_hal::ISR_Pointers.INT0_vect != NULL ? c_hal::ISR_Pointers.INT0_vect(time_at_vector,port_values) : void();
+	//c_hal::ISR_Pointers.INT0_vect != NULL ? c_hal::ISR_Pointers.INT0_vect(time_at_vector,port_values) : void();
+	Spindle_Controller::c_encoder::hal_callbacks::position_change(time_at_vector,port_values);
 	TCNT1 = 0;
 }
 
@@ -226,6 +219,7 @@ ISR(INT1_vect)
 	uint8_t port_values = PIND;
 	uint16_t time_at_vector = TCNT1;
 
-	c_hal::ISR_Pointers.INT1_vect != NULL ? c_hal::ISR_Pointers.INT1_vect(time_at_vector,port_values) : void();
+	//c_hal::ISR_Pointers.INT1_vect != NULL ? c_hal::ISR_Pointers.INT1_vect(time_at_vector,port_values) : void();
+	Spindle_Controller::c_encoder::hal_callbacks::position_change(time_at_vector,port_values);
 	TCNT1 = 0;
 }

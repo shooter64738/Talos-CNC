@@ -32,21 +32,22 @@ machine type and processor combination. More control types are planned in the fu
 To set compilation for a particular machine type, uncomment the define
 */
 //ONLY ONE CONTROL TYPE CAN BE DEFINED FOR EACH COMPILE
-#define CONTROL_TYPE_SPINDLE
-//#define CONTROL_TYPE_COORDINATOR
-//#define CONTROL_TYPE_LATHE_FLAT
-//#define CONTROL_TYPE_LATHE_SLANT
-//#define CONTROL_TYPE_MILL_RF45
-//#define CONTROL_TYPE_MILL_GANTRY
-//#define CONTROL_TYPE_MILL_ROUTER
-//#define CONTROL_TYPE_MILL_LASER
-//#define CONTROL_TYPE_PLASMA
-//#define CONTROL_TYPE_EDM_WIRE
-//#define CONTROL_TYPE_EDM_PLUNGE
-//#define CONTROL_TYPE_STOCK_FEEDER
-//#define CONTROL_TYPE_TOOL_CHANGER
-//#define CONTROL_TYPE_GRINDER
-//#define CONTROL_TYPE_TORCH_HEIGHT
+#define CONTROL_TYPE_SPINDLE        //<--Controls a DC motor+encoder as a spindle (const vel servo)
+//#define CONTROL_TYPE_COORDINATOR  //<--Coordinates spindle,motion,peripheral controls
+//#define CONTROL_TYPE_LATHE_FLAT   //<--Controls a flat bed lathe
+//#define CONTROL_TYPE_LATHE_SLANT  //<--Controls a slant bed lathe
+//#define CONTROL_TYPE_MILL_RF45    //<--Controls a Cartesian RF45 style mill
+//#define CONTROL_TYPE_MILL_GANTRY  //<--Controls a Cartesian gantry style mill
+//#define CONTROL_TYPE_MILL_ROUTER  //<--Controls a Cartesian wood router mill
+//#define CONTROL_TYPE_MILL_LASER   //<--Controls a Cartesian laser
+//#define CONTROL_TYPE_PLASMA       //<--Controls a Cartesian plasma cutter
+//#define CONTROL_TYPE_PLASMA_THC   //<--Controls the torch head on a Cartesian plasma cutter
+//#define CONTROL_TYPE_EDM_WIRE     //<--Controls a wire EDM machine
+//#define CONTROL_TYPE_EDM_PLUNGE   //<--Controls a plunge EDM machine
+//#define CONTROL_TYPE_STOCK_FEEDER //<--Controls a stock/material feeder
+//#define CONTROL_TYPE_TOOL_CHANGER //<--Controls a tool change system
+//#define CONTROL_TYPE_GRINDER      //<--Controls a Cartesian surface grinder
+//#define CONTROL_TYPE_SERVO        //<--Controls a DC motor+encoder as a servo (pos held servo)
 
 
 #include <stdio.h>

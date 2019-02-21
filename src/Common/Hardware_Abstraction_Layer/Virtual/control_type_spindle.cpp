@@ -93,8 +93,6 @@ uint16_t  WGM00 = 0;
 
 void control_type::initialize()
 {
-	
-	control_type::_set_outbound_isr_pointers();
 	control_type::_set_inbound_function_pointers();
 	control_type::_set_encoder_inputs();
 	control_type::_set_timer1_capture_input();
@@ -169,14 +167,6 @@ void control_type::_forward_drive()
 	CONTROL_PORT &= ~(1<<DIRECTION_PIN); //(uno pin 13)
 }
 
-void control_type::_set_outbound_isr_pointers()
-{
-	//Functions called from hal->progam
-	c_hal::ISR_Pointers.TIMER1_CAPT_vect = &Spindle_Controller::c_encoder::hal_callbacks::timer_capture;
-	c_hal::ISR_Pointers.TIMER1_OVF_vect = &Spindle_Controller::c_encoder::hal_callbacks::timer_overflow;
-	c_hal::ISR_Pointers.INT0_vect = &Spindle_Controller::c_encoder::hal_callbacks::position_change;
-	c_hal::ISR_Pointers.INT1_vect = &Spindle_Controller::c_encoder::hal_callbacks::position_change;
-}
 void control_type::_set_encoder_inputs()
 {
 	//Following code enables interrupts to determine direction of motor rotation
@@ -249,7 +239,8 @@ void control_type::isr_threads::TIMER1_CAPT_vect()
 	{
 		uint8_t port_values = PIND;
 		uint16_t time_at_vector = ICR1;
-		c_hal::ISR_Pointers.TIMER1_CAPT_vect != NULL ? c_hal::ISR_Pointers.TIMER1_CAPT_vect(time_at_vector, port_values) : void();
+		Spindle_Controller::c_encoder::hal_callbacks::timer_capture(time_at_vector,port_values);
+
 		TCNT1 = 0;
 		std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 	}
@@ -262,7 +253,9 @@ void control_type::isr_threads::TIMER1_OVF_vect()
 	{
 		ICR1++;
 		uint8_t port_values = PIND;
-		c_hal::ISR_Pointers.TIMER1_OVF_vect != NULL ? c_hal::ISR_Pointers.TIMER1_OVF_vect() : void();
+		//c_hal::ISR_Pointers.TIMER1_OVF_vect != NULL ? c_hal::ISR_Pointers.TIMER1_OVF_vect() : void();		
+		Spindle_Controller::c_encoder::hal_callbacks::timer_overflow();
+		
 		TCNT1 = 0;
 		std::this_thread::sleep_for(std::chrono::milliseconds(1));
 	}
@@ -274,12 +267,12 @@ void control_type::isr_threads::TIMER0_OVF_vect()
 
 void control_type::isr_threads::PCINT0_vect()
 {
-	c_hal::ISR_Pointers.PCINT0_vect != NULL ? c_hal::ISR_Pointers.PCINT0_vect() : void();
+	
 };
 
 void control_type::isr_threads::PCINT2_vect()
 {
-	c_hal::ISR_Pointers.PCINT2_vect != NULL ? c_hal::ISR_Pointers.PCINT2_vect() : void();
+	
 };
 
 void control_type::isr_threads::INT0_vect()
@@ -287,7 +280,8 @@ void control_type::isr_threads::INT0_vect()
 	uint8_t port_values = PIND;
 	uint16_t time_at_vector = TCNT1;
 	
-	c_hal::ISR_Pointers.INT0_vect != NULL ? c_hal::ISR_Pointers.INT0_vect(time_at_vector,port_values) : void();
+	//c_hal::ISR_Pointers.INT0_vect != NULL ? c_hal::ISR_Pointers.INT0_vect(time_at_vector,port_values) : void();
+	Spindle_Controller::c_encoder::hal_callbacks::position_change(time_at_vector, port_values);
 	TCNT1 = 0;
 }
 
@@ -295,8 +289,8 @@ void control_type::isr_threads::INT1_vect()
 {
 	uint8_t port_values = PIND;
 	uint16_t time_at_vector = TCNT1;
-	c_hal::ISR_Pointers.INT1_vect != NULL ? c_hal::ISR_Pointers.INT1_vect(time_at_vector,port_values) : void();
-	#ifdef CONTROL_TYPE_SPINDLE
+
+	//c_hal::ISR_Pointers.INT1_vect != NULL ? c_hal::ISR_Pointers.INT1_vect(time_at_vector,port_values) : void();
+	Spindle_Controller::c_encoder::hal_callbacks::position_change(time_at_vector, port_values);
 	TCNT1 = 0;
-	#endif
 }

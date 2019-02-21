@@ -28,6 +28,7 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{7441F880-C918-411F-BC16-17BF9F62D426}</ProjectGuid>
     <RootNamespace>Virtual_HAL</RootNamespace>
+    <ProjectName>PC_Torch_Height_Control</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

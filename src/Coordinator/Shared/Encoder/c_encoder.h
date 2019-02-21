@@ -1,5 +1,5 @@
 /*
-*  c_processor.h - NGC_RS274 controller.
+*  c_encoder.h - NGC_RS274 controller.
 *  A component of Talos
 *
 *  Copyright (c) 2016-2019 Jeff Dill
@@ -19,33 +19,33 @@
 */
 
 
-#ifndef __C_PROCESSOR_H__
-#define __C_PROCESSOR_H__
-#include "../Common/Serial/c_Serial.h"
-#include "../Common/NGC_RS274/NGC_Block.h"
-namespace Spindle_Controller
+#ifndef __C_ENCODER_H__
+#define __C_ENCODER_H__
+//#include <stdint.h>
+#include "..\..\..\Talos.h"
+namespace Coordinator
 {
-	class c_processor
+	class c_encoder
 	{
 		//variables
 		public:
-		static c_Serial host_serial;
-		static NGC_RS274::NGC_Binary_Block local_block;
+		static int8_t Axis_Incrimenter[MACHINE_AXIS_COUNT];
+		static int32_t Axis_Positions[MACHINE_AXIS_COUNT];
 		protected:
 		private:
 
 		//functions
 		public:
-		static void startup();
-		static uint16_t prep_input();
-		static uint16_t process_control_command();
+		static void initialize();
+		static void position_change(uint8_t port_values);
+		static void direction_change(uint8_t port_values);
 		protected:
 		private:
-		//c_processor( const c_processor &c );
-		//c_processor& operator=( const c_processor &c );
-		//c_processor();
-		//~c_processor();
+		//c_status();
+		//~c_status();
+		//c_status( const c_status &c );
+		//c_status& operator=( const c_status &c );
 
-	}; //c_processor
+	}; //c_status
 };
-#endif //__C_PROCESSOR_H__
+#endif //__C_ENCODER_H__

@@ -217,7 +217,7 @@ uint8_t Spindle_Controller::c_state_manager::process_state(float current_rpm)
 	Spindle_Controller::c_processor::host_serial.print_string("output is : ");
 	Spindle_Controller::c_processor::host_serial.print_int32(Spindle_Controller::c_processor::local_block.get_value('S'));
 	Spindle_Controller::c_processor::host_serial.Write(CR);
-	c_hal::driver.PNTR_DRIVE_ANALOG(Spindle_Controller::c_processor::local_block.get_value('S'));
+	c_hal::driver.PNTR_DRIVE_ANALOG!=NULL?c_hal::driver.PNTR_DRIVE_ANALOG(Spindle_Controller::c_processor::local_block.get_value('S')):void();
 	
 	
 	//if (Spindle_Controller::c_driver::Get_State(STATE_BIT_ACCELERATE))
@@ -241,6 +241,6 @@ uint8_t Spindle_Controller::c_state_manager::process_state(float current_rpm)
 		//c_Spindle_Drive::current_output = c_PID::Calculate(current_rpm,c_Spindle_Drive::Drive_Control.target_rpm,c_PID::spindle_terms);
 	}
 	//c_hal::driver.PNTR_DRIVE_ANALOG(Spindle_Controller::c_driver::current_output);
-	c_hal::driver.PNTR_DRIVE_ANALOG(Spindle_Controller::c_processor::local_block.get_value('S'));
+	c_hal::driver.PNTR_DRIVE_ANALOG!=NULL ? c_hal::driver.PNTR_DRIVE_ANALOG(Spindle_Controller::c_processor::local_block.get_value('S')):void();
 	return NGC_Machine_Errors::OK;
 }

@@ -62,9 +62,9 @@ void Spindle_Controller::c_processor::startup()
 	{
 		int16_t return_value = 0;
 
-		//Spindle_Controller::c_processor::host_serial.print_float(Spindle_Controller::c_encoder::current_rpm());
-		//Spindle_Controller::c_processor::host_serial.print_string("rpm  ");
-		//Spindle_Controller::c_processor::host_serial.Write(CR);
+		Spindle_Controller::c_processor::host_serial.print_float(Spindle_Controller::c_encoder::current_rpm());
+		Spindle_Controller::c_processor::host_serial.print_string("rpm  ");
+		Spindle_Controller::c_processor::host_serial.Write(CR);
 
 
 		bool Control_Command = false;
@@ -75,8 +75,9 @@ void Spindle_Controller::c_processor::startup()
 			{
 				//Pull the : character off the serial buffer
 				Spindle_Controller::c_processor::host_serial.Get();
-				Spindle_Controller::c_processor::host_serial.SkipToEOL();
-				Control_Command = false;
+				Spindle_Controller::c_processor::process_control_command();
+				
+				Control_Command = true;
 			}
 			
 			/*
@@ -131,6 +132,38 @@ uint16_t Spindle_Controller::c_processor::prep_input()
 			return return_value;
 		}
 
+	}
+
+}
+
+uint16_t Spindle_Controller::c_processor::process_control_command()
+{
+	int16_t return_value = 0;
+	uint8_t control_value = Spindle_Controller::c_processor::host_serial.Get();;
+	
+	if (Spindle_Controller::c_processor::host_serial.HasEOL())
+	{
+		switch (control_value)
+		{
+		case 'P':
+		{
+			//set pid Proportional
+			break;
+		}
+		case 'I':
+		{
+			//set pid Integral
+			break;
+		}
+		case 'D':
+		{
+			//set pid Derivative
+			break;
+		}
+		default:
+			break;
+		}
+		Spindle_Controller::c_processor::host_serial.SkipToEOL();
 	}
 
 }

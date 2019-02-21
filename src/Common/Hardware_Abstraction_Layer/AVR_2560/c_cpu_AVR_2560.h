@@ -75,35 +75,35 @@ class c_cpu_AVR_2560
 	static void core_stop_interrupts();
 	static uint32_t core_get_cpu_clock_rate();
 
-	static void driver_timer_initializer();
-	static void driver_timer_deactivate();
-	static void driver_timer_activate();
-	static uint8_t driver_aux_controller(uint8_t check_mask);
-	static void driver_drive();
-	static void driver_reset();
-	static void driver_set_prescaler(uint16_t pre_scaler);
-	static void driver_dset_timer_rate(uint16_t delay);
-	static uint8_t *driver_lock;
-	struct s_pntr_motion
-	{
-		uint8_t Step_Pins; //<--which pins on the port will be stepping
-		uint8_t Step_Directions; //<--directions to step
-		uint8_t Coninuous_Motion; //<--If set to 1, stepper will move until stopped for another reason.
-		uint32_t Step_Count; //<-- how many steps are we moving.
-	};
-
-	static s_pntr_motion PNTR_STEPPER;
-	static void driver_configure_step_data(uint8_t Pins,uint8_t Directions,uint8_t Continuous,uint32_t Count);
-	
-	static void feedback_initializer();
-	static void feedback_direction_isr();
-	static void feedback_pulse_isr();
-	static void feedback_pin0_change_isr();
-	static void feedback_pin2_change_isr();
-	static bool feedback_dirty();
-
-	static void (*PNTR_INTERNAL_PCINT0)(void);
-	static void (*PNTR_INTERNAL_PCINT2)(void);
+	//static void driver_timer_initializer();
+	//static void driver_timer_deactivate();
+	//static void driver_timer_activate();
+	//static uint8_t driver_aux_controller(uint8_t check_mask);
+	//static void driver_drive();
+	//static void driver_reset();
+	//static void driver_set_prescaler(uint16_t pre_scaler);
+	//static void driver_dset_timer_rate(uint16_t delay);
+	//static uint8_t *driver_lock;
+	//struct s_pntr_motion
+	//{
+		//uint8_t Step_Pins; //<--which pins on the port will be stepping
+		//uint8_t Step_Directions; //<--directions to step
+		//uint8_t Coninuous_Motion; //<--If set to 1, stepper will move until stopped for another reason.
+		//uint32_t Step_Count; //<-- how many steps are we moving.
+	//};
+//
+	//static s_pntr_motion PNTR_STEPPER;
+	//static void driver_configure_step_data(uint8_t Pins,uint8_t Directions,uint8_t Continuous,uint32_t Count);
+	//
+	//static void feedback_initializer();
+	//static void feedback_direction_isr();
+	//static void feedback_pulse_isr();
+	//static void feedback_pin0_change_isr();
+	//static void feedback_pin2_change_isr();
+	//static bool feedback_dirty();
+//
+	//static void (*PNTR_INTERNAL_PCINT0)(void);
+	//static void (*PNTR_INTERNAL_PCINT2)(void);
 	
 	static void serial_initializer(uint8_t Port, uint32_t BaudRate);
 	static void serial_send(uint8_t Port, char byte);

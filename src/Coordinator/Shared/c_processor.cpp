@@ -44,6 +44,8 @@
 #include "../../Common/NGC_RS274/NGC_Interpreter.h"
 #include "../../Torch Height Control/c_configuration.h"
 #include "../../Spindle/c_spindle_com_bus.h"
+#include "Encoder/c_encoder.h"
+
 
 c_Serial c_processor::host_serial;
 c_Serial c_processor::controller_serial;
@@ -121,17 +123,16 @@ void c_processor::startup()
 	{
 		//c_interpreter::normalize_distance_units_to_mm = false;
 		//Now synch the pulse values in the HAL feedback with the pulse counts the machine is reportedly at
-		if (c_hal::feedback.PNTR_POSITION_DATA != NULL)
 		{
 			for (uint8_t axis_id = 0;axis_id < MACHINE_AXIS_COUNT;axis_id++)
 			{
-				c_hal::feedback.PNTR_POSITION_DATA[axis_id] = (c_machine::axis_position[axis_id] * c_motion_controller_settings::configuration_settings.steps_per_mm[axis_id]);
+				Coordinator::c_encoder::Axis_Positions[axis_id] = (c_machine::axis_position[axis_id] * c_motion_controller_settings::configuration_settings.steps_per_mm[axis_id]);
 			}
 		}
 	}
 	
 	//c_feedback needs to know how many axis were reported by the controller. So it must be initialized after the controller
-	c_hal::feedback.PNTR_INITIALIZE != NULL ? c_hal::feedback.PNTR_INITIALIZE() : void();
+	//c_hal::feedback.PNTR_INITIALIZE != NULL ? c_hal::feedback.PNTR_INITIALIZE() : void();
 
 	c_processor::host_serial.print_string("Ready\r");
 

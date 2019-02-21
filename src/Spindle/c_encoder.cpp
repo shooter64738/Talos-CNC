@@ -29,7 +29,8 @@ volatile uint8_t time_index = 0;
 volatile uint32_t encoder_count = 0;
 volatile uint8_t encoder_state = 0;
 volatile const int8_t encoder_table[] = {0,-1,1,0,1,0,0,-1,-1,0,0,1,0,1,-1,0};
-volatile uint32_t over_flows;
+volatile uint32_t over_flows = 0;
+volatile uint16_t lost_signal = 0;
 
 float Spindle_Controller::c_encoder::encoder_rpm_multiplier = 0;
 float Spindle_Controller::c_encoder::encoder_angle_multiplier = 0;
@@ -37,7 +38,11 @@ uint16_t Spindle_Controller::c_encoder::encoder_ticks_per_rev = 0;
 
 void Spindle_Controller::c_encoder::hal_callbacks::position_change(uint16_t time_at_vector,uint8_t port_values)
 {
-	
+	//This is getting called from an ISR. Do not over burden it. 
+
+	//If we received a pulse, reset lost signal value
+	lost_signal = 0;
+
 	/*
 	If using a 3 channel encoder (or 2 channel with an index pulse) we dont need this code
 	section to calculate the RPM. the timer capture should do that for us.
@@ -58,12 +63,20 @@ void Spindle_Controller::c_encoder::hal_callbacks::position_change(uint16_t time
 
 void Spindle_Controller::c_encoder::hal_callbacks::timer_capture(uint16_t time_at_vector,uint8_t port_values)
 {
+	//This is getting called from an ISR. Do not over burden it. 
+
+	//If we received a pulse, reset lost signal value
+	lost_signal = 0;
 	Spindle_Controller::c_encoder::update_time(time_at_vector);
 }
 
 void Spindle_Controller::c_encoder::hal_callbacks::timer_overflow()
 {
+	//This is getting called from an ISR. Do not over burden it. 
+
 	over_flows++;
+	//If lost_signal reaches 1000, that should be 1 second. If we have received no input in the last second we can expect we arent moving.
+	lost_signal<1000 ?lost_signal++:lost_signal=1000;
 }
 
 void Spindle_Controller::c_encoder::initialize(uint16_t encoder_ticks_per_rev)
@@ -85,6 +98,9 @@ void Spindle_Controller::c_encoder::update_time(uint16_t time_at_vector)
 
 float Spindle_Controller::c_encoder::current_rpm()
 {
+	if (lost_signal >= 1000)
+		return 0;
+
 	uint32_t avg=0;
 	for (int i=0;i<TIME_ARRAY_SIZE;i++)
 	{

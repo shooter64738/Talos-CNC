@@ -53,7 +53,7 @@ private:
 	static void _set_inbound_function_pointers();
 	static void _reverse_drive();
 	static void _forward_drive();
-	static void _set_outbound_isr_pointers();
+	
 	static void _set_encoder_inputs();
 	static void _set_timer1_capture_input();
 	static void _set_control_outputs();

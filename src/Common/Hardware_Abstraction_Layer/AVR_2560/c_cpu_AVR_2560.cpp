@@ -30,16 +30,16 @@
 #include <avr/eeprom.h>
 #include "..\c_hal.h"
 
-int8_t c_cpu_AVR_2560::Axis_Incrimenter[MACHINE_AXIS_COUNT];
-int32_t c_cpu_AVR_2560::Axis_Positions[MACHINE_AXIS_COUNT];
+//int8_t c_cpu_AVR_2560::Axis_Incrimenter[MACHINE_AXIS_COUNT];
+//int32_t c_cpu_AVR_2560::Axis_Positions[MACHINE_AXIS_COUNT];
 s_Buffer c_cpu_AVR_2560::rxBuffer[COM_PORT_COUNT];
-bool c_cpu_AVR_2560::feedback_is_dirty=false;
-bool c_cpu_AVR_2560::timer_busy = false;
-uint8_t *c_cpu_AVR_2560::driver_lock=NULL;
-c_cpu_AVR_2560::s_pntr_motion c_cpu_AVR_2560::PNTR_STEPPER;
+//bool c_cpu_AVR_2560::feedback_is_dirty=false;
+//bool c_cpu_AVR_2560::timer_busy = false;
+//uint8_t *c_cpu_AVR_2560::driver_lock=NULL;
+//c_cpu_AVR_2560::s_pntr_motion c_cpu_AVR_2560::PNTR_STEPPER;
 
-void (*c_cpu_AVR_2560::PNTR_INTERNAL_PCINT0)(void);
-void (*c_cpu_AVR_2560::PNTR_INTERNAL_PCINT2)(void);
+//void (*c_cpu_AVR_2560::PNTR_INTERNAL_PCINT0)(void);
+//void (*c_cpu_AVR_2560::PNTR_INTERNAL_PCINT2)(void);
 
 /*
 All cpu specific functions should take place in here. There should be no logic
@@ -69,263 +69,263 @@ uint32_t c_cpu_AVR_2560::core_get_cpu_clock_rate()
 	return F_CPU;
 }
 
-void c_cpu_AVR_2560::driver_timer_initializer()
-{
-	
-	//TIMSK1 &= ~(1 << OCIE1A); // Disable Timer1 interrupt
-	//TCCR1B = (TCCR1B & ~((1 << CS12) | (1 << CS11))) | (1 << CS10); // Reset clock to no prescaling.
-	//TCCR1B |= (1 << CS12);//| (1 << CS10); // Reset clock to no prescaling.
-
-	// Configure step and direction interface pins
-	STEP_DDR |= STEP_MASK;
-	STEPPERS_DISABLE_DDR |= 1 << STEPPERS_DISABLE_BIT;
-	DIRECTION_DDR |= DIRECTION_MASK;
-
-	// Configure Timer 1: Stepper Driver Interrupt
-	TCCR1B &= ~(1 << WGM13); // waveform generation = 0100 = CTC
-	TCCR1B |= (1 << WGM12);
-	TCCR1A &= ~((1 << WGM11) | (1 << WGM10));
-	TCCR1A &= ~((1 << COM1A1) | (1 << COM1A0) | (1 << COM1B1) | (1 << COM1B0)); // Disconnect OC1 output
-	// TCCR1B = (TCCR1B & ~((1<<CS12) | (1<<CS11))) | (1<<CS10); // Set in st_go_idle().
-	// TIMSK1 &= ~(1<<OCIE1A);  // Set in st_go_idle().
-
-	// Configure Timer 0: Stepper Port Reset Interrupt
-	TIMSK0 &= ~((1 << OCIE0B) | (1 << OCIE0A) | (1 << TOIE0)); // Disconnect OC0 outputs and OVF interrupt.
-	TCCR0A = 0; // Normal operation
-	TCCR0B = 0; // Disable Timer0 until needed
-	TIMSK0 |= (1 << TOIE0); // Enable Timer0 overflow interrupt
-}
-void c_cpu_AVR_2560::driver_timer_deactivate()
-{
-	TCCR1B &= ~((1<<CS12)|(1<<CS11)|(1<<CS10));
-}
-void c_cpu_AVR_2560::driver_timer_activate()
-{
-	TIMSK1 |= (1 << OCIE1A);
-}
-/*
-When the stepper drive timer is in a state (presumably on) this function CAN be called via pointer and configured to
-stop the stepper timer. This can happen on a pin change, a timer interval, or called via main loop. Alternately it
-can also be called to turn the drive timer off (stopping the stepper motor) as well.
-*/
-uint8_t c_cpu_AVR_2560::driver_aux_controller(uint8_t check_mask)
-{
-	
-}
-
-void c_cpu_AVR_2560::driver_drive()
-{
-	if (c_cpu_AVR_2560::timer_busy)
-	return;
-	//c_Bresenham::step();
-	//c_cpu_AVR_2560::driver_step++;
-	STEP_PORT = (1<<c_cpu_AVR_2560::PNTR_STEPPER.Step_Pins);
-	c_cpu_AVR_2560::timer_busy = true;
-	if (c_cpu_AVR_2560::PNTR_STEPPER.Coninuous_Motion == 0)
-	{
-		c_cpu_AVR_2560::PNTR_STEPPER.Step_Count--;
-		if (c_cpu_AVR_2560::PNTR_STEPPER.Step_Count<=0)
-		{
-			c_cpu_AVR_2560::driver_timer_deactivate(); //<--turn off this timer to stop stepper motions
-		}
-	}
-	//if (c_speed::busy) return;
-	//set direction
-	//DIRECTION_PORT = (DIRECTION_PORT & ~DIRECTION_MASK) | (c_speed::executing_profile->direction_bits & DIRECTION_MASK);
-	
-	//STEP_PORT = (STEP_PORT & ~STEP_MASK) | 2;
-	
-	//STEP_PORT = (STEP_PORT & ~STEP_MASK) |c_interpolation::begin();
-	//c_speed::busy = true; //<-- we need this because we call sei() below
-	
-	//step_count++;
-
-	/*
-	When running full speed at a high feed rate 15,000+ mm per minute the tail is going to exceed
-	the head. An attempt was made to stop using the buffer when in the RUN state, but its actually
-	slower by a few microseconds, and we cant determine how far ahead the ISR is that way. So even
-	though we pass the head with the tail, we are reading the same value (min_delay), and there
-	doest appear to be any harm in that. This ONLY occurs with feeds exceeding ~15,000mm per minute
-	at a rate of 800 micro steps per revolution. The highest step rate I have achieved so far is
-	46.6kHz. My motors stall above 3500rpm. Acceleration rate set to 50mm per second^2, rpm 3500
-	distance of 500mm, 17,500mm/m or 688.97in/m.
-	*/
-
-	//OCR1A = c_speed::delay_buffer[c_speed::tail++];
-	//if (c_speed::tail == DELAY_BUFFER_SIZE)
-	//{
-	//c_speed::tail = 0;
-	//}
+//void c_cpu_AVR_2560::driver_timer_initializer()
+//{
 	//
-	TCNT0 = 1;
-	TCCR0B = (1 << CS00); //<-- Timer0, NO prescaler to reset the pulse pins low
-	sei();
-	
+	////TIMSK1 &= ~(1 << OCIE1A); // Disable Timer1 interrupt
+	////TCCR1B = (TCCR1B & ~((1 << CS12) | (1 << CS11))) | (1 << CS10); // Reset clock to no prescaling.
+	////TCCR1B |= (1 << CS12);//| (1 << CS10); // Reset clock to no prescaling.
+//
+	//// Configure step and direction interface pins
+	//STEP_DDR |= STEP_MASK;
+	//STEPPERS_DISABLE_DDR |= 1 << STEPPERS_DISABLE_BIT;
+	//DIRECTION_DDR |= DIRECTION_MASK;
+//
+	//// Configure Timer 1: Stepper Driver Interrupt
+	//TCCR1B &= ~(1 << WGM13); // waveform generation = 0100 = CTC
+	//TCCR1B |= (1 << WGM12);
+	//TCCR1A &= ~((1 << WGM11) | (1 << WGM10));
+	//TCCR1A &= ~((1 << COM1A1) | (1 << COM1A0) | (1 << COM1B1) | (1 << COM1B0)); // Disconnect OC1 output
+	//// TCCR1B = (TCCR1B & ~((1<<CS12) | (1<<CS11))) | (1<<CS10); // Set in st_go_idle().
+	//// TIMSK1 &= ~(1<<OCIE1A);  // Set in st_go_idle().
+//
+	//// Configure Timer 0: Stepper Port Reset Interrupt
+	//TIMSK0 &= ~((1 << OCIE0B) | (1 << OCIE0A) | (1 << TOIE0)); // Disconnect OC0 outputs and OVF interrupt.
+	//TCCR0A = 0; // Normal operation
+	//TCCR0B = 0; // Disable Timer0 until needed
+	//TIMSK0 |= (1 << TOIE0); // Enable Timer0 overflow interrupt
+//}
+//void c_cpu_AVR_2560::driver_timer_deactivate()
+//{
+	//TCCR1B &= ~((1<<CS12)|(1<<CS11)|(1<<CS10));
+//}
+//void c_cpu_AVR_2560::driver_timer_activate()
+//{
+	//TIMSK1 |= (1 << OCIE1A);
+//}
+///*
+//When the stepper drive timer is in a state (presumably on) this function CAN be called via pointer and configured to
+//stop the stepper timer. This can happen on a pin change, a timer interval, or called via main loop. Alternately it
+//can also be called to turn the drive timer off (stopping the stepper motor) as well.
+//*/
+//uint8_t c_cpu_AVR_2560::driver_aux_controller(uint8_t check_mask)
+//{
 	//
-	
-	return;
-}
-void c_cpu_AVR_2560::driver_reset()
-{
-	c_cpu_AVR_2560::timer_busy = false;
-	STEP_PORT = 0;
-	TCCR0B = 0; // Disable Timer0 to prevent re-entering this interrupt when it's not needed.
-}
-void c_cpu_AVR_2560::driver_set_prescaler(uint16_t pre_scaler)
-{
-	//clear prescaler
-	TCCR1B = (TCCR1B & ~((1<<CS12) | (1<<CS11))) | (1<<CS10);
-	if (pre_scaler ==1)
-	TCCR1B |= (1 << CS10);
-	else if (pre_scaler ==8)
-	TCCR1B |= (1 << CS11);//<--prescale 8
-	else if (pre_scaler == 64)
-	TCCR1B |= (1 << CS11)|(1 << CS10); //<--prescale 64
-	else if (pre_scaler == 256)
-	TCCR1B |= (1 << CS12); //<--prescale 256
-	else if (pre_scaler == 1024)
-	TCCR1B |= (1 << CS12)|(1 << CS10); //<--prescale 1024
-}
-void c_cpu_AVR_2560::driver_dset_timer_rate(uint16_t delay_period)
-{
-	OCR1A = delay_period;
-}
-void c_cpu_AVR_2560::driver_configure_step_data(uint8_t Pins,uint8_t Directions,uint8_t Continuous,uint32_t Count)
-{
+//}
 
-	c_cpu_AVR_2560::PNTR_STEPPER.Coninuous_Motion = Continuous;
-	c_cpu_AVR_2560::PNTR_STEPPER.Step_Count = Count;
-	c_cpu_AVR_2560::PNTR_STEPPER.Step_Directions = Directions;
-	c_cpu_AVR_2560::PNTR_STEPPER.Step_Pins = Pins;
-}
-
-bool c_cpu_AVR_2560::feedback_dirty()
-{
-	if (c_cpu_AVR_2560::feedback_is_dirty)
-	{
-		//memcpy(c_machine::axis_position,c_cpu_AVR_2560::Axis_Positions,sizeof(int32_t)*MACHINE_AXIS_COUNT);
-		c_cpu_AVR_2560::feedback_is_dirty = false;
-		return true;
-	}
-	return false;
-}
-void c_cpu_AVR_2560::feedback_initializer()
-{
-	/*
-	The pin change interrupts are pretty simple, but can be confusing for a beginner. These are the steps:
-	1. PORTB - Set the internal pull-up resistor to on (make the pin high).
-	If you don't do this I can almost guarantee you will get weird
-	unexpected pin change interrupts to fire for no real reason.
-	Even a simple fluorescent light will cause erratic interrupts.
-	2. PCMSK0 - Configure the mask, so the AVR knows which pins it is supposed to monitor.
-	Of special note, the PCINTx values don't run for 0-7 per port. They run 0-21 (or more
-	depending on the board). 0-7 is one PORT, 8-15 is another PORT, 16-24 is another PORT.
-	3. Finally assign the PCIR (pin change interrupt request) so the AVR
-	knows which bank of interrupts to monitor
-	*/
-	//Direction pin monitoring..
-	//Without these set by default the incrimenter will be 0. Until the direction pin is CHANGED
-	//the interrupt wont fire. So we need to default the incrimenter value to the PORT_ input values
-	PORTB=0; //<--Initially make this input so we can get the pin values.
-	DDRB=0;
-	c_cpu_AVR_2560::feedback_direction_isr();
-	
-	//Set pull up for PB0-PB5. (pins 8-13 on Arduino UNO)
-	PORTB = (1<<PORTB0)|(1<<PORTB1)|(1<<PORTB2)|(1<<PORTB3)|(1<<PORTB4)|(1<<PORTB5)|(1<<PORTB6)|(1<<PORTB7);
-	//Set the mask to check pins PB0-PB7
-	PCMSK0 = (1<<PCINT0)|(1<<PCINT1)|(1<<PCINT2)|(1<<PCINT3)|(1<<PCINT4)|(1<<PCINT5)|(1<<PCINT6)|(1<<PCINT7);
-	
-	//Set the interrupt for PORTB (PCIE0)
-	PCICR = (1<<PCIE0);
-
-	//Pulse pin monitoring..
-	PORTK=0; //<--Initially make this input so we can get the pin values.
-	DDRK=0;
-	//Set pull up for PK0-PK7.
-	PORTK = (1<<PORTK0)|(1<<PORTK1)|(1<<PORTK2)|(1<<PORTK3)|(1<<PORTK4)|(1<<PORTK5)|(1<<PORTK6)|(1<<PORTK7);
-	//Set the mask to check pins PK0-PK7
-	PCMSK2 = (1<<PCINT16)|(1<<PCINT17)|(1<<PCINT18)|(1<<PCINT19)|(1<<PCINT20)|(1<<PCINT21)|(1<<PCINT22)|(1<<PCINT23);
-
-	//Set the interrupt for PORTK (PCIE2)
-	PCICR |= (1<<PCIE2);
-	//Set interrupt flag register.
-	PCIFR=(1<<PCIF2) | (1<<PCIF0);
-}
-void c_cpu_AVR_2560::feedback_direction_isr()
-{
-	uint8_t port_value = DIRECTION_INPUT_PINS;
-
-	int8_t bit_mask = 1;
-	for (uint8_t bit_to_check =0; bit_to_check < MACHINE_AXIS_COUNT;bit_to_check ++)
-	{
-		//If direction bit is high assume positive travel. If bit low, assume negative
-		c_cpu_AVR_2560::Axis_Incrimenter[bit_to_check]   = 1;
-		if ((bit_mask & port_value))
-		{
-			c_cpu_AVR_2560::Axis_Incrimenter[bit_to_check]   = -1;
-		}
-		//Shift left and see if the next bit is set.
-		bit_mask = bit_mask << 1;
-	}
-	return;
-};
-void c_cpu_AVR_2560::feedback_pulse_isr()
-{
-
-	//It might save a little time on the isr, if we return when all bits are 0
-	uint8_t port_value = PULSE_INPUT_PINS;
-	if (port_value ==0){return;}
-
-	int8_t bit_mask = 1;
-	for (uint8_t bit_to_check =0; bit_to_check < MACHINE_AXIS_COUNT;bit_to_check ++)
-	{
-		if ((bit_mask & port_value))
-		{
-			c_cpu_AVR_2560::Axis_Positions[bit_to_check]+=Axis_Incrimenter[bit_to_check];
-		}
-		//Shift left and see if the next bit is set.
-		bit_mask = bit_mask << 1;
-		
-	}
-	c_cpu_AVR_2560::feedback_is_dirty = true;
-	return;
-}
-void c_cpu_AVR_2560::feedback_pin0_change_isr()
-{
-	uint8_t port_value = DIRECTION_INPUT_PINS;
-
-	int8_t bit_mask = 1;
-	//for (uint8_t bit_to_check =0; bit_to_check < 8;bit_to_check ++)
+//void c_cpu_AVR_2560::driver_drive()
+//{
+	//if (c_cpu_AVR_2560::timer_busy)
+	//return;
+	////c_Bresenham::step();
+	////c_cpu_AVR_2560::driver_step++;
+	//STEP_PORT = (1<<c_cpu_AVR_2560::PNTR_STEPPER.Step_Pins);
+	//c_cpu_AVR_2560::timer_busy = true;
+	//if (c_cpu_AVR_2560::PNTR_STEPPER.Coninuous_Motion == 0)
 	//{
-	//if ((bit_mask & port_value))
-	//{
-	//c_cpu_AVR_2560::Axis_Incrimenter[bit_to_check]   = -1;
+		//c_cpu_AVR_2560::PNTR_STEPPER.Step_Count--;
+		//if (c_cpu_AVR_2560::PNTR_STEPPER.Step_Count<=0)
+		//{
+			//c_cpu_AVR_2560::driver_timer_deactivate(); //<--turn off this timer to stop stepper motions
+		//}
 	//}
-	////Shift left and see if the next bit is set.
-	//bit_mask = bit_mask << 1;
+	////if (c_speed::busy) return;
+	////set direction
+	////DIRECTION_PORT = (DIRECTION_PORT & ~DIRECTION_MASK) | (c_speed::executing_profile->direction_bits & DIRECTION_MASK);
+	//
+	////STEP_PORT = (STEP_PORT & ~STEP_MASK) | 2;
+	//
+	////STEP_PORT = (STEP_PORT & ~STEP_MASK) |c_interpolation::begin();
+	////c_speed::busy = true; //<-- we need this because we call sei() below
+	//
+	////step_count++;
+//
+	///*
+	//When running full speed at a high feed rate 15,000+ mm per minute the tail is going to exceed
+	//the head. An attempt was made to stop using the buffer when in the RUN state, but its actually
+	//slower by a few microseconds, and we cant determine how far ahead the ISR is that way. So even
+	//though we pass the head with the tail, we are reading the same value (min_delay), and there
+	//doest appear to be any harm in that. This ONLY occurs with feeds exceeding ~15,000mm per minute
+	//at a rate of 800 micro steps per revolution. The highest step rate I have achieved so far is
+	//46.6kHz. My motors stall above 3500rpm. Acceleration rate set to 50mm per second^2, rpm 3500
+	//distance of 500mm, 17,500mm/m or 688.97in/m.
+	//*/
+//
+	////OCR1A = c_speed::delay_buffer[c_speed::tail++];
+	////if (c_speed::tail == DELAY_BUFFER_SIZE)
+	////{
+	////c_speed::tail = 0;
+	////}
+	////
+	//TCNT0 = 1;
+	//TCCR0B = (1 << CS00); //<-- Timer0, NO prescaler to reset the pulse pins low
+	//sei();
+	//
+	////
+	//
+	//return;
+//}
+//void c_cpu_AVR_2560::driver_reset()
+//{
+	//c_cpu_AVR_2560::timer_busy = false;
+	//STEP_PORT = 0;
+	//TCCR0B = 0; // Disable Timer0 to prevent re-entering this interrupt when it's not needed.
+//}
+//void c_cpu_AVR_2560::driver_set_prescaler(uint16_t pre_scaler)
+//{
+	////clear prescaler
+	//TCCR1B = (TCCR1B & ~((1<<CS12) | (1<<CS11))) | (1<<CS10);
+	//if (pre_scaler ==1)
+	//TCCR1B |= (1 << CS10);
+	//else if (pre_scaler ==8)
+	//TCCR1B |= (1 << CS11);//<--prescale 8
+	//else if (pre_scaler == 64)
+	//TCCR1B |= (1 << CS11)|(1 << CS10); //<--prescale 64
+	//else if (pre_scaler == 256)
+	//TCCR1B |= (1 << CS12); //<--prescale 256
+	//else if (pre_scaler == 1024)
+	//TCCR1B |= (1 << CS12)|(1 << CS10); //<--prescale 1024
+//}
+//void c_cpu_AVR_2560::driver_dset_timer_rate(uint16_t delay_period)
+//{
+	//OCR1A = delay_period;
+//}
+//void c_cpu_AVR_2560::driver_configure_step_data(uint8_t Pins,uint8_t Directions,uint8_t Continuous,uint32_t Count)
+//{
+//
+	//c_cpu_AVR_2560::PNTR_STEPPER.Coninuous_Motion = Continuous;
+	//c_cpu_AVR_2560::PNTR_STEPPER.Step_Count = Count;
+	//c_cpu_AVR_2560::PNTR_STEPPER.Step_Directions = Directions;
+	//c_cpu_AVR_2560::PNTR_STEPPER.Step_Pins = Pins;
+//}
+
+//bool c_cpu_AVR_2560::feedback_dirty()
+//{
+	//if (c_cpu_AVR_2560::feedback_is_dirty)
+	//{
+		////memcpy(c_machine::axis_position,c_cpu_AVR_2560::Axis_Positions,sizeof(int32_t)*MACHINE_AXIS_COUNT);
+		//c_cpu_AVR_2560::feedback_is_dirty = false;
+		//return true;
+	//}
+	//return false;
+//}
+//void c_cpu_AVR_2560::feedback_initializer()
+//{
+	///*
+	//The pin change interrupts are pretty simple, but can be confusing for a beginner. These are the steps:
+	//1. PORTB - Set the internal pull-up resistor to on (make the pin high).
+	//If you don't do this I can almost guarantee you will get weird
+	//unexpected pin change interrupts to fire for no real reason.
+	//Even a simple fluorescent light will cause erratic interrupts.
+	//2. PCMSK0 - Configure the mask, so the AVR knows which pins it is supposed to monitor.
+	//Of special note, the PCINTx values don't run for 0-7 per port. They run 0-21 (or more
+	//depending on the board). 0-7 is one PORT, 8-15 is another PORT, 16-24 is another PORT.
+	//3. Finally assign the PCIR (pin change interrupt request) so the AVR
+	//knows which bank of interrupts to monitor
+	//*/
+	////Direction pin monitoring..
+	////Without these set by default the incrimenter will be 0. Until the direction pin is CHANGED
+	////the interrupt wont fire. So we need to default the incrimenter value to the PORT_ input values
+	//PORTB=0; //<--Initially make this input so we can get the pin values.
+	//DDRB=0;
+	//c_cpu_AVR_2560::feedback_direction_isr();
+	//
+	////Set pull up for PB0-PB5. (pins 8-13 on Arduino UNO)
+	//PORTB = (1<<PORTB0)|(1<<PORTB1)|(1<<PORTB2)|(1<<PORTB3)|(1<<PORTB4)|(1<<PORTB5)|(1<<PORTB6)|(1<<PORTB7);
+	////Set the mask to check pins PB0-PB7
+	//PCMSK0 = (1<<PCINT0)|(1<<PCINT1)|(1<<PCINT2)|(1<<PCINT3)|(1<<PCINT4)|(1<<PCINT5)|(1<<PCINT6)|(1<<PCINT7);
+	//
+	////Set the interrupt for PORTB (PCIE0)
+	//PCICR = (1<<PCIE0);
+//
+	////Pulse pin monitoring..
+	//PORTK=0; //<--Initially make this input so we can get the pin values.
+	//DDRK=0;
+	////Set pull up for PK0-PK7.
+	//PORTK = (1<<PORTK0)|(1<<PORTK1)|(1<<PORTK2)|(1<<PORTK3)|(1<<PORTK4)|(1<<PORTK5)|(1<<PORTK6)|(1<<PORTK7);
+	////Set the mask to check pins PK0-PK7
+	//PCMSK2 = (1<<PCINT16)|(1<<PCINT17)|(1<<PCINT18)|(1<<PCINT19)|(1<<PCINT20)|(1<<PCINT21)|(1<<PCINT22)|(1<<PCINT23);
+//
+	////Set the interrupt for PORTK (PCIE2)
+	//PCICR |= (1<<PCIE2);
+	////Set interrupt flag register.
+	//PCIFR=(1<<PCIF2) | (1<<PCIF0);
+//}
+//void c_cpu_AVR_2560::feedback_direction_isr()
+//{
+	//uint8_t port_value = DIRECTION_INPUT_PINS;
+//
+	//int8_t bit_mask = 1;
+	//for (uint8_t bit_to_check =0; bit_to_check < MACHINE_AXIS_COUNT;bit_to_check ++)
+	//{
+		////If direction bit is high assume positive travel. If bit low, assume negative
+		//c_cpu_AVR_2560::Axis_Incrimenter[bit_to_check]   = 1;
+		//if ((bit_mask & port_value))
+		//{
+			//c_cpu_AVR_2560::Axis_Incrimenter[bit_to_check]   = -1;
+		//}
+		////Shift left and see if the next bit is set.
+		//bit_mask = bit_mask << 1;
 	//}
 	//return;
-};
-void c_cpu_AVR_2560::feedback_pin2_change_isr()
-{
-
-	//It might save a little time on the isr, if we return when all bits are 0
-	uint8_t port_value = PULSE_INPUT_PINS;
-	if (port_value ==0){return;}
-
-	int8_t bit_mask = 1;
-	//for (uint8_t bit_to_check =0; bit_to_check < 8;bit_to_check ++)
+//};
+//void c_cpu_AVR_2560::feedback_pulse_isr()
+//{
+//
+	////It might save a little time on the isr, if we return when all bits are 0
+	//uint8_t port_value = PULSE_INPUT_PINS;
+	//if (port_value ==0){return;}
+//
+	//int8_t bit_mask = 1;
+	//for (uint8_t bit_to_check =0; bit_to_check < MACHINE_AXIS_COUNT;bit_to_check ++)
 	//{
-	//if ((bit_mask & port_value))
-	//{
-	//c_cpu_AVR_2560::Axis_Positions[bit_to_check]+=Axis_Incrimenter[bit_to_check];
+		//if ((bit_mask & port_value))
+		//{
+			//c_cpu_AVR_2560::Axis_Positions[bit_to_check]+=Axis_Incrimenter[bit_to_check];
+		//}
+		////Shift left and see if the next bit is set.
+		//bit_mask = bit_mask << 1;
+		//
 	//}
-	////Shift left and see if the next bit is set.
-	//bit_mask = bit_mask << 1;
-	//
-	//}
+	//c_cpu_AVR_2560::feedback_is_dirty = true;
 	//return;
-}
+//}
+//void c_cpu_AVR_2560::feedback_pin0_change_isr()
+//{
+	//uint8_t port_value = DIRECTION_INPUT_PINS;
+//
+	//int8_t bit_mask = 1;
+	////for (uint8_t bit_to_check =0; bit_to_check < 8;bit_to_check ++)
+	////{
+	////if ((bit_mask & port_value))
+	////{
+	////c_cpu_AVR_2560::Axis_Incrimenter[bit_to_check]   = -1;
+	////}
+	//////Shift left and see if the next bit is set.
+	////bit_mask = bit_mask << 1;
+	////}
+	////return;
+//};
+//void c_cpu_AVR_2560::feedback_pin2_change_isr()
+//{
+//
+	////It might save a little time on the isr, if we return when all bits are 0
+	//uint8_t port_value = PULSE_INPUT_PINS;
+	//if (port_value ==0){return;}
+//
+	//int8_t bit_mask = 1;
+	////for (uint8_t bit_to_check =0; bit_to_check < 8;bit_to_check ++)
+	////{
+	////if ((bit_mask & port_value))
+	////{
+	////c_cpu_AVR_2560::Axis_Positions[bit_to_check]+=Axis_Incrimenter[bit_to_check];
+	////}
+	//////Shift left and see if the next bit is set.
+	////bit_mask = bit_mask << 1;
+	////
+	////}
+	////return;
+//}
 
 void c_cpu_AVR_2560::serial_initializer(uint8_t Port, uint32_t BaudRate)
 {
@@ -683,29 +683,29 @@ void c_cpu_AVR_2560::_incoming_serial_isr(uint8_t Port, char Byte)
 ISR(TIMER1_COMPA_vect)
 {
 	
-	c_cpu_AVR_2560::driver_drive();
+	//c_cpu_AVR_2560::driver_drive();
 }
 
 ISR(TIMER0_OVF_vect)
 {
-	c_cpu_AVR_2560::driver_reset();
+	//c_cpu_AVR_2560::driver_reset();
 }
 
-ISR(PCINT2_vect)
-{
-	//ISR_dirty=true;
-	//when the interrupt fires we call the static method inside the class.
-	//c_cpu_AVR_2560::feedback_pulse_isr();
-	c_cpu_AVR_2560::PNTR_INTERNAL_PCINT2 != NULL ? c_cpu_AVR_2560::PNTR_INTERNAL_PCINT2() : void();
-};
-
-ISR(PCINT0_vect)
-{
-	
-	//when the interrupt fires we call the static method inside the class.
-	//c_cpu_AVR_2560::feedback_direction_isr();
-	c_cpu_AVR_2560::PNTR_INTERNAL_PCINT0 != NULL ? c_cpu_AVR_2560::PNTR_INTERNAL_PCINT0() : void();
-};
+//ISR(PCINT2_vect)
+//{
+	////ISR_dirty=true;
+	////when the interrupt fires we call the static method inside the class.
+	////c_cpu_AVR_2560::feedback_pulse_isr();
+	//c_cpu_AVR_2560::PNTR_INTERNAL_PCINT2 != NULL ? c_cpu_AVR_2560::PNTR_INTERNAL_PCINT2() : void();
+//};
+//
+//ISR(PCINT0_vect)
+//{
+	//
+	////when the interrupt fires we call the static method inside the class.
+	////c_cpu_AVR_2560::feedback_direction_isr();
+	//c_cpu_AVR_2560::PNTR_INTERNAL_PCINT0 != NULL ? c_cpu_AVR_2560::PNTR_INTERNAL_PCINT0() : void();
+//};
 
 #ifdef USART_RX_vect
 ISR(USART_RX_vect)

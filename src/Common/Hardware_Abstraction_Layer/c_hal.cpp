@@ -25,7 +25,18 @@
 #include "AVR_328\control_type_spindle.h"
 #include "VIRTUAL\control_type_spindle.h"
 #endif
+#ifdef CONTROL_TYPE_PLASMA_THC
+#include "AVR_328\control_type_thc.h"
+#include "VIRTUAL\control_type_thc.h"
+#endif
+#ifdef CONTROL_TYPE_COORDINATOR
+#include "AVR_2560\control_type_coordinator.h"
+//#include "VIRTUAL\control_type_coordinator.h"
+#endif
+
 #ifdef MSVC
+//special include here, just so i can start threads and mimic encoder inputs for the spindle control
+#include "..\..\Spindle\c_encoder.h"
 #include <thread>
 #endif // MSVC
 
@@ -41,11 +52,8 @@ in the respective CPU class.
 c_hal::s_driver_function_pointers c_hal::driver;
 c_hal::s_core_function_pointers c_hal::core;
 c_hal::s_comm_function_pointers c_hal::comm;
-c_hal::s_feedback_function_pointers c_hal::feedback;
 c_hal::s_lcd_function_pointers c_hal::lcd;
-c_hal::s_edm_function_pointers c_hal::edm;
 c_hal::s_storage_function_pointers c_hal::storage;
-c_hal::s_spindle_function_pointers c_hal::spindle;
 
 
 void c_hal::initialize()
@@ -60,9 +68,9 @@ void c_hal::initialize()
 	c_hal::comm.PNTR_INITIALIZE = &c_cpu_AVR_328::serial_initializer;
 	c_hal::comm.PNTR_SERIAL_TX = &c_cpu_AVR_328::serial_send;
 	c_hal::comm.PNTR_SERIAL_RX_BUFFER = c_cpu_AVR_328::rxBuffer;
-	//#ifdef CONTROL_TYPE_SPINDLE
+	//Depending on the control_type defined in talos.h, this will call a different initializer.
 	control_type::initialize();
-	//#endif
+	
 	
 	#endif
 
@@ -75,36 +83,34 @@ void c_hal::initialize()
 	c_hal::core.PNTR_GET_CPU_SPEED = &c_cpu_AVR_2560::core_get_cpu_clock_rate;
 
 	//map the function pointers in c_hal, to the functions in c_driver for the board
-	c_hal::driver.PNTR_INITIALIZE = &c_cpu_AVR_2560::driver_timer_initializer;
-	c_hal::driver.PNTR_ENABLE = &c_cpu_AVR_2560::driver_timer_activate;
-	c_hal::driver.PNTR_DISABLE = &c_cpu_AVR_2560::driver_timer_deactivate;
-	c_hal::driver.PNTR_DRIVE = &c_cpu_AVR_2560::driver_drive;
-	c_hal::driver.PNTR_SET_PRESCALER = &c_cpu_AVR_2560::driver_set_prescaler;
-	c_hal::driver.PNTR_SET_TIMER_RATE = &c_cpu_AVR_2560::driver_dset_timer_rate;
-	c_hal::driver.PNTR_CONFIGURE_STEPPER = &c_cpu_AVR_2560::driver_configure_step_data;
+	//c_hal::driver.PNTR_INITIALIZE = &c_cpu_AVR_2560::driver_timer_initializer;
+	//c_hal::driver.PNTR_ENABLE = &c_cpu_AVR_2560::driver_timer_activate;
+	//c_hal::driver.PNTR_DISABLE = &c_cpu_AVR_2560::driver_timer_deactivate;
+	//c_hal::driver.PNTR_DRIVE = &c_cpu_AVR_2560::driver_drive;
+	//c_hal::driver.PNTR_SET_PRESCALER = &c_cpu_AVR_2560::driver_set_prescaler;
+	//c_hal::driver.PNTR_SET_TIMER_RATE = &c_cpu_AVR_2560::driver_dset_timer_rate;
+	//c_hal::driver.PNTR_CONFIGURE_STEPPER = &c_cpu_AVR_2560::driver_configure_step_data;
 
 	c_hal::comm.PNTR_INITIALIZE = &c_cpu_AVR_2560::serial_initializer;
 	c_hal::comm.PNTR_SERIAL_TX = &c_cpu_AVR_2560::serial_send;
 	c_hal::comm.PNTR_SERIAL_RX_BUFFER = c_cpu_AVR_2560::rxBuffer;
 
-	c_hal::feedback.PNTR_INITIALIZE = &c_cpu_AVR_2560::feedback_initializer;
-	c_hal::feedback.PNTR_IS_DIRTY = &c_cpu_AVR_2560::feedback_dirty;
-	c_hal::feedback.PNTR_POSITION_DATA = c_cpu_AVR_2560::Axis_Positions;
+	//c_hal::feedback.PNTR_INITIALIZE = &c_cpu_AVR_2560::feedback_initializer;
+	//c_hal::feedback.PNTR_IS_DIRTY = &c_cpu_AVR_2560::feedback_dirty;
+	//c_hal::feedback.PNTR_POSITION_DATA = c_cpu_AVR_2560::Axis_Positions;
 	//These are default function mappings, but will/can be reconfigured depending on machine type.
-	c_cpu_AVR_2560::PNTR_INTERNAL_PCINT2 = &c_cpu_AVR_2560::feedback_pulse_isr;
-	c_cpu_AVR_2560::PNTR_INTERNAL_PCINT0 = &c_cpu_AVR_2560::feedback_direction_isr;
+	//c_cpu_AVR_2560::PNTR_INTERNAL_PCINT2 = &c_cpu_AVR_2560::feedback_pulse_isr;
+	//c_cpu_AVR_2560::PNTR_INTERNAL_PCINT0 = &c_cpu_AVR_2560::feedback_direction_isr;
 
 	c_hal::lcd.PNTR_UPDATE_AXIS_DISPLAY = c_cpu_AVR_2560::lcd_update_axis;
 	c_hal::lcd.PNTR_INITIALIZE = c_cpu_AVR_2560::lcd_initializer;
-
-	c_hal::edm.PNTR_GET_ARC_VOLTAGE = &c_cpu_AVR_2560::edm_get_gap_voltage;
-	c_hal::edm.PNTR_INITIALIZE = &c_cpu_AVR_2560::edm_set_pulse_frequency;
-	c_hal::edm.PNTR_SET_ARC_DRIVE_FREQUENCY = &c_cpu_AVR_2560::edm_set_pulse_frequency;
 
 	c_hal::storage.PNTR_GET_BYTE = &c_cpu_AVR_2560::eeprom_get_byte;
 	c_hal::storage.PNTR_GET_WORD = &c_cpu_AVR_2560::eeprom_get_word;
 	c_hal::storage.PNTR_GET_DWORD = &c_cpu_AVR_2560::eeprom_get_dword;
 	c_hal::storage.PNTR_GET_FLOAT = &c_cpu_AVR_2560::eeprom_get_float;
+
+	control_type::initialize();
 	#endif
 
 	#ifdef __SAM3X8E__
@@ -159,9 +165,9 @@ void c_hal::initialize()
 
 	control_type::initialize();
 	//simulate timers for easier debug
-	std::thread timer1_capture(control_type::isr_threads::TIMER1_CAPT_vect);
+	//std::thread timer1_capture(control_type::isr_threads::TIMER1_CAPT_vect);
 	std::thread timer1_overflow(control_type::isr_threads::TIMER1_OVF_vect);
-	timer1_capture.detach();
+	//timer1_capture.detach();
 	timer1_overflow.detach();
 	
 	#endif
