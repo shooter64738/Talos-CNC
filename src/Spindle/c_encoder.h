@@ -32,15 +32,27 @@ namespace Spindle_Controller
 		class hal_callbacks
 		{
 			public:
-			static void timer_capture(uint16_t time_at_vector,uint8_t port_values);
+			static void timer_capture(uint16_t time_at_vector,int8_t port_values);
 			static void timer_overflow();
-			static void position_change(uint16_t time_at_vector,uint8_t port_values);
+			static void position_change(uint16_t time_at_vector,int8_t port_values);
 		};
+		enum e_rpm_type
+		{
+			position_based,
+			time_based
+		};
+		struct s_encoder_data
+		{
+			float rpm_multiplier;
+			e_rpm_type rpm_type;
+			float angle_multiplier;
+			uint8_t channels;
+			uint16_t ticks_per_rev;
+		};
+		static s_encoder_data encoder_data;
 		
-		static float encoder_rpm_multiplier;
-		static float encoder_angle_multiplier;
-		static uint16_t encoder_ticks_per_rev;
-		static void initialize(uint16_t encoder_ticks_per_rev);
+		static uint8_t one_second;
+		static void initialize(uint16_t encoder_ticks_per_rev, e_rpm_type);
 		protected:
 		private:
 

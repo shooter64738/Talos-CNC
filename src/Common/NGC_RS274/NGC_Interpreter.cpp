@@ -1357,6 +1357,9 @@ int NGC_RS274::Interpreter::Processor::normalize_distance_units()
 	We are using some 3rd party controller like grbl, tinyg, smoothies, etc. Those controlelr can convert g20/g21 on their own
 	IF we do it here, and the 3rd party controll does it too, 1 inch will become 254.*25.4 mm. (a big ass WRONG number)
 	*/
+	
+	//Decided NOT to do this at this time. 
+	return  NGC_RS274::Interpreter::Errors::OK;
 
 	//If we are in inch mode, convert all dimensional word values to MM
 	NGC_RS274::Interpreter::Processor::local_block.block_word_values[A_WORD_BIT] *= MM_CONVERSION;

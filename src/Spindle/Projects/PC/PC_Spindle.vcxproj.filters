@@ -16,6 +16,9 @@
     <Filter Include="Common\Serial">
       <UniqueIdentifier>{69cdc5ef-6b2b-4029-b4fc-1066dc6660e7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="PID">
+      <UniqueIdentifier>{36f1c5db-fe1f-4eaa-9b43-682369c55e20}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\c_processor.cpp" />
@@ -31,6 +34,9 @@
     </ClCompile>
     <ClCompile Include="..\..\c_state_manager.cpp">
       <Filter>Control</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\c_pid.cpp">
+      <Filter>PID</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -51,5 +57,8 @@
       <Filter>Control</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Talos.h" />
+    <ClInclude Include="..\..\c_pid.h">
+      <Filter>PID</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

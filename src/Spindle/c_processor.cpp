@@ -26,7 +26,9 @@
 #include "c_driver.h"
 #include "../Common/NGC_RS274/NGC_Interpreter.h"
 #include "c_state_manager.h"
-#define CONTROL_TYPE_SPINDLE
+#include "c_pid.h"
+
+
 c_Serial Spindle_Controller::c_processor::host_serial;
 NGC_RS274::NGC_Binary_Block Spindle_Controller::c_processor::local_block = NGC_RS274::NGC_Binary_Block();
 
@@ -38,34 +40,59 @@ void Spindle_Controller::c_processor::startup()
 
 	Spindle_Controller::c_processor::host_serial = c_Serial(0, 115200); //<--Connect to host
 	Spindle_Controller::c_driver::initialize();
-	Spindle_Controller::c_encoder::initialize(400);
+	Spindle_Controller::c_encoder::initialize(400,Spindle_Controller::c_encoder::e_rpm_type::position_based);
 	Spindle_Controller::c_processor::host_serial.print_string("spindle on line");
 	Spindle_Controller::c_processor::local_block.reset();
 	NGC_RS274::Interpreter::Processor::initialize();
 	c_hal::core.PNTR_START_INTERRUPTS != NULL ? c_hal::core.PNTR_START_INTERRUPTS() : void();
 	Spindle_Controller::c_driver::Disable_Drive();
-	Spindle_Controller::c_driver::Drive_Control.direction = M05;
+	Spindle_Controller::c_driver::Drive_Control.direction = NGC_RS274::M_codes::SPINDLE_STOP;
 	Spindle_Controller::c_processor::local_block.m_group[NGC_RS274::Groups::M::SPINDLE] = Spindle_Controller::c_driver::Drive_Control.direction;
-	
+	Spindle_Controller::c_pid::Initialize();
 
 	#ifdef MSVC
 	{
 		//If running this on a pc, use this line to fill the serial buffer as if it
 		//were sent from a terminal to the micro controller over a serial connection
 		//c_hal::comm.PNTR_VIRTUAL_BUFFER_WRITE(0, "g41p.25G0X1Y1F100\rX2Y2\rX3Y3\r"); //<--data from host
-		c_hal::comm.PNTR_VIRTUAL_BUFFER_WRITE(0, "M4s2000\r\0");
+		c_hal::comm.PNTR_VIRTUAL_BUFFER_WRITE(0, "i.5\r\0");
 		
 	}
 	#endif
-	
+	uint8_t ticker = 0;
 	while (1)
 	{
-		int16_t return_value = 0;
+		if (Spindle_Controller::c_encoder::one_second>=1)
+		{
+			ticker++;
+			Spindle_Controller::c_state_manager::current_rpm = Spindle_Controller::c_encoder::current_rpm();
+			uint8_t output = Spindle_Controller::c_pid::Calculate(Spindle_Controller::c_state_manager::current_rpm,Spindle_Controller::c_processor::local_block.get_value('S'),c_pid::spindle_terms);
+			Spindle_Controller::c_encoder::one_second = 0;
+			
+			c_hal::driver.PNTR_DRIVE_ANALOG!=NULL?c_hal::driver.PNTR_DRIVE_ANALOG(output):void();
+			if (ticker>60)
+			{
+				ticker = 0;
+				Spindle_Controller::c_processor::host_serial.print_int32(output);
+				Spindle_Controller::c_processor::host_serial.print_string("output  ");
+				Spindle_Controller::c_processor::host_serial.Write(CR);
+				
+				Spindle_Controller::c_processor::host_serial.print_float(Spindle_Controller::c_state_manager::current_rpm);
+				Spindle_Controller::c_processor::host_serial.print_string("read rpm  ");
+				Spindle_Controller::c_processor::host_serial.Write(CR);
+				
+				Spindle_Controller::c_processor::host_serial.print_float(Spindle_Controller::c_processor::local_block.get_value('S'));
+				Spindle_Controller::c_processor::host_serial.print_string("target rpm  ");
+				Spindle_Controller::c_processor::host_serial.Write(CR);
+				
+				Spindle_Controller::c_processor::host_serial.print_float(Spindle_Controller::c_encoder::current_angle_deg());
+				Spindle_Controller::c_processor::host_serial.print_string("deg ");
+				Spindle_Controller::c_processor::host_serial.Write(CR);
+				Spindle_Controller::c_processor::host_serial.Write(CR);
+			}
+		}
 
-		Spindle_Controller::c_processor::host_serial.print_float(Spindle_Controller::c_encoder::current_rpm());
-		Spindle_Controller::c_processor::host_serial.print_string("rpm  ");
-		Spindle_Controller::c_processor::host_serial.Write(CR);
-
+		uint16_t return_value =0;
 
 		bool Control_Command = false;
 
@@ -133,39 +160,57 @@ uint16_t Spindle_Controller::c_processor::prep_input()
 		}
 
 	}
+	Spindle_Controller::c_processor::process_control_command();
 
 }
 
 uint16_t Spindle_Controller::c_processor::process_control_command()
 {
 	int16_t return_value = 0;
-	uint8_t control_value = Spindle_Controller::c_processor::host_serial.Get();;
+	//uint8_t control_value = Spindle_Controller::c_processor::host_serial.Get();;
 	
-	if (Spindle_Controller::c_processor::host_serial.HasEOL())
+	//if (Spindle_Controller::c_processor::host_serial.HasEOL())
 	{
-		switch (control_value)
-		{
-		case 'P':
+		if (Spindle_Controller::c_processor::local_block.get_defined('P'))
 		{
 			//set pid Proportional
-			break;
+			Spindle_Controller::c_pid::spindle_terms.Kp=Spindle_Controller::c_processor::local_block.get_value('P');
+			Spindle_Controller::c_pid::Clear(c_pid::spindle_terms);
 		}
-		case 'I':
+		
+		
+		if (Spindle_Controller::c_processor::local_block.get_defined('I'))
+		
 		{
 			//set pid Integral
-			break;
+			Spindle_Controller::c_pid::spindle_terms.Ki=Spindle_Controller::c_processor::local_block.get_value('I');
+			Spindle_Controller::c_pid::Clear(c_pid::spindle_terms);
 		}
-		case 'D':
+		if (Spindle_Controller::c_processor::local_block.get_defined('D'))
+		
 		{
 			//set pid Derivative
-			break;
+			Spindle_Controller::c_pid::spindle_terms.Kd=Spindle_Controller::c_processor::local_block.get_value('D');
+			Spindle_Controller::c_pid::Clear(c_pid::spindle_terms);
 		}
-		default:
-			break;
+		if (Spindle_Controller::c_processor::local_block.get_defined('Q'))
+		
+		{
+			Spindle_Controller::c_processor::host_serial.print_string("P=");
+			Spindle_Controller::c_processor::host_serial.print_float(Spindle_Controller::c_pid::spindle_terms.Kp);
+			Spindle_Controller::c_processor::host_serial.Write(CR);
+			Spindle_Controller::c_processor::host_serial.print_string("I=");
+			Spindle_Controller::c_processor::host_serial.print_float(Spindle_Controller::c_pid::spindle_terms.Ki);
+			Spindle_Controller::c_processor::host_serial.Write(CR);
+			Spindle_Controller::c_processor::host_serial.print_string("D=");
+			Spindle_Controller::c_processor::host_serial.print_float(Spindle_Controller::c_pid::spindle_terms.Kd);
+			Spindle_Controller::c_processor::host_serial.Write(CR);
 		}
-		Spindle_Controller::c_processor::host_serial.SkipToEOL();
 	}
+	Spindle_Controller::c_processor::host_serial.print_string("Parm Updated  ");
+	Spindle_Controller::c_processor::host_serial.Write(CR);
 
+	return return_value;
 }
 
 //// default constructor

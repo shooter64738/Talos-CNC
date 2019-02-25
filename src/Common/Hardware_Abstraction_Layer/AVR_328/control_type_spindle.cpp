@@ -175,6 +175,7 @@ Captures the time count in ICR1 when the index pulse came in. This should be use
 */
 ISR(TIMER1_CAPT_vect)
 {
+	//UDR0='b';
 	uint8_t port_values = PIND;
 	uint16_t time_at_vector = ICR1;
 	//c_hal::ISR_Pointers.TIMER1_CAPT_vect != NULL ? c_hal::ISR_Pointers.TIMER1_CAPT_vect(time_at_vector, port_values) : void();
@@ -187,6 +188,7 @@ Increments the over flow counter. Over flows occur every .0001 seconds
 */
 ISR(TIMER1_OVF_vect)
 {
+	//UDR0='a';
 	//c_hal::ISR_Pointers.TIMER1_OVF_vect != NULL ? c_hal::ISR_Pointers.TIMER1_OVF_vect() : void();
 	Spindle_Controller::c_encoder::hal_callbacks::timer_overflow();
 }
@@ -206,20 +208,22 @@ INT0 and INT1, capture the values when the encoder channels changed state. Used 
 */
 ISR (INT0_vect)
 {
-	uint8_t port_values = PIND;
+	//UDR0='c';
+	int8_t port_values = PIND;
 	uint16_t time_at_vector = TCNT1;
 	
 	//c_hal::ISR_Pointers.INT0_vect != NULL ? c_hal::ISR_Pointers.INT0_vect(time_at_vector,port_values) : void();
 	Spindle_Controller::c_encoder::hal_callbacks::position_change(time_at_vector,port_values);
-	TCNT1 = 0;
+	//TCNT1 = 0;
 }
 
 ISR(INT1_vect)
 {
-	uint8_t port_values = PIND;
+	//UDR0='d';
+	int8_t port_values = PIND;
 	uint16_t time_at_vector = TCNT1;
 
 	//c_hal::ISR_Pointers.INT1_vect != NULL ? c_hal::ISR_Pointers.INT1_vect(time_at_vector,port_values) : void();
 	Spindle_Controller::c_encoder::hal_callbacks::position_change(time_at_vector,port_values);
-	TCNT1 = 0;
+	//TCNT1 = 0;
 }

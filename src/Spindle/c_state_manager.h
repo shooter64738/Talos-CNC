@@ -23,10 +23,6 @@
 #ifndef __C_STATE_H__
 #define __C_STATE_H__
 
-#define M03 3 //CW spindle
-#define M04 4 //CCW spindle
-#define M05 5 //Stop Spindle
-
 namespace Spindle_Controller
 {
 	class c_state_manager
@@ -40,6 +36,7 @@ namespace Spindle_Controller
 		public:
 		static uint8_t check_driver_state();
 		static uint8_t process_state(float CurrentRPM);
+		static float current_rpm;
 
 		protected:
 		private:

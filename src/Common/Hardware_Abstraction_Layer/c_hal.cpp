@@ -27,7 +27,7 @@
 #endif
 #ifdef CONTROL_TYPE_PLASMA_THC
 #include "AVR_328\control_type_thc.h"
-#include "VIRTUAL\control_type_thc.h"
+//#include "VIRTUAL\control_type_thc.h"
 #endif
 #ifdef CONTROL_TYPE_COORDINATOR
 #include "AVR_2560\control_type_coordinator.h"
@@ -154,12 +154,6 @@ void c_hal::initialize()
 	c_hal::comm.PNTR_SERIAL_TX = &c_cpu_VIRTUAL::serial_send;
 	c_hal::comm.PNTR_SERIAL_RX_BUFFER = c_cpu_VIRTUAL::rxBuffer;
 	c_hal::comm.PNTR_VIRTUAL_BUFFER_WRITE = &c_cpu_VIRTUAL::add_to_buffer;
-	c_hal::feedback.PNTR_PULSE_ISR = &c_cpu_VIRTUAL::feedback_pulse_isr;
-	//c_hal::feedback.PNTR_POSITION_DATA = c_cpu_VIRTUAL::Axis_Positions;
-
-	c_hal::edm.PNTR_GET_ARC_VOLTAGE = &c_cpu_VIRTUAL::edm_get_gap_voltage;
-	c_hal::edm.PNTR_INITIALIZE = &c_cpu_VIRTUAL::edm_set_pulse_frequency;
-	c_hal::edm.PNTR_SET_ARC_DRIVE_FREQUENCY = &c_cpu_VIRTUAL::edm_set_pulse_frequency;
 
 	c_hal::storage.PNTR_GET_BYTE = &c_cpu_VIRTUAL::eeprom_get_byte;
 
