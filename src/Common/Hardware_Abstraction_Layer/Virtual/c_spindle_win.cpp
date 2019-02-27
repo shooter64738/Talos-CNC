@@ -6,8 +6,7 @@
 */
 
 
-#include "control_type_spindle.h"
-#include "..\c_hal.h"
+#include "c_spindle_win.h"
 #include "..\..\..\Spindle\c_encoder.h"
 
 #include <thread>
@@ -90,28 +89,16 @@ uint16_t  ICIE1 = 0;
 uint16_t  TCCR0A = 0;
 uint16_t  WGM01 = 0;
 uint16_t  WGM00 = 0;
+uint8_t	  OCR0A = 0;
 
-void control_type::initialize()
+void Hardware_Abstraction_Layer::Spindle::initialize()
 {
-	control_type::_set_inbound_function_pointers();
-	control_type::_set_encoder_inputs();
-	control_type::_set_timer1_capture_input();
-	control_type::_set_control_outputs();
+	Hardware_Abstraction_Layer::Spindle::_set_encoder_inputs();
+	Hardware_Abstraction_Layer::Spindle::_set_timer1_capture_input();
+	Hardware_Abstraction_Layer::Spindle::_set_control_outputs();
 }
 
-void control_type::_set_inbound_function_pointers()
-{
-	//Functions called from program->hal
-	c_hal::driver.PNTR_ENABLE = &control_type::_enable_drive;
-	c_hal::driver.PNTR_DISABLE = &control_type::_disable_drive;
-	c_hal::driver.PNTR_BRAKE= &control_type::_brake_drive;
-	c_hal::driver.PNTR_FORWARD= &control_type::_forward_drive;
-	c_hal::driver.PNTR_REVERSE= &control_type::_reverse_drive;
-	c_hal::driver.PNTR_RELEASE= &control_type::_release_drive;
-}
-
-
-void control_type::_enable_drive()
+void Hardware_Abstraction_Layer::Spindle::_enable_drive()
 {
 	// make sure to make OC0 pin (pin PB6 for atmega328) as output pin
 	DDRD |= (1<<PWM_OUTPUT_PIN);
@@ -128,7 +115,7 @@ void control_type::_enable_drive()
 	*/
 }
 
-void control_type::_disable_drive()
+void Hardware_Abstraction_Layer::Spindle::_disable_drive()
 {
 	//set pwm output pin to input so that no output will go to the driver.
 	//if the drive does not have an enable control line, this should effectively set the output to 0
@@ -138,7 +125,7 @@ void control_type::_disable_drive()
 	CONTROL_PORT &= ~(1<<ENABLE_PIN);
 }
 
-void control_type::_brake_drive()
+void Hardware_Abstraction_Layer::Spindle::_brake_drive()
 {
 	/*
 	braking may be accomplished by connecting motor output leads together via a relay/resistor combo.
@@ -151,23 +138,28 @@ void control_type::_brake_drive()
 	CONTROL_PORT |= (1<<BRAKE_PIN);
 }
 
-void control_type::_release_drive()
+void Hardware_Abstraction_Layer::Spindle::_release_drive()
 {
 	//set brake pin low
 	CONTROL_PORT &= ~(1<<BRAKE_PIN); //(uno pin 6)
 }
 
-void control_type::_reverse_drive()
+void Hardware_Abstraction_Layer::Spindle::_reverse_drive()
 {
 	CONTROL_PORT |= (1<<DIRECTION_PIN); //(uno pin 13)
 }
 
-void control_type::_forward_drive()
+void Hardware_Abstraction_Layer::Spindle::_forward_drive()
 {
 	CONTROL_PORT &= ~(1<<DIRECTION_PIN); //(uno pin 13)
 }
 
-void control_type::_set_encoder_inputs()
+void Hardware_Abstraction_Layer::Spindle::_drive_analog(uint16_t current_output)
+{
+	OCR0A = current_output;
+}
+
+void Hardware_Abstraction_Layer::Spindle::_set_encoder_inputs()
 {
 	//Following code enables interrupts to determine direction of motor rotation
 	DDRD &= ~(1 << DDD2);	//input mode
@@ -178,7 +170,8 @@ void control_type::_set_encoder_inputs()
 	EICRA |= (1 << ISC00);	// Trigger on any change on INT0
 	EICRA |= (1 << ISC10);	// Trigger on any change on INT1
 }
-void control_type::_set_timer1_capture_input()
+
+void Hardware_Abstraction_Layer::Spindle::_set_timer1_capture_input()
 {
 	//Following code enables interrupts on pin change with time capture for RPM
 	/*
@@ -203,7 +196,7 @@ void control_type::_set_timer1_capture_input()
 	TIMSK1 = (1<< TOIE1) |(1 << ICIE1);  //<-- (Input Capture Interrupt Enable) and (Timer Overflow Interrupt Enable)
 }
 
-void control_type::_set_control_outputs()
+void Hardware_Abstraction_Layer::Spindle::_set_control_outputs()
 {
 	//The following code enables PWM output on pin 6, and digital output on pins 4,5,7
 	//6 is not setup as output yet because sometimes it jumps to a high state momentarily causing the spindle to jerk.
@@ -228,11 +221,11 @@ void control_type::_set_control_outputs()
 	*/
 }
 
-void control_type::isr_threads::TIMER1_COMPA_vect()
+void Hardware_Abstraction_Layer::Spindle::isr_threads::TIMER1_COMPA_vect()
 {
 }
 
-void control_type::isr_threads::TIMER1_CAPT_vect()
+void Hardware_Abstraction_Layer::Spindle::isr_threads::TIMER1_CAPT_vect()
 {
 	//simulate a pulse captured every 1000 milliseconds (1 time per second, 60 times per minute. 60rpm)
 	while (1)
@@ -246,7 +239,7 @@ void control_type::isr_threads::TIMER1_CAPT_vect()
 	}
 }
 
-void control_type::isr_threads::TIMER1_OVF_vect()
+void Hardware_Abstraction_Layer::Spindle::isr_threads::TIMER1_OVF_vect()
 {
 	//simulate an overflow every 1 milli-seconds
 	while (1)
@@ -261,21 +254,21 @@ void control_type::isr_threads::TIMER1_OVF_vect()
 	}
 }
 
-void control_type::isr_threads::TIMER0_OVF_vect()
+void Hardware_Abstraction_Layer::Spindle::isr_threads::TIMER0_OVF_vect()
 {
 }
 
-void control_type::isr_threads::PCINT0_vect()
+void Hardware_Abstraction_Layer::Spindle::isr_threads::PCINT0_vect()
 {
 	
 };
 
-void control_type::isr_threads::PCINT2_vect()
+void Hardware_Abstraction_Layer::Spindle::isr_threads::PCINT2_vect()
 {
 	
 };
 
-void control_type::isr_threads::INT0_vect()
+void Hardware_Abstraction_Layer::Spindle::isr_threads::INT0_vect()
 {
 	uint8_t port_values = PIND;
 	uint16_t time_at_vector = TCNT1;
@@ -285,7 +278,7 @@ void control_type::isr_threads::INT0_vect()
 	TCNT1 = 0;
 }
 
-void control_type::isr_threads::INT1_vect()
+void Hardware_Abstraction_Layer::Spindle::isr_threads::INT1_vect()
 {
 	uint8_t port_values = PIND;
 	uint16_t time_at_vector = TCNT1;

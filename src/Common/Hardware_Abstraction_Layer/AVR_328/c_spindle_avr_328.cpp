@@ -1,5 +1,5 @@
 /*
-*  c_control_type_spindle.cpp - NGC_RS274 controller.
+*  c_spindle_avr_328.cpp - NGC_RS274 controller.
 *  A component of Talos
 *
 *  Copyright (c) 2016-2019 Jeff Dill
@@ -19,33 +19,28 @@
 */
 
 
-#include "control_type_spindle.h"
+#include "c_spindle_avr_328.h"
 #include <avr/io.h>
-#include "..\c_hal.h"
+#include <avr/interrupt.h>
 #include "..\..\..\Spindle\c_encoder.h"
 
-void control_type::initialize()
+//Using Timer1, which is a 16 bit timer. The overlfow on this timer is 65535.
+//If a different timer is used thsi value shoudl be changed. 
+#define TIMER_OVERFLOW_SIZE 65535.0 //<-- Maximum value the timer can reach for an overflow
+//Using prescale 8 on a 16mhz clock (16,000,000/8,000,000 = 2,000,000). If the prescaler is
+//changed for the timer, adjust this value
+#define TIME_FREQUENCY_HZ 2000000.0 //<-- Timer frequency. (using prescale of 8)
+#define _TIME_FACTOR (TIME_FREQUENCY_HZ/TIMER_OVERFLOW_SIZE)
+
+void Hardware_Abstraction_Layer::Spindle::initialize()
 {
-	control_type::_set_inbound_function_pointers();
-	control_type::_set_encoder_inputs();
-	control_type::_set_timer1_capture_input();
-	control_type::_set_control_outputs();
+	Hardware_Abstraction_Layer::Spindle::_set_encoder_inputs();
+	Hardware_Abstraction_Layer::Spindle::_set_timer1_capture_input();
+	Hardware_Abstraction_Layer::Spindle::_set_control_outputs();
+	Spindle_Controller::c_encoder::set_time_factor(_TIME_FACTOR);
 }
 
-void control_type::_set_inbound_function_pointers()
-{
-	//Functions called from program->hal
-	c_hal::driver.PNTR_ENABLE = &control_type::_enable_drive;
-	c_hal::driver.PNTR_DISABLE = &control_type::_disable_drive;
-	c_hal::driver.PNTR_BRAKE= &control_type::_brake_drive;
-	c_hal::driver.PNTR_FORWARD= &control_type::_forward_drive;
-	c_hal::driver.PNTR_REVERSE= &control_type::_reverse_drive;
-	c_hal::driver.PNTR_RELEASE= &control_type::_release_drive;
-	c_hal::driver.PNTR_DRIVE_ANALOG = &control_type::_drive_analog;
-}
-
-
-void control_type::_enable_drive()
+void Hardware_Abstraction_Layer::Spindle::_enable_drive()
 {
 	// make sure to make OC0 pin (pin PB6 for atmega328) as output pin
 	DDRD |= (1<<PWM_OUTPUT_PIN);
@@ -62,7 +57,7 @@ void control_type::_enable_drive()
 	*/
 }
 
-void control_type::_disable_drive()
+void Hardware_Abstraction_Layer::Spindle::_disable_drive()
 {
 	//set pwm output pin to input so that no output will go to the driver.
 	//if the drive does not have an enable control line, this should effectively set the output to 0
@@ -72,7 +67,7 @@ void control_type::_disable_drive()
 	CONTROL_PORT &= ~(1<<ENABLE_PIN);
 }
 
-void control_type::_brake_drive()
+void Hardware_Abstraction_Layer::Spindle::_brake_drive()
 {
 	/*
 	braking may be accomplished by connecting motor output leads together via a relay/resistor combo.
@@ -85,28 +80,28 @@ void control_type::_brake_drive()
 	CONTROL_PORT |= (1<<BRAKE_PIN);
 }
 
-void control_type::_release_drive()
+void Hardware_Abstraction_Layer::Spindle::_release_drive()
 {
 	//set brake pin low
 	CONTROL_PORT &= ~(1<<BRAKE_PIN); //(uno pin 6)
 }
 
-void control_type::_drive_analog(uint16_t current_output)
+void Hardware_Abstraction_Layer::Spindle::_drive_analog(uint16_t current_output)
 {
 	OCR0A = current_output;
 }
 
-void control_type::_reverse_drive()
+void Hardware_Abstraction_Layer::Spindle::_reverse_drive()
 {
 	CONTROL_PORT |= (1<<DIRECTION_PIN); //(uno pin 13)
 }
 
-void control_type::_forward_drive()
+void Hardware_Abstraction_Layer::Spindle::_forward_drive()
 {
 	CONTROL_PORT &= ~(1<<DIRECTION_PIN); //(uno pin 13)
 }
 
-void control_type::_set_encoder_inputs()
+void Hardware_Abstraction_Layer::Spindle::_set_encoder_inputs()
 {
 	//Following code enables interrupts to determine direction of motor rotation
 	DDRD &= ~(1 << DDD2);	//input mode
@@ -119,7 +114,8 @@ void control_type::_set_encoder_inputs()
 	
 	EIMSK |= (1 << INT0) | (1 << INT1);     // Enable external interrupt INT0, INT1
 }
-void control_type::_set_timer1_capture_input()
+
+void Hardware_Abstraction_Layer::Spindle::_set_timer1_capture_input()
 {
 	//Following code enables interrupts on pin change with time capture for RPM
 	/*
@@ -144,7 +140,7 @@ void control_type::_set_timer1_capture_input()
 	TIMSK1 = (1<< TOIE1) |(1 << ICIE1);  //<-- (Input Capture Interrupt Enable) and (Timer Overflow Interrupt Enable)
 }
 
-void control_type::_set_control_outputs()
+void Hardware_Abstraction_Layer::Spindle::_set_control_outputs()
 {
 	//The following code enables PWM output on pin 6, and digital output on pins 4,5,7
 	//6 is not setup as output yet because sometimes it jumps to a high state momentarily causing the spindle to jerk.
@@ -168,7 +164,6 @@ void control_type::_set_control_outputs()
 	1		0 		1 		Clock / 1024
 	*/
 }
-
 
 /*
 Captures the time count in ICR1 when the index pulse came in. This should be used to measure RPM

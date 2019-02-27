@@ -21,10 +21,13 @@
 #include "c_hal.h"
 #include "..\..\talos.h"
 #include "..\..\Coordinator\Shared\Settings\c_general.h"
+
 #ifdef CONTROL_TYPE_SPINDLE
-#include "AVR_328\control_type_spindle.h"
+#include "AVR_328\spindle_avr_328.h"
 #include "VIRTUAL\control_type_spindle.h"
+using namespace Hardware_Abstraction_Layer;
 #endif
+
 #ifdef CONTROL_TYPE_PLASMA_THC
 #include "AVR_328\control_type_thc.h"
 //#include "VIRTUAL\control_type_thc.h"
@@ -49,9 +52,9 @@ in the respective CPU class.
 3. In order to do that you will need to include the proper cpu file below.
 */
 
-c_hal::s_driver_function_pointers c_hal::driver;
-c_hal::s_core_function_pointers c_hal::core;
-c_hal::s_comm_function_pointers c_hal::comm;
+//c_hal::s_driver_function_pointers c_hal::driver;
+//c_hal::s_core_function_pointers c_hal::core;
+//c_hal::s_comm_function_pointers c_hal::comm;
 c_hal::s_lcd_function_pointers c_hal::lcd;
 c_hal::s_storage_function_pointers c_hal::storage;
 
@@ -60,16 +63,17 @@ void c_hal::initialize()
 {
 	#ifdef __AVR_ATmega328P__
 	//Functions called from program->hal
-	c_hal::core.PNTR_INITIALIZE = &c_cpu_AVR_328::core_initializer;
-	c_hal::core.PNTR_START_INTERRUPTS = &c_cpu_AVR_328::core_start_interrupts;
-	c_hal::core.PNTR_STOP_INTERRUPTS = &c_cpu_AVR_328::core_stop_interrupts;
-	c_hal::core.PNTR_GET_CPU_SPEED = &c_cpu_AVR_328::core_get_cpu_clock_rate;
+	//c_hal::core.PNTR_INITIALIZE = &c_cpu_AVR_328::core_initializer;
+	//c_hal::core.PNTR_START_INTERRUPTS = &c_cpu_AVR_328::core_start_interrupts;
+	//c_hal::core.PNTR_STOP_INTERRUPTS = &c_cpu_AVR_328::core_stop_interrupts;
+	//c_hal::core.PNTR_GET_CPU_SPEED = &c_cpu_AVR_328::core_get_cpu_clock_rate;
 
-	c_hal::comm.PNTR_INITIALIZE = &c_cpu_AVR_328::serial_initializer;
-	c_hal::comm.PNTR_SERIAL_TX = &c_cpu_AVR_328::serial_send;
-	c_hal::comm.PNTR_SERIAL_RX_BUFFER = c_cpu_AVR_328::rxBuffer;
+	//c_hal::comm.PNTR_INITIALIZE = &c_cpu_AVR_328::serial_initializer;
+	//c_hal::comm.PNTR_SERIAL_TX = &c_cpu_AVR_328::serial_send;
+	//c_hal::comm.PNTR_SERIAL_RX_BUFFER = c_cpu_AVR_328::rxBuffer;
 	//Depending on the control_type defined in talos.h, this will call a different initializer.
-	control_type::initialize();
+	
+	//control_type::initialize();
 	
 	
 	#endif
@@ -116,10 +120,10 @@ void c_hal::initialize()
 	#ifdef __SAM3X8E__
 
 	//c_hal::core.PNTR_BASE = &c_cpu_ARM_SAM3X8E::initialize;
-	c_hal::core.PNTR_INITIALIZE = &c_cpu_ARM_SAM3X8E::core_initializer;
+	//c_hal::core.PNTR_INITIALIZE = &c_cpu_ARM_SAM3X8E::core_initializer;
 	//c_hal::core.PNTR_START_INTERRUPTS = &c_cpu_ARM_SAM3X8E::core_start_interrupts;
 	//c_hal::core.PNTR_STOP_INTERRUPTS = &c_cpu_ARM_SAM3X8E::core_stop_interrupts;
-	c_hal::core.PNTR_GET_CPU_SPEED = &c_cpu_ARM_SAM3X8E::core_get_cpu_clock_rate;
+	//c_hal::core.PNTR_GET_CPU_SPEED = &c_cpu_ARM_SAM3X8E::core_get_cpu_clock_rate;
 	//
 	////map the function pointers in c_hal, to the functions in c_driver for the board
 	//c_hal::driver.PNTR_INITIALIZE = &c_cpu_ARM_SAM3X8E::driver_timer_initializer;

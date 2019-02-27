@@ -50,50 +50,50 @@ class c_hal
 	static void initialize();
 
 
-	//core struct refers to actions that give basic function
-	typedef struct
-	{
-		void (*PNTR_INITIALIZE)(void);
-		void (*PNTR_START_INTERRUPTS)(void);
-		void (*PNTR_STOP_INTERRUPTS)(void);
-		void (*PNTR_BASE)(void);		
-		uint32_t (*PNTR_GET_CPU_SPEED)(void);
-	}s_core_function_pointers;
-	static s_core_function_pointers core;
+	////core struct refers to actions that give basic function
+	//typedef struct
+	//{
+		//void (*PNTR_INITIALIZE)(void);
+		//void (*PNTR_START_INTERRUPTS)(void);
+		//void (*PNTR_STOP_INTERRUPTS)(void);
+		//void (*PNTR_BASE)(void);		
+		//uint32_t (*PNTR_GET_CPU_SPEED)(void);
+	//}s_core_function_pointers;
+	//static s_core_function_pointers core;
 	
-	typedef struct
-	{
-		void (*PNTR_INITIALIZE)(uint8_t, uint32_t);
-		void (*PNTR_BASE)(void);
-		void (*PNTR_VIRTUAL_BUFFER_WRITE)(uint8_t, const char*);
-		void (*PNTR_SERIAL_RX)(void);
-		void (*PNTR_SERIAL_TX)(uint8_t , char);
-		void (*PNTR_I2C_RX)(void);
-		void (*PNTR_I2C_TX)(void);
-		s_Buffer *PNTR_SERIAL_RX_BUFFER;
-		
-	}s_comm_function_pointers;
-	static s_comm_function_pointers comm;	
+	//typedef struct
+	//{
+		//void (*PNTR_INITIALIZE)(uint8_t, uint32_t);
+		//void (*PNTR_BASE)(void);
+		//void (*PNTR_VIRTUAL_BUFFER_WRITE)(uint8_t, const char*);
+		//void (*PNTR_SERIAL_RX)(void);
+		//void (*PNTR_SERIAL_TX)(uint8_t , char);
+		//void (*PNTR_I2C_RX)(void);
+		//void (*PNTR_I2C_TX)(void);
+		//s_Buffer *PNTR_SERIAL_RX_BUFFER;
+		//
+	//}s_comm_function_pointers;
+	//static s_comm_function_pointers comm;	
 	
 	//driver struct refers to actions to run stepper or servo drivers
-	typedef struct
-	{
-		void (*PNTR_INITIALIZE)(void);
-		void (*PNTR_ENABLE)(void);
-		void (*PNTR_DISABLE)(void);
-		void (*PNTR_DRIVE)(void);
-		void (*PNTR_BRAKE)(void);
-		void (*PNTR_FORWARD)(void);
-		void (*PNTR_REVERSE)(void);
-		void (*PNTR_RELEASE)(void);
-		void (*PNTR_DRIVE_ANALOG)(uint16_t);
-		void (*PNTR_RESET)(void);
-		void(*PNTR_SET_PRESCALER)(uint16_t);
-		void(*PNTR_SET_TIMER_RATE)(uint16_t);
-		uint8_t(*PNTR_AUX_DRIVE_CONTROLER)(uint8_t);
-		void (*PNTR_CONFIGURE_STEPPER)(uint8_t,uint8_t,uint8_t,uint32_t);
-	}s_driver_function_pointers;
-	static s_driver_function_pointers driver;
+	//typedef struct
+	//{
+		//void (*PNTR_INITIALIZE)(void);
+		//void (*PNTR_ENABLE)(void);
+		//void (*PNTR_DISABLE)(void);
+		//void (*PNTR_DRIVE)(void);
+		//void (*PNTR_BRAKE)(void);
+		//void (*PNTR_FORWARD)(void);
+		//void (*PNTR_REVERSE)(void);
+		//void (*PNTR_RELEASE)(void);
+		//void (*PNTR_DRIVE_ANALOG)(uint16_t);
+		//void (*PNTR_RESET)(void);
+		//void(*PNTR_SET_PRESCALER)(uint16_t);
+		//void(*PNTR_SET_TIMER_RATE)(uint16_t);
+		//uint8_t(*PNTR_AUX_DRIVE_CONTROLER)(uint8_t);
+		//void (*PNTR_CONFIGURE_STEPPER)(uint8_t,uint8_t,uint8_t,uint32_t);
+	//}s_driver_function_pointers;
+	//static s_driver_function_pointers driver;
 	
 	//lcd struct refers to anything related to lcd display
 	typedef struct

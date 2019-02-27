@@ -19,12 +19,12 @@
 */
 
 #include "c_cpu_VIRTUAL.h"
-#include "..\c_hal.h"
+
 
 #ifdef MSVC
 
 #include <iostream>
-//#include "../../../Coordinator/Shared/MotionControllerInterface/c_motion_controller.h"
+#define COM_PORT_COUNT 4
 s_Buffer c_cpu_VIRTUAL::rxBuffer[COM_PORT_COUNT];
 
 int8_t c_cpu_VIRTUAL::Axis_Incrimenter[MACHINE_AXIS_COUNT];

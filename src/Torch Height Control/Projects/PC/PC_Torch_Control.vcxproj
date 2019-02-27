@@ -20,11 +20,6 @@
     <ClInclude Include="..\..\c_processor.h" />
     <ClInclude Include="..\..\c_torch_height.h" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\Common\Hardware_Abstraction_Layer\Virtual\Virtual_HAL.vcxproj">
-      <Project>{12e9995c-e23a-4b5a-9884-deb11ac068dd}</Project>
-    </ProjectReference>
-  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{7441F880-C918-411F-BC16-17BF9F62D426}</ProjectGuid>
     <RootNamespace>Virtual_HAL</RootNamespace>

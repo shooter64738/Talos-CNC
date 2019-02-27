@@ -48,17 +48,20 @@ namespace Spindle_Controller
 			float angle_multiplier;
 			uint8_t channels;
 			uint16_t ticks_per_rev;
+			float time_factor;
+			float pulse_per_second_rate;
 		};
 		static s_encoder_data encoder_data;
 		
-		static uint8_t one_second;
-		static void initialize(uint16_t encoder_ticks_per_rev, e_rpm_type);
+		static uint8_t has_overflowed;
+		
 		protected:
 		private:
 
 		//functions
 		public:
-		static void update_time(uint16_t time_at_vector);
+		static void initialize(uint16_t encoder_ticks_per_rev, e_rpm_type);
+		static void set_time_factor(float time_factor_from_hal);
 		static float current_rpm();
 		static float current_angle_deg();
 

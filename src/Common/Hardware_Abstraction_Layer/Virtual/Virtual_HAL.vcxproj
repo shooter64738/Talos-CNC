@@ -65,13 +65,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\c_hal.cpp" />
     <ClCompile Include="control_type_spindle.cpp" />
     <ClCompile Include="c_cpu_VIRTUAL.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Talos.h" />
-    <ClInclude Include="..\c_hal.h" />
     <ClInclude Include="control_type_spindle.h" />
     <ClInclude Include="c_cpu_VIRTUAL.h" />
   </ItemGroup>

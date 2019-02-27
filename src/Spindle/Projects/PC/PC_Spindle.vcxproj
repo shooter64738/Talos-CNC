@@ -11,23 +11,34 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Common\Hardware_Abstraction_Layer\Virtual\Virtual_HAL.vcxproj">
-      <Project>{12e9995c-e23a-4b5a-9884-deb11ac068dd}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\Common\NGC_RS274\Projects\PC\PC_Interpreter.vcxproj">
-      <Project>{d8cd0074-2e2a-4957-a3f7-a3bebcf704e4}</Project>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
+    <ClCompile Include="..\..\..\Common\Hardware_Abstraction_Layer\Virtual\c_core_win.cpp" />
+    <ClCompile Include="..\..\..\Common\Hardware_Abstraction_Layer\Virtual\c_serial_win.cpp" />
+    <ClCompile Include="..\..\..\Common\Hardware_Abstraction_Layer\Virtual\c_spindle_win.cpp" />
+    <ClCompile Include="..\..\..\Common\Hardware_Abstraction_Layer\Virtual\c_cpu_VIRTUAL.cpp" />
+    <ClCompile Include="..\..\..\Common\NGC_RS274\NGC_Block.cpp" />
+    <ClCompile Include="..\..\..\Common\NGC_RS274\NGC_Interpreter.cpp" />
     <ClCompile Include="..\..\..\Common\Serial\c_Serial.cpp" />
     <ClCompile Include="..\..\c_driver.cpp" />
     <ClCompile Include="..\..\c_encoder.cpp" />
     <ClCompile Include="..\..\c_pid.cpp" />
     <ClCompile Include="..\..\c_processor.cpp" />
     <ClCompile Include="..\..\c_state_manager.cpp" />
+    <ClCompile Include="..\..\c_synchronizer.cpp" />
     <ClCompile Include="..\..\main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\Common\Hardware_Abstraction_Layer\Virtual\c_core_win.h" />
+    <ClInclude Include="..\..\..\Common\Hardware_Abstraction_Layer\Virtual\c_serial_win.h" />
+    <ClInclude Include="..\..\..\Common\Hardware_Abstraction_Layer\Virtual\c_spindle_win.h" />
+    <ClInclude Include="..\..\..\Common\Hardware_Abstraction_Layer\Virtual\c_cpu_VIRTUAL.h" />
+    <ClInclude Include="..\..\..\Common\NGC_RS274\NGC_Block.h" />
+    <ClInclude Include="..\..\..\Common\NGC_RS274\NGC_Errors.h" />
+    <ClInclude Include="..\..\..\Common\NGC_RS274\NGC_G_Codes.h" />
+    <ClInclude Include="..\..\..\Common\NGC_RS274\NGC_G_Groups.h" />
+    <ClInclude Include="..\..\..\Common\NGC_RS274\NGC_Interpreter.h" />
+    <ClInclude Include="..\..\..\Common\NGC_RS274\NGC_M_Codes.h" />
+    <ClInclude Include="..\..\..\Common\NGC_RS274\NGC_M_Groups.h" />
+    <ClInclude Include="..\..\..\Common\NGC_RS274\NGC_Parameters.h" />
     <ClInclude Include="..\..\..\Common\Serial\c_Serial.h" />
     <ClInclude Include="..\..\..\Common\Serial\s_buffer.h" />
     <ClInclude Include="..\..\..\Talos.h" />
@@ -36,6 +47,8 @@
     <ClInclude Include="..\..\c_pid.h" />
     <ClInclude Include="..\..\c_processor.h" />
     <ClInclude Include="..\..\c_state_manager.h" />
+    <ClInclude Include="..\..\c_synchronizer.h" />
+    <ClInclude Include="..\..\hardware_def.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{604D9DD2-8922-4CA8-8CA2-085B354BA482}</ProjectGuid>

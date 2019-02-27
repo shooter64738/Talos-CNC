@@ -22,41 +22,14 @@
 #ifndef TALOS_H_
 #define TALOS_H_
 //To enable compilation and debugging in Microsoft Visual C++ define MSCV
-//#define MSVC
-
-/*
-Setting this will determine how the HAL compiles, and what control type it will control.
-In each HAL project there is an #ifdef for the control type. Within each control type
-there is an additional #ifdef for the processor. This prevents compilation for any other
-machine type and processor combination. More control types are planned in the future. 
-To set compilation for a particular machine type, uncomment the define
-*/
-//ONLY ONE CONTROL TYPE CAN BE DEFINED FOR EACH COMPILE
-#define CONTROL_TYPE_SPINDLE        //<--Controls a DC motor+encoder as a spindle (const vel servo)
-//#define CONTROL_TYPE_COORDINATOR  //<--Coordinates spindle,motion,peripheral controls
-//#define CONTROL_TYPE_LATHE_FLAT   //<--Controls a flat bed lathe
-//#define CONTROL_TYPE_LATHE_SLANT  //<--Controls a slant bed lathe
-//#define CONTROL_TYPE_MILL_RF45    //<--Controls a Cartesian RF45 style mill
-//#define CONTROL_TYPE_MILL_GANTRY  //<--Controls a Cartesian gantry style mill
-//#define CONTROL_TYPE_MILL_ROUTER  //<--Controls a Cartesian wood router mill
-//#define CONTROL_TYPE_MILL_LASER   //<--Controls a Cartesian laser
-//#define CONTROL_TYPE_PLASMA       //<--Controls a Cartesian plasma cutter
-//#define CONTROL_TYPE_PLASMA_THC   //<--Controls the torch head on a Cartesian plasma cutter
-//#define CONTROL_TYPE_EDM_WIRE     //<--Controls a wire EDM machine
-//#define CONTROL_TYPE_EDM_PLUNGE   //<--Controls a plunge EDM machine
-//#define CONTROL_TYPE_STOCK_FEEDER //<--Controls a stock/material feeder
-//#define CONTROL_TYPE_TOOL_CHANGER //<--Controls a tool change system
-//#define CONTROL_TYPE_GRINDER      //<--Controls a Cartesian surface grinder
-//#define CONTROL_TYPE_SERVO        //<--Controls a DC motor+encoder as a servo (pos held servo)
-
+#define MSVC
 
 #include <stdio.h>
 #include <ctype.h>
 #include <stdlib.h>
 #include <math.h>
 #define MM_CONVERSION 25.40001
-//How many com ports are in use? (sets buffer array in CPU)
-#define COM_PORT_COUNT 3
+
 //How many words can a block contain
 #define COUNT_OF_BLOCK_WORDS_ARRAY 26
 //How many elements are in the G code group array

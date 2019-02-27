@@ -23,7 +23,6 @@
 #include "c_driver.h"
 #include "c_encoder.h"
 #include "c_processor.h"
-#include "..\Common\Hardware_Abstraction_Layer\c_hal.h"
 
 float Spindle_Controller::c_state_manager::current_rpm = 0;
 

@@ -19,6 +19,18 @@
     <Filter Include="PID">
       <UniqueIdentifier>{36f1c5db-fe1f-4eaa-9b43-682369c55e20}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Common\Hardware Abstraction Layer">
+      <UniqueIdentifier>{de997444-3448-45f1-9825-7c207cd304bc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common\Hardware Abstraction Layer\WIN32">
+      <UniqueIdentifier>{882f1804-13a0-4eb8-a241-349e428d0e8a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Synchronizer">
+      <UniqueIdentifier>{bb1328ec-b452-4509-b475-35285671cef0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NGC_RS274">
+      <UniqueIdentifier>{7ab1c648-427e-4d1f-9dfe-1d2ede56a59c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\c_processor.cpp" />
@@ -37,6 +49,27 @@
     </ClCompile>
     <ClCompile Include="..\..\c_pid.cpp">
       <Filter>PID</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Common\Hardware_Abstraction_Layer\Virtual\c_cpu_VIRTUAL.cpp">
+      <Filter>Common\Hardware Abstraction Layer\WIN32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Common\Hardware_Abstraction_Layer\Virtual\c_spindle_win.cpp">
+      <Filter>Common\Hardware Abstraction Layer\WIN32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Common\Hardware_Abstraction_Layer\Virtual\c_core_win.cpp">
+      <Filter>Common\Hardware Abstraction Layer\WIN32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Common\Hardware_Abstraction_Layer\Virtual\c_serial_win.cpp">
+      <Filter>Common\Hardware Abstraction Layer\WIN32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\c_synchronizer.cpp">
+      <Filter>Synchronizer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Common\NGC_RS274\NGC_Block.cpp">
+      <Filter>NGC_RS274</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Common\NGC_RS274\NGC_Interpreter.cpp">
+      <Filter>NGC_RS274</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -59,6 +92,46 @@
     <ClInclude Include="..\..\..\Talos.h" />
     <ClInclude Include="..\..\c_pid.h">
       <Filter>PID</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Common\Hardware_Abstraction_Layer\Virtual\c_cpu_VIRTUAL.h">
+      <Filter>Common\Hardware Abstraction Layer\WIN32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\hardware_def.h" />
+    <ClInclude Include="..\..\..\Common\Hardware_Abstraction_Layer\Virtual\c_spindle_win.h">
+      <Filter>Common\Hardware Abstraction Layer\WIN32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Common\Hardware_Abstraction_Layer\Virtual\c_core_win.h">
+      <Filter>Common\Hardware Abstraction Layer\WIN32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Common\Hardware_Abstraction_Layer\Virtual\c_serial_win.h">
+      <Filter>Common\Hardware Abstraction Layer\WIN32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\c_synchronizer.h">
+      <Filter>Synchronizer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Common\NGC_RS274\NGC_Block.h">
+      <Filter>NGC_RS274</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Common\NGC_RS274\NGC_Errors.h">
+      <Filter>NGC_RS274</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Common\NGC_RS274\NGC_G_Codes.h">
+      <Filter>NGC_RS274</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Common\NGC_RS274\NGC_G_Groups.h">
+      <Filter>NGC_RS274</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Common\NGC_RS274\NGC_Interpreter.h">
+      <Filter>NGC_RS274</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Common\NGC_RS274\NGC_M_Codes.h">
+      <Filter>NGC_RS274</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Common\NGC_RS274\NGC_M_Groups.h">
+      <Filter>NGC_RS274</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Common\NGC_RS274\NGC_Parameters.h">
+      <Filter>NGC_RS274</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

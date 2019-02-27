@@ -20,8 +20,9 @@
 
 
 #include "c_driver.h"
-#include "..\Common\Hardware_Abstraction_Layer\c_hal.h"
 #include "c_encoder.h"
+#include "hardware_def.h"
+
 #define MINIMUM_OUTPUT 100
 #define MAXIMUM_OUTPUT 255
 
@@ -31,7 +32,9 @@ uint8_t Spindle_Controller::c_driver::accel_output = 0;
 
 void Spindle_Controller::c_driver::initialize()
 {
-	c_hal::driver.PNTR_DRIVE_ANALOG!=NULL?c_hal::driver.PNTR_DRIVE_ANALOG(MINIMUM_OUTPUT):void();
+
+	//c_hal::driver.PNTR_DRIVE_ANALOG!=NULL?c_hal::driver.PNTR_DRIVE_ANALOG(MINIMUM_OUTPUT):void();
+	Hardware_Abstraction_Layer::Spindle::_drive_analog(MINIMUM_OUTPUT);
 	Spindle_Controller::c_driver::Drive_Control.State = 0;
 	Spindle_Controller::c_driver::Drive_Control.accel_time = 15;
 	Spindle_Controller::c_driver::Enable_Drive();
@@ -41,7 +44,8 @@ void Spindle_Controller::c_driver::initialize()
 void Spindle_Controller::c_driver::Enable_Drive()
 {
 	//call into the hal and enable the driver
-	c_hal::driver.PNTR_ENABLE != NULL ? c_hal::driver.PNTR_ENABLE() : void();
+	//c_hal::driver.PNTR_ENABLE != NULL ? c_hal::driver.PNTR_ENABLE() : void();
+	Hardware_Abstraction_Layer::Spindle::_enable_drive();
 
 	Spindle_Controller::c_driver::Set_State(STATE_BIT_ENABLE); //<--set the enable bit to 1
 	Spindle_Controller::c_driver::Clear_State(STATE_BIT_DISABLE); //<--set the disable bit to 0
@@ -55,7 +59,8 @@ void Spindle_Controller::c_driver::Enable_Drive()
 void Spindle_Controller::c_driver::Disable_Drive()
 {
 	//call into the hal and disable the driver
-	c_hal::driver.PNTR_DISABLE != NULL ? c_hal::driver.PNTR_DISABLE() : void();
+	//c_hal::driver.PNTR_DISABLE != NULL ? c_hal::driver.PNTR_DISABLE() : void();
+	Hardware_Abstraction_Layer::Spindle::_disable_drive();
 	Spindle_Controller::c_driver::Set_State(STATE_BIT_DISABLE); //<--set the disable bit to 1
 	Spindle_Controller::c_driver::Clear_State(STATE_BIT_ENABLE); //<--set the enable bit to 0
 }
@@ -72,7 +77,8 @@ void Spindle_Controller::c_driver::Brake_Drive()
 	//disable drive
 	Spindle_Controller::c_driver::Disable_Drive();
 	//call into hal and set the brake on the driver
-	c_hal::driver.PNTR_BRAKE != NULL ? c_hal::driver.PNTR_BRAKE() : void();
+	//c_hal::driver.PNTR_BRAKE != NULL ? c_hal::driver.PNTR_BRAKE() : void();
+	Hardware_Abstraction_Layer::Spindle::_brake_drive();
 	
 	Spindle_Controller::c_driver::Set_State(STATE_BIT_BRAKE);//<--set braking bit
 	Spindle_Controller::c_driver::current_output = MINIMUM_OUTPUT;
@@ -81,20 +87,23 @@ void Spindle_Controller::c_driver::Brake_Drive()
 void Spindle_Controller::c_driver::Release_Drive()
 {
 	//set brake pin low
-	c_hal::driver.PNTR_RELEASE != NULL ? c_hal::driver.PNTR_RELEASE() : void();
+	//c_hal::driver.PNTR_RELEASE != NULL ? c_hal::driver.PNTR_RELEASE() : void();
+	Hardware_Abstraction_Layer::Spindle::_release_drive();
 	Spindle_Controller::c_driver::Clear_State(STATE_BIT_BRAKE);//<--clear braking bit
 }
 
 void Spindle_Controller::c_driver::Reverse_Drive()
 {
-	c_hal::driver.PNTR_REVERSE != NULL ? c_hal::driver.PNTR_REVERSE() : void();
+	//c_hal::driver.PNTR_REVERSE != NULL ? c_hal::driver.PNTR_REVERSE() : void();
+	Hardware_Abstraction_Layer::Spindle::_reverse_drive();
 	Spindle_Controller::c_driver::Set_State(STATE_BIT_DIRECTION_CCW);//<--set CCW direction bit
 	Spindle_Controller::c_driver::Clear_State(STATE_BIT_DIRECTION_CW);//<--clear CW direction bit
 }
 
 void Spindle_Controller::c_driver::Forward_Drive()
 {
-	c_hal::driver.PNTR_FORWARD != NULL ? c_hal::driver.PNTR_FORWARD() : void();
+	//c_hal::driver.PNTR_FORWARD != NULL ? c_hal::driver.PNTR_FORWARD() : void();
+	Hardware_Abstraction_Layer::Spindle::_forward_drive();
 	Spindle_Controller::c_driver::Set_State(STATE_BIT_DIRECTION_CW);//<--set CW direction bit
 	Spindle_Controller::c_driver::Clear_State(STATE_BIT_DIRECTION_CCW); //<--clear CCW direction bit
 }

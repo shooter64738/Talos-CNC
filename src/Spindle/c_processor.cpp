@@ -21,12 +21,12 @@
 
 
 #include "c_processor.h"
-#include "../Common/Hardware_Abstraction_Layer/c_hal.h"
 #include "c_encoder.h"
 #include "c_driver.h"
 #include "../Common/NGC_RS274/NGC_Interpreter.h"
 #include "c_state_manager.h"
 #include "c_pid.h"
+#include "hardware_def.h"
 
 
 c_Serial Spindle_Controller::c_processor::host_serial;
@@ -34,9 +34,10 @@ NGC_RS274::NGC_Binary_Block Spindle_Controller::c_processor::local_block = NGC_R
 
 void Spindle_Controller::c_processor::startup()
 {
-	c_hal::initialize();
+	//c_hal::initialize();
 
-	c_hal::core.PNTR_INITIALIZE != NULL ? c_hal::core.PNTR_INITIALIZE() : void();
+	Hardware_Abstraction_Layer::Core::initialize();
+	Hardware_Abstraction_Layer::Spindle::initialize();
 
 	Spindle_Controller::c_processor::host_serial = c_Serial(0, 115200); //<--Connect to host
 	Spindle_Controller::c_driver::initialize();
@@ -44,7 +45,9 @@ void Spindle_Controller::c_processor::startup()
 	Spindle_Controller::c_processor::host_serial.print_string("spindle on line");
 	Spindle_Controller::c_processor::local_block.reset();
 	NGC_RS274::Interpreter::Processor::initialize();
-	c_hal::core.PNTR_START_INTERRUPTS != NULL ? c_hal::core.PNTR_START_INTERRUPTS() : void();
+	
+	Hardware_Abstraction_Layer::Core::start_interrupts();
+
 	Spindle_Controller::c_driver::Disable_Drive();
 	Spindle_Controller::c_driver::Drive_Control.direction = NGC_RS274::M_codes::SPINDLE_STOP;
 	Spindle_Controller::c_processor::local_block.m_group[NGC_RS274::Groups::M::SPINDLE] = Spindle_Controller::c_driver::Drive_Control.direction;
@@ -55,21 +58,23 @@ void Spindle_Controller::c_processor::startup()
 		//If running this on a pc, use this line to fill the serial buffer as if it
 		//were sent from a terminal to the micro controller over a serial connection
 		//c_hal::comm.PNTR_VIRTUAL_BUFFER_WRITE(0, "g41p.25G0X1Y1F100\rX2Y2\rX3Y3\r"); //<--data from host
-		c_hal::comm.PNTR_VIRTUAL_BUFFER_WRITE(0, "i.5\r\0");
+		///c_hal::comm.PNTR_VIRTUAL_BUFFER_WRITE(0, "i.5\r\0");
+		Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "i.5\r\0");
 		
 	}
 	#endif
 	uint8_t ticker = 0;
 	while (1)
 	{
-		if (Spindle_Controller::c_encoder::one_second>=1)
+		if (Spindle_Controller::c_encoder::has_overflowed>=1)
 		{
 			ticker++;
 			Spindle_Controller::c_state_manager::current_rpm = Spindle_Controller::c_encoder::current_rpm();
 			uint8_t output = Spindle_Controller::c_pid::Calculate(Spindle_Controller::c_state_manager::current_rpm,Spindle_Controller::c_processor::local_block.get_value('S'),c_pid::spindle_terms);
-			Spindle_Controller::c_encoder::one_second = 0;
+			Spindle_Controller::c_encoder::has_overflowed = 0;
 			
-			c_hal::driver.PNTR_DRIVE_ANALOG!=NULL?c_hal::driver.PNTR_DRIVE_ANALOG(output):void();
+			//c_hal::driver.PNTR_DRIVE_ANALOG!=NULL?c_hal::driver.PNTR_DRIVE_ANALOG(output):void();
+			Hardware_Abstraction_Layer::Spindle::_drive_analog(output);
 			if (ticker>60)
 			{
 				ticker = 0;

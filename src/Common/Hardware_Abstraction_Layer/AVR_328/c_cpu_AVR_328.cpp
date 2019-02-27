@@ -24,7 +24,7 @@
 #include "lcd\c_LcdPcf8574.h"
 #include <util\delay.h>
 #include <avr/eeprom.h>
-#include "..\c_hal.h"
+//#include "..\c_hal.h"
 
 
 #ifdef CONTROL_TYPE_SPINDLE //<--If the control_type.h file contains a control specific type, act on it here.

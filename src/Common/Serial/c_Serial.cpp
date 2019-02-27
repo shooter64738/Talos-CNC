@@ -21,7 +21,8 @@
 #include "c_Serial.h"
 #include "../../numeric_converters.h"
 #include "../../talos.h"
-#include "../Hardware_Abstraction_Layer/c_hal.h"
+//#include "../Hardware_Abstraction_Layer/c_hal.h"
+#include "../../Spindle/hardware_def.h"
 
 
 //static s_Buffer rxBuffer[2];
@@ -38,46 +39,47 @@ c_Serial::c_Serial(uint8_t Port, uint32_t BaudRate)
 	
 	InitBuffer();
 	
-	c_hal::comm.PNTR_INITIALIZE != NULL ? c_hal::comm.PNTR_INITIALIZE(Port, 115200) : void();
+	//c_hal::comm.PNTR_INITIALIZE != NULL ? c_hal::comm.PNTR_INITIALIZE(Port, 115200) : void();
+	Hardware_Abstraction_Layer::Serial::initialize(Port,BaudRate);
 }
 
 void c_Serial::ClearBuffer()
 {
-	if (c_hal::comm.PNTR_SERIAL_RX_BUFFER == NULL)
+	if (Hardware_Abstraction_Layer::Serial::rxBuffer == NULL)
 	return;
 
 	//memset(rxBuffer[_port].Buffer,0,RX_BUFFER_SIZE);
 	for (int i=0;i<RX_BUFFER_SIZE;i++)
-		c_hal::comm.PNTR_SERIAL_RX_BUFFER != NULL ? c_hal::comm.PNTR_SERIAL_RX_BUFFER[_port].Buffer[i] = 0 : 0;
+		Hardware_Abstraction_Layer::Serial::rxBuffer[_port].Buffer[i] = 0;
 	
 }
 
 void c_Serial::InitBuffer()
 {
-	c_hal::comm.PNTR_SERIAL_RX_BUFFER != NULL ? c_hal::comm.PNTR_SERIAL_RX_BUFFER[_port].Head = 0 : 0;
-	c_hal::comm.PNTR_SERIAL_RX_BUFFER != NULL ? c_hal::comm.PNTR_SERIAL_RX_BUFFER[_port].Tail = 0 : 0;
+	Hardware_Abstraction_Layer::Serial::rxBuffer[_port].Head = 0;
+	Hardware_Abstraction_Layer::Serial::rxBuffer[_port].Tail = 0;
 	EOL=FALSE;
 	ClearBuffer();
 }
 
 char c_Serial::Get()
 {
-	if (c_hal::comm.PNTR_SERIAL_RX_BUFFER == NULL)
+	if (Hardware_Abstraction_Layer::Serial::rxBuffer == NULL)
 	return NULL;
 	
-	char byte = c_hal::comm.PNTR_SERIAL_RX_BUFFER[_port].Buffer[c_hal::comm.PNTR_SERIAL_RX_BUFFER[_port].Tail];
+	char byte = Hardware_Abstraction_Layer::Serial::rxBuffer[_port].Buffer[Hardware_Abstraction_Layer::Serial::rxBuffer[_port].Tail];
 	if (byte == CR)
 	{
-		c_hal::comm.PNTR_SERIAL_RX_BUFFER[_port].EOL--;
+		Hardware_Abstraction_Layer::Serial::rxBuffer[_port].EOL--;
 		//rxBuffer[_port].Buffer[rxBuffer[_port].Tail]=0;//<--clear the CR byte.
 	}
 	
 	
-	c_hal::comm.PNTR_SERIAL_RX_BUFFER[_port].Tail++;
+	Hardware_Abstraction_Layer::Serial::rxBuffer[_port].Tail++;
 
-	if (c_hal::comm.PNTR_SERIAL_RX_BUFFER[_port].Tail == RX_BUFFER_SIZE)
+	if (Hardware_Abstraction_Layer::Serial::rxBuffer[_port].Tail == RX_BUFFER_SIZE)
 	{
-		c_hal::comm.PNTR_SERIAL_RX_BUFFER[_port].Tail=0;
+		Hardware_Abstraction_Layer::Serial::rxBuffer[_port].Tail=0;
 	}
 	
 	return byte;
@@ -85,36 +87,36 @@ char c_Serial::Get()
 
 char c_Serial::Peek()
 {
-	if (c_hal::comm.PNTR_SERIAL_RX_BUFFER == NULL)
+	if (Hardware_Abstraction_Layer::Serial::rxBuffer == NULL)
 	return NULL;
 
-	if (c_hal::comm.PNTR_SERIAL_RX_BUFFER[_port].Tail> c_hal::comm.PNTR_SERIAL_RX_BUFFER[_port].Head)
+	if (Hardware_Abstraction_Layer::Serial::rxBuffer[_port].Tail> Hardware_Abstraction_Layer::Serial::rxBuffer[_port].Head)
 	return 0;
 	
-	char byte = c_hal::comm.PNTR_SERIAL_RX_BUFFER[_port].Buffer[c_hal::comm.PNTR_SERIAL_RX_BUFFER[_port].Tail];
+	char byte = Hardware_Abstraction_Layer::Serial::rxBuffer[_port].Buffer[Hardware_Abstraction_Layer::Serial::rxBuffer[_port].Tail];
 	//Write(byte);
 	return byte;
 }
 
 char c_Serial::Peek(uint8_t LookAhead)
 {
-	if (c_hal::comm.PNTR_SERIAL_RX_BUFFER == NULL)
+	if (Hardware_Abstraction_Layer::Serial::rxBuffer == NULL)
 	return NULL;
 
-	if (c_hal::comm.PNTR_SERIAL_RX_BUFFER[_port].Tail+LookAhead> c_hal::comm.PNTR_SERIAL_RX_BUFFER[_port].Head)
+	if (Hardware_Abstraction_Layer::Serial::rxBuffer[_port].Tail+LookAhead> Hardware_Abstraction_Layer::Serial::rxBuffer[_port].Head)
 	return 0;
 	
-	char byte = c_hal::comm.PNTR_SERIAL_RX_BUFFER[_port].Buffer[c_hal::comm.PNTR_SERIAL_RX_BUFFER[_port].Tail+LookAhead];
+	char byte = Hardware_Abstraction_Layer::Serial::rxBuffer[_port].Buffer[Hardware_Abstraction_Layer::Serial::rxBuffer[_port].Tail+LookAhead];
 	//Write(byte);
 	return byte;
 }
 
 uint8_t c_Serial::Available()
 {
-	if (c_hal::comm.PNTR_SERIAL_RX_BUFFER == NULL)
+	if (Hardware_Abstraction_Layer::Serial::rxBuffer == NULL)
 	return NULL;
 	
-	if (c_hal::comm.PNTR_SERIAL_RX_BUFFER[_port].Head != c_hal::comm.PNTR_SERIAL_RX_BUFFER[_port].Tail )
+	if (Hardware_Abstraction_Layer::Serial::rxBuffer[_port].Head != Hardware_Abstraction_Layer::Serial::rxBuffer[_port].Tail )
 	{
 		//UDR0='A';
 		return TRUE;
@@ -126,21 +128,21 @@ uint8_t c_Serial::Available()
 
 uint8_t c_Serial::HasEOL()
 {
-	if (c_hal::comm.PNTR_SERIAL_RX_BUFFER == NULL)
+	if (Hardware_Abstraction_Layer::Serial::rxBuffer == NULL)
 	return NULL;
 
-	return c_hal::comm.PNTR_SERIAL_RX_BUFFER[_port].EOL>0?TRUE:FALSE;
+	return Hardware_Abstraction_Layer::Serial::rxBuffer[_port].EOL>0?TRUE:FALSE;
 }
 
 uint16_t c_Serial::DataSize()
 {
-	if (c_hal::comm.PNTR_SERIAL_RX_BUFFER == NULL)
+	if (Hardware_Abstraction_Layer::Serial::rxBuffer == NULL)
 	return NULL;
 
 	uint16_t distane_to_head =
-	c_hal::comm.PNTR_SERIAL_RX_BUFFER[_port].Head<c_hal::comm.PNTR_SERIAL_RX_BUFFER[_port].Tail
-	?c_hal::comm.PNTR_SERIAL_RX_BUFFER[_port].Head+RX_BUFFER_SIZE:c_hal::comm.PNTR_SERIAL_RX_BUFFER[_port].Head;
-	return distane_to_head - c_hal::comm.PNTR_SERIAL_RX_BUFFER[_port].Tail;
+	Hardware_Abstraction_Layer::Serial::rxBuffer[_port].Head<Hardware_Abstraction_Layer::Serial::rxBuffer[_port].Tail
+	?Hardware_Abstraction_Layer::Serial::rxBuffer[_port].Head+RX_BUFFER_SIZE:Hardware_Abstraction_Layer::Serial::rxBuffer[_port].Head;
+	return distane_to_head - Hardware_Abstraction_Layer::Serial::rxBuffer[_port].Tail;
 	
 }
 
@@ -179,7 +181,7 @@ void c_Serial::Write(const char *Buffer)
 
 void c_Serial::Write(char Buffer)
 {
-	c_hal::comm.PNTR_SERIAL_TX != NULL ? c_hal::comm.PNTR_SERIAL_TX(this->_port, Buffer) : void();
+	Hardware_Abstraction_Layer::Serial::send(this->_port, Buffer);
 }
 
 void c_Serial::Write_ni(int16_t val) {

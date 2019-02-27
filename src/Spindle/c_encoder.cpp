@@ -21,10 +21,11 @@
 
 #include "c_encoder.h"
 #include "c_processor.h"
+#include "hardware_def.h"
 
-//#define TIME_FACTOR 0.0000000625 //<-- using prescaler 1
-#define TIME_FACTOR 0.000000125 //<-- using prescaler 8
-#define ONE_SECOND_TICK_COUNT 30 //<--Changing this will effect the measurement of 1 second
+#define TIMER_OVERFLOW_SIZE 65535.0 //<-- Whats the maximum value the timer can reach for an overflow
+#define TIME_FREQUENCY_HZ 2000000.0
+#define _TIME_FACTOR (TIME_FREQUENCY_HZ/TIMER_OVERFLOW_SIZE)
 #define ENCODER_READ_PERIOD 1 //30
 #define ENCODER_READ_ARRAY_SIZE 10
 
@@ -38,15 +39,21 @@ volatile uint32_t over_flows = 0;
 //float Spindle_Controller::c_encoder::encoder_rpm_multiplier = 0;
 //float Spindle_Controller::c_encoder::encoder_angle_multiplier = 0;
 //uint16_t Spindle_Controller::c_encoder::encoder_ticks_per_rev = 0;
-uint8_t Spindle_Controller::c_encoder::one_second = 0;
+uint8_t Spindle_Controller::c_encoder::has_overflowed = 0;
 Spindle_Controller::c_encoder::s_encoder_data Spindle_Controller::c_encoder::encoder_data;
 
 void Spindle_Controller::c_encoder::initialize(uint16_t encoder_ticks_per_rev, Spindle_Controller::c_encoder::e_rpm_type rpm_type)
 {
-	Spindle_Controller::c_encoder::encoder_data.rpm_multiplier = TIME_FACTOR * (float)encoder_ticks_per_rev;
+	Spindle_Controller::c_encoder::encoder_data.rpm_multiplier = Spindle_Controller::c_encoder::encoder_data.time_factor / (float)encoder_ticks_per_rev;
 	Spindle_Controller::c_encoder::encoder_data.angle_multiplier = 360.0/(float)encoder_ticks_per_rev;
 	Spindle_Controller::c_encoder::encoder_data.ticks_per_rev = encoder_ticks_per_rev;
 	Spindle_Controller::c_encoder::encoder_data.rpm_type = rpm_type;
+}
+
+void Spindle_Controller::c_encoder::set_time_factor(float time_factor_from_hal)
+{
+	Spindle_Controller::c_encoder::encoder_data.time_factor = time_factor_from_hal;
+	
 }
 
 void Spindle_Controller::c_encoder::hal_callbacks::position_change(uint16_t time_at_vector,int8_t port_values)
@@ -92,7 +99,7 @@ void Spindle_Controller::c_encoder::hal_callbacks::timer_capture(uint16_t time_a
 	encoder_read_count[encoder_read_index++] = (over_flows*65535)+time_at_vector;
 	if (encoder_read_index == ENCODER_READ_ARRAY_SIZE)
 	{
-		//encoder_read_index =0;
+		encoder_read_index =0;
 	}
 }
 
@@ -104,26 +111,18 @@ void Spindle_Controller::c_encoder::hal_callbacks::timer_overflow()
 	{
 		//Move the index so the encoder ISR will put data in a new array position
 		encoder_read_index++;
+		if (encoder_read_index == ENCODER_READ_ARRAY_SIZE)
+		{
+			encoder_read_index =0;
+		}
 	}
 
 	over_flows++;
 	
-	if (encoder_read_index == ENCODER_READ_ARRAY_SIZE)
-	{
-		encoder_read_index =0;
-	}
-	
-	//This flags when one second has elapsed. We will reset this during PID cycles.
-	Spindle_Controller::c_encoder::one_second<ONE_SECOND_TICK_COUNT ?
-	Spindle_Controller::c_encoder::one_second++:Spindle_Controller::c_encoder::one_second = ONE_SECOND_TICK_COUNT+1;
+	//This flags when one overflow has elapsed. We will reset this during PID cycles.
+	Spindle_Controller::c_encoder::has_overflowed++;
 }
 
-
-
-void Spindle_Controller::c_encoder::update_time(uint16_t time_at_vector)
-{
-	
-}
 
 float Spindle_Controller::c_encoder::current_rpm()
 {
@@ -134,26 +133,27 @@ float Spindle_Controller::c_encoder::current_rpm()
 	#endif // MSVC
 	
 	
-	int32_t avg = 0;
+	float avg = 0;
 	for (int i=0;i<ENCODER_READ_ARRAY_SIZE;i++)
 	{
 		avg+= encoder_read_count[i];
 		encoder_read_count[i] = 0; //<--Clear this value so if we dont get
 		//any new data, rpm will eventually drop to zero.
 	}
+	avg = avg/(float)ENCODER_READ_ARRAY_SIZE;
 
 	//If using a 3 channel encoder we dont get pulse count on a set time.
 	if (Spindle_Controller::c_encoder::encoder_data.rpm_type == e_rpm_type::position_based)
 	{
 		//This is an average of the pulse counts we got on each over flow of the timer
-		//return  60.0*(((float)avg/(float)ENCODER_READ_ARRAY_SIZE)*0.025491); //.030518 = 2,000,000/65534
-		return  30*(60.0*(((float)avg/(float)ENCODER_READ_ARRAY_SIZE)*0.025491)); //.030518 = 2,000,000/65534
+		//return  60.0*(((float)avg/(float)ENCODER_READ_ARRAY_SIZE)*0.025491); 
+		Spindle_Controller::c_encoder::encoder_data.pulse_per_second_rate = Spindle_Controller::c_encoder::encoder_data.rpm_multiplier * avg;
+		return  60.0 * Spindle_Controller::c_encoder::encoder_data.pulse_per_second_rate;
 	}
 	else
 	{
 		//This is an average of the time we got at each index pulse
-		return  60/((((((float)avg)/((float)ENCODER_READ_ARRAY_SIZE))
-		*Spindle_Controller::c_encoder::encoder_data.rpm_multiplier)));
+		return  60 * (Spindle_Controller::c_encoder::encoder_data.time_factor/1000);
 	}
 	//float seconds = 60/((((((float)time_at_tick[0])/((float)TIME_ARRAY_SIZE))*encoder_rpm_multiplier)));
 	//float seconds = ((float)encoder_count_at_interval/(float)c_encoder::encoder_ticks_per_rev)*60.0;
