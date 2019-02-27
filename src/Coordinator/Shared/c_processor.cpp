@@ -36,7 +36,6 @@
 #include "MotionControllerInterface/ExternalControllers/GRBL/c_Grbl.h"
 #include "Status/c_status.h"
 #include "../../Common/NGC_RS274/NGC_Block.h"
-#include "../../Common/Hardware_Abstraction_Layer/c_hal.h"
 #include "../../Common/MotionControllerInterface/c_motion_controller_settings.h"
 #include "../../Common/MotionControllerInterface/c_motion_controller.h"
 #include "../../Common/Bresenham/c_Bresenham.h"
@@ -45,6 +44,8 @@
 #include "../../Torch Height Control/c_configuration.h"
 #include "../../Spindle/c_spindle_com_bus.h"
 #include "Encoder/c_encoder.h"
+#include "hardware_def.h"
+
 
 
 c_Serial c_processor::host_serial;
@@ -55,26 +56,24 @@ c_Bresenham bres;
 //If running this on a pc through microsoft visual C++, uncomment the MSVC define in Talos.h and recompile.
 void c_processor::startup()
 {
-	c_spindle::u_spindle_data tdata;
-	memset(tdata.stream, 0, sizeof(c_spindle::Spindle_Data.stream));
-	tdata.s_spindle_detail.direction = 1;
-	tdata.s_spindle_detail.rpm = 1234;
-	tdata.s_spindle_detail.state = 1;
-	
-	for (uint8_t i = 0; i<sizeof(tdata.stream) - sizeof(tdata.s_spindle_detail.check_sum); i++)
-	{
-		tdata.s_spindle_detail.check_sum += tdata.stream[i];
-	}
-	
-	c_spindle::ReadStream(tdata.stream);
+	//c_spindle::u_spindle_data tdata;
+	//memset(tdata.stream, 0, sizeof(c_spindle::Spindle_Data.stream));
+	//tdata.s_spindle_detail.direction = 1;
+	//tdata.s_spindle_detail.rpm = 1234;
+	//tdata.s_spindle_detail.state = 1;
+	//
+	//for (uint8_t i = 0; i<sizeof(tdata.stream) - sizeof(tdata.s_spindle_detail.check_sum); i++)
+	//{
+		//tdata.s_spindle_detail.check_sum += tdata.stream[i];
+	//}
+	//
+	//c_spindle::ReadStream(tdata.stream);
 	//hal must init first.
-	c_hal::initialize();
-
-	//Plasma_Control::c_configuration::initialize();
-
+	
 	//This MUST be called first (especially for the ARM processors)
-	c_hal::core.PNTR_INITIALIZE != NULL ? c_hal::core.PNTR_INITIALIZE() : void();
-	c_hal::lcd.PNTR_INITIALIZE != NULL ? c_hal::lcd.PNTR_INITIALIZE() : void();
+	Hardware_Abstraction_Layer::Core::initialize();
+	//Hardware_Abstraction_Layer::Lcd::initialize();
+	
 
 	c_processor::host_serial = c_Serial(0, 115200); //<--Connect to host
 	c_processor::controller_serial = c_Serial(1, 115200);//<--Connect to motion board
@@ -92,20 +91,22 @@ void c_processor::startup()
 	c_stager::initialize();
 	c_gcode_buffer::initialize();
 
-	c_hal::core.PNTR_START_INTERRUPTS != NULL ? c_hal::core.PNTR_START_INTERRUPTS() : void();
+	Hardware_Abstraction_Layer::Core::start_interrupts();
+	
 
 #ifdef MSVC
 	{
 		//If running this on a pc, use this line to fill the serial buffer as if it
 		//were sent from a terminal to the micro controller over a serial connection
 		//c_hal::comm.PNTR_VIRTUAL_BUFFER_WRITE(0, "g41p.25G0X1Y1F100\rX2Y2\rX3Y3\r"); //<--data from host
-		c_hal::comm.PNTR_VIRTUAL_BUFFER_WRITE(0, "g98g0z0.5\r");
-		c_hal::comm.PNTR_VIRTUAL_BUFFER_WRITE(0, "g81x1y0r0.1z-1.0f50\r"); //<--data from host
-		c_hal::comm.PNTR_VIRTUAL_BUFFER_WRITE(0, "x3\r"); //<--data from host
-		c_hal::comm.PNTR_VIRTUAL_BUFFER_WRITE(0, "x5\r"); //<--data from host
-		c_hal::comm.PNTR_VIRTUAL_BUFFER_WRITE(0, "x7\r"); //<--data from host
-		c_hal::comm.PNTR_VIRTUAL_BUFFER_WRITE(1, "ok\r<Idle|MPos:0.000,0.000,0.000,0.000,0.000,0.000|FS:0,0|Ov:100,100,100>\rok\r");//<--data from motion control
-		c_hal::comm.PNTR_VIRTUAL_BUFFER_WRITE(2, "rpm=1234\rmode=torque_hold\r");//<--data from spindle control
+		
+		Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "g98g0z0.5\r");
+		Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "g81x1y0r0.1z-1.0f50\r"); //<--data from host
+		Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "x3\r"); //<--data from host
+		Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "x5\r"); //<--data from host
+		Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "x7\r"); //<--data from host
+		Hardware_Abstraction_Layer::Serial::add_to_buffer(1, "ok\r<Idle|MPos:0.000,0.000,0.000,0.000,0.000,0.000|FS:0,0|Ov:100,100,100>\rok\r");//<--data from motion control
+		Hardware_Abstraction_Layer::Serial::add_to_buffer(2, "rpm=1234\rmode=torque_hold\r");//<--data from spindle control
 	}
 #endif
 
@@ -126,7 +127,7 @@ void c_processor::startup()
 		{
 			for (uint8_t axis_id = 0;axis_id < MACHINE_AXIS_COUNT;axis_id++)
 			{
-				Coordinator::c_encoder::Axis_Positions[axis_id] = (c_machine::axis_position[axis_id] * c_motion_controller_settings::configuration_settings.steps_per_mm[axis_id]);
+				xCoordinator::c_encoder::Axis_Positions[axis_id] = (c_machine::axis_position[axis_id] * c_motion_controller_settings::configuration_settings.steps_per_mm[axis_id]);
 			}
 		}
 	}

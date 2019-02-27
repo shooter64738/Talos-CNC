@@ -21,8 +21,9 @@
 #include "c_Serial.h"
 #include "../../numeric_converters.h"
 #include "../../talos.h"
+//..#include "../Hardware_Abstraction_Layer/AVR_2560/c_serial_avr_2560.h"
 //#include "../Hardware_Abstraction_Layer/c_hal.h"
-#include "../../Spindle/hardware_def.h"
+//#include "../../Spindle/hardware_def.h"
 
 
 //static s_Buffer rxBuffer[2];

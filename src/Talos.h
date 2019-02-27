@@ -22,7 +22,7 @@
 #ifndef TALOS_H_
 #define TALOS_H_
 //To enable compilation and debugging in Microsoft Visual C++ define MSCV
-#define MSVC
+//#define MSVC
 
 #include <stdio.h>
 #include <ctype.h>

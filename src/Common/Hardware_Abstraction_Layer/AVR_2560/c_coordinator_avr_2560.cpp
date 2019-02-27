@@ -6,13 +6,14 @@
 */
 
 
-#include "control_type_coordinator.h"
 #include <avr/io.h>
-#include "..\c_hal.h"
-#include "../../../Coordinator/Shared/Encoder/c_encoder.h"
+#include <avr/interrupt.h>
+//#include "../../../Coordinator/Shared/Encoder/c_encoder.h"
+#include "c_coordinator_avr_2560.h"
 
 
-void control_type::initialize()
+
+void Hardware_Abstraction_Layer::Coordinator::initialize()
 {
 	
 	//control_type::_set_outbound_isr_pointers();
@@ -20,16 +21,16 @@ void control_type::initialize()
 	//control_type::_set_encoder_inputs();
 	//control_type::_set_timer1_capture_input();
 	//control_type::_set_control_outputs();
-	control_type::_set_pcint0();
-	control_type::_set_pcint2();
+	Hardware_Abstraction_Layer::Coordinator::_set_pcint0();
+	Hardware_Abstraction_Layer::Coordinator::_set_pcint2();
 }
 
-void control_type::_set_pcint0()
+void Hardware_Abstraction_Layer::Coordinator::_set_pcint0()
 {
 	PORTB=0; //<--Initially make this input so we can get the pin values.
 	DDRB=0;
 	uint8_t port_values = DIRECTION_INPUT_PINS;
-	Coordinator::c_encoder::direction_change(port_values);
+	xCoordinator::c_encoder::direction_change(port_values);
 	
 	//Set pull up for PB0-PB5. (pins 8-13 on Arduino UNO)
 	PORTB = (1<<PORTB0)|(1<<PORTB1)|(1<<PORTB2)|(1<<PORTB3)|(1<<PORTB4)|(1<<PORTB5)|(1<<PORTB6)|(1<<PORTB7);
@@ -41,7 +42,7 @@ void control_type::_set_pcint0()
 	PCIFR |= (1<<PCIF0);
 
 }
-void control_type::_set_pcint2()
+void Hardware_Abstraction_Layer::Coordinator::_set_pcint2()
 {
 	//Pulse pin monitoring..
 	PORTK=0; //<--Initially make this input so we can get the pin values.
@@ -72,7 +73,7 @@ void control_type::_set_pcint2()
 ISR(PCINT2_vect)
 {
 	uint8_t port_values = DIRECTION_INPUT_PINS;
-	Coordinator::c_encoder::direction_change(port_values);
+	xCoordinator::c_encoder::direction_change(port_values);
 };
 
 ISR(PCINT0_vect)
@@ -80,5 +81,5 @@ ISR(PCINT0_vect)
 	uint8_t port_values = PULSE_INPUT_PINS;
 	if (port_values ==0){return;}
 
-	Coordinator::c_encoder::position_change(port_values);
+	xCoordinator::c_encoder::position_change(port_values);
 };

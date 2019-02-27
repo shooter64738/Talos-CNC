@@ -28,7 +28,7 @@
 #include <util\delay.h>
 #include "..\..\Bresenham\c_Bresenham.h"
 #include <avr/eeprom.h>
-#include "..\c_hal.h"
+
 
 //int8_t c_cpu_AVR_2560::Axis_Incrimenter[MACHINE_AXIS_COUNT];
 //int32_t c_cpu_AVR_2560::Axis_Positions[MACHINE_AXIS_COUNT];

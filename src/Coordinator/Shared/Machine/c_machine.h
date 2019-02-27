@@ -24,7 +24,6 @@
 
 #include "../../../talos.h"
 #include "../../../Common/NGC_RS274/NGC_Block.h"
-#include "..\..\..\common/Hardware_Abstraction_Layer\c_hal.h"
 
 class c_machine
 {

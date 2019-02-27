@@ -23,7 +23,7 @@
 #define __C_ENCODER_H__
 //#include <stdint.h>
 #include "..\..\..\Talos.h"
-namespace Coordinator
+namespace xCoordinator
 {
 	class c_encoder
 	{

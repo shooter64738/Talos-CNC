@@ -147,9 +147,6 @@
     <ClInclude Include="..\Shared\System\tool_table.h" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Common\NGC_RS274\Projects\PC\PC_Interpreter.vcxproj">
-      <Project>{d8cd0074-2e2a-4957-a3f7-a3bebcf704e4}</Project>
-    </ProjectReference>
     <ProjectReference Include="..\..\Torch Height Control\Projects\PC\PC_Torch_Control.vcxproj">
       <Project>{7441f880-c918-411f-bc16-17bf9f62d426}</Project>
     </ProjectReference>

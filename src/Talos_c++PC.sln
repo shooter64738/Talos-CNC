@@ -5,8 +5,6 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PC_Coordinator", "Coordinator\PC_Coordinator\PC_Coordinator.vcxproj", "{E84FFE07-C518-4C45-B385-7431F1A99F18}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PC_Interpreter", "Common\NGC_RS274\Projects\PC\PC_Interpreter.vcxproj", "{D8CD0074-2E2A-4957-A3F7-A3BEBCF704E4}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PC_Torch_Height_Control", "Torch Height Control\Projects\PC\PC_Torch_Control.vcxproj", "{7441F880-C918-411F-BC16-17BF9F62D426}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PC_EDM_Drive", "EDM_Drive\Projects\PC\PC_EDM_Drive.vcxproj", "{618B81C7-88B7-4CD2-AED4-65EB8EE2D790}"
@@ -27,12 +25,6 @@ Global
 		{E84FFE07-C518-4C45-B385-7431F1A99F18}.Release|Win32.ActiveCfg = Release|Win32
 		{E84FFE07-C518-4C45-B385-7431F1A99F18}.Release|Win32.Build.0 = Release|Win32
 		{E84FFE07-C518-4C45-B385-7431F1A99F18}.Release|x64.ActiveCfg = Release|Win32
-		{D8CD0074-2E2A-4957-A3F7-A3BEBCF704E4}.Debug|Win32.ActiveCfg = Debug|Win32
-		{D8CD0074-2E2A-4957-A3F7-A3BEBCF704E4}.Debug|Win32.Build.0 = Debug|Win32
-		{D8CD0074-2E2A-4957-A3F7-A3BEBCF704E4}.Debug|x64.ActiveCfg = Debug|Win32
-		{D8CD0074-2E2A-4957-A3F7-A3BEBCF704E4}.Release|Win32.ActiveCfg = Release|Win32
-		{D8CD0074-2E2A-4957-A3F7-A3BEBCF704E4}.Release|Win32.Build.0 = Release|Win32
-		{D8CD0074-2E2A-4957-A3F7-A3BEBCF704E4}.Release|x64.ActiveCfg = Release|Win32
 		{7441F880-C918-411F-BC16-17BF9F62D426}.Debug|Win32.ActiveCfg = Debug|Win32
 		{7441F880-C918-411F-BC16-17BF9F62D426}.Debug|Win32.Build.0 = Debug|Win32
 		{7441F880-C918-411F-BC16-17BF9F62D426}.Debug|x64.ActiveCfg = Debug|Win32

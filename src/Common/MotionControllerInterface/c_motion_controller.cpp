@@ -28,7 +28,7 @@ This library is shared across all projects.
 #include "..\..\Coordinator/Shared/Events/c_motion_control_events.h"
 #include "..\../Coordinator/Shared/MotionControllerInterface/ExternalControllers/GRBL/c_Grbl.h"
 #ifdef MSVC
-#include "../Hardware_Abstraction_Layer/c_hal.h"
+//#include "../Hardware_Abstraction_Layer/c_hal.h"
 #endif
 #include "../../Coordinator/Shared/c_processor.h"
 #include "../../Coordinator/Shared/Machine/c_machine.h"

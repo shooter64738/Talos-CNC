@@ -190,7 +190,13 @@ ISR(TIMER1_OVF_vect)
 
 ISR(PCINT0_vect)
 {
-	//c_hal::ISR_Pointers.PCINT0_vect != NULL ? c_hal::ISR_Pointers.PCINT0_vect() : void();
+	//UDR0='c';
+	int8_t port_values = PIND;
+	uint16_t time_at_vector = TCNT1;
+	
+	//c_hal::ISR_Pointers.INT0_vect != NULL ? c_hal::ISR_Pointers.INT0_vect(time_at_vector,port_values) : void();
+	Spindle_Controller::c_encoder::hal_callbacks::position_change(time_at_vector,port_values);
+	//TCNT1 = 0;
 };
 
 ISR(PCINT2_vect)

@@ -22,7 +22,6 @@
 #include "..\c_processor.h"
 #include "..\..\..\Common\AVR_Terminal_IO\c_lcd_display.h"
 #include "..\..\..\Talos.h"
-#include "..\..\..\Common\Hardware_Abstraction_Layer\c_hal.h"
 //#include "..\..\..\common\NGC_RS274\NGC_Groups.h"
 //#include "..\Machine\c_machine.h"
 
@@ -57,8 +56,8 @@ void c_status::axis_values(float * axis_array, uint8_t a_size,float unit_factor)
 		
 		c_processor::host_serial.print_float(axis_array[axis_id]/unit_factor);
 		
-		if (c_hal::lcd.PNTR_UPDATE_AXIS_DISPLAY !=NULL)
-		c_hal::lcd.PNTR_UPDATE_AXIS_DISPLAY(axis_id,axis_array[axis_id]/unit_factor);
+		//if (c_hal::lcd.PNTR_UPDATE_AXIS_DISPLAY !=NULL)
+		//c_hal::lcd.PNTR_UPDATE_AXIS_DISPLAY(axis_id,axis_array[axis_id]/unit_factor);
 		
 		//c_lcd_display::update_axis(axis_id,axis_array[axis_id]/unit_factor);
 		

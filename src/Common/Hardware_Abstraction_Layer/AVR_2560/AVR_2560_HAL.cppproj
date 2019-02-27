@@ -172,24 +172,28 @@
       <SubType>compile</SubType>
       <Link>Talos.h</Link>
     </Compile>
-    <Compile Include="..\c_hal.cpp">
-      <SubType>compile</SubType>
-      <Link>c_hal.cpp</Link>
-    </Compile>
-    <Compile Include="..\c_hal.h">
-      <SubType>compile</SubType>
-      <Link>c_hal.h</Link>
-    </Compile>
-    <Compile Include="control_type_coordinator.cpp">
+    <Compile Include="c_coordinator_avr_2560.cpp">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="control_type_coordinator.h">
+    <Compile Include="c_coordinator_avr_2560.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="c_core_avr_2560.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="c_core_avr_2560.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="c_cpu_AVR_2560.cpp">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="c_cpu_AVR_2560.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="c_serial_avr_2560.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="c_serial_avr_2560.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="I2C\c_i2cMaster.cpp">

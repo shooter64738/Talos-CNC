@@ -28,10 +28,10 @@
 #include "../Common/Hardware_Abstraction_Layer/AVR_328/c_serial_avr_328.h"
 #endif
 
-#ifdef __AVR_ATmega2560P__
-#include "../Common/Hardware_Abstraction_Layer/AVR_2560/c_spindle_avr_2560.h"
-#include "../Common/Hardware_Abstraction_Layer/AVR_2560/c_core_avr_2560.h"
-#include "../Common/Hardware_Abstraction_Layer/AVR_2560/c_serial_avr_2560.h"
+#ifdef __AVR_ATmega2560__
+#include "../../Common/Hardware_Abstraction_Layer/AVR_2560/c_coordinator_avr_2560.h"
+#include "../../Common/Hardware_Abstraction_Layer/AVR_2560/c_core_avr_2560.h"
+#include "../../Common/Hardware_Abstraction_Layer/AVR_2560/c_serial_avr_2560.h"
 #endif
 
 #ifdef __SAM3X8E__
