@@ -74,7 +74,6 @@ void c_processor::startup()
 	Hardware_Abstraction_Layer::Core::initialize();
 	//Hardware_Abstraction_Layer::Lcd::initialize();
 	
-
 	c_processor::host_serial = c_Serial(0, 115200); //<--Connect to host
 	c_processor::controller_serial = c_Serial(1, 115200);//<--Connect to motion board
 	c_processor::spindle_serial = c_Serial(2, 115200);//<--Connect to spindle board
@@ -127,7 +126,7 @@ void c_processor::startup()
 		{
 			for (uint8_t axis_id = 0;axis_id < MACHINE_AXIS_COUNT;axis_id++)
 			{
-				xCoordinator::c_encoder::Axis_Positions[axis_id] = (c_machine::axis_position[axis_id] * c_motion_controller_settings::configuration_settings.steps_per_mm[axis_id]);
+				Coordinator::c_encoder::Axis_Positions[axis_id] = (c_machine::axis_position[axis_id] * c_motion_controller_settings::configuration_settings.steps_per_mm[axis_id]);
 			}
 		}
 	}

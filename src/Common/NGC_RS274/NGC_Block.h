@@ -181,6 +181,7 @@ namespace NGC_RS274
 		//Returns TRUE if the value was defined in the line. Returns FALSE if it was not.
 		uint8_t get_defined(char Word);
 		void clear_defined_word(char Word);
+		void clear_all_defined();
 		void clear_defined_gcode(uint8_t gcode_group);
 		void set_defined_gcode(uint8_t gcode_group);
 		float get_value(char Word);

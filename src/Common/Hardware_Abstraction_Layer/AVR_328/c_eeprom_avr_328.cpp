@@ -1,5 +1,5 @@
 /*
-*  c_encoder.h - NGC_RS274 controller.
+*  c_core_avr_328.cpp - NGC_RS274 controller.
 *  A component of Talos
 *
 *  Copyright (c) 2016-2019 Jeff Dill
@@ -18,34 +18,23 @@
 *  along with Talos.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "c_eeprom_avr_328.h"
 
-#ifndef __C_ENCODER_H__
-#define __C_ENCODER_H__
-//#include <stdint.h>
-#include "..\..\..\Talos.h"
-namespace Coordinator
+#include <avr/eeprom.h>
+#include <avr/interrupt.h>
+#include <stdint.h>
+
+
+
+void Hardware_Abstraction_Layer::Eeprom::initialize()
 {
-	class c_encoder
-	{
-		//variables
-		public:
-		static int8_t Axis_Incrimenter[MACHINE_AXIS_COUNT];
-		static int32_t Axis_Positions[MACHINE_AXIS_COUNT];
-		protected:
-		private:
 
-		//functions
-		public:
-		static void initialize();
-		static void position_change(uint8_t port_values);
-		static void direction_change(uint8_t port_values);
-		protected:
-		private:
-		//c_status();
-		//~c_status();
-		//c_status( const c_status &c );
-		//c_status& operator=( const c_status &c );
-
-	}; //c_status
-};
-#endif //__C_ENCODER_H__
+}
+void Hardware_Abstraction_Layer::Eeprom::update_block(const char* data, uint16_t size )
+{
+	eeprom_write_block(data, (void*)0, size);
+}
+void Hardware_Abstraction_Layer::Eeprom::read_block(char* data, uint16_t size )
+{
+	eeprom_read_block(data, 0, size);
+}

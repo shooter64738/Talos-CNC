@@ -21,9 +21,22 @@
 #include "c_Serial.h"
 #include "../../numeric_converters.h"
 #include "../../talos.h"
-//..#include "../Hardware_Abstraction_Layer/AVR_2560/c_serial_avr_2560.h"
-//#include "../Hardware_Abstraction_Layer/c_hal.h"
-//#include "../../Spindle/hardware_def.h"
+
+#ifdef __AVR_ATmega328P__
+#include "../Hardware_Abstraction_Layer/AVR_328/c_serial_avr_328.h"
+#endif
+
+#ifdef __AVR_ATmega2560__
+#include "../Hardware_Abstraction_Layer/AVR_2560/c_serial_avr_2560.h"
+#endif
+
+#ifdef __SAM3X8E__
+
+#endif
+
+#ifdef MSVC
+#include "../Hardware_Abstraction_Layer/Virtual/c_serial_win.h"
+#endif
 
 
 //static s_Buffer rxBuffer[2];

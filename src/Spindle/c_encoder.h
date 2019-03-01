@@ -36,7 +36,7 @@ namespace Spindle_Controller
 			static void timer_overflow();
 			static void position_change(uint16_t time_at_vector,int8_t port_values);
 		};
-		enum e_rpm_type
+		enum e_rpm_type:uint8_t
 		{
 			position_based,
 			time_based
@@ -44,10 +44,10 @@ namespace Spindle_Controller
 		struct s_encoder_data
 		{
 			float rpm_multiplier;
-			e_rpm_type rpm_type;
+			//e_rpm_type rpm_type;
 			float angle_multiplier;
 			uint8_t channels;
-			uint16_t ticks_per_rev;
+			//uint16_t ticks_per_rev;
 			float time_factor;
 			float pulse_per_second_rate;
 		};

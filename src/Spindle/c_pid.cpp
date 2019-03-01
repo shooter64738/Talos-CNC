@@ -7,15 +7,16 @@
 
 
 #include "c_pid.h"
+#include "c_settings.h"
 
 Spindle_Controller::c_pid::s_pid_terms Spindle_Controller::c_pid::servo_terms;
 Spindle_Controller::c_pid::s_pid_terms Spindle_Controller::c_pid::spindle_terms;
 
 void Spindle_Controller::c_pid::Initialize()
 {
-	Spindle_Controller::c_pid::servo_terms.Kp=0.009;
-	Spindle_Controller::c_pid::servo_terms.Ki=0.00001;
-	Spindle_Controller::c_pid::servo_terms.Kd=-0.0;
+	//Spindle_Controller::c_pid::servo_terms.Kp=0.009;
+	//Spindle_Controller::c_pid::servo_terms.Ki=0.00001;
+	//Spindle_Controller::c_pid::servo_terms.Kd=-0.0;
 	Spindle_Controller::c_pid::servo_terms.KITerm=0;
 	Spindle_Controller::c_pid::servo_terms.lastInput = 0;
 	Spindle_Controller::c_pid::servo_terms.NewOutPut = 0;
@@ -26,9 +27,9 @@ void Spindle_Controller::c_pid::Initialize()
 	//c_PID::spindle_terms.Kp=0.05;
 	//c_PID::spindle_terms.Ki=0.0011;
 	//c_PID::spindle_terms.Kd=0.0001;
-	Spindle_Controller::c_pid::spindle_terms.Kp=.005;
-	Spindle_Controller::c_pid::spindle_terms.Ki=0.005;
-	Spindle_Controller::c_pid::spindle_terms.Kd=0.001;
+	//Spindle_Controller::c_pid::spindle_terms.Kp=.005;
+	//Spindle_Controller::c_pid::spindle_terms.Ki=0.005;
+	//Spindle_Controller::c_pid::spindle_terms.Kd=0.001;
 	Spindle_Controller::c_pid::spindle_terms.KITerm=0;
 	Spindle_Controller::c_pid::spindle_terms.lastInput = 0;
 	Spindle_Controller::c_pid::spindle_terms.NewOutPut = 0;
@@ -52,14 +53,14 @@ uint8_t Spindle_Controller::c_pid::Calculate(int32_t current, int32_t target, s_
 {
 	
 	double error = target - current;
-	terms.KITerm+= (terms.Ki * error);
+	terms.KITerm+= (Spindle_Controller::c_settings::serializer.values.pI * error);
 	if(terms.KITerm > terms.Max_Val) terms.KITerm= terms.Max_Val;
 	else if(terms.KITerm < terms.Min_Val) terms.KITerm= terms.Min_Val;
 	
 	double dInput = (current - target);
 	
 	/*Compute PID Output*/
-	terms.NewOutPut = terms.Kp * error + terms.KITerm - terms.Kd * dInput;
+	terms.NewOutPut = Spindle_Controller::c_settings::serializer.values.pP * error + terms.KITerm - Spindle_Controller::c_settings::serializer.values.pD * dInput;
 	
 	if(terms.NewOutPut > terms.Max_Val) terms.NewOutPut = terms.Max_Val;
 	else if(terms.NewOutPut < terms.Min_Val) terms.NewOutPut = terms.Min_Val;
@@ -83,14 +84,15 @@ uint8_t Spindle_Controller::c_pid::Calculate(int32_t current, int32_t target, s_
 uint8_t Spindle_Controller::c_pid::Calculate(float current, float target, s_pid_terms &terms)
 {
 	double error = target - current;
-	terms.KITerm+= (terms.Ki * error);
+	terms.KITerm+= (Spindle_Controller::c_settings::serializer.values.pI * error);
 	if(terms.KITerm > terms.Max_Val) terms.KITerm= terms.Max_Val;
 	else if(terms.KITerm < terms.Min_Val) terms.KITerm= terms.Min_Val;
 	
 	double dInput = (current - target);
 	
 	/*Compute PID Output*/
-	terms.NewOutPut = terms.Kp * error + terms.KITerm- terms.Kd * dInput;
+	terms.NewOutPut = Spindle_Controller::c_settings::serializer.values.pP 
+	* error + terms.KITerm- Spindle_Controller::c_settings::serializer.values.pD * dInput;
 	
 	if(terms.NewOutPut > terms.Max_Val) terms.NewOutPut = terms.Max_Val;
 	else if(terms.NewOutPut < terms.Min_Val) terms.NewOutPut = terms.Min_Val;

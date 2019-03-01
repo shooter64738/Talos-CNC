@@ -23,6 +23,8 @@
 #include "c_driver.h"
 #include "c_encoder.h"
 #include "c_processor.h"
+#include "c_pid.h"
+#include "hardware_def.h"
 
 float Spindle_Controller::c_state_manager::current_rpm = 0;
 
@@ -53,7 +55,7 @@ uint8_t Spindle_Controller::c_state_manager::check_driver_state()
 		//determine the state of current rotation
 		switch (Spindle_Controller::c_driver::Drive_Control.direction)
 		{
-		case NGC_RS274::M_codes::SPINDLE_ON_CCW: //<--drive is currently in CCW rotation (M04)
+			case NGC_RS274::M_codes::SPINDLE_ON_CCW: //<--drive is currently in CCW rotation (M04)
 			{
 				/*
 				since we were in a rotating state, and now we are going to be stopping/changing direction,
@@ -69,12 +71,12 @@ uint8_t Spindle_Controller::c_state_manager::check_driver_state()
 				//however we set the direction pin, and then set directions to be =
 
 				if (Spindle_Controller::c_state_manager::current_rpm < 1 &&
-				 (uint8_t)Spindle_Controller::c_processor::local_block.get_m_code_value_x
-				 (NGC_RS274::Groups::M::SPINDLE) == NGC_RS274::M_codes::SPINDLE_ON_CW) //(M03)
+				(uint8_t)Spindle_Controller::c_processor::local_block.get_m_code_value_x
+				(NGC_RS274::Groups::M::SPINDLE) == NGC_RS274::M_codes::SPINDLE_ON_CW) //(M03)
 				{
 					//if this is a new direction, set the direction pin, and then match the directions
 					//between the driver and the parser
-					Spindle_Controller::c_driver::Drive_Control.direction = 
+					Spindle_Controller::c_driver::Drive_Control.direction =
 					(uint8_t)Spindle_Controller::c_processor::local_block.get_m_code_value_x
 					(NGC_RS274::Groups::M::SPINDLE);
 
@@ -88,7 +90,7 @@ uint8_t Spindle_Controller::c_state_manager::check_driver_state()
 				//If the spindle was rotating, and then set to an off state, the brake will remain on.
 			}
 			break;
-		case NGC_RS274::M_codes::SPINDLE_ON_CW: //<--drive is currently in CW rotation (M03)
+			case NGC_RS274::M_codes::SPINDLE_ON_CW: //<--drive is currently in CW rotation (M03)
 			{
 				/*
 				since we were in a rotating state, and now we are going to be stopping/changing direction,
@@ -103,14 +105,14 @@ uint8_t Spindle_Controller::c_state_manager::check_driver_state()
 				//If a stop is all we needed, we are essentially done. If we are going a new direction
 				//however we set the direction pin, and then set directions to be =
 
-				if (Spindle_Controller::c_state_manager::current_rpm < 1 
+				if (Spindle_Controller::c_state_manager::current_rpm < 1
 				&& (uint8_t)Spindle_Controller::c_processor::local_block.get_m_code_value_x
 				(NGC_RS274::Groups::M::SPINDLE) == NGC_RS274::M_codes::SPINDLE_ON_CCW) //(M04)
 				{
 					//if this is a new direction, set the direction pin, and then match the directions
 					//between the driver and the parser
 					Spindle_Controller::c_driver::Drive_Control.direction =
-					 Spindle_Controller::c_processor::local_block.get_m_code_value_x(NGC_RS274::Groups::M::SPINDLE);
+					Spindle_Controller::c_processor::local_block.get_m_code_value_x(NGC_RS274::Groups::M::SPINDLE);
 
 					//Set direction to reverse
 					Spindle_Controller::c_driver::Reverse_Drive();
@@ -142,16 +144,16 @@ uint8_t Spindle_Controller::c_state_manager::check_driver_state()
 
 				//Set the rotation directions to match
 				Spindle_Controller::c_driver::Drive_Control.direction =
-				 Spindle_Controller::c_processor::local_block.get_m_code_value_x(NGC_RS274::Groups::M::SPINDLE);
+				Spindle_Controller::c_processor::local_block.get_m_code_value_x(NGC_RS274::Groups::M::SPINDLE);
 
 				if (Spindle_Controller::c_processor::local_block.get_m_code_value_x(NGC_RS274::Groups::M::SPINDLE) ==
-				 NGC_RS274::M_codes::SPINDLE_ON_CW) //(M03)
+				NGC_RS274::M_codes::SPINDLE_ON_CW) //(M03)
 				{
 					Spindle_Controller::c_driver::Forward_Drive();
 				}
 
 				if (Spindle_Controller::c_processor::local_block.get_m_code_value_x(NGC_RS274::Groups::M::SPINDLE) ==
-				 NGC_RS274::M_codes::SPINDLE_ON_CCW) //(M04)
+				NGC_RS274::M_codes::SPINDLE_ON_CCW) //(M04)
 				{
 					Spindle_Controller::c_driver::Reverse_Drive();
 				}
@@ -182,12 +184,12 @@ uint8_t Spindle_Controller::c_state_manager::check_driver_state()
 		}
 		//Last state to check. We were rotating, and now we have commanded to stop
 		if (Spindle_Controller::c_processor::local_block.get_m_code_value_x(NGC_RS274::Groups::M::SPINDLE) ==
-		 NGC_RS274::M_codes::SPINDLE_STOP)
+		NGC_RS274::M_codes::SPINDLE_STOP)
 		{
 			//Since our brake is on, we can just let it come to a stop. Nothing else for us to do.
 			//Set the rotation directions to match
 			Spindle_Controller::c_driver::Drive_Control.direction =
-			 Spindle_Controller::c_processor::local_block.get_m_code_value_x(NGC_RS274::Groups::M::SPINDLE);
+			Spindle_Controller::c_processor::local_block.get_m_code_value_x(NGC_RS274::Groups::M::SPINDLE);
 			break; //<--brake out of our loop
 		}
 	}
@@ -199,7 +201,22 @@ uint8_t Spindle_Controller::c_state_manager::check_driver_state()
 	//
 	if (Spindle_Controller::c_driver::Drive_Control.direction == NGC_RS274::M_codes::SPINDLE_STOP)
 	return NGC_Machine_Errors::OK;
-	//
+	
+	//Was a speed change requested
+	if (Spindle_Controller::c_processor::local_block.get_defined('S'))
+	{
+		if ((uint32_t) Spindle_Controller::c_state_manager::current_rpm < (uint32_t)Spindle_Controller::c_processor::local_block.get_value('S'))
+		{
+			Spindle_Controller::c_driver::Set_State(STATE_BIT_ACCELERATE);
+			Spindle_Controller::c_driver::Clear_State(STATE_BIT_DECELERATE);
+		}
+		else if ((uint32_t) Spindle_Controller::c_state_manager::current_rpm < (uint32_t)Spindle_Controller::c_processor::local_block.get_value('S'))
+		{
+			Spindle_Controller::c_driver::Set_State(STATE_BIT_DECELERATE);
+			Spindle_Controller::c_driver::Clear_State(STATE_BIT_ACCELERATE);
+		}
+	}
+
 	Spindle_Controller::c_state_manager::process_state(Spindle_Controller::c_state_manager::current_rpm);
 
 	return NGC_Machine_Errors::OK;
@@ -224,34 +241,29 @@ uint8_t Spindle_Controller::c_state_manager::process_state(float current_rpm)
 		Spindle_Controller::c_processor::host_serial.Write(CR);
 		Spindle_Controller::c_driver::Enable_Drive();
 	}
-	//Spindle_Controller::c_driver::Enable_Drive();
-	//Spindle_Controller::c_processor::host_serial.print_string("output is : ");
-	//Spindle_Controller::c_processor::host_serial.print_int32(Spindle_Controller::c_processor::local_block.get_value('S'));
-	//Spindle_Controller::c_processor::host_serial.Write(CR);
-	//c_hal::driver.PNTR_DRIVE_ANALOG!=NULL?c_hal::driver.PNTR_DRIVE_ANALOG(Spindle_Controller::c_processor::local_block.get_value('S')):void();
 	
+	//Are we accelerating the motor
+	if (Spindle_Controller::c_driver::Get_State(STATE_BIT_ACCELERATE))
+	{
+		//Add a factor of rpm based on the time we loop and the accel rate
+		float target_rpm = Spindle_Controller::c_state_manager::current_rpm + (1000 /Spindle_Controller::c_encoder::encoder_data.time_factor);
+		//If we exceeded target rpm, set it to target and clear accel bit.
+		if (target_rpm>Spindle_Controller::c_processor::local_block.get_value('S'))
+		{
+			Spindle_Controller::c_driver::Clear_State(STATE_BIT_ACCELERATE);
+			target_rpm = Spindle_Controller::c_processor::local_block.get_value('S');
+		}
+		Spindle_Controller::c_driver::current_output = Spindle_Controller::c_pid::Calculate
+		(Spindle_Controller::c_state_manager::current_rpm, target_rpm, c_pid::spindle_terms);
+	}
+	else
+	{
+		//Cruise state or decel state. We do not have to 'decel' because the motor has a natural decel.
+		Spindle_Controller::c_driver::current_output = Spindle_Controller::c_pid::Calculate
+		(Spindle_Controller::c_state_manager::current_rpm, Spindle_Controller::c_processor::local_block.get_value('S'), c_pid::spindle_terms);
+	}
 	
-	//if (Spindle_Controller::c_driver::Get_State(STATE_BIT_ACCELERATE))
-	//{
-	//if (Spindle_Controller::c_driver::accel_output< c_PID::spindle_terms.Min_Val)
-	//{
-	//Spindle_Controller::c_driver::accel_output = c_PID::spindle_terms.Min_Val;
-	//}
-	//Spindle_Controller::c_driver::Set_Acceleration(current_rpm);
-	//}
-	//else if (Spindle_Controller::c_driver::Get_State(STATE_BIT_DECELERATE))
-	//{
-	//Spindle_Controller::c_driver::Set_Decelerate(current_rpm);
-	//}
-	//else
-	//{
-		////save current accel value in case we increase rpm from here.
-		//Spindle_Controller::c_driver::accel_output = Spindle_Controller::c_driver::current_output;
-		//
-		//current_rpm = Spindle_Controller::c_encoder::current_rpm();
-		////c_Spindle_Drive::current_output = c_PID::Calculate(current_rpm,c_Spindle_Drive::Drive_Control.target_rpm,c_PID::spindle_terms);
-	//}
-	////c_hal::driver.PNTR_DRIVE_ANALOG(Spindle_Controller::c_driver::current_output);
-	//c_hal::driver.PNTR_DRIVE_ANALOG!=NULL ? c_hal::driver.PNTR_DRIVE_ANALOG(Spindle_Controller::c_processor::local_block.get_value('S')):void();
+	Hardware_Abstraction_Layer::Spindle::_drive_analog(Spindle_Controller::c_driver::current_output);
+
 	return NGC_Machine_Errors::OK;
 }

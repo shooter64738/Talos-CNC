@@ -33,7 +33,7 @@
 namespace Hardware_Abstraction_Layer
 {
 
-	class Coordinator
+	class Coordination
 	{
 		//variables
 		public:

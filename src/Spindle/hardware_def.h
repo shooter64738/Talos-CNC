@@ -26,6 +26,7 @@
 #include "../Common/Hardware_Abstraction_Layer/AVR_328/c_spindle_avr_328.h"
 #include "../Common/Hardware_Abstraction_Layer/AVR_328/c_core_avr_328.h"
 #include "../Common/Hardware_Abstraction_Layer/AVR_328/c_serial_avr_328.h"
+#include "../Common/Hardware_Abstraction_Layer/AVR_328/c_eeprom_avr_328.h"
 #endif
 
 #ifdef __AVR_ATmega2560P__

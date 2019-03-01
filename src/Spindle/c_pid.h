@@ -23,9 +23,9 @@ namespace Spindle_Controller
 		public:
 		struct s_pid_terms
 		{
-			double Kp;
-			double Ki;
-			double Kd;
+			//double Kp;
+			//double Ki;
+			//double Kd;
 			
 			double KITerm;
 			double lastInput;

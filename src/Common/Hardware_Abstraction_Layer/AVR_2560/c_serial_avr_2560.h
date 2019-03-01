@@ -10,6 +10,7 @@
 #define __C_SERIAL_AVR_2560_H__
 #include <stdint.h>
 #include "../../Serial/s_Buffer.h"
+
 namespace Hardware_Abstraction_Layer
 {
 	class Serial
@@ -24,6 +25,7 @@ namespace Hardware_Abstraction_Layer
 		public:
 		static void initialize(uint8_t Port, uint32_t BaudRate);
 		static void send(uint8_t Port, char byte);
+
 		protected:
 		private:
 		

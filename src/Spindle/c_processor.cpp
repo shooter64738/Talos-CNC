@@ -27,6 +27,7 @@
 #include "c_state_manager.h"
 #include "c_pid.h"
 #include "hardware_def.h"
+#include "c_settings.h"
 
 
 c_Serial Spindle_Controller::c_processor::host_serial;
@@ -40,8 +41,12 @@ void Spindle_Controller::c_processor::startup()
 	Hardware_Abstraction_Layer::Spindle::initialize();
 
 	Spindle_Controller::c_processor::host_serial = c_Serial(0, 115200); //<--Connect to host
+	
+	Spindle_Controller::c_settings::load_settings();
 	Spindle_Controller::c_driver::initialize();
-	Spindle_Controller::c_encoder::initialize(400,Spindle_Controller::c_encoder::e_rpm_type::position_based);
+	Spindle_Controller::c_encoder::initialize(Spindle_Controller::c_settings::serializer.values.encoder_ticks_per_rev,Spindle_Controller::c_settings::serializer.values.rpm_derivation);
+	
+
 	Spindle_Controller::c_processor::host_serial.print_string("spindle on line");
 	Spindle_Controller::c_processor::local_block.reset();
 	NGC_RS274::Interpreter::Processor::initialize();
@@ -57,8 +62,6 @@ void Spindle_Controller::c_processor::startup()
 	{
 		//If running this on a pc, use this line to fill the serial buffer as if it
 		//were sent from a terminal to the micro controller over a serial connection
-		//c_hal::comm.PNTR_VIRTUAL_BUFFER_WRITE(0, "g41p.25G0X1Y1F100\rX2Y2\rX3Y3\r"); //<--data from host
-		///c_hal::comm.PNTR_VIRTUAL_BUFFER_WRITE(0, "i.5\r\0");
 		Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "i.5\r\0");
 		
 	}
@@ -66,19 +69,21 @@ void Spindle_Controller::c_processor::startup()
 	uint8_t ticker = 0;
 	while (1)
 	{
-		if (Spindle_Controller::c_encoder::has_overflowed>=1)
+		if (Spindle_Controller::c_encoder::has_overflowed!=0)
 		{
 			ticker++;
+			//Get the curretn RPM and store it. IT is also importatnt that we read the rpm at a certain time period
 			Spindle_Controller::c_state_manager::current_rpm = Spindle_Controller::c_encoder::current_rpm();
-			uint8_t output = Spindle_Controller::c_pid::Calculate(Spindle_Controller::c_state_manager::current_rpm,Spindle_Controller::c_processor::local_block.get_value('S'),c_pid::spindle_terms);
+			//uint8_t output = Spindle_Controller::c_pid::Calculate(Spindle_Controller::c_state_manager::current_rpm,Spindle_Controller::c_processor::local_block.get_value('S'),c_pid::spindle_terms);
 			Spindle_Controller::c_encoder::has_overflowed = 0;
+			Spindle_Controller::c_state_manager::check_driver_state();
 			
 			//c_hal::driver.PNTR_DRIVE_ANALOG!=NULL?c_hal::driver.PNTR_DRIVE_ANALOG(output):void();
-			Hardware_Abstraction_Layer::Spindle::_drive_analog(output);
+			
 			if (ticker>60)
 			{
 				ticker = 0;
-				Spindle_Controller::c_processor::host_serial.print_int32(output);
+				Spindle_Controller::c_processor::host_serial.print_int32(Spindle_Controller::c_driver::current_output);
 				Spindle_Controller::c_processor::host_serial.print_string("output  ");
 				Spindle_Controller::c_processor::host_serial.Write(CR);
 				
@@ -167,6 +172,9 @@ uint16_t Spindle_Controller::c_processor::prep_input()
 	}
 	Spindle_Controller::c_processor::process_control_command();
 
+	//We have used the data in the block. Clear defined flags but leave values
+	Spindle_Controller::c_processor::local_block.clear_all_defined();
+
 }
 
 uint16_t Spindle_Controller::c_processor::process_control_command()
@@ -179,7 +187,7 @@ uint16_t Spindle_Controller::c_processor::process_control_command()
 		if (Spindle_Controller::c_processor::local_block.get_defined('P'))
 		{
 			//set pid Proportional
-			Spindle_Controller::c_pid::spindle_terms.Kp=Spindle_Controller::c_processor::local_block.get_value('P');
+			Spindle_Controller::c_settings::serializer.values.pP=Spindle_Controller::c_processor::local_block.get_value('P');
 			Spindle_Controller::c_pid::Clear(c_pid::spindle_terms);
 		}
 		
@@ -188,27 +196,27 @@ uint16_t Spindle_Controller::c_processor::process_control_command()
 		
 		{
 			//set pid Integral
-			Spindle_Controller::c_pid::spindle_terms.Ki=Spindle_Controller::c_processor::local_block.get_value('I');
+			Spindle_Controller::c_settings::serializer.values.pI=Spindle_Controller::c_processor::local_block.get_value('I');
 			Spindle_Controller::c_pid::Clear(c_pid::spindle_terms);
 		}
 		if (Spindle_Controller::c_processor::local_block.get_defined('D'))
 		
 		{
 			//set pid Derivative
-			Spindle_Controller::c_pid::spindle_terms.Kd=Spindle_Controller::c_processor::local_block.get_value('D');
+			Spindle_Controller::c_settings::serializer.values.pD=Spindle_Controller::c_processor::local_block.get_value('D');
 			Spindle_Controller::c_pid::Clear(c_pid::spindle_terms);
 		}
 		if (Spindle_Controller::c_processor::local_block.get_defined('Q'))
 		
 		{
 			Spindle_Controller::c_processor::host_serial.print_string("P=");
-			Spindle_Controller::c_processor::host_serial.print_float(Spindle_Controller::c_pid::spindle_terms.Kp);
+			Spindle_Controller::c_processor::host_serial.print_float(Spindle_Controller::c_settings::serializer.values.pP);
 			Spindle_Controller::c_processor::host_serial.Write(CR);
 			Spindle_Controller::c_processor::host_serial.print_string("I=");
-			Spindle_Controller::c_processor::host_serial.print_float(Spindle_Controller::c_pid::spindle_terms.Ki);
+			Spindle_Controller::c_processor::host_serial.print_float(Spindle_Controller::c_settings::serializer.values.pI);
 			Spindle_Controller::c_processor::host_serial.Write(CR);
 			Spindle_Controller::c_processor::host_serial.print_string("D=");
-			Spindle_Controller::c_processor::host_serial.print_float(Spindle_Controller::c_pid::spindle_terms.Kd);
+			Spindle_Controller::c_processor::host_serial.print_float(Spindle_Controller::c_settings::serializer.values.pD);
 			Spindle_Controller::c_processor::host_serial.Write(CR);
 		}
 	}

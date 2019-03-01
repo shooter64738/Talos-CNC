@@ -31,6 +31,9 @@
     <Filter Include="NGC_RS274">
       <UniqueIdentifier>{7ab1c648-427e-4d1f-9dfe-1d2ede56a59c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Settings">
+      <UniqueIdentifier>{c9e8c790-bfc8-4e99-a017-d84fdf5a4adc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\c_processor.cpp" />
@@ -70,6 +73,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\Common\NGC_RS274\NGC_Interpreter.cpp">
       <Filter>NGC_RS274</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\c_settings.cpp">
+      <Filter>Settings</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -132,6 +138,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\Common\NGC_RS274\NGC_Parameters.h">
       <Filter>NGC_RS274</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\c_settings.h">
+      <Filter>Settings</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

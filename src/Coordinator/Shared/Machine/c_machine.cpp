@@ -147,7 +147,7 @@ void c_machine::synch_position()
 
 		for (uint8_t axis = 0;axis < c_motion_controller_settings::axis_count_reported;axis++)
 		{
-			c_machine::axis_position[axis] = ((float)(xCoordinator::c_encoder::Axis_Positions[axis]))
+			c_machine::axis_position[axis] = ((float)(Coordinator::c_encoder::Axis_Positions[axis]))
 			/ ((float)(c_motion_controller_settings::configuration_settings.steps_per_mm[axis]));
 		}
 		c_status::axis_values(c_machine::axis_position, c_motion_controller_settings::axis_count_reported, c_machine::unit_scaler);

@@ -268,6 +268,19 @@ void NGC_RS274::NGC_Binary_Block::clear_defined_word(char Word)
 	this->word_defined_in_block_A_Z = BitClr(this->word_defined_in_block_A_Z, Word - 65);
 }
 
+void NGC_RS274::NGC_Binary_Block::clear_all_defined()
+{
+	/*
+	|***************************************************************************************|
+	|                              IMPORTANT INFORMATION                                    |
+	| Clear the value in the G Group array.                          |
+	|***************************************************************************************|
+	*/
+	this->g_code_defined_in_block = 0;
+	this->m_code_defined_in_block = 0;
+	this->word_defined_in_block_A_Z = 0;
+}
+
 /*
 Clears the bit flag for the specified gcode
 */

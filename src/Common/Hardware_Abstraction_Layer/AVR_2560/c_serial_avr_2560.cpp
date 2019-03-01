@@ -12,6 +12,7 @@
 
 #define COM_PORT_COUNT 3 //<--how many serial ports does this hardware have (or) how many do you need to use.
 s_Buffer Hardware_Abstraction_Layer::Serial::rxBuffer[COM_PORT_COUNT];
+//c_Serial Hardware_Abstraction_Layer::Serial::port[COM_PORT_COUNT];
 
 void Hardware_Abstraction_Layer::Serial::initialize(uint8_t Port, uint32_t BaudRate)
 {

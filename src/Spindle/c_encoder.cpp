@@ -22,6 +22,7 @@
 #include "c_encoder.h"
 #include "c_processor.h"
 #include "hardware_def.h"
+#include "c_settings.h"
 
 #define TIMER_OVERFLOW_SIZE 65535.0 //<-- Whats the maximum value the timer can reach for an overflow
 #define TIME_FREQUENCY_HZ 2000000.0
@@ -46,8 +47,6 @@ void Spindle_Controller::c_encoder::initialize(uint16_t encoder_ticks_per_rev, S
 {
 	Spindle_Controller::c_encoder::encoder_data.rpm_multiplier = Spindle_Controller::c_encoder::encoder_data.time_factor / (float)encoder_ticks_per_rev;
 	Spindle_Controller::c_encoder::encoder_data.angle_multiplier = 360.0/(float)encoder_ticks_per_rev;
-	Spindle_Controller::c_encoder::encoder_data.ticks_per_rev = encoder_ticks_per_rev;
-	Spindle_Controller::c_encoder::encoder_data.rpm_type = rpm_type;
 }
 
 void Spindle_Controller::c_encoder::set_time_factor(float time_factor_from_hal)
@@ -70,13 +69,13 @@ void Spindle_Controller::c_encoder::hal_callbacks::position_change(uint16_t time
 	encoder_count += encoder_table[(encoder_state & 0b1111)];
 	
 	if (encoder_count<= 0)
-	encoder_count = Spindle_Controller::c_encoder::encoder_data.ticks_per_rev;
-	else if (encoder_count >=Spindle_Controller::c_encoder::encoder_data.ticks_per_rev)
+	encoder_count = Spindle_Controller::c_settings::serializer.values.encoder_ticks_per_rev;
+	else if (encoder_count >=Spindle_Controller::c_settings::serializer.values.encoder_ticks_per_rev)
 	encoder_count = 0;
 	
 	//This rpm mode does not use an index pulse. So we determine based on the number of pulses
 	//we have accumulated when the timer overflows.
-	if (Spindle_Controller::c_encoder::encoder_data.rpm_type == e_rpm_type::position_based)
+	if (Spindle_Controller::c_settings::serializer.values.rpm_derivation == e_rpm_type::position_based)
 	{
 		encoder_read_count[encoder_read_index]++;
 	}
@@ -107,7 +106,7 @@ void Spindle_Controller::c_encoder::hal_callbacks::timer_overflow()
 {
 	//This is getting called from an ISR. Do not over burden it.
 
-	if (Spindle_Controller::c_encoder::encoder_data.rpm_type == e_rpm_type::position_based)
+	if (Spindle_Controller::c_settings::serializer.values.rpm_derivation == e_rpm_type::position_based)
 	{
 		//Move the index so the encoder ISR will put data in a new array position
 		encoder_read_index++;
@@ -143,7 +142,7 @@ float Spindle_Controller::c_encoder::current_rpm()
 	avg = avg/(float)ENCODER_READ_ARRAY_SIZE;
 
 	//If using a 3 channel encoder we dont get pulse count on a set time.
-	if (Spindle_Controller::c_encoder::encoder_data.rpm_type == e_rpm_type::position_based)
+	if (Spindle_Controller::c_settings::serializer.values.rpm_derivation == e_rpm_type::position_based)
 	{
 		//This is an average of the pulse counts we got on each over flow of the timer
 		//return  60.0*(((float)avg/(float)ENCODER_READ_ARRAY_SIZE)*0.025491); 

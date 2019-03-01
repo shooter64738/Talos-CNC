@@ -1,5 +1,6 @@
+
 /*
-*  c_encoder.h - NGC_RS274 controller.
+*  c_core_avr_328.h - NGC_RS274 controller.
 *  A component of Talos
 *
 *  Copyright (c) 2016-2019 Jeff Dill
@@ -18,34 +19,35 @@
 *  along with Talos.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifdef __AVR_ATmega328P__//<--This will stop the multiple ISR definition error
 
-#ifndef __C_ENCODER_H__
-#define __C_ENCODER_H__
-//#include <stdint.h>
-#include "..\..\..\Talos.h"
-namespace Coordinator
+#ifndef __C_CORE_AVR_328_H__
+#define __C_CORE_AVR_328_H__
+#include <stdint.h>
+#define F_CPU 16000000UL
+namespace Hardware_Abstraction_Layer
 {
-	class c_encoder
+	class Eeprom
 	{
 		//variables
 		public:
-		static int8_t Axis_Incrimenter[MACHINE_AXIS_COUNT];
-		static int32_t Axis_Positions[MACHINE_AXIS_COUNT];
 		protected:
 		private:
 
 		//functions
 		public:
 		static void initialize();
-		static void position_change(uint8_t port_values);
-		static void direction_change(uint8_t port_values);
+		
+		static void update_block(const char* data, uint16_t size );
+		static void read_block(char* data, uint16_t size );
 		protected:
 		private:
-		//c_status();
-		//~c_status();
-		//c_status( const c_status &c );
-		//c_status& operator=( const c_status &c );
+		//c_core_avr_328( const c_core_avr_328 &c );
+		//c_core_avr_328& operator=( const c_core_avr_328 &c );
+		//c_core_avr_328();
+		//~c_core_avr_328();
 
-	}; //c_status
+	}; //c_core_avr_328
 };
-#endif //__C_ENCODER_H__
+#endif //__C_CORE_AVR_328_H__
+#endif
