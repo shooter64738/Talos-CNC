@@ -43,10 +43,14 @@ volatile uint32_t over_flows = 0;
 uint8_t Spindle_Controller::c_encoder::has_overflowed = 0;
 Spindle_Controller::c_encoder::s_encoder_data Spindle_Controller::c_encoder::encoder_data;
 
-void Spindle_Controller::c_encoder::initialize(uint16_t encoder_ticks_per_rev, Spindle_Controller::c_encoder::e_rpm_type rpm_type)
+void Spindle_Controller::c_encoder::initialize()
 {
-	Spindle_Controller::c_encoder::encoder_data.rpm_multiplier = Spindle_Controller::c_encoder::encoder_data.time_factor / (float)encoder_ticks_per_rev;
-	Spindle_Controller::c_encoder::encoder_data.angle_multiplier = 360.0/(float)encoder_ticks_per_rev;
+	Spindle_Controller::c_encoder::encoder_data.rpm_multiplier =
+	(Spindle_Controller::c_encoder::encoder_data.time_factor *10)
+	/ (float)Spindle_Controller::c_settings::serializer.values.encoder_ticks_per_rev;
+	
+	Spindle_Controller::c_encoder::encoder_data.angle_multiplier = 360.0
+	/(float)(float)Spindle_Controller::c_settings::serializer.values.encoder_ticks_per_rev;
 }
 
 void Spindle_Controller::c_encoder::set_time_factor(float time_factor_from_hal)
@@ -146,8 +150,9 @@ float Spindle_Controller::c_encoder::current_rpm()
 	{
 		//This is an average of the pulse counts we got on each over flow of the timer
 		//return  60.0*(((float)avg/(float)ENCODER_READ_ARRAY_SIZE)*0.025491); 
-		Spindle_Controller::c_encoder::encoder_data.pulse_per_second_rate = Spindle_Controller::c_encoder::encoder_data.rpm_multiplier * avg;
-		return  60.0 * Spindle_Controller::c_encoder::encoder_data.pulse_per_second_rate;
+		Spindle_Controller::c_encoder::encoder_data.pulse_per_second_rate =
+			Spindle_Controller::c_encoder::encoder_data.rpm_multiplier * avg;
+		return 60.0 * Spindle_Controller::c_encoder::encoder_data.pulse_per_second_rate;
 	}
 	else
 	{

@@ -29,18 +29,16 @@ within these speed parameters. Everything in motion is tied to the gap voltage.
 */
 
 #include "c_edm_driver.h"
-#include "..\common\Hardware_Abstraction_Layer\c_hal.h"
+
 
 //Initialize the HAL for EDM
 void c_edm_driver::initialize()
 {
-	c_hal::edm.PNTR_INITIALIZE();
 }
 
 //Call into HAL and read the arc voltage on the analog pin
 float c_edm_driver::Get_ArcVoltage()
 {
-	c_hal::edm.PNTR_GET_ARC_VOLTAGE();
 	return 0;
 }
 
@@ -53,8 +51,5 @@ void c_edm_driver::Find_Part_Zero()
 //For plunge edm, this causes the tool to retract some distance for flushing
 void c_edm_driver::Dither()
 {
-	//c_hal::driver.PNTR_STEPPER.Step_Directions = 1;
-	//c_hal::driver.PNTR_STEPPER.Step_Count = 1;
-	//c_hal::driver.PNTR_DRIVE();
 }
 

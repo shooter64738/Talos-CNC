@@ -147,3 +147,77 @@ void Hardware_Abstraction_Layer::Serial::send(uint8_t Port, char byte)
 		#endif
 	}
 }
+
+#ifdef USART_RX_vect
+ISR(USART_RX_vect)
+{
+	char Byte = UDR0;
+
+	if (Hardware_Abstraction_Layer::Serial::rxBuffer[0].Head==RX_BUFFER_SIZE)
+	{Hardware_Abstraction_Layer::Serial::rxBuffer[0].Head = 0;}
+
+	
+	//keep CR values, throw away LF values
+	if (Byte == 10)
+	return;
+	
+	Hardware_Abstraction_Layer::Serial::rxBuffer[0].Buffer[Hardware_Abstraction_Layer::Serial::rxBuffer[0].Head] = Byte;
+	
+	if (Hardware_Abstraction_Layer::Serial::rxBuffer[0].Buffer[Hardware_Abstraction_Layer::Serial::rxBuffer[0].Head] == 13)
+	Hardware_Abstraction_Layer::Serial::rxBuffer[0].EOL++;
+	
+	Hardware_Abstraction_Layer::Serial::rxBuffer[0].Head++;
+
+	if (Hardware_Abstraction_Layer::Serial::rxBuffer[0].Head == Hardware_Abstraction_Layer::Serial::rxBuffer[0].Tail)
+	{Hardware_Abstraction_Layer::Serial::rxBuffer[0].OverFlow=true;}
+}
+#endif
+
+#ifdef USART0_RX_vect
+ISR(USART0_RX_vect)
+{
+	char Byte = UDR0;
+
+	if (Hardware_Abstraction_Layer::Serial::rxBuffer[0].Head==RX_BUFFER_SIZE)
+	{Hardware_Abstraction_Layer::Serial::rxBuffer[0].Head = 0;}
+
+	
+	//keep CR values, throw away LF values
+	if (Byte == 10)
+	return;
+	
+	Hardware_Abstraction_Layer::Serial::rxBuffer[0].Buffer[Hardware_Abstraction_Layer::Serial::rxBuffer[0].Head] = Byte;
+	
+	if (Hardware_Abstraction_Layer::Serial::rxBuffer[0].Buffer[Hardware_Abstraction_Layer::Serial::rxBuffer[0].Head] == 13)
+	Hardware_Abstraction_Layer::Serial::rxBuffer[0].EOL++;
+	
+	Hardware_Abstraction_Layer::Serial::rxBuffer[0].Head++;
+
+	if (Hardware_Abstraction_Layer::Serial::rxBuffer[0].Head == Hardware_Abstraction_Layer::Serial::rxBuffer[0].Tail)
+	{Hardware_Abstraction_Layer::Serial::rxBuffer[0].OverFlow=true;}
+}
+#endif
+
+#ifdef USART1_RX_vect
+ISR(USART1_RX_vect)
+{
+	char Byte = UDR1;
+
+	if (Hardware_Abstraction_Layer::Serial::rxBuffer[1].Head==RX_BUFFER_SIZE)
+	{Hardware_Abstraction_Layer::Serial::rxBuffer[1].Head = 0;}
+
+	//keep CR values, throw away LF values
+	if (Byte == 10)
+	return;
+	
+	Hardware_Abstraction_Layer::Serial::rxBuffer[1].Buffer[Hardware_Abstraction_Layer::Serial::rxBuffer[1].Head] = Byte;
+	
+	if (rxBuffer[1].Buffer[Hardware_Abstraction_Layer::Serial::rxBuffer[1].Head] == 13)
+	Hardware_Abstraction_Layer::Serial::rxBuffer[1].EOL++;
+	
+	Hardware_Abstraction_Layer::Serial::rxBuffer[1].Head++;
+
+	if (Hardware_Abstraction_Layer::Serial::rxBuffer[1].Head == Hardware_Abstraction_Layer::Serial::rxBuffer[1].Tail)
+	{Hardware_Abstraction_Layer::Serial::rxBuffer[1].OverFlow=true;}
+}
+#endif

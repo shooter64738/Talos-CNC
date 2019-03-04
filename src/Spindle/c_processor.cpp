@@ -35,8 +35,6 @@ NGC_RS274::NGC_Binary_Block Spindle_Controller::c_processor::local_block = NGC_R
 
 void Spindle_Controller::c_processor::startup()
 {
-	//c_hal::initialize();
-
 	Hardware_Abstraction_Layer::Core::initialize();
 	Hardware_Abstraction_Layer::Spindle::initialize();
 
@@ -44,9 +42,8 @@ void Spindle_Controller::c_processor::startup()
 	
 	Spindle_Controller::c_settings::load_settings();
 	Spindle_Controller::c_driver::initialize();
-	Spindle_Controller::c_encoder::initialize(Spindle_Controller::c_settings::serializer.values.encoder_ticks_per_rev,Spindle_Controller::c_settings::serializer.values.rpm_derivation);
+	Spindle_Controller::c_encoder::initialize();
 	
-
 	Spindle_Controller::c_processor::host_serial.print_string("spindle on line");
 	Spindle_Controller::c_processor::local_block.reset();
 	NGC_RS274::Interpreter::Processor::initialize();
@@ -62,7 +59,7 @@ void Spindle_Controller::c_processor::startup()
 	{
 		//If running this on a pc, use this line to fill the serial buffer as if it
 		//were sent from a terminal to the micro controller over a serial connection
-		Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "i.5\r\0");
+		Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "Q\r");
 		
 	}
 	#endif
@@ -113,6 +110,16 @@ void Spindle_Controller::c_processor::startup()
 				//Pull the : character off the serial buffer
 				Spindle_Controller::c_processor::host_serial.Get();
 				Spindle_Controller::c_processor::process_control_command();
+				if (Spindle_Controller::c_processor::host_serial.Peek() == 'S')
+				{
+					Spindle_Controller::c_settings::save_settings();
+					Spindle_Controller::c_processor::host_serial.print_string("Settings Saved!");
+					Spindle_Controller::c_processor::host_serial.Write(CR);
+				}
+				
+				//did the buffer end with CR or NULL?
+				if (c_processor::host_serial.Peek() == CR)
+				c_processor::host_serial.Get();
 				
 				Control_Command = true;
 			}
@@ -143,12 +150,16 @@ uint16_t Spindle_Controller::c_processor::prep_input()
 		/*
 		fill the interpreter with serial data
 		*/
+		
 		uint8_t index = 0;
 		while (c_processor::host_serial.Peek() != CR && c_processor::host_serial.Peek() != NULL)
 		{
 			NGC_RS274::Interpreter::Processor::Line[index] =  toupper(c_processor::host_serial.Get());
 			index++;
 		}
+		
+		
+		
 		//did the buffer end with CR or NULL?
 		if (c_processor::host_serial.Peek() == CR)
 		c_processor::host_serial.Get();
@@ -206,24 +217,50 @@ uint16_t Spindle_Controller::c_processor::process_control_command()
 			Spindle_Controller::c_settings::serializer.values.pD=Spindle_Controller::c_processor::local_block.get_value('D');
 			Spindle_Controller::c_pid::Clear(c_pid::spindle_terms);
 		}
-		if (Spindle_Controller::c_processor::local_block.get_defined('Q'))
-		
-		{
-			Spindle_Controller::c_processor::host_serial.print_string("P=");
-			Spindle_Controller::c_processor::host_serial.print_float(Spindle_Controller::c_settings::serializer.values.pP);
-			Spindle_Controller::c_processor::host_serial.Write(CR);
-			Spindle_Controller::c_processor::host_serial.print_string("I=");
-			Spindle_Controller::c_processor::host_serial.print_float(Spindle_Controller::c_settings::serializer.values.pI);
-			Spindle_Controller::c_processor::host_serial.Write(CR);
-			Spindle_Controller::c_processor::host_serial.print_string("D=");
-			Spindle_Controller::c_processor::host_serial.print_float(Spindle_Controller::c_settings::serializer.values.pD);
-			Spindle_Controller::c_processor::host_serial.Write(CR);
-		}
 	}
+	if (Spindle_Controller::c_processor::local_block.get_defined('Q'))
+	{
+		Spindle_Controller::c_processor::display_settings();
+	}
+	
 	Spindle_Controller::c_processor::host_serial.print_string("Parm Updated  ");
 	Spindle_Controller::c_processor::host_serial.Write(CR);
 
 	return return_value;
+}
+
+void Spindle_Controller::c_processor::display_settings()
+{
+	
+	{
+		Spindle_Controller::c_processor::host_serial.print_string("Accel=");
+		Spindle_Controller::c_processor::host_serial.print_int32(Spindle_Controller::c_settings::serializer.values.acceleration_rate);
+		Spindle_Controller::c_processor::host_serial.Write(CR);
+		
+		Spindle_Controller::c_processor::host_serial.print_string("P=");
+		Spindle_Controller::c_processor::host_serial.print_float(Spindle_Controller::c_settings::serializer.values.pP);
+		Spindle_Controller::c_processor::host_serial.Write(CR);
+		
+		Spindle_Controller::c_processor::host_serial.print_string("I=");
+		Spindle_Controller::c_processor::host_serial.print_float(Spindle_Controller::c_settings::serializer.values.pI);
+		Spindle_Controller::c_processor::host_serial.Write(CR);
+		
+		Spindle_Controller::c_processor::host_serial.print_string("D=");
+		Spindle_Controller::c_processor::host_serial.print_float(Spindle_Controller::c_settings::serializer.values.pD);
+		Spindle_Controller::c_processor::host_serial.Write(CR);
+		
+		Spindle_Controller::c_processor::host_serial.print_string("Tick=");
+		Spindle_Controller::c_processor::host_serial.print_int32(Spindle_Controller::c_settings::serializer.values.encoder_ticks_per_rev);
+		Spindle_Controller::c_processor::host_serial.Write(CR);
+		
+		Spindle_Controller::c_processor::host_serial.print_string("RPM=");
+		Spindle_Controller::c_processor::host_serial.print_int32(Spindle_Controller::c_settings::serializer.values.rpm_derivation);
+		Spindle_Controller::c_processor::host_serial.Write(CR);
+	}
+	//did the buffer end with CR or NULL?
+	if (c_processor::host_serial.Peek() == CR)
+	c_processor::host_serial.Get();
+
 }
 
 //// default constructor

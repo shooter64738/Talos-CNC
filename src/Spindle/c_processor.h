@@ -39,6 +39,7 @@ namespace Spindle_Controller
 		static void startup();
 		static uint16_t prep_input();
 		static uint16_t process_control_command();
+		static void display_settings();
 		protected:
 		private:
 		//c_processor( const c_processor &c );

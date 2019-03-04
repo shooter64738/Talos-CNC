@@ -77,6 +77,9 @@
     <ClCompile Include="..\..\c_settings.cpp">
       <Filter>Settings</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\Common\Hardware_Abstraction_Layer\Virtual\c_eeprom_win.cpp">
+      <Filter>Common\Hardware Abstraction Layer\WIN32</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\c_processor.h" />
@@ -141,6 +144,9 @@
     </ClInclude>
     <ClInclude Include="..\..\c_settings.h">
       <Filter>Settings</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Common\Hardware_Abstraction_Layer\Virtual\c_eeprom_win.h">
+      <Filter>Common\Hardware Abstraction Layer\WIN32</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -94,7 +94,7 @@ void c_motion_controller::send_motion(char * line_data, bool is_motion)
 
 			//c_grbl::SendToController(line_data, 1, false);
 			#ifdef MSVC
-			c_hal::comm.PNTR_VIRTUAL_BUFFER_WRITE(1, "ok\rDONE\r");//<--data from motion control
+			//c_hal::comm.PNTR_VIRTUAL_BUFFER_WRITE(1, "ok\rDONE\r");//<--data from motion control
 			#endif
 			break;
 		}

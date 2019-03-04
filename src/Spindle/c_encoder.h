@@ -28,15 +28,15 @@ namespace Spindle_Controller
 	class c_encoder
 	{
 		//variables
-		public:
+	public:
 		class hal_callbacks
 		{
-			public:
-			static void timer_capture(uint16_t time_at_vector,int8_t port_values);
+		public:
+			static void timer_capture(uint16_t time_at_vector, int8_t port_values);
 			static void timer_overflow();
-			static void position_change(uint16_t time_at_vector,int8_t port_values);
+			static void position_change(uint16_t time_at_vector, int8_t port_values);
 		};
-		enum e_rpm_type:uint8_t
+		enum e_rpm_type :uint8_t
 		{
 			position_based,
 			time_based
@@ -52,21 +52,21 @@ namespace Spindle_Controller
 			float pulse_per_second_rate;
 		};
 		static s_encoder_data encoder_data;
-		
+
 		static uint8_t has_overflowed;
-		
-		protected:
-		private:
+
+	protected:
+	private:
 
 		//functions
-		public:
-		static void initialize(uint16_t encoder_ticks_per_rev, e_rpm_type);
+	public:
+		static void initialize();
 		static void set_time_factor(float time_factor_from_hal);
 		static float current_rpm();
 		static float current_angle_deg();
 
-		protected:
-		private:
+	protected:
+	private:
 		//c_encoder();
 		//~c_encoder();
 		//c_encoder( const c_encoder &c );
