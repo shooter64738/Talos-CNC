@@ -20,55 +20,83 @@
 
 
 #include "c_spindle_com_bus.h"
+#include <string.h>
 
-float c_spindle::Rpm;
-uint8_t c_spindle::Direction;
-uint8_t c_spindle::State;
-c_spindle::u_spindle_data c_spindle::Spindle_Data;
+float c_spindle_com_bus::Rpm;
+uint8_t c_spindle_com_bus::Direction;
+uint8_t c_spindle_com_bus::State;
+c_spindle_com_bus::u_spindle_data c_spindle_com_bus::Spindle_Data;
+c_spindle_com_bus::u_check_sum c_spindle_com_bus::Check_Sum;
 
 /*
-Convert a stream of serial data into a struct for spindle data. 
+Convert a stream of serial data into a struct for spindle data.
 A simplistic checksum is used to validate that the data we got is the data we expected.
-This may need to be a more rubust checksum calculation, but ultimately it has to be
-extremley fast. 
+This may need to be a more robust checksum calculation, but ultimately it has to be
+extremely fast.
 */
-void c_spindle::ReadStream(const char* stream_data)
+void c_spindle_com_bus::ReadStream(const char* stream_data)
 {
 	//clear the checksum
-	int16_t check_sum = 0;
+	uint16_t running_check_sum = 0;
 
 	//Reset the internal stream buffer
-	c_spindle::Reset();
+	c_spindle_com_bus::Reset();
 	
 	//convert the serial stream into the struct union, dont read last byte. Thats a check sum
-	for (uint8_t i=0; i<sizeof(c_spindle::Spindle_Data.stream)-sizeof(c_spindle::Spindle_Data.s_spindle_detail.check_sum);i++)
+	for (uint8_t i=0; i<sizeof(c_spindle_com_bus::Spindle_Data.s_spindle_detail);i++)
 	{
-		c_spindle::Spindle_Data.stream[i] = *stream_data++;
-		check_sum += c_spindle::Spindle_Data.stream[i];
+		c_spindle_com_bus::Spindle_Data.stream[i] = *stream_data++;
+		running_check_sum += c_spindle_com_bus::Spindle_Data.stream[i];
 	}
+	
 	//Read the checksum that was sent with the data
-	c_spindle::Spindle_Data.s_spindle_detail.check_sum = (int16_t)*stream_data;
+	c_spindle_com_bus::Check_Sum.s_check_sum.Check_Sum_Value = (int16_t)*stream_data;
+	*stream_data ++;*stream_data ++;
+	//Read the record terminator
+	c_spindle_com_bus::Check_Sum.s_check_sum.End_Of_Record = (int16_t)*stream_data;
 
 	//We should be at the stream data checksum value. Read it and compare it to the checksum we calculated
-	if (check_sum != c_spindle::Spindle_Data.s_spindle_detail.check_sum)
+	if (running_check_sum !=c_spindle_com_bus::Check_Sum.s_check_sum.Check_Sum_Value || c_spindle_com_bus::Check_Sum.s_check_sum.End_Of_Record!=65535)
 	{
 		//Bad read, some or all of the data is bad. Better luck next time!
 		//Reset the stream buffer
-		c_spindle::Reset();
+		c_spindle_com_bus::Reset();
 		return;
 	}
 
-	//Load the streamed data into our variables. 
-	c_spindle::Direction = c_spindle::Spindle_Data.s_spindle_detail.direction;
-	c_spindle::State = c_spindle::Spindle_Data.s_spindle_detail.state;
-	c_spindle::Rpm = (float)c_spindle::Spindle_Data.s_spindle_detail.rpm/1000.0;
+	//Load the streamed data into our variables.
+	c_spindle_com_bus::Direction = c_spindle_com_bus::Spindle_Data.s_spindle_detail.direction;
+	c_spindle_com_bus::State = c_spindle_com_bus::Spindle_Data.s_spindle_detail.state;
+	c_spindle_com_bus::Rpm = (float)c_spindle_com_bus::Spindle_Data.s_spindle_detail.rpm/1000.0;
+	c_spindle_com_bus::Reset();
 }
 
-void c_spindle::Reset()
+void c_spindle_com_bus::WriteStream(const char* stream_data, c_Serial destination)
+{
+	
+	c_spindle_com_bus::Reset();
+
+	for (uint8_t i = 0; i<sizeof(c_spindle_com_bus::Spindle_Data.s_spindle_detail); i++)
+	{
+		destination.Write(stream_data[i]);
+		Check_Sum.s_check_sum.Check_Sum_Value += stream_data[i];
+	}
+
+	Check_Sum.s_check_sum.End_Of_Record = 65535;
+
+	for (uint8_t i = 0; i<sizeof(c_spindle_com_bus::Check_Sum.s_check_sum);i++)
+	{
+		destination.Write(Check_Sum.stream[i]);
+	}
+	c_spindle_com_bus::Reset();
+}
+
+void c_spindle_com_bus::Reset()
 {
 	
 	//clear the stream. May have garbage in it.
-	memset(c_spindle::Spindle_Data.stream,0,sizeof(c_spindle::Spindle_Data.stream));
+	memset(c_spindle_com_bus::Spindle_Data.stream,0,sizeof(c_spindle_com_bus::Spindle_Data.stream));
+	memset(c_spindle_com_bus::Check_Sum.stream, 0, sizeof(c_spindle_com_bus::Check_Sum.stream));
 }
 
 

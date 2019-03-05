@@ -31,6 +31,7 @@ namespace Coordinator
 		public:
 		static int8_t Axis_Incrimenter[MACHINE_AXIS_COUNT];
 		static int32_t Axis_Positions[MACHINE_AXIS_COUNT];
+		static uint8_t dirty;
 		protected:
 		private:
 

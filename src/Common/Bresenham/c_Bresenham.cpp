@@ -21,6 +21,7 @@
 
 #include "c_Bresenham.h"
 #include "..\MotionControllerInterface\c_motion_controller_settings.h"
+#include "..\NGC_RS274\NGC_Errors.h"
 
 //// default constructor
 //c_Bresenham::c_Bresenham()

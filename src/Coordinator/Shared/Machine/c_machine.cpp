@@ -35,6 +35,9 @@
 #include "..\..\..\Common\NGC_RS274\NGC_Interpreter.h"
 #include "..\Planner\c_gcode_buffer.h"
 #include "..\Encoder\c_encoder.h"
+#include "..\..\..\common\NGC_RS274\NGC_M_Groups.h"
+#include "..\..\..\Common\NGC_RS274\NGC_G_Codes.h"
+#include "..\..\..\common\NGC_RS274\NGC_G_Groups.h"
 
 
 uint16_t *c_machine::machine_state_g_group; //There are 14 groups of gcodes (0-13)
@@ -122,7 +125,7 @@ void c_machine::synch_position()
 		}
 	}
 	#endif
-	//if (c_hal::feedback.PNTR_IS_DIRTY())
+	if (Coordinator::c_encoder::dirty == 1)
 	{
 		/*
 		If feedback is in use then each step of interpolation should match the Bresenham algorithm.
@@ -144,7 +147,9 @@ void c_machine::synch_position()
 
 			//c_motion_controller::PNTR_RESET();
 		}
-
+		
+		Coordinator::c_encoder::dirty = 0;
+		
 		for (uint8_t axis = 0;axis < c_motion_controller_settings::axis_count_reported;axis++)
 		{
 			c_machine::axis_position[axis] = ((float)(Coordinator::c_encoder::Axis_Positions[axis]))

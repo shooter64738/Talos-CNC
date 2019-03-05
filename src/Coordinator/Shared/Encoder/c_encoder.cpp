@@ -29,6 +29,7 @@
 
 int8_t Coordinator::c_encoder::Axis_Incrimenter[MACHINE_AXIS_COUNT]{0};
 int32_t Coordinator::c_encoder::Axis_Positions[MACHINE_AXIS_COUNT]{0};
+uint8_t Coordinator::c_encoder::dirty;
 
 void Coordinator::c_encoder::initialize()
 {
@@ -46,7 +47,7 @@ void Coordinator::c_encoder::position_change(uint8_t port_values)
 		bit_mask = bit_mask << 1;
 		
 	}
-	//control_type::feedback_is_dirty = true;
+	Coordinator::c_encoder::dirty = 1;
 }
 
 void Coordinator::c_encoder::direction_change(uint8_t port_values)

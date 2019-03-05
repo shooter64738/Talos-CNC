@@ -25,6 +25,8 @@
 #include "..\status\c_status.h"
 #include "..\..\..\Common\NGC_RS274\NGC_Interpreter.h"
 #include "c_stager.h"
+#include "..\..\..\common\NGC_RS274\NGC_G_Groups.h"
+#include "..\..\..\common\NGC_RS274\NGC_Errors.h"
 NGC_RS274::NGC_Binary_Block c_gcode_buffer::collection[NGC_BUFFER_SIZE];
 uint8_t c_gcode_buffer::buffer_head=0;
 uint8_t c_gcode_buffer::buffer_tail=0;

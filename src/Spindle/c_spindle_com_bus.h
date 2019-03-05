@@ -22,10 +22,10 @@
 #ifndef __C_SPINDLE_H__
 #define __C_SPINDLE_H__
 #include "../std_types.h"
-#include "../talos.h"
-#include "../Common/Serial/s_buffer.h"
-
-class c_spindle
+#include "../Common/Serial/c_Serial.h"
+//#include "../talos.h"
+//#include "../Common/Serial/s_buffer.h"
+class c_spindle_com_bus
 {
 	//variables
 	public:
@@ -35,6 +35,7 @@ class c_spindle
 	static uint8_t State;
 
 	static void ReadStream(const char* stream_data);
+	static void WriteStream(const char* stream_data, c_Serial destination);
 	static void Reset();
 	union u_spindle_data
 	{
@@ -43,12 +44,26 @@ class c_spindle
 			uint32_t rpm; //Divide this by 1000 to get decimal
 			uint8_t direction;
 			uint8_t state; //
-			int16_t check_sum;
 		}s_spindle_detail;
 		//This serves as a byte stream that can be loaded or unloaded to/from a serial stream.
 		char stream[(sizeof(uint32_t) * 1) + (sizeof(uint8_t) * 2)+ (sizeof(int16_t) * 1)];
+		
 	};
 	static u_spindle_data Spindle_Data;
+	
+	union u_check_sum
+	{
+		struct
+		{
+			uint16_t Check_Sum_Value;
+			uint16_t End_Of_Record;
+		}s_check_sum;
+		
+		char stream[(sizeof(uint16_t)*2)];
+
+	};
+	static u_check_sum Check_Sum;
+
 	protected:
 	private:
 
@@ -57,11 +72,11 @@ class c_spindle
 	
 	protected:
 	private:
+	
 	//c_spindle_rx( const c_spindle_rx &c );
 	//c_spindle_rx& operator=( const c_spindle_rx &c );
 	//c_spindle_rx();
 	//~c_spindle_rx();
 
 }; //c_spindle
-
 #endif //__C_SPINDLE_H__

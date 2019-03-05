@@ -21,6 +21,9 @@
 #include "c_cutter_comp.h"
 #include <math.h>
 #include <stdint.h>
+#include "..\..\..\..\common\NGC_RS274\NGC_M_Groups.h"
+#include "..\..\..\..\Common\NGC_RS274\NGC_G_Codes.h"
+#include "..\..\..\..\common\NGC_RS274\NGC_Errors.h"
 
 
 

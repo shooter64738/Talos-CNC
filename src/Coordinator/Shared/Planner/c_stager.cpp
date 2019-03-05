@@ -33,6 +33,10 @@
 #include "../Status/c_status.h"
 #include "c_gcode_buffer.h"
 #include "../../../Common/NGC_RS274/NGC_Interpreter.h"
+#include "../../../common/NGC_RS274/NGC_G_Groups.h"
+#include "../../../Common/NGC_RS274/NGC_G_Codes.h"
+#include "../../../common/NGC_RS274/NGC_Errors.h"
+#include "../../../common/NGC_RS274/NGC_Parameters.h"
 
 
 //uint16_t c_stager::stager_state_g_group[COUNT_OF_G_CODE_GROUPS_ARRAY]; //There are 14 groups of gcodes (0-13)

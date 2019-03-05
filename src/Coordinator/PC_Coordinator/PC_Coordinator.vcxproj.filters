@@ -55,11 +55,14 @@
     <Filter Include="Common\Spindle">
       <UniqueIdentifier>{fae15e68-424a-4c76-973c-3f107f9cc2d3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Common\NGC_RS274">
+      <UniqueIdentifier>{3dd79870-e377-4a6f-8909-806e6cd2b83e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shared\Encoder">
+      <UniqueIdentifier>{6f8ff9f1-d689-499b-9849-41a655f78490}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\Common\Hardware_Abstraction_Layer\c_hal.cpp">
-      <Filter>Common\HardwareAbstractionLayer</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Common\Serial\c_Serial.cpp">
       <Filter>Common\Serial</Filter>
     </ClCompile>
@@ -142,11 +145,23 @@
     <ClCompile Include="..\..\Spindle\c_spindle_com_bus.cpp">
       <Filter>Common\Spindle</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Common\Hardware_Abstraction_Layer\Virtual\c_core_win.cpp">
+      <Filter>Common\HardwareAbstractionLayer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Common\Hardware_Abstraction_Layer\Virtual\c_serial_win.cpp">
+      <Filter>Common\HardwareAbstractionLayer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Common\NGC_RS274\NGC_Block.cpp">
+      <Filter>Common\NGC_RS274</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Common\NGC_RS274\NGC_Interpreter.cpp">
+      <Filter>Common\NGC_RS274</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Shared\Encoder\c_encoder.cpp">
+      <Filter>Shared\Encoder</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\Common\Hardware_Abstraction_Layer\c_hal.h">
-      <Filter>Common\HardwareAbstractionLayer</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Common\Serial\c_Serial.h">
       <Filter>Common\Serial</Filter>
     </ClInclude>
@@ -247,6 +262,42 @@
     </ClInclude>
     <ClInclude Include="..\..\Spindle\c_spindle_com_bus.h">
       <Filter>Common\Spindle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\Hardware_Abstraction_Layer\Virtual\c_core_win.h">
+      <Filter>Common\HardwareAbstractionLayer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\Hardware_Abstraction_Layer\Virtual\c_serial_win.h">
+      <Filter>Common\HardwareAbstractionLayer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shared\hardware_def.h">
+      <Filter>Shared</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\NGC_RS274\NGC_Block.h">
+      <Filter>Common\NGC_RS274</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\NGC_RS274\NGC_Errors.h">
+      <Filter>Common\NGC_RS274</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\NGC_RS274\NGC_G_Codes.h">
+      <Filter>Common\NGC_RS274</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\NGC_RS274\NGC_G_Groups.h">
+      <Filter>Common\NGC_RS274</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\NGC_RS274\NGC_Interpreter.h">
+      <Filter>Common\NGC_RS274</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\NGC_RS274\NGC_M_Codes.h">
+      <Filter>Common\NGC_RS274</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\NGC_RS274\NGC_M_Groups.h">
+      <Filter>Common\NGC_RS274</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\NGC_RS274\NGC_Parameters.h">
+      <Filter>Common\NGC_RS274</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shared\Encoder\c_encoder.h">
+      <Filter>Shared\Encoder</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

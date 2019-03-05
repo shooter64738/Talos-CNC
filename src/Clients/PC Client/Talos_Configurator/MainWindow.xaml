@@ -8,6 +8,6 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="1887.582" Width="2990.163">
     <Grid>
-        <Configurator:Configurator HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+        <Button x:Name="button" Content="Button" HorizontalAlignment="Left" VerticalAlignment="Top" Width="200" Height="200" Click="button_Click"/>
     </Grid>
 </Window>

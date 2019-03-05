@@ -40,9 +40,9 @@
 #endif
 
 #ifdef MSVC
-#include "../Common/Hardware_Abstraction_Layer/Virtual/c_spindle_win.h"
-#include "../Common/Hardware_Abstraction_Layer/Virtual/c_core_win.h"
-#include "../Common/Hardware_Abstraction_Layer/Virtual/c_serial_win.h"
+#include "../../Common/Hardware_Abstraction_Layer/Virtual/c_spindle_win.h"
+#include "../../Common/Hardware_Abstraction_Layer/Virtual/c_core_win.h"
+#include "../../Common/Hardware_Abstraction_Layer/Virtual/c_serial_win.h"
 #endif
 
 #endif /* HARDWARE_DEF_H_ */

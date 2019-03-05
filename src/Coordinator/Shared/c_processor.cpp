@@ -45,6 +45,8 @@
 #include "../../Spindle/c_spindle_com_bus.h"
 #include "Encoder/c_encoder.h"
 #include "hardware_def.h"
+#include "../../common/NGC_RS274/NGC_Errors.h"
+//#include "Spindle/c_spindle.h"
 
 
 
@@ -53,23 +55,16 @@ c_Serial c_processor::controller_serial;
 c_Serial c_processor::spindle_serial;
 c_Bresenham bres;
 
-//If running this on a pc through microsoft visual C++, uncomment the MSVC define in Talos.h and recompile.
+//If running this on a pc through Microsoft visual C++, uncomment the MSVC define in Talos.h and recompile.
 void c_processor::startup()
 {
-	//c_spindle::u_spindle_data tdata;
-	//memset(tdata.stream, 0, sizeof(c_spindle::Spindle_Data.stream));
+	//c_spindle_com_bus::u_spindle_data tdata;
+	//
+	//memset(tdata.stream, 0, sizeof(c_spindle_com_bus::Spindle_Data.stream));
 	//tdata.s_spindle_detail.direction = 1;
-	//tdata.s_spindle_detail.rpm = 1234;
-	//tdata.s_spindle_detail.state = 1;
-	//
-	//for (uint8_t i = 0; i<sizeof(tdata.stream) - sizeof(tdata.s_spindle_detail.check_sum); i++)
-	//{
-		//tdata.s_spindle_detail.check_sum += tdata.stream[i];
-	//}
-	//
-	//c_spindle::ReadStream(tdata.stream);
-	//hal must init first.
-	
+	//tdata.s_spindle_detail.rpm = 0;
+	//tdata.s_spindle_detail.state = 32;
+
 	//This MUST be called first (especially for the ARM processors)
 	Hardware_Abstraction_Layer::Core::initialize();
 	//Hardware_Abstraction_Layer::Lcd::initialize();
@@ -80,10 +75,10 @@ void c_processor::startup()
 
 	Settings::c_general::initialize();
 
-	if (Settings::c_general::machine.machine_type == Settings::e_machine_types::EDM)
-	{
-		//c_edm_driver::initialize();
-	}
+	//if (Settings::c_general::machine.machine_type == Settings::e_machine_types::EDM)
+	//{
+		////c_edm_driver::initialize();
+	//}
 
 	NGC_RS274::Interpreter::Processor::initialize();
 	c_machine::initialize();
@@ -93,7 +88,7 @@ void c_processor::startup()
 	Hardware_Abstraction_Layer::Core::start_interrupts();
 	
 
-#ifdef MSVC
+	#ifdef MSVC
 	{
 		//If running this on a pc, use this line to fill the serial buffer as if it
 		//were sent from a terminal to the micro controller over a serial connection
@@ -107,7 +102,7 @@ void c_processor::startup()
 		Hardware_Abstraction_Layer::Serial::add_to_buffer(1, "ok\r<Idle|MPos:0.000,0.000,0.000,0.000,0.000,0.000|FS:0,0|Ov:100,100,100>\rok\r");//<--data from motion control
 		Hardware_Abstraction_Layer::Serial::add_to_buffer(2, "rpm=1234\rmode=torque_hold\r");//<--data from spindle control
 	}
-#endif
+	#endif
 
 	/*
 	If a controller is connected, the axis count for the controller will be used.
@@ -135,6 +130,19 @@ void c_processor::startup()
 	//c_hal::feedback.PNTR_INITIALIZE != NULL ? c_hal::feedback.PNTR_INITIALIZE() : void();
 
 	c_processor::host_serial.print_string("Ready\r");
+	
+	//uint32_t tickers=0;
+	//while(1)
+	//{
+		//tickers++;
+		//if (tickers>900000)
+		//{
+			//tickers = 0;
+			//c_spindle_com_bus::WriteStream(tdata.stream,c_processor::host_serial);
+			//tdata.s_spindle_detail.rpm++;
+			//
+		//}
+	//}
 
 	int16_t return_value = 0;
 	c_machine::synch_position();
@@ -198,7 +206,7 @@ uint16_t c_processor::prep_input()
 	If the host sends anything else before we clear the buffer full event
 	that is not a command, we will respond with a buffer full error
 	*/
-	//Host sent data, and the buffer it full. We did not send an ok response, host shoudl have waited.. bad host.. 
+	//Host sent data, and the buffer it full. We did not send an ok response, host shoudl have waited.. bad host..
 	if (host_serial.HasEOL() && c_data_events::get_event(Data_Events::NGC_BUFFER_FULL))
 	{
 		//Throw away data that comes in when the buffer is full.
@@ -258,7 +266,7 @@ uint16_t c_processor::prep_input()
 				}
 			}
 			//Block was interpreted, staged, and sent to the machine (which sent it to the motion controller).
-			//The line should be complete now and the current serial buffer moved to the next eol position. 
+			//The line should be complete now and the current serial buffer moved to the next eol position.
 			//Tell the host we did good!
 			host_serial.print_string("ok:\r");
 

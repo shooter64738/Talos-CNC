@@ -1,5 +1,5 @@
 /*
-*  c_state_manager.h - NGC_RS274 controller.
+*  c_processor.h - NGC_RS274 controller.
 *  A component of Talos
 *
 *  Copyright (c) 2016-2019 Jeff Dill
@@ -18,36 +18,15 @@
 *  along with Talos.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "..\Talos.h"
+#ifndef __C_SPINDLE_H__
+#define __C_SPINDLE_H__
+#include "../std_types.h"
+#include "../talos.h"
+#include "../Common/Serial/s_buffer.h"
 
-#ifndef __C_STATE_H__
-#define __C_STATE_H__
-
-
-namespace Spindle_Controller
+namespace Coordinator
 {
-	class c_state_manager
-	{
-		//variables
-		public:
-		protected:
-		private:
+#include "../../../Spindle/c_spindle_com_bus.h"
+}; 
 
-		//functions
-		public:
-		static uint8_t check_driver_state();
-		static uint8_t process_state(float CurrentRPM);
-		static float current_rpm;
-
-		protected:
-		private:
-		//c_state_manager( const c_state_manager &c );
-		//c_state_manager& operator=( const c_state_manager &c );
-		//c_state_manager();
-		//~c_state_manager();
-
-	
-		
-	}; //c_state
-};
-#endif //__C_STATE_H__
+#endif //__C_SPINDLE_H__

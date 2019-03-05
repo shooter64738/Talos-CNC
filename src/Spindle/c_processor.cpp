@@ -28,6 +28,9 @@
 #include "c_pid.h"
 #include "hardware_def.h"
 #include "c_settings.h"
+#include "../common/NGC_RS274/NGC_M_Codes.h"
+#include "../common/NGC_RS274/NGC_M_Groups.h"
+#include "../common/NGC_RS274/NGC_Errors.h"
 
 
 c_Serial Spindle_Controller::c_processor::host_serial;

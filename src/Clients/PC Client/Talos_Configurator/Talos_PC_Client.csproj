@@ -110,6 +110,16 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Message_Types\Message_Serializer\Message_Serializer.csproj">
+      <Project>{0ef25bd1-bcf0-4e25-bc4c-a63a26be4447}</Project>
+      <Name>Message_Serializer</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Serial_Library\Serial_Library.csproj">
+      <Project>{e14f4f6c-7684-40e8-9bfc-55ead5d31eee}</Project>
+      <Name>Serial_Library</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

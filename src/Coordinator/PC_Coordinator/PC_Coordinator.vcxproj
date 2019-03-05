@@ -77,12 +77,16 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Common\Bresenham\c_Bresenham.cpp" />
-    <ClCompile Include="..\..\Common\Hardware_Abstraction_Layer\c_hal.cpp" />
+    <ClCompile Include="..\..\Common\Hardware_Abstraction_Layer\Virtual\c_core_win.cpp" />
+    <ClCompile Include="..\..\Common\Hardware_Abstraction_Layer\Virtual\c_serial_win.cpp" />
     <ClCompile Include="..\..\Common\MotionControllerInterface\c_motion_controller.cpp" />
     <ClCompile Include="..\..\Common\MotionControllerInterface\c_motion_controller_settings.cpp" />
+    <ClCompile Include="..\..\Common\NGC_RS274\NGC_Block.cpp" />
+    <ClCompile Include="..\..\Common\NGC_RS274\NGC_Interpreter.cpp" />
     <ClCompile Include="..\..\Common\Serial\c_Serial.cpp" />
     <ClCompile Include="..\..\Spindle\c_spindle_com_bus.cpp" />
     <ClCompile Include="..\Shared\c_processor.cpp" />
+    <ClCompile Include="..\Shared\Encoder\c_encoder.cpp" />
     <ClCompile Include="..\Shared\Events\c_block_events.cpp" />
     <ClCompile Include="..\Shared\Events\c_data_events.cpp" />
     <ClCompile Include="..\Shared\Events\c_events.cpp" />
@@ -108,9 +112,18 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Common\Bresenham\c_Bresenham.h" />
-    <ClInclude Include="..\..\Common\Hardware_Abstraction_Layer\c_hal.h" />
+    <ClInclude Include="..\..\Common\Hardware_Abstraction_Layer\Virtual\c_core_win.h" />
+    <ClInclude Include="..\..\Common\Hardware_Abstraction_Layer\Virtual\c_serial_win.h" />
     <ClInclude Include="..\..\Common\MotionControllerInterface\c_motion_controller.h" />
     <ClInclude Include="..\..\Common\MotionControllerInterface\c_motion_controller_settings.h" />
+    <ClInclude Include="..\..\Common\NGC_RS274\NGC_Block.h" />
+    <ClInclude Include="..\..\Common\NGC_RS274\NGC_Errors.h" />
+    <ClInclude Include="..\..\Common\NGC_RS274\NGC_G_Codes.h" />
+    <ClInclude Include="..\..\Common\NGC_RS274\NGC_G_Groups.h" />
+    <ClInclude Include="..\..\Common\NGC_RS274\NGC_Interpreter.h" />
+    <ClInclude Include="..\..\Common\NGC_RS274\NGC_M_Codes.h" />
+    <ClInclude Include="..\..\Common\NGC_RS274\NGC_M_Groups.h" />
+    <ClInclude Include="..\..\Common\NGC_RS274\NGC_Parameters.h" />
     <ClInclude Include="..\..\Common\Serial\c_Serial.h" />
     <ClInclude Include="..\..\Common\Serial\s_buffer.h" />
     <ClInclude Include="..\..\helpers.h" />
@@ -120,11 +133,13 @@
     <ClInclude Include="..\..\std_types.h" />
     <ClInclude Include="..\..\Talos.h" />
     <ClInclude Include="..\Shared\c_processor.h" />
+    <ClInclude Include="..\Shared\Encoder\c_encoder.h" />
     <ClInclude Include="..\Shared\Events\c_block_events.h" />
     <ClInclude Include="..\Shared\Events\c_data_events.h" />
     <ClInclude Include="..\Shared\Events\c_events.h" />
     <ClInclude Include="..\Shared\Events\c_motion_control_events.h" />
     <ClInclude Include="..\Shared\Events\c_motion_events.h" />
+    <ClInclude Include="..\Shared\hardware_def.h" />
     <ClInclude Include="..\Shared\Interpolation\c_closed_loop.h" />
     <ClInclude Include="..\Shared\Machine\c_machine.h" />
     <ClInclude Include="..\Shared\MotionControllerInterface\ExternalControllers\GRBL\c_Grbl.h" />
@@ -145,11 +160,6 @@
     <ClInclude Include="..\Shared\Status\c_status.h" />
     <ClInclude Include="..\Shared\System\c_parameter_table.h" />
     <ClInclude Include="..\Shared\System\tool_table.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\Torch Height Control\Projects\PC\PC_Torch_Control.vcxproj">
-      <Project>{7441f880-c918-411f-bc16-17bf9f62d426}</Project>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

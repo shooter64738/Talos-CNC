@@ -42,6 +42,8 @@ the correct axis should be engaged without having to figure out which plane you 
 #include "..\..\c_processor.h"
 #include <string.h>
 #include "..\..\System\c_parameter_table.h"
+#include "..\..\..\..\common\NGC_RS274\NGC_G_Groups.h"
+#include "..\..\..\..\Common\NGC_RS274\NGC_G_Codes.h"
 //I think we could 'point' to these values in a block, but what if a user specified
 //a Q,L,R value after the cycle was started... Might be risky.
 float c_canned_cycle::Z_at_start = 0;

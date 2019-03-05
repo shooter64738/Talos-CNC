@@ -30,21 +30,21 @@
     <EraseKey />
     <AsfFrameworkConfig>
       <framework-data>
-  <options />
-  <configurations />
-  <files />
-  <documentation help="" />
-  <offline-documentation help="" />
-  <dependencies>
-    <content-extension eid="atmel.asf" uuidref="Atmel.ASF" version="3.26.0" />
-  </dependencies>
-</framework-data>
+        <options />
+        <configurations />
+        <files />
+        <documentation help="" />
+        <offline-documentation help="" />
+        <dependencies>
+          <content-extension eid="atmel.asf" uuidref="Atmel.ASF" version="3.37" />
+        </dependencies>
+      </framework-data>
     </AsfFrameworkConfig>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <ToolchainSettings>
       <AvrGccCpp>
-  <avrgcc.common.Device>-mmcu=atmega2560 -B "%24(PackRepoDir)\atmel\ATmega_DFP\1.2.150\gcc\dev\atmega2560"</avrgcc.common.Device>
+  <avrgcc.common.Device>-mmcu=atmega2560 -B "%24(PackRepoDir)\atmel\ATmega_DFP\1.2.209\gcc\dev\atmega2560"</avrgcc.common.Device>
   <avrgcc.common.optimization.RelaxBranches>True</avrgcc.common.optimization.RelaxBranches>
   <avrgcc.common.outputfiles.hex>True</avrgcc.common.outputfiles.hex>
   <avrgcc.common.outputfiles.lss>True</avrgcc.common.outputfiles.lss>
@@ -60,7 +60,7 @@
   </avrgcc.compiler.symbols.DefSymbols>
   <avrgcc.compiler.directories.IncludePaths>
     <ListValues>
-      <Value>%24(PackRepoDir)\atmel\ATmega_DFP\1.2.150\include</Value>
+      <Value>%24(PackRepoDir)\atmel\ATmega_DFP\1.2.209\include</Value>
     </ListValues>
   </avrgcc.compiler.directories.IncludePaths>
   <avrgcc.compiler.optimization.level>Optimize for size (-Os)</avrgcc.compiler.optimization.level>
@@ -76,7 +76,7 @@
   </avrgcccpp.compiler.symbols.DefSymbols>
   <avrgcccpp.compiler.directories.IncludePaths>
     <ListValues>
-      <Value>%24(PackRepoDir)\atmel\ATmega_DFP\1.2.150\include</Value>
+      <Value>%24(PackRepoDir)\atmel\ATmega_DFP\1.2.209\include</Value>
     </ListValues>
   </avrgcccpp.compiler.directories.IncludePaths>
   <avrgcccpp.compiler.optimization.level>Optimize for size (-Os)</avrgcccpp.compiler.optimization.level>
@@ -87,7 +87,6 @@
     <ListValues>
       <Value>libm</Value>
       <Value>libAVR_2560.a</Value>
-      <Value>libAVR_2560_Interpreter.a</Value>
     </ListValues>
   </avrgcccpp.linker.libraries.Libraries>
   <avrgcccpp.linker.libraries.LibrarySearchPaths>
@@ -103,7 +102,7 @@
   </avrgcccpp.linker.libraries.LibrarySearchPaths>
   <avrgcccpp.assembler.general.IncludePaths>
     <ListValues>
-      <Value>%24(PackRepoDir)\atmel\ATmega_DFP\1.2.150\include</Value>
+      <Value>%24(PackRepoDir)\atmel\ATmega_DFP\1.2.209\include</Value>
     </ListValues>
   </avrgcccpp.assembler.general.IncludePaths>
 </AvrGccCpp>
@@ -112,7 +111,7 @@
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <ToolchainSettings>
       <AvrGccCpp>
-  <avrgcc.common.Device>-mmcu=atmega2560 -B "%24(PackRepoDir)\atmel\ATmega_DFP\1.2.150\gcc\dev\atmega2560"</avrgcc.common.Device>
+  <avrgcc.common.Device>-mmcu=atmega2560 -B "%24(PackRepoDir)\atmel\ATmega_DFP\1.2.209\gcc\dev\atmega2560"</avrgcc.common.Device>
   <avrgcc.common.optimization.RelaxBranches>True</avrgcc.common.optimization.RelaxBranches>
   <avrgcc.common.outputfiles.hex>True</avrgcc.common.outputfiles.hex>
   <avrgcc.common.outputfiles.lss>True</avrgcc.common.outputfiles.lss>
@@ -128,7 +127,7 @@
   </avrgcc.compiler.symbols.DefSymbols>
   <avrgcc.compiler.directories.IncludePaths>
     <ListValues>
-      <Value>%24(PackRepoDir)\atmel\ATmega_DFP\1.2.150\include</Value>
+      <Value>%24(PackRepoDir)\atmel\ATmega_DFP\1.2.209\include</Value>
     </ListValues>
   </avrgcc.compiler.directories.IncludePaths>
   <avrgcc.compiler.optimization.level>Optimize (-O1)</avrgcc.compiler.optimization.level>
@@ -145,7 +144,7 @@
   </avrgcccpp.compiler.symbols.DefSymbols>
   <avrgcccpp.compiler.directories.IncludePaths>
     <ListValues>
-      <Value>%24(PackRepoDir)\atmel\ATmega_DFP\1.2.150\include</Value>
+      <Value>%24(PackRepoDir)\atmel\ATmega_DFP\1.2.209\include</Value>
     </ListValues>
   </avrgcccpp.compiler.directories.IncludePaths>
   <avrgcccpp.compiler.optimization.level>Optimize (-O1)</avrgcccpp.compiler.optimization.level>
@@ -157,18 +156,11 @@
   <avrgcccpp.linker.libraries.Libraries>
     <ListValues>
       <Value>libm</Value>
-      <Value>libAVR_2560_Interpreter.a</Value>
     </ListValues>
   </avrgcccpp.linker.libraries.Libraries>
-  <avrgcccpp.linker.libraries.LibrarySearchPaths>
-    <ListValues>
-      <Value>../../../Common/Hardware_Abstraction_Layer/AVR_2560/Debug</Value>
-      <Value>../../../Common/NGC_RS274/Projects/AVR_2560/Debug</Value>
-    </ListValues>
-  </avrgcccpp.linker.libraries.LibrarySearchPaths>
   <avrgcccpp.assembler.general.IncludePaths>
     <ListValues>
-      <Value>%24(PackRepoDir)\atmel\ATmega_DFP\1.2.150\include</Value>
+      <Value>%24(PackRepoDir)\atmel\ATmega_DFP\1.2.209\include</Value>
     </ListValues>
   </avrgcccpp.assembler.general.IncludePaths>
   <avrgcccpp.assembler.debugging.DebugLevel>Default (-Wa,-g)</avrgcccpp.assembler.debugging.DebugLevel>
@@ -226,6 +218,46 @@
     <Compile Include="..\..\Common\MotionControllerInterface\c_motion_controller_settings.h">
       <SubType>compile</SubType>
       <Link>AVR_Coordinator\MotionControllerInterface\c_motion_controller_settings.h</Link>
+    </Compile>
+    <Compile Include="..\..\Common\NGC_RS274\NGC_Block.cpp">
+      <SubType>compile</SubType>
+      <Link>Common\NGC_RS274\NGC_Block.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\Common\NGC_RS274\NGC_Block.h">
+      <SubType>compile</SubType>
+      <Link>Common\NGC_RS274\NGC_Block.h</Link>
+    </Compile>
+    <Compile Include="..\..\Common\NGC_RS274\NGC_Errors.h">
+      <SubType>compile</SubType>
+      <Link>Common\NGC_RS274\NGC_Errors.h</Link>
+    </Compile>
+    <Compile Include="..\..\Common\NGC_RS274\NGC_G_Codes.h">
+      <SubType>compile</SubType>
+      <Link>Common\NGC_RS274\NGC_G_Codes.h</Link>
+    </Compile>
+    <Compile Include="..\..\Common\NGC_RS274\NGC_G_Groups.h">
+      <SubType>compile</SubType>
+      <Link>Common\NGC_RS274\NGC_G_Groups.h</Link>
+    </Compile>
+    <Compile Include="..\..\Common\NGC_RS274\NGC_Interpreter.cpp">
+      <SubType>compile</SubType>
+      <Link>Common\NGC_RS274\NGC_Interpreter.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\Common\NGC_RS274\NGC_Interpreter.h">
+      <SubType>compile</SubType>
+      <Link>Common\NGC_RS274\NGC_Interpreter.h</Link>
+    </Compile>
+    <Compile Include="..\..\Common\NGC_RS274\NGC_M_Codes.h">
+      <SubType>compile</SubType>
+      <Link>Common\NGC_RS274\NGC_M_Codes.h</Link>
+    </Compile>
+    <Compile Include="..\..\Common\NGC_RS274\NGC_M_Groups.h">
+      <SubType>compile</SubType>
+      <Link>Common\NGC_RS274\NGC_M_Groups.h</Link>
+    </Compile>
+    <Compile Include="..\..\Common\NGC_RS274\NGC_Parameters.h">
+      <SubType>compile</SubType>
+      <Link>Common\NGC_RS274\NGC_Parameters.h</Link>
     </Compile>
     <Compile Include="..\..\Common\Serial\c_Serial.cpp">
       <SubType>compile</SubType>
@@ -439,6 +471,10 @@
       <SubType>compile</SubType>
       <Link>AVR_Coordinator\Settings\c_Turn.h</Link>
     </Compile>
+    <Compile Include="..\Shared\Spindle\c_spindle.h">
+      <SubType>compile</SubType>
+      <Link>AVR_Coordinator\Spindle\c_spindle.h</Link>
+    </Compile>
     <Compile Include="..\Shared\Status\c_status.cpp">
       <SubType>compile</SubType>
       <Link>AVR_Coordinator\Status\c_status.cpp</Link>
@@ -483,6 +519,7 @@
     <Folder Include="Common\Bresenham" />
     <Folder Include="Common\Hardware Abstraction Layer" />
     <Folder Include="Common\Hardware Abstraction Layer\AVR 2560" />
+    <Folder Include="Common\NGC_RS274" />
     <Folder Include="Common\Serial\" />
   </ItemGroup>
   <Import Project="$(AVRSTUDIO_EXE_PATH)\\Vs\\Compiler.targets" />

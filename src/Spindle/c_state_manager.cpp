@@ -18,13 +18,17 @@
 *  along with Talos.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
+#include "..\common\NGC_RS274\NGC_M_Groups.h"
+#include "..\common\NGC_RS274\NGC_M_Codes.h"
+#include "..\common\NGC_RS274\NGC_Errors.h"
 #include "c_state_manager.h"
 #include "c_driver.h"
 #include "c_encoder.h"
 #include "c_processor.h"
 #include "c_pid.h"
 #include "hardware_def.h"
+
+
 
 float Spindle_Controller::c_state_manager::current_rpm = 0;
 

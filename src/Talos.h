@@ -1,4 +1,4 @@
- /*
+  /*
 *  Talos.h - NGC_RS274 controller.
 *  A component of Talos
 *
@@ -58,22 +58,6 @@
 #define max(a,b) (((a) > (b)) ? (a) : (b))
 #define min(a,b) (((a) < (b)) ? (a) : (b))
 
-//#define bit_get(p,m) ((p) & (m))
-//#define bit_set(p,m) ((p) |= (m))
-//#define bit_clear(p,m) ((p) &= ~(m))
-//#define bit_flip(p,m) ((p) ^= (m))
-//#define bit_write(c,p,m) (c ? bit_set(p,m) : bit_clear(p,m))
-//#define BIT(x) (1 << (x))
-//#define LONGBIT(x) ((unsigned long)0x00000001 << (x))
-
-
-#include "common/NGC_RS274/NGC_G_Groups.h"
-#include "common/NGC_RS274/NGC_M_Groups.h"
-#include "common/NGC_RS274/NGC_G_Codes.h"
-#include "common/NGC_RS274/NGC_M_Codes.h"
-#include "common/NGC_RS274/NGC_Errors.h"
-#include "common/NGC_RS274/NGC_Parameters.h"
-//#include "Serial/c_Serial.h"
 #include "helpers.h"
 #include "numeric_converters.h"
 
@@ -82,11 +66,11 @@ These defines are used in the motion driver project. Only modify these for
  the motion driver, NOT the coordinator or spindle driver
 */
 
-#define MOTION_DRIVE_BUFFER_SIZE 20
+//#define MOTION_DRIVE_BUFFER_SIZE 20
 
-// Speed ramp states
-#define STOP  0
-#define ACCEL 1
-#define DECEL 2
-#define RUN   3
+//// Speed ramp states
+//#define STOP  0
+//#define ACCEL 1
+//#define DECEL 2
+//#define RUN   3
 #endif /* TALOS_H_*/
