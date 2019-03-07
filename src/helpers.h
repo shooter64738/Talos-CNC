@@ -32,13 +32,12 @@
 #define Bit(x) (0x01 << (x))
 #define LongBit(x) ((unsigned long)0x00000001 << (x))
 
-//#define bit_get(p,m) ((p) & (m))
-//#define bit_set(p,m) ((p) |= (m))
-//#define bit_clear(p,m) ((p) &= ~(m))
-//#define bit_flip(p,m) ((p) ^= (m))
-//#define bit_write(c,p,m) (c ? bit_set(p,m) : bit_clear(p,m))
-//#define BIT(x) (1 << (x))
-//#define LONGBIT(x) ((unsigned long)0x00000001 << (x))
+//Copied from grbl. These macros shoudl be chagned out eventualy. 
+#define bit(n) (1 << (n))
+#define bit_true(x,mask) ((x) |= (mask))
+#define bit_false(x,mask) ((x) &= ~(mask))
+#define bit_istrue(x,mask) (((x) & (mask)) != 0)
+#define bit_isfalse(x,mask) (((x) & (mask)) == 0)
 
 
 #endif /* HELPERS_H_ */

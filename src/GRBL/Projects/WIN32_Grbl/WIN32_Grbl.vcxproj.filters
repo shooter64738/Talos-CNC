@@ -1,0 +1,71 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Common">
+      <UniqueIdentifier>{6d745b62-6d6a-40d8-ad37-6af3843faeb3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shared">
+      <UniqueIdentifier>{f07fb087-5757-4e9a-9f04-a4e828496f47}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\c_coolant.cpp" />
+    <ClCompile Include="..\..\c_eeprom.cpp" />
+    <ClCompile Include="..\..\c_gcode.cpp" />
+    <ClCompile Include="..\..\c_jog.cpp" />
+    <ClCompile Include="..\..\c_limits.cpp" />
+    <ClCompile Include="..\..\c_motion_control.cpp" />
+    <ClCompile Include="..\..\c_planner.cpp" />
+    <ClCompile Include="..\..\c_print.cpp" />
+    <ClCompile Include="..\..\c_probe.cpp" />
+    <ClCompile Include="..\..\c_protocol.cpp" />
+    <ClCompile Include="..\..\c_report.cpp" />
+    <ClCompile Include="..\..\c_serial.cpp" />
+    <ClCompile Include="..\..\c_settings.cpp" />
+    <ClCompile Include="..\..\c_spindle.cpp" />
+    <ClCompile Include="..\..\c_stepper.cpp" />
+    <ClCompile Include="..\..\c_system.cpp" />
+    <ClCompile Include="..\..\main.cpp" />
+    <ClCompile Include="..\..\utils.cpp" />
+    <ClCompile Include="..\..\..\Common\Hardware_Abstraction_Layer\Virtual\c_core_win.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Common\Hardware_Abstraction_Layer\Virtual\c_eeprom_win.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Common\Hardware_Abstraction_Layer\Virtual\c_serial_win.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\helpers.h" />
+    <ClInclude Include="..\..\Talos.h" />
+    <ClInclude Include="..\..\all_includes.h" />
+    <ClInclude Include="..\..\c_coolant.h" />
+    <ClInclude Include="..\..\c_eeprom.h" />
+    <ClInclude Include="..\..\c_gcode.h" />
+    <ClInclude Include="..\..\c_jog.h" />
+    <ClInclude Include="..\..\c_limits.h" />
+    <ClInclude Include="..\..\c_motion_control.h" />
+    <ClInclude Include="..\..\c_planner.h" />
+    <ClInclude Include="..\..\c_print.h" />
+    <ClInclude Include="..\..\c_probe.h" />
+    <ClInclude Include="..\..\c_protocol.h" />
+    <ClInclude Include="..\..\c_report.h" />
+    <ClInclude Include="..\..\c_serial.h" />
+    <ClInclude Include="..\..\c_settings.h" />
+    <ClInclude Include="..\..\c_spindle.h" />
+    <ClInclude Include="..\..\c_stepper.h" />
+    <ClInclude Include="..\..\c_system.h" />
+    <ClInclude Include="..\..\utils.h" />
+    <ClInclude Include="..\..\..\Common\Hardware_Abstraction_Layer\Virtual\c_core_win.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Common\Hardware_Abstraction_Layer\Virtual\c_eeprom_win.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Common\Hardware_Abstraction_Layer\Virtual\c_serial_win.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

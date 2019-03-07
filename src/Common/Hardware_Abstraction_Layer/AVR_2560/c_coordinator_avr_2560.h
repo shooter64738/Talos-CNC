@@ -48,8 +48,8 @@ namespace Hardware_Abstraction_Layer
 		
 		protected:
 		private:
-		static void _set_pcint0();
-		static void _set_pcint2();
+		static void _configure_pulse_count_pins();
+		static void _configure_direction_change_pins();
 
 		
 	}; //control_type_coordinator

@@ -21,11 +21,11 @@ void Hardware_Abstraction_Layer::Coordination::initialize()
 	//control_type::_set_encoder_inputs();
 	//control_type::_set_timer1_capture_input();
 	//control_type::_set_control_outputs();
-	Hardware_Abstraction_Layer::Coordination::_set_pcint0();
-	Hardware_Abstraction_Layer::Coordination::_set_pcint2();
+	Hardware_Abstraction_Layer::Coordination::_configure_pulse_count_pins();
+	Hardware_Abstraction_Layer::Coordination::_configure_direction_change_pins();
 }
 
-void Hardware_Abstraction_Layer::Coordination::_set_pcint0()
+void Hardware_Abstraction_Layer::Coordination::_configure_pulse_count_pins()
 {
 	PORTB=0; //<--Initially make this input so we can get the pin values.
 	DDRB=0;
@@ -42,7 +42,7 @@ void Hardware_Abstraction_Layer::Coordination::_set_pcint0()
 	PCIFR |= (1<<PCIF0);
 
 }
-void Hardware_Abstraction_Layer::Coordination::_set_pcint2()
+void Hardware_Abstraction_Layer::Coordination::_configure_direction_change_pins()
 {
 	//Pulse pin monitoring..
 	PORTK=0; //<--Initially make this input so we can get the pin values.
@@ -58,17 +58,6 @@ void Hardware_Abstraction_Layer::Coordination::_set_pcint2()
 	PCIFR |= (1<<PCIF2);
 
 }
-
-//ISR(TIMER1_COMPA_vect)
-//{
-	//
-	////c_cpu_AVR_2560::driver_drive();
-//}
-//
-//ISR(TIMER0_OVF_vect)
-//{
-	////c_cpu_AVR_2560::driver_reset();
-//}
 
 ISR(PCINT2_vect)
 {

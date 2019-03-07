@@ -13,6 +13,8 @@ Project("{E66E83B9-2572-4076-B26E-6BE79FF3018A}") = "AVR_EDM_Drive", "EDM_Drive\
 EndProject
 Project("{E66E83B9-2572-4076-B26E-6BE79FF3018A}") = "AVR_328_Spindle", "Spindle\Projects\AVR\AVR_328_Spindle\AVR_328_Spindle.cppproj", "{30833530-04CD-46C5-ACF9-1109B1D0FC0D}"
 EndProject
+Project("{E66E83B9-2572-4076-B26E-6BE79FF3018A}") = "AVR_2560_GRBL", "GRBL\Projects\AVR\AVR_2560_Grbl\AVR_2560_GRBL.cppproj", "{9DCD3F4E-09CE-4A64-8500-FDA8B3D56129}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|AVR = Debug|AVR
@@ -39,6 +41,10 @@ Global
 		{30833530-04CD-46C5-ACF9-1109B1D0FC0D}.Debug|AVR.Build.0 = Debug|AVR
 		{30833530-04CD-46C5-ACF9-1109B1D0FC0D}.Release|AVR.ActiveCfg = Release|AVR
 		{30833530-04CD-46C5-ACF9-1109B1D0FC0D}.Release|AVR.Build.0 = Release|AVR
+		{9DCD3F4E-09CE-4A64-8500-FDA8B3D56129}.Debug|AVR.ActiveCfg = Debug|AVR
+		{9DCD3F4E-09CE-4A64-8500-FDA8B3D56129}.Debug|AVR.Build.0 = Debug|AVR
+		{9DCD3F4E-09CE-4A64-8500-FDA8B3D56129}.Release|AVR.ActiveCfg = Release|AVR
+		{9DCD3F4E-09CE-4A64-8500-FDA8B3D56129}.Release|AVR.Build.0 = Release|AVR
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
