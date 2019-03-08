@@ -21,7 +21,7 @@
  */
 
 #include "c_eeprom.h"
-#include <avr/eeprom.h>
+//#include <avr/eeprom.h>
 
 uint8_t c_eeprom::calck_checksum(const void *buf, size_t size)
 {

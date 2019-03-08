@@ -10,12 +10,19 @@
 #define __C_CORE_AVR_2560_H__
 #define F_CPU 16000000UL
 #include <stdint.h>
+#include <avr/pgmspace.h>
+#include <util/delay.h>
+
+#define Hardware_Abstraction_Layer_Core_pgm_read_byte_near pgm_read_byte_near
+#define Hardware_Abstraction_Layer_Core_PSTR PSTR
+
 namespace Hardware_Abstraction_Layer
 {
 	class Core
 	{
 		//variables
 		public:
+		static uint8_t register_at_int_stop;
 		protected:
 		private:
 
@@ -25,6 +32,9 @@ namespace Hardware_Abstraction_Layer
 		static void start_interrupts();
 		static void stop_interrupts();
 		static uint32_t get_cpu_clock_rate();
+		
+		static void delay_ms(uint16_t delay_time);
+		static void delay_us(uint16_t delay_time);
 		protected:
 		private:
 		

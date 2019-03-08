@@ -38,6 +38,7 @@ class c_serial
 	// Writes one byte to the TX serial buffer. Called by main program.
 	static void serial_write(uint8_t data);
 
+	static void serial_tx_event(uint8_t data);
 	// Fetches the first byte in the serial read buffer. Called by main program.
 	static uint8_t serial_read();
 

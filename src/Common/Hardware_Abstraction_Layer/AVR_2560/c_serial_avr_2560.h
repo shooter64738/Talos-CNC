@@ -26,6 +26,8 @@ namespace Hardware_Abstraction_Layer
 		static void initialize(uint8_t Port, uint32_t BaudRate);
 		static void send(uint8_t Port, char byte);
 
+		static void disable_tx_isr();
+		static void enable_tx_isr();
 		protected:
 		private:
 		

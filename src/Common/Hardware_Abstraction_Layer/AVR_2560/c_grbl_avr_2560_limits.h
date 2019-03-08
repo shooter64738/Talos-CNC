@@ -5,7 +5,7 @@
 * Author: jeff_d
 */
 
-
+#ifdef __AVR_ATmega2560__
 #ifndef __C_GRBL_AVR_2560_LIMITS_H__
 #define __C_GRBL_AVR_2560_LIMITS_H__
 
@@ -52,3 +52,4 @@ namespace Hardware_Abstraction_Layer
 	};
 };
 #endif //__C_GRBL_AVR_2560_LIMITS_H__
+#endif

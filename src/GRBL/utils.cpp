@@ -1,6 +1,8 @@
 #include "utils.h"
 #include "c_system.h"
 #include "all_includes.h"
+#include "hardware_def.h"
+
 /*
  * utils.cpp
  *
@@ -138,49 +140,49 @@
 				 return;
 			 } // Bail, if safety door reopens.
 		 }
-		 _delay_ms(DWELL_TIME_STEP); // Delay DWELL_TIME_STEP increment
+		  Hardware_Abstraction_Layer::Core::delay_ms(DWELL_TIME_STEP); // Delay DWELL_TIME_STEP increment
 	 }
  }
 
  // Delays variable defined milliseconds. Compiler compatibility fix for _delay_ms(),
  // which only accepts constants in future compiler releases.
- void utils::delay_ms(uint16_t ms)
- {
-	 while (ms--)
-	 {
-		 _delay_ms(1);
-	 }
- }
+ //void utils::delay_ms(uint16_t ms)
+ //{
+	 //while (ms--)
+	 //{
+		 //Hardware_Abstraction_Layer::Core::blocking_delay_ms(1);
+	 //}
+ //}
 
  // Delays variable defined microseconds. Compiler compatibility fix for _delay_us(),
  // which only accepts constants in future compiler releases. Written to perform more
  // efficiently with larger delays, as the counter adds parasitic time in each iteration.
- void utils::delay_us(uint32_t us)
- {
-	 while (us)
-	 {
-		 if (us < 10)
-		 {
-			 _delay_us(1);
-			 us--;
-		 }
-		 else if (us < 100)
-		 {
-			 _delay_us(10);
-			 us -= 10;
-		 }
-		 else if (us < 1000)
-		 {
-			 _delay_us(100);
-			 us -= 100;
-		 }
-		 else
-		 {
-			 _delay_ms(1);
-			 us -= 1000;
-		 }
-	 }
- }
+ //void utils::delay_us(uint32_t us)
+ //{
+	 //while (us)
+	 //{
+		 //if (us < 10)
+		 //{
+			 //Hardware_Abstraction_Layer::Core::blocking_delay_us(1);
+			 //us--;
+		 //}
+		 //else if (us < 100)
+		 //{
+			 //Hardware_Abstraction_Layer::Core::blocking_delay_us(10);
+			 //us -= 10;
+		 //}
+		 //else if (us < 1000)
+		 //{
+			 //Hardware_Abstraction_Layer::Core::blocking_delay_us(100);
+			 //us -= 100;
+		 //}
+		 //else
+		 //{
+			 //Hardware_Abstraction_Layer::Core::blocking_delay_ms(1);
+			 //us -= 1000;
+		 //}
+	 //}
+ //}
 
  // Simple hypotenuse computation function.
  float utils::hypot_f(float x, float y)

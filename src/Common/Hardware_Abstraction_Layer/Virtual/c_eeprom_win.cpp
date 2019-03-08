@@ -27,11 +27,22 @@ void Hardware_Abstraction_Layer::Eeprom::initialize()
 {
 
 }
-void Hardware_Abstraction_Layer::Eeprom::update_block(const char* data, uint16_t size )
+void Hardware_Abstraction_Layer::Eeprom::update_block(const char* data, uint16_t size)
 {
-	
+	//eeprom_write_block(data, (void*)0, size);
 }
-void Hardware_Abstraction_Layer::Eeprom::read_block(char* data, uint16_t size )
+void Hardware_Abstraction_Layer::Eeprom::read_block(char* data, uint16_t size)
 {
-	
+	//eeprom_read_block(data, 0, size);
+}
+
+void Hardware_Abstraction_Layer::Eeprom::_eeprom_write_byte(char* data, uint16_t size)
+{
+	//eeprom_write_byte(NULL, SETTINGS_VERSION);
+	//eeprom_write_byte(NULL, 10);
+}
+
+uint8_t Hardware_Abstraction_Layer::Eeprom::_eeprom_read_byte(uint8_t* data)
+{
+	//return eeprom_read_byte(data);
 }

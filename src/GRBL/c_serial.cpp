@@ -29,12 +29,12 @@
 
 #include "c_serial.h"
 #include "c_system.h"
-#include <avr/interrupt.h>
+//#include <avr/interrupt.h>
 #include "all_includes.h"
 #include "c_motion_control.h"
-//#include "serial.h"
-//#include "grbl.h"
-//#include "cpu_map.h"
+//#include "..\Common\Hardware_Abstraction_Layer\AVR_2560\c_serial_avr_2560.h"
+//#include "..\Common\Hardware_Abstraction_Layer\AVR_2560\c_grbl_avr_2560_control.h"
+#include "hardware_def.h"
 
 #define RX_RING_BUFFER (RX_BUFFER_SIZE+1)
 #define TX_RING_BUFFER (TX_BUFFER_SIZE+1)
@@ -84,21 +84,24 @@ uint8_t c_serial::serial_get_tx_buffer_count()
 
 void c_serial::serial_init()
 {
-    // Set baud rate
-#if BAUD_RATE < 57600
-    uint16_t UBRR0_value = ((F_CPU / (8L * BAUD_RATE)) - 1)/2;
-    UCSR0A &= ~(1 << U2X0); // baud doubler off  - Only needed on Uno XXX
-#else
-    uint16_t UBRR0_value = ((F_CPU / (4L * BAUD_RATE)) - 1) / 2;
-    UCSR0A |= (1 << U2X0);  // baud doubler on for high baud rates, i.e. 115200
-#endif
-    UBRR0H = UBRR0_value >> 8;
-    UBRR0L = UBRR0_value;
+Hardware_Abstraction_Layer::Serial::initialize(0,115200);
 
-    // enable rx, tx, and interrupt on complete reception of a byte
-    UCSR0B |= (1 << RXEN0 | 1 << TXEN0 | 1 << RXCIE0);
-
-    // defaults to 8-bit, no parity, 1 stop bit
+//
+    //// Set baud rate
+//#if BAUD_RATE < 57600
+    //uint16_t UBRR0_value = ((F_CPU / (8L * BAUD_RATE)) - 1)/2;
+    //UCSR0A &= ~(1 << U2X0); // baud doubler off  - Only needed on Uno XXX
+//#else
+    //uint16_t UBRR0_value = ((F_CPU / (4L * BAUD_RATE)) - 1) / 2;
+    //UCSR0A |= (1 << U2X0);  // baud doubler on for high baud rates, i.e. 115200
+//#endif
+    //UBRR0H = UBRR0_value >> 8;
+    //UBRR0L = UBRR0_value;
+//
+    //// enable rx, tx, and interrupt on complete reception of a byte
+    //UCSR0B |= (1 << RXEN0 | 1 << TXEN0 | 1 << RXCIE0);
+//
+    //// defaults to 8-bit, no parity, 1 stop bit
 }
 
 // Writes one byte to the TX serial buffer. Called by main program.
@@ -126,16 +129,19 @@ void c_serial::serial_write(uint8_t data)
     serial_tx_buffer_head = next_head;
 
     // Enable Data Register Empty Interrupt to make sure tx-streaming is running
-    UCSR0B |= (1 << UDRIE0);
+    //UCSR0B |= (1 << UDRIE0);
+	Hardware_Abstraction_Layer::Serial::enable_tx_isr();
 }
 
 // Data Register Empty Interrupt handler
-ISR(SERIAL_UDRE)
+void c_serial::serial_tx_event(uint8_t data)
+//ISR(SERIAL_UDRE)
 {
     uint8_t tail = serial_tx_buffer_tail; // Temporary serial_tx_buffer_tail (to optimize for volatile)
 
     // Send a byte from the buffer
-    UDR0 = serial_tx_buffer[tail];
+    //UDR0 = serial_tx_buffer[tail];
+	Hardware_Abstraction_Layer::Serial::send(0,serial_tx_buffer[tail]);
 
     // Update tail position
     tail++;
@@ -149,7 +155,8 @@ ISR(SERIAL_UDRE)
     // Turn off Data Register Empty Interrupt to stop tx-streaming if this concludes the transfer
     if (tail == serial_tx_buffer_head)
     {
-        UCSR0B &= ~(1 << UDRIE0);
+	Hardware_Abstraction_Layer::Serial::disable_tx_isr();
+        //UCSR0B &= ~(1 << UDRIE0);
     }
 }
 

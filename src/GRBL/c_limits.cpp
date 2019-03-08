@@ -9,7 +9,7 @@
 #include "c_limits.h"
 #include "all_includes.h"
 #include "c_settings.h"
-#include <avr/interrupt.h>
+//#include <avr/interrupt.h>
 #include "c_system.h"
 #include "c_planner.h"
 #include <string.h>
@@ -18,9 +18,10 @@
 #include "c_protocol.h"
 #include "c_stepper.h"
 #include "utils.h"
-//#include "../Common/Hardware_Abstraction_Layer/AVR_2560/c_grbl_avr_2560.h"
-#include "../Common/Hardware_Abstraction_Layer/AVR_2560/c_grbl_avr_2560_limits.h"
-//#include "hardware_def.h"
+
+//#include "../Common/Hardware_Abstraction_Layer/AVR_2560/c_grbl_avr_2560_limits.h"
+//#include "../Common/Hardware_Abstraction_Layer/AVR_2560/c_grbl_avr_2560_stepper.h"
+#include "hardware_def.h"
 
 // Homing axis search distance multiplier. Computed by this value times the cycle travel.
 #ifndef HOMING_AXIS_SEARCH_SCALAR
@@ -317,10 +318,11 @@ void c_limits::limits_go_home(uint8_t cycle_mask)
 			}
 
 		}
-		while (STEP_MASK & axislock);
+		//while (STEP_MASK & axislock);
+		while (Hardware_Abstraction_Layer::Grbl::Stepper::step_mask & axislock);
 
 		c_stepper::st_reset(); // Immediately force kill steppers and reset step segment buffer.
-		utils::delay_ms(c_settings::settings.homing_debounce_delay); // Delay to allow transient dynamics to dissipate.
+		Hardware_Abstraction_Layer::Core::delay_ms(c_settings::settings.homing_debounce_delay); // Delay to allow transient dynamics to dissipate.
 
 		// Reverse direction and reset homing rate for locate cycle(s).
 		approach = !approach;

@@ -41,10 +41,9 @@
 #include "c_stepper.h"
 #include "c_print.h"
 #include "utils.h"
-//#include "protocol.h"
-//#include "grbl.h"
-//#include "system.h"
-//#include "serial.h"
+//#include "..\Common\Hardware_Abstraction_Layer\AVR_2560\c_core_avr_2560.h"
+//#include "..\Common\Hardware_Abstraction_Layer\AVR_2560\c_grbl_avr_2560_spindle.h"
+#include "hardware_def.h"
 
 // Define line flags. Includes comment type tracking and line overflow detection.
 #define LINE_FLAG_OVERFLOW bit(0)
@@ -535,7 +534,7 @@ void c_protocol::protocol_exec_rt_system()
                     c_system::sys.suspend = SUSPEND_DISABLE;
                     c_system::sys.state = STATE_IDLE;
                 }
-				c_print::print_string_P(PSTR("DONE\r\n"));
+				c_print::print_string_P(Hardware_Abstraction_Layer_Core_PSTR("DONE\r\n"));
             }
             c_system::system_clear_exec_state_flag(EXEC_CYCLE_STOP);
         }

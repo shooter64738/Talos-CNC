@@ -16,9 +16,9 @@
 #define COOLANT_NO_SYNC     false
 #define COOLANT_FORCE_SYNC  true
 
-#define COOLANT_STATE_DISABLE   0  // Must be zero
-#define COOLANT_STATE_FLOOD     bit(0)
-#define COOLANT_STATE_MIST      bit(1)
+//#define COOLANT_STATE_DISABLE   0  // Must be zero
+//#define COOLANT_STATE_FLOOD     bit(0)
+//#define COOLANT_STATE_MIST      bit(1)
 
 class c_coolant
 {

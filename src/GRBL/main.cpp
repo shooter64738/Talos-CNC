@@ -12,10 +12,10 @@
 #include "c_planner.h"
 #include "c_report.h"
 #include "c_protocol.h"
-#include "..\Common\Hardware_Abstraction_Layer\AVR_2560\c_grbl_avr_2560_limits.h"
-#include "..\Common\Hardware_Abstraction_Layer\AVR_2560\c_core_avr_2560.h"
-
+//#include "..\Common\Hardware_Abstraction_Layer\AVR_2560\c_grbl_avr_2560_limits.h"
+//#include "..\Common\Hardware_Abstraction_Layer\AVR_2560\c_core_avr_2560.h"
 #include "hardware_def.h"
+//#include "..\Common\Hardware_Abstraction_Layer\AVR_2560\c_grbl_avr_2560_spindle.h"
 /*
  * AVR_2560_GRBL.cpp
  *

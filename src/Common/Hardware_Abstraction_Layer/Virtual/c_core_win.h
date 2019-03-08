@@ -25,6 +25,11 @@
 #define __C_CORE_WIN_H__
 #include <stdint.h>
 #define F_CPU 18*1000000*1000000
+
+
+#define Hardware_Abstraction_Layer_Core_pgm_read_byte_near(PS1) "."
+#define Hardware_Abstraction_Layer_Core_PSTR (PS2) "."
+
 namespace Hardware_Abstraction_Layer
 {
 	class Core
@@ -40,6 +45,9 @@ namespace Hardware_Abstraction_Layer
 		static void start_interrupts();
 		static void stop_interrupts();
 		static uint32_t get_cpu_clock_rate();
+		
+		static void delay_ms(uint16_t delay_time);
+		static void delay_us(uint16_t delay_time);
 
 		protected:
 		private:

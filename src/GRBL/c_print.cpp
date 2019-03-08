@@ -31,6 +31,8 @@
 #include "c_settings.h"
 #include "..\helpers.h"
 #include "all_includes.h"
+//#include "..\Common\Hardware_Abstraction_Layer\AVR_2560\c_core_avr_2560.h"
+#include "hardware_def.h"
 
 void c_print::print_string(const char *s)
 {
@@ -42,7 +44,7 @@ void c_print::print_string(const char *s)
 void c_print::print_string_P(const char *s)
 {
 	char c;
-	while ((c = pgm_read_byte_near(s++)))
+	while ((c = Hardware_Abstraction_Layer_Core_pgm_read_byte_near(s++)))
 	c_serial::serial_write(c);
 }
 

@@ -1,4 +1,4 @@
-/* 
+/*
 * c_stepper.cpp
 *
 * Created: 3/6/2019 12:55:07 PM
@@ -38,15 +38,12 @@ along with Grbl.  If not, see <http://www.gnu.org/licenses/>.
 #include <string.h>
 #include "c_planner.h"
 #include "c_spindle.h"
-#include <avr/interrupt.h>
+//#include <avr/interrupt.h>
 #include "c_probe.h"
 #include "utils.h"
-//#include "grbl.h"
-//#include "config.h"
-//#include "cpu_map.h"
-//#include "probe.h"
-//#include "planner.h"
-//#include "system.h"
+//#include "..\Common\Hardware_Abstraction_Layer\AVR_2560\c_grbl_avr_2560_stepper.h"
+//#include "..\Common\Hardware_Abstraction_Layer\AVR_2560\c_grbl_avr_2560_spindle.h"
+#include "hardware_def.h"
 
 // Some useful constants.
 #define DT_SEGMENT (1.0/(ACCELERATION_TICKS_PER_SECOND*60.0)) // min/segment
@@ -77,73 +74,15 @@ along with Grbl.  If not, see <http://www.gnu.org/licenses/>.
 #define AMASS_LEVEL3 (F_CPU/2000) // Over-drives ISR (x8)
 
 
-// Stores the planner block Bresenham algorithm execution data for the segments in the segment
-// buffer. Normally, this buffer is partially in-use, but, for the worst case scenario, it will
-// never exceed the number of accessible stepper buffer segments (SEGMENT_BUFFER_SIZE-1).
-// NOTE: This data is copied from the prepped planner blocks so that the planner blocks may be
-// discarded when entirely consumed and completed by the segment buffer. Also, AMASS alters this
-// data for its own use.
-typedef struct
-{
-	uint32_t steps[N_AXIS];
-	uint32_t step_event_count;
-	uint8_t direction_bits;
-	uint8_t is_pwm_rate_adjusted; // Tracks motions that require constant laser power/rate
-} st_block_t;
-static st_block_t st_block_buffer[SEGMENT_BUFFER_SIZE-1];
-
-// Primary stepper segment ring buffer. Contains small, short line segments for the stepper
-// algorithm to execute, which are "checked-out" incrementally from the first block in the
-// planner buffer. Once "checked-out", the steps in the segments buffer cannot be modified by
-// the planner, where the remaining planner block steps still can.
-typedef struct
-{
-	uint16_t n_step;           // Number of step events to be executed for this segment
-	uint16_t cycles_per_tick;  // Step distance traveled per ISR tick, aka step rate.
-	uint8_t st_block_index;   // Stepper block data index. Uses this information to execute this segment.
-	#ifdef ADAPTIVE_MULTI_AXIS_STEP_SMOOTHING
-	uint8_t amass_level;    // Indicates AMASS level for the ISR to execute this segment
-	#else
-	uint8_t prescaler;      // Without AMASS, a prescaler is required to adjust for slow timing.
-	#endif
-	uint16_t spindle_pwm;
-} segment_t;
-static segment_t segment_buffer[SEGMENT_BUFFER_SIZE];
-
-// Stepper ISR data struct. Contains the running data for the main stepper ISR.
-typedef struct
-{
-	// Used by the bresenham line algorithm
-	// Counter variables for the bresenham line tracer
-	uint32_t counter_x;
-	uint32_t counter_y;
-	uint32_t counter_z;
-	uint32_t counter_a;
-	uint32_t counter_b;
-	uint32_t counter_c;
-	#ifdef STEP_PULSE_DELAY
-	uint8_t step_bits;  // Stores out_bits output to complete the step pulse delay
-	#endif
-
-	uint8_t execute_step;     // Flags step execution for each interrupt.
-	uint8_t step_pulse_time;  // Step pulse reset time after step rise
-	uint8_t step_outbits;         // The next stepping-bits to be output
-	uint8_t dir_outbits;
-	#ifdef ADAPTIVE_MULTI_AXIS_STEP_SMOOTHING
-	uint32_t steps[N_AXIS];
-	#endif
-
-	uint16_t step_count;       // Steps remaining in line segment motion
-	uint8_t exec_block_index; // Tracks the current st_block index. Change indicates new block.
-	st_block_t *exec_block;   // Pointer to the block data for the segment being executed
-	segment_t *exec_segment;  // Pointer to the segment being executed
-} stepper_t;
-static stepper_t st;
+c_stepper::segment_t c_stepper::segment_buffer[SEGMENT_BUFFER_SIZE];
+c_stepper::st_block_t c_stepper::st_block_buffer[SEGMENT_BUFFER_SIZE-1];
 
 // Step segment ring buffer indices
 static volatile uint8_t segment_buffer_tail;
 static uint8_t segment_buffer_head;
 static uint8_t segment_next_head;
+
+
 
 // Step and direction port invert masks.
 static uint8_t step_port_invert_mask;
@@ -155,11 +94,12 @@ static volatile uint8_t busy;
 // Pointers for the step segment being prepped from the planner buffer. Accessed only by the
 // main program. Pointers may be planning segments or planner blocks ahead of what being executed.
 static c_planner::plan_block_t *pl_block;     // Pointer to the planner block being prepped
-static st_block_t *st_prep_block;  // Pointer to the stepper block data being prepped
+static c_stepper::st_block_t *st_prep_block;  // Pointer to the stepper block data being prepped
 
 // Segment preparation data struct. Contains all the necessary information to compute new segments
 // based on the current executing planner block.
 c_stepper::st_prep_t c_stepper::prep;
+c_stepper::stepper_t c_stepper::st;
 
 /*    BLOCK VELOCITY PROFILE DEFINITION
 __________________________
@@ -205,31 +145,32 @@ are shown and defined in the above illustration.
 void c_stepper::st_wake_up()
 {
 	
-	// Enable stepper drivers.
-	if (bit_istrue(c_settings::settings.flags, BITFLAG_INVERT_ST_ENABLE))
-	{
-		STEPPERS_DISABLE_PORT |= (1 << STEPPERS_DISABLE_BIT);
-	}
-	else
-	{
-		STEPPERS_DISABLE_PORT &= ~(1 << STEPPERS_DISABLE_BIT);
-	}
+	//// Enable stepper drivers.
+	//if (bit_istrue(c_settings::settings.flags, BITFLAG_INVERT_ST_ENABLE))
+	//{
+	//STEPPERS_DISABLE_PORT |= (1 << STEPPERS_DISABLE_BIT);
+	//}
+	//else
+	//{
+	//STEPPERS_DISABLE_PORT &= ~(1 << STEPPERS_DISABLE_BIT);
+	//}
 
 	// Initialize stepper output bits to ensure first ISR call does not step.
 	st.step_outbits = step_port_invert_mask;
 
-	// Initialize step pulse timing from settings. Here to ensure updating after re-writing.
-	#ifdef STEP_PULSE_DELAY
-	// Set total step pulse time after direction pin set. Ad hoc computation from oscilloscope.
-	st.step_pulse_time = -(((c_settings::settings.pulse_microseconds+STEP_PULSE_DELAY-2)*TICKS_PER_MICROSECOND) >> 3);
-	// Set delay between direction pin write and step command.
-	OCR0A = -(((c_settings::settings.pulse_microseconds)*TICKS_PER_MICROSECOND) >> 3);
-	#else // Normal operation
-	// Set step pulse time. Ad hoc computation from oscilloscope. Uses two's complement.
-	st.step_pulse_time = -(((c_settings::settings.pulse_microseconds - 2) * TICKS_PER_MICROSECOND) >> 3);
-	#endif
+	//// Initialize step pulse timing from settings. Here to ensure updating after re-writing.
+	//#ifdef STEP_PULSE_DELAY
+	//// Set total step pulse time after direction pin set. Ad hoc computation from oscilloscope.
+	//st.step_pulse_time = -(((c_settings::settings.pulse_microseconds+STEP_PULSE_DELAY-2)*TICKS_PER_MICROSECOND) >> 3);
+	//// Set delay between direction pin write and step command.
+	//OCR0A = -(((c_settings::settings.pulse_microseconds)*TICKS_PER_MICROSECOND) >> 3);
+	//#else // Normal operation
+	//// Set step pulse time. Ad hoc computation from oscilloscope. Uses two's complement.
+	//st.step_pulse_time = -(((c_settings::settings.pulse_microseconds - 2) * TICKS_PER_MICROSECOND) >> 3);
+	//#endif
 	// Enable Stepper Driver Interrupt
-	TIMSK1 |= (1 << OCIE1A);
+	//TIMSK1 |= (1 << OCIE1A);
+	Hardware_Abstraction_Layer::Grbl::Stepper::wake_up();
 }
 
 
@@ -237,8 +178,9 @@ void c_stepper::st_wake_up()
 void c_stepper::st_go_idle()
 {
 	// Disable Stepper Driver Interrupt. Allow Stepper Port Reset Interrupt to finish, if active.
-	TIMSK1 &= ~(1 << OCIE1A); // Disable Timer1 interrupt
-	TCCR1B = (TCCR1B & ~((1 << CS12) | (1 << CS11))) | (1 << CS10); // Reset clock to no prescaling.
+	//TIMSK1 &= ~(1 << OCIE1A); // Disable Timer1 interrupt
+	//TCCR1B = (TCCR1B & ~((1 << CS12) | (1 << CS11))) | (1 << CS10); // Reset clock to no prescaling.
+	Hardware_Abstraction_Layer::Grbl::Stepper::st_go_idle();
 	busy = false;
 
 	// Set stepper driver idle state, disabled or enabled, depending on settings and circumstances.
@@ -247,7 +189,7 @@ void c_stepper::st_go_idle()
 	{
 		// Force stepper dwell to lock axes for a defined amount of time to ensure the axes come to a complete
 		// stop and not drift from residual inertial forces at the end of the last movement.
-		utils::delay_ms(c_settings::settings.stepper_idle_lock_time);
+		Hardware_Abstraction_Layer::Core::delay_ms(c_settings::settings.stepper_idle_lock_time);
 		pin_state = true; // Override. Disable steppers.
 	}
 	if (bit_istrue(c_settings::settings.flags, BITFLAG_INVERT_ST_ENABLE))
@@ -314,7 +256,8 @@ NOTE: This ISR expects at least one step to be executed per segment.
 // int8 variables and update position counters only when a segment completes. This can get complicated
 // with probing and homing cycles that require true real-time positions.
 
-ISR(TIMER1_COMPA_vect)
+//ISR(TIMER1_COMPA_vect)
+void c_stepper::step_tick()
 {
 	if (busy)
 	{
@@ -331,13 +274,14 @@ ISR(TIMER1_COMPA_vect)
 	STEP_PORT = (STEP_PORT & ~STEP_MASK) | st.step_outbits;
 	#endif
 
-	// Enable step pulse reset timer so that The Stepper Port Reset Interrupt can reset the signal after
-	// exactly settings.pulse_microseconds microseconds, independent of the main Timer1 prescaler.
-	TCNT0 = st.step_pulse_time; // Reload Timer0 counter
-	TCCR0B = (1 << CS01); // Begin Timer0. Full speed, 1/8 prescaler
-
+	//// Enable step pulse reset timer so that The Stepper Port Reset Interrupt can reset the signal after
+	//// exactly settings.pulse_microseconds microseconds, independent of the main Timer1 prescaler.
+	//TCNT0 = st.step_pulse_time; // Reload Timer0 counter
+	//TCCR0B = (1 << CS01); // Begin Timer0. Full speed, 1/8 prescaler
+	//
+	Hardware_Abstraction_Layer::Grbl::Stepper::pulse_reset_timer();
 	busy = true;
-	sei();
+	//sei();
 	// Re-enable interrupts to allow Stepper Port Reset Interrupt to fire on-time.
 	// NOTE: The remaining code in this ISR will finish before returning to main program.
 
@@ -352,11 +296,13 @@ ISR(TIMER1_COMPA_vect)
 
 			#ifndef ADAPTIVE_MULTI_AXIS_STEP_SMOOTHING
 			// With AMASS is disabled, set timer prescaler for segments with slow step frequencies (< 250Hz).
-			TCCR1B = (TCCR1B & ~(0x07<<CS10)) | (st.exec_segment->prescaler<<CS10);
+			//TCCR1B = (TCCR1B & ~(0x07<<CS10)) | (st.exec_segment->prescaler<<CS10);
+			Hardware_Abstraction_Layer::Grbl::Stepper::TCCR1B_set(st.exec_segment->prescaler);
 			#endif
 
 			// Initialize step segment timing per step and load number of steps to execute.
-			OCR1A = st.exec_segment->cycles_per_tick;
+			//OCR1A = st.exec_segment->cycles_per_tick;
+			Hardware_Abstraction_Layer::Grbl::Stepper::OCR1A_set(st.exec_segment->cycles_per_tick);
 			st.step_count = st.exec_segment->n_step; // NOTE: Can sometimes be zero when moving slow.
 			// If the new segment starts a new planner block, initialize stepper variables and counters.
 			// NOTE: When the segment data index changes, this indicates a new planner block.
@@ -366,7 +312,9 @@ ISR(TIMER1_COMPA_vect)
 				st.exec_block = &st_block_buffer[st.exec_block_index];
 
 				// Initialize Bresenham line and distance counters
-				st.counter_x = st.counter_y = st.counter_z = st.counter_a = st.counter_b = st.counter_c = (st.exec_block->step_event_count >> 1);
+				
+				st.counter[X_AXIS] = st.counter[Y_AXIS] = st.counter[Z_AXIS] = st.counter[A_AXIS] = st.counter[B_AXIS] = st.counter[C_AXIS] =
+				 (st.exec_block->step_event_count >> 1);
 			}
 			st.dir_outbits = st.exec_block->direction_bits ^ dir_port_invert_mask;
 
@@ -406,7 +354,26 @@ ISR(TIMER1_COMPA_vect)
 
 	// Reset step out bits.
 	st.step_outbits = 0;
+	for (int i=0;i<N_AXIS;i++)
+	{
+		// Execute step displacement profile by Bresenham line algorithm
+		#ifdef ADAPTIVE_MULTI_AXIS_STEP_SMOOTHING
+		st.counter[i] += st.steps[X_AXIS];
+		#else
+		st.counter[i] += st.exec_block->steps[X_AXIS];
+		#endif
+		if (st.counter[i] > st.exec_block->step_event_count)
+		{
+			st.step_outbits |= (1 << i);
+			st.counter[i] -= st.exec_block->step_event_count;
+			if (st.exec_block->direction_bits & (1 << i))
+			c_system::sys_position[i]--;
+			else
+			c_system::sys_position[i]++;
+		}
+	}
 
+	/*
 	// Execute step displacement profile by Bresenham line algorithm
 	#ifdef ADAPTIVE_MULTI_AXIS_STEP_SMOOTHING
 	st.counter_x += st.steps[X_AXIS];
@@ -492,6 +459,7 @@ ISR(TIMER1_COMPA_vect)
 		else
 		c_system::sys_position[C_AXIS]++;
 	}
+	*/
 
 	// During a homing cycle, lock out and prevent desired axes from moving.
 	if (c_system::sys.state == STATE_HOMING)
@@ -524,12 +492,12 @@ added to Grbl.
 // This interrupt is enabled by ISR_TIMER1_COMPAREA when it sets the motor port bits to execute
 // a step. This ISR resets the motor port after a short period (settings.pulse_microseconds)
 // completing one step cycle.
-ISR(TIMER0_OVF_vect)
-{
-	// Reset stepping pins (leave the direction pins)
-	STEP_PORT = (STEP_PORT & ~STEP_MASK) | (step_port_invert_mask & STEP_MASK);
-	TCCR0B = 0; // Disable Timer0 to prevent re-entering this interrupt when it's not needed.
-}
+//ISR(TIMER0_OVF_vect)
+//{
+//// Reset stepping pins (leave the direction pins)
+//STEP_PORT = (STEP_PORT & ~STEP_MASK) | (step_port_invert_mask & STEP_MASK);
+//TCCR0B = 0; // Disable Timer0 to prevent re-entering this interrupt when it's not needed.
+//}
 #ifdef STEP_PULSE_DELAY
 // This interrupt is used only when STEP_PULSE_DELAY is enabled. Here, the step pulse is
 // initiated after the STEP_PULSE_DELAY time period has elapsed. The ISR TIMER2_OVF interrupt
@@ -546,17 +514,17 @@ ISR(TIMER0_COMPA_vect)
 void c_stepper::st_generate_step_dir_invert_masks()
 {
 	uint8_t idx;
-	step_port_invert_mask = 0;
-	dir_port_invert_mask = 0;
+	Hardware_Abstraction_Layer::Grbl::Stepper::step_port_invert_mask = 0;
+	Hardware_Abstraction_Layer::Grbl::Stepper::dir_port_invert_mask = 0;
 	for (idx = 0; idx < N_AXIS; idx++)
 	{
 		if (bit_istrue(c_settings::settings.step_invert_mask, bit(idx)))
 		{
-			step_port_invert_mask |= c_settings::get_step_pin_mask(idx);
+			Hardware_Abstraction_Layer::Grbl::Stepper::step_port_invert_mask |= c_settings::get_step_pin_mask(idx);
 		}
 		if (bit_istrue(c_settings::settings.dir_invert_mask, bit(idx)))
 		{
-			dir_port_invert_mask |= c_settings::get_direction_pin_mask(idx);
+			Hardware_Abstraction_Layer::Grbl::Stepper::dir_port_invert_mask |= c_settings::get_direction_pin_mask(idx);
 		}
 	}
 }
@@ -588,27 +556,28 @@ void c_stepper::st_reset()
 // Initialize and start the stepper motor subsystem
 void c_stepper::stepper_init()
 {
-	// Configure step and direction interface pins
-	STEP_DDR |= STEP_MASK;
-	STEPPERS_DISABLE_DDR |= 1 << STEPPERS_DISABLE_BIT;
-	DIRECTION_DDR |= DIRECTION_MASK;
-
-	// Configure Timer 1: Stepper Driver Interrupt
-	TCCR1B &= ~(1 << WGM13); // waveform generation = 0100 = CTC
-	TCCR1B |= (1 << WGM12);
-	TCCR1A &= ~((1 << WGM11) | (1 << WGM10));
-	TCCR1A &= ~((1 << COM1A1) | (1 << COM1A0) | (1 << COM1B1) | (1 << COM1B0)); // Disconnect OC1 output
-	// TCCR1B = (TCCR1B & ~((1<<CS12) | (1<<CS11))) | (1<<CS10); // Set in st_go_idle().
-	// TIMSK1 &= ~(1<<OCIE1A);  // Set in st_go_idle().
-
-	// Configure Timer 0: Stepper Port Reset Interrupt
-	TIMSK0 &= ~((1 << OCIE0B) | (1 << OCIE0A) | (1 << TOIE0)); // Disconnect OC0 outputs and OVF interrupt.
-	TCCR0A = 0; // Normal operation
-	TCCR0B = 0; // Disable Timer0 until needed
-	TIMSK0 |= (1 << TOIE0); // Enable Timer0 overflow interrupt
-	#ifdef STEP_PULSE_DELAY
-	TIMSK0 |= (1<<OCIE0A); // Enable Timer0 Compare Match A interrupt
-	#endif
+	Hardware_Abstraction_Layer::Grbl::Stepper::initialize();
+	//// Configure step and direction interface pins
+	//STEP_DDR |= STEP_MASK;
+	//STEPPERS_DISABLE_DDR |= 1 << STEPPERS_DISABLE_BIT;
+	//DIRECTION_DDR |= DIRECTION_MASK;
+	//
+	//// Configure Timer 1: Stepper Driver Interrupt
+	//TCCR1B &= ~(1 << WGM13); // waveform generation = 0100 = CTC
+	//TCCR1B |= (1 << WGM12);
+	//TCCR1A &= ~((1 << WGM11) | (1 << WGM10));
+	//TCCR1A &= ~((1 << COM1A1) | (1 << COM1A0) | (1 << COM1B1) | (1 << COM1B0)); // Disconnect OC1 output
+	//// TCCR1B = (TCCR1B & ~((1<<CS12) | (1<<CS11))) | (1<<CS10); // Set in st_go_idle().
+	//// TIMSK1 &= ~(1<<OCIE1A);  // Set in st_go_idle().
+	//
+	//// Configure Timer 0: Stepper Port Reset Interrupt
+	//TIMSK0 &= ~((1 << OCIE0B) | (1 << OCIE0A) | (1 << TOIE0)); // Disconnect OC0 outputs and OVF interrupt.
+	//TCCR0A = 0; // Normal operation
+	//TCCR0B = 0; // Disable Timer0 until needed
+	//TIMSK0 |= (1 << TOIE0); // Enable Timer0 overflow interrupt
+	//#ifdef STEP_PULSE_DELAY
+	//TIMSK0 |= (1<<OCIE0A); // Enable Timer0 Compare Match A interrupt
+	//#endif
 }
 
 // Called by planner_recalculate() when the executing block is updated by the new plan.

@@ -7,7 +7,6 @@
 *  Author: jeff_d
 */
 
-
 #ifndef ALL_INCLUDES_H_
 #define ALL_INCLUDES_H_
 
@@ -47,137 +46,8 @@
 
 
 
-#include <avr/io.h>
+//#include <avr/io.h>
 #include "../helpers.h"
-// Serial port interrupt vectors
-#define SERIAL_RX USART0_RX_vect
-#define SERIAL_UDRE USART0_UDRE_vect
-
-// Define step pulse output pins. NOTE: All step bit pins must be on the same port.
-#define STEP_DDR      DDRA
-#define STEP_PORT     PORTA
-#define STEP_PIN      PINA
-//  #define X_STEP_BIT    2 // MEGA2560 Digital Pin 24
-//  #define Y_STEP_BIT    3 // MEGA2560 Digital Pin 25
-//  #define Z_STEP_BIT    4 // MEGA2560 Digital Pin 26
-//  #define STEP_MASK ((1 << X_STEP_BIT) | (1 << Y_STEP_BIT) | (1 << Z_STEP_BIT)) // All step bits
-#define X_STEP_BIT        0 // MEGA2560 Digital Pin 22
-#define Y_STEP_BIT        1 // MEGA2560 Digital Pin 23
-#define Z_STEP_BIT        2 // MEGA2560 Digital Pin 24
-#define A_STEP_BIT        3 // MEGA2560 Digital Pin 25
-#define B_STEP_BIT        4 // MEGA2560 Digital Pin 26
-#define C_STEP_BIT        5 // MEGA2560 Digital Pin 27
-#define STEP_MASK ((1 << X_STEP_BIT) | (1 << Y_STEP_BIT) | (1 << Z_STEP_BIT) | (1 << A_STEP_BIT) | (1 << B_STEP_BIT) | (1 << C_STEP_BIT)) // All step bits
-
-// Define step direction output pins. NOTE: All direction pins must be on the same port.
-#define DIRECTION_DDR     DDRC
-#define DIRECTION_PORT    PORTC
-#define DIRECTION_PIN     PINC
-//  #define X_DIRECTION_BIT   7 // MEGA2560 Digital Pin 30
-//  #define Y_DIRECTION_BIT   6 // MEGA2560 Digital Pin 31
-//  #define Z_DIRECTION_BIT   5 // MEGA2560 Digital Pin 32
-//  #define DIRECTION_MASK ((1 << X_DIRECTION_BIT) | (1 << Y_DIRECTION_BIT) | (1 << Z_DIRECTION_BIT)) // All direction bits
-#define X_DIRECTION_BIT   0 // MEGA2560 Digital Pin 37
-#define Y_DIRECTION_BIT   1 // MEGA2560 Digital Pin 36
-#define Z_DIRECTION_BIT   2 // MEGA2560 Digital Pin 35
-#define A_DIRECTION_BIT   3 // MEGA2560 Digital Pin 34
-#define B_DIRECTION_BIT   4 // MEGA2560 Digital Pin 33
-#define C_DIRECTION_BIT   5 // MEGA2560 Digital Pin 32
-#define DIRECTION_MASK ((1 << X_DIRECTION_BIT) | (1 << Y_DIRECTION_BIT) | (1 << Z_DIRECTION_BIT) | (1 << A_DIRECTION_BIT) | (1 << B_DIRECTION_BIT) | (1 << C_DIRECTION_BIT)) // All direction bits
-
-// Define stepper driver enable/disable output pin.
-#define STEPPERS_DISABLE_DDR   DDRB
-#define STEPPERS_DISABLE_PORT  PORTB
-#define STEPPERS_DISABLE_BIT   7 // MEGA2560 Digital Pin 13
-#define STEPPERS_DISABLE_MASK (1 << STEPPERS_DISABLE_BIT)
-
-// Define homing/hard limit switch input pins and limit interrupt vectors.
-// NOTE: All limit bit pins must be on the same port
-#define LIMIT_INT       PCIE0  // Pin change interrupt enable pin
-#define LIMIT_INT_vect  PCINT0_vect
-#define LIMIT_PCMSK     PCMSK0 // Pin change interrupt register
-#define LIMIT_DDR       DDRB
-#define LIMIT_PORT      PORTB
-#define LIMIT_PIN       PINB
-//    #define X_LIMIT_BIT     4 // MEGA2560 Digital Pin 10
-//    #define Y_LIMIT_BIT     5 // MEGA2560 Digital Pin 11
-//    #define Z_LIMIT_BIT     6 // MEGA2560 Digital Pin 12
-//    #define LIMIT_MASK ((1 << X_LIMIT_BIT) | (1 << Y_LIMIT_BIT) | (1 << Z_LIMIT_BIT)) // All limit bits
-#define X_LIMIT_BIT     0 // MEGA2560 Digital Pin 53
-#define Y_LIMIT_BIT     1 // MEGA2560 Digital Pin 52
-#define Z_LIMIT_BIT     2 // MEGA2560 Digital Pin 51
-#define A_LIMIT_BIT     3 // MEGA2560 Digital Pin 50
-#define B_LIMIT_BIT     4 // MEGA2560 Digital Pin 10
-#define C_LIMIT_BIT     5 // MEGA2560 Digital Pin 11
-#define LIMIT_MASK ((1 << X_LIMIT_BIT) | (1 << Y_LIMIT_BIT) | (1 << Z_LIMIT_BIT) | (1 << A_LIMIT_BIT) | (1 << B_LIMIT_BIT) | (1 << C_LIMIT_BIT)) // All limit bits
-
-// Define spindle enable and spindle direction output pins.
-#define SPINDLE_ENABLE_DDR      DDRH
-#define SPINDLE_ENABLE_PORT     PORTH
-#define SPINDLE_ENABLE_BIT      3 // MEGA2560 Digital Pin 6
-#define SPINDLE_DIRECTION_DDR   DDRE
-#define SPINDLE_DIRECTION_PORT  PORTE
-#define SPINDLE_DIRECTION_BIT   3 // MEGA2560 Digital Pin 5
-
-// Define flood and mist coolant enable output pins.
-#define COOLANT_FLOOD_DDR   DDRH
-#define COOLANT_FLOOD_PORT  PORTH
-#define COOLANT_FLOOD_BIT   5 // MEGA2560 Digital Pin 8
-#define COOLANT_MIST_DDR    DDRH
-#define COOLANT_MIST_PORT   PORTH
-#define COOLANT_MIST_BIT    6 // MEGA2560 Digital Pin 9
-
-// Define user-control CONTROLs (cycle start, reset, feed hold) input pins.
-// NOTE: All CONTROLs pins must be on the same port and not on a port with other input pins (limits).
-#define CONTROL_DDR       DDRK
-#define CONTROL_PIN       PINK
-#define CONTROL_PORT      PORTK
-#define CONTROL_RESET_BIT         0  // MEGA2560 Analog Pin 8
-#define CONTROL_FEED_HOLD_BIT     1  // MEGA2560 Analog Pin 9
-#define CONTROL_CYCLE_START_BIT   2  // MEGA2560 Analog Pin 10
-#define CONTROL_SAFETY_DOOR_BIT   3  // MEGA2560 Analog Pin 11
-#define CONTROL_INT       PCIE2  // Pin change interrupt enable pin
-#define CONTROL_INT_vect  PCINT2_vect
-#define CONTROL_PCMSK     PCMSK2 // Pin change interrupt register
-#ifdef RTC_H_
-#define CONTROL_MASK      ((1 << CONTROL_RESET_BIT) | (1 << CONTROL_FEED_HOLD_BIT) | (1 << CONTROL_CYCLE_START_BIT) | (1 << CONTROL_SAFETY_DOOR_BIT) | (1<<CONTROL_SPINDLE_DIRECTION_BIT) | (1<<CONTROL_SPINDLE_DRIVER_BIT))
-#else
-#define CONTROL_MASK      ((1 << CONTROL_RESET_BIT) | (1 << CONTROL_FEED_HOLD_BIT) | (1 << CONTROL_CYCLE_START_BIT) | (1 << CONTROL_SAFETY_DOOR_BIT) )
-#endif // RTC_H_
-
-
-
-
-// Define probe switch input pin.
-#define PROBE_DDR       DDRK
-#define PROBE_PIN       PINK
-#define PROBE_PORT      PORTK
-#define PROBE_BIT       7  // MEGA2560 Analog Pin 15
-#define PROBE_MASK      (1 << PROBE_BIT)
-
-// Advanced Configuration Below You should not need to touch these variables
-// Set Timer up to use TIMER4B which is attached to Digital Pin 7
-#define SPINDLE_PWM_MAX_VALUE       1024.0 // Translates to about 1.9 kHz PWM frequency at 1/8 prescaler
-#ifndef SPINDLE_PWM_MIN_VALUE
-#define SPINDLE_PWM_MIN_VALUE   1   // Must be greater than zero.
-#endif
-#define SPINDLE_PWM_OFF_VALUE       0
-#define SPINDLE_PWM_RANGE           (SPINDLE_PWM_MAX_VALUE - SPINDLE_PWM_MIN_VALUE)
-#define SPINDLE_TCCRA_REGISTER		TCCR4A
-#define SPINDLE_TCCRB_REGISTER		TCCR4B
-#define SPINDLE_OCR_REGISTER	  	OCR4B
-#define SPINDLE_COMB_BIT			COM4B1
-
-// 1/8 Prescaler, 16-bit Fast PWM mode
-#define SPINDLE_TCCRA_INIT_MASK ((1 << WGM40) | (1 << WGM41))
-#define SPINDLE_TCCRB_INIT_MASK ((1 << WGM42) | (1 << WGM43) | (1 << CS41))
-#define SPINDLE_OCRA_REGISTER   OCR4A // 16-bit Fast PWM mode requires top reset value stored here.
-#define SPINDLE_OCRA_TOP_VALUE  0x0400 // PWM counter reset value. Should be the same as PWM_MAX_VALUE in hex.
-
-// Define spindle output pins.
-#define SPINDLE_PWM_DDR		DDRH
-#define SPINDLE_PWM_PORT    PORTH
-#define SPINDLE_PWM_BIT		4 // MEGA2560 Digital Pin 7
 
 #define DEFAULT_FEED_OVERRIDE           100 // 100%. Don't change this value.
 #define MAX_FEED_RATE_OVERRIDE          200 // Percent of programmed feed rate (100-255). Usually 120% or 200%
@@ -188,21 +58,6 @@
 #define DEFAULT_RAPID_OVERRIDE  100 // 100%. Don't change this value.
 #define RAPID_OVERRIDE_MEDIUM    50 // Percent of rapid (1-99). Usually 50%.
 #define RAPID_OVERRIDE_LOW       25 // Percent of rapid (1-99). Usually 25%.
-// #define RAPID_OVERRIDE_EXTRA_LOW 5 // *NOT SUPPORTED* Percent of rapid (1-99). Usually 5%.
-
-#define DEFAULT_SPINDLE_SPEED_OVERRIDE    100 // 100%. Don't change this value.
-#define MAX_SPINDLE_SPEED_OVERRIDE        200 // Percent of programmed spindle speed (100-255). Usually 200%.
-#define MIN_SPINDLE_SPEED_OVERRIDE         10 // Percent of programmed spindle speed (1-100). Usually 10%.
-#define SPINDLE_OVERRIDE_COARSE_INCREMENT  10 // (1-99). Usually 10%.
-#define SPINDLE_OVERRIDE_FINE_INCREMENT     1 // (1-99). Usually 1%.
-
-/*
-#ifdef CPU_MAP_CUSTOM_PROC
-// For a custom pin map or different processor, copy and edit one of the available cpu
-// map files and modify it to your needs. Make sure the defined name is also changed in
-// the config.h file.
-#endif
-*/
 
 // Sets which axis the tool length offset is applied. Assumes the spindle is always parallel with
 // the selected axis with the tool oriented toward the negative direction. In other words, a positive
@@ -222,16 +77,6 @@
 // Version of the EEPROM data. Will be used to migrate existing data from older versions of Grbl
 // when firmware is upgraded. Always stored in byte 0 of eeprom
 #define SETTINGS_VERSION 10  // NOTE: Check settings_reset() when moving to next version.
-
-// Define bit flag masks for the boolean settings in settings.flag.
-#define BITFLAG_REPORT_INCHES      bit(0)
-#define BITFLAG_LASER_MODE         bit(1)
-#define BITFLAG_INVERT_ST_ENABLE   bit(2)
-#define BITFLAG_HARD_LIMIT_ENABLE  bit(3)
-#define BITFLAG_HOMING_ENABLE      bit(4)
-#define BITFLAG_SOFT_LIMIT_ENABLE  bit(5)
-#define BITFLAG_INVERT_LIMIT_PINS  bit(6)
-#define BITFLAG_INVERT_PROBE_PIN   bit(7)
 
 // Define status reporting boolean enable bit flags in settings.status_report_mask
 #define BITFLAG_RT_STATUS_POSITION_TYPE     bit(0)
@@ -316,15 +161,6 @@
 // greater.
 #define N_HOMING_LOCATE_CYCLE 1 // Integer (1-128)
 
-// Define homing/hard limit switch input pins and limit interrupt vectors.
-// NOTE: All limit bit pins must be on the same port
-#define LIMIT_INT       PCIE0  // Pin change interrupt enable pin
-#define LIMIT_INT_vect  PCINT0_vect
-#define LIMIT_PCMSK     PCMSK0 // Pin change interrupt register
-#define LIMIT_DDR       DDRB
-#define LIMIT_PORT      PORTB
-#define LIMIT_PIN       PINB
-
 // Define realtime command special characters. These characters are 'picked-off' directly from the
 // serial read data stream and are not passed to the grbl line execution parser. Select characters
 // that do not and must not exist in the streamed g-code program. ASCII control characters may be
@@ -337,113 +173,11 @@
 #define CMD_CYCLE_START '~'
 #define CMD_FEED_HOLD '!'
 
-// NOTE: All override realtime commands must be in the extended ASCII character set, starting
-// at character value 128 (0x80) and up to 255 (0xFF). If the normal set of realtime commands,
-// such as status reports, feed hold, reset, and cycle start, are moved to the extended set
-// space, serial.c's RX ISR will need to be modified to accomodate the change.
-// #define CMD_RESET 0x80
-// #define CMD_STATUS_REPORT 0x81
-// #define CMD_CYCLE_START 0x82
-// #define CMD_FEED_HOLD 0x83
-#define CMD_SAFETY_DOOR 0x84
-#define CMD_JOG_CANCEL  0x85
-#define CMD_DEBUG_REPORT 0x86 // Only when DEBUG enabled, sends debug report in '{}' braces.
-#define CMD_FEED_OVR_RESET 0x90         // Restores feed override value to 100%.
-#define CMD_FEED_OVR_COARSE_PLUS 0x91
-#define CMD_FEED_OVR_COARSE_MINUS 0x92
-#define CMD_FEED_OVR_FINE_PLUS  0x93
-#define CMD_FEED_OVR_FINE_MINUS  0x94
-#define CMD_RAPID_OVR_RESET 0x95        // Restores rapid override value to 100%.
-#define CMD_RAPID_OVR_MEDIUM 0x96
-#define CMD_RAPID_OVR_LOW 0x97
-// #define CMD_RAPID_OVR_EXTRA_LOW 0x98 // *NOT SUPPORTED*
-#define CMD_SPINDLE_OVR_RESET 0x99      // Restores spindle override value to 100%.
-#define CMD_SPINDLE_OVR_COARSE_PLUS 0x9A
-#define CMD_SPINDLE_OVR_COARSE_MINUS 0x9B
-#define CMD_SPINDLE_OVR_FINE_PLUS 0x9C
-#define CMD_SPINDLE_OVR_FINE_MINUS 0x9D
-#define CMD_SPINDLE_OVR_STOP 0x9E
-#define CMD_COOLANT_FLOOD_OVR_TOGGLE 0xA0
-#define CMD_COOLANT_MIST_OVR_TOGGLE 0xA1
-
-#define CMD_MPG_JOG_X 'X'
-#define CMD_MPG_JOG_Y 'Y'
-
-
-//for pstr
-#include <avr/pgmspace.h>
-
 #define F_CPU 16000000
 #define BAUD_RATE 115200
 
 
-#ifndef DEFAULTS_H_
-#define DEFAULTS_H_
-#define DEFAULTS_GENERIC
 
-#ifdef DEFAULTS_GENERIC
-#define DEFAULT_X_STEPS_PER_MM  250.0
-#define DEFAULT_X_MAX_RATE     500.0 // mm/min
-#define DEFAULT_X_ACCELERATION (10.0 * 60 * 60) // 10 * 60 * 60 mm/min^2 = 10 mm/sec^2
-#define DEFAULT_X_MAX_TRAVEL   200.0 // mm
-
-#define DEFAULT_Y_STEPS_PER_MM 250.0
-#define DEFAULT_Y_MAX_RATE     500.0 // mm/min
-#define DEFAULT_Y_ACCELERATION (10.0 * 60 * 60) // 10 * 60 * 60 mm/min^2 = 10 mm/sec^2
-#define DEFAULT_Y_MAX_TRAVEL   200.0 // mm
-
-#define DEFAULT_Z_STEPS_PER_MM 250.0
-#define DEFAULT_Z_MAX_RATE     500.0 // mm/min
-#define DEFAULT_Z_ACCELERATION (10.0 * 60 * 60) // 10 * 60 * 60 mm/min^2 = 10 mm/sec^2
-#define DEFAULT_Z_MAX_TRAVEL   200.0 // mm
-
-#define DEFAULT_A_STEPS_PER_MM 250.0
-#define DEFAULT_A_MAX_RATE     500.0 // mm/min
-#define DEFAULT_A_ACCELERATION (10.0 * 60 * 60) // 10 * 60 * 60 mm/min^2 = 10 mm/sec^2
-#define DEFAULT_A_MAX_TRAVEL   200.0 // mm
-
-#define DEFAULT_B_STEPS_PER_MM 250.0
-#define DEFAULT_B_MAX_RATE     500.0 // mm/min
-#define DEFAULT_B_ACCELERATION (10.0 * 60 * 60) // 10 * 60 * 60 mm/min^2 = 10 mm/sec^2
-#define DEFAULT_B_MAX_TRAVEL   200.0 // mm
-
-#define DEFAULT_C_STEPS_PER_MM 250.0
-#define DEFAULT_C_MAX_RATE     500.0 // mm/min
-#define DEFAULT_C_ACCELERATION (10.0 * 60 * 60) // 10 * 60 * 60 mm/min^2 = 10 mm/sec^2
-#define DEFAULT_C_MAX_TRAVEL   200.0 // mm
-
-#define DEFAULT_SPINDLE_RPM_MAX         1000.0 // rpm
-#define DEFAULT_SPINDLE_RPM_MIN         0.0 // rpm
-
-#define DEFAULT_STEP_PULSE_MICROSECONDS 10
-#define DEFAULT_STEPPING_INVERT_MASK    0
-#define DEFAULT_DIRECTION_INVERT_MASK   0
-#define DEFAULT_STEPPER_IDLE_LOCK_TIME  25 // msec (0-254, 255 keeps steppers enabled)
-
-#define DEFAULT_STATUS_REPORT_MASK      1 // MPos enabled
-
-#define DEFAULT_JUNCTION_DEVIATION      0.01 // mm
-#define DEFAULT_ARC_TOLERANCE           0.002 // mm
-#define DEFAULT_REPORT_INCHES           0 // false
-
-#define DEFAULT_INVERT_ST_ENABLE        0 // false
-#define DEFAULT_INVERT_LIMIT_PINS       0 // false
-#define DEFAULT_SOFT_LIMIT_ENABLE       0 // false
-#define DEFAULT_HARD_LIMIT_ENABLE       0 // false
-#define DEFAULT_INVERT_PROBE_PIN        0 // false
-#define DEFAULT_LASER_MODE              0 // false
-
-#define DEFAULT_HOMING_ENABLE           0 // false
-#define DEFAULT_HOMING_DIR_MASK         0 // move positive dir
-#define DEFAULT_HOMING_FEED_RATE        25.0 // mm/min
-#define DEFAULT_HOMING_SEEK_RATE        500.0 // mm/min
-#define DEFAULT_HOMING_DEBOUNCE_DELAY   250 // msec (0-65k)
-#define DEFAULT_HOMING_PULLOFF          1.0 // mm
-#else
-#error No defaults found
-#endif
-
-#endif /* DEFAULTS_H_ */
 
 // Number of floating decimal points printed by Grbl for certain value types. These settings are
 // determined by realistic and commonly observed values in CNC machines. For example, position
@@ -465,44 +199,7 @@
 #define LINE_BUFFER_SIZE 256
 #endif
 
-// Define Grbl status codes. Valid values (0-255)
-#define STATUS_OK 0
-#define STATUS_EXPECTED_COMMAND_LETTER 1
-#define STATUS_BAD_NUMBER_FORMAT 2
-#define STATUS_INVALID_STATEMENT 3
-#define STATUS_NEGATIVE_VALUE 4
-#define STATUS_SETTING_DISABLED 5
-#define STATUS_SETTING_STEP_PULSE_MIN 6
-#define STATUS_SETTING_READ_FAIL 7
-#define STATUS_IDLE_ERROR 8
-#define STATUS_SYSTEM_GC_LOCK 9
-#define STATUS_SOFT_LIMIT_ERROR 10
-#define STATUS_OVERFLOW 11
-#define STATUS_MAX_STEP_RATE_EXCEEDED 12
-#define STATUS_CHECK_DOOR 13
-#define STATUS_LINE_LENGTH_EXCEEDED 14
-#define STATUS_TRAVEL_EXCEEDED 15
-#define STATUS_INVALID_JOG_COMMAND 16
 
-#define STATUS_GCODE_UNSUPPORTED_COMMAND 20
-#define STATUS_GCODE_MODAL_GROUP_VIOLATION 21
-#define STATUS_GCODE_UNDEFINED_FEED_RATE 22
-#define STATUS_GCODE_COMMAND_VALUE_NOT_INTEGER 23
-#define STATUS_GCODE_AXIS_COMMAND_CONFLICT 24
-#define STATUS_GCODE_WORD_REPEATED 25
-#define STATUS_GCODE_NO_AXIS_WORDS 26
-#define STATUS_GCODE_INVALID_LINE_NUMBER 27
-#define STATUS_GCODE_VALUE_WORD_MISSING 28
-#define STATUS_GCODE_UNSUPPORTED_COORD_SYS 29
-#define STATUS_GCODE_G53_INVALID_MOTION_MODE 30
-#define STATUS_GCODE_AXIS_WORDS_EXIST 31
-#define STATUS_GCODE_NO_AXIS_WORDS_IN_PLANE 32
-#define STATUS_GCODE_INVALID_TARGET 33
-#define STATUS_GCODE_ARC_RADIUS_ERROR 34
-#define STATUS_GCODE_NO_OFFSETS_IN_PLANE 35
-#define STATUS_GCODE_UNUSED_WORDS 36
-#define STATUS_GCODE_G43_DYNAMIC_AXIS_ERROR 37
-#define STATUS_GCODE_MAX_VALUE_EXCEEDED 38
 
 // The temporal resolution of the acceleration management subsystem. A higher number gives smoother
 // acceleration, particularly noticeable on machines that run at very high feedrates, but may negatively

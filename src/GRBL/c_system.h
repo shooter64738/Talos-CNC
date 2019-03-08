@@ -156,6 +156,7 @@ class c_system
 	// Returns bitfield of control pin states, organized by CONTROL_PIN_INDEX. (1=triggered, 0=not triggered).
 	static uint8_t system_control_get_state();
 
+	static void control_pin_event_default();
 	// Returns if safety door is open or closed, based on pin state.
 	static uint8_t system_check_safety_door_ajar();
 

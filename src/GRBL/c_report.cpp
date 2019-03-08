@@ -16,6 +16,8 @@
 #include "c_settings.h"
 #include <string.h>
 #include "utils.h"
+//#include "..\Common\Hardware_Abstraction_Layer\AVR_2560\c_core_avr_2560.h"
+#include "hardware_def.h"
 
 /*
  report.c - reporting and messaging methods
@@ -53,6 +55,7 @@
 //#include "coolant_control.h"
 //#include "spindle_control.h"
 
+
 // Internal report utilities to reduce flash with repetitive tasks turned into functions.
 void c_report::report_util_setting_prefix(uint8_t n)
 {
@@ -63,7 +66,7 @@ void c_report::report_util_setting_prefix(uint8_t n)
 
 void c_report::report_util_line_feed()
 {
-    c_print::print_string_P(PSTR("\r\n"));
+    c_print::print_string_P(Hardware_Abstraction_Layer_Core_PSTR("\r\n"));
 }
 
 void c_report::report_util_feedback_line_feed()
@@ -74,12 +77,12 @@ void c_report::report_util_feedback_line_feed()
 
 void c_report::report_util_gcode_modes_G()
 {
-    c_print::print_string_P(PSTR(" G"));
+    c_print::print_string_P(Hardware_Abstraction_Layer_Core_PSTR(" G"));
 }
 
 void c_report::report_util_gcode_modes_M()
 {
-    c_print::print_string_P(PSTR(" M"));
+    c_print::print_string_P(Hardware_Abstraction_Layer_Core_PSTR(" M"));
 }
 
 // static void report_util_comment_line_feed() { serial_write(')'); report_util_line_feed(); }
@@ -223,10 +226,10 @@ void c_report::report_status_message(uint8_t status_code)
     switch (status_code)
     {
         case STATUS_OK: // STATUS_OK
-            c_print::print_string_P(PSTR("ok\r\n"));
+            c_print::print_string_P(Hardware_Abstraction_Layer_Core_PSTR("ok\r\n"));
             break;
         default:
-            c_print::print_string_P(PSTR("error:"));
+            c_print::print_string_P(Hardware_Abstraction_Layer_Core_PSTR("error:"));
             c_print::print_uint8_base10(status_code);
             report_util_line_feed();
     }
@@ -235,10 +238,10 @@ void c_report::report_status_message(uint8_t status_code)
 // Prints alarm messages.
 void c_report::report_alarm_message(uint8_t alarm_code)
 {
-    c_print::print_string_P(PSTR("ALARM:"));
+    c_print::print_string_P(Hardware_Abstraction_Layer_Core_PSTR("ALARM:"));
     c_print::print_uint8_base10(alarm_code);
     report_util_line_feed();
-    utils::delay_ms(500); // Force delay to ensure message clears serial write buffer.
+    Hardware_Abstraction_Layer::Core::delay_ms(500); // Force delay to ensure message clears serial write buffer.
 }
 
 // Prints feedback messages. This serves as a centralized method to provide additional
@@ -248,41 +251,41 @@ void c_report::report_alarm_message(uint8_t alarm_code)
 // is installed, the message number codes are less than zero.
 void c_report::report_feedback_message(uint8_t message_code)
 {
-    c_print::print_string_P(PSTR("[MSG:"));
+    c_print::print_string_P(Hardware_Abstraction_Layer_Core_PSTR("[MSG:"));
     switch (message_code)
     {
         case MESSAGE_CRITICAL_EVENT:
-            c_print::print_string_P(PSTR("Reset to continue"));
+            c_print::print_string_P(Hardware_Abstraction_Layer_Core_PSTR("Reset to continue"));
             break;
         case MESSAGE_ALARM_LOCK:
-            c_print::print_string_P(PSTR("'$H'|'$X' to unlock"));
+            c_print::print_string_P(Hardware_Abstraction_Layer_Core_PSTR("'$H'|'$X' to unlock"));
             break;
         case MESSAGE_ALARM_UNLOCK:
-            c_print::print_string_P(PSTR("Caution: Unlocked"));
+            c_print::print_string_P(Hardware_Abstraction_Layer_Core_PSTR("Caution: Unlocked"));
             break;
         case MESSAGE_ENABLED:
-            c_print::print_string_P(PSTR("Enabled"));
+            c_print::print_string_P(Hardware_Abstraction_Layer_Core_PSTR("Enabled"));
             break;
         case MESSAGE_DISABLED:
-            c_print::print_string_P(PSTR("Disabled"));
+            c_print::print_string_P(Hardware_Abstraction_Layer_Core_PSTR("Disabled"));
             break;
         case MESSAGE_SAFETY_DOOR_AJAR:
-            c_print::print_string_P(PSTR("Check Door"));
+            c_print::print_string_P(Hardware_Abstraction_Layer_Core_PSTR("Check Door"));
             break;
         case MESSAGE_CHECK_LIMITS:
-           c_print::print_string_P(PSTR("Check Limits"));
+           c_print::print_string_P(Hardware_Abstraction_Layer_Core_PSTR("Check Limits"));
             break;
         case MESSAGE_PROGRAM_END:
-            c_print::print_string_P(PSTR("Pgm End"));
+            c_print::print_string_P(Hardware_Abstraction_Layer_Core_PSTR("Pgm End"));
             break;
         case MESSAGE_RESTORE_DEFAULTS:
-            c_print::print_string_P(PSTR("Restoring defaults"));
+            c_print::print_string_P(Hardware_Abstraction_Layer_Core_PSTR("Restoring defaults"));
             break;
         case MESSAGE_SPINDLE_RESTORE:
-            c_print::print_string_P(PSTR("Restoring spindle"));
+            c_print::print_string_P(Hardware_Abstraction_Layer_Core_PSTR("Restoring spindle"));
             break;
         case MESSAGE_SLEEP_MODE:
-            c_print::print_string_P(PSTR("Sleeping"));
+            c_print::print_string_P(Hardware_Abstraction_Layer_Core_PSTR("Sleeping"));
             break;
     }
     c_report::report_util_feedback_line_feed();
@@ -291,13 +294,13 @@ void c_report::report_feedback_message(uint8_t message_code)
 // Welcome message
 void c_report::report_init_message()
 {
-    c_print::print_string_P(PSTR("\r\nGrbl " GRBL_VERSION " ['$' for help]\r\n"));
+    c_print::print_string_P(Hardware_Abstraction_Layer_Core_PSTR("\r\nGrbl " GRBL_VERSION " ['$' for help]\r\n"));
 }
 
 // Grbl help message
 void c_report::report_grbl_help()
 {
-    c_print::print_string_P(PSTR("[HLP:$$ $# $G $I $N $x=val $Nx=line $J=line $SLP $C $X $H ~ ! ? ctrl-x]\r\n"));
+    c_print::print_string_P(Hardware_Abstraction_Layer_Core_PSTR("[HLP:$$ $# $G $I $N $x=val $Nx=line $J=line $SLP $C $X $H ~ ! ? ctrl-x]\r\n"));
 }
 
 // Grbl global settings print out.
@@ -359,7 +362,7 @@ void c_report::report_grbl_settings()
 void c_report::report_probe_parameters()
 {
     // Report in terms of machine position.
-    c_print::print_string_P(PSTR("[PRB:"));
+    c_print::print_string_P(Hardware_Abstraction_Layer_Core_PSTR("[PRB:"));
     float print_position[N_AXIS];
     c_system::system_convert_array_steps_to_mpos(print_position, c_system::sys_probe_position);
     report_util_axis_values(print_position);
@@ -380,14 +383,14 @@ void c_report::report_ngc_parameters()
             c_report::report_status_message(STATUS_SETTING_READ_FAIL);
             return;
         }
-        c_print::print_string_P(PSTR("[G"));
+        c_print::print_string_P(Hardware_Abstraction_Layer_Core_PSTR("[G"));
         switch (coord_select)
         {
             case 6:
-                c_print::print_string_P(PSTR("28"));
+                c_print::print_string_P(Hardware_Abstraction_Layer_Core_PSTR("28"));
                 break;
             case 7:
-               c_print:: print_string_P(PSTR("30"));
+               c_print:: print_string_P(Hardware_Abstraction_Layer_Core_PSTR("30"));
                 break;
             default:
                 c_print::print_uint8_base10(coord_select + 54);
@@ -397,10 +400,10 @@ void c_report::report_ngc_parameters()
         c_report::report_util_axis_values(coord_data);
         c_report::report_util_feedback_line_feed();
     }
-    c_print::print_string_P(PSTR("[G92:")); // Print G92,G92.1 which are not persistent in memory
+    c_print::print_string_P(Hardware_Abstraction_Layer_Core_PSTR("[G92:")); // Print G92,G92.1 which are not persistent in memory
     c_report::report_util_axis_values(c_gcode::gc_state.coord_offset);
     c_report::report_util_feedback_line_feed();
-    c_print::print_string_P(PSTR("[TLO:")); // Print tool length offset value
+    c_print::print_string_P(Hardware_Abstraction_Layer_Core_PSTR("[TLO:")); // Print tool length offset value
    c_print:: print_float_coord_value(c_gcode::gc_state.tool_length_offset);
     c_report::report_util_feedback_line_feed();
     c_report::report_probe_parameters(); // Print probe parameters. Not persistent in memory.
@@ -409,10 +412,10 @@ void c_report::report_ngc_parameters()
 // Print current gcode parser mode state
 void c_report::report_gcode_modes()
 {
-    c_print::print_string_P(PSTR("[GC:G"));
+    c_print::print_string_P(Hardware_Abstraction_Layer_Core_PSTR("[GC:G"));
     if (c_gcode::gc_state.modal.motion >= MOTION_MODE_PROBE_TOWARD)
     {
-        c_print::print_string_P(PSTR("38."));
+        c_print::print_string_P(Hardware_Abstraction_Layer_Core_PSTR("38."));
         c_print::print_uint8_base10(c_gcode::gc_state.modal.motion - (MOTION_MODE_PROBE_TOWARD - 2));
     }
     else
@@ -475,13 +478,13 @@ void c_report::report_gcode_modes()
     else
         c_serial::serial_write('9');
 
-    c_print::print_string_P(PSTR(" T"));
+    c_print::print_string_P(Hardware_Abstraction_Layer_Core_PSTR(" T"));
     c_print::print_uint8_base10(c_gcode::gc_state.tool);
 
-    c_print::print_string_P(PSTR(" F"));
+    c_print::print_string_P(Hardware_Abstraction_Layer_Core_PSTR(" F"));
     c_print::print_float_rate_value(c_gcode::gc_state.feed_rate);
 
-    c_print::print_string_P(PSTR(" S"));
+    c_print::print_string_P(Hardware_Abstraction_Layer_Core_PSTR(" S"));
     c_print::print_float(c_gcode::gc_state.spindle_speed, N_DECIMAL_RPMVALUE);
 
     c_report::report_util_feedback_line_feed();
@@ -490,7 +493,7 @@ void c_report::report_gcode_modes()
 // Prints specified startup line
 void c_report::report_startup_line(uint8_t n, char *line)
 {
-    c_print::print_string_P(PSTR("$N"));
+    c_print::print_string_P(Hardware_Abstraction_Layer_Core_PSTR("$N"));
     c_print::print_uint8_base10(n);
     c_serial::serial_write('=');
     c_print::print_string(line);
@@ -508,10 +511,10 @@ void c_report::report_execute_startup_message(char *line, uint8_t status_code)
 // Prints build info line
 void c_report::report_build_info(char *line)
 {
-    c_print::print_string_P(PSTR("[VER:" GRBL_VERSION "." GRBL_VERSION_BUILD ":"));
+    c_print::print_string_P(Hardware_Abstraction_Layer_Core_PSTR("[VER:" GRBL_VERSION "." GRBL_VERSION_BUILD ":"));
     c_print::print_string(line);
     report_util_feedback_line_feed();
-    c_print::print_string_P(PSTR("[OPT:")); // Generate compile-time build option list
+    c_print::print_string_P(Hardware_Abstraction_Layer_Core_PSTR("[OPT:")); // Generate compile-time build option list
     c_serial::serial_write('V');
     c_serial::serial_write('N');
     c_serial::serial_write('M');
@@ -561,7 +564,7 @@ void c_report::report_build_info(char *line)
 // and has been sent into protocol_execute_line() routine to be executed by Grbl.
 void c_report::report_echo_line_received(char *line)
 {
-    c_print::print_string_P(PSTR("[echo: "));
+    c_print::print_string_P(Hardware_Abstraction_Layer_Core_PSTR("[echo: "));
     c_print::print_string(line);
     c_report::report_util_feedback_line_feed();
 }
@@ -584,15 +587,15 @@ void c_report::report_realtime_status()
     switch (c_system::sys.state)
     {
         case STATE_IDLE:
-            c_print::print_string_P(PSTR("Idle"));
+            c_print::print_string_P(Hardware_Abstraction_Layer_Core_PSTR("Idle"));
             break;
         case STATE_CYCLE:
-            c_print::print_string_P(PSTR("Run"));
+            c_print::print_string_P(Hardware_Abstraction_Layer_Core_PSTR("Run"));
             break;
         case STATE_HOLD:
             if (!(c_system::sys.suspend & SUSPEND_JOG_CANCEL))
             {
-                c_print::print_string_P(PSTR("Hold:"));
+                c_print::print_string_P(Hardware_Abstraction_Layer_Core_PSTR("Hold:"));
                 if (c_system::sys.suspend & SUSPEND_HOLD_COMPLETE)
                 {
                     c_serial::serial_write('0');
@@ -605,19 +608,19 @@ void c_report::report_realtime_status()
             } // Continues to print jog state during jog cancel.
         /* no break */
         case STATE_JOG:
-            c_print::print_string_P(PSTR("Jog"));
+            c_print::print_string_P(Hardware_Abstraction_Layer_Core_PSTR("Jog"));
             break;
         case STATE_HOMING:
-            c_print::print_string_P(PSTR("Home"));
+            c_print::print_string_P(Hardware_Abstraction_Layer_Core_PSTR("Home"));
             break;
         case STATE_ALARM:
-            c_print::print_string_P(PSTR("Alarm"));
+            c_print::print_string_P(Hardware_Abstraction_Layer_Core_PSTR("Alarm"));
             break;
         case STATE_CHECK_MODE:
-            c_print::print_string_P(PSTR("Check"));
+            c_print::print_string_P(Hardware_Abstraction_Layer_Core_PSTR("Check"));
             break;
         case STATE_SAFETY_DOOR:
-            c_print::print_string_P(PSTR("Door:"));
+            c_print::print_string_P(Hardware_Abstraction_Layer_Core_PSTR("Door:"));
             if (c_system::sys.suspend & SUSPEND_INITIATE_RESTORE)
                 c_serial::serial_write('3'); // Restoring
             else
@@ -634,7 +637,7 @@ void c_report::report_realtime_status()
             }
             break;
         case STATE_SLEEP:
-            c_print::print_string_P(PSTR("Sleep"));
+            c_print::print_string_P(Hardware_Abstraction_Layer_Core_PSTR("Sleep"));
             break;
     }
 
@@ -654,9 +657,9 @@ void c_report::report_realtime_status()
 
     // Report machine position
     if (bit_istrue(c_settings::settings.status_report_mask, BITFLAG_RT_STATUS_POSITION_TYPE))
-        c_print::print_string_P(PSTR("|MPos:"));
+        c_print::print_string_P(Hardware_Abstraction_Layer_Core_PSTR("|MPos:"));
     else
-        c_print::print_string_P(PSTR("|WPos:"));
+        c_print::print_string_P(Hardware_Abstraction_Layer_Core_PSTR("|WPos:"));
     report_util_axis_values(print_position);
 
     // Returns planner and serial read buffer states.

@@ -39,11 +39,9 @@
 #include "c_limits.h"
 #include "c_stepper.h"
 #include "utils.h"
-#include "..\Common\Hardware_Abstraction_Layer\AVR_2560\c_grbl_avr_2560_limits.h"
-//#include "grbl.h"
-//#include "system.h"
-//#include "gcode.h"
-//#include "probe.h"
+//#include "..\Common\Hardware_Abstraction_Layer\AVR_2560\c_grbl_avr_2560_limits.h"
+//#include "..\Common\Hardware_Abstraction_Layer\AVR_2560\c_grbl_avr_2560_probe.h"
+#include "hardware_def.h"
 
 // Execute linear motion in absolute millimeter coordinates. Feed rate given in millimeters/second
 // unless invert_feed_rate is true. Then the feed_rate means that the motion should be completed in
@@ -329,7 +327,8 @@ uint8_t c_motion_control::mc_probe_cycle(float *target, c_planner::plan_line_dat
     uint8_t is_probe_away = bit_istrue(parser_flags, GC_PARSER_PROBE_IS_AWAY);
     uint8_t is_no_error = bit_istrue(parser_flags, GC_PARSER_PROBE_IS_NO_ERROR);
     c_system::sys.probe_succeeded = false; // Re-initialize probe history before beginning cycle.
-    c_probe::probe_configure_invert_mask(is_probe_away);
+    //c_probe::probe_configure_invert_mask(is_probe_away);
+	Hardware_Abstraction_Layer::Grbl::Probe::probe_configure_invert_mask(is_probe_away);
 
     // After syncing, check if probe is already triggered. If so, halt and issue alarm.
     // NOTE: This probe initialization error applies to all probing cycles.
@@ -337,7 +336,8 @@ uint8_t c_motion_control::mc_probe_cycle(float *target, c_planner::plan_line_dat
     { // Check probe pin state.
         c_system::system_set_exec_alarm(EXEC_ALARM_PROBE_FAIL_INITIAL);
         c_protocol::protocol_execute_realtime();
-        c_probe::probe_configure_invert_mask(false); // Re-initialize invert mask before returning.
+        //c_probe::probe_configure_invert_mask(false); // Re-initialize invert mask before returning.
+		Hardware_Abstraction_Layer::Grbl::Probe::probe_configure_invert_mask(false);
         return (GC_PROBE_FAIL_INIT); // Nothing else to do but bail.
     }
 
@@ -378,7 +378,8 @@ uint8_t c_motion_control::mc_probe_cycle(float *target, c_planner::plan_line_dat
         c_system::sys.probe_succeeded = true; // Indicate to system the probing cycle completed successfully.
     }
     c_system::sys_probe_state = PROBE_OFF; // Ensure probe state monitor is disabled.
-    c_probe::probe_configure_invert_mask(false); // Re-initialize invert mask.
+    //c_probe::probe_configure_invert_mask(false); // Re-initialize invert mask.
+	Hardware_Abstraction_Layer::Grbl::Probe::probe_configure_invert_mask(false);
     c_protocol::protocol_execute_realtime();   // Check and execute run-time commands
 
     // Reset the stepper and planner buffers to remove the remainder of the probe motion.

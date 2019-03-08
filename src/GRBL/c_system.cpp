@@ -27,7 +27,7 @@ along with Grbl.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "c_system.h"
-#include <avr/interrupt.h>
+//#include <avr/interrupt.h>
 #include "c_motion_control.h"
 #include "c_settings.h"
 #include "c_report.h"
@@ -36,11 +36,10 @@ along with Grbl.  If not, see <http://www.gnu.org/licenses/>.
 #include <math.h>
 #include "all_includes.h"
 #include "utils.h"
-//#include "system.h"
-//#include "grbl.h"
-//#include "report.h"
-//#include "cpu_map.h"
-//#include "motion_control.h"
+//#include "..\Common\Hardware_Abstraction_Layer\AVR_2560\c_grbl_avr_2560_control.h"
+//#include "..\Common\Hardware_Abstraction_Layer\AVR_2560\c_core_avr_2560.h"
+#include "hardware_def.h"
+
 c_system::system_t c_system::sys;
 
 // NOTE: These position variables may need to be declared as volatiles, if problems arise.
@@ -71,7 +70,7 @@ void c_system::system_init()
 uint8_t c_system::system_control_get_state()
 {
 	uint8_t control_state = 0;
-	uint8_t pin = (CONTROL_PIN & CONTROL_MASK);
+	uint8_t pin = (Hardware_Abstraction_Layer::Grbl::Control::Pin_Values & Hardware_Abstraction_Layer::Grbl::Control::Pin_Mask);
 	#ifdef INVERT_CONTROL_PIN_MASK
 	pin ^= INVERT_CONTROL_PIN_MASK;
 	#endif
@@ -93,17 +92,6 @@ uint8_t c_system::system_control_get_state()
 		{
 			control_state |= CONTROL_PIN_INDEX_CYCLE_START;
 		}
-		#ifdef RTC_H_
-		if (bit_isfalse(pin, (1 << CONTROL_SPINDLE_DIRECTION_BIT)))
-		{
-			control_state |= CONTROL_PIN_INDEX_SPINDLE_DIRECTION;
-		}
-
-		if (bit_isfalse(pin, (1 << CONTROL_SPINDLE_DRIVER_BIT)))
-		{
-			control_state |= CONTROL_PIN_INDEX_SPINDLE_MOTION;
-		}
-		#endif // RTC_H_
 	}
 	return (control_state);
 }
@@ -112,7 +100,8 @@ uint8_t c_system::system_control_get_state()
 // only the realtime command execute variable to have the main program execute these when
 // its ready. This works exactly like the character-based realtime commands when picked off
 // directly from the incoming serial data stream.
-ISR( CONTROL_INT_vect)
+//ISR( CONTROL_INT_vect)
+void c_system::control_pin_event_default()
 {
 	//sys_position[0]++;
 	uint8_t pin = c_system::system_control_get_state();
@@ -532,64 +521,52 @@ uint8_t c_system::system_check_travel_limits(float *target)
 // Special handlers for setting and clearing Grbl's real-time execution flags.
 void c_system::system_set_exec_state_flag(uint8_t mask)
 {
-	uint8_t sreg = SREG;
-	cli();
+	Hardware_Abstraction_Layer::Core::stop_interrupts();
 	sys_rt_exec_state |= (mask);
-	SREG = sreg;
 }
 
 void c_system::system_clear_exec_state_flag(uint8_t mask)
 {
-	uint8_t sreg = SREG;
-	cli();
+	Hardware_Abstraction_Layer::Core::stop_interrupts();
 	sys_rt_exec_state &= ~(mask);
-	SREG = sreg;
 }
 
 void c_system::system_set_exec_alarm(uint8_t code)
 {
-	uint8_t sreg = SREG;
-	cli();
+	Hardware_Abstraction_Layer::Core::stop_interrupts();
 	sys_rt_exec_alarm = code;
-	SREG = sreg;
 }
 
 void c_system::system_clear_exec_alarm()
 {
-	uint8_t sreg = SREG;
-	cli();
+	
+	Hardware_Abstraction_Layer::Core::stop_interrupts();
 	sys_rt_exec_alarm = 0;
-	SREG = sreg;
 }
 
 void c_system::system_set_exec_motion_override_flag(uint8_t mask)
 {
-	uint8_t sreg = SREG;
-	cli();
+	
+	Hardware_Abstraction_Layer::Core::stop_interrupts();
 	sys_rt_exec_motion_override |= (mask);
-	SREG = sreg;
 }
 
 void c_system::system_set_exec_accessory_override_flag(uint8_t mask)
 {
-	uint8_t sreg = SREG;
-	cli();
+	
+	Hardware_Abstraction_Layer::Core::stop_interrupts();
 	sys_rt_exec_accessory_override |= (mask);
-	SREG = sreg;
 }
 
 void c_system::system_clear_exec_motion_overrides()
 {
-	uint8_t sreg = SREG;
-	cli();
+	Hardware_Abstraction_Layer::Core::stop_interrupts();
 	sys_rt_exec_motion_override = 0;
-	SREG = sreg;
 }
 
 void c_system::system_clear_exec_accessory_overrides()
 {
-	uint8_t sreg = SREG;
-	cli();
+	
+	Hardware_Abstraction_Layer::Core::stop_interrupts();
 	sys_rt_exec_accessory_override = 0;
-	SREG = sreg;
 }

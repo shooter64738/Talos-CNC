@@ -16,8 +16,12 @@
 #include "c_probe.h"
 #include <math.h>
 #include "c_eeprom.h"
-#include "../Common/Hardware_Abstraction_Layer/AVR_2560/c_grbl_avr_2560_limits.h"
-
+//#include "../Common/Hardware_Abstraction_Layer/AVR_2560/c_grbl_avr_2560_limits.h"
+//#include "../Common/Hardware_Abstraction_Layer/AVR_2560/c_eeprom_avr_2560.h"
+//#include "../Common/Hardware_Abstraction_Layer/AVR_2560/c_grbl_avr_2560_probe.h"
+//#include "../Common/Hardware_Abstraction_Layer/AVR_2560/c_grbl_avr_2560_stepper.h"
+#include "defaults.h"
+#include "hardware_def.h"
 /*
  settings.c - eeprom configuration handling
  Part of Grbl
@@ -40,7 +44,7 @@
  */
 
 
-#include <avr/eeprom.h>
+//#include <avr/eeprom.h>
 #include <string.h>
 //#include "grbl.h"
 //#include "eeprom.h"
@@ -79,7 +83,8 @@ void c_settings::settings_write_coord_data(uint8_t coord_select, float *coord_da
 // NOTE: This function can only be called in IDLE state.
 void c_settings::write_global_settings()
 {
-    eeprom_write_byte(NULL, SETTINGS_VERSION);
+
+    Hardware_Abstraction_Layer::Eeprom::_eeprom_write_byte(NULL, SETTINGS_VERSION);
     c_eeprom::memcpy_to_eeprom_with_checksum(EEPROM_ADDR_GLOBAL, &settings, sizeof(settings_t));
 }
 
@@ -162,19 +167,19 @@ void c_settings::settings_restore(uint8_t restore_flag)
     if (restore_flag & SETTINGS_RESTORE_STARTUP_LINES)
     {
 #if N_STARTUP_LINE > 0
-        eeprom_write_byte(EEPROM_ADDR_STARTUP_BLOCK, 0);
-        eeprom_write_byte(EEPROM_ADDR_STARTUP_BLOCK + 1, 0); // Checksum
+        Hardware_Abstraction_Layer::Eeprom::_eeprom_write_byte((char*)EEPROM_ADDR_STARTUP_BLOCK, 0);
+        Hardware_Abstraction_Layer::Eeprom::_eeprom_write_byte((char*)EEPROM_ADDR_STARTUP_BLOCK + 1, 0); // Checksum
 #endif
 #if N_STARTUP_LINE > 1
-        eeprom_write_byte(EEPROM_ADDR_STARTUP_BLOCK + (LINE_BUFFER_SIZE + 1), 0);
-        eeprom_write_byte(EEPROM_ADDR_STARTUP_BLOCK + (LINE_BUFFER_SIZE + 2), 0); // Checksum
+        Hardware_Abstraction_Layer::Eeprom::_eeprom_write_byte((char*)EEPROM_ADDR_STARTUP_BLOCK + (LINE_BUFFER_SIZE + 1), 0);
+        Hardware_Abstraction_Layer::Eeprom::_eeprom_write_byte((char*)EEPROM_ADDR_STARTUP_BLOCK + (LINE_BUFFER_SIZE + 2), 0); // Checksum
 #endif
     }
 
     if (restore_flag & SETTINGS_RESTORE_BUILD_INFO)
     {
-        eeprom_write_byte(EEPROM_ADDR_BUILD_INFO, 0);
-        eeprom_write_byte(EEPROM_ADDR_BUILD_INFO + 1, 0); // Checksum
+        Hardware_Abstraction_Layer::Eeprom::_eeprom_write_byte((char*)EEPROM_ADDR_BUILD_INFO, 0);
+        Hardware_Abstraction_Layer::Eeprom::_eeprom_write_byte((char*)EEPROM_ADDR_BUILD_INFO + 1, 0); // Checksum
     }
 }
 
@@ -223,7 +228,7 @@ uint8_t c_settings::settings_read_coord_data(uint8_t coord_select, float *coord_
 uint8_t c_settings::read_global_settings()
 {
     // Check version-byte of eeprom
-    uint8_t version = eeprom_read_byte(NULL);
+    uint8_t version = Hardware_Abstraction_Layer::Eeprom::_eeprom_read_byte(NULL);
     if (version == SETTINGS_VERSION)
     {
         // Read settings-record and check checksum
@@ -347,7 +352,8 @@ uint8_t c_settings::settings_store_global_setting(uint8_t parameter, float value
                 {
                     settings.flags &= ~BITFLAG_INVERT_PROBE_PIN;
                 }
-                c_probe::probe_configure_invert_mask(false);
+                //c_probe::probe_configure_invert_mask(false);
+				Hardware_Abstraction_Layer::Grbl::Probe::probe_configure_invert_mask(false);
                 break;
             case 10:
                 settings.status_report_mask = int_value;

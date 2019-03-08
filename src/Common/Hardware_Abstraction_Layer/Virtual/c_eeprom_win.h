@@ -36,10 +36,12 @@ namespace Hardware_Abstraction_Layer
 
 		//functions
 		public:
-		static void initialize();
-		
-		static void update_block(const char* data, uint16_t size );
-		static void read_block(char* data, uint16_t size );
+			static void initialize();
+
+			static void update_block(const char* data, uint16_t size);
+			static void read_block(char* data, uint16_t size);
+			static void _eeprom_write_byte(char* data, uint16_t size);
+			static uint8_t _eeprom_read_byte(uint8_t* data);
 		protected:
 		private:
 		//c_core_avr_328( const c_core_avr_328 &c );

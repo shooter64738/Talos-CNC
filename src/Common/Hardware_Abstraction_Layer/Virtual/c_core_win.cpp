@@ -37,3 +37,13 @@ uint32_t Hardware_Abstraction_Layer::Core::get_cpu_clock_rate()
 {
 	return F_CPU;
 }
+
+
+void Hardware_Abstraction_Layer::Core::delay_ms(uint16_t delay_time)
+{
+
+}
+void Hardware_Abstraction_Layer::Core::delay_us(uint16_t delay_time)
+{
+
+}

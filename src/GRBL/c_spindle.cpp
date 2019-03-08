@@ -35,26 +35,26 @@
 #include "c_gcode.h"
 #include <math.h>
 #include "c_protocol.h"
-//#include "grbl.h"
-//#include "cpu_map.h"
-//#include "gcode.h"
-//#include "planner.h"
+//#include "..\Common\Hardware_Abstraction_Layer\AVR_2560\c_grbl_avr_2560_spindle.h"
+#include "hardware_def.h"
 
 static float pwm_gradient; // Precalulated value to speed up rpm to PWM conversions.
 
 
 void c_spindle::spindle_init()
 {    
-  // Configure variable spindle PWM and enable pin, if required.
-  SPINDLE_PWM_DDR |= (1<<SPINDLE_PWM_BIT); // Configure as PWM output pin.
-  SPINDLE_TCCRA_REGISTER = SPINDLE_TCCRA_INIT_MASK; // Configure PWM output compare timer
-  SPINDLE_TCCRB_REGISTER = SPINDLE_TCCRB_INIT_MASK;
-  SPINDLE_OCRA_REGISTER = SPINDLE_OCRA_TOP_VALUE; // Set the top value for 16-bit fast PWM mode
-  SPINDLE_ENABLE_DDR |= (1<<SPINDLE_ENABLE_BIT); // Configure as output pin.
-  SPINDLE_DIRECTION_DDR |= (1<<SPINDLE_DIRECTION_BIT); // Configure as output pin.
+Hardware_Abstraction_Layer::Grbl::Spindle::initialize();
 
-  pwm_gradient = SPINDLE_PWM_RANGE/(c_settings::settings.rpm_max-c_settings::settings.rpm_min);
-  spindle_stop();
+  //// Configure variable spindle PWM and enable pin, if required.
+  //SPINDLE_PWM_DDR |= (1<<SPINDLE_PWM_BIT); // Configure as PWM output pin.
+  //SPINDLE_TCCRA_REGISTER = SPINDLE_TCCRA_INIT_MASK; // Configure PWM output compare timer
+  //SPINDLE_TCCRB_REGISTER = SPINDLE_TCCRB_INIT_MASK;
+  //SPINDLE_OCRA_REGISTER = SPINDLE_OCRA_TOP_VALUE; // Set the top value for 16-bit fast PWM mode
+  //SPINDLE_ENABLE_DDR |= (1<<SPINDLE_ENABLE_BIT); // Configure as output pin.
+  //SPINDLE_DIRECTION_DDR |= (1<<SPINDLE_DIRECTION_BIT); // Configure as output pin.
+//
+  //pwm_gradient = SPINDLE_PWM_RANGE/(c_settings::settings.rpm_max-c_settings::settings.rpm_min);
+  //spindle_stop();
 }
 
 
