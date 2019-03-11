@@ -95,21 +95,21 @@ void c_print::print_uint8_base10(uint8_t n)
 	}
 }
 
-// Prints an uint8 variable in base 2 with desired number of desired digits.
-void c_print::print_uint8_base2_ndigit(uint8_t n, uint8_t digits)
-{
-	unsigned char buf[digits];
-	uint8_t i = 0;
-
-	for (; i < digits; i++)
-	{
-		buf[i] = n % 2;
-		n /= 2;
-	}
-
-	for (; i > 0; i--)
-	c_serial::serial_write('0' + buf[i - 1]);
-}
+//// Prints an uint8 variable in base 2 with desired number of desired digits.
+//void c_print::print_uint8_base2_ndigit(uint8_t n, uint8_t digits)
+//{
+//	unsigned char buf[digits];
+//	uint8_t i = 0;
+//
+//	for (; i < digits; i++)
+//	{
+//		buf[i] = n % 2;
+//		n /= 2;
+//	}
+//
+//	for (; i > 0; i--)
+//	c_serial::serial_write('0' + buf[i - 1]);
+//}
 
 void c_print::print_uint32_base10(uint32_t n)
 {

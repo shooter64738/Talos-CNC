@@ -7,7 +7,7 @@
 
 //#include <avr/io.h>
 //#include <avr/interrupt.h>
-#include "c_grbl_avr_2560_probe.h"
+#include "c_grbl_win_probe.h"
 #include "../../../helpers.h"
 #include "../../../GRBL/c_settings.h"
 

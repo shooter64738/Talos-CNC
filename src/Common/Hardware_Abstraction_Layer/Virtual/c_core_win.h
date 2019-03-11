@@ -26,9 +26,8 @@
 #include <stdint.h>
 #define F_CPU 18*1000000*1000000
 
-
-#define Hardware_Abstraction_Layer_Core_pgm_read_byte_near(PS1) "."
-#define Hardware_Abstraction_Layer_Core_PSTR (PS2) "."
+#define Hardware_Abstraction_Layer_Core_pgm_read_byte_near(x) ((int)x)
+#define Hardware_Abstraction_Layer_Core_PSTR(x) ((const char*)x) //PSTR
 
 namespace Hardware_Abstraction_Layer
 {

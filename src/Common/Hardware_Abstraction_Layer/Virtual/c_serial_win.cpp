@@ -39,3 +39,14 @@ void Hardware_Abstraction_Layer::Serial::_add(uint8_t port, char byte, uint16_t 
 	if (rxBuffer[port].Buffer[position] == 13)
 		rxBuffer[port].EOL++;
 }
+
+void Hardware_Abstraction_Layer::Serial::disable_tx_isr()
+{
+	
+}
+
+void Hardware_Abstraction_Layer::Serial::enable_tx_isr()
+{
+
+	
+}

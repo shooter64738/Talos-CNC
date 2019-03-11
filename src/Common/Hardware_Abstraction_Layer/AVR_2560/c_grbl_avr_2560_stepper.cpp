@@ -98,7 +98,6 @@ void Hardware_Abstraction_Layer::Grbl::Stepper::OCR1A_set(uint8_t delay)
 	OCR1A = delay;
 }
 
-
 ISR(TIMER1_COMPA_vect)
 {
 	c_stepper::step_tick();

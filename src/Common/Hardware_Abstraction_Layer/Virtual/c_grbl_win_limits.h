@@ -11,7 +11,7 @@
 #define __C_GRBL_WIN_LIMITS_H__
 //dummy defines for windows
 uint8_t PCMSK0 = 0;
-uint8_t PCICR = 0;
+
 uint8_t PCIE0 = 0;
 uint8_t DDRB = 0;
 uint8_t  PORTB = 0;

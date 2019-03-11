@@ -29,16 +29,16 @@
     <eraseonlaunchrule>0</eraseonlaunchrule>
     <EraseKey />
     <AsfFrameworkConfig>
-      <framework-data xmlns="">
-        <options />
-        <configurations />
-        <files />
-        <documentation help="" />
-        <offline-documentation help="" />
-        <dependencies>
-          <content-extension eid="atmel.asf" uuidref="Atmel.ASF" version="3.45.0" />
-        </dependencies>
-      </framework-data>
+      <framework-data>
+  <options />
+  <configurations />
+  <files />
+  <documentation help="" />
+  <offline-documentation help="" />
+  <dependencies>
+    <content-extension eid="atmel.asf" uuidref="Atmel.ASF" version="3.26.0" />
+  </dependencies>
+</framework-data>
     </AsfFrameworkConfig>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
@@ -234,6 +234,10 @@
     <Compile Include="..\..\..\..\Common\Hardware_Abstraction_Layer\AVR_2560\c_serial_avr_2560.h">
       <SubType>compile</SubType>
       <Link>Common\Hardware Abstraction Layer\AVR 2560\c_serial_avr_2560.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\helpers.h">
+      <SubType>compile</SubType>
+      <Link>helpers.h</Link>
     </Compile>
     <Compile Include="..\..\..\..\Talos.h">
       <SubType>compile</SubType>

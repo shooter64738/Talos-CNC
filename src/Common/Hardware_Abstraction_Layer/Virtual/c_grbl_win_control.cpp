@@ -5,9 +5,7 @@
 * Author: jeff_d
 */
 
-#include <avr/io.h>
-#include <avr/interrupt.h>
-#include "c_grbl_avr_2560_control.h"
+#include "c_grbl_win_control.h"
 #include "../../../GRBL/c_system.h"
 #include "../../../GRBL/c_motion_control.h"
 
@@ -34,9 +32,9 @@ void Hardware_Abstraction_Layer::Grbl::Control::_configure_control_input_pins()
 
 }
 
-ISR( CONTROL_INT_vect)
-{
-	Hardware_Abstraction_Layer::Grbl::Control::Pin_Values = CONTROL_PIN;
-	
-	c_system::control_pin_event_default();
-}
+//ISR( CONTROL_INT_vect)
+//{
+//	Hardware_Abstraction_Layer::Grbl::Control::Pin_Values = CONTROL_PIN;
+//	
+//	c_system::control_pin_event_default();
+//}

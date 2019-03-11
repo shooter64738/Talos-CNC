@@ -7,12 +7,12 @@
 
 //#include <avr/io.h>
 //#include <avr/interrupt.h>
-#include "c_grbl_avr_2560_stepper.h"
+#include "c_grbl_win_stepper.h"
 #include "../../../helpers.h"
 #include "../../../GRBL/c_settings.h"
 
 #include "../../../GRBL/c_stepper.h"
-#include "c_core_avr_2560.h"
+#include "c_core_win.h"
 
 uint8_t Hardware_Abstraction_Layer::Grbl::Stepper::step_port_invert_mask;
 uint8_t Hardware_Abstraction_Layer::Grbl::Stepper::dir_port_invert_mask;
@@ -48,11 +48,11 @@ void Hardware_Abstraction_Layer::Grbl::Stepper::wake_up()
 	// Enable stepper drivers.
 	if (bit_istrue(c_settings::settings.flags, BITFLAG_INVERT_ST_ENABLE))
 	{
-		STEPPERS_DISABLE_PORT |= (1 << STEPPERS_DISABLE_BIT);
+		//STEPPERS_DISABLE_PORT |= (1 << STEPPERS_DISABLE_BIT);
 	}
 	else
 	{
-		STEPPERS_DISABLE_PORT &= ~(1 << STEPPERS_DISABLE_BIT);
+		//STEPPERS_DISABLE_PORT &= ~(1 << STEPPERS_DISABLE_BIT);
 	}
 
 	// Initialize step pulse timing from settings. Here to ensure updating after re-writing.
@@ -99,9 +99,9 @@ void Hardware_Abstraction_Layer::Grbl::Stepper::OCR1A_set(uint8_t delay)
 }
 
 
-ISR(TIMER1_COMPA_vect)
-{
-	c_stepper::step_tick();
+//ISR(TIMER1_COMPA_vect)
+//{
+//	c_stepper::step_tick();
 
 	/*	if (busy)
 	{
@@ -301,7 +301,7 @@ ISR(TIMER1_COMPA_vect)
 	busy = false;
 	}
 	*/
-}
+//}
 /* The Stepper Port Reset Interrupt: Timer0 OVF interrupt handles the falling edge of the step
 pulse. This should always trigger before the next Timer1 COMPA interrupt and independently
 finish, if Timer1 is disabled after completing a move.
@@ -314,9 +314,9 @@ added to Grbl.
 // a step. This ISR resets the motor port after a short period (settings.pulse_microseconds)
 // completing one step cycle.
 
-ISR(TIMER0_OVF_vect)
-{
-	// Reset stepping pins (leave the direction pins)
-	STEP_PORT = (STEP_PORT & ~STEP_MASK) | (Hardware_Abstraction_Layer::Grbl::Stepper::step_port_invert_mask & STEP_MASK);
-	TCCR0B = 0; // Disable Timer0 to prevent re-entering this interrupt when it's not needed.
-}
+//ISR(TIMER0_OVF_vect)
+//{
+//	// Reset stepping pins (leave the direction pins)
+//	STEP_PORT = (STEP_PORT & ~STEP_MASK) | (Hardware_Abstraction_Layer::Grbl::Stepper::step_port_invert_mask & STEP_MASK);
+//	TCCR0B = 0; // Disable Timer0 to prevent re-entering this interrupt when it's not needed.
+//}

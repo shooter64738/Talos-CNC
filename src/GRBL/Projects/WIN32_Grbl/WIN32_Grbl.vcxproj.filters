@@ -110,5 +110,6 @@
       <Filter>Common</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\helpers.h" />
+    <ClInclude Include="..\..\defaults.h" />
   </ItemGroup>
 </Project>

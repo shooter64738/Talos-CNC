@@ -135,6 +135,7 @@
     <ClInclude Include="..\..\c_spindle.h" />
     <ClInclude Include="..\..\c_stepper.h" />
     <ClInclude Include="..\..\c_system.h" />
+    <ClInclude Include="..\..\defaults.h" />
     <ClInclude Include="..\..\hardware_def.h" />
     <ClInclude Include="..\..\utils.h" />
   </ItemGroup>

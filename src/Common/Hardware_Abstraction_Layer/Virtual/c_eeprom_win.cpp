@@ -45,4 +45,5 @@ void Hardware_Abstraction_Layer::Eeprom::_eeprom_write_byte(char* data, uint16_t
 uint8_t Hardware_Abstraction_Layer::Eeprom::_eeprom_read_byte(uint8_t* data)
 {
 	//return eeprom_read_byte(data);
+	return 0;
 }

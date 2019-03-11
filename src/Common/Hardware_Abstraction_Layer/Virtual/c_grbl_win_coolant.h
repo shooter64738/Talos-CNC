@@ -18,6 +18,7 @@ uint8_t COOLANT_MIST_DDR = 0;
 uint8_t COOLANT_MIST_PORT = 0;
 #define COOLANT_MIST_BIT    6 // MEGA2560 Digital Pin 9
 
+
 namespace Hardware_Abstraction_Layer
 {
 	namespace Grbl
