@@ -19,16 +19,16 @@ void Hardware_Abstraction_Layer::Grbl::Control::initialize()
 
 void Hardware_Abstraction_Layer::Grbl::Control::_configure_control_input_pins()
 {
-	CONTROL_DDR &= ~(CONTROL_MASK); // Set as input pins
+	//CONTROL_DDR &= ~(CONTROL_MASK); // Set as input pins
 
-	CONTROL_DDR &= ~(CONTROL_MASK); // Configure as input pins
+	//CONTROL_DDR &= ~(CONTROL_MASK); // Configure as input pins
 	#ifdef DISABLE_CONTROL_PIN_PULL_UP
 	CONTROL_PORT &= ~(CONTROL_MASK); // Normal low operation. Requires external pull-down.
 	#else
-	CONTROL_PORT |= CONTROL_MASK;   // Enable internal pull-up resistors. Normal high operation.
+	//CONTROL_PORT |= CONTROL_MASK;   // Enable internal pull-up resistors. Normal high operation.
 	#endif
-	CONTROL_PCMSK |= CONTROL_MASK;  // Enable specific pins of the Pin Change Interrupt
-	PCICR |= (1 << CONTROL_INT);   // Enable Pin Change Interrupt
+	//CONTROL_PCMSK |= CONTROL_MASK;  // Enable specific pins of the Pin Change Interrupt
+	//PCICR |= (1 << CONTROL_INT);   // Enable Pin Change Interrupt
 
 }
 

@@ -22,24 +22,24 @@ void Hardware_Abstraction_Layer::Grbl::Limits::initialize()
 
 void Hardware_Abstraction_Layer::Grbl::Limits::disable()
 {
-	LIMIT_PCMSK &= ~LIMIT_MASK;  // Disable specific pins of the Pin Change Interrupt
-	PCICR &= ~(1 << LIMIT_INT);  // Disable Pin Change Interrupt
+	//LIMIT_PCMSK &= ~LIMIT_MASK;  // Disable specific pins of the Pin Change Interrupt
+	//PCICR &= ~(1 << LIMIT_INT);  // Disable Pin Change Interrupt
 }
 
 void Hardware_Abstraction_Layer::Grbl::Limits::_configure_limit_input_pins()
 {
-	LIMIT_DDR &= ~(LIMIT_MASK); // Set as input pins
+	//LIMIT_DDR &= ~(LIMIT_MASK); // Set as input pins
 
 	#ifdef DISABLE_LIMIT_PIN_PULL_UP
 	LIMIT_PORT &= ~(LIMIT_MASK); // Normal low operation. Requires external pull-down.
 	#else
-	LIMIT_PORT |= (LIMIT_MASK);  // Enable internal pull-up resistors. Normal high operation.
+	//LIMIT_PORT |= (LIMIT_MASK);  // Enable internal pull-up resistors. Normal high operation.
 	#endif
 
 	if (bit_istrue(c_settings::settings.flags, BITFLAG_HARD_LIMIT_ENABLE))
 	{
-		LIMIT_PCMSK |= LIMIT_MASK; // Enable specific pins of the Pin Change Interrupt
-		PCICR |= (1 << LIMIT_INT); // Enable Pin Change Interrupt
+		//LIMIT_PCMSK |= LIMIT_MASK; // Enable specific pins of the Pin Change Interrupt
+		//PCICR |= (1 << LIMIT_INT); // Enable Pin Change Interrupt
 	}
 	else
 	{

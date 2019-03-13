@@ -11,12 +11,16 @@
 #define __C_GRBL_WIN_COOLANT_H__
 
 // Define flood and mist coolant enable output pins.
-uint8_t COOLANT_FLOOD_DDR = 0;
-uint8_t COOLANT_FLOOD_PORT = 0;
+#define COOLANT_FLOOD_DDR 1
+#define COOLANT_FLOOD_PORT 1
 #define COOLANT_FLOOD_BIT   5 // MEGA2560 Digital Pin 8
-uint8_t COOLANT_MIST_DDR = 0;
-uint8_t COOLANT_MIST_PORT = 0;
+#define COOLANT_MIST_DDR 1
+#define COOLANT_MIST_PORT 1
 #define COOLANT_MIST_BIT    6 // MEGA2560 Digital Pin 9
+
+#define COOLANT_STATE_DISABLE   0  // Must be zero
+#define COOLANT_STATE_FLOOD     bit(0)
+#define COOLANT_STATE_MIST      bit(1)
 
 
 namespace Hardware_Abstraction_Layer
@@ -34,6 +38,7 @@ namespace Hardware_Abstraction_Layer
 		public:
 			static void initialize();
 			static void stop();
+			static void set_state(uint8_t mode);
 		protected:
 		private:
 

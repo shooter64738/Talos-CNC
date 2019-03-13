@@ -9,8 +9,8 @@
 //#include <avr/io.h>
 //#include <avr/interrupt.h>
 #include "c_grbl_win.h"
-#include "../../../GRBL/c_limits.h"
-#include "c_grbl_win_limits.h"
+//#include "../../../GRBL/c_limits.h"
+//#include "c_grbl_win_limits.h"
 
 
 //Hardware_Abstraction_Layer::Grbl::s_limits Hardware_Abstraction_Layer::Grbl::Limits;
@@ -24,6 +24,6 @@ void Hardware_Abstraction_Layer::Grbl::Base::initialize()
 	//control_type::_set_encoder_inputs();
 	//control_type::_set_timer1_capture_input();
 	//control_type::_set_control_outputs();
-	Hardware_Abstraction_Layer::Grbl::Limits::initialize();
+	//Hardware_Abstraction_Layer::Grbl::Limits::initialize();
 }
 

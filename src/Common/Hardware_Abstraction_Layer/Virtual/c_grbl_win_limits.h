@@ -10,21 +10,21 @@
 #ifndef __C_GRBL_WIN_LIMITS_H__
 #define __C_GRBL_WIN_LIMITS_H__
 //dummy defines for windows
-uint8_t PCMSK0 = 0;
+#define PCMSK0 0
 
-uint8_t PCIE0 = 0;
-uint8_t DDRB = 0;
-uint8_t  PORTB = 0;
-uint8_t PCINT0_vect = 0;
+#define PCIE0 0
+#define DDRB 0
+#define  PORTB 0
+#define PCINT0_vect 0
 
 
 
-uint8_t LIMIT_INT = 0;  // Pin change interrupt enable pin
-uint8_t LIMIT_INT_vect = 0;
-uint8_t LIMIT_PCMSK = 0; // Pin change interrupt register
-uint8_t LIMIT_DDR = 0;
-uint8_t LIMIT_PORT = 0;
-uint8_t LIMIT_PIN = 0;
+#define LIMIT_INT 0  // Pin change interrupt enable pin
+#define LIMIT_INT_vect 0
+#define LIMIT_PCMSK 0 // Pin change interrupt register
+#define LIMIT_DDR 0
+#define LIMIT_PORT 0
+#define LIMIT_PIN  0
 #define X_LIMIT_BIT  0 // MEGA2560 Digital Pin 53
 #define Y_LIMIT_BIT  1 // MEGA2560 Digital Pin 52
 #define Z_LIMIT_BIT  2 // MEGA2560 Digital Pin 51

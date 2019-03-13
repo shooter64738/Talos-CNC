@@ -10,6 +10,7 @@
 #include "c_grbl_avr_2560_spindle.h"
 #include "../../../helpers.h"
 #include "../../../GRBL/c_settings.h"
+#include "../../../GRBL/c_gcode.h"
 
 float Hardware_Abstraction_Layer::Grbl::Spindle::pwm_gradient = 0; // Precalulated value to speed up rpm to PWM conversions.
 
@@ -27,15 +28,43 @@ void Hardware_Abstraction_Layer::Grbl::Spindle::initialize()
 	Hardware_Abstraction_Layer::Grbl::Spindle::stop();
 }
 
-	// Disables the spindle and sets PWM output to zero when PWM variable spindle speed is enabled.
-	// Called by various main program and ISR routines. Keep routine small, fast, and efficient.
-	// Called by spindle_init(), spindle_set_speed(), spindle_set_state(), and mc_reset().
-	void Hardware_Abstraction_Layer::Grbl::Spindle::stop()
-	{
+// Disables the spindle and sets PWM output to zero when PWM variable spindle speed is enabled.
+// Called by various main program and ISR routines. Keep routine small, fast, and efficient.
+// Called by spindle_init(), spindle_set_speed(), spindle_set_state(), and mc_reset().
+void Hardware_Abstraction_Layer::Grbl::Spindle::stop()
+{
+	SPINDLE_TCCRA_REGISTER &= ~(1<<SPINDLE_COMB_BIT); // Disable PWM. Output voltage is zero.
+	#ifdef INVERT_SPINDLE_ENABLE_PIN
+	SPINDLE_ENABLE_PORT |= (1<<SPINDLE_ENABLE_BIT);  // Set pin to high
+	#else
+	SPINDLE_ENABLE_PORT &= ~(1<<SPINDLE_ENABLE_BIT); // Set pin to low
+	#endif
+}
+
+void Hardware_Abstraction_Layer::Grbl::Spindle::set_speed(uint16_t output_value)
+{
+	SPINDLE_OCR_REGISTER = output_value; // Set PWM output level.
+	if (output_value == SPINDLE_PWM_OFF_VALUE) {
 		SPINDLE_TCCRA_REGISTER &= ~(1<<SPINDLE_COMB_BIT); // Disable PWM. Output voltage is zero.
-		#ifdef INVERT_SPINDLE_ENABLE_PIN
-		SPINDLE_ENABLE_PORT |= (1<<SPINDLE_ENABLE_BIT);  // Set pin to high
-		#else
-		SPINDLE_ENABLE_PORT &= ~(1<<SPINDLE_ENABLE_BIT); // Set pin to low
-		#endif
+		} else {
+		SPINDLE_TCCRA_REGISTER |= (1<<SPINDLE_COMB_BIT); // Ensure PWM output is enabled.
 	}
+}
+
+void Hardware_Abstraction_Layer::Grbl::Spindle::set_direction(uint8_t direction)
+{
+	if (direction == SPINDLE_ENABLE_CW) {
+		SPINDLE_DIRECTION_PORT &= ~(1<<SPINDLE_DIRECTION_BIT);
+		} else {
+		SPINDLE_DIRECTION_PORT |= (1<<SPINDLE_DIRECTION_BIT);
+	}
+}
+
+void Hardware_Abstraction_Layer::Grbl::Spindle::enable()
+{
+	#ifdef INVERT_SPINDLE_ENABLE_PIN
+	SPINDLE_ENABLE_PORT &= ~(1<<SPINDLE_ENABLE_BIT);
+	#else
+	SPINDLE_ENABLE_PORT |= (1<<SPINDLE_ENABLE_BIT);
+	#endif
+}

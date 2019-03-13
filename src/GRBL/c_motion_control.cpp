@@ -41,6 +41,10 @@
 //#include "..\Common\Hardware_Abstraction_Layer\AVR_2560\c_grbl_avr_2560_limits.h"
 //#include "..\Common\Hardware_Abstraction_Layer\AVR_2560\c_grbl_avr_2560_probe.h"
 #include "hardware_def.h"
+#ifdef MSVC
+#include "../MSVC++.h"
+#endif // MSVC
+
 
 // Execute linear motion in absolute millimeter coordinates. Feed rate given in millimeters/second
 // unless invert_feed_rate is true. Then the feed_rate means that the motion should be completed in

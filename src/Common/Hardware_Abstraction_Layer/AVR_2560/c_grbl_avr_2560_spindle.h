@@ -21,7 +21,7 @@
 #define SPINDLE_ENABLE_BIT      3 // MEGA2560 Digital Pin 6
 #define SPINDLE_DIRECTION_DDR   DDRE
 #define SPINDLE_DIRECTION_PORT  PORTE
-#define SPINDLE_DIRECTION_BIT   2 // MEGA2560 Digital Pin 5 TODO:: this was bit 3, but it cannot be... 
+#define SPINDLE_DIRECTION_BIT   2 // MEGA2560 Digital Pin 5 TODO:: this was bit 3, but it cannot be...
 
 // 1/8 Prescaler, 16-bit Fast PWM mode
 #define SPINDLE_TCCRA_INIT_MASK ((1 << WGM40) | (1 << WGM41))
@@ -65,6 +65,9 @@ namespace Hardware_Abstraction_Layer
 			public:
 			static void initialize();
 			static void stop();
+			static void set_speed(uint16_t output_value);
+			static void set_direction(uint8_t direction);
+			static void enable();
 			protected:
 			private:
 

@@ -61,6 +61,9 @@ namespace Hardware_Abstraction_Layer
 			static void initialize();
 			static void wake_up();
 			static void st_go_idle();
+			static void port_disable(uint8_t inverted);
+			static void port_direction(uint8_t directions);
+			static void port_step(uint8_t steps);
 			static void pulse_reset_timer();
 			static void TCCR1B_set(uint8_t prescaler);
 			static void OCR1A_set(uint8_t delay);

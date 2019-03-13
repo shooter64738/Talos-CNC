@@ -32,7 +32,7 @@ along with Grbl.  If not, see <http://www.gnu.org/licenses/>.
 #include "c_system.h"
 #include "c_protocol.h"
 //#include "..\Common\Hardware_Abstraction_Layer\AVR_2560\c_grbl_avr_2560_coolant.h"
-#include "hardware_def.h"
+
 //#include "grbl.h"
 
 void c_coolant::coolant_init()

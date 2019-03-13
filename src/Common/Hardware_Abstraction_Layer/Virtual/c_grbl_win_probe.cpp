@@ -17,11 +17,11 @@ uint8_t Hardware_Abstraction_Layer::Grbl::Probe::Pin_Values;
 
 void Hardware_Abstraction_Layer::Grbl::Probe::initialize()
 {
-	PROBE_DDR &= ~(PROBE_MASK); // Configure as input pins
+	//PROBE_DDR &= ~(PROBE_MASK); // Configure as input pins
 	#ifdef DISABLE_PROBE_PIN_PULL_UP
 	PROBE_PORT &= ~(PROBE_MASK); // Normal low operation. Requires external pull-down.
 	#else
-	PROBE_PORT |= PROBE_MASK;    // Enable internal pull-up resistors. Normal high operation.
+	//PROBE_PORT |= PROBE_MASK;    // Enable internal pull-up resistors. Normal high operation.
 	#endif
 	probe_configure_invert_mask(false); // Initialize invert mask.
 }

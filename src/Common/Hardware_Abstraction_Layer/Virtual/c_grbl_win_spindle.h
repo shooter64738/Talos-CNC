@@ -9,7 +9,7 @@
 
 #ifndef __C_GRBL_WIN_SPINDLE_H__
 #define __C_GRBL_WIN_SPINDLE_H__
-uint8_t dummy;
+#define dummy 0
 #define DDRH 1
 #define PORTH 1
 #define DDRE 1
@@ -77,6 +77,9 @@ namespace Hardware_Abstraction_Layer
 		public:
 			static void initialize();
 			static void stop();
+			static void set_speed(uint16_t output_value);
+			static void set_direction(uint8_t direction);
+			static void enable();
 		protected:
 		private:
 

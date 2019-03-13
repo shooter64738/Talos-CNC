@@ -8,9 +8,9 @@
 #ifdef MSVC
 
 
-#ifndef __C_GRBLAVR_2560_PROBE_H__
-#define __C_GRBLAVR_2560_PROBE_H__
-uint8_t dummy1 = 0;
+#ifndef __C_GRBL_WIN_PROBE_H__
+#define __C_GRBL_WIN_PROBE_H__
+#define dummy1 0
 
 
 // Define probe switch input pin.

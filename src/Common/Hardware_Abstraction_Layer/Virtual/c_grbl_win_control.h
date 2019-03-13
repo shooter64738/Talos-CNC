@@ -17,16 +17,16 @@
 #define PCINT2_vect 1
 #define PCMSK2 1
 
-uint8_t CONTROL_DDR = DDRK;
+#define CONTROL_DDR DDRK;
 #define CONTROL_PIN       PINK
-uint8_t CONTROL_PORT = PORTK;
+#define CONTROL_PORT PORTK;
 #define CONTROL_RESET_BIT         0  // MEGA2560 Analog Pin 8
 #define CONTROL_FEED_HOLD_BIT     1  // MEGA2560 Analog Pin 9
 #define CONTROL_CYCLE_START_BIT   2  // MEGA2560 Analog Pin 10
 #define CONTROL_SAFETY_DOOR_BIT   3  // MEGA2560 Analog Pin 11
 #define CONTROL_INT       PCIE2  // Pin change interrupt enable pin
 #define CONTROL_INT_vect  PCINT2_vect
-uint8_t CONTROL_PCMSK = PCMSK2; // Pin change interrupt register
+#define CONTROL_PCMSK PCMSK2 // Pin change interrupt register
 #define CONTROL_MASK      ((1 << CONTROL_RESET_BIT) | (1 << CONTROL_FEED_HOLD_BIT) | (1 << CONTROL_CYCLE_START_BIT) | (1 << CONTROL_SAFETY_DOOR_BIT) )
 
 

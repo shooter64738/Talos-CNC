@@ -12,6 +12,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include "..\helpers.h"
+#include "hardware_def.h"
 
 #define COOLANT_NO_SYNC     false
 #define COOLANT_FORCE_SYNC  true

@@ -21,23 +21,23 @@ uint8_t Hardware_Abstraction_Layer::Grbl::Stepper::step_mask = STEP_MASK;
 void Hardware_Abstraction_Layer::Grbl::Stepper::initialize()
 {
 	// Configure step and direction interface pins
-	STEP_DDR |= STEP_MASK;
-	STEPPERS_DISABLE_DDR |= 1 << STEPPERS_DISABLE_BIT;
-	DIRECTION_DDR |= DIRECTION_MASK;
+	//STEP_DDR |= STEP_MASK;
+	//STEPPERS_DISABLE_DDR |= 1 << STEPPERS_DISABLE_BIT;
+	//DIRECTION_DDR |= DIRECTION_MASK;
 
 	// Configure Timer 1: Stepper Driver Interrupt
-	TCCR1B &= ~(1 << WGM13); // waveform generation = 0100 = CTC
-	TCCR1B |= (1 << WGM12);
-	TCCR1A &= ~((1 << WGM11) | (1 << WGM10));
-	TCCR1A &= ~((1 << COM1A1) | (1 << COM1A0) | (1 << COM1B1) | (1 << COM1B0)); // Disconnect OC1 output
+	//TCCR1B &= ~(1 << WGM13); // waveform generation = 0100 = CTC
+	//TCCR1B |= (1 << WGM12);
+	//TCCR1A &= ~((1 << WGM11) | (1 << WGM10));
+	//TCCR1A &= ~((1 << COM1A1) | (1 << COM1A0) | (1 << COM1B1) | (1 << COM1B0)); // Disconnect OC1 output
 	// TCCR1B = (TCCR1B & ~((1<<CS12) | (1<<CS11))) | (1<<CS10); // Set in st_go_idle().
 	// TIMSK1 &= ~(1<<OCIE1A);  // Set in st_go_idle().
 
 	// Configure Timer 0: Stepper Port Reset Interrupt
-	TIMSK0 &= ~((1 << OCIE0B) | (1 << OCIE0A) | (1 << TOIE0)); // Disconnect OC0 outputs and OVF interrupt.
-	TCCR0A = 0; // Normal operation
-	TCCR0B = 0; // Disable Timer0 until needed
-	TIMSK0 |= (1 << TOIE0); // Enable Timer0 overflow interrupt
+	//TIMSK0 &= ~((1 << OCIE0B) | (1 << OCIE0A) | (1 << TOIE0)); // Disconnect OC0 outputs and OVF interrupt.
+	//TCCR0A = 0; // Normal operation
+	//TCCR0B = 0; // Disable Timer0 until needed
+	//TIMSK0 |= (1 << TOIE0); // Enable Timer0 overflow interrupt
 	#ifdef STEP_PULSE_DELAY
 	TIMSK0 |= (1<<OCIE0A); // Enable Timer0 Compare Match A interrupt
 	#endif
@@ -67,22 +67,44 @@ void Hardware_Abstraction_Layer::Grbl::Stepper::wake_up()
 	#endif
 
 	// Enable Stepper Driver Interrupt
-	TIMSK1 |= (1 << OCIE1A);
+	//TIMSK1 |= (1 << OCIE1A);
 }
 
 void Hardware_Abstraction_Layer::Grbl::Stepper::st_go_idle()
 {
 	// Disable Stepper Driver Interrupt. Allow Stepper Port Reset Interrupt to finish, if active.
-	TIMSK1 &= ~(1 << OCIE1A); // Disable Timer1 interrupt
-	TCCR1B = (TCCR1B & ~((1 << CS12) | (1 << CS11))) | (1 << CS10); // Reset clock to no prescaling.
+	//TIMSK1 &= ~(1 << OCIE1A); // Disable Timer1 interrupt
+	//TCCR1B = (TCCR1B & ~((1 << CS12) | (1 << CS11))) | (1 << CS10); // Reset clock to no prescaling.
+}
+
+void Hardware_Abstraction_Layer::Grbl::Stepper::port_disable(uint8_t inverted)
+{
+	if (inverted)
+	{
+		//STEPPERS_DISABLE_PORT |= (1 << STEPPERS_DISABLE_BIT);
+	}
+	else
+	{
+		//STEPPERS_DISABLE_PORT &= ~(1 << STEPPERS_DISABLE_BIT);
+	}
+}
+
+void Hardware_Abstraction_Layer::Grbl::Stepper::port_direction(uint8_t directions)
+{
+	//DIRECTION_PORT = (DIRECTION_PORT & ~DIRECTION_MASK) | (directions & DIRECTION_MASK);
+}
+
+void Hardware_Abstraction_Layer::Grbl::Stepper::port_step(uint8_t steps)
+{
+	//STEP_PORT = (STEP_PORT & ~STEP_MASK) | steps;
 }
 
 void Hardware_Abstraction_Layer::Grbl::Stepper::pulse_reset_timer()
 {
 	// Enable step pulse reset timer so that The Stepper Port Reset Interrupt can reset the signal after
 	// exactly settings.pulse_microseconds microseconds, independent of the main Timer1 prescaler.
-	TCNT0 = c_stepper::st.step_pulse_time; // Reload Timer0 counter
-	TCCR0B = (1 << CS01); // Begin Timer0. Full speed, 1/8 prescaler
+	//TCNT0 = c_stepper::st.step_pulse_time; // Reload Timer0 counter
+	//TCCR0B = (1 << CS01); // Begin Timer0. Full speed, 1/8 prescaler
 
 	//sei();
 	Hardware_Abstraction_Layer::Core::start_interrupts();
@@ -90,12 +112,12 @@ void Hardware_Abstraction_Layer::Grbl::Stepper::pulse_reset_timer()
 
 void Hardware_Abstraction_Layer::Grbl::Stepper::TCCR1B_set(uint8_t prescaler)
 {
-	TCCR1B = (TCCR1B & ~(0x07<<CS10)) | (prescaler<<CS10);
+	//TCCR1B = (TCCR1B & ~(0x07<<CS10)) | (prescaler<<CS10);
 }
 
 void Hardware_Abstraction_Layer::Grbl::Stepper::OCR1A_set(uint8_t delay)
 {
-	OCR1A = delay;
+	//OCR1A = delay;
 }
 
 

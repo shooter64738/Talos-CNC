@@ -241,7 +241,13 @@ void c_limits::limits_go_home(uint8_t cycle_mask)
 			}
 
 		}
+#ifdef MSVC
+		homing_rate *= sqrtf(n_active_axis); // [sqrt(N_AXIS)] Adjust so individual axes all move at homing rate.
+#else
 		homing_rate *= sqrt(n_active_axis); // [sqrt(N_AXIS)] Adjust so individual axes all move at homing rate.
+#endif // MSVC
+
+		//homing_rate *= sqrt(n_active_axis); // [sqrt(N_AXIS)] Adjust so individual axes all move at homing rate.
 		c_system::sys.homing_axis_lock = axislock;
 
 		// Perform homing cycle. Planner buffer should be empty, as required to initiate the homing cycle.

@@ -196,14 +196,15 @@ void c_stepper::st_go_idle()
 	{
 		pin_state = !pin_state;
 	} // Apply pin invert.
-	if (pin_state)
+	/*if (pin_state)
 	{
 		STEPPERS_DISABLE_PORT |= (1 << STEPPERS_DISABLE_BIT);
 	}
 	else
 	{
 		STEPPERS_DISABLE_PORT &= ~(1 << STEPPERS_DISABLE_BIT);
-	}
+	}*/
+	Hardware_Abstraction_Layer::Grbl::Stepper::port_disable(pin_state);
 }
 
 
@@ -265,13 +266,15 @@ void c_stepper::step_tick()
 	} // The busy-flag is used to avoid reentering this interrupt
 
 	// Set the direction pins a couple of nanoseconds before we step the steppers
-	DIRECTION_PORT = (DIRECTION_PORT & ~DIRECTION_MASK) | (st.dir_outbits & DIRECTION_MASK);
+	//DIRECTION_PORT = (DIRECTION_PORT & ~DIRECTION_MASK) | (st.dir_outbits & DIRECTION_MASK);
+	Hardware_Abstraction_Layer::Grbl::Stepper::port_direction((DIRECTION_PORT & ~DIRECTION_MASK) | (st.dir_outbits & DIRECTION_MASK));
 
 	// Then pulse the stepping pins
 	#ifdef STEP_PULSE_DELAY
 	st.step_bits = (STEP_PORT & ~STEP_MASK) | st.step_outbits; // Store out_bits to prevent overwriting.
 	#else  // Normal operation
-	STEP_PORT = (STEP_PORT & ~STEP_MASK) | st.step_outbits;
+	//STEP_PORT = (STEP_PORT & ~STEP_MASK) | st.step_outbits;
+	Hardware_Abstraction_Layer::Grbl::Stepper::port_step((STEP_PORT & ~STEP_MASK) | st.step_outbits);
 	#endif
 
 	//// Enable step pulse reset timer so that The Stepper Port Reset Interrupt can reset the signal after
@@ -549,8 +552,11 @@ void c_stepper::st_reset()
 	st.dir_outbits = dir_port_invert_mask; // Initialize direction bits to default.
 
 	// Initialize step and direction port pins.
-	STEP_PORT = (STEP_PORT & ~STEP_MASK) | step_port_invert_mask;
-	DIRECTION_PORT = (DIRECTION_PORT & ~DIRECTION_MASK) | dir_port_invert_mask;
+	//STEP_PORT = (STEP_PORT & ~STEP_MASK) | step_port_invert_mask;
+	Hardware_Abstraction_Layer::Grbl::Stepper::port_step((STEP_PORT & ~STEP_MASK) | step_port_invert_mask);
+	
+	//DIRECTION_PORT = (DIRECTION_PORT & ~DIRECTION_MASK) | dir_port_invert_mask;
+	Hardware_Abstraction_Layer::Grbl::Stepper::port_direction((DIRECTION_PORT & ~DIRECTION_MASK) | dir_port_invert_mask);
 }
 
 // Initialize and start the stepper motor subsystem

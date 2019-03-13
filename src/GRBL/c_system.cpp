@@ -54,14 +54,15 @@ uint8_t c_system::sys_rt_exec_accessory_override; // Global realtime executor bi
 
 void c_system::system_init()
 {
-	CONTROL_DDR &= ~(CONTROL_MASK); // Configure as input pins
-	#ifdef DISABLE_CONTROL_PIN_PULL_UP
-	CONTROL_PORT &= ~(CONTROL_MASK); // Normal low operation. Requires external pull-down.
-	#else
-	CONTROL_PORT |= CONTROL_MASK;   // Enable internal pull-up resistors. Normal high operation.
-	#endif
-	CONTROL_PCMSK |= CONTROL_MASK;  // Enable specific pins of the Pin Change Interrupt
-	PCICR |= (1 << CONTROL_INT);   // Enable Pin Change Interrupt
+	Hardware_Abstraction_Layer::Grbl::Control::initialize();
+	//CONTROL_DDR &= ~(CONTROL_MASK); // Configure as input pins
+	//#ifdef DISABLE_CONTROL_PIN_PULL_UP
+	//CONTROL_PORT &= ~(CONTROL_MASK); // Normal low operation. Requires external pull-down.
+	//#else
+	//CONTROL_PORT |= CONTROL_MASK;   // Enable internal pull-up resistors. Normal high operation.
+	//#endif
+	//CONTROL_PCMSK |= CONTROL_MASK;  // Enable specific pins of the Pin Change Interrupt
+	//PCICR |= (1 << CONTROL_INT);   // Enable Pin Change Interrupt
 }
 
 // Returns control pin state as a uint8 bitfield. Each bit indicates the input pin state, where

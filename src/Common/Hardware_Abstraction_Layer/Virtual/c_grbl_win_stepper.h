@@ -7,8 +7,8 @@
 #include "../../../Talos.h"
 #ifdef MSVC
 
-#ifndef __C_GRBLAVR_2560_STEPPER_H__
-#define __C_GRBLAVR_2560_STEPPER_H__
+#ifndef __C_GRBL_WIN_STEPPER_H__
+#define __C_GRBL_WIN_STEPPER_H__
 #define DDRB 1
 #define PORTB 1
 #define DDRA 1
@@ -17,7 +17,7 @@
 #define DDRC 1
 #define PORTC 1
 #define PINC 1
-uint8_t dummy0;
+#define dummy0 1
 
 #define TCCR1B dummy0
 #define TCCR1A dummy0
@@ -102,6 +102,9 @@ namespace Hardware_Abstraction_Layer
 			static void pulse_reset_timer();
 			static void TCCR1B_set(uint8_t prescaler);
 			static void OCR1A_set(uint8_t delay);
+			static void port_disable(uint8_t inverted);
+			static void port_direction(uint8_t directions);
+			static void port_step(uint8_t steps);
 			protected:
 			private:
 

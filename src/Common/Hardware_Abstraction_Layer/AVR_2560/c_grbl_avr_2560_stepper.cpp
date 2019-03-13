@@ -77,6 +77,28 @@ void Hardware_Abstraction_Layer::Grbl::Stepper::st_go_idle()
 	TCCR1B = (TCCR1B & ~((1 << CS12) | (1 << CS11))) | (1 << CS10); // Reset clock to no prescaling.
 }
 
+void Hardware_Abstraction_Layer::Grbl::Stepper::port_disable(uint8_t inverted)
+{
+	if (inverted)
+	{
+		STEPPERS_DISABLE_PORT |= (1 << STEPPERS_DISABLE_BIT);
+	}
+	else
+	{
+		STEPPERS_DISABLE_PORT &= ~(1 << STEPPERS_DISABLE_BIT);
+	}
+}
+
+void Hardware_Abstraction_Layer::Grbl::Stepper::port_direction(uint8_t directions)
+{
+	DIRECTION_PORT = (DIRECTION_PORT & ~DIRECTION_MASK) | (directions & DIRECTION_MASK);
+}
+
+void Hardware_Abstraction_Layer::Grbl::Stepper::port_step(uint8_t steps)
+{
+	STEP_PORT = (STEP_PORT & ~STEP_MASK) | steps;
+}
+
 void Hardware_Abstraction_Layer::Grbl::Stepper::pulse_reset_timer()
 {
 	// Enable step pulse reset timer so that The Stepper Port Reset Interrupt can reset the signal after
