@@ -107,6 +107,9 @@ Hardware_Abstraction_Layer::Serial::initialize(0,115200);
 // Writes one byte to the TX serial buffer. Called by main program.
 void c_serial::serial_write(uint8_t data)
 {
+#ifdef MSVC
+	return;
+#endif
     // Calculate next head
     uint8_t next_head = serial_tx_buffer_head + 1;
     if (next_head == TX_RING_BUFFER)
@@ -182,6 +185,14 @@ uint8_t c_serial::serial_read()
         return data;
     }
 }
+#ifdef MSVC
+void c_serial::serial_fill(const char *data)
+{
+	while (*data != NULL)
+		serial_rx_event(*data++);
+}
+#endif // MSVC
+
 
 //ISR(SERIAL_RX)
 void c_serial::serial_rx_event(uint8_t data)

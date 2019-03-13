@@ -96,6 +96,12 @@ void c_protocol::protocol_main_loop()
     uint8_t line_flags = 0;
     uint8_t char_counter = 0;
     uint8_t c;
+
+	//if running on win32 throw some sample data into the serial buffer
+#ifdef MSVC
+	c_serial::serial_fill("G0X1\rg0y1\r");
+#endif // MSVC
+
     for (;;)
     {
 

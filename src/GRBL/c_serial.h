@@ -11,10 +11,15 @@
 
 #include <stdint.h>
 #include <stdint.h>
-
+#include "../Talos.h"
 
 class c_serial
 {
+
+#ifdef MSVC
+public:
+	static void serial_fill(const char *data);
+#endif // MSVC
 
 	#ifndef RX_BUFFER_SIZE
 	#define RX_BUFFER_SIZE 255

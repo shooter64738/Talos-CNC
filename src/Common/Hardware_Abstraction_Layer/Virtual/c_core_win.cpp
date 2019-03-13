@@ -38,6 +38,15 @@ uint32_t Hardware_Abstraction_Layer::Core::get_cpu_clock_rate()
 	return F_CPU;
 }
 
+void Hardware_Abstraction_Layer::Core::capture_status_register_SREG()
+{
+	//Hardware_Abstraction_Layer::Core::register_at_int_stop = SREG;
+}
+
+void Hardware_Abstraction_Layer::Core::restore_status_register_SREG()
+{
+	//SREG = Hardware_Abstraction_Layer::Core::register_at_int_stop;
+}
 
 void Hardware_Abstraction_Layer::Core::delay_ms(uint16_t delay_time)
 {

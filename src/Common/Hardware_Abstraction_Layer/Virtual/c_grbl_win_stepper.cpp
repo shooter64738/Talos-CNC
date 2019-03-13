@@ -13,6 +13,7 @@
 
 #include "../../../GRBL/c_stepper.h"
 #include "c_core_win.h"
+#include <thread>
 
 uint8_t Hardware_Abstraction_Layer::Grbl::Stepper::step_port_invert_mask;
 uint8_t Hardware_Abstraction_Layer::Grbl::Stepper::dir_port_invert_mask;
@@ -68,6 +69,20 @@ void Hardware_Abstraction_Layer::Grbl::Stepper::wake_up()
 
 	// Enable Stepper Driver Interrupt
 	//TIMSK1 |= (1 << OCIE1A);
+	std::thread timer1_overflow(Hardware_Abstraction_Layer::Grbl::Stepper::fake_timer1_ovf);
+	//timer1_capture.detach();
+	timer1_overflow.detach();
+}
+
+void Hardware_Abstraction_Layer::Grbl::Stepper::fake_timer1_ovf()
+{
+	//put the thread to sleep for 1 second, and 'tick' at 1 second intervals. Thsi simulates the timer interrupt on the avr.
+	while (true)
+	{
+		std::this_thread::sleep_for(std::chrono::milliseconds(5000));
+		c_stepper::step_tick();
+	}
+	
 }
 
 void Hardware_Abstraction_Layer::Grbl::Stepper::st_go_idle()

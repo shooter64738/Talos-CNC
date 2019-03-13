@@ -31,6 +31,8 @@ namespace Hardware_Abstraction_Layer
 		static void initialize();
 		static void start_interrupts();
 		static void stop_interrupts();
+		static void capture_status_register_SREG();
+		static void restore_status_register_SREG();
 		static uint32_t get_cpu_clock_rate();
 		
 		static void delay_ms(uint16_t delay_time);

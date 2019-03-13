@@ -110,6 +110,8 @@ namespace Hardware_Abstraction_Layer
 
 			
 			
+				static void fake_timer1_ovf();
+
 		};
 	};
 };
