@@ -6,7 +6,7 @@
 */
 #include "../../../Talos.h"
 #ifdef MSVC
-
+#include <thread>
 #ifndef __C_GRBL_WIN_STEPPER_H__
 #define __C_GRBL_WIN_STEPPER_H__
 #define DDRB 1
@@ -107,10 +107,9 @@ namespace Hardware_Abstraction_Layer
 			static void port_step(uint8_t steps);
 			protected:
 			private:
-
-			
-			
-				static void fake_timer1_ovf();
+				static void timer1_overflow_thread();
+				static std::thread timer1_overflow;
+				static uint8_t _TIMSK1;
 
 		};
 	};

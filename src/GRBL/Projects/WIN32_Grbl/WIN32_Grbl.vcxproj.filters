@@ -111,5 +111,6 @@
     </ClInclude>
     <ClInclude Include="..\..\..\helpers.h" />
     <ClInclude Include="..\..\defaults.h" />
+    <ClInclude Include="..\..\..\MSVC++.h" />
   </ItemGroup>
 </Project>

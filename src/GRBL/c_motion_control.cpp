@@ -38,10 +38,12 @@
 #include "c_limits.h"
 #include "c_stepper.h"
 #include "utils.h"
+
 //#include "..\Common\Hardware_Abstraction_Layer\AVR_2560\c_grbl_avr_2560_limits.h"
 //#include "..\Common\Hardware_Abstraction_Layer\AVR_2560\c_grbl_avr_2560_probe.h"
 #include "hardware_def.h"
 #ifdef MSVC
+#define M_PI 3.14159265358979323846
 #include "../MSVC++.h"
 #endif // MSVC
 

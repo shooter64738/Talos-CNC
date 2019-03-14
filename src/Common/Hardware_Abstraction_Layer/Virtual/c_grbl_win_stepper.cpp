@@ -13,14 +13,19 @@
 
 #include "../../../GRBL/c_stepper.h"
 #include "c_core_win.h"
-#include <thread>
+
 
 uint8_t Hardware_Abstraction_Layer::Grbl::Stepper::step_port_invert_mask;
 uint8_t Hardware_Abstraction_Layer::Grbl::Stepper::dir_port_invert_mask;
 uint8_t Hardware_Abstraction_Layer::Grbl::Stepper::step_mask = STEP_MASK;
 
+std::thread Hardware_Abstraction_Layer::Grbl::Stepper::timer1_overflow(Hardware_Abstraction_Layer::Grbl::Stepper::timer1_overflow_thread);
+uint8_t Hardware_Abstraction_Layer::Grbl::Stepper::_TIMSK1 = 0;
+
 void Hardware_Abstraction_Layer::Grbl::Stepper::initialize()
 {
+	//Hardware_Abstraction_Layer::Grbl::Stepper::timer1_overflow(Hardware_Abstraction_Layer::Grbl::Stepper::timer1_overflow_thread);
+	Hardware_Abstraction_Layer::Grbl::Stepper::timer1_overflow.detach();
 	// Configure step and direction interface pins
 	//STEP_DDR |= STEP_MASK;
 	//STEPPERS_DISABLE_DDR |= 1 << STEPPERS_DISABLE_BIT;
@@ -39,9 +44,9 @@ void Hardware_Abstraction_Layer::Grbl::Stepper::initialize()
 	//TCCR0A = 0; // Normal operation
 	//TCCR0B = 0; // Disable Timer0 until needed
 	//TIMSK0 |= (1 << TOIE0); // Enable Timer0 overflow interrupt
-	#ifdef STEP_PULSE_DELAY
-	TIMSK0 |= (1<<OCIE0A); // Enable Timer0 Compare Match A interrupt
-	#endif
+#ifdef STEP_PULSE_DELAY
+	TIMSK0 |= (1 << OCIE0A); // Enable Timer0 Compare Match A interrupt
+#endif
 }
 
 void Hardware_Abstraction_Layer::Grbl::Stepper::wake_up()
@@ -57,38 +62,44 @@ void Hardware_Abstraction_Layer::Grbl::Stepper::wake_up()
 	}
 
 	// Initialize step pulse timing from settings. Here to ensure updating after re-writing.
-	#ifdef STEP_PULSE_DELAY
-	// Set total step pulse time after direction pin set. Ad hoc computation from oscilloscope.
-	c_stepper::st.step_pulse_time = -(((c_settings::settings.pulse_microseconds+STEP_PULSE_DELAY-2)*TICKS_PER_MICROSECOND) >> 3);
+#ifdef STEP_PULSE_DELAY
+// Set total step pulse time after direction pin set. Ad hoc computation from oscilloscope.
+	c_stepper::st.step_pulse_time = -(((c_settings::settings.pulse_microseconds + STEP_PULSE_DELAY - 2)*TICKS_PER_MICROSECOND) >> 3);
 	// Set delay between direction pin write and step command.
 	OCR0A = -(((c_settings::settings.pulse_microseconds)*TICKS_PER_MICROSECOND) >> 3);
-	#else // Normal operation
-	// Set step pulse time. Ad hoc computation from oscilloscope. Uses two's complement.
+#else // Normal operation
+// Set step pulse time. Ad hoc computation from oscilloscope. Uses two's complement.
 	c_stepper::st.step_pulse_time = -(((c_settings::settings.pulse_microseconds - 2) * TICKS_PER_MICROSECOND) >> 3);
-	#endif
+#endif
 
 	// Enable Stepper Driver Interrupt
-	//TIMSK1 |= (1 << OCIE1A);
-	std::thread timer1_overflow(Hardware_Abstraction_Layer::Grbl::Stepper::fake_timer1_ovf);
+	Hardware_Abstraction_Layer::Grbl::Stepper::_TIMSK1 |= (1 << OCIE1A);
+	
+
 	//timer1_capture.detach();
-	timer1_overflow.detach();
+	//timer1_overflow.detach();
 }
 
-void Hardware_Abstraction_Layer::Grbl::Stepper::fake_timer1_ovf()
+void Hardware_Abstraction_Layer::Grbl::Stepper::timer1_overflow_thread()
 {
 	//put the thread to sleep for 1 second, and 'tick' at 1 second intervals. Thsi simulates the timer interrupt on the avr.
 	while (true)
 	{
-		std::this_thread::sleep_for(std::chrono::milliseconds(5000));
-		c_stepper::step_tick();
+		//only run a step timer tick if the 'timer' is enabled
+		if (Hardware_Abstraction_Layer::Grbl::Stepper::_TIMSK1 & (1 << OCIE1A))
+		{
+			c_stepper::step_tick();
+			std::this_thread::sleep_for(std::chrono::milliseconds(5000));
+			
+		}
 	}
-	
+
 }
 
 void Hardware_Abstraction_Layer::Grbl::Stepper::st_go_idle()
 {
 	// Disable Stepper Driver Interrupt. Allow Stepper Port Reset Interrupt to finish, if active.
-	//TIMSK1 &= ~(1 << OCIE1A); // Disable Timer1 interrupt
+	Hardware_Abstraction_Layer::Grbl::Stepper::_TIMSK1 &= ~(1 << OCIE1A); // Disable Timer1 interrupt
 	//TCCR1B = (TCCR1B & ~((1 << CS12) | (1 << CS11))) | (1 << CS10); // Reset clock to no prescaling.
 }
 
@@ -338,22 +349,22 @@ void Hardware_Abstraction_Layer::Grbl::Stepper::OCR1A_set(uint8_t delay)
 	busy = false;
 	}
 	*/
-//}
-/* The Stepper Port Reset Interrupt: Timer0 OVF interrupt handles the falling edge of the step
-pulse. This should always trigger before the next Timer1 COMPA interrupt and independently
-finish, if Timer1 is disabled after completing a move.
-NOTE: Interrupt collisions between the serial and stepper interrupts can cause delays by
-a few microseconds, if they execute right before one another. Not a big deal, but can
-cause issues at high step rates if another high frequency asynchronous interrupt is
-added to Grbl.
-*/
-// This interrupt is enabled by ISR_TIMER1_COMPAREA when it sets the motor port bits to execute
-// a step. This ISR resets the motor port after a short period (settings.pulse_microseconds)
-// completing one step cycle.
+	//}
+	/* The Stepper Port Reset Interrupt: Timer0 OVF interrupt handles the falling edge of the step
+	pulse. This should always trigger before the next Timer1 COMPA interrupt and independently
+	finish, if Timer1 is disabled after completing a move.
+	NOTE: Interrupt collisions between the serial and stepper interrupts can cause delays by
+	a few microseconds, if they execute right before one another. Not a big deal, but can
+	cause issues at high step rates if another high frequency asynchronous interrupt is
+	added to Grbl.
+	*/
+	// This interrupt is enabled by ISR_TIMER1_COMPAREA when it sets the motor port bits to execute
+	// a step. This ISR resets the motor port after a short period (settings.pulse_microseconds)
+	// completing one step cycle.
 
-//ISR(TIMER0_OVF_vect)
-//{
-//	// Reset stepping pins (leave the direction pins)
-//	STEP_PORT = (STEP_PORT & ~STEP_MASK) | (Hardware_Abstraction_Layer::Grbl::Stepper::step_port_invert_mask & STEP_MASK);
-//	TCCR0B = 0; // Disable Timer0 to prevent re-entering this interrupt when it's not needed.
-//}
+	//ISR(TIMER0_OVF_vect)
+	//{
+	//	// Reset stepping pins (leave the direction pins)
+	//	STEP_PORT = (STEP_PORT & ~STEP_MASK) | (Hardware_Abstraction_Layer::Grbl::Stepper::step_port_invert_mask & STEP_MASK);
+	//	TCCR0B = 0; // Disable Timer0 to prevent re-entering this interrupt when it's not needed.
+	//}
