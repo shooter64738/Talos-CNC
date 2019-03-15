@@ -59,8 +59,9 @@ int NGC_RS274::Interpreter::Processor::process_line(NGC_RS274::NGC_Binary_Block*
 	memcpy(NGC_RS274::Interpreter::Processor::local_block.m_group, plan_block->m_group, COUNT_OF_M_CODE_GROUPS_ARRAY * sizeof(uint16_t));
 	memcpy(&NGC_RS274::Interpreter::Processor::local_block.persisted_values, &plan_block->persisted_values, sizeof(NGC_RS274::NGC_Binary_Block::s_persisted_values));
 	memcpy(NGC_RS274::Interpreter::Processor::local_block.block_word_values, plan_block->block_word_values, COUNT_OF_BLOCK_WORDS_ARRAY * sizeof(float));
-	memcpy(&NGC_RS274::Interpreter::Processor::local_block.plane_axis, &plan_block->plane_axis, sizeof(NGC_RS274::NGC_Binary_Block::s_plane_axis));
-	memcpy(&NGC_RS274::Interpreter::Processor::local_block.arc_values, &plan_block->arc_values, sizeof(NGC_RS274::NGC_Binary_Block::s_arc_values));
+
+	//memcpy(&NGC_RS274::Interpreter::Processor::local_block.plane_axis, &plan_block->plane_axis, sizeof(NGC_RS274::NGC_Binary_Block::s_plane_axis));
+	//memcpy(&NGC_RS274::Interpreter::Processor::local_block.arc_values, &plan_block->arc_values, sizeof(NGC_RS274::NGC_Binary_Block::s_arc_values));
 
 	HasErrors = 0;
 
@@ -90,11 +91,13 @@ int NGC_RS274::Interpreter::Processor::process_line(NGC_RS274::NGC_Binary_Block*
 	*/
 
 	//We need to call assign planes even if the plane has not changed so the axis defines and arc define pointers get set.
+	//Really this comes down to setting the 'defined' value. If I could call the class member 'get_defined' from the internal
+	//struct then we wouldnt need to set the 'defined' value externally. 
 	NGC_RS274::Interpreter::Processor::assign_planes();
 
 	//Perform a  detailed error check on this block. If it passes, the other libraries should have no trouble processing it.
 	ReturnValue = NGC_RS274::Interpreter::Processor::error_check_main();
-	if (ReturnValue !=  NGC_RS274::Interpreter::Errors::OK)
+	if (ReturnValue != NGC_RS274::Interpreter::Errors::OK)
 	{
 		NGC_RS274::Interpreter::Processor::local_block.reset();
 		HasErrors = ReturnValue;
@@ -108,9 +111,11 @@ int NGC_RS274::Interpreter::Processor::process_line(NGC_RS274::NGC_Binary_Block*
 	memcpy(&plan_block->m_code_defined_in_block, &NGC_RS274::Interpreter::Processor::local_block.m_code_defined_in_block, sizeof(uint16_t));
 	memcpy(&plan_block->persisted_values, &NGC_RS274::Interpreter::Processor::local_block.persisted_values, sizeof(NGC_RS274::NGC_Binary_Block::s_persisted_values));
 	memcpy(plan_block->block_word_values, NGC_RS274::Interpreter::Processor::local_block.block_word_values, COUNT_OF_BLOCK_WORDS_ARRAY * sizeof(float));
-	memcpy(&plan_block->plane_axis, &NGC_RS274::Interpreter::Processor::local_block.plane_axis, sizeof(NGC_RS274::NGC_Binary_Block::s_plane_axis));
-	memcpy(&plan_block->arc_values, &NGC_RS274::Interpreter::Processor::local_block.arc_values, sizeof(NGC_RS274::NGC_Binary_Block::s_arc_values));
 	memcpy(&plan_block->word_defined_in_block_A_Z, &NGC_RS274::Interpreter::Processor::local_block.word_defined_in_block_A_Z, sizeof(uint32_t));
+
+	//memcpy(&plan_block->plane_axis, &NGC_RS274::Interpreter::Processor::local_block.plane_axis, sizeof(NGC_RS274::NGC_Binary_Block::s_plane_axis));
+	//memcpy(&plan_block->arc_values, &NGC_RS274::Interpreter::Processor::local_block.arc_values, sizeof(NGC_RS274::NGC_Binary_Block::s_arc_values));
+
 
 	//Clear the line data so its ready for next time. 
 	clear_line();
@@ -125,7 +130,7 @@ particular motion command.
 int NGC_RS274::Interpreter::Processor::error_check_main()
 {
 
-	int ReturnValue =  NGC_RS274::Interpreter::Errors::OK;
+	int ReturnValue = NGC_RS274::Interpreter::Errors::OK;
 
 	//float iAddress = 0;
 	/*
@@ -146,7 +151,7 @@ int NGC_RS274::Interpreter::Processor::error_check_main()
 			//If cutter radius compensation compensation is on, selecting a new coordinate
 			//system should produce an error
 			if (NGC_RS274::Interpreter::Processor::local_block.g_group[NGC_RS274::Groups::G::CUTTER_RADIUS_COMPENSATION]
-	> NGC_RS274::G_codes::CANCEL_CUTTER_RADIUS_COMPENSATION)
+				> NGC_RS274::G_codes::CANCEL_CUTTER_RADIUS_COMPENSATION)
 			{
 				return  NGC_RS274::Interpreter::Errors::COORDINATE_SETTING_INVALID_DURING_COMPENSATION;
 			}
@@ -169,7 +174,7 @@ int NGC_RS274::Interpreter::Processor::error_check_main()
 				break;
 
 			ReturnValue = NGC_RS274::Interpreter::Processor::error_check_cutter_compensation();
-			if (ReturnValue !=  NGC_RS274::Interpreter::Errors::OK)
+			if (ReturnValue != NGC_RS274::Interpreter::Errors::OK)
 			{
 				return ReturnValue;
 			}
@@ -239,7 +244,7 @@ int NGC_RS274::Interpreter::Processor::error_check_main()
 			case NGC_RS274::G_codes::CIRCULAR_INTERPOLATION_CCW:
 			{
 				ReturnValue = error_check_arc();
-				if (ReturnValue !=  NGC_RS274::Interpreter::Errors::OK)
+				if (ReturnValue != NGC_RS274::Interpreter::Errors::OK)
 				{
 					return ReturnValue;
 				}
@@ -263,7 +268,7 @@ int NGC_RS274::Interpreter::Processor::error_check_main()
 			case NGC_RS274::G_codes::CANNED_CYCLE_BORING_DWELL_FEED_OUT: //<--G89
 			{
 				ReturnValue = error_check_canned_cycle();
-				if (ReturnValue !=  NGC_RS274::Interpreter::Errors::OK)
+				if (ReturnValue != NGC_RS274::Interpreter::Errors::OK)
 				{
 					return ReturnValue;
 				}
@@ -284,7 +289,7 @@ int NGC_RS274::Interpreter::Processor::error_check_main()
 			if (!BitTst(NGC_RS274::Interpreter::Processor::local_block.g_code_defined_in_block, NGC_RS274::Groups::G::NON_MODAL))
 				break;
 			ReturnValue = error_check_non_modal();
-			if (ReturnValue !=  NGC_RS274::Interpreter::Errors::OK)
+			if (ReturnValue != NGC_RS274::Interpreter::Errors::OK)
 			{
 				return ReturnValue;
 			}
@@ -314,7 +319,7 @@ int NGC_RS274::Interpreter::Processor::error_check_main()
 				break;
 
 			ReturnValue = error_check_tool_length_offset();
-			if (ReturnValue !=  NGC_RS274::Interpreter::Errors::OK)
+			if (ReturnValue != NGC_RS274::Interpreter::Errors::OK)
 			{
 				return ReturnValue;
 			}
@@ -341,11 +346,11 @@ int NGC_RS274::Interpreter::Processor::error_check_plane_select()
 		NGC_RS274::Interpreter::Processor::local_block.plane_axis.horizontal_axis.name = 'X';
 		NGC_RS274::Interpreter::Processor::local_block.plane_axis.vertical_axis.name = 'Y';
 		NGC_RS274::Interpreter::Processor::local_block.plane_axis.normal_axis.name = 'Z';
-		NGC_RS274::Interpreter::Processor::local_block.plane_axis.plane_error =  NGC_RS274::Interpreter::Errors::MISSING_CIRCLE_AXIS_XY;
+		NGC_RS274::Interpreter::Processor::local_block.plane_axis.plane_error = NGC_RS274::Interpreter::Errors::MISSING_CIRCLE_AXIS_XY;
 
 		NGC_RS274::Interpreter::Processor::local_block.arc_values.horizontal_center.name = 'I';
 		NGC_RS274::Interpreter::Processor::local_block.arc_values.vertical_center.name = 'J';
-		NGC_RS274::Interpreter::Processor::local_block.arc_values.plane_error =  NGC_RS274::Interpreter::Errors::MISSING_CIRCLE_OFFSET_IJ;
+		NGC_RS274::Interpreter::Processor::local_block.arc_values.plane_error = NGC_RS274::Interpreter::Errors::MISSING_CIRCLE_OFFSET_IJ;
 	}
 	break;
 	case NGC_RS274::G_codes::XZ_PLANE_SELECTION:
@@ -353,11 +358,11 @@ int NGC_RS274::Interpreter::Processor::error_check_plane_select()
 		NGC_RS274::Interpreter::Processor::local_block.plane_axis.horizontal_axis.name = 'X';
 		NGC_RS274::Interpreter::Processor::local_block.plane_axis.vertical_axis.name = 'Z';
 		NGC_RS274::Interpreter::Processor::local_block.plane_axis.normal_axis.name = 'Y';
-		NGC_RS274::Interpreter::Processor::local_block.plane_axis.plane_error =  NGC_RS274::Interpreter::Errors::MISSING_CIRCLE_AXIS_XZ;
+		NGC_RS274::Interpreter::Processor::local_block.plane_axis.plane_error = NGC_RS274::Interpreter::Errors::MISSING_CIRCLE_AXIS_XZ;
 
 		NGC_RS274::Interpreter::Processor::local_block.arc_values.horizontal_center.name = 'I';
 		NGC_RS274::Interpreter::Processor::local_block.arc_values.vertical_center.name = 'K';
-		NGC_RS274::Interpreter::Processor::local_block.arc_values.plane_error =  NGC_RS274::Interpreter::Errors::MISSING_CIRCLE_OFFSET_IK;
+		NGC_RS274::Interpreter::Processor::local_block.arc_values.plane_error = NGC_RS274::Interpreter::Errors::MISSING_CIRCLE_OFFSET_IK;
 	}
 	break;
 	case NGC_RS274::G_codes::YZ_PLANE_SELECTION:
@@ -365,11 +370,11 @@ int NGC_RS274::Interpreter::Processor::error_check_plane_select()
 		NGC_RS274::Interpreter::Processor::local_block.plane_axis.horizontal_axis.name = 'Y';
 		NGC_RS274::Interpreter::Processor::local_block.plane_axis.vertical_axis.name = 'Z';
 		NGC_RS274::Interpreter::Processor::local_block.plane_axis.normal_axis.name = 'X';
-		NGC_RS274::Interpreter::Processor::local_block.plane_axis.plane_error =  NGC_RS274::Interpreter::Errors::MISSING_CIRCLE_AXIS_YZ;
+		NGC_RS274::Interpreter::Processor::local_block.plane_axis.plane_error = NGC_RS274::Interpreter::Errors::MISSING_CIRCLE_AXIS_YZ;
 
 		NGC_RS274::Interpreter::Processor::local_block.arc_values.horizontal_center.name = 'J';
 		NGC_RS274::Interpreter::Processor::local_block.arc_values.vertical_center.name = 'K';
-		NGC_RS274::Interpreter::Processor::local_block.arc_values.plane_error =  NGC_RS274::Interpreter::Errors::MISSING_CIRCLE_OFFSET_JK;
+		NGC_RS274::Interpreter::Processor::local_block.arc_values.plane_error = NGC_RS274::Interpreter::Errors::MISSING_CIRCLE_OFFSET_JK;
 	}
 	break;
 	}
@@ -426,7 +431,7 @@ int NGC_RS274::Interpreter::Processor::error_check_arc()
 		return NGC_RS274::Interpreter::Processor::local_block.plane_axis.plane_error;
 
 	//Was radius specified?
-	if (NGC_RS274::Interpreter::Processor::local_block.arc_values.R == 0)
+	if (!NGC_RS274::Interpreter::Processor::local_block.get_defined('R'))
 	{
 		//Must have H or V, but we don't have to have both
 		if (!NGC_RS274::Interpreter::Processor::local_block.arc_values.horizontal_center.defined && !NGC_RS274::Interpreter::Processor::local_block.arc_values.vertical_center.defined)
@@ -436,8 +441,8 @@ int NGC_RS274::Interpreter::Processor::error_check_arc()
 	}
 	else
 	{
-		return_value = error_check_radius_format_arc(MACHINE_X_AXIS, MACHINE_Y_AXIS, MACHINE_Z_AXIS, offsets);
-		if (return_value ==  NGC_RS274::Interpreter::Errors::OK)
+		return_value = error_check_radius_format_arc(offsets);
+		if (return_value == NGC_RS274::Interpreter::Errors::OK)
 		{
 			NGC_RS274::Interpreter::Processor::local_block.set_value('I', offsets[0]);
 			NGC_RS274::Interpreter::Processor::local_block.set_value('J', offsets[1]);
@@ -468,18 +473,21 @@ int NGC_RS274::Interpreter::Processor::error_check_center_format_arc(float*offse
 	return  NGC_RS274::Interpreter::Errors::OK;
 }
 
-int NGC_RS274::Interpreter::Processor::error_check_radius_format_arc(uint8_t horizontal_axis, uint8_t vertical_axis
-	, uint8_t normal_axis, float*offsets)
+int NGC_RS274::Interpreter::Processor::error_check_radius_format_arc(float*offsets)
 {
 	//TODO:add back the delat from origin to destination
 	// Calculate the change in position along each selected axis
-	float x = 0, y = 0;
-	//x =  NGC_RS274::Interpreter::Processor::local_block.get_value(c_axis_planner::machine_axis_names[horizontal_axis]) - c_axis_planner::previous_axis_unit_positions[horizontal_axis]; // Delta x between current position and target
-	//y = NGC_RS274::Interpreter::Processor::local_block.get_value(c_axis_planner::machine_axis_names[vertical_axis]) - c_axis_planner::previous_axis_unit_positions[vertical_axis];; // Delta y between current position and target
+	float x = *NGC_RS274::Interpreter::Processor::local_block.plane_axis.horizontal_axis.value;
+	float y = *NGC_RS274::Interpreter::Processor::local_block.plane_axis.vertical_axis.value;
+
+	//x = gc_block.values.xyz[axis_0] - gc_state.position[axis_0]; // Delta x between current position and target
+	//y = gc_block.values.xyz[axis_1] - gc_state.position[axis_1]; // Delta y between current position and target
 
 	// First, use h_x2_div_d to compute 4*h^2 to check if it is negative or r is smaller
 	// than d. If so, the sqrt of a negative number is complex and error out.
-	float h_x2_div_d = 4.0 * NGC_RS274::Interpreter::Processor::square(NGC_RS274::Interpreter::Processor::local_block.get_value('R')) - NGC_RS274::Interpreter::Processor::square(x) - NGC_RS274::Interpreter::Processor::square(y);
+	float h_x2_div_d = 4.0 * NGC_RS274::Interpreter::Processor::square(*NGC_RS274::Interpreter::Processor::local_block.arc_values.Radius)
+		- NGC_RS274::Interpreter::Processor::square(*NGC_RS274::Interpreter::Processor::local_block.plane_axis.horizontal_axis.value)
+		- NGC_RS274::Interpreter::Processor::square(*NGC_RS274::Interpreter::Processor::local_block.plane_axis.vertical_axis.value);
 
 	if (h_x2_div_d < 0)
 		return  NGC_RS274::Interpreter::Errors::RADIUS_FORMAT_ARC_RADIUS_LESS_THAN_ZERO; // [Arc radius error]
@@ -513,6 +521,9 @@ int NGC_RS274::Interpreter::Processor::error_check_radius_format_arc(uint8_t hor
 	{
 		h_x2_div_d = -h_x2_div_d;
 		NGC_RS274::Interpreter::Processor::local_block.set_value('R', -NGC_RS274::Interpreter::Processor::local_block.get_value('R')); // Finished with r. Set to positive for mc_arc
+		// Complete the operation by calculating the actual center of the arc
+		*NGC_RS274::Interpreter::Processor::local_block.arc_values.horizontal_center.value = (0.5 * (x - (y * h_x2_div_d)));
+		*NGC_RS274::Interpreter::Processor::local_block.arc_values.vertical_center.value = (0.5 * (y + (x * h_x2_div_d)));
 	}
 
 
@@ -769,10 +780,10 @@ Loops through the array data handed to the ProcessLine() method and splits it in
 */
 int NGC_RS274::Interpreter::Processor::parse_values()
 {
-	
+
 	/*Line must be primed before we get to here. It has to be pointing to a valid char array
 	*/
-	int ReturnValue =  NGC_RS274::Interpreter::Errors::OK;
+	int ReturnValue = NGC_RS274::Interpreter::Errors::OK;
 	//memset(Line, 0, 256);//<--Clear the line array
 	char *line_pointer = Line;//<--creating a pointer to an array
 	//to simplify building the array data in the loops
@@ -793,7 +804,7 @@ int NGC_RS274::Interpreter::Processor::parse_values()
 		//Is this a letter between A and Z
 		if (*line_pointer >= 'A' && *line_pointer <= 'Z')
 		{
-			char Word = *line_pointer;line_pointer++;*line_pointer = toupper(*line_pointer);
+			char Word = *line_pointer; line_pointer++; *line_pointer = toupper(*line_pointer);
 			char _address[10];
 			memset(_address, 0, 10);
 			uint8_t i = 0;
@@ -814,13 +825,13 @@ int NGC_RS274::Interpreter::Processor::parse_values()
 				}
 				_address[i] = *line_pointer; i++;
 
-				
-				line_pointer++;*line_pointer = toupper(*line_pointer);
+
+				line_pointer++; *line_pointer = toupper(*line_pointer);
 			}
 
 			ReturnValue = group_word(Word, evaluate_address(_address));
 			//If there was an error during line processing don't bother finishing the line, just bale.
-			if (ReturnValue !=  NGC_RS274::Interpreter::Errors::OK)
+			if (ReturnValue != NGC_RS274::Interpreter::Errors::OK)
 				return ReturnValue;
 		}
 		//If this is a CR break out of the outer while
@@ -861,7 +872,7 @@ int NGC_RS274::Interpreter::Processor::group_word(char Word, float Address)
 		return _gWord(Address);
 		break;
 	case 'M': //<--Process words for M (M3,M90,M5, etc..)
-	return _mWord( Address);
+		return _mWord(Address);
 		break;
 	default:
 		return _pWord(Word, Address); //<--Process words for Everything else (X__,Y__,Z__,I__,D__, etc..)
@@ -1093,7 +1104,7 @@ int NGC_RS274::Interpreter::Processor::_mWord(float Address)
 		NGC_RS274::Interpreter::Processor::local_block.m_group[NGC_RS274::Groups::M::SPINDLE] = (iAddress);
 		break;
 	}
-	
+
 	case NGC_RS274::M_codes::PROGRAM_PAUSE: //<-M00
 	case NGC_RS274::M_codes::PROGRAM_PAUSE_OPTIONAL: //<-M01
 	case NGC_RS274::M_codes::TOOL_CHANGE_PAUSE: //<-M06
@@ -1125,7 +1136,7 @@ int NGC_RS274::Interpreter::Processor::_mWord(float Address)
 	}
 
 	default:
-		if (iAddress>=100 && iAddress<=199)
+		if (iAddress >= 100 && iAddress <= 199)
 		{
 			ngc_working_group = NGC_RS274::Groups::M::USER_DEFINED;
 			NGC_RS274::Interpreter::Processor::local_block.m_group[NGC_RS274::Groups::M::USER_DEFINED] = (iAddress);
@@ -1134,7 +1145,7 @@ int NGC_RS274::Interpreter::Processor::_mWord(float Address)
 		{
 			return  NGC_RS274::Interpreter::Errors::INTERPRETER_DOES_NOT_UNDERSTAND_M_WORD_VALUE;
 		}
-		
+
 		break;
 	}
 
@@ -1172,7 +1183,7 @@ int NGC_RS274::Interpreter::Processor::_pWord(char Word, float iAddress)
 
 	//Convert this to an int so we can store smaller types
 	//float iAddress = atof(Address);
-	int ReturnValue =  NGC_RS274::Interpreter::Errors::OK;
+	int ReturnValue = NGC_RS274::Interpreter::Errors::OK;
 	//If the working group is a motion group, then the x,y,z,a,b,c,u,v,w value is an axis value
 
 	//the NIST standard states it is an error to have an axis word on a line for a motion and a non modal group at the same time (page 20)
@@ -1361,7 +1372,7 @@ int NGC_RS274::Interpreter::Processor::normalize_distance_units()
 	We are using some 3rd party controller like grbl, tinyg, smoothies, etc. Those controlelr can convert g20/g21 on their own
 	IF we do it here, and the 3rd party controll does it too, 1 inch will become 254.*25.4 mm. (a big ass WRONG number)
 	*/
-	
+
 	//Decided NOT to do this at this time. 
 	return  NGC_RS274::Interpreter::Errors::OK;
 

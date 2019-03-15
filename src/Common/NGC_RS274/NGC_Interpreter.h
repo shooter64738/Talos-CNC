@@ -69,10 +69,11 @@ namespace NGC_RS274
 			static int error_check_cutter_compensation();
 			static uint8_t IsValidCharacter();
 			static int error_check_non_modal();
-			static int error_check_radius_format_arc(uint8_t horizontal_axis, uint8_t vertical_axis
-				, uint8_t normal_axis, float *offsets);
+			static int error_check_radius_format_arc(float *offsets);
 			static int normalize_distance_units();
 			static int error_check_center_format_arc(float*offsets);
+
+			
 
 			static float hypot_f(float x, float y);
 			static float square(float x);
