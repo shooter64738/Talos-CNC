@@ -4,7 +4,7 @@
 #include "c_stepper.h"
 #include "c_system.h"
 //#include <avr/interrupt.h>
-#include "c_gcode.h"
+#include "c_gcode_plus.h"
 #include "c_spindle.h"
 #include "c_coolant.h"
 #include "c_limits.h"

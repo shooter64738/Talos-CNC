@@ -28,7 +28,7 @@ along with Grbl.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "c_coolant.h"
-#include "c_gcode.h"
+#include "c_gcode_plus.h"
 #include "c_system.h"
 #include "c_protocol.h"
 //#include "..\Common\Hardware_Abstraction_Layer\AVR_2560\c_grbl_avr_2560_coolant.h"

@@ -94,12 +94,12 @@ namespace NGC_RS274
 		}s_axis_values;
 		s_axis_values axis_values;
 
-		typedef struct s_axis_property
+		struct s_axis_property
 		{
 			float *value;
 			uint8_t name;
 			bool defined;
-		}s_axis_property;
+		};
 
 		typedef struct s_arc_values
 		{
@@ -109,7 +109,7 @@ namespace NGC_RS274
 			//float *I;
 			//float *J;
 			//float *K;
-			float *R;
+			float *Radius;
 		}s_arc_values;
 		s_arc_values arc_values;
 

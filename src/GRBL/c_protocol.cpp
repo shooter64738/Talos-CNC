@@ -33,7 +33,7 @@
 #include "c_serial.h"
 #include <stddef.h>
 #include "c_report.h"
-#include "c_gcode.h"
+#include "c_gcode_plus.h"
 #include "c_planner.h"
 #include "c_settings.h"
 #include "c_coolant.h"
@@ -99,8 +99,8 @@ void c_protocol::protocol_main_loop()
 
 	//if running on win32 throw some sample data into the serial buffer
 #ifdef MSVC
-	//c_serial::serial_fill("G0X1\rg0y1\r");
-	c_serial::serial_fill("G2X1Y1R1F150\r");
+	c_serial::serial_fill("G0X1\rg0y1\r");
+	c_serial::serial_fill("G2X2Y2R1F150\r");
 #endif // MSVC
 
     for (;;)

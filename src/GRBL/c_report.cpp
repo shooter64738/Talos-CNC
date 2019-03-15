@@ -11,7 +11,7 @@
 #include "..\helpers.h"
 #include "c_serial.h"
 #include "c_system.h"
-#include "c_gcode.h"
+#include "c_gcode_plus.h"
 #include "c_print.h"
 #include "c_settings.h"
 #include <string.h>

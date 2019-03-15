@@ -10,7 +10,7 @@
 #include "c_grbl_win_spindle.h"
 #include "../../../helpers.h"
 #include "../../../GRBL/c_settings.h"
-#include "../../../GRBL/c_gcode.h"
+#include "../../../GRBL/c_gcode_plus.h"
 
 float Hardware_Abstraction_Layer::Grbl::Spindle::pwm_gradient = 0;
 

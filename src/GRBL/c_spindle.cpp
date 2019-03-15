@@ -32,7 +32,7 @@
 #include "c_spindle.h"
 #include "c_system.h"
 #include "c_settings.h"
-#include "c_gcode.h"
+#include "c_gcode_plus.h"
 #include <math.h>
 #include "c_protocol.h"
 //#include "..\Common\Hardware_Abstraction_Layer\AVR_2560\c_grbl_avr_2560_spindle.h"

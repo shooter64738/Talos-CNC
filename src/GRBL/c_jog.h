@@ -29,7 +29,7 @@
 #define __C_JOG_H__
 
 #include <stdint.h>
-#include "c_gcode.h"
+#include "c_gcode_plus.h"
 #include "c_planner.h"
 // System motion line numbers must be zero.
 #define JOG_LINE_NUMBER 0

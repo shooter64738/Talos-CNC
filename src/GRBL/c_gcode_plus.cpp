@@ -6,7 +6,7 @@
 */
 
 
-#include "c_gcode.h"
+#include "c_gcode_plus.h"
 #include <string.h>
 #include "c_report.h"
 #include "c_system.h"
@@ -19,6 +19,8 @@
 #include "c_motion_control.h"
 #include "c_spindle.h"
 #include "utils.h"
+
+
 
 /*
 gcode.c - rs274/ngc parser.
@@ -61,6 +63,7 @@ along with Grbl.  If not, see <http://www.gnu.org/licenses/>.
 // Declare gc extern struct
 c_gcode::parser_state_t c_gcode::gc_state;
 c_gcode::parser_block_t c_gcode::gc_block;
+NGC_RS274::NGC_Binary_Block c_gcode::test_block = NGC_RS274::NGC_Binary_Block();
 
 #define FAIL(status) do { return (status); } while (0)
 
@@ -71,6 +74,36 @@ void c_gcode::gc_init()
 	// Load default G54 coordinate system.
 	if (!(c_settings::settings_read_coord_data(c_gcode::gc_state.modal.coord_select, c_gcode::gc_state.coord_system)))
 	c_report::report_status_message(STATUS_SETTING_READ_FAIL);
+
+	c_gcode::test_block.reset();
+}
+
+void c_gcode::gc_default_block()
+{
+	//default the motion state to canceled
+	c_gcode::test_block.g_group[NGC_RS274::Groups::G::MOTION] = NGC_RS274::G_codes::MOTION_CANCELED;
+	//default plane selection
+	c_gcode::test_block.g_group[NGC_RS274::Groups::G::PLANE_SELECTION] = NGC_RS274::G_codes::XY_PLANE_SELECTION;
+	//default the machines distance mode to absolute
+	c_gcode::test_block.g_group[NGC_RS274::Groups::G::DISTANCE_MODE] = NGC_RS274::G_codes::ABSOLUTE_DISANCE_MODE;
+	//default feed rate mode
+	c_gcode::test_block.g_group[NGC_RS274::Groups::G::FEED_RATE_MODE] = NGC_RS274::G_codes::FEED_RATE_UNITS_PER_MINUTE_MODE;
+	//default the machines units to inches
+	c_gcode::test_block.g_group[NGC_RS274::Groups::G::UNITS] = NGC_RS274::G_codes::MILLIMETER_SYSTEM_SELECTION;
+	//default the machines cutter comp to off
+	c_gcode::test_block.g_group[NGC_RS274::Groups::G::CUTTER_RADIUS_COMPENSATION] = NGC_RS274::G_codes::CANCEL_CUTTER_RADIUS_COMPENSATION;
+	//default tool length offset
+	c_gcode::test_block.g_group[NGC_RS274::Groups::G::TOOL_LENGTH_OFFSET] = NGC_RS274::G_codes::CANCEL_TOOL_LENGTH_OFFSET;
+	//default tool length offset
+	c_gcode::test_block.g_group[NGC_RS274::Groups::G::RETURN_MODE_CANNED_CYCLE] = NGC_RS274::G_codes::CANNED_CYCLE_RETURN_TO_Z;
+	//default coordinate system selection
+	c_gcode::test_block.g_group[NGC_RS274::Groups::G::COORDINATE_SYSTEM_SELECTION] = NGC_RS274::G_codes::MOTION_IN_MACHINE_COORDINATE_SYSTEM;
+	//default path control mode
+	c_gcode::test_block.g_group[NGC_RS274::Groups::G::PATH_CONTROL_MODE] = NGC_RS274::G_codes::PATH_CONTROL_EXACT_PATH;
+	//default coordinate system type
+	c_gcode::test_block.g_group[NGC_RS274::Groups::G::RECTANGLAR_POLAR_COORDS_SELECTION] = NGC_RS274::G_codes::RECTANGULAR_COORDINATE_SYSTEM;
+	//default canned cycle return mode
+	c_gcode::test_block.g_group[NGC_RS274::Groups::G::RETURN_MODE_CANNED_CYCLE] = NGC_RS274::G_codes::CANNED_CYCLE_RETURN_TO_R;
 }
 
 // Sets g-code parser position in mm. Input in steps. Called by the system abort and hard
@@ -133,6 +166,22 @@ uint8_t c_gcode::gc_execute_line(char *line)
 	float value;
 	uint8_t int_value = 0;
 	uint16_t mantissa = 0;
+
+	//Non standard GRBL. testing internal interpreter
+	//************************************************************************************
+	//************************************************************************************
+	//************************************************************************************
+	
+	NGC_RS274::NGC_Binary_Block* gc_local_block = &test_block;
+	//put line data into interpreter buffer
+	
+	memcpy(NGC_RS274::Interpreter::Processor::Line,line,256);
+
+	uint16_t return_value = NGC_RS274::Interpreter::Processor::process_line(gc_local_block);
+
+	//************************************************************************************
+	//************************************************************************************
+	//************************************************************************************
 
 	char_counter = gc_parser_flags & GC_PARSER_JOG_MOTION ? 3 : 0; // // Start parsing after `$J=`
 
@@ -543,7 +592,7 @@ uint8_t c_gcode::gc_execute_line(char *line)
 	}
 	else
 	{
-		if (gc_block.modal.feed_rate == FEED_RATE_MODE_INVERSE_TIME)
+		if (gc_local_block->get_g_code_value_x(NGC_RS274::Groups::G::FEED_RATE_MODE) == NGC_RS274::G_codes::FEED_RATE_MINUTES_PER_UNIT_MODE)
 		{
 			// = G93
 			// NOTE: G38 can also operate in inverse time, but is undefined as an error. Missing F word check added here.

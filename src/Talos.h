@@ -22,7 +22,11 @@
 #ifndef TALOS_H_
 #define TALOS_H_
 //To enable compilation and debugging in Microsoft Visual C++ define MSCV
+#if !defined(__AVR_ATmega328P__) && !defined(__AVR_ATmega2560__) && !defined(__SAM3X8E__)
 #define MSVC
+#endif
+
+//#define MSVC
 
 #include <stdio.h>
 #include <ctype.h>

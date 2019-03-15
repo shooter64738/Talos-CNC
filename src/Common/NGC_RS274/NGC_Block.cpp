@@ -44,7 +44,7 @@ NGC_RS274::NGC_Binary_Block::NGC_Binary_Block()
 	this->arc_values.vertical_center.value =&this->block_word_values[J_WORD_BIT];
 	this->arc_values.horizontal_center.name='I';
 	this->arc_values.vertical_center.name='J';
-	this->arc_values.R = &this->block_word_values[R_WORD_BIT];
+	this->arc_values.Radius = &this->block_word_values[R_WORD_BIT];
 
 	this->canned_values.L_repeat_count = &this->block_word_values[L_WORD_BIT];
 	this->canned_values.P_dwell_time_at_bottom = &this->block_word_values[P_WORD_BIT];

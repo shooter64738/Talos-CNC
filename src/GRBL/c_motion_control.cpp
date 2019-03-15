@@ -32,7 +32,7 @@
 #include <string.h>
 #include "c_settings.h"
 #include "c_coolant.h"
-#include "c_gcode.h"
+#include "c_gcode_plus.h"
 #include "c_probe.h"
 #include "c_spindle.h"
 #include "c_limits.h"

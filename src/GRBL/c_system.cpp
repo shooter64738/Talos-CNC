@@ -31,7 +31,7 @@ along with Grbl.  If not, see <http://www.gnu.org/licenses/>.
 #include "c_motion_control.h"
 #include "c_settings.h"
 #include "c_report.h"
-#include "c_gcode.h"
+#include "c_gcode_plus.h"
 #include "c_stepper.h"
 #include <math.h>
 #include "all_includes.h"

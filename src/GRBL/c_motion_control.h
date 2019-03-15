@@ -29,27 +29,27 @@ along with Grbl.  If not, see <http://www.gnu.org/licenses/>.
 
 #ifndef __C_MOTION_CONTROL_H__
 #define __C_MOTION_CONTROL_H__
-	//#include "planner.h"
-	#include "c_planner.h"
-	#include <stdint.h>
-	// System motion commands must have a line number of zero.
-	#define HOMING_CYCLE_LINE_NUMBER 0
-	#define PARKING_MOTION_LINE_NUMBER 0
+//#include "planner.h"
+#include "c_planner.h"
+#include <stdint.h>
+// System motion commands must have a line number of zero.
+#define HOMING_CYCLE_LINE_NUMBER 0
+#define PARKING_MOTION_LINE_NUMBER 0
 
-	#define HOMING_CYCLE_ALL  0  // Must be zero.
-	#define HOMING_CYCLE_X    bit(X_AXIS)
-	#define HOMING_CYCLE_Y    bit(Y_AXIS)
-	#define HOMING_CYCLE_Z    bit(Z_AXIS)
+#define HOMING_CYCLE_ALL  0  // Must be zero.
+#define HOMING_CYCLE_X    bit(X_AXIS)
+#define HOMING_CYCLE_Y    bit(Y_AXIS)
+#define HOMING_CYCLE_Z    bit(Z_AXIS)
 
 class c_motion_control
 {
 	//variables
-	public:
-	protected:
-	private:
+public:
+protected:
+private:
 
 	//functions
-	public:
+public:
 
 	// Execute linear motion in absolute millimeter coordinates. Feed rate given in millimeters/second
 	// unless invert_feed_rate is true. Then the feed_rate means that the motion should be completed in
@@ -77,8 +77,8 @@ class c_motion_control
 
 	// Performs system reset. If in motion state, kills all motion and sets system alarm.
 	static void mc_reset();
-	protected:
-	private:
+protected:
+private:
 
 }; //c_motion_control
 
