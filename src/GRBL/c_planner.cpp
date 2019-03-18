@@ -382,14 +382,14 @@ The system motion condition tells the planner to plan a motion in the always unu
 head. It avoids changing the planner state and preserves the buffer to ensure subsequent gcode
 motions are still planned correctly, while the stepper module only points to the block buffer head
 to execute the special system motion. */
-uint8_t c_planner::plan_buffer_line(float *target, plan_line_data_t *pl_data)
+uint8_t c_planner::plan_buffer_line(float *target, plan_line_data_t *pl_data, NGC_RS274::NGC_Binary_Block *target_block)
 {
 	// Prepare and initialize new block. Copy relevant pl_data for block execution.
-	plan_block_t *block = &block_buffer[block_buffer_head];
-	memset(block, 0, sizeof(plan_block_t)); // Zero all block values.
-	block->condition = pl_data->condition;
-	block->spindle_speed = pl_data->spindle_speed;
-	block->line_number = pl_data->line_number;
+	plan_block_t *planning_block = &block_buffer[block_buffer_head];
+	memset(planning_block, 0, sizeof(plan_block_t)); // Zero all block values.
+	planning_block->condition = pl_data->condition;
+	planning_block->spindle_speed = *target_block->persisted_values.active_spindle_speed_S;
+	planning_block->line_number = *target_block->persisted_values.active_line_number_N;
 
 	// Compute and store initial move distance data.
 	int32_t target_steps[N_AXIS], position_steps[N_AXIS];
@@ -397,71 +397,38 @@ uint8_t c_planner::plan_buffer_line(float *target, plan_line_data_t *pl_data)
 	uint8_t idx;
 
 	// Copy position data based on type of motion being planned.
-	if (block->condition & PL_COND_FLAG_SYSTEM_MOTION)
+	if (planning_block->condition & PL_COND_FLAG_SYSTEM_MOTION)
 	{
-		#ifdef COREXY
-		position_steps[X_AXIS] = c_system::system_convert_corexy_to_x_axis_steps(c_system::sys_position);
-		position_steps[Y_AXIS] = c_system::system_convert_corexy_to_y_axis_steps(c_system::sys_position);
-		position_steps[Z_AXIS] = c_system::sys_position[Z_AXIS];
-		#else
 		memcpy(position_steps, c_system::sys_position, sizeof(c_system::sys_position));
-		#endif
 	}
 	else
 	{
 		memcpy(position_steps, pl.position, sizeof(pl.position));
 	}
 
-	#ifdef COREXY
-	target_steps[A_MOTOR] = lround(target[A_MOTOR]*settings.steps_per_mm[A_MOTOR]);
-	target_steps[B_MOTOR] = lround(target[B_MOTOR]*settings.steps_per_mm[B_MOTOR]);
-	block->steps[A_MOTOR] = labs((target_steps[X_AXIS]-position_steps[X_AXIS]) + (target_steps[Y_AXIS]-position_steps[Y_AXIS]));
-	block->steps[B_MOTOR] = labs((target_steps[X_AXIS]-position_steps[X_AXIS]) - (target_steps[Y_AXIS]-position_steps[Y_AXIS]));
-	#endif
 
 	for (idx = 0; idx < N_AXIS; idx++)
 	{
 		// Calculate target position in absolute steps, number of steps for each axis, and determine max step events.
 		// Also, compute individual axes distance for move and prep unit vector calculations.
 		// NOTE: Computes true distance from converted step values.
-		#ifdef COREXY
-		if ( !(idx == A_MOTOR) && !(idx == B_MOTOR) )
-		{
-			target_steps[idx] = lround(target[idx]*c_settings::settings.steps_per_mm[idx]);
-			block->steps[idx] = labs(target_steps[idx]-position_steps[idx]);
-		}
-		block->step_event_count = max(block->step_event_count, block->steps[idx]);
 		
-		if (idx == A_MOTOR)
-		{
-			delta_mm = (target_steps[X_AXIS]-position_steps[X_AXIS] + target_steps[Y_AXIS]-position_steps[Y_AXIS])/c_settings::settings.steps_per_mm[idx];
-		}
-		else if (idx == B_MOTOR)
-		{
-			delta_mm = (target_steps[X_AXIS]-position_steps[X_AXIS] - target_steps[Y_AXIS]+position_steps[Y_AXIS])/c_settings::settings.steps_per_mm[idx];
-		}
-		else
-		{
-			delta_mm = (target_steps[idx] - position_steps[idx])/c_settings::settings.steps_per_mm[idx];
-		}
-		#else
-		target_steps[idx] = lround(target[idx] * c_settings::settings.steps_per_mm[idx]);
-		block->steps[idx] = labs(target_steps[idx] - position_steps[idx]);
-		block->step_event_count = max(block->step_event_count, block->steps[idx]);
+		target_steps[idx] = lround(*target_block->axis_values.Loop[idx] * c_settings::settings.steps_per_mm[idx]);
+		planning_block->steps[idx] = labs(target_steps[idx] - position_steps[idx]);
+		planning_block->step_event_count = max(planning_block->step_event_count, planning_block->steps[idx]);
 		delta_mm = (target_steps[idx] - position_steps[idx]) / c_settings::settings.steps_per_mm[idx];
-		#endif
 		
 		unit_vec[idx] = delta_mm; // Store unit vector numerator
 
 		// Set direction bits. Bit enabled always means direction is negative.
 		if (delta_mm < 0.0)
 		{
-			block->direction_bits |= c_settings::get_direction_pin_mask(idx);
+			planning_block->direction_bits |= c_settings::get_direction_pin_mask(idx);
 		}
 	}
 
 	// Bail if this is a zero-length block. Highly unlikely to occur.
-	if (block->step_event_count == 0)
+	if (planning_block->step_event_count == 0)
 	{
 		return (PLAN_EMPTY_BLOCK);
 	}
@@ -470,32 +437,32 @@ uint8_t c_planner::plan_buffer_line(float *target, plan_line_data_t *pl_data)
 	// down such that no individual axes maximum values are exceeded with respect to the line direction.
 	// NOTE: This calculation assumes all axes are orthogonal (Cartesian) and works with ABC-axes,
 	// if they are also orthogonal/independent. Operates on the absolute value of the unit vector.
-	block->millimeters = utils::convert_delta_vector_to_unit_vector(unit_vec);
-	block->acceleration = utils::limit_value_by_axis_maximum(c_settings::settings.acceleration, unit_vec);
-	block->rapid_rate = utils::limit_value_by_axis_maximum(c_settings::settings.max_rate, unit_vec);
+	planning_block->millimeters = utils::convert_delta_vector_to_unit_vector(unit_vec);
+	planning_block->acceleration = utils::limit_value_by_axis_maximum(c_settings::settings.acceleration, unit_vec);
+	planning_block->rapid_rate = utils::limit_value_by_axis_maximum(c_settings::settings.max_rate, unit_vec);
 
 	// Store programmed rate.
-	if (block->condition & PL_COND_FLAG_RAPID_MOTION)
+	if (planning_block->condition & PL_COND_FLAG_RAPID_MOTION)
 	{
-		block->programmed_rate = block->rapid_rate;
+		planning_block->programmed_rate = planning_block->rapid_rate;
 	}
 	else
 	{
-		block->programmed_rate = pl_data->feed_rate;
-		if (block->condition & PL_COND_FLAG_INVERSE_TIME)
+		planning_block->programmed_rate = *target_block->persisted_values.feed_rate_F;
+		if (planning_block->condition & PL_COND_FLAG_INVERSE_TIME)
 		{
-			block->programmed_rate *= block->millimeters;
+			planning_block->programmed_rate *= planning_block->millimeters;
 		}
 	}
 
 	// TODO: Need to check this method handling zero junction speeds when starting from rest.
-	if ((block_buffer_head == block_buffer_tail) || (block->condition & PL_COND_FLAG_SYSTEM_MOTION))
+	if ((block_buffer_head == block_buffer_tail) || (planning_block->condition & PL_COND_FLAG_SYSTEM_MOTION))
 	{
 
 		// Initialize block entry speed as zero. Assume it will be starting from rest. Planner will correct this later.
 		// If system motion, the system motion block always is assumed to start from rest and end at a complete stop.
-		block->entry_speed_sqr = 0.0;
-		block->max_junction_speed_sqr = 0.0; // Starting from rest. Enforce start from zero velocity.
+		planning_block->entry_speed_sqr = 0.0;
+		planning_block->max_junction_speed_sqr = 0.0; // Starting from rest. Enforce start from zero velocity.
 
 	}
 	else
@@ -534,31 +501,31 @@ uint8_t c_planner::plan_buffer_line(float *target, plan_line_data_t *pl_data)
 		if (junction_cos_theta > 0.999999)
 		{
 			//  For a 0 degree acute junction, just set minimum junction speed.
-			block->max_junction_speed_sqr = MINIMUM_JUNCTION_SPEED * MINIMUM_JUNCTION_SPEED;
+			planning_block->max_junction_speed_sqr = MINIMUM_JUNCTION_SPEED * MINIMUM_JUNCTION_SPEED;
 		}
 		else
 		{
 			if (junction_cos_theta < -0.999999)
 			{
 				// Junction is a straight line or 180 degrees. Junction speed is infinite.
-				block->max_junction_speed_sqr = SOME_LARGE_VALUE;
+				planning_block->max_junction_speed_sqr = SOME_LARGE_VALUE;
 			}
 			else
 			{
 				utils::convert_delta_vector_to_unit_vector(junction_unit_vec);
 				float junction_acceleration = utils::limit_value_by_axis_maximum(c_settings::settings.acceleration, junction_unit_vec);
 				float sin_theta_d2 = sqrt(0.5 * (1.0 - junction_cos_theta)); // Trig half angle identity. Always positive.
-				block->max_junction_speed_sqr = max(MINIMUM_JUNCTION_SPEED*MINIMUM_JUNCTION_SPEED,
+				planning_block->max_junction_speed_sqr = max(MINIMUM_JUNCTION_SPEED*MINIMUM_JUNCTION_SPEED,
 				(junction_acceleration * c_settings::settings.junction_deviation * sin_theta_d2) / (1.0 - sin_theta_d2));
 			}
 		}
 	}
 
 	// Block system motion from updating this data to ensure next g-code motion is computed correctly.
-	if (!(block->condition & PL_COND_FLAG_SYSTEM_MOTION))
+	if (!(planning_block->condition & PL_COND_FLAG_SYSTEM_MOTION))
 	{
-		float nominal_speed = plan_compute_profile_nominal_speed(block);
-		plan_compute_profile_parameters(block, nominal_speed, pl.previous_nominal_speed);
+		float nominal_speed = plan_compute_profile_nominal_speed(planning_block);
+		plan_compute_profile_parameters(planning_block, nominal_speed, pl.previous_nominal_speed);
 		pl.previous_nominal_speed = nominal_speed;
 
 		// Update previous path unit_vector and planner position.

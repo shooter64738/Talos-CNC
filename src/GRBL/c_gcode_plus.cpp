@@ -1161,7 +1161,7 @@ uint8_t c_gcode::gc_execute_line(char *line)
 		pl_data->spindle_speed = gc_state.spindle_speed;
 		plan_data.condition = (gc_state.modal.spindle | gc_state.modal.coolant);
 
-		uint8_t status = c_jog::jog_execute(&plan_data, &gc_block);
+		uint8_t status = c_jog::jog_execute(&plan_data, &gc_block, gc_local_block);
 		if (status == STATUS_OK)
 		memcpy(gc_state.position, gc_block.values.xyz, sizeof(gc_block.values.xyz));
 
@@ -1334,8 +1334,8 @@ uint8_t c_gcode::gc_execute_line(char *line)
 		// and absolute and incremental modes.
 		pl_data->condition |= PL_COND_FLAG_RAPID_MOTION; // Set rapid motion condition flag.
 		if (axis_command)
-		c_motion_control::mc_line(gc_block.values.xyz, pl_data);
-		c_motion_control::mc_line(gc_block.values.ijk, pl_data);
+		c_motion_control::mc_line(gc_block.values.xyz, pl_data, gc_local_block);
+		c_motion_control::mc_line(gc_block.values.ijk, pl_data, gc_local_block);
 		memcpy(gc_state.position, gc_block.values.ijk, N_AXIS * sizeof(float));
 		break;
 		case NON_MODAL_SET_HOME_0:
@@ -1365,17 +1365,19 @@ uint8_t c_gcode::gc_execute_line(char *line)
 			uint8_t gc_update_pos = GC_UPDATE_POS_TARGET;
 			if (gc_state.modal.motion == MOTION_MODE_LINEAR)
 			{
-				c_motion_control::mc_line(gc_block.values.xyz, pl_data);
+				
+				c_motion_control::mc_line(gc_block.values.xyz, pl_data, gc_local_block);
 			}
 			else if (gc_state.modal.motion == MOTION_MODE_SEEK)
 			{
+				
 				pl_data->condition |= PL_COND_FLAG_RAPID_MOTION; // Set rapid motion condition flag.
-				c_motion_control::mc_line(gc_block.values.xyz, pl_data);
+				c_motion_control::mc_line(gc_block.values.xyz, pl_data, gc_local_block);
 			}
 			else if ((gc_state.modal.motion == MOTION_MODE_CW_ARC) || (gc_state.modal.motion == MOTION_MODE_CCW_ARC))
 			{
 				c_motion_control::mc_arc(gc_block.values.xyz, pl_data, gc_state.position, gc_block.values.ijk, gc_block.values.r, axis_0, axis_1, axis_linear,
-				bit_istrue(gc_parser_flags, GC_PARSER_ARC_IS_CLOCKWISE));
+					bit_istrue(gc_parser_flags, GC_PARSER_ARC_IS_CLOCKWISE), gc_local_block);
 			}
 			else
 			{
@@ -1384,7 +1386,7 @@ uint8_t c_gcode::gc_execute_line(char *line)
 				#ifndef ALLOW_FEED_OVERRIDE_DURING_PROBE_CYCLES
 				pl_data->condition |= PL_COND_FLAG_NO_FEED_OVERRIDE;
 				#endif
-				gc_update_pos = c_motion_control::mc_probe_cycle(gc_block.values.xyz, pl_data, gc_parser_flags);
+				gc_update_pos = c_motion_control::mc_probe_cycle(gc_block.values.xyz, pl_data, gc_parser_flags,gc_local_block);
 			}
 
 			// As far as the parser is concerned, the position is now == target. In reality the

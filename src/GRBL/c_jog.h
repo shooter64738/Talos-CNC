@@ -44,7 +44,7 @@ private:
 public:
 
 // Sets up valid jog motion received from g-code parser, checks for soft-limits, and executes the jog.
-static uint8_t jog_execute(c_planner::plan_line_data_t *pl_data, c_gcode::parser_block_t *gc_block);
+	static uint8_t jog_execute(c_planner::plan_line_data_t *pl_data, c_gcode::parser_block_t *gc_block, NGC_RS274::NGC_Binary_Block *target_block);
 
 protected:
 private:

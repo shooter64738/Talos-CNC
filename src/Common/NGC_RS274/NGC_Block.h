@@ -91,6 +91,7 @@ namespace NGC_RS274
 			float *C;
 			float *U;
 			float *V;
+			float *Loop[8];
 		}s_axis_values;
 		s_axis_values axis_values;
 

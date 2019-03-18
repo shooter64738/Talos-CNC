@@ -38,7 +38,7 @@ along with Grbl.  If not, see <http://www.gnu.org/licenses/>.
 //#include "system.h"
 
 // Sets up valid jog motion received from g-code parser, checks for soft-limits, and executes the jog.
-uint8_t c_jog::jog_execute(c_planner::plan_line_data_t *pl_data, c_gcode::parser_block_t *gc_block)
+uint8_t c_jog::jog_execute(c_planner::plan_line_data_t *pl_data, c_gcode::parser_block_t *gc_block, NGC_RS274::NGC_Binary_Block *target_block)
 {
 	// Initialize planner data struct for jogging motions.
 	// NOTE: Spindle and coolant are allowed to fully function with overrides during a jog.
@@ -55,7 +55,7 @@ uint8_t c_jog::jog_execute(c_planner::plan_line_data_t *pl_data, c_gcode::parser
 	}
 
 	// Valid jog command. Plan, set state, and execute.
-	c_motion_control::mc_line(gc_block->values.xyz, pl_data);
+	c_motion_control::mc_line(gc_block->values.xyz, pl_data, target_block);
 	if (c_system::sys.state == STATE_IDLE)
 	{
 		if (c_planner::plan_get_current_block() != NULL)

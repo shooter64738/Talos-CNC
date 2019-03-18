@@ -55,7 +55,7 @@
 // segments, must pass through this routine before being passed to the planner. The seperation of
 // mc_line and plan_buffer_line is done primarily to place non-planner-type functions from being
 // in the planner and to let backlash compensation or canned cycle integration simple and direct.
-void c_motion_control::mc_line(float *target, c_planner::plan_line_data_t *pl_data)
+void c_motion_control::mc_line(float *target, c_planner::plan_line_data_t *pl_data, NGC_RS274::NGC_Binary_Block *target_block)
 {
     // If enabled, check for soft limit violations. Placed here all line motions are picked up
     // from everywhere in Grbl.
@@ -110,7 +110,7 @@ void c_motion_control::mc_line(float *target, c_planner::plan_line_data_t *pl_da
 
     // Plan and queue motion into planner buffer
     // uint8_t plan_status; // Not used in normal operation.
-    c_planner::plan_buffer_line(target, pl_data);
+    c_planner::plan_buffer_line(target, pl_data,target_block);
 }
 
 // Execute an arc in offset mode format. position == current xyz, target == target xyz,
@@ -121,7 +121,7 @@ void c_motion_control::mc_line(float *target, c_planner::plan_line_data_t *pl_da
 // of each segment is configured in settings.arc_tolerance, which is defined to be the maximum normal
 // distance from segment to the circle when the end points both lie on the circle.
 void c_motion_control::mc_arc(float *target, c_planner::plan_line_data_t *pl_data, float *position, float *offset, float radius, uint8_t axis_0, uint8_t axis_1, uint8_t axis_linear,
-    uint8_t is_clockwise_arc)
+	uint8_t is_clockwise_arc, NGC_RS274::NGC_Binary_Block *target_block)
 {
     float center_axis0 = position[axis_0] + offset[axis_0];
     float center_axis1 = position[axis_1] + offset[axis_1];
@@ -230,7 +230,7 @@ void c_motion_control::mc_arc(float *target, c_planner::plan_line_data_t *pl_dat
             position[axis_1] = center_axis1 + r_axis1;
             position[axis_linear] += linear_per_segment;
 
-            mc_line(position, pl_data);
+            mc_line(position, pl_data,target_block);
 
             // Bail mid-circle on system abort. Runtime command check already performed by mc_line.
             if (c_system::sys.abort)
@@ -240,7 +240,7 @@ void c_motion_control::mc_arc(float *target, c_planner::plan_line_data_t *pl_dat
         }
     }
     // Ensure last segment arrives at target location.
-    mc_line(target, pl_data);
+	mc_line(target, pl_data, target_block);
 }
 
 // Execute dwell in seconds.
@@ -313,7 +313,7 @@ void c_motion_control::mc_homing_cycle(uint8_t cycle_mask)
 
 // Perform tool length probe cycle. Requires probe switch.
 // NOTE: Upon probe failure, the program will be stopped and placed into ALARM state.
-uint8_t c_motion_control::mc_probe_cycle(float *target, c_planner::plan_line_data_t *pl_data, uint8_t parser_flags)
+uint8_t c_motion_control::mc_probe_cycle(float *target, c_planner::plan_line_data_t *pl_data, uint8_t parser_flags, NGC_RS274::NGC_Binary_Block *target_block)
 {
     // TODO: Need to update this cycle so it obeys a non-auto cycle start.
     if (c_system::sys.state == STATE_CHECK_MODE)
@@ -347,7 +347,7 @@ uint8_t c_motion_control::mc_probe_cycle(float *target, c_planner::plan_line_dat
     }
 
     // Setup and queue probing motion. Auto cycle-start should not start the cycle.
-    mc_line(target, pl_data);
+    mc_line(target, pl_data, target_block);
 
     // Activate the probing state monitor in the stepper module.
     c_system::sys_probe_state = PROBE_ACTIVE;
@@ -416,7 +416,7 @@ void c_motion_control::mc_parking_motion(float *parking_target, c_planner::plan_
         return;
     } // Block during abort.
 
-    uint8_t plan_status = c_planner::plan_buffer_line(parking_target, pl_data);
+    uint8_t plan_status = c_planner::plan_buffer_line(parking_target, pl_data,NULL);
 
     if (plan_status)
     {

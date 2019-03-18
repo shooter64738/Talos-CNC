@@ -33,6 +33,15 @@ NGC_RS274::NGC_Binary_Block::NGC_Binary_Block()
 	this->axis_values.U = &this->block_word_values[U_WORD_BIT];
 	this->axis_values.V = &this->block_word_values[V_WORD_BIT];
 
+	this->axis_values.Loop[0] = &this->block_word_values[X_WORD_BIT];
+	this->axis_values.Loop[1] = &this->block_word_values[Y_WORD_BIT];
+	this->axis_values.Loop[2] = &this->block_word_values[Z_WORD_BIT];
+	this->axis_values.Loop[3] = &this->block_word_values[A_WORD_BIT];
+	this->axis_values.Loop[4] = &this->block_word_values[B_WORD_BIT];
+	this->axis_values.Loop[5] = &this->block_word_values[C_WORD_BIT];
+	this->axis_values.Loop[6] = &this->block_word_values[U_WORD_BIT];
+	this->axis_values.Loop[7] = &this->block_word_values[V_WORD_BIT];
+
 	this->persisted_values.feed_rate_F = &this->block_word_values[F_WORD_BIT];
 	this->persisted_values.active_tool_T = &this->block_word_values[T_WORD_BIT];
 	this->persisted_values.active_diameter_D = &this->block_word_values[D_WORD_BIT];

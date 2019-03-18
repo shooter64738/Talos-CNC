@@ -28,6 +28,7 @@ along with Grbl.  If not, see <http://www.gnu.org/licenses/>.
 #include <stdint.h>
 #include "..\helpers.h"
 #include "all_includes.h"
+#include "..\Common\NGC_RS274\NGC_Block.h"
 #ifndef __C_PLANNER_H__
 #define __C_PLANNER_H__
 
@@ -97,7 +98,7 @@ class c_planner
 		float feed_rate;          // Desired feed rate for line motion. Value is ignored, if rapid motion.
 		float spindle_speed;      // Desired spindle speed through line motion.
 		int32_t line_number;    // Desired line number to report when executing.
-		uint8_t condition;        // Bitflag variable to indicate planner conditions. See defines above.
+		uint8_t conditionx;        // Bitflag variable to indicate planner conditions. See defines above.
 	} plan_line_data_t;
 
 	static plan_block_t block_buffer[BLOCK_BUFFER_SIZE];  // A ring buffer for motion instructions
@@ -116,7 +117,7 @@ class c_planner
 	// Add a new linear movement to the buffer. target[N_AXIS] is the signed, absolute target position
 	// in millimeters. Feed rate specifies the speed of the motion. If feed rate is inverted, the feed
 	// rate is taken to mean "frequency" and would complete the operation in 1/feed_rate minutes.
-	static uint8_t plan_buffer_line(float *target, plan_line_data_t *pl_data);
+	static uint8_t plan_buffer_line(float *target, plan_line_data_t *pl_data, NGC_RS274::NGC_Binary_Block *target_block);
 
 	// Called when the current block is no longer needed. Discards the block and makes the memory
 	// availible for new blocks.

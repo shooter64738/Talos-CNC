@@ -32,6 +32,7 @@ along with Grbl.  If not, see <http://www.gnu.org/licenses/>.
 //#include "planner.h"
 #include "c_planner.h"
 #include <stdint.h>
+#include "..\Common\NGC_RS274\NGC_Block.h"
 // System motion commands must have a line number of zero.
 #define HOMING_CYCLE_LINE_NUMBER 0
 #define PARKING_MOTION_LINE_NUMBER 0
@@ -54,14 +55,14 @@ public:
 	// Execute linear motion in absolute millimeter coordinates. Feed rate given in millimeters/second
 	// unless invert_feed_rate is true. Then the feed_rate means that the motion should be completed in
 	// (1 minute)/feed_rate time.
-	static void mc_line(float *target, c_planner::plan_line_data_t *pl_data);
+	static void mc_line(float *target, c_planner::plan_line_data_t *pl_data,  NGC_RS274::NGC_Binary_Block *target_block);
 
 	// Execute an arc in offset mode format. position == current xyz, target == target xyz,
 	// offset == offset from current xyz, axis_XXX defines circle plane in tool space, axis_linear is
 	// the direction of helical travel, radius == circle radius, is_clockwise_arc boolean. Used
 	// for vector transformation direction.
 	static void mc_arc(float *target, c_planner::plan_line_data_t *pl_data, float *position, float *offset, float radius,
-		uint8_t axis_0, uint8_t axis_1, uint8_t axis_linear, uint8_t is_clockwise_arc);
+		uint8_t axis_0, uint8_t axis_1, uint8_t axis_linear, uint8_t is_clockwise_arc, NGC_RS274::NGC_Binary_Block *target_block);
 
 	// Dwell for a specific number of seconds
 	static void mc_dwell(float seconds);
@@ -70,7 +71,7 @@ public:
 	static void mc_homing_cycle(uint8_t cycle_mask);
 
 	// Perform tool length probe cycle. Requires probe switch.
-	static uint8_t mc_probe_cycle(float *target, c_planner::plan_line_data_t *pl_data, uint8_t parser_flags);
+	static uint8_t mc_probe_cycle(float *target, c_planner::plan_line_data_t *pl_data, uint8_t parser_flags, NGC_RS274::NGC_Binary_Block *target_block);
 
 	// Plans and executes the single special motion case for parking. Independent of main planner buffer.
 	static void mc_parking_motion(float *parking_target, c_planner::plan_line_data_t *pl_data);

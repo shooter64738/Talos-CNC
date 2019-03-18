@@ -60,8 +60,8 @@ namespace NGC_RS274
 			private:
 			static int parse_values();
 			static int error_check_main();
-			static int error_check_plane_select();
-			static void assign_planes();
+			static int error_check_plane_select(NGC_RS274::NGC_Binary_Block &plane_block);
+			static void assign_planes(NGC_RS274::NGC_Binary_Block &plane_block);
 			static int error_check_arc();
 			//static int _ErrorCheck_Linear(void);
 			static int error_check_canned_cycle();
@@ -69,9 +69,9 @@ namespace NGC_RS274
 			static int error_check_cutter_compensation();
 			static uint8_t IsValidCharacter();
 			static int error_check_non_modal();
-			static int error_check_radius_format_arc(float *offsets);
+			static int error_check_radius_format_arc();
 			static int normalize_distance_units();
-			static int error_check_center_format_arc(float*offsets);
+			static int error_check_center_format_arc();
 
 			
 
