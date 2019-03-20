@@ -456,6 +456,8 @@ uint8_t c_settings::settings_store_global_setting(uint8_t parameter, float value
 // Initialize the config subsystem
 void c_settings::settings_init()
 {
+settings_restore(SETTINGS_RESTORE_ALL); // Force restore all EEPROM data.
+return;
     if (!read_global_settings())
     {
         c_report::report_status_message(STATUS_SETTING_READ_FAIL);

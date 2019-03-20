@@ -254,7 +254,7 @@ class c_gcode
 		gc_values_t values;
 	} parser_block_t;
 
-		
+	static uint32_t gc_internal_line_Number;
 	static parser_block_t gc_block;
 
 	static void gc_set_block_defaults();

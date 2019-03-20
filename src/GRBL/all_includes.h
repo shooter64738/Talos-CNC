@@ -214,5 +214,5 @@
 // and addresses are defined in settings.h. With the current settings, up to 2 startup blocks may
 // be stored and executed in order. These startup blocks would typically be used to set the g-code
 // parser state depending on user preferences.
-#define N_STARTUP_LINE 2 // Integer (1-2)
+#define N_STARTUP_LINE 0 // Integer (1-2)
 #endif /* ALL_INCLUDES_H_ */

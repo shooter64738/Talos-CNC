@@ -88,6 +88,7 @@
     <ClCompile Include="..\..\..\Common\Hardware_Abstraction_Layer\Virtual\c_serial_win.cpp" />
     <ClCompile Include="..\..\..\Common\NGC_RS274\NGC_Block.cpp" />
     <ClCompile Include="..\..\..\Common\NGC_RS274\NGC_Interpreter.cpp" />
+    <ClCompile Include="..\..\..\Common\Serial\c_Serial.cpp" />
     <ClCompile Include="..\..\c_coolant.cpp" />
     <ClCompile Include="..\..\c_eeprom.cpp" />
     <ClCompile Include="..\..\c_gcode_plus.cpp" />
@@ -99,7 +100,6 @@
     <ClCompile Include="..\..\c_probe.cpp" />
     <ClCompile Include="..\..\c_protocol.cpp" />
     <ClCompile Include="..\..\c_report.cpp" />
-    <ClCompile Include="..\..\c_serial.cpp" />
     <ClCompile Include="..\..\c_settings.cpp" />
     <ClCompile Include="..\..\c_spindle.cpp" />
     <ClCompile Include="..\..\c_stepper.cpp" />
@@ -126,6 +126,8 @@
     <ClInclude Include="..\..\..\Common\NGC_RS274\NGC_M_Codes.h" />
     <ClInclude Include="..\..\..\Common\NGC_RS274\NGC_M_Groups.h" />
     <ClInclude Include="..\..\..\Common\NGC_RS274\NGC_Parameters.h" />
+    <ClInclude Include="..\..\..\Common\Serial\c_Serial.h" />
+    <ClInclude Include="..\..\..\Common\Serial\s_buffer.h" />
     <ClInclude Include="..\..\..\helpers.h" />
     <ClInclude Include="..\..\..\MSVC++.h" />
     <ClInclude Include="..\..\..\Talos.h" />
@@ -141,7 +143,6 @@
     <ClInclude Include="..\..\c_probe.h" />
     <ClInclude Include="..\..\c_protocol.h" />
     <ClInclude Include="..\..\c_report.h" />
-    <ClInclude Include="..\..\c_serial.h" />
     <ClInclude Include="..\..\c_settings.h" />
     <ClInclude Include="..\..\c_spindle.h" />
     <ClInclude Include="..\..\c_stepper.h" />

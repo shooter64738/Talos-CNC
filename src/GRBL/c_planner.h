@@ -98,11 +98,17 @@ class c_planner
 		float feed_rate;          // Desired feed rate for line motion. Value is ignored, if rapid motion.
 		float spindle_speed;      // Desired spindle speed through line motion.
 		int32_t line_number;    // Desired line number to report when executing.
-		uint8_t conditionx;        // Bitflag variable to indicate planner conditions. See defines above.
+		uint8_t condition;        // Bitflag variable to indicate planner conditions. See defines above.
 	} plan_line_data_t;
 
 	static plan_block_t block_buffer[BLOCK_BUFFER_SIZE];  // A ring buffer for motion instructions
-
+	
+	static uint8_t block_buffer_tail;     // Index of the block to process now
+	static uint8_t block_buffer_head;     // Index of the next block to be pushed
+	static uint8_t next_buffer_head;      // Index of the next buffer head
+	static uint8_t block_buffer_planned;  // Index of the optimally planned block
+	
+	static uint32_t completed_block;
 	protected:
 	private:
 

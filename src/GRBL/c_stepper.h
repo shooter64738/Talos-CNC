@@ -57,6 +57,7 @@ class c_stepper
 		uint8_t prescaler;      // Without AMASS, a prescaler is required to adjust for slow timing.
 		#endif
 		uint16_t spindle_pwm;
+		uint32_t line_number;
 	} ;
 	static segment_t segment_buffer[SEGMENT_BUFFER_SIZE];
 
@@ -135,6 +136,7 @@ class c_stepper
 
 		float inv_rate;    // Used by PWM laser mode to speed up segment calculations.
 		uint16_t current_spindle_pwm;
+		uint16_t line_number;
 	} ;
 	static st_prep_t prep;
 

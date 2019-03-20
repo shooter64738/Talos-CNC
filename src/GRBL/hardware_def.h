@@ -27,6 +27,7 @@
 #include "../Common/Hardware_Abstraction_Layer/AVR_328/c_core_avr_328.h"
 #include "../Common/Hardware_Abstraction_Layer/AVR_328/c_serial_avr_328.h"
 #include "../Common/Hardware_Abstraction_Layer/AVR_328/c_eeprom_avr_328.h"
+#include "../Common/Serial/c_Serial.h"
 #endif
 
 #ifdef __AVR_ATmega2560__
@@ -44,6 +45,7 @@
 #include "../Common/Hardware_Abstraction_Layer/AVR_2560/c_grbl_avr_2560_limits.h"
 #include "../Common/Hardware_Abstraction_Layer/AVR_2560/c_grbl_avr_2560_limits.h"
 #include "../Common/Hardware_Abstraction_Layer/AVR_2560/c_grbl_avr_2560_coolant.h"
+#include "../Common/Serial/c_Serial.h"
 #endif
 
 #ifdef __SAM3X8E__
@@ -65,6 +67,7 @@
 #include "../Common/Hardware_Abstraction_Layer/Virtual/c_grbl_win_limits.h"
 #include "../Common/Hardware_Abstraction_Layer/Virtual/c_grbl_win_limits.h"
 #include "../Common/Hardware_Abstraction_Layer/Virtual/c_grbl_win_coolant.h"
+#include "../Common/Serial/c_Serial.h"
 #endif
 
 #endif /* HARDWARE_DEF_H_ */

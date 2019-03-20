@@ -27,17 +27,18 @@
  */
 
 #include "c_print.h"
-#include "c_serial.h"
+//#include "c_serial.h"
 #include "c_settings.h"
 #include "..\helpers.h"
 #include "all_includes.h"
 //#include "..\Common\Hardware_Abstraction_Layer\AVR_2560\c_core_avr_2560.h"
 #include "hardware_def.h"
+#include "c_protocol.h"
 
 void c_print::print_string(const char *s)
 {
 	while (*s)
-	c_serial::serial_write(*s++);
+	c_protocol::control_serial.Write(*s++);
 }
 
 // Print a string stored in PGM-memory
@@ -45,7 +46,7 @@ void c_print::print_string_P(const char *s)
 {
 	char c;
 	while ((c = Hardware_Abstraction_Layer_Core_pgm_read_byte_near(s++)))
-	c_serial::serial_write(c);
+	c_protocol::control_serial.Write(c);
 }
 
 // void printIntegerInBase(unsigned long n, unsigned long base)
@@ -84,14 +85,14 @@ void c_print::print_uint8_base10(uint8_t n)
 		digit_b = '0' + n % 10;
 		n /= 10;
 	}
-	c_serial::serial_write('0' + n);
+	c_protocol::control_serial.Write('0' + n);
 	if (digit_b)
 	{
-		c_serial::serial_write(digit_b);
+		c_protocol::control_serial.Write(digit_b);
 	}
 	if (digit_a)
 	{
-		c_serial::serial_write(digit_a);
+		c_protocol::control_serial.Write(digit_a);
 	}
 }
 
@@ -115,7 +116,7 @@ void c_print::print_uint32_base10(uint32_t n)
 {
 	if (n == 0)
 	{
-		c_serial::serial_write('0');
+		c_protocol::control_serial.Write('0');
 		return;
 	}
 
@@ -129,14 +130,14 @@ void c_print::print_uint32_base10(uint32_t n)
 	}
 
 	for (; i > 0; i--)
-	c_serial::serial_write('0' + buf[i - 1]);
+	c_protocol::control_serial.Write('0' + buf[i - 1]);
 }
 
 void c_print::print_int32(long n)
 {
 	if (n < 0)
 	{
-		c_serial::serial_write('-');
+		c_protocol::control_serial.Write('-');
 		print_uint32_base10(-n);
 	}
 	else
@@ -154,7 +155,7 @@ void c_print::print_float(float n, uint8_t decimal_places)
 {
 	if (n < 0)
 	{
-		c_serial::serial_write('-');
+		c_protocol::control_serial.Write('-');
 		n = -n;
 	}
 
@@ -193,9 +194,9 @@ void c_print::print_float(float n, uint8_t decimal_places)
 	{
 		if (i == decimal_places)
 		{
-			c_serial::serial_write('.');
+			c_protocol::control_serial.Write('.');
 		} // Insert decimal point in right place.
-		c_serial::serial_write(buf[i - 1]);
+		c_protocol::control_serial.Write(buf[i - 1]);
 	}
 }
 

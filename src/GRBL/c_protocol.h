@@ -1,3 +1,4 @@
+
 /* 
 * c_protocol.h
 *
@@ -5,7 +6,7 @@
 * Author: jeff_d
 */
 
-
+#include "hardware_def.h"
 #ifndef __C_PROTOCOL_H__
 #define __C_PROTOCOL_H__
 	// Line buffer size from the serial input stream to be executed.
@@ -18,6 +19,7 @@ class c_protocol
 {
 //variables
 public:
+static c_Serial control_serial;
 protected:
 private:
 

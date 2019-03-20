@@ -9,7 +9,7 @@
 #include "c_report.h"
 #include "all_includes.h"
 #include "..\helpers.h"
-#include "c_serial.h"
+//#include "c_serial.h"
 #include "c_system.h"
 #include "c_gcode_plus.h"
 #include "c_print.h"
@@ -18,6 +18,7 @@
 #include "utils.h"
 //#include "..\Common\Hardware_Abstraction_Layer\AVR_2560\c_core_avr_2560.h"
 #include "hardware_def.h"
+#include "c_protocol.h"
 
 /*
  report.c - reporting and messaging methods
@@ -59,19 +60,25 @@
 // Internal report utilities to reduce flash with repetitive tasks turned into functions.
 void c_report::report_util_setting_prefix(uint8_t n)
 {
-    c_serial::serial_write('$');
+    c_protocol::control_serial.Write('$');
     c_print::print_uint8_base10(n);
-    c_serial::serial_write('=');
+    c_protocol::control_serial.Write('=');
 }
 
 void c_report::report_util_line_feed()
 {
-    c_print::print_string_P(Hardware_Abstraction_Layer_Core_PSTR("\r\n"));
+#ifdef MSVC
+	c_protocol::control_serial.Write(CR);
+#else
+	c_print::print_string_P(Hardware_Abstraction_Layer_Core_PSTR("\r\n"));
+#endif // MSVC
+
+    
 }
 
 void c_report::report_util_feedback_line_feed()
 {
-    c_serial::serial_write(']');
+    c_protocol::control_serial.Write(']');
     report_util_line_feed();
 }
 
@@ -94,7 +101,7 @@ void c_report::report_util_axis_values(float *axis_value)
         c_print::print_float_coord_value(axis_value[idx]);
         if (idx < (N_AXIS - 1))
         {
-            c_serial::serial_write(',');
+            c_protocol::control_serial.Write(',');
         }
     }
 }
@@ -366,7 +373,7 @@ void c_report::report_probe_parameters()
     float print_position[N_AXIS];
     c_system::system_convert_array_steps_to_mpos(print_position, c_system::sys_probe_position);
     report_util_axis_values(print_position);
-    c_serial::serial_write(':');
+    c_protocol::control_serial.Write(':');
     c_print::print_uint8_base10(c_system::sys.probe_succeeded);
     c_report::report_util_feedback_line_feed();
 }
@@ -396,7 +403,7 @@ void c_report::report_ngc_parameters()
                 c_print::print_uint8_base10(coord_select + 54);
                 break; // G54-G59
         }
-        c_serial::serial_write(':');
+        c_protocol::control_serial.Write(':');
         c_report::report_util_axis_values(coord_data);
         c_report::report_util_feedback_line_feed();
     }
@@ -444,7 +451,7 @@ void c_report::report_gcode_modes()
         switch (c_gcode::gc_state.modal.program_flow)
         {
             case PROGRAM_FLOW_PAUSED:
-                c_serial::serial_write('0');
+                c_protocol::control_serial.Write('0');
                 break;
                 // case PROGRAM_FLOW_OPTIONAL_STOP : serial_write('1'); break; // M1 is ignored and not supported.
             case PROGRAM_FLOW_COMPLETED_M2:
@@ -458,13 +465,13 @@ void c_report::report_gcode_modes()
     switch (c_gcode::gc_state.modal.spindle)
     {
         case SPINDLE_ENABLE_CW:
-            c_serial::serial_write('3');
+            c_protocol::control_serial.Write('3');
             break;
         case SPINDLE_ENABLE_CCW:
-            c_serial::serial_write('4');
+            c_protocol::control_serial.Write('4');
             break;
         case SPINDLE_DISABLE:
-            c_serial::serial_write('5');
+            c_protocol::control_serial.Write('5');
             break;
     }
 
@@ -472,11 +479,11 @@ void c_report::report_gcode_modes()
     if (c_gcode::gc_state.modal.coolant)
     {
         // Note: Multiple coolant states may be active at the same time.
-        if (c_gcode::gc_state.modal.coolant & PL_COND_FLAG_COOLANT_MIST)  c_serial::serial_write('7');
-        if (c_gcode::gc_state.modal.coolant & PL_COND_FLAG_COOLANT_FLOOD) c_serial::serial_write('8');
+        if (c_gcode::gc_state.modal.coolant & PL_COND_FLAG_COOLANT_MIST)  c_protocol::control_serial.Write('7');
+        if (c_gcode::gc_state.modal.coolant & PL_COND_FLAG_COOLANT_FLOOD) c_protocol::control_serial.Write('8');
     }
     else
-        c_serial::serial_write('9');
+        c_protocol::control_serial.Write('9');
 
     c_print::print_string_P(Hardware_Abstraction_Layer_Core_PSTR(" T"));
     c_print::print_uint8_base10(c_gcode::gc_state.tool);
@@ -495,16 +502,16 @@ void c_report::report_startup_line(uint8_t n, char *line)
 {
     c_print::print_string_P(Hardware_Abstraction_Layer_Core_PSTR("$N"));
     c_print::print_uint8_base10(n);
-    c_serial::serial_write('=');
+    c_protocol::control_serial.Write('=');
     c_print::print_string(line);
     report_util_line_feed();
 }
 
 void c_report::report_execute_startup_message(char *line, uint8_t status_code)
 {
-    c_serial::serial_write('>');
+    c_protocol::control_serial.Write('>');
     c_print::print_string(line);
-    c_serial::serial_write(':');
+    c_protocol::control_serial.Write(':');
     report_status_message(status_code);
 }
 
@@ -515,44 +522,44 @@ void c_report::report_build_info(char *line)
     c_print::print_string(line);
     report_util_feedback_line_feed();
     c_print::print_string_P(Hardware_Abstraction_Layer_Core_PSTR("[OPT:")); // Generate compile-time build option list
-    c_serial::serial_write('V');
-    c_serial::serial_write('N');
-    c_serial::serial_write('M');
+    c_protocol::control_serial.Write('V');
+    c_protocol::control_serial.Write('N');
+    c_protocol::control_serial.Write('M');
 #ifdef COREXY
-    c_serial::serial_write('C');
+    c_protocol::control_serial.Write('C');
 #endif
 #ifdef PARKING_ENABLE
-    c_serial::serial_write('P');
+    c_protocol::control_serial.Write('P');
 #endif
 #ifdef HOMING_FORCE_SET_ORIGIN
-    c_serial::serial_write('Z');
+    c_protocol::control_serial.Write('Z');
 #endif
 #ifdef HOMING_SINGLE_AXIS_COMMANDS
-    c_serial::serial_write('H');
+    c_protocol::control_serial.Write('H');
 #endif
 #ifdef LIMITS_TWO_SWITCHES_ON_AXES
-    c_serial::serial_write('L');
+    c_protocol::control_serial.Write('L');
 #endif
 #ifdef ALLOW_FEED_OVERRIDE_DURING_PROBE_CYCLES
-    c_serial::serial_write('A');
+    c_protocol::control_serial.Write('A');
 #endif
 #ifndef ENABLE_RESTORE_EEPROM_WIPE_ALL // NOTE: Shown when disabled.
-    c_serial::serial_write('*');
+    c_protocol::control_serial.Write('*');
 #endif
 #ifndef ENABLE_RESTORE_EEPROM_DEFAULT_SETTINGS // NOTE: Shown when disabled.
-    c_serial::serial_write('$');
+    c_protocol::control_serial.Write('$');
 #endif
 #ifndef ENABLE_RESTORE_EEPROM_CLEAR_PARAMETERS // NOTE: Shown when disabled.
-    c_serial::serial_write('#');
+    c_protocol::control_serial.Write('#');
 #endif
 #ifndef ENABLE_BUILD_INFO_WRITE_COMMAND // NOTE: Shown when disabled.
-    c_serial::serial_write('I');
+    c_protocol::control_serial.Write('I');
 #endif
 #ifndef FORCE_BUFFER_SYNC_DURING_EEPROM_WRITE // NOTE: Shown when disabled.
-    c_serial::serial_write('E');
+    c_protocol::control_serial.Write('E');
 #endif
 #ifndef FORCE_BUFFER_SYNC_DURING_WCO_CHANGE // NOTE: Shown when disabled.
-    c_serial::serial_write('W');
+    c_protocol::control_serial.Write('W');
 #endif
     // NOTE: Compiled values, like override increments/max/min values, may be added at some point later.
     // These will likely have a comma delimiter to separate them.
@@ -583,7 +590,7 @@ void c_report::report_realtime_status()
     c_system::system_convert_array_steps_to_mpos(print_position, current_position);
 
     // Report current machine state and sub-states
-    c_serial::serial_write('<');
+    c_protocol::control_serial.Write('<');
     switch (c_system::sys.state)
     {
         case STATE_IDLE:
@@ -598,11 +605,11 @@ void c_report::report_realtime_status()
                 c_print::print_string_P(Hardware_Abstraction_Layer_Core_PSTR("Hold:"));
                 if (c_system::sys.suspend & SUSPEND_HOLD_COMPLETE)
                 {
-                    c_serial::serial_write('0');
+                    c_protocol::control_serial.Write('0');
                 } // Ready to resume
                 else
                 {
-                    c_serial::serial_write('1');
+                    c_protocol::control_serial.Write('1');
                 } // Actively holding
                 break;
             } // Continues to print jog state during jog cancel.
@@ -622,18 +629,18 @@ void c_report::report_realtime_status()
         case STATE_SAFETY_DOOR:
             c_print::print_string_P(Hardware_Abstraction_Layer_Core_PSTR("Door:"));
             if (c_system::sys.suspend & SUSPEND_INITIATE_RESTORE)
-                c_serial::serial_write('3'); // Restoring
+                c_protocol::control_serial.Write('3'); // Restoring
             else
             {
                 if (c_system::sys.suspend & SUSPEND_RETRACT_COMPLETE)
                 {
                     if (c_system::sys.suspend & SUSPEND_SAFETY_DOOR_AJAR)
-                        c_serial::serial_write('1'); // Door ajar
+                        c_protocol::control_serial.Write('1'); // Door ajar
                     else
-                        c_serial::serial_write('0'); // Door closed and ready to resume
+                        c_protocol::control_serial.Write('0'); // Door closed and ready to resume
                 }
                 else
-                    c_serial::serial_write('2'); // Retracting
+                    c_protocol::control_serial.Write('2'); // Retracting
             }
             break;
         case STATE_SLEEP:
@@ -668,7 +675,7 @@ void c_report::report_realtime_status()
     {
         c_print::print_string_P(PSTR("|Bf:"));
         c_print::print_uint8_base10(plan_get_block_buffer_available());
-        c_serial::serial_write(',');
+        c_protocol::control_serial.Write(',');
         c_print::print_uint8_base10(serial_get_rx_buffer_available());
     }
 #endif
@@ -691,7 +698,7 @@ void c_report::report_realtime_status()
 #ifdef REPORT_FIELD_CURRENT_FEED_SPEED
     c_print::print_string_P(PSTR("|FS:"));
     c_print::print_float_rate_value(st_get_realtime_rate());
-    c_serial::serial_write(',');
+    c_protocol::control_serial.Write(',');
     c_print::print_float(sys.spindle_speed, N_DECIMAL_RPMVALUE);
 #endif
 
@@ -702,15 +709,15 @@ void c_report::report_realtime_status()
     if (lim_pin_state | ctrl_pin_state | prb_pin_state)
     {
         c_print::print_string_P(PSTR("|Pn:"));
-        if (prb_pin_state) c_serial::serial_write('P');
+        if (prb_pin_state) c_protocol::control_serial.Write('P');
         if (lim_pin_state)
         {
-            if (bit_istrue(lim_pin_state, bit(X_AXIS))) c_serial::serial_write('X');
-            if (bit_istrue(lim_pin_state, bit(Y_AXIS))) c_serial::serial_write('Y');
-            if (bit_istrue(lim_pin_state, bit(Z_AXIS))) c_serial::serial_write('Z');
-            if (bit_istrue(lim_pin_state, bit(A_AXIS))) c_serial::serial_write('A');
-            if (bit_istrue(lim_pin_state, bit(B_AXIS))) c_serial::serial_write('B');
-            if (bit_istrue(lim_pin_state, bit(C_AXIS))) c_serial::serial_write('C');
+            if (bit_istrue(lim_pin_state, bit(X_AXIS))) c_protocol::control_serial.Write('X');
+            if (bit_istrue(lim_pin_state, bit(Y_AXIS))) c_protocol::control_serial.Write('Y');
+            if (bit_istrue(lim_pin_state, bit(Z_AXIS))) c_protocol::control_serial.Write('Z');
+            if (bit_istrue(lim_pin_state, bit(A_AXIS))) c_protocol::control_serial.Write('A');
+            if (bit_istrue(lim_pin_state, bit(B_AXIS))) c_protocol::control_serial.Write('B');
+            if (bit_istrue(lim_pin_state, bit(C_AXIS))) c_protocol::control_serial.Write('C');
         }
         if (ctrl_pin_state)
         {
@@ -774,7 +781,7 @@ void c_report::report_realtime_status()
     }
 #endif
 
-    c_serial::serial_write('>');
+    c_protocol::control_serial.Write('>');
     report_util_line_feed();
 }
 

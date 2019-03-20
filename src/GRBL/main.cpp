@@ -1,5 +1,5 @@
 #include <string.h>
-#include "c_serial.h"
+//#include "c_serial.h"
 #include "c_settings.h"
 #include "c_stepper.h"
 #include "c_system.h"
@@ -26,15 +26,17 @@
 
 int main(void)
 {
+Hardware_Abstraction_Layer::Core::initialize();
 	// Initialize system upon power-up.
-	c_serial::serial_init();   // Setup serial baud rate and interrupts
+	//c_serial::serial_init();   // Setup serial baud rate and interrupts
+	c_protocol::control_serial = c_Serial(0, 115200);
 	c_settings::settings_init(); // Load Grbl settings from EEPROM
 	c_stepper::stepper_init();  // Configure stepper pins and interrupt timers
 	c_system::system_init();   // Configure pinout pins and pin-change interrupt
 
 	memset(c_system::sys_position, 0, sizeof(c_system::sys_position)); // Clear machine position.
 	//sei();
-	Hardware_Abstraction_Layer::Core::initialize();
+	
 	Hardware_Abstraction_Layer::Core::start_interrupts();
 	
 	// Enable interrupts
@@ -81,7 +83,7 @@ int main(void)
 		c_system::sys_rt_exec_accessory_override = 0;
 
 		// Reset Grbl primary systems.
-		c_serial::serial_reset_read_buffer(); // Clear serial read buffer
+		//c_serial::serial_reset_read_buffer(); // Clear serial read buffer
 		c_gcode::gc_init(); // Set g-code parser to default state
 		c_spindle::spindle_init();
 		c_coolant::coolant_init();

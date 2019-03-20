@@ -64,6 +64,7 @@ along with Grbl.  If not, see <http://www.gnu.org/licenses/>.
 c_gcode::parser_state_t c_gcode::gc_state;
 c_gcode::parser_block_t c_gcode::gc_block;
 NGC_RS274::NGC_Binary_Block c_gcode::test_block = NGC_RS274::NGC_Binary_Block();
+uint32_t c_gcode::gc_internal_line_Number = 0;
 
 #define FAIL(status) do { return (status); } while (0)
 
@@ -1203,7 +1204,10 @@ uint8_t c_gcode::gc_execute_line(char *line)
 
 	// [0. Non-specific/common error-checks and miscellaneous setup]:
 	// NOTE: If no line number is present, the value is zero.
-	gc_state.line_number = gc_block.values.n;
+
+	//If no line number is sent, use the internal line number counter. this value is tracked
+	//and when it changes, we know that a particular line has completed. 
+	gc_state.line_number = gc_block.values.n>0? gc_block.values.n:++c_gcode::gc_internal_line_Number;
 	pl_data->line_number = gc_state.line_number; // Record data for planner use.
 
 	// [1. Comments feedback ]:  NOT SUPPORTED

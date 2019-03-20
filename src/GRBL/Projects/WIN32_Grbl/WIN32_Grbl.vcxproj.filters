@@ -16,6 +16,9 @@
     <Filter Include="Common\Hardware Abstraction Layer\WIN32">
       <UniqueIdentifier>{6fde1f12-248d-42a8-8d24-c7732695ab29}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Common\Serial">
+      <UniqueIdentifier>{1d3018ad-f891-40fd-8bc3-561a8c59624e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\c_coolant.cpp" />
@@ -28,7 +31,6 @@
     <ClCompile Include="..\..\c_probe.cpp" />
     <ClCompile Include="..\..\c_protocol.cpp" />
     <ClCompile Include="..\..\c_report.cpp" />
-    <ClCompile Include="..\..\c_serial.cpp" />
     <ClCompile Include="..\..\c_settings.cpp" />
     <ClCompile Include="..\..\c_spindle.cpp" />
     <ClCompile Include="..\..\c_stepper.cpp" />
@@ -72,6 +74,9 @@
       <Filter>Common\Hardware Abstraction Layer\WIN32</Filter>
     </ClCompile>
     <ClCompile Include="..\..\c_gcode_plus.cpp" />
+    <ClCompile Include="..\..\..\Common\Serial\c_Serial.cpp">
+      <Filter>Common\Serial</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\all_includes.h" />
@@ -85,7 +90,6 @@
     <ClInclude Include="..\..\c_probe.h" />
     <ClInclude Include="..\..\c_protocol.h" />
     <ClInclude Include="..\..\c_report.h" />
-    <ClInclude Include="..\..\c_serial.h" />
     <ClInclude Include="..\..\c_settings.h" />
     <ClInclude Include="..\..\c_spindle.h" />
     <ClInclude Include="..\..\c_stepper.h" />
@@ -151,5 +155,11 @@
       <Filter>Common\Hardware Abstraction Layer\WIN32</Filter>
     </ClInclude>
     <ClInclude Include="..\..\c_gcode_plus.h" />
+    <ClInclude Include="..\..\..\Common\Serial\c_Serial.h">
+      <Filter>Common\Serial</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Common\Serial\s_buffer.h">
+      <Filter>Common\Serial</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

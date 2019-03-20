@@ -42,10 +42,11 @@ along with Grbl.  If not, see <http://www.gnu.org/licenses/>.
 
 c_planner::plan_block_t c_planner::block_buffer[BLOCK_BUFFER_SIZE];  // A ring buffer for motion instructions
 
-static uint8_t block_buffer_tail;     // Index of the block to process now
-static uint8_t block_buffer_head;     // Index of the next block to be pushed
-static uint8_t next_buffer_head;      // Index of the next buffer head
-static uint8_t block_buffer_planned;  // Index of the optimally planned block
+uint8_t c_planner::block_buffer_tail;     // Index of the block to process now
+uint8_t c_planner::block_buffer_head;     // Index of the next block to be pushed
+uint8_t c_planner::next_buffer_head;      // Index of the next buffer head
+uint8_t c_planner::block_buffer_planned;  // Index of the optimally planned block
+uint32_t c_planner::completed_block;
 
 // Define planner variables
 typedef struct
@@ -162,7 +163,7 @@ void c_planner::planner_recalculate()
 	float entry_speed_sqr;
 	plan_block_t *next;
 	plan_block_t *current = &block_buffer[block_index];
-
+	
 	// Calculate maximum entry speed for last block in buffer, where the exit speed is always zero.
 	current->entry_speed_sqr = min(current->max_entry_speed_sqr, 2 * current->acceleration * current->millimeters);
 
@@ -389,7 +390,8 @@ uint8_t c_planner::plan_buffer_line(float *target, plan_line_data_t *pl_data, NG
 	memset(planning_block, 0, sizeof(plan_block_t)); // Zero all block values.
 	planning_block->condition = pl_data->condition;
 	planning_block->spindle_speed = *target_block->persisted_values.active_spindle_speed_S;
-	planning_block->line_number = *target_block->persisted_values.active_line_number_N;
+	//planning_block->line_number = *target_block->persisted_values.active_line_number_N;
+	planning_block->line_number = pl_data->line_number;
 
 	// Compute and store initial move distance data.
 	int32_t target_steps[N_AXIS], position_steps[N_AXIS];
@@ -413,7 +415,7 @@ uint8_t c_planner::plan_buffer_line(float *target, plan_line_data_t *pl_data, NG
 		// Also, compute individual axes distance for move and prep unit vector calculations.
 		// NOTE: Computes true distance from converted step values.
 		
-		target_steps[idx] = lround(*target_block->axis_values.Loop[idx] * c_settings::settings.steps_per_mm[idx]);
+		target_steps[idx] = lround(target[idx] * c_settings::settings.steps_per_mm[idx]);
 		planning_block->steps[idx] = labs(target_steps[idx] - position_steps[idx]);
 		planning_block->step_event_count = max(planning_block->step_event_count, planning_block->steps[idx]);
 		delta_mm = (target_steps[idx] - position_steps[idx]) / c_settings::settings.steps_per_mm[idx];

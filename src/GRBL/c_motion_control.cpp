@@ -158,10 +158,12 @@ void c_motion_control::mc_arc(float *target, c_planner::plan_line_data_t *pl_dat
         // Multiply inverse feed_rate to compensate for the fact that this movement is approximated
         // by a number of discrete segments. The inverse feed_rate should be correct for the sum of
         // all segments.
-        if (pl_data->condition & PL_COND_FLAG_INVERSE_TIME)
+		//if (target_block->get_g_code_value_x(NGC_RS274::Groups::G::FEED_RATE_MODE) == NGC_RS274::G_codes::FEED_RATE_MINUTES_PER_UNIT_MODE)
+		
+		if (pl_data->condition & PL_COND_FLAG_INVERSE_TIME)
         {
             pl_data->feed_rate *= segments;
-            bit_false(pl_data->condition, PL_COND_FLAG_INVERSE_TIME); // Force as feed absolute mode over arc segments.
+            //bit_false(pl_data->condition, PL_COND_FLAG_INVERSE_TIME); // Force as feed absolute mode over arc segments.
         }
 
         float theta_per_segment = angular_travel / segments;

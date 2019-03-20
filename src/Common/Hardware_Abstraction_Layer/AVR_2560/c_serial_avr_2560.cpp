@@ -10,7 +10,7 @@
 #include "c_core_avr_2560.h"
 #include <avr/interrupt.h>
 #include <avr/io.h>
-#include "../../../GRBL/c_serial.h"
+//#include "../../../GRBL/c_serial.h"
 #include <stddef.h>
 
 #define COM_PORT_COUNT 0 //<--how many serial ports does this hardware have (or) how many do you need to use.
@@ -189,8 +189,8 @@ ISR(USART_RX_vect)
 #ifdef USART0_RX_vect
 ISR(USART0_RX_vect)
 {
-	c_serial::serial_rx_event(UDR0);
-	return;
+	//c_serial::serial_rx_event(UDR0);
+	//return;
 	//expand this later to fill the serial buffer. at the moment, this is just to get grbl to compile.
 	char Byte = UDR0;
 
@@ -241,6 +241,6 @@ ISR(USART1_RX_vect)
 ISR(USART0_UDRE_vect)
 {
 //UDR0='b';
-	c_serial::serial_tx_event(NULL);
+	//c_serial::serial_tx_event(NULL);
 }
 

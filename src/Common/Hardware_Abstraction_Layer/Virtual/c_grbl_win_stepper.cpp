@@ -89,7 +89,7 @@ void Hardware_Abstraction_Layer::Grbl::Stepper::timer1_overflow_thread()
 		if (Hardware_Abstraction_Layer::Grbl::Stepper::_TIMSK1 & (1 << OCIE1A))
 		{
 			c_stepper::step_tick();
-			std::this_thread::sleep_for(std::chrono::milliseconds(5000));
+			std::this_thread::sleep_for(std::chrono::milliseconds(10));
 			
 		}
 	}
