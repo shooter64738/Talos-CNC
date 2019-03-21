@@ -46,7 +46,8 @@ uint8_t c_planner::block_buffer_tail;     // Index of the block to process now
 uint8_t c_planner::block_buffer_head;     // Index of the next block to be pushed
 uint8_t c_planner::next_buffer_head;      // Index of the next buffer head
 uint8_t c_planner::block_buffer_planned;  // Index of the optimally planned block
-uint32_t c_planner::completed_block;
+uint32_t c_planner::completed_block = 1;
+bool c_planner::block_complete = false;
 
 // Define planner variables
 typedef struct

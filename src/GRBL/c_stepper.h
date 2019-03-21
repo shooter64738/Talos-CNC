@@ -34,7 +34,9 @@ along with Grbl.  If not, see <http://www.gnu.org/licenses/>.
 #define SEGMENT_BUFFER_SIZE 10
 #endif
 
+#ifndef N_AXIS
 #define N_AXIS 6
+#endif
 
 #include <stdint.h>
 class c_stepper
@@ -67,14 +69,14 @@ class c_stepper
 	// NOTE: This data is copied from the prepped planner blocks so that the planner blocks may be
 	// discarded when entirely consumed and completed by the segment buffer. Also, AMASS alters this
 	// data for its own use.
-	struct st_block_t
+	struct st_block_t_bresenham
 	{
 		uint32_t steps[N_AXIS];
 		uint32_t step_event_count;
 		uint8_t direction_bits;
 		uint8_t is_pwm_rate_adjusted; // Tracks motions that require constant laser power/rate
 	} ;
-	static st_block_t st_block_buffer[SEGMENT_BUFFER_SIZE-1];
+	static st_block_t_bresenham st_block_buffer_bresenham[SEGMENT_BUFFER_SIZE-1];
 
 	// Stepper ISR data struct. Contains the running data for the main stepper ISR.
 	struct stepper_t
@@ -102,7 +104,7 @@ class c_stepper
 
 		uint16_t step_count;       // Steps remaining in line segment motion
 		uint8_t exec_block_index; // Tracks the current st_block index. Change indicates new block.
-		st_block_t *exec_block;   // Pointer to the block data for the segment being executed
+		st_block_t_bresenham *exec_block;   // Pointer to the block data for the segment being executed
 		segment_t *exec_segment;  // Pointer to the segment being executed
 	} ;
 	static stepper_t st;
@@ -110,7 +112,7 @@ class c_stepper
 
 	struct st_prep_t
 	{
-		uint8_t st_block_index;  // Index of stepper common data block being prepped
+		uint8_t st_block_index_4_bresenham;  // Index of stepper common data block being prepped
 		uint8_t recalculate_flag;
 
 		float dt_remainder;
@@ -139,6 +141,8 @@ class c_stepper
 		uint16_t line_number;
 	} ;
 	static st_prep_t prep;
+	static uint32_t current_block;
+	
 
 	protected:
 	private:

@@ -431,6 +431,14 @@
       <SubType>compile</SubType>
       <Link>main.cpp</Link>
     </Compile>
+    <Compile Include="..\..\..\Motion_Core\c_segment.cpp">
+      <SubType>compile</SubType>
+      <Link>Motion_Core\c_segment.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\Motion_Core\c_segment.h">
+      <SubType>compile</SubType>
+      <Link>Motion_Core\c_segment.h</Link>
+    </Compile>
     <Compile Include="..\..\..\status.h">
       <SubType>compile</SubType>
       <Link>status.h</Link>
@@ -450,6 +458,7 @@
     <Folder Include="Common\Hardware Abstraction Layer\AVR 2560" />
     <Folder Include="Common\Serial" />
     <Folder Include="Common\NGC_Rs274" />
+    <Folder Include="Motion_Core" />
   </ItemGroup>
   <Import Project="$(AVRSTUDIO_EXE_PATH)\\Vs\\Compiler.targets" />
 </Project>

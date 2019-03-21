@@ -105,6 +105,8 @@
     <ClCompile Include="..\..\c_stepper.cpp" />
     <ClCompile Include="..\..\c_system.cpp" />
     <ClCompile Include="..\..\main.cpp" />
+    <ClCompile Include="..\..\Motion_Core\c_segment.cpp" />
+    <ClCompile Include="..\..\Motion_Core\c_step_core.cpp" />
     <ClCompile Include="..\..\utils.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -149,6 +151,8 @@
     <ClInclude Include="..\..\c_system.h" />
     <ClInclude Include="..\..\defaults.h" />
     <ClInclude Include="..\..\hardware_def.h" />
+    <ClInclude Include="..\..\Motion_Core\c_segment.h" />
+    <ClInclude Include="..\..\Motion_Core\c_step_core.h" />
     <ClInclude Include="..\..\utils.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

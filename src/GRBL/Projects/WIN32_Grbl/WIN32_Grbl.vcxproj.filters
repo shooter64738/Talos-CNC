@@ -19,6 +19,9 @@
     <Filter Include="Common\Serial">
       <UniqueIdentifier>{1d3018ad-f891-40fd-8bc3-561a8c59624e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Motion_Core">
+      <UniqueIdentifier>{58cf6b4b-7d37-499d-8c92-7f26cadffec3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\c_coolant.cpp" />
@@ -76,6 +79,12 @@
     <ClCompile Include="..\..\c_gcode_plus.cpp" />
     <ClCompile Include="..\..\..\Common\Serial\c_Serial.cpp">
       <Filter>Common\Serial</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Motion_Core\c_segment.cpp">
+      <Filter>Motion_Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Motion_Core\c_step_core.cpp">
+      <Filter>Motion_Core</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -160,6 +169,12 @@
     </ClInclude>
     <ClInclude Include="..\..\..\Common\Serial\s_buffer.h">
       <Filter>Common\Serial</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Motion_Core\c_segment.h">
+      <Filter>Motion_Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Motion_Core\c_step_core.h">
+      <Filter>Motion_Core</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

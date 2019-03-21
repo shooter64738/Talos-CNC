@@ -41,6 +41,7 @@ along with Grbl.  If not, see <http://www.gnu.org/licenses/>.
 #include "c_stepper.h"
 #include "c_print.h"
 #include "utils.h"
+
 //#include "..\Common\Hardware_Abstraction_Layer\AVR_2560\c_core_avr_2560.h"
 //#include "..\Common\Hardware_Abstraction_Layer\AVR_2560\c_grbl_avr_2560_spindle.h"
 
@@ -59,6 +60,7 @@ GRBL PRIMARY LOOP:
 */
 void c_protocol::protocol_main_loop()
 {
+	
 	// Perform some machine checks to make sure everything is good to go.
 	#ifdef CHECK_LIMITS_AT_INIT
 	if (bit_istrue(settings.flags, BITFLAG_HARD_LIMIT_ENABLE) && limits_get_state())
@@ -99,10 +101,11 @@ void c_protocol::protocol_main_loop()
 
 	//if running on win32 throw some sample data into the serial buffer
 	#ifdef MSVC
-	Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "G0X1\rg1y1F150G94\r");
-	Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "G2X2Y2R1F150G93\rG94\r");
+	Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "G0X10Y10\r");// g1y1F150G94\r");
+	//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "G2X2Y2R1F150G93\rG94\r");
 	#endif // MSVC
 	uint8_t pass=0;
+	uint32_t last_reported_block = 0;
 	for (;;)
 	{
 
@@ -152,12 +155,6 @@ void c_protocol::protocol_main_loop()
 			char_counter = 0;
 
 		}
-		else
-		{
-
-			
-		}
-		
 
 		// If there are no more characters in the serial read buffer to be processed and executed,
 		// this indicates that g-code streaming has either filled the planner buffer or has
@@ -165,12 +162,14 @@ void c_protocol::protocol_main_loop()
 		protocol_auto_cycle_start();
 		
 		protocol_execute_realtime();  // Runtime command check point.
-		if (c_planner::completed_block!=0)
+
+		if (c_planner::block_complete)
 		{
+			c_planner::block_complete = false;
 			c_protocol::control_serial.print_string("Block: ");
 			c_protocol::control_serial.print_int32(c_planner::completed_block);
 			c_protocol::control_serial.print_string(" finished\r");
-			c_planner::completed_block = 0;
+			
 		}
 		if (c_system::sys.abort)
 		{
@@ -639,14 +638,7 @@ void c_protocol::protocol_exec_rt_system()
 		}
 	}
 
-	//#ifdef DEBUG
-	//if (c_system::sys_rt_exec_debug)
-	//{
-	//c_report::report_realtime_debug();
-	//c_system::sys_rt_exec_debug = 0;
-	//}
-	//#endif
-
+	
 	// Reload step segment buffer
 	if (c_system::sys.state & (STATE_CYCLE | STATE_HOLD | STATE_SAFETY_DOOR | STATE_HOMING | STATE_SLEEP | STATE_JOG))
 	{

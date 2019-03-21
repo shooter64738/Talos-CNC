@@ -109,6 +109,7 @@ class c_planner
 	static uint8_t block_buffer_planned;  // Index of the optimally planned block
 	
 	static uint32_t completed_block;
+	static bool block_complete;
 	protected:
 	private:
 
