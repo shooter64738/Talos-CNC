@@ -52,7 +52,7 @@ class c_stepper
 	{
 		uint16_t n_step;           // Number of step events to be executed for this segment
 		uint16_t cycles_per_tick;  // Step distance traveled per ISR tick, aka step rate.
-		uint8_t st_block_index;   // Stepper block data index. Uses this information to execute this segment.
+		uint8_t st_block_index_4_bresenham;   // Stepper block data index. Uses this information to execute this segment.
 		#ifdef ADAPTIVE_MULTI_AXIS_STEP_SMOOTHING
 		uint8_t amass_level;    // Indicates AMASS level for the ISR to execute this segment
 		#else

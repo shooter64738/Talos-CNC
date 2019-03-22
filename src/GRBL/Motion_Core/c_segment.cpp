@@ -13,7 +13,7 @@ Motion_Core::Segment::Item::Item(uint16_t n_step,uint16_t cycles_per_tick,uint8_
 	this->line_number = line_number;
 	this->n_step = n_step;
 	this->prescaler = prescaler;
-	this->st_block_index = st_block_index;
+	this->st_block_index_4_bresenham = st_block_index;
 }
 
 

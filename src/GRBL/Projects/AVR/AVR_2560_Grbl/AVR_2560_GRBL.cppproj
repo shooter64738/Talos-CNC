@@ -439,6 +439,14 @@
       <SubType>compile</SubType>
       <Link>Motion_Core\c_segment.h</Link>
     </Compile>
+    <Compile Include="..\..\..\Motion_Core\c_step_core.cpp">
+      <SubType>compile</SubType>
+      <Link>Motion_Core\c_step_core.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\Motion_Core\c_step_core.h">
+      <SubType>compile</SubType>
+      <Link>Motion_Core\c_step_core.h</Link>
+    </Compile>
     <Compile Include="..\..\..\status.h">
       <SubType>compile</SubType>
       <Link>status.h</Link>

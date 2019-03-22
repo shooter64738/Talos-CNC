@@ -9,7 +9,7 @@ namespace Motion_Core
 		public:
 			uint16_t n_step;           // Number of step events to be executed for this segment
 			uint16_t cycles_per_tick;  // Step distance traveled per ISR tick, aka step rate.
-			uint8_t st_block_index;   // Stepper block data index. Uses this information to execute this segment.
+			uint8_t st_block_index_4_bresenham;   // Stepper block data index. Uses this information to execute this segment.
 
 			uint8_t prescaler;      // Without AMASS, a prescaler is required to adjust for slow timing.
 			uint32_t line_number;
