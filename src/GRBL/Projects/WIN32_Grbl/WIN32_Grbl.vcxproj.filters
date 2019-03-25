@@ -80,10 +80,16 @@
     <ClCompile Include="..\..\..\Common\Serial\c_Serial.cpp">
       <Filter>Common\Serial</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Motion_Core\c_segment.cpp">
+    <ClCompile Include="..\..\Motion_Core\c_segment_timer_item.cpp">
       <Filter>Motion_Core</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Motion_Core\c_step_core.cpp">
+    <ClCompile Include="..\..\Motion_Core\c_segment_arbitrator.cpp">
+      <Filter>Motion_Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Motion_Core\c_segment_timer_bresenham.cpp">
+      <Filter>Motion_Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Motion_Core\c_planner_compute_block.cpp">
       <Filter>Motion_Core</Filter>
     </ClCompile>
   </ItemGroup>
@@ -170,10 +176,19 @@
     <ClInclude Include="..\..\..\Common\Serial\s_buffer.h">
       <Filter>Common\Serial</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Motion_Core\c_segment.h">
+    <ClInclude Include="..\..\Motion_Core\c_segment_timer_item.h">
       <Filter>Motion_Core</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Motion_Core\c_step_core.h">
+    <ClInclude Include="..\..\Motion_Core\c_segment_arbitrator.h">
+      <Filter>Motion_Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Motion_Core\c_segment_timer_bresenham.h">
+      <Filter>Motion_Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Motion_Core\c_planner_compute_block.h">
+      <Filter>Motion_Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Motion_Core\c_segment.h">
       <Filter>Motion_Core</Filter>
     </ClInclude>
   </ItemGroup>

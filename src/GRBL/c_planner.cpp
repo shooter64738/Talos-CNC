@@ -163,10 +163,10 @@ void c_planner::planner_recalculate()
 	// NOTE: Forward pass will later refine and correct the reverse pass to create an optimal plan.
 	float entry_speed_sqr;
 	plan_block_t *next;
-	plan_block_t *current = &block_buffer[block_index];
+	plan_block_t *current_block_from_index = &block_buffer[block_index];
 	
 	// Calculate maximum entry speed for last block in buffer, where the exit speed is always zero.
-	current->entry_speed_sqr = min(current->max_entry_speed_sqr, 2 * current->acceleration * current->millimeters);
+	current_block_from_index->entry_speed_sqr = min(current_block_from_index->max_entry_speed_sqr, 2 * current_block_from_index->acceleration * current_block_from_index->millimeters);
 
 	block_index = plan_prev_block_index(block_index);
 	if (block_index == block_buffer_planned)
@@ -181,8 +181,8 @@ void c_planner::planner_recalculate()
 	{ // Three or more plan-able blocks
 		while (block_index != block_buffer_planned)
 		{
-			next = current;
-			current = &block_buffer[block_index];
+			next = current_block_from_index;
+			current_block_from_index = &block_buffer[block_index];
 			block_index = plan_prev_block_index(block_index);
 
 			// Check if next block is the tail block(=planned block). If so, update current stepper parameters.
@@ -192,16 +192,16 @@ void c_planner::planner_recalculate()
 			}
 
 			// Compute maximum entry speed decelerating over the current block from its exit speed.
-			if (current->entry_speed_sqr != current->max_entry_speed_sqr)
+			if (current_block_from_index->entry_speed_sqr != current_block_from_index->max_entry_speed_sqr)
 			{
-				entry_speed_sqr = next->entry_speed_sqr + 2 * current->acceleration * current->millimeters;
-				if (entry_speed_sqr < current->max_entry_speed_sqr)
+				entry_speed_sqr = next->entry_speed_sqr + 2 * current_block_from_index->acceleration * current_block_from_index->millimeters;
+				if (entry_speed_sqr < current_block_from_index->max_entry_speed_sqr)
 				{
-					current->entry_speed_sqr = entry_speed_sqr;
+					current_block_from_index->entry_speed_sqr = entry_speed_sqr;
 				}
 				else
 				{
-					current->entry_speed_sqr = current->max_entry_speed_sqr;
+					current_block_from_index->entry_speed_sqr = current_block_from_index->max_entry_speed_sqr;
 				}
 			}
 		}
@@ -213,15 +213,15 @@ void c_planner::planner_recalculate()
 	block_index = plan_next_block_index(block_buffer_planned);
 	while (block_index != block_buffer_head)
 	{
-		current = next;
+		current_block_from_index = next;
 		next = &block_buffer[block_index];
 
 		// Any acceleration detected in the forward pass automatically moves the optimal planned
 		// pointer forward, since everything before this is all optimal. In other words, nothing
 		// can improve the plan from the buffer tail to the planned pointer by logic.
-		if (current->entry_speed_sqr < next->entry_speed_sqr)
+		if (current_block_from_index->entry_speed_sqr < next->entry_speed_sqr)
 		{
-			entry_speed_sqr = current->entry_speed_sqr + 2 * current->acceleration * current->millimeters;
+			entry_speed_sqr = current_block_from_index->entry_speed_sqr + 2 * current_block_from_index->acceleration * current_block_from_index->millimeters;
 			// If true, current block is full-acceleration and we can move the planned pointer forward.
 			if (entry_speed_sqr < next->entry_speed_sqr)
 			{

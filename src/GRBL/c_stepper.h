@@ -39,6 +39,8 @@ along with Grbl.  If not, see <http://www.gnu.org/licenses/>.
 #endif
 
 #include <stdint.h>
+
+#include "Motion_Core\c_segment_timer_bresenham.h"
 class c_stepper
 {
 	//variables
@@ -76,7 +78,7 @@ class c_stepper
 		uint8_t direction_bits;
 		uint8_t is_pwm_rate_adjusted; // Tracks motions that require constant laser power/rate
 	} ;
-	static st_block_t_bresenham st_block_buffer_bresenham[SEGMENT_BUFFER_SIZE-1];
+	//static st_block_t_bresenham st_block_buffer_bresenham[SEGMENT_BUFFER_SIZE-1];
 
 	// Stepper ISR data struct. Contains the running data for the main stepper ISR.
 	struct stepper_t
@@ -104,7 +106,7 @@ class c_stepper
 
 		uint16_t step_count;       // Steps remaining in line segment motion
 		uint8_t exec_block_index; // Tracks the current st_block index. Change indicates new block.
-		st_block_t_bresenham *exec_block;   // Pointer to the block data for the segment being executed
+		Motion_Core::Segment::Bresenham::Bresenham_Item *exec_block;   // Pointer to the block data for the segment being executed
 		segment_t *exec_segment;  // Pointer to the segment being executed
 	} ;
 	static stepper_t st;
@@ -140,7 +142,7 @@ class c_stepper
 		uint16_t current_spindle_pwm;
 		uint16_t line_number;
 	} ;
-	static st_prep_t prep;
+	//static st_prep_t prep;
 	static uint32_t current_block;
 	
 
