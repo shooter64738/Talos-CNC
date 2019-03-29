@@ -41,6 +41,8 @@ along with Grbl.  If not, see <http://www.gnu.org/licenses/>.
 #include <stdint.h>
 
 #include "Motion_Core\c_segment_timer_bresenham.h"
+#include "Motion_Core\c_segment_timer_item.h"
+#include "c_planner.h"
 class c_stepper
 {
 	//variables
@@ -63,7 +65,7 @@ class c_stepper
 		uint16_t spindle_pwm;
 		uint32_t line_number;
 	} ;
-	static segment_t segment_buffer[SEGMENT_BUFFER_SIZE];
+	//static segment_t segment_buffer[SEGMENT_BUFFER_SIZE];
 
 	// Stores the planner block Bresenham algorithm execution data for the segments in the segment
 	// buffer. Normally, this buffer is partially in-use, but, for the worst case scenario, it will
@@ -71,15 +73,7 @@ class c_stepper
 	// NOTE: This data is copied from the prepped planner blocks so that the planner blocks may be
 	// discarded when entirely consumed and completed by the segment buffer. Also, AMASS alters this
 	// data for its own use.
-	struct st_block_t_bresenham
-	{
-		uint32_t steps[N_AXIS];
-		uint32_t step_event_count;
-		uint8_t direction_bits;
-		uint8_t is_pwm_rate_adjusted; // Tracks motions that require constant laser power/rate
-	} ;
-	//static st_block_t_bresenham st_block_buffer_bresenham[SEGMENT_BUFFER_SIZE-1];
-
+	
 	// Stepper ISR data struct. Contains the running data for the main stepper ISR.
 	struct stepper_t
 	{
@@ -104,46 +98,15 @@ class c_stepper
 		uint32_t steps[N_AXIS];
 		#endif
 
-		uint16_t step_count;       // Steps remaining in line segment motion
-		uint8_t exec_block_index; // Tracks the current st_block index. Change indicates new block.
-		Motion_Core::Segment::Bresenham::Bresenham_Item *exec_block;   // Pointer to the block data for the segment being executed
-		segment_t *exec_segment;  // Pointer to the segment being executed
+		//uint16_t step_count;       // Steps remaining in line segment motion
+		Motion_Core::Segment::Bresenham::Bresenham_Item *Change_Check_Exec_Timer_Bresenham; // Tracks the current st_block index. Change indicates new block.
+		Motion_Core::Segment::Bresenham::Bresenham_Item *Exec_Timer_Bresenham;   // Pointer to the block data for the segment being executed
+		Motion_Core::Segment::Timer::Timer_Item *Exec_Timer_Item;  // Pointer to the segment being executed
 	} ;
 	static stepper_t st;
-
-
-	struct st_prep_t
-	{
-		uint8_t st_block_index_4_bresenham;  // Index of stepper common data block being prepped
-		uint8_t recalculate_flag;
-
-		float dt_remainder;
-		float steps_remaining;
-		float step_per_mm;
-		float req_mm_increment;
-
-		#ifdef PARKING_ENABLE
-		uint8_t last_st_block_index;
-		float last_steps_remaining;
-		float last_step_per_mm;
-		float last_dt_remainder;
-		#endif
-
-		uint8_t ramp_type;      // Current segment ramp state
-		float mm_complete;      // End of velocity profile from end of current planner block in (mm).
-		// NOTE: This value must coincide with a step(no mantissa) when converted.
-		float current_speed;    // Current speed at the end of the segment buffer (mm/min)
-		float maximum_speed;    // Maximum speed of executing block. Not always nominal speed. (mm/min)
-		float exit_speed;       // Exit speed of executing block (mm/min)
-		float accelerate_until; // Acceleration ramp end measured from end of block (mm)
-		float decelerate_after; // Deceleration ramp start measured from end of block (mm)
-
-		float inv_rate;    // Used by PWM laser mode to speed up segment calculations.
-		uint16_t current_spindle_pwm;
-		uint16_t line_number;
-	} ;
-	//static st_prep_t prep;
+		
 	static uint32_t current_block;
+	static c_planner::plan_block_t *pl_block;
 	
 
 	protected:

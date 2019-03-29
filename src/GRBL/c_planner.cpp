@@ -37,6 +37,7 @@ along with Grbl.  If not, see <http://www.gnu.org/licenses/>.
 #include "c_settings.h"
 #include "c_stepper.h"
 #include "utils.h"
+#include "Motion_Core\c_planner_compute_block.h"
 
 //#include "grbl.h"
 
@@ -386,6 +387,9 @@ motions are still planned correctly, while the stepper module only points to the
 to execute the special system motion. */
 uint8_t c_planner::plan_buffer_line(float *target, plan_line_data_t *pl_data, NGC_RS274::NGC_Binary_Block *target_block)
 {
+	Motion_Core::Planner::Calculator::plan_buffer_line(target,pl_data,target_block);
+	return PLAN_OK;
+
 	// Prepare and initialize new block. Copy relevant pl_data for block execution.
 	plan_block_t *planning_block = &block_buffer[block_buffer_head];
 	memset(planning_block, 0, sizeof(plan_block_t)); // Zero all block values.

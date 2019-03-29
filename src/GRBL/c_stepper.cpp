@@ -36,7 +36,7 @@ along with Grbl.  If not, see <http://www.gnu.org/licenses/>.
 #include <math.h>
 #include "c_settings.h"
 #include <string.h>
-#include "c_planner.h"
+
 #include "c_spindle.h"
 //#include <avr/interrupt.h>
 #include "c_probe.h"
@@ -47,6 +47,15 @@ along with Grbl.  If not, see <http://www.gnu.org/licenses/>.
 #include "Motion_Core\c_segment_timer_item.h"
 #include "Motion_Core\c_segment_timer_bresenham.h"
 #include "Motion_Core\c_segment_arbitrator.h"
+
+#ifdef MSVC
+#include <iostream>
+#include <fstream>
+using namespace std;
+static ofstream myfile;
+#endif
+
+
 
 // Some useful constants.
 #define DT_SEGMENT (1.0/(ACCELERATION_TICKS_PER_SECOND*60.0)) // min/segment
@@ -77,15 +86,13 @@ along with Grbl.  If not, see <http://www.gnu.org/licenses/>.
 #define AMASS_LEVEL3 (F_CPU/2000) // Over-drives ISR (x8)
 
 
-c_stepper::segment_t c_stepper::segment_buffer[SEGMENT_BUFFER_SIZE];
-//c_stepper::st_block_t_bresenham c_stepper::st_block_buffer_bresenham[SEGMENT_BUFFER_SIZE - 1];
+//c_stepper::segment_t c_stepper::segment_buffer[SEGMENT_BUFFER_SIZE];
+
 
 // Step segment ring buffer indices
 static volatile uint8_t segment_buffer_tail;
 static uint8_t segment_buffer_head;
 static uint8_t segment_next_head;
-uint32_t c_stepper::current_block = 1;
-
 
 
 // Step and direction port invert masks.
@@ -97,7 +104,10 @@ static volatile uint8_t busy;
 
 // Pointers for the step segment being prepped from the planner buffer. Accessed only by the
 // main program. Pointers may be planning segments or planner blocks ahead of what being executed.
-static c_planner::plan_block_t *pl_block;     // Pointer to the planner block being prepped
+c_planner::plan_block_t *c_stepper::pl_block;     // Pointer to the planner block being prepped
+
+uint32_t c_stepper::current_block;
+
 //static c_stepper::st_block_t_bresenham *st_prep_block;  // Pointer to the stepper block data being prepped
 //Motion_Core::Segment::Bresenham::Bresenham_Item *st_prep_block_bresenham_block;
 
@@ -149,6 +159,7 @@ are shown and defined in the above illustration.
 // enabled. Startup init and limits call this function but shouldn't start the cycle.
 void c_stepper::st_wake_up()
 {
+	
 
 	//// Enable stepper drivers.
 	//if (bit_istrue(c_settings::settings.flags, BITFLAG_INVERT_ST_ENABLE))
@@ -262,6 +273,7 @@ NOTE: This ISR expects at least one step to be executed per segment.
 // int8 variables and update position counters only when a segment completes. This can get complicated
 // with probing and homing cycles that require true real-time positions.
 
+
 //ISR(TIMER1_COMPA_vect)
 void c_stepper::step_tick()
 {
@@ -270,18 +282,18 @@ void c_stepper::step_tick()
 		return;
 	} // The busy-flag is used to avoid reentering this interrupt
 
-
 	// Set the direction pins a couple of nanoseconds before we step the steppers
 	//DIRECTION_PORT = (DIRECTION_PORT & ~DIRECTION_MASK) | (st.dir_outbits & DIRECTION_MASK);
-	Hardware_Abstraction_Layer::Grbl::Stepper::port_direction((DIRECTION_PORT & ~DIRECTION_MASK) | (st.dir_outbits & DIRECTION_MASK));
+	Hardware_Abstraction_Layer::Grbl::Stepper::port_direction((DIRECTION_PORT & ~DIRECTION_MASK)
+	| (c_stepper::st.dir_outbits & DIRECTION_MASK));
 
 	// Then pulse the stepping pins
-#ifdef STEP_PULSE_DELAY
+	#ifdef STEP_PULSE_DELAY
 	st.step_bits = (STEP_PORT & ~STEP_MASK) | st.step_outbits; // Store out_bits to prevent overwriting.
-#else  // Normal operation
+	#else  // Normal operation
 	//STEP_PORT = (STEP_PORT & ~STEP_MASK) | st.step_outbits;
-	Hardware_Abstraction_Layer::Grbl::Stepper::port_step((STEP_PORT & ~STEP_MASK) | st.step_outbits);
-#endif
+	Hardware_Abstraction_Layer::Grbl::Stepper::port_step((STEP_PORT & ~STEP_MASK) | c_stepper::st.step_outbits);
+	#endif
 
 	// Enable step pulse reset timer so that The Stepper Port Reset Interrupt can reset the signal after
 	// exactly settings.pulse_microseconds microseconds, independent of the main Timer1 prescaler.
@@ -295,71 +307,63 @@ void c_stepper::step_tick()
 
 	// If there is no step segment, attempt to pop one from the stepper buffer
 
-	if (st.exec_segment == NULL)
+	if (c_stepper::st.Exec_Timer_Item == NULL)
 	{
-		//If the line numbers have changed, then we have completed a block.
-
 
 		// Anything in the buffer? If so, load and initialize next step segment.
-		if (segment_buffer_head != segment_buffer_tail)
+		if ((c_stepper::st.Exec_Timer_Item = Motion_Core::Segment::Timer::Buffer::Current()) != NULL)
 		{
-			// Initialize new step segment and load number of steps to execute
-			st.exec_segment = &segment_buffer[segment_buffer_tail];
-			Motion_Core::Segment::Timer::Buffer::Read();
+			#ifdef MSVC
+			myfile << st.Exec_Timer_Item->steps_to_execute_in_this_segment << ",";
+			myfile << st.Exec_Timer_Item->timer_delay_value << ",";
+			myfile << '0' + st.Exec_Timer_Item->timer_prescaler << ",";
+			myfile << '0' + st.Exec_Timer_Item->line_number;
+			myfile << "\r";
+			myfile.flush();
+			#endif
+			
+
 			//If the block line number has changed this is a new block.
-			if (c_stepper::current_block != st.exec_segment->line_number)
+			if (c_stepper::current_block != c_stepper::st.Exec_Timer_Item->line_number)
 			{
 				//c_planner::block_complete = true;
 				c_planner::completed_block = c_stepper::current_block;
 			}
 
-			c_stepper::current_block = st.exec_segment->line_number;
+			c_stepper::current_block = st.Exec_Timer_Item->line_number;
 
-#ifndef ADAPTIVE_MULTI_AXIS_STEP_SMOOTHING
-			// With AMASS is disabled, set timer prescaler for segments with slow step frequencies (< 250Hz).
-			//TCCR1B = (TCCR1B & ~(0x07<<CS10)) | (st.exec_segment->prescaler<<CS10);
-			Hardware_Abstraction_Layer::Grbl::Stepper::TCCR1B_set(st.exec_segment->prescaler);
-#endif
+			Hardware_Abstraction_Layer::Grbl::Stepper::TCCR1B_set(st.Exec_Timer_Item->timer_prescaler);
 
 			// Initialize step segment timing per step and load number of steps to execute.
-			//OCR1A = st.exec_segment->cycles_per_tick;
-			Hardware_Abstraction_Layer::Grbl::Stepper::OCR1A_set(st.exec_segment->cycles_per_tick);
-			st.step_count = st.exec_segment->n_step; // NOTE: Can sometimes be zero when moving slow.
+			Hardware_Abstraction_Layer::Grbl::Stepper::OCR1A_set(st.Exec_Timer_Item->timer_delay_value);
+			//st.step_count = st.Exec_Timer_Item->steps_to_execute_in_this_segment; // NOTE: Can sometimes be zero when moving slow.
+
 			// If the new segment starts a new planner block, initialize stepper variables and counters.
 			// NOTE: When the segment data index changes, this indicates a new planner block.
-			if (st.exec_block_index != st.exec_segment->st_block_index_4_bresenham)
+			if (c_stepper::st.Change_Check_Exec_Timer_Bresenham != c_stepper::st.Exec_Timer_Item->bresenham_in_item)
 			{
-				st.exec_block_index = st.exec_segment->st_block_index_4_bresenham;
-				st.exec_block = Motion_Core::Segment::Bresenham::Buffer::Read();// &st_block_buffer_bresenham[st.exec_block_index];
+				c_stepper::st.Change_Check_Exec_Timer_Bresenham = c_stepper::st.Exec_Timer_Item->bresenham_in_item;
+				c_stepper::st.Exec_Timer_Bresenham = c_stepper::st.Exec_Timer_Item->bresenham_in_item;
 
 				// Initialize Bresenham line and distance counters
 
-				st.counter[X_AXIS] = st.counter[Y_AXIS] = st.counter[Z_AXIS] = st.counter[A_AXIS] = st.counter[B_AXIS] = st.counter[C_AXIS] =
-					(st.exec_block->step_event_count >> 1);
+				c_stepper::st.counter[X_AXIS] = c_stepper::st.counter[Y_AXIS] = c_stepper::st.counter[Z_AXIS]
+				= c_stepper::st.counter[A_AXIS] = c_stepper::st.counter[B_AXIS] = c_stepper::st.counter[C_AXIS] =
+				(c_stepper::st.Exec_Timer_Bresenham->step_event_count >> 1);
 			}
-			st.dir_outbits = st.exec_block->direction_bits ^ dir_port_invert_mask;
-
-#ifdef ADAPTIVE_MULTI_AXIS_STEP_SMOOTHING
-			// With AMASS enabled, adjust Bresenham axis increment counters according to AMASS level.
-			st.steps[X_AXIS] = st.exec_block->steps[X_AXIS] >> st.exec_segment->amass_level;
-			st.steps[Y_AXIS] = st.exec_block->steps[Y_AXIS] >> st.exec_segment->amass_level;
-			st.steps[Z_AXIS] = st.exec_block->steps[Z_AXIS] >> st.exec_segment->amass_level;
-			st.steps[A_AXIS] = st.exec_block->steps[A_AXIS] >> st.exec_segment->amass_level;
-			st.steps[B_AXIS] = st.exec_block->steps[B_AXIS] >> st.exec_segment->amass_level;
-			st.steps[C_AXIS] = st.exec_block->steps[C_AXIS] >> st.exec_segment->amass_level;
-#endif
-
-			// Set real-time spindle output as segment is loaded, just prior to the first step.
-			c_spindle::spindle_set_speed(st.exec_segment->spindle_pwm);
+			c_stepper::st.dir_outbits = c_stepper::st.Exec_Timer_Bresenham->direction_bits ^ dir_port_invert_mask;
 
 		}
 		else
 		{
-			Hardware_Abstraction_Layer::Serial::send(0, 'A');
+
+			#ifdef MSVC
+			myfile.close();
+			#endif
 			// Segment buffer empty. Shutdown.
 			c_stepper::st_go_idle();
 			// Ensure pwm is set properly upon completion of rate-controlled motion.
-			if (st.exec_block->is_pwm_rate_adjusted)
+			if (st.Exec_Timer_Bresenham->is_pwm_rate_adjusted)
 			{
 				c_spindle::spindle_set_speed(SPINDLE_PWM_OFF_VALUE);
 			}
@@ -379,45 +383,52 @@ void c_stepper::step_tick()
 	}
 
 	// Reset step out bits.
-	st.step_outbits = 0;
+	c_stepper::st.step_outbits = 0;
 	for (int i = 0; i < N_AXIS; i++)
 	{
 		// Execute step displacement profile by Bresenham line algorithm
-#ifdef ADAPTIVE_MULTI_AXIS_STEP_SMOOTHING
+		#ifdef ADAPTIVE_MULTI_AXIS_STEP_SMOOTHING
 		st.counter[i] += st.steps[i];
-#else
-		st.counter[i] += st.exec_block->steps[i];
-#endif
-		if (st.counter[i] > st.exec_block->step_event_count)
+		#else
+		c_stepper::st.counter[i] += c_stepper::st.Exec_Timer_Bresenham->steps[i];
+		#endif
+		if (c_stepper::st.counter[i] > c_stepper::st.Exec_Timer_Bresenham->step_event_count)
 		{
-			st.step_outbits |= (1 << i);
-			st.counter[i] -= st.exec_block->step_event_count;
-			if (st.exec_block->direction_bits & (1 << i))
-				c_system::sys_position[i]--;
+			c_stepper::st.step_outbits |= (1 << i);
+			c_stepper::st.counter[i] -= c_stepper::st.Exec_Timer_Bresenham->step_event_count;
+			if (c_stepper::st.Exec_Timer_Bresenham->direction_bits & (1 << i))
+			c_system::sys_position[i]--;
 			else
-				c_system::sys_position[i]++;
+			c_system::sys_position[i]++;
 		}
 	}
 
 	// During a homing cycle, lock out and prevent desired axes from moving.
 	if (c_system::sys.state == STATE_HOMING)
 	{
-		st.step_outbits &= c_system::sys.homing_axis_lock;
+		c_stepper::st.step_outbits &= c_system::sys.homing_axis_lock;
 	}
 
 
-	st.step_count--; // Decrement step events count
-	if (st.step_count == 0)
+	//st.step_count--; // Decrement step events count
+
+	if (c_stepper::st.Exec_Timer_Item->steps_to_execute_in_this_segment > 0)
+	c_stepper::st.Exec_Timer_Item->steps_to_execute_in_this_segment--;
+	else
+	{
+		int x = 0;
+	}
+
+	//if (st.step_count == 0)
+	if (c_stepper::st.Exec_Timer_Item->steps_to_execute_in_this_segment == 0)
 	{
 
 		// Segment is complete. Discard current segment and advance segment indexing.
-		st.exec_segment = NULL;
-		if (++segment_buffer_tail == SEGMENT_BUFFER_SIZE)
-		{
-			segment_buffer_tail = 0;
-		}
+		c_stepper::st.Exec_Timer_Item = NULL;
+		Motion_Core::Segment::Timer::Buffer::Advance();
+
 	}
-	st.step_outbits ^= step_port_invert_mask;  // Apply step port invert mask
+	c_stepper::st.step_outbits ^= step_port_invert_mask;  // Apply step port invert mask
 	busy = false;
 }
 /* The Stepper Port Reset Interrupt: Timer0 OVF interrupt handles the falling edge of the step
@@ -478,8 +489,8 @@ void c_stepper::st_reset()
 	//memset(&prep, 0, sizeof(st_prep_t));
 	Motion_Core::Segment::Arbitrator::Reset();
 	memset(&st, 0, sizeof(stepper_t));
-	st.exec_segment = NULL;
-	pl_block = NULL;  // Planner block pointer used by segment buffer
+	st.Exec_Timer_Item = NULL;
+	c_stepper::pl_block = NULL;  // Planner block pointer used by segment buffer
 	segment_buffer_tail = 0;
 	segment_buffer_head = 0; // empty = tail
 	segment_next_head = 1;
@@ -526,11 +537,11 @@ void c_stepper::stepper_init()
 // Called by planner_recalculate() when the executing block is updated by the new plan.
 void c_stepper::st_update_plan_block_parameters()
 {
-	if (pl_block != NULL)
+	if (c_stepper::pl_block != NULL)
 	{ // Ignore if at start of a new block.
 		Motion_Core::Segment::Arbitrator::recalculate_flag |= PREP_FLAG_RECALCULATE;
-		pl_block->entry_speed_sqr = Motion_Core::Segment::Arbitrator::current_speed * Motion_Core::Segment::Arbitrator::current_speed; // Update entry speed.
-		pl_block = NULL; // Flag st_prep_segment() to load and check active velocity profile.
+		c_stepper::pl_block->entry_speed_sqr = Motion_Core::Segment::Arbitrator::current_speed * Motion_Core::Segment::Arbitrator::current_speed; // Update entry speed.
+		c_stepper::pl_block = NULL; // Flag st_prep_segment() to load and check active velocity profile.
 	}
 }
 
@@ -548,7 +559,7 @@ uint8_t c_stepper::st_next_block_index(uint8_t block_index)
 // Changes the run state of the step segment buffer to execute the special parking motion.
 void c_stepper::st_parking_setup_buffer()
 {
-#ifdef PARKING_ENABLE
+	#ifdef PARKING_ENABLE
 	// Store step execution data of partially completed block, if necessary.
 	if (Motion_Core::Segment::Arbitrator::recalculate_flag & PREP_FLAG_HOLD_PARTIAL_BLOCK)
 	{
@@ -561,13 +572,13 @@ void c_stepper::st_parking_setup_buffer()
 	Motion_Core::Segment::Arbitrator::recalculate_flag |= PREP_FLAG_PARKING;
 	Motion_Core::Segment::Arbitrator::recalculate_flag &= ~(PREP_FLAG_RECALCULATE);
 	pl_block = NULL;// Always reset parking motion to reload new block.
-#endif
+	#endif
 }
 
 // Restores the step segment buffer to the normal run state after a parking motion.
 void c_stepper::st_parking_restore_buffer()
 {
-#ifdef PARKING_ENABLE
+	#ifdef PARKING_ENABLE
 	// Restore step execution data and flags of partially completed block, if necessary.
 	if (Motion_Core::Segment::Arbitrator::recalculate_flag & PREP_FLAG_HOLD_PARTIAL_BLOCK)
 	{
@@ -584,7 +595,7 @@ void c_stepper::st_parking_restore_buffer()
 		Motion_Core::Segment::Arbitrator::recalculate_flag = false;
 	}
 	pl_block = NULL; // Set to reload next block.
-#endif
+	#endif
 }
 
 /* Prepares step segment buffer. Continuously called from main program.
@@ -609,22 +620,27 @@ void c_stepper::st_prep_buffer()
 	}
 
 	//If the segment buffer is not full keep adding step data to it
-	while (Motion_Core::Segment::Timer::Buffer::Available())
+	while (1)
 	{
 
 		//If pl_block is null, see if theres one we can load
-		if (pl_block == NULL)
+		if (c_stepper::pl_block == NULL)
 		{
-			if (Motion_Core::Segment::Arbitrator::New_Block_Calculate(pl_block) == 0)
-				return; //<--there was not a block we could pull and calculate at this time.
+			c_stepper::pl_block = c_planner::plan_get_current_block();
+			if (c_stepper::pl_block == NULL)
+			break; //<--there was not a block we could pull and calculate at this time.
+			//Motion_Core::Segment::Arbitrator::pl_block = c_stepper::pl_block;
+			//Motion_Core::Segment::Arbitrator::New_Block_Calculate();
 		}
 		/*
 		We have loaded a block, and ran the base calculations for velocity. Lets calculate how many
 		steps we can fit in the time we are allowed, and set the timer delay value. These values
-		end up stored in the motion_core::segment::timer::buffer array. We can pull them out in the 
+		end up stored in the motion_core::segment::timer::buffer array. We can pull them out in the
 		timer isr and load the data.
 		*/
-		Motion_Core::Segment::Arbitrator::Segment_Calculate(pl_block);
+		if (Motion_Core::Segment::Arbitrator::Active_Block != NULL)
+		if (Motion_Core::Segment::Arbitrator::Segment_Calculate() == 0)
+		break; //<--if segment buffer fills up and we cant get a new segment, break the loop
 
 		//Remaining code is as it was in grbl. I will start converting the planner code next.
 
@@ -639,7 +655,7 @@ void c_stepper::st_prep_buffer()
 				// cycle stop flag from the ISR. Prep_segment is blocked until then.
 				bit_true(c_system::sys.step_control, STEP_CONTROL_END_MOTION);
 
-				return; // Bail!
+				break; // Bail!
 			}
 			else
 			{ // End of planner block
@@ -647,10 +663,13 @@ void c_stepper::st_prep_buffer()
 				if (c_system::sys.step_control & STEP_CONTROL_EXECUTE_SYS_MOTION)
 				{
 					bit_true(c_system::sys.step_control, STEP_CONTROL_END_MOTION);
-					return;
+					break;
 				}
-				pl_block = NULL; // Set pointer to indicate check and load next planner block.
+				c_stepper::pl_block = NULL; // Set pointer to indicate check and load next planner block.
 				c_planner::plan_discard_current_block();
+				//Advance the bresenham buffer tail, so when another block is loaded it wont
+				//step on the current bresenham data that the timer MIGHT still be executing
+				Motion_Core::Segment::Bresenham::Buffer::Advance();
 			}
 		}
 

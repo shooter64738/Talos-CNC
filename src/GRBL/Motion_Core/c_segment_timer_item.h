@@ -4,15 +4,12 @@ namespace Motion_Core
 {
 	namespace Segment
 	{
-#ifndef __C_MOTION_SEGMENT
-#define __C_MOTION_SEGMENT
-		
-
 		namespace Timer
 		{
-			static const uint8_t BUFFER_SIZE = 20;
 #ifndef __C_TIMER_ITEM
 #define __C_TIMER_ITEM
+			static const uint8_t BUFFER_SIZE = 20;
+
 			class Timer_Item
 			{
 			public:
@@ -23,8 +20,6 @@ namespace Motion_Core
 
 				uint8_t timer_prescaler;      // Without AMASS, a prescaler is required to adjust for slow timing.
 				uint32_t line_number;
-				uint16_t spindle_pwm;
-				//static segment_t segment_buffer[SEGMENT_BUFFER_SIZE];
 
 			public:
 				Timer_Item();
@@ -39,18 +34,20 @@ namespace Motion_Core
 			{
 			public:
 				static Timer_Item *Read();
-				static Motion_Core::Segment::Timer::Timer_Item * Write();
+				static Timer_Item *Write();
+				static Timer_Item *Current();
+				static void Advance();
 				static void Reset();
-				static uint8_t Available();
+				
 
 			private:
 				static Timer_Item _buffer[];
 				static int16_t _tail;
 				static int16_t _head;
+				static uint8_t _full;
 
 			};
 #endif
 		};
-#endif
 	};
 };

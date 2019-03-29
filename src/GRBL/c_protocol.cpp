@@ -41,7 +41,8 @@ along with Grbl.  If not, see <http://www.gnu.org/licenses/>.
 #include "c_stepper.h"
 #include "c_print.h"
 #include "utils.h"
-
+#include "Motion_Core\c_segment_arbitrator.h"
+#include "Motion_Core\c_interpollation_hardware.h"
 //#include "..\Common\Hardware_Abstraction_Layer\AVR_2560\c_core_avr_2560.h"
 //#include "..\Common\Hardware_Abstraction_Layer\AVR_2560\c_grbl_avr_2560_spindle.h"
 
@@ -101,8 +102,8 @@ void c_protocol::protocol_main_loop()
 
 	//if running on win32 throw some sample data into the serial buffer
 	#ifdef MSVC
-	Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "G0X10Y10\r");// g1y1F150G94\r");
-	//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "G2X2Y2R1F150G93\rG94\r");
+	//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "G0X10\rG0X20\rG0X30\r");// g1y1F150G94\r");
+	Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "G2X1Y1R1F150G94\r");
 	#endif // MSVC
 	uint8_t pass=0;
 	uint32_t last_reported_block = 0;
@@ -210,7 +211,8 @@ void c_protocol::protocol_buffer_synchronize()
 // execute calls a buffer sync, or the planner buffer is full and ready to go.
 void c_protocol::protocol_auto_cycle_start()
 {
-	if (c_planner::plan_get_current_block() != NULL)
+	//if (c_planner::plan_get_current_block() != NULL)
+	if (Motion_Core::Planner::Buffer::Current()!=NULL)
 	{ // Check if there are any blocks in the buffer.
 		c_system::system_set_exec_state_flag(EXEC_CYCLE_START); // If so, execute them!
 	}
@@ -429,12 +431,14 @@ void c_protocol::protocol_exec_rt_system()
 					{
 						// Start cycle only if queued motions exist in planner buffer and the motion is not canceled.
 						c_system::sys.step_control = STEP_CONTROL_NORMAL_OP; // Restore step control to normal operation
-						if (c_planner::plan_get_current_block() && bit_isfalse(c_system::sys.suspend, SUSPEND_MOTION_CANCEL))
+						if (Motion_Core::Planner::Buffer::Current() && bit_isfalse(c_system::sys.suspend, SUSPEND_MOTION_CANCEL))
 						{
 							c_system::sys.suspend = SUSPEND_DISABLE; // Break suspend state.
 							c_system::sys.state = STATE_CYCLE;
-							c_stepper::st_prep_buffer(); // Initialize step segment buffer before beginning cycle.
-							c_stepper::st_wake_up();
+							//c_stepper::st_prep_buffer(); // Initialize step segment buffer before beginning cycle.
+							Motion_Core::Segment::Arbitrator::st_prep_buffer();
+							Motion_Core::Hardware::Interpollation::Initialize();
+							//c_stepper::st_wake_up();
 						}
 						else
 						{ // Otherwise, do nothing. Set and resume IDLE state.
@@ -643,7 +647,8 @@ void c_protocol::protocol_exec_rt_system()
 	if (c_system::sys.state & (STATE_CYCLE | STATE_HOLD | STATE_SAFETY_DOOR | STATE_HOMING | STATE_SLEEP | STATE_JOG))
 	{
 		//Hardware_Abstraction_Layer::Serial::send(0, 'w');
-		c_stepper::st_prep_buffer();
+		//c_stepper::st_prep_buffer();
+		Motion_Core::Segment::Arbitrator::st_prep_buffer();
 	}
 	
 }

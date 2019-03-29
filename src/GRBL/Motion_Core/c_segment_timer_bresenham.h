@@ -20,21 +20,22 @@ namespace Motion_Core
 			public:
 				Bresenham_Item();
 				~Bresenham_Item();
-				Bresenham_Item(uint16_t steps_to_execute_in_this_segment, uint16_t timer_delay_value, uint8_t st_block_index, uint8_t timer_prescaler, uint32_t line_number);
 			};
 
 			class Buffer
 			{
 			public:
 				static Bresenham_Item *Read();
-				static Motion_Core::Segment::Bresenham::Bresenham_Item *Write();
+				static Bresenham_Item *Write();
+				static Bresenham_Item *Current();
+				static void Advance();
 				static void Reset();
 
 			private:
 				static Bresenham_Item _buffer[];
 				static int16_t _tail;
 				static int16_t _head;
-
+				static uint8_t _full;
 
 			};
 #endif

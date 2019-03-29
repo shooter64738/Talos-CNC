@@ -92,6 +92,21 @@
     <ClCompile Include="..\..\Motion_Core\c_planner_compute_block.cpp">
       <Filter>Motion_Core</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Motion_Core\c_motion_core.cpp">
+      <Filter>Motion_Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Motion_Core\c_block.cpp">
+      <Filter>Motion_Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Motion_Core\c_block_buffer.cpp">
+      <Filter>Motion_Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Motion_Core\c_interpollation_hardware.cpp">
+      <Filter>Motion_Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Motion_Core\c_interpollation_software.cpp">
+      <Filter>Motion_Core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\all_includes.h" />
@@ -188,7 +203,19 @@
     <ClInclude Include="..\..\Motion_Core\c_planner_compute_block.h">
       <Filter>Motion_Core</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Motion_Core\c_segment.h">
+    <ClInclude Include="..\..\Motion_Core\c_motion_core.h">
+      <Filter>Motion_Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Motion_Core\c_block.h">
+      <Filter>Motion_Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Motion_Core\c_block_buffer.h">
+      <Filter>Motion_Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Motion_Core\c_interpollation_hardware.h">
+      <Filter>Motion_Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Motion_Core\c_interpollation_software.h">
       <Filter>Motion_Core</Filter>
     </ClInclude>
   </ItemGroup>

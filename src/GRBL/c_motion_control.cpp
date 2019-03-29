@@ -38,6 +38,7 @@
 #include "c_limits.h"
 #include "c_stepper.h"
 #include "utils.h"
+#include "Motion_Core\c_segment_arbitrator.h"
 
 //#include "..\Common\Hardware_Abstraction_Layer\AVR_2560\c_grbl_avr_2560_limits.h"
 //#include "..\Common\Hardware_Abstraction_Layer\AVR_2560\c_grbl_avr_2560_probe.h"
@@ -425,7 +426,8 @@ void c_motion_control::mc_parking_motion(float *parking_target, c_planner::plan_
         bit_true(c_system::sys.step_control, STEP_CONTROL_EXECUTE_SYS_MOTION);
         bit_false(c_system::sys.step_control, STEP_CONTROL_END_MOTION); // Allow parking motion to execute, if feed hold is active.
         c_stepper::st_parking_setup_buffer(); // Setup step segment buffer for special parking motion case
-        c_stepper::st_prep_buffer();
+        //c_stepper::st_prep_buffer();
+		Motion_Core::Segment::Arbitrator::st_prep_buffer();
         c_stepper::st_wake_up();
         do
         {

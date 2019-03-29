@@ -1,12 +1,13 @@
 #include "c_segment_arbitrator.h"
 #include "c_segment_timer_bresenham.h"
-#include "c_segment.h"
+#include "c_planner_compute_block.h"
+#include "c_motion_core.h"
 
 #include "..\c_stepper.h"
 #include "..\c_system.h"
 #include "c_segment_timer_item.h"
-//uint8_t Motion_Core::Segment::Arbitrator::st_block_index_4_bresenham = 0;  // Index of stepper common data block being prepped
-Motion_Core::Segment::Bresenham::Bresenham_Item *Motion_Core::Segment::Arbitrator::bresenham_item_pointer;
+
+
 uint8_t Motion_Core::Segment::Arbitrator::recalculate_flag = 0;
 
 float Motion_Core::Segment::Arbitrator::dt_remainder = 0;
@@ -14,9 +15,10 @@ float Motion_Core::Segment::Arbitrator::steps_remaining = 0;
 float Motion_Core::Segment::Arbitrator::step_per_mm = 0;
 float Motion_Core::Segment::Arbitrator::req_mm_increment = 0;
 float Motion_Core::Segment::Arbitrator::mm_remaining = 0;
+Motion_Core::Planner::Block_Item *Motion_Core::Segment::Arbitrator::Active_Block;
 
 
-uint8_t Motion_Core::Segment::Arbitrator::ramp_type = 0;      // Current segment ramp state
+Motion_Core::Ramp_Type Motion_Core::Segment::Arbitrator::ramp_type = Motion_Core::Ramp_Type::Accel;      // Current segment ramp state
 float Motion_Core::Segment::Arbitrator::mm_complete = 0;      // End of velocity profile from end of current planner block in (mm).
 					   // NOTE: This value must coincide with a step(no mantissa) when converted.
 
@@ -32,7 +34,6 @@ uint16_t Motion_Core::Segment::Arbitrator::line_number = 0;
 
 void Motion_Core::Segment::Arbitrator::Reset()
 {
-	Motion_Core::Segment::Arbitrator::bresenham_item_pointer = NULL;  // Index of stepper common data block being prepped
 	Motion_Core::Segment::Arbitrator::recalculate_flag = 0;
 
 	Motion_Core::Segment::Arbitrator::dt_remainder = 0;
@@ -40,7 +41,7 @@ void Motion_Core::Segment::Arbitrator::Reset()
 	Motion_Core::Segment::Arbitrator::step_per_mm = 0;
 	Motion_Core::Segment::Arbitrator::req_mm_increment = 0;
 	
-	Motion_Core::Segment::Arbitrator::ramp_type = 0;      // Current segment ramp state
+	Motion_Core::Segment::Arbitrator::ramp_type = Motion_Core::Ramp_Type::Accel;      // Current segment ramp state
 	Motion_Core::Segment::Arbitrator::mm_complete = 0;      // End of velocity profile from end of current planner block in (mm).
 	// NOTE: This value must coincide with a step(no mantissa) when converted.
 
@@ -56,8 +57,7 @@ void Motion_Core::Segment::Arbitrator::Reset()
 }
 
 //static c_planner::plan_block_t *pl_block;
-Motion_Core::Segment::Bresenham::Bresenham_Item *Motion_Core::Segment::Arbitrator::st_prep_block_bresenham_block;
-uint8_t Motion_Core::Segment::Arbitrator::New_Block_Calculate(c_planner::plan_block_t *pl_block)
+uint8_t Motion_Core::Segment::Arbitrator::Base_Calculate()
 {
 	//This gets called each time a new block is loaded from the planner. Some base information is set
 	//in the arbitrator. The arbitrator is just a holding place for data related to the segment calculations
@@ -67,13 +67,13 @@ uint8_t Motion_Core::Segment::Arbitrator::New_Block_Calculate(c_planner::plan_bl
 	// Query planner for a queued block
 	//pl_block = c_planner::plan_get_current_block();
 
-	if (pl_block == NULL)
+	if (Motion_Core::Segment::Arbitrator::Active_Block == NULL)
 	{
 		return 0;
 	} // No planner blocks. Exit.
 
 	//Adding line number to stepper data. This will track when a line of gcode has finished.
-	Motion_Core::Segment::Arbitrator::line_number = pl_block->line_number;
+	Motion_Core::Segment::Arbitrator::line_number = Active_Block->line_number;
 
 
 	// Check if we need to only recompute the velocity profile or load a new block.
@@ -83,30 +83,28 @@ uint8_t Motion_Core::Segment::Arbitrator::New_Block_Calculate(c_planner::plan_bl
 	}
 	else
 	{
-
+		//TODO:: After planner is converted, move this code into bresenham copy block steps. 
 		// Load the Bresenham stepping data for the block.
-		//Motion_Core::Segment::Arbitrator::st_block_index_4_bresenham = c_stepper::st_next_block_index(Motion_Core::Segment::Arbitrator::st_block_index_4_bresenham);
-		Motion_Core::Segment::Arbitrator::bresenham_item_pointer = Motion_Core::Segment::Bresenham::Buffer::Write();
+		Motion_Core::Segment::Bresenham::Bresenham_Item *bresenham_item = Motion_Core::Segment::Bresenham::Buffer::Write();
 
 		// Prepare and copy Bresenham algorithm segment data from the new planner block, so that
 		// when the segment buffer completes the planner block, it may be discarded when the
 		// segment buffer finishes the prepped block, but the stepper ISR is still executing it.
 		//st_prep_block = &st_block_buffer_bresenham[Motion_Core::Segment::Arbitrator::st_block_index_4_bresenham];
-		st_prep_block_bresenham_block = Motion_Core::Segment::Bresenham::Buffer::Write();
-		st_prep_block_bresenham_block->direction_bits = pl_block->direction_bits;
+		bresenham_item->direction_bits = Motion_Core::Segment::Arbitrator::Active_Block->direction_bits;
 
 		uint8_t idx;
 
 		for (idx = 0; idx<N_AXIS; idx++)
 		{
-			Motion_Core::Segment::Arbitrator::st_prep_block_bresenham_block->steps[idx] = (pl_block->steps[idx] << 1);
+			bresenham_item->steps[idx] = (Motion_Core::Segment::Arbitrator::Active_Block->steps[idx] << 1);
 		}
-		Motion_Core::Segment::Arbitrator::st_prep_block_bresenham_block->step_event_count = (pl_block->step_event_count << 1);
+		bresenham_item->step_event_count = (Motion_Core::Segment::Arbitrator::Active_Block->step_event_count << 1);
 		
 
 		// Initialize segment buffer data for generating the segments.
-		Motion_Core::Segment::Arbitrator::steps_remaining = (float)pl_block->step_event_count;
-		Motion_Core::Segment::Arbitrator::step_per_mm = Motion_Core::Segment::Arbitrator::steps_remaining / pl_block->millimeters;
+		Motion_Core::Segment::Arbitrator::steps_remaining = (float)Motion_Core::Segment::Arbitrator::Active_Block->step_event_count;
+		Motion_Core::Segment::Arbitrator::step_per_mm = Motion_Core::Segment::Arbitrator::steps_remaining / Motion_Core::Segment::Arbitrator::Active_Block->millimeters;
 		Motion_Core::Segment::Arbitrator::req_mm_increment = REQ_MM_INCREMENT_SCALAR / Motion_Core::Segment::Arbitrator::step_per_mm;
 		Motion_Core::Segment::Arbitrator::dt_remainder = 0.0; // Reset for new segment block
 
@@ -114,28 +112,13 @@ uint8_t Motion_Core::Segment::Arbitrator::New_Block_Calculate(c_planner::plan_bl
 		{
 			// New block loaded mid-hold. Override planner block entry speed to enforce deceleration.
 			Motion_Core::Segment::Arbitrator::current_speed = Motion_Core::Segment::Arbitrator::exit_speed;
-			pl_block->entry_speed_sqr = Motion_Core::Segment::Arbitrator::exit_speed * Motion_Core::Segment::Arbitrator::exit_speed;
+			Motion_Core::Segment::Arbitrator::Active_Block->entry_speed_sqr = Motion_Core::Segment::Arbitrator::exit_speed * Motion_Core::Segment::Arbitrator::exit_speed;
 			Motion_Core::Segment::Arbitrator::recalculate_flag &= ~(PREP_FLAG_DECEL_OVERRIDE);
 		}
 		else
 		{
-			Motion_Core::Segment::Arbitrator::current_speed = sqrt(pl_block->entry_speed_sqr);
+			Motion_Core::Segment::Arbitrator::current_speed = sqrt(Motion_Core::Segment::Arbitrator::Active_Block->entry_speed_sqr);
 		}
-
-		//This is only core motion. We will not be controlling a spindle or any other peripheral with this. 
-
-		//// Setup laser mode variables. PWM rate adjusted motions will always complete a motion with the
-		//// spindle off.
-		//st_prep_block_bresenham_block->is_pwm_rate_adjusted = false;
-		//if (c_settings::settings.flags & BITFLAG_LASER_MODE)
-		//{
-		//	if (pl_block->condition & PL_COND_FLAG_SPINDLE_CCW)
-		//	{
-		//		// Pre-compute inverse programmed rate to speed up PWM updating per step segment.
-		//		Motion_Core::Segment::Arbitrator::inv_rate = 1.0 / pl_block->programmed_rate;
-		//		st_prep_block_bresenham_block->is_pwm_rate_adjusted = true;
-		//	}
-		//}
 	}
 
 	/* ---------------------------------------------------------------------------------
@@ -145,18 +128,18 @@ uint8_t Motion_Core::Segment::Arbitrator::New_Block_Calculate(c_planner::plan_bl
 	hold, override the planner velocities and decelerate to the target exit speed.
 	*/
 	Motion_Core::Segment::Arbitrator::mm_complete = 0.0; // Default velocity profile complete at 0.0mm from end of block.
-	float inv_2_accel = 0.5 / pl_block->acceleration;
+	float inv_2_accel = 0.5 / Motion_Core::Segment::Arbitrator::Active_Block->acceleration;
 	if (c_system::sys.step_control & STEP_CONTROL_EXECUTE_HOLD)
 	{ // [Forced Deceleration to Zero Velocity]
 		// Compute velocity profile parameters for a feed hold in-progress. This profile overrides
 		// the planner block profile, enforcing a deceleration to zero speed.
-		Motion_Core::Segment::Arbitrator::ramp_type = (int)Motion_Core::Ramp_Type::Decel;
+		Motion_Core::Segment::Arbitrator::ramp_type = Motion_Core::Ramp_Type::Decel;
 		// Compute decelerate distance relative to end of block.
-		float decel_dist = pl_block->millimeters - inv_2_accel * pl_block->entry_speed_sqr;
+		float decel_dist = Motion_Core::Segment::Arbitrator::Active_Block->millimeters - inv_2_accel * Motion_Core::Segment::Arbitrator::Active_Block->entry_speed_sqr;
 		if (decel_dist < 0.0)
 		{
 			// Deceleration through entire planner block. End of feed hold is not in this block.
-			Motion_Core::Segment::Arbitrator::exit_speed = sqrt(pl_block->entry_speed_sqr - 2 * pl_block->acceleration * pl_block->millimeters);
+			Motion_Core::Segment::Arbitrator::exit_speed = sqrt(Motion_Core::Segment::Arbitrator::Active_Block->entry_speed_sqr - 2 * Motion_Core::Segment::Arbitrator::Active_Block->acceleration * Motion_Core::Segment::Arbitrator::Active_Block->millimeters);
 		}
 		else
 		{
@@ -167,27 +150,27 @@ uint8_t Motion_Core::Segment::Arbitrator::New_Block_Calculate(c_planner::plan_bl
 	else
 	{ // [Normal Operation]
 		// Compute or recompute velocity profile parameters of the prepped planner block.
-		Motion_Core::Segment::Arbitrator::ramp_type = (int)Motion_Core::Ramp_Type::Accel; // Initialize as acceleration ramp.
-		Motion_Core::Segment::Arbitrator::accelerate_until = pl_block->millimeters;
+		Motion_Core::Segment::Arbitrator::ramp_type = Motion_Core::Ramp_Type::Accel; // Initialize as acceleration ramp.
+		Motion_Core::Segment::Arbitrator::accelerate_until = Motion_Core::Segment::Arbitrator::Active_Block->millimeters;
 
 		float exit_speed_sqr;
 		float nominal_speed;
 
-		exit_speed_sqr = c_planner::plan_get_exec_block_exit_speed_sqr();
+		exit_speed_sqr = Motion_Core::Planner::Calculator::plan_get_exec_block_exit_speed_sqr();
 		Motion_Core::Segment::Arbitrator::exit_speed = sqrt(exit_speed_sqr);
 
-		nominal_speed = c_planner::plan_compute_profile_nominal_speed(pl_block);
+		nominal_speed = Motion_Core::Planner::Calculator::plan_compute_profile_nominal_speed(Motion_Core::Segment::Arbitrator::Active_Block);
 		float nominal_speed_sqr = nominal_speed * nominal_speed;
-		float intersect_distance = 0.5 * (pl_block->millimeters + inv_2_accel * (pl_block->entry_speed_sqr - exit_speed_sqr));
-		if (pl_block->entry_speed_sqr > nominal_speed_sqr)
+		float intersect_distance = 0.5 * (Motion_Core::Segment::Arbitrator::Active_Block->millimeters + inv_2_accel * (Motion_Core::Segment::Arbitrator::Active_Block->entry_speed_sqr - exit_speed_sqr));
+		if (Motion_Core::Segment::Arbitrator::Active_Block->entry_speed_sqr > nominal_speed_sqr)
 		{ // Only occurs during override reductions.
-			Motion_Core::Segment::Arbitrator::accelerate_until = pl_block->millimeters - inv_2_accel * (pl_block->entry_speed_sqr - nominal_speed_sqr);
+			Motion_Core::Segment::Arbitrator::accelerate_until = Motion_Core::Segment::Arbitrator::Active_Block->millimeters - inv_2_accel * (Motion_Core::Segment::Arbitrator::Active_Block->entry_speed_sqr - nominal_speed_sqr);
 			if (Motion_Core::Segment::Arbitrator::accelerate_until <= 0.0)
 			{ // Deceleration-only.
-				Motion_Core::Segment::Arbitrator::ramp_type = (int)Motion_Core::Ramp_Type::Decel;
+				Motion_Core::Segment::Arbitrator::ramp_type = Motion_Core::Ramp_Type::Decel;
 
 				// Compute override block exit speed since it doesn't match the planner exit speed.
-				Motion_Core::Segment::Arbitrator::exit_speed = sqrt(pl_block->entry_speed_sqr - 2 * pl_block->acceleration * pl_block->millimeters);
+				Motion_Core::Segment::Arbitrator::exit_speed = sqrt(Motion_Core::Segment::Arbitrator::Active_Block->entry_speed_sqr - 2 * Motion_Core::Segment::Arbitrator::Active_Block->acceleration * Motion_Core::Segment::Arbitrator::Active_Block->millimeters);
 				Motion_Core::Segment::Arbitrator::recalculate_flag |= PREP_FLAG_DECEL_OVERRIDE; // Flag to load next block as deceleration override.
 
 			}
@@ -196,39 +179,39 @@ uint8_t Motion_Core::Segment::Arbitrator::New_Block_Calculate(c_planner::plan_bl
 				// Decelerate to cruise or cruise-decelerate types. Guaranteed to intersect updated plan.
 				Motion_Core::Segment::Arbitrator::decelerate_after = inv_2_accel * (nominal_speed_sqr - exit_speed_sqr);
 				Motion_Core::Segment::Arbitrator::maximum_speed = nominal_speed;
-				Motion_Core::Segment::Arbitrator::ramp_type = (int)Motion_Core::Ramp_Type::Decel_Override;
+				Motion_Core::Segment::Arbitrator::ramp_type = Motion_Core::Ramp_Type::Decel_Override;
 			}
 		}
 		else if (intersect_distance > 0.0)
 		{
-			if (intersect_distance < pl_block->millimeters)
+			if (intersect_distance < Motion_Core::Segment::Arbitrator::Active_Block->millimeters)
 			{ // Either trapezoid or triangle types
 				// NOTE: For acceleration-cruise and cruise-only types, following calculation will be 0.0.
 				Motion_Core::Segment::Arbitrator::decelerate_after = inv_2_accel * (nominal_speed_sqr - exit_speed_sqr);
 				if (Motion_Core::Segment::Arbitrator::decelerate_after < intersect_distance)
 				{ // Trapezoid type
 					Motion_Core::Segment::Arbitrator::maximum_speed = nominal_speed;
-					if (pl_block->entry_speed_sqr == nominal_speed_sqr)
+					if (Motion_Core::Segment::Arbitrator::Active_Block->entry_speed_sqr == nominal_speed_sqr)
 					{
 						// Cruise-deceleration or cruise-only type.
-						Motion_Core::Segment::Arbitrator::ramp_type = (int)Motion_Core::Ramp_Type::Cruise;
+						Motion_Core::Segment::Arbitrator::ramp_type = Motion_Core::Ramp_Type::Cruise;
 					}
 					else
 					{
 						// Full-trapezoid or acceleration-cruise types
-						Motion_Core::Segment::Arbitrator::accelerate_until -= inv_2_accel * (nominal_speed_sqr - pl_block->entry_speed_sqr);
+						Motion_Core::Segment::Arbitrator::accelerate_until -= inv_2_accel * (nominal_speed_sqr - Motion_Core::Segment::Arbitrator::Active_Block->entry_speed_sqr);
 					}
 				}
 				else
 				{ // Triangle type
 					Motion_Core::Segment::Arbitrator::accelerate_until = intersect_distance;
 					Motion_Core::Segment::Arbitrator::decelerate_after = intersect_distance;
-					Motion_Core::Segment::Arbitrator::maximum_speed = sqrt(2.0 * pl_block->acceleration * intersect_distance + exit_speed_sqr);
+					Motion_Core::Segment::Arbitrator::maximum_speed = sqrt(2.0 * Motion_Core::Segment::Arbitrator::Active_Block->acceleration * intersect_distance + exit_speed_sqr);
 				}
 			}
 			else
 			{ // Deceleration-only type
-				Motion_Core::Segment::Arbitrator::ramp_type = (int)Motion_Core::Ramp_Type::Decel;
+				Motion_Core::Segment::Arbitrator::ramp_type = Motion_Core::Ramp_Type::Decel;
 			}
 		}
 		else
@@ -239,8 +222,74 @@ uint8_t Motion_Core::Segment::Arbitrator::New_Block_Calculate(c_planner::plan_bl
 	}
 }
 
-uint8_t Motion_Core::Segment::Arbitrator::Segment_Calculate(c_planner::plan_block_t *pl_block)
+void Motion_Core::Segment::Arbitrator::st_prep_buffer()
 {
+	// Block step prep buffer, while in a suspend state and there is no suspend motion to execute.
+	if (bit_istrue(c_system::sys.step_control, STEP_CONTROL_END_MOTION))
+	{
+		return;
+	}
+
+	//If the segment buffer is not full keep adding step data to it
+	while (1)
+	{
+
+		//If pl_block is null, see if theres one we can load
+		if (Motion_Core::Segment::Arbitrator::Active_Block == NULL)
+		{
+			Motion_Core::Segment::Arbitrator::Active_Block = Motion_Core::Planner::Buffer::Current();
+			if (Motion_Core::Segment::Arbitrator::Active_Block == NULL)
+				break; //<--there was not a block we could pull and calculate at this time.
+			Motion_Core::Segment::Arbitrator::Base_Calculate();
+		}
+		/*
+		We have loaded a block, and ran the base calculations for velocity. Lets calculate how many
+		steps we can fit in the time we are allowed, and set the timer delay value. These values
+		end up stored in the motion_core::segment::timer::buffer array. We can pull them out in the
+		timer isr and load the data.
+		*/
+		if (Motion_Core::Segment::Arbitrator::Active_Block != NULL)
+			if (Motion_Core::Segment::Arbitrator::Segment_Calculate() == 0)
+				break; //<--if segment buffer fills up and we cant get a new segment, break the loop
+
+					   //Remaining code is as it was in grbl. I will start converting the planner code next.
+
+					   // Check for exit conditions and flag to load next planner block.
+		if (Motion_Core::Segment::Arbitrator::mm_remaining == Motion_Core::Segment::Arbitrator::mm_complete)
+		{
+			// End of planner block or forced-termination. No more distance to be executed.
+			if (Motion_Core::Segment::Arbitrator::mm_remaining > 0.0)
+			{ // At end of forced-termination.
+			  // Reset prep parameters for resuming and then bail. Allow the stepper ISR to complete
+			  // the segment queue, where realtime protocol will set new state upon receiving the
+			  // cycle stop flag from the ISR. Prep_segment is blocked until then.
+				bit_true(c_system::sys.step_control, STEP_CONTROL_END_MOTION);
+
+				break; // Bail!
+			}
+			else
+			{ // End of planner block
+			  // The planner block is complete. All steps are set to be executed in the segment buffer.
+				if (c_system::sys.step_control & STEP_CONTROL_EXECUTE_SYS_MOTION)
+				{
+					bit_true(c_system::sys.step_control, STEP_CONTROL_END_MOTION);
+					break;
+				}
+				Motion_Core::Segment::Arbitrator::Active_Block = NULL; // Set pointer to indicate check and load next planner block.
+				Motion_Core::Planner::Buffer::Advance();
+				//Advance the bresenham buffer tail, so when another block is loaded it wont
+				//step on the current bresenham data that the timer MIGHT still be executing
+				Motion_Core::Segment::Bresenham::Buffer::Advance();
+			}
+		}
+
+	}
+}
+
+uint8_t Motion_Core::Segment::Arbitrator::Segment_Calculate()
+{
+	//if (!Motion_Core::Segment::Timer::Buffer::Available())
+	//	return 0;
 	/* -----------------------------------------------------------------------------------
 	Compute segment step rate, steps to execute, and apply necessary rate corrections.
 	NOTE: Steps are computed by direct scalar conversion of the millimeter distance
@@ -251,18 +300,26 @@ uint8_t Motion_Core::Segment::Arbitrator::Segment_Calculate(c_planner::plan_bloc
 	Fortunately, this scenario is highly unlikely and unrealistic in CNC machines
 	supported by Grbl (i.e. exceeding 10 meters axis travel at 200 step/mm).
 	*/
-	Motion_Core::Segment::Arbitrator::mm_remaining = pl_block->millimeters; // New segment distance from end of block.
+	Motion_Core::Segment::Arbitrator::mm_remaining = Motion_Core::Segment::Arbitrator::Active_Block->millimeters; // New segment distance from end of block.
 	//float step_dist_remaining = Motion_Core::Segment::Arbitrator::step_per_mm * mm_remaining; // Convert mm_remaining to steps
 	//float n_steps_remaining = ceil(step_dist_remaining); // Round-up current steps remaining
 	//float last_n_steps_remaining = ceil(Motion_Core::Segment::Arbitrator::steps_remaining); // Round-up last steps remaining
 
 	// Initialize new segment
 	Motion_Core::Segment::Timer::Timer_Item *segment_item = Motion_Core::Segment::Timer::Buffer::Write();
+	if (segment_item == NULL)
+		return 0;
 
 	// Set new segment to point to the current segment data block.
-	segment_item->bresenham_in_item = Motion_Core::Segment::Arbitrator::bresenham_item_pointer;
+	segment_item->bresenham_in_item = Motion_Core::Segment::Bresenham::Buffer::Current();// Motion_Core::Segment::Arbitrator::bresenham_item_pointer;
 	segment_item->line_number = Motion_Core::Segment::Arbitrator::line_number;
 	
+	if (segment_item->bresenham_in_item == NULL)
+	{
+		int x = 0;
+		return 0;
+	}
+
 	/*------------------------------------------------------------------------------------
 	Compute the average velocity of this new segment by determining the total distance
 	traveled over the segment time DT_SEGMENT. The following code first attempts to create
@@ -294,15 +351,15 @@ uint8_t Motion_Core::Segment::Arbitrator::Segment_Calculate(c_planner::plan_bloc
 		switch ((Motion_Core::Ramp_Type)Motion_Core::Segment::Arbitrator::ramp_type)
 		{
 		case Motion_Core::Ramp_Type::Decel_Override:
-			speed_var = pl_block->acceleration * time_var;
+			speed_var = Motion_Core::Segment::Arbitrator::Active_Block->acceleration * time_var;
 			mm_var = time_var * (Motion_Core::Segment::Arbitrator::current_speed - 0.5 * speed_var);
 			mm_remaining -= mm_var;
 			if ((mm_remaining < Motion_Core::Segment::Arbitrator::accelerate_until) || (mm_var <= 0))
 			{
 				// Cruise or cruise-deceleration types only for deceleration override.
 				mm_remaining = Motion_Core::Segment::Arbitrator::accelerate_until; // NOTE: 0.0 at EOB
-				time_var = 2.0 * (pl_block->millimeters - mm_remaining) / (Motion_Core::Segment::Arbitrator::current_speed + Motion_Core::Segment::Arbitrator::maximum_speed);
-				Motion_Core::Segment::Arbitrator::ramp_type = (int)Motion_Core::Ramp_Type::Cruise;
+				time_var = 2.0 * (Motion_Core::Segment::Arbitrator::Active_Block->millimeters - mm_remaining) / (Motion_Core::Segment::Arbitrator::current_speed + Motion_Core::Segment::Arbitrator::maximum_speed);
+				Motion_Core::Segment::Arbitrator::ramp_type = Motion_Core::Ramp_Type::Cruise;
 				Motion_Core::Segment::Arbitrator::current_speed = Motion_Core::Segment::Arbitrator::maximum_speed;
 			}
 			else
@@ -312,20 +369,20 @@ uint8_t Motion_Core::Segment::Arbitrator::Segment_Calculate(c_planner::plan_bloc
 			break;
 		case Motion_Core::Ramp_Type::Accel:
 			// NOTE: Acceleration ramp only computes during first do-while loop.
-			speed_var = pl_block->acceleration * time_var;
+			speed_var = Motion_Core::Segment::Arbitrator::Active_Block->acceleration * time_var;
 			mm_remaining -= time_var * (Motion_Core::Segment::Arbitrator::current_speed + 0.5 * speed_var);
 			if (mm_remaining < Motion_Core::Segment::Arbitrator::accelerate_until)
 			{ // End of acceleration ramp.
 				// Acceleration-cruise, acceleration-deceleration ramp junction, or end of block.
 				mm_remaining = Motion_Core::Segment::Arbitrator::accelerate_until; // NOTE: 0.0 at EOB
-				time_var = 2.0 * (pl_block->millimeters - mm_remaining) / (Motion_Core::Segment::Arbitrator::current_speed + Motion_Core::Segment::Arbitrator::maximum_speed);
+				time_var = 2.0 * (Motion_Core::Segment::Arbitrator::Active_Block->millimeters - mm_remaining) / (Motion_Core::Segment::Arbitrator::current_speed + Motion_Core::Segment::Arbitrator::maximum_speed);
 				if (mm_remaining == Motion_Core::Segment::Arbitrator::decelerate_after)
 				{
-					Motion_Core::Segment::Arbitrator::ramp_type = (int)Motion_Core::Ramp_Type::Decel;
+					Motion_Core::Segment::Arbitrator::ramp_type = Motion_Core::Ramp_Type::Decel;
 				}
 				else
 				{
-					Motion_Core::Segment::Arbitrator::ramp_type = (int)Motion_Core::Ramp_Type::Cruise;
+					Motion_Core::Segment::Arbitrator::ramp_type = Motion_Core::Ramp_Type::Cruise;
 				}
 				Motion_Core::Segment::Arbitrator::current_speed = Motion_Core::Segment::Arbitrator::maximum_speed;
 			}
@@ -344,7 +401,7 @@ uint8_t Motion_Core::Segment::Arbitrator::Segment_Calculate(c_planner::plan_bloc
 				// Cruise-deceleration junction or end of block.
 				time_var = (mm_remaining - Motion_Core::Segment::Arbitrator::decelerate_after) / Motion_Core::Segment::Arbitrator::maximum_speed;
 				mm_remaining = Motion_Core::Segment::Arbitrator::decelerate_after; // NOTE: 0.0 at EOB
-				Motion_Core::Segment::Arbitrator::ramp_type = (int)Motion_Core::Ramp_Type::Decel;
+				Motion_Core::Segment::Arbitrator::ramp_type = Motion_Core::Ramp_Type::Decel;
 			}
 			else
 			{ // Cruising only.
@@ -353,7 +410,7 @@ uint8_t Motion_Core::Segment::Arbitrator::Segment_Calculate(c_planner::plan_bloc
 			break;
 		default: // case RAMP_DECEL:
 			// NOTE: mm_var used as a misc worker variable to prevent errors when near zero speed.
-			speed_var = pl_block->acceleration * time_var; // Used as delta speed (mm/min)
+			speed_var = Motion_Core::Segment::Arbitrator::Active_Block->acceleration * time_var; // Used as delta speed (mm/min)
 			if (Motion_Core::Segment::Arbitrator::current_speed > speed_var)
 			{ // Check if at or below zero speed.
 				// Compute distance from end of segment to end of block.
@@ -412,14 +469,14 @@ uint8_t Motion_Core::Segment::Arbitrator::Segment_Calculate(c_planner::plan_bloc
 	Motion_Core::Segment::Arbitrator::Set_Segment_Delay(segment_item, cycles);
 
 	// Update the appropriate planner and segment data.
-	pl_block->millimeters = mm_remaining;
+	Motion_Core::Segment::Arbitrator::Active_Block->millimeters = mm_remaining;
 	Motion_Core::Segment::Arbitrator::steps_remaining = n_steps_remaining;
 	Motion_Core::Segment::Arbitrator::dt_remainder = (n_steps_remaining - step_dist_remaining) * inv_rate;
 
-	return 0;
+	return 1;
 }
 
-void Motion_Core::Segment::Arbitrator::Set_Segment_Delay(Motion_Core::Segment::Timer::Timer_Item *segment_item,uint32_t cycles)
+void Motion_Core::Segment::Arbitrator::Set_Segment_Delay(Motion_Core::Segment::Timer::Timer_Item *segment_item, uint32_t cycles)
 {
 	
 	// Compute step timing and timer prescalar for normal step generation.
@@ -445,5 +502,17 @@ void Motion_Core::Segment::Arbitrator::Set_Segment_Delay(Motion_Core::Segment::T
 		{ // Just set the slowest speed possible. (Around 4 step/sec.)
 			segment_item->timer_delay_value = 0xffff;
 		}
+	}
+}
+
+// Called by planner_recalculate() when the executing block is updated by the new plan.
+void Motion_Core::Segment::Arbitrator::st_update_plan_block_parameters()
+{
+	if (Motion_Core::Segment::Arbitrator::Active_Block != NULL)
+	{ // Ignore if at start of a new block.
+		Motion_Core::Segment::Arbitrator::recalculate_flag |= PREP_FLAG_RECALCULATE;
+		//Update the entry speed of the block we jsut loaded in the arbitrator. This should be the same speed we are currently running.
+		Motion_Core::Segment::Arbitrator::Active_Block->entry_speed_sqr = Motion_Core::Segment::Arbitrator::current_speed * Motion_Core::Segment::Arbitrator::current_speed; // Update entry speed.
+		Motion_Core::Segment::Arbitrator::Active_Block = NULL; // Flag st_prep_segment() to load and check active velocity profile.
 	}
 }
