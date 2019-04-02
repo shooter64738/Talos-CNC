@@ -13,6 +13,7 @@
 
 #include "../../../GRBL/c_stepper.h"
 #include "c_core_avr_2560.h"
+#include "../../../GRBL/Motion_Core/c_interpollation_hardware.h"
 
 
 uint8_t Hardware_Abstraction_Layer::Grbl::Stepper::step_port_invert_mask;
@@ -59,12 +60,12 @@ void Hardware_Abstraction_Layer::Grbl::Stepper::wake_up()
 	// Initialize step pulse timing from settings. Here to ensure updating after re-writing.
 	#ifdef STEP_PULSE_DELAY
 	// Set total step pulse time after direction pin set. Ad hoc computation from oscilloscope.
-	c_stepper::st.step_pulse_time = -(((c_settings::settings.pulse_microseconds+STEP_PULSE_DELAY-2)*TICKS_PER_MICROSECOND) >> 3);
+	Motion_Core::Hardware::Interpollation::Step_Pulse_Length = -(((c_settings::settings.pulse_microseconds+STEP_PULSE_DELAY-2)*TICKS_PER_MICROSECOND) >> 3);
 	// Set delay between direction pin write and step command.
 	OCR0A = -(((c_settings::settings.pulse_microseconds)*TICKS_PER_MICROSECOND) >> 3);
 	#else // Normal operation
 	// Set step pulse time. Ad hoc computation from oscilloscope. Uses two's complement.
-	c_stepper::st.step_pulse_time = -(((c_settings::settings.pulse_microseconds - 2) * TICKS_PER_MICROSECOND) >> 3);
+	Motion_Core::Hardware::Interpollation::Step_Pulse_Length = -(((c_settings::settings.pulse_microseconds - 2) * TICKS_PER_MICROSECOND) >> 3);
 	#endif
 
 	// Enable Stepper Driver Interrupt
@@ -104,7 +105,7 @@ void Hardware_Abstraction_Layer::Grbl::Stepper::pulse_reset_timer()
 {
 	// Enable step pulse reset timer so that The Stepper Port Reset Interrupt can reset the signal after
 	// exactly settings.pulse_microseconds microseconds, independent of the main Timer1 prescaler.
-	TCNT0 = c_stepper::st.step_pulse_time; // Reload Timer0 counter
+	TCNT0 = Motion_Core::Hardware::Interpollation::Step_Pulse_Length; // Reload Timer0 counter
 	TCCR0B = (1 << CS01); // Begin Timer0. Full speed, 1/8 prescaler
 
 	
@@ -115,14 +116,14 @@ void Hardware_Abstraction_Layer::Grbl::Stepper::TCCR1B_set(uint8_t prescaler)
 	TCCR1B = (TCCR1B & ~(0x07<<CS10)) | (prescaler<<CS10);
 }
 
-void Hardware_Abstraction_Layer::Grbl::Stepper::OCR1A_set(uint8_t delay)
+void Hardware_Abstraction_Layer::Grbl::Stepper::OCR1A_set(uint16_t delay)
 {
 	OCR1A = delay;
 }
 
 ISR(TIMER1_COMPA_vect)
 {
-	c_stepper::step_tick();
+	Motion_Core::Hardware::Interpollation::step_tick();
 }
 /* The Stepper Port Reset Interrupt: Timer0 OVF interrupt handles the falling edge of the step
 pulse. This should always trigger before the next Timer1 COMPA interrupt and independently

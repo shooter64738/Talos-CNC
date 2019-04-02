@@ -522,22 +522,23 @@ uint8_t c_system::system_check_travel_limits(float *target)
 // Special handlers for setting and clearing Grbl's real-time execution flags.
 void c_system::system_set_exec_state_flag(uint8_t mask)
 {
-	Hardware_Abstraction_Layer::Core::capture_status_register_SREG();// uint8_t sreg = SREG;
-	Hardware_Abstraction_Layer::Core::stop_interrupts();//cli();
+	//Hardware_Abstraction_Layer::Core::capture_status_register_SREG();// uint8_t sreg = SREG;
+	//Hardware_Abstraction_Layer::Core::stop_interrupts();//cli();
 	sys_rt_exec_state |= (mask);
-	Hardware_Abstraction_Layer::Core::restore_status_register_SREG();//SREG = sreg;
+	//Hardware_Abstraction_Layer::Core::restore_status_register_SREG();//SREG = sreg;
 }
 
 void c_system::system_clear_exec_state_flag(uint8_t mask)
 {
-	Hardware_Abstraction_Layer::Core::capture_status_register_SREG();// uint8_t sreg = SREG;
-	Hardware_Abstraction_Layer::Core::stop_interrupts();//cli();
+	//Hardware_Abstraction_Layer::Core::capture_status_register_SREG();// uint8_t sreg = SREG;
+	//Hardware_Abstraction_Layer::Core::stop_interrupts();//cli();
 	sys_rt_exec_state &= ~(mask);
-	Hardware_Abstraction_Layer::Core::restore_status_register_SREG();//SREG = sreg;
+	//Hardware_Abstraction_Layer::Core::restore_status_register_SREG();//SREG = sreg;
 }
 
 void c_system::system_set_exec_alarm(uint8_t code)
 {
+	return;
 	Hardware_Abstraction_Layer::Core::capture_status_register_SREG();// uint8_t sreg = SREG;
 	Hardware_Abstraction_Layer::Core::stop_interrupts();//cli();
 	sys_rt_exec_alarm = code;
@@ -546,7 +547,7 @@ void c_system::system_set_exec_alarm(uint8_t code)
 
 void c_system::system_clear_exec_alarm()
 {
-	
+	return;
 	Hardware_Abstraction_Layer::Core::capture_status_register_SREG();// uint8_t sreg = SREG;
 	Hardware_Abstraction_Layer::Core::stop_interrupts();//cli();
 	sys_rt_exec_alarm = 0;
@@ -555,7 +556,7 @@ void c_system::system_clear_exec_alarm()
 
 void c_system::system_set_exec_motion_override_flag(uint8_t mask)
 {
-	
+	return;
 	Hardware_Abstraction_Layer::Core::capture_status_register_SREG();// uint8_t sreg = SREG;
 	Hardware_Abstraction_Layer::Core::stop_interrupts();//cli();
 	sys_rt_exec_motion_override |= (mask);
@@ -564,7 +565,7 @@ void c_system::system_set_exec_motion_override_flag(uint8_t mask)
 
 void c_system::system_set_exec_accessory_override_flag(uint8_t mask)
 {
-	
+	return;
 	Hardware_Abstraction_Layer::Core::capture_status_register_SREG();// uint8_t sreg = SREG;
 	Hardware_Abstraction_Layer::Core::stop_interrupts();//cli();
 	sys_rt_exec_accessory_override |= (mask);
@@ -573,6 +574,7 @@ void c_system::system_set_exec_accessory_override_flag(uint8_t mask)
 
 void c_system::system_clear_exec_motion_overrides()
 {
+	return;
 	Hardware_Abstraction_Layer::Core::capture_status_register_SREG();// uint8_t sreg = SREG;
 	Hardware_Abstraction_Layer::Core::stop_interrupts();//cli();
 	sys_rt_exec_motion_override = 0;
@@ -581,7 +583,7 @@ void c_system::system_clear_exec_motion_overrides()
 
 void c_system::system_clear_exec_accessory_overrides()
 {
-	
+	return;
 	Hardware_Abstraction_Layer::Core::capture_status_register_SREG();// uint8_t sreg = SREG;
 	Hardware_Abstraction_Layer::Core::stop_interrupts();//cli();
 	sys_rt_exec_accessory_override = 0;

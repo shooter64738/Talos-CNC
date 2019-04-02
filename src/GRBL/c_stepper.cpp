@@ -349,7 +349,7 @@ void c_stepper::step_tick()
 
 				c_stepper::st.counter[X_AXIS] = c_stepper::st.counter[Y_AXIS] = c_stepper::st.counter[Z_AXIS]
 				= c_stepper::st.counter[A_AXIS] = c_stepper::st.counter[B_AXIS] = c_stepper::st.counter[C_AXIS] =
-				(c_stepper::st.Exec_Timer_Bresenham->step_event_count >> 1);
+				(c_stepper::st.Exec_Timer_Bresenham->step_event_count );
 			}
 			c_stepper::st.dir_outbits = c_stepper::st.Exec_Timer_Bresenham->direction_bits ^ dir_port_invert_mask;
 

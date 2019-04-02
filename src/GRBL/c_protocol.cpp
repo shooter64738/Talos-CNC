@@ -43,6 +43,7 @@ along with Grbl.  If not, see <http://www.gnu.org/licenses/>.
 #include "utils.h"
 #include "Motion_Core\c_segment_arbitrator.h"
 #include "Motion_Core\c_interpollation_hardware.h"
+#include "Motion_Core\c_interpollation_software.h"
 //#include "..\Common\Hardware_Abstraction_Layer\AVR_2560\c_core_avr_2560.h"
 //#include "..\Common\Hardware_Abstraction_Layer\AVR_2560\c_grbl_avr_2560_spindle.h"
 
@@ -160,9 +161,9 @@ void c_protocol::protocol_main_loop()
 		// If there are no more characters in the serial read buffer to be processed and executed,
 		// this indicates that g-code streaming has either filled the planner buffer or has
 		// completed. In either case, auto-cycle start, if enabled, any queued moves.
-		protocol_auto_cycle_start();
+		//protocol_auto_cycle_start();
 		
-		protocol_execute_realtime();  // Runtime command check point.
+		//protocol_execute_realtime();  // Runtime command check point.
 
 		if (c_planner::block_complete)
 		{
@@ -181,8 +182,11 @@ void c_protocol::protocol_main_loop()
 		// Check for sleep conditions and execute auto-park, if timeout duration elapses.
 		sleep_check();
 		#endif
+		Motion_Core::Software::Interpollation::load_buffer();
 	}
-
+	
+	
+	
 	return; /* Never reached */
 }
 

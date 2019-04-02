@@ -10,7 +10,7 @@
 #include "c_motion_core.h"
 namespace Motion_Core
 {
-#define TICKS_PER_MICROSECOND (F_CPU/1000000)
+#define _TICKS_PER_MICROSECOND (F_CPU/1000000)
 	namespace Segment
 	{
 		class Arbitrator

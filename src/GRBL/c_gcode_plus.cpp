@@ -180,6 +180,9 @@ uint8_t c_gcode::gc_execute_line(char *line)
 
 	uint16_t return_value = NGC_RS274::Interpreter::Processor::process_line(gc_local_block);
 
+	Motion_Core::Software::Interpollation::load_block(gc_local_block);
+	return STATUS_OK;
+
 	//************************************************************************************
 	//************************************************************************************
 	//************************************************************************************

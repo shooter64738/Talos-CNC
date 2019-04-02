@@ -66,7 +66,7 @@ namespace Hardware_Abstraction_Layer
 			static void port_step(uint8_t steps);
 			static void pulse_reset_timer();
 			static void TCCR1B_set(uint8_t prescaler);
-			static void OCR1A_set(uint8_t delay);
+			static void OCR1A_set(uint16_t delay);
 			protected:
 			private:
 

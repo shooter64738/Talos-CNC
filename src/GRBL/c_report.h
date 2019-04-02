@@ -46,6 +46,7 @@ class c_report
 	static void report_util_gcode_modes_G();
 	static void report_util_gcode_modes_M();
 	static void report_util_axis_values(float *axis_value);
+	static void report_util_axis_values(uint32_t *axis_value);
 	static void report_util_uint8_setting(uint8_t n, int val);
 	static void report_util_float_setting(uint8_t n, float val, uint8_t n_decimal);
 	// Prints system status messages.

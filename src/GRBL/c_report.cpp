@@ -19,6 +19,7 @@
 //#include "..\Common\Hardware_Abstraction_Layer\AVR_2560\c_core_avr_2560.h"
 #include "hardware_def.h"
 #include "c_protocol.h"
+#include "Motion_Core\c_interpollation_hardware.h"
 
 /*
  report.c - reporting and messaging methods
@@ -105,6 +106,20 @@ void c_report::report_util_axis_values(float *axis_value)
         }
     }
 }
+
+void c_report::report_util_axis_values(uint32_t *axis_value)
+{
+	uint8_t idx;
+	for (idx = 0; idx < N_AXIS; idx++)
+	{
+		c_print::print_float_coord_value(axis_value[idx]);
+		if (idx < (N_AXIS - 1))
+		{
+			c_protocol::control_serial.Write(',');
+		}
+	}
+}
+
 
 /*
 static void report_util_setting_string(uint8_t n)
@@ -667,7 +682,8 @@ void c_report::report_realtime_status()
         c_print::print_string_P(Hardware_Abstraction_Layer_Core_PSTR("|MPos:"));
     else
         c_print::print_string_P(Hardware_Abstraction_Layer_Core_PSTR("|WPos:"));
-    report_util_axis_values(print_position);
+    //report_util_axis_values(print_position);
+	report_util_axis_values(Motion_Core::Hardware::Interpollation::system_position);
 
     // Returns planner and serial read buffer states.
 #ifdef REPORT_FIELD_BUFFER_STATE

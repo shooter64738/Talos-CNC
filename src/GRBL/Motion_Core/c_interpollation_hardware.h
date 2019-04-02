@@ -14,9 +14,6 @@ namespace Motion_Core
 #ifdef STEP_PULSE_DELAY
 			uint8_t step_bits;  // Stores out_bits output to complete the step pulse delay
 #endif
-
-			//static uint8_t execute_step;     // Flags step execution for each interrupt.
-			static uint8_t step_pulse_time;  // Step pulse reset time after step rise
 			static uint8_t step_outbits;         // The next stepping-bits to be output
 			static uint8_t dir_outbits;
 #ifdef ADAPTIVE_MULTI_AXIS_STEP_SMOOTHING
@@ -36,6 +33,7 @@ namespace Motion_Core
 			static uint8_t Step_Active;
 			static uint8_t Interpolation_Active;
 			static uint32_t Current_Line;
+			static uint8_t Step_Pulse_Length;  // Step pulse reset time after step rise
 			static void step_tick();
 			static void Initialize();
 			static void Shutdown();

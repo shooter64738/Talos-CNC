@@ -443,7 +443,7 @@ int16_t c_Cutter_Comp::set_path(NGC_RS274::NGC_Binary_Block* local_block)
 		c_Cutter_Comp::_current_path.compensated.target = c_Cutter_Comp::_current_path.programmed.target;
 
 
-		c_Cutter_Comp::_current_path.programmed.radius = *local_block->arc_values.R;
+		c_Cutter_Comp::_current_path.programmed.radius = *local_block->arc_values.Radius;
 		c_Cutter_Comp::_current_path.programmed.center.X = *local_block->arc_values.horizontal_center.value;
 		c_Cutter_Comp::_current_path.programmed.center.Y = *local_block->arc_values.vertical_center.value;
 		c_Cutter_Comp::_forward_path.programmed.origin = c_Cutter_Comp::_current_path.programmed.target;
@@ -462,7 +462,7 @@ int16_t c_Cutter_Comp::set_path(NGC_RS274::NGC_Binary_Block* local_block)
 		c_Cutter_Comp::_forward_path.programmed.origin = c_Cutter_Comp::_current_path.programmed.target;
 
 
-		c_Cutter_Comp::_current_path.programmed.radius = *local_block->arc_values.R;
+		c_Cutter_Comp::_current_path.programmed.radius = *local_block->arc_values.Radius;
 		c_Cutter_Comp::_current_path.programmed.center.X = *local_block->arc_values.horizontal_center.value;
 		c_Cutter_Comp::_current_path.programmed.center.Y = *local_block->arc_values.vertical_center.value;
 		c_Cutter_Comp::set_object_type(local_block, _forward_path);

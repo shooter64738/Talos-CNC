@@ -42,18 +42,18 @@ void Hardware_Abstraction_Layer::Grbl::Stepper::wake_up()
 
 	// Initialize step pulse timing from settings. Here to ensure updating after re-writing.
 #ifdef STEP_PULSE_DELAY
-// Set total step pulse time after direction pin set. Ad hoc computation from oscilloscope.
+	// Set total step pulse time after direction pin set. Ad hoc computation from oscilloscope.
 	c_stepper::st.step_pulse_time = -(((c_settings::settings.pulse_microseconds + STEP_PULSE_DELAY - 2)*TICKS_PER_MICROSECOND) >> 3);
 	// Set delay between direction pin write and step command.
 	OCR0A = -(((c_settings::settings.pulse_microseconds)*TICKS_PER_MICROSECOND) >> 3);
 #else // Normal operation
-// Set step pulse time. Ad hoc computation from oscilloscope. Uses two's complement.
+	// Set step pulse time. Ad hoc computation from oscilloscope. Uses two's complement.
 	c_stepper::st.step_pulse_time = -(((c_settings::settings.pulse_microseconds - 2) * TICKS_PER_MICROSECOND) >> 3);
 #endif
 
 	// Enable Stepper Driver Interrupt
 	Hardware_Abstraction_Layer::Grbl::Stepper::_TIMSK1 |= (1 << OCIE1A);
-	
+
 
 	//timer1_capture.detach();
 	//timer1_overflow.detach();
@@ -70,7 +70,7 @@ void Hardware_Abstraction_Layer::Grbl::Stepper::timer1_overflow_thread()
 			Motion_Core::Hardware::Interpollation::step_tick();
 			//c_stepper::step_tick();
 			std::this_thread::sleep_for(std::chrono::microseconds(16));
-			
+
 		}
 	}
 
@@ -118,7 +118,14 @@ void Hardware_Abstraction_Layer::Grbl::Stepper::pulse_reset_timer()
 
 void Hardware_Abstraction_Layer::Grbl::Stepper::TCCR1B_set(uint8_t prescaler)
 {
-	//TCCR1B = (TCCR1B & ~(0x07<<CS10)) | (prescaler<<CS10);
+	uint8_t _CS10 = 0;
+	uint8_t _CS11 = 1;
+	uint8_t _CS12 = 2;
+	uint8_t _TCCR1B = 0;
+	//Only here to determine if the values are setting correctly. These are not used in WIN32
+	_TCCR1B = (_TCCR1B & ~((1 << _CS12) | (1 << _CS11))) | (1 << _CS10); // Reset clock to no prescaling.;
+	_TCCR1B = (_TCCR1B & ~(0x07 << _CS10)) | ((prescaler + 1) << _CS10);
+
 }
 
 void Hardware_Abstraction_Layer::Grbl::Stepper::OCR1A_set(uint8_t delay)

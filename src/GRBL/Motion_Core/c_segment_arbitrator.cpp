@@ -97,9 +97,9 @@ uint8_t Motion_Core::Segment::Arbitrator::Base_Calculate()
 
 		for (idx = 0; idx<N_AXIS; idx++)
 		{
-			bresenham_item->steps[idx] = (Motion_Core::Segment::Arbitrator::Active_Block->steps[idx] << 1);
+			bresenham_item->steps[idx] = (Motion_Core::Segment::Arbitrator::Active_Block->steps[idx]);
 		}
-		bresenham_item->step_event_count = (Motion_Core::Segment::Arbitrator::Active_Block->step_event_count << 1);
+		bresenham_item->step_event_count = (Motion_Core::Segment::Arbitrator::Active_Block->step_event_count);
 		
 
 		// Initialize segment buffer data for generating the segments.
@@ -465,7 +465,7 @@ uint8_t Motion_Core::Segment::Arbitrator::Segment_Calculate()
 	float inv_rate = dt / (last_n_steps_remaining - step_dist_remaining); // Compute adjusted step rate inverse
 
 	// Compute CPU cycles per step for the prepped segment.
-	uint32_t cycles = ceil((TICKS_PER_MICROSECOND * 1000000 * 60) * inv_rate); // (cycles/step)
+	uint32_t cycles = ceil((_TICKS_PER_MICROSECOND * 1000000 * 60) * inv_rate); // (cycles/step)
 	Motion_Core::Segment::Arbitrator::Set_Segment_Delay(segment_item, cycles);
 
 	// Update the appropriate planner and segment data.
