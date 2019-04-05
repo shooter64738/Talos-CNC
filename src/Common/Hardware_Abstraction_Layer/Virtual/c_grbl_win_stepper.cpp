@@ -10,10 +10,10 @@
 #include "c_grbl_win_stepper.h"
 #include "../../../helpers.h"
 #include "../../../GRBL/c_settings.h"
-
+#include "../../../MotionDriver/c_motion_core.h"
 #include "../../../GRBL/c_stepper.h"
 #include "c_core_win.h"
-#include "../../../GRBL/Motion_Core/c_interpollation_hardware.h"
+#include "../../../MotionDriver/c_interpollation_hardware.h"
 
 
 uint8_t Hardware_Abstraction_Layer::Grbl::Stepper::step_port_invert_mask;
@@ -48,7 +48,7 @@ void Hardware_Abstraction_Layer::Grbl::Stepper::wake_up()
 	OCR0A = -(((c_settings::settings.pulse_microseconds)*TICKS_PER_MICROSECOND) >> 3);
 #else // Normal operation
 	// Set step pulse time. Ad hoc computation from oscilloscope. Uses two's complement.
-	c_stepper::st.step_pulse_time = -(((c_settings::settings.pulse_microseconds - 2) * TICKS_PER_MICROSECOND) >> 3);
+	Motion_Core::Hardware::Interpollation::Step_Pulse_Length = -(((Motion_Core::Settings::pulse_length - 2) * TICKS_PER_MICROSECOND) >> 3);
 #endif
 
 	// Enable Stepper Driver Interrupt

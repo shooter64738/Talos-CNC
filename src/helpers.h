@@ -39,5 +39,7 @@
 #define bit_istrue(x,mask) (((x) & (mask)) != 0)
 #define bit_isfalse(x,mask) (((x) & (mask)) == 0)
 
+#define max(a,b) (((a) > (b)) ? (a) : (b))
+#define min(a,b) (((a) < (b)) ? (a) : (b))
 
 #endif /* HELPERS_H_ */

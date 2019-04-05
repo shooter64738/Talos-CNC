@@ -6,6 +6,7 @@
 #include "c_block.h"
 #include "c_block_buffer.h"
 #include "c_motion_core.h"
+#include "hardware_def.h"
 namespace Motion_Core
 {
 #define _TICKS_PER_MICROSECOND (F_CPU/1000000)

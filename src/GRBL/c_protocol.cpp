@@ -118,7 +118,7 @@ void c_protocol::protocol_main_loop()
 			c_protocol::control_serial.print_string(" finished\r");
 			
 		}
-		Motion_Core::Segment::Arbitrator::st_prep_buffer();
+		Motion_Core::Segment::Arbitrator::Fil_Step_Segment_Buffer();
 	}
 	
 	return; /* Never reached */
@@ -374,7 +374,7 @@ void c_protocol::protocol_exec_rt_system()
 							c_system::sys.suspend = SUSPEND_DISABLE; // Break suspend state.
 							c_system::sys.state = STATE_CYCLE;
 							//c_stepper::st_prep_buffer(); // Initialize step segment buffer before beginning cycle.
-							Motion_Core::Segment::Arbitrator::st_prep_buffer();
+							Motion_Core::Segment::Arbitrator::Fil_Step_Segment_Buffer();
 							Motion_Core::Hardware::Interpollation::Initialize();
 							//c_stepper::st_wake_up();
 						}
@@ -586,7 +586,7 @@ void c_protocol::protocol_exec_rt_system()
 	{
 		//Hardware_Abstraction_Layer::Serial::send(0, 'w');
 		//c_stepper::st_prep_buffer();
-		Motion_Core::Segment::Arbitrator::st_prep_buffer();
+		Motion_Core::Segment::Arbitrator::Fil_Step_Segment_Buffer();
 	}
 	
 }

@@ -1,10 +1,7 @@
 #include "c_interpollation_software.h"
 #include "c_block_buffer.h"
-//#include "../c_settings.h"
-//#include "../c_system.h"
-//#include "../c_protocol.h"
-#include "../../common/NGC_RS274/NGC_G_Groups.h"
-#include "../../common/NGC_RS274/NGC_G_Codes.h"
+#include "../common/NGC_RS274/NGC_G_Groups.h"
+#include "../common/NGC_RS274/NGC_G_Codes.h"
 #include "c_segment_arbitrator.h"
 #include "c_interpollation_hardware.h"
 #ifdef MSVC
@@ -18,39 +15,42 @@ void Motion_Core::Software::Interpollation::load_block(NGC_RS274::NGC_Binary_Blo
 {
 	if (!block->any_axis_was_defined())
 		return;
-
+	uint8_t return_value = 0;
 	switch (block->g_group[NGC_RS274::Groups::G::MOTION])
 	{
-		case NGC_RS274::G_codes::RAPID_POSITIONING:
-		{
-			Motion_Core::Software::Interpollation::_mc_line(block);
-			break;
-		}
-		case NGC_RS274::G_codes::LINEAR_INTERPOLATION:
-		{
-			Motion_Core::Software::Interpollation::_mc_line(block);
-			break;
-		}
-		case NGC_RS274::G_codes::CIRCULAR_INTERPOLATION_CW:
-		{
-			Motion_Core::Software::Interpollation::_mc_arc(1, block);
-			break;
-		}
-		case NGC_RS274::G_codes::CIRCULAR_INTERPOLATION_CCW:
-		{
-			Motion_Core::Software::Interpollation::_mc_arc(0, block);
-			break;
-		}
+	case NGC_RS274::G_codes::RAPID_POSITIONING:
+	{
+		return_value = Motion_Core::Software::Interpollation::_mc_line(block);
+		break;
 	}
-	
-	Motion_Core::Segment::Arbitrator::Fil_Step_Segment_Buffer();
-	Motion_Core::Hardware::Interpollation::Initialize();
+	case NGC_RS274::G_codes::LINEAR_INTERPOLATION:
+	{
+		return_value = Motion_Core::Software::Interpollation::_mc_line(block);
+		break;
+	}
+	case NGC_RS274::G_codes::CIRCULAR_INTERPOLATION_CW:
+	{
+		return_value = Motion_Core::Software::Interpollation::_mc_arc(1, block);
+		break;
+	}
+	case NGC_RS274::G_codes::CIRCULAR_INTERPOLATION_CCW:
+	{
+		return_value = Motion_Core::Software::Interpollation::_mc_arc(0, block);
+		break;
+	}
+	}
+
+	if (return_value)
+	{
+		Motion_Core::Segment::Arbitrator::Fil_Step_Segment_Buffer();
+		Motion_Core::Hardware::Interpollation::Initialize();
+	}
 }
 
 
 
 
-void Motion_Core::Software::Interpollation::_mc_line(NGC_RS274::NGC_Binary_Block *target_block)
+uint8_t Motion_Core::Software::Interpollation::_mc_line(NGC_RS274::NGC_Binary_Block *target_block)
 {
 
 	// NOTE: Backlash compensation may be installed here. It will need direction info to track when
@@ -90,7 +90,7 @@ void Motion_Core::Software::Interpollation::_mc_line(NGC_RS274::NGC_Binary_Block
 	// Plan and queue motion into planner buffer
 	// uint8_t plan_status; // Not used in normal operation.
 	//Motion_Core::Planner::Calculator::plan_buffer_line(target, pl_data, target_block);
-	Motion_Core::Planner::Calculator::_plan_buffer_line(target_block);
+	return Motion_Core::Planner::Calculator::_plan_buffer_line(target_block);
 }
 //void Motion_Core::Software::Interpollation::mc_line(float *target, c_planner::plan_line_data_t *pl_data, NGC_RS274::NGC_Binary_Block *target_block)
 //{
@@ -119,9 +119,9 @@ void Motion_Core::Software::Interpollation::_mc_line(NGC_RS274::NGC_Binary_Block
 //}
 
 
-void Motion_Core::Software::Interpollation::_mc_arc(uint8_t is_clockwise_arc, NGC_RS274::NGC_Binary_Block *target_block)
+uint8_t Motion_Core::Software::Interpollation::_mc_arc(uint8_t is_clockwise_arc, NGC_RS274::NGC_Binary_Block *target_block)
 {
-	float center_axis0 ;//= *Motion_Core::Software::Interpollation::previous_state.plane_axis.horizontal_axis.value
+	float center_axis0;//= *Motion_Core::Software::Interpollation::previous_state.plane_axis.horizontal_axis.value
 	//+ *target_block->arc_values.horizontal_center.value;
 	float center_axis1; //= *Motion_Core::Software::Interpollation::previous_state.plane_axis.vertical_axis.value
 	//+ *target_block->arc_values.vertical_center.value;
@@ -153,7 +153,7 @@ void Motion_Core::Software::Interpollation::_mc_arc(uint8_t is_clockwise_arc, NG
 	// is desired, i.e. least-squares, midpoint on arc, just change the mm_per_arc_segment calculation.
 	// For the intended uses of Grbl, this value shouldn't exceed 2000 for the strictest of cases.
 	uint16_t segments = floor(fabs(0.5 * angular_travel * (*target_block->arc_values.Radius))
-	/ sqrt(Motion_Core::Settings::arc_tolerance * (2 * (*target_block->arc_values.Radius) -Motion_Core::Settings::arc_tolerance)));
+		/ sqrt(Motion_Core::Settings::arc_tolerance * (2 * (*target_block->arc_values.Radius) - Motion_Core::Settings::arc_tolerance)));
 
 	if (segments)
 	{
@@ -169,7 +169,7 @@ void Motion_Core::Software::Interpollation::_mc_arc(uint8_t is_clockwise_arc, NG
 		//}
 
 		float theta_per_segment = angular_travel / segments;
-		float linear_per_segment ;//= (target_block->plane_axis.horizontal_axis.value -
+		float linear_per_segment;//= (target_block->plane_axis.horizontal_axis.value -
 		//Motion_Core::Software::Interpollation::previous_state.plane_axis.normal_axis.value) / segments;
 
 		/* Vector rotation by transformation matrix: r is the original vector, r_T is the rotated vector,
@@ -226,9 +226,9 @@ void Motion_Core::Software::Interpollation::_mc_arc(uint8_t is_clockwise_arc, NG
 				cos_Ti = cos(i * theta_per_segment);
 				sin_Ti = sin(i * theta_per_segment);
 				r_axis0 = -*target_block->arc_values.horizontal_center.value * cos_Ti
-				+ *target_block->arc_values.vertical_center.value * sin_Ti;
+					+ *target_block->arc_values.vertical_center.value * sin_Ti;
 				r_axis1 = -*target_block->arc_values.horizontal_center.value * sin_Ti
-				- *target_block->arc_values.vertical_center.value * cos_Ti;
+					- *target_block->arc_values.vertical_center.value * cos_Ti;
 				count = 0;
 			}
 
@@ -242,7 +242,7 @@ void Motion_Core::Software::Interpollation::_mc_arc(uint8_t is_clockwise_arc, NG
 		}
 	}
 	// Ensure last segment arrives at target location.
-	Motion_Core::Software::Interpollation::_mc_line(target_block);
+	return Motion_Core::Software::Interpollation::_mc_line(target_block);
 }
 
 //void Motion_Core::Software::Interpollation::mc_arc(float *target, c_planner::plan_line_data_t *pl_data, float *position, float *offset, float radius, uint8_t axis_0, uint8_t axis_1, uint8_t axis_linear,

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Atmel Studio Solution File, Format Version 11.00
-VisualStudioVersion = 14.0.23107.0
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{E66E83B9-2572-4076-B26E-6BE79FF3018A}") = "AVR_2560_Coordinator", "Coordinator\AVR_Coordinator\AVR_2560_Coordinator.cppproj", "{A43646D7-207B-4974-A4C7-D1F89198FF8A}"
 EndProject
@@ -13,7 +13,7 @@ Project("{E66E83B9-2572-4076-B26E-6BE79FF3018A}") = "AVR_328_Spindle", "Spindle\
 EndProject
 Project("{E66E83B9-2572-4076-B26E-6BE79FF3018A}") = "AVR_2560_GRBL", "GRBL\Projects\AVR\AVR_2560_Grbl\AVR_2560_GRBL.cppproj", "{9DCD3F4E-09CE-4A64-8500-FDA8B3D56129}"
 EndProject
-Project("{E66E83B9-2572-4076-B26E-6BE79FF3018A}") = "AVR_2560_MotionDriver", "MotionDriver\AVR_2560_MotionDriver.cppproj", "{34A5F4BA-6C84-414D-BA07-1B1E116E9E6D}"
+Project("{E66E83B9-2572-4076-B26E-6BE79FF3018A}") = "AVR_2560_MotionDriver", "MotionDriver\AVR_MotionDriver\AVR_2560_MotionDriver.cppproj", "{34A5F4BA-6C84-414D-BA07-1B1E116E9E6D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

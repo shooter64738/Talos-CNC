@@ -7,11 +7,12 @@
 
 //#include <avr/io.h>
 //#include <avr/interrupt.h>
-#include "c_grbl_avr_2560_stepper.h"
+#include "c_motion_core_avr_2560_stepper.h"
 #include "../../../helpers.h"
 #include "c_core_avr_2560.h"
-#include "../../../GRBL/Motion_Core/c_interpollation_hardware.h"
+#include "../../../MotionDriver/c_interpollation_hardware.h"
 #include "../../../MotionDriver/c_motion_core.h"
+
 
 
 uint8_t Hardware_Abstraction_Layer::Grbl::Stepper::step_port_invert_mask;
@@ -49,14 +50,14 @@ void Hardware_Abstraction_Layer::Grbl::Stepper::initialize()
 void Hardware_Abstraction_Layer::Grbl::Stepper::wake_up()
 {
 	// Enable stepper drivers.
-	if (bit_istrue(0, BITFLAG_INVERT_ST_ENABLE))
-	{
+	//if (bit_istrue(0, BITFLAG_INVERT_ST_ENABLE))
+//	{
 		STEPPERS_DISABLE_PORT |= (1 << STEPPERS_DISABLE_BIT);
-	}
-	else
-	{
-		STEPPERS_DISABLE_PORT &= ~(1 << STEPPERS_DISABLE_BIT);
-	}
+//	}
+//	else
+//	{
+		//STEPPERS_DISABLE_PORT &= ~(1 << STEPPERS_DISABLE_BIT);
+	//}
 
 	// Initialize step pulse timing from settings. Here to ensure updating after re-writing.
 	#ifdef STEP_PULSE_DELAY

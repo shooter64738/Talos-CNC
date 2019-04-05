@@ -427,7 +427,7 @@ void c_motion_control::mc_parking_motion(float *parking_target, c_planner::plan_
         bit_false(c_system::sys.step_control, STEP_CONTROL_END_MOTION); // Allow parking motion to execute, if feed hold is active.
         c_stepper::st_parking_setup_buffer(); // Setup step segment buffer for special parking motion case
         //c_stepper::st_prep_buffer();
-		Motion_Core::Segment::Arbitrator::st_prep_buffer();
+		Motion_Core::Segment::Arbitrator::Fil_Step_Segment_Buffer();
         c_stepper::st_wake_up();
         do
         {
