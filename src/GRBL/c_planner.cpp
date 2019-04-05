@@ -371,25 +371,9 @@ void c_planner::plan_update_velocity_profile_parameters()
 	pl.previous_nominal_speed = prev_nominal_speed; // Update prev nominal speed for next incoming block.
 }
 
-/* Add a new linear movement to the buffer. target[N_AXIS] is the signed, absolute target position
-in millimeters. Feed rate specifies the speed of the motion. If feed rate is inverted, the feed
-rate is taken to mean "frequency" and would complete the operation in 1/feed_rate minutes.
-All position data passed to the planner must be in terms of machine position to keep the planner
-independent of any coordinate system changes and offsets, which are handled by the g-code parser.
-NOTE: Assumes buffer is available. Buffer checks are handled at a higher level by motion_control.
-In other words, the buffer head is never equal to the buffer tail.  Also the feed rate input value
-is used in three ways: as a normal feed rate if invert_feed_rate is false, as inverse time if
-invert_feed_rate is true, or as seek/rapids rate if the feed_rate value is negative (and
-invert_feed_rate always false).
-The system motion condition tells the planner to plan a motion in the always unused block buffer
-head. It avoids changing the planner state and preserves the buffer to ensure subsequent gcode
-motions are still planned correctly, while the stepper module only points to the block buffer head
-to execute the special system motion. */
+
 uint8_t c_planner::plan_buffer_line(float *target, plan_line_data_t *pl_data, NGC_RS274::NGC_Binary_Block *target_block)
 {
-	Motion_Core::Planner::Calculator::plan_buffer_line(target,pl_data,target_block);
-	return PLAN_OK;
-
 	// Prepare and initialize new block. Copy relevant pl_data for block execution.
 	plan_block_t *planning_block = &block_buffer[block_buffer_head];
 	memset(planning_block, 0, sizeof(plan_block_t)); // Zero all block values.

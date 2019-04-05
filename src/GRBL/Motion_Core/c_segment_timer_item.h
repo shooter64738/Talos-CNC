@@ -8,7 +8,7 @@ namespace Motion_Core
 		{
 #ifndef __C_TIMER_ITEM
 #define __C_TIMER_ITEM
-			static const uint8_t BUFFER_SIZE = 20;
+			static const uint8_t BUFFER_SIZE = 10;
 
 			class Timer_Item
 			{
@@ -24,10 +24,6 @@ namespace Motion_Core
 			public:
 				Timer_Item();
 				~Timer_Item();
-				Timer_Item(uint16_t steps_to_execute_in_this_segment, uint16_t timer_delay_value,
-					Motion_Core::Segment::Bresenham::Bresenham_Item *st_block_index,
-					uint8_t timer_prescaler, uint32_t line_number);
-				uint8_t Calculate();
 			};
 
 			class Buffer
@@ -42,8 +38,8 @@ namespace Motion_Core
 
 			private:
 				static Timer_Item _buffer[];
-				static int16_t _tail;
-				static int16_t _head;
+				static int8_t _tail;
+				static int8_t _head;
 				static uint8_t _full;
 
 			};

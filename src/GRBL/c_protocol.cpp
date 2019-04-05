@@ -62,49 +62,11 @@ GRBL PRIMARY LOOP:
 */
 void c_protocol::protocol_main_loop()
 {
-	
-	// Perform some machine checks to make sure everything is good to go.
-	#ifdef CHECK_LIMITS_AT_INIT
-	if (bit_istrue(settings.flags, BITFLAG_HARD_LIMIT_ENABLE) && limits_get_state())
-	{
-		c_system::sys.state = STATE_ALARM; // Ensure alarm state is active.
-		report_feedback_message(MESSAGE_CHECK_LIMITS);
-	}
-	#endif
-	// Check for and report alarm state after a reset, error, or an initial power up.
-	// NOTE: Sleep mode disables the stepper drivers and position can't be guaranteed.
-	// Re-initialize the sleep state as an ALARM mode to ensure user homes or acknowledges.
-	if (c_system::sys.state & (STATE_ALARM | STATE_SLEEP))
-	{
-		c_report::report_feedback_message(MESSAGE_ALARM_LOCK);
-		c_system::sys.state = STATE_ALARM; // Ensure alarm state is set.
-	}
-	else
-	{
-		// Check if the safety door is open.
-		c_system::sys.state = STATE_IDLE;
-		if (c_system::system_check_safety_door_ajar())
-		{
-			bit_true(c_system::sys_rt_exec_state, EXEC_SAFETY_DOOR);
-			protocol_execute_realtime(); // Enter safety door mode. Should return as IDLE state.
-		}
-		// All systems go!
-		c_system::system_execute_startup(line); // Execute startup script.
-	}
-
-	// ---------------------------------------------------------------------------------
-	// Primary loop! Upon a system abort, this exits back to main() to reset the system.
-	// This is also where Grbl idles while waiting for something to do.
-	// ---------------------------------------------------------------------------------
-
-	uint8_t line_flags = 0;
-	uint8_t char_counter = 0;
-	uint8_t c;
-
+	Motion_Core::initialize();
 	//if running on win32 throw some sample data into the serial buffer
 	#ifdef MSVC
-	//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "G0X10\rG0X20\rG0X30\r");// g1y1F150G94\r");
-	Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "G2X1Y1R1F150G94\r");
+	Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "G0X10\rG0X20\rG0X30\r");// g1y1F150G94\r");
+	//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "G2X1Y1R1F150G94\r");
 	#endif // MSVC
 	uint8_t pass=0;
 	uint32_t last_reported_block = 0;
@@ -128,16 +90,10 @@ void c_protocol::protocol_main_loop()
 			if (c_protocol::control_serial.Peek() == CR)
 			c_protocol::control_serial.Get();
 
-			
-			if (c_system::sys.abort)
-			{
-				return;
-			} // Bail to calling function upon system abort
-			
-			else if (line[0] == '$')
+			if (line[0] == '$')
 			{
 				// Grbl '$' system command
-				c_report::report_status_message(c_system::system_execute_line(line));
+				//c_report::report_status_message(c_system::system_execute_line(line));
 			}
 			else if (line[0] == '?')
 			{
@@ -146,24 +102,13 @@ void c_protocol::protocol_main_loop()
 			else
 			{
 				//protocol_execute_realtime(); // Runtime command check point.
-				c_report::report_status_message(c_gcode::gc_execute_line(line));
+				c_protocol::control_serial.print_string("gcode: ");
+				c_protocol::control_serial.print_int32( '0'+c_gcode::gc_execute_line(line));
 				// Parse and execute g-code block.
 				//c_report::report_status_message(c_gcode::gc_execute_line(line));
 				//c_gcode::gc_execute_line(line);
 			}
-
-			// Reset tracking data for next line.
-			line_flags = 0;
-			char_counter = 0;
-
 		}
-
-		// If there are no more characters in the serial read buffer to be processed and executed,
-		// this indicates that g-code streaming has either filled the planner buffer or has
-		// completed. In either case, auto-cycle start, if enabled, any queued moves.
-		//protocol_auto_cycle_start();
-		
-		//protocol_execute_realtime();  // Runtime command check point.
 
 		if (c_planner::block_complete)
 		{
@@ -173,19 +118,8 @@ void c_protocol::protocol_main_loop()
 			c_protocol::control_serial.print_string(" finished\r");
 			
 		}
-		if (c_system::sys.abort)
-		{
-			return;
-		} // Bail to main() program loop to reset system.
-
-		#ifdef SLEEP_ENABLE
-		// Check for sleep conditions and execute auto-park, if timeout duration elapses.
-		sleep_check();
-		#endif
-		Motion_Core::Software::Interpollation::load_buffer();
+		Motion_Core::Segment::Arbitrator::st_prep_buffer();
 	}
-	
-	
 	
 	return; /* Never reached */
 }

@@ -1,6 +1,7 @@
 #include <stdint.h>
 #include <stddef.h>
-#include "../all_includes.h"
+//#include "../all_includes.h"
+#include "c_motion_core.h"
 namespace Motion_Core
 {
 	namespace Segment
@@ -15,7 +16,6 @@ namespace Motion_Core
 				uint32_t steps[N_AXIS];
 				uint32_t step_event_count;
 				uint8_t direction_bits;
-				uint8_t is_pwm_rate_adjusted;
 
 			public:
 				Bresenham_Item();
@@ -33,8 +33,8 @@ namespace Motion_Core
 
 			private:
 				static Bresenham_Item _buffer[];
-				static int16_t _tail;
-				static int16_t _head;
+				static int8_t _tail;
+				static int8_t _head;
 				static uint8_t _full;
 
 			};

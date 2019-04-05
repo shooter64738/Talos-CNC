@@ -1,33 +1,32 @@
 #include "c_planner_compute_block.h"
 #include "c_segment_arbitrator.h"
 #include "c_segment_timer_bresenham.h"
-#include "..\c_settings.h"
-#include "..\c_planner.h"
-#include "..\c_system.h"
 #include "c_motion_core.h"
 #include "..\..\common\NGC_RS274\NGC_G_Groups.h"
 #include "..\..\common\NGC_RS274\NGC_G_Codes.h"
 
 
+
 Motion_Core::Planner::Block_Item *Motion_Core::Planner::Calculator::block_buffer_planned = Motion_Core::Planner::Buffer::Get(0);
-int32_t Motion_Core::Planner::Calculator::position[N_AXIS];
+//int32_t Motion_Core::Planner::Calculator::position[N_AXIS];
 float Motion_Core::Planner::Calculator::previous_unit_vec[N_AXIS];
 float Motion_Core::Planner::Calculator::previous_nominal_speed;
+
 
 uint8_t Motion_Core::Planner::Calculator::_plan_buffer_line(NGC_RS274::NGC_Binary_Block *target_block)
 {
 	// Prepare and initialize new block. Copy relevant pl_data for block execution.
 	Motion_Core::Planner::Block_Item *planning_block = Motion_Core::Planner::Buffer::Write();
 
-	planning_block->spindle_speed = *target_block->persisted_values.active_spindle_speed_S;
+	
 	planning_block->line_number = *target_block->persisted_values.active_line_number_N;
 	
 	// Compute and store initial move distance data.
-	int32_t target_steps[N_AXIS], position_steps[N_AXIS];
-	float unit_vec[N_AXIS], delta_mm;
+	int32_t target_steps[N_AXIS]{0};
+	float unit_vec[N_AXIS]{0}, delta_mm;
 	uint8_t idx;
 
-	memcpy(position_steps, Motion_Core::Planner::Calculator::position, sizeof(Motion_Core::Planner::Calculator::position));
+	//memcpy(position_steps, Motion_Core::Planner::Calculator::position, sizeof(Motion_Core::Planner::Calculator::position));
 
 
 	for (idx = 0; idx < N_AXIS; idx++)
@@ -36,24 +35,24 @@ uint8_t Motion_Core::Planner::Calculator::_plan_buffer_line(NGC_RS274::NGC_Binar
 		// Also, compute individual axes distance for move and prep unit vector calculations.
 		// NOTE: Computes true distance from converted step values.
 
-		target_steps[idx] = lround(*target_block->axis_values.Loop[idx] * c_settings::settings.steps_per_mm[idx]);
-		planning_block->steps[idx] = labs(target_steps[idx] - position_steps[idx]);
+		target_steps[idx] = lround(*target_block->axis_values.Loop[idx] * Motion_Core::Settings::steps_per_mm[idx]);
+		planning_block->steps[idx] = labs(target_steps[idx] );
 		planning_block->step_event_count = max(planning_block->step_event_count, planning_block->steps[idx]);
-		delta_mm = (target_steps[idx] - position_steps[idx]) / c_settings::settings.steps_per_mm[idx];
+		delta_mm = (target_steps[idx]) / Motion_Core::Settings::steps_per_mm[idx];
 
 		unit_vec[idx] = delta_mm; // Store unit vector numerator
 
 		// Set direction bits. Bit enabled always means direction is negative.
 		if (delta_mm < 0.0)
 		{
-			planning_block->direction_bits |= c_settings::get_direction_pin_mask(idx);
+			planning_block->direction_bits |= Motion_Core::get_direction_pin_mask(idx);
 		}
 	}
 
 	// Bail if this is a zero-length block. Highly unlikely to occur.
 	if (planning_block->step_event_count == 0)
 	{
-		return (PLAN_EMPTY_BLOCK);
+		return (0);
 	}
 
 	// Calculate the unit vector of the line move and the block maximum feed rate and acceleration scaled
@@ -61,8 +60,8 @@ uint8_t Motion_Core::Planner::Calculator::_plan_buffer_line(NGC_RS274::NGC_Binar
 	// NOTE: This calculation assumes all axes are orthogonal (Cartesian) and works with ABC-axes,
 	// if they are also orthogonal/independent. Operates on the absolute value of the unit vector.
 	planning_block->millimeters = Motion_Core::convert_delta_vector_to_unit_vector(unit_vec);
-	planning_block->acceleration = Motion_Core::limit_value_by_axis_maximum(c_settings::settings.acceleration, unit_vec);
-	planning_block->rapid_rate = Motion_Core::limit_value_by_axis_maximum(c_settings::settings.max_rate, unit_vec);
+	planning_block->acceleration = Motion_Core::limit_value_by_axis_maximum(Motion_Core::Settings::acceleration, unit_vec);
+	planning_block->rapid_rate = Motion_Core::limit_value_by_axis_maximum(Motion_Core::Settings::max_rate, unit_vec);
 
 	// Store programmed rate.
 	if (target_block->g_group[NGC_RS274::Groups::G::MOTION] == NGC_RS274::G_codes::RAPID_POSITIONING)
@@ -136,16 +135,16 @@ uint8_t Motion_Core::Planner::Calculator::_plan_buffer_line(NGC_RS274::NGC_Binar
 			else
 			{
 				Motion_Core::convert_delta_vector_to_unit_vector(junction_unit_vec);
-				float junction_acceleration = Motion_Core::limit_value_by_axis_maximum(c_settings::settings.acceleration, junction_unit_vec);
+				float junction_acceleration = Motion_Core::limit_value_by_axis_maximum(Motion_Core::Settings::acceleration, junction_unit_vec);
 				float sin_theta_d2 = sqrt(0.5 * (1.0 - junction_cos_theta)); // Trig half angle identity. Always positive.
 				planning_block->max_junction_speed_sqr = max(MINIMUM_JUNCTION_SPEED*MINIMUM_JUNCTION_SPEED,
-					(junction_acceleration * c_settings::settings.junction_deviation * sin_theta_d2) / (1.0 - sin_theta_d2));
+				(junction_acceleration * Motion_Core::Settings::junction_deviation * sin_theta_d2) / (1.0 - sin_theta_d2));
 			}
 		}
 	}
 
 	// Block system motion from updating this data to ensure next g-code motion is computed correctly.
-	if (!(planning_block->condition & PL_COND_FLAG_SYSTEM_MOTION))
+	//if (!(planning_block->condition & PL_COND_FLAG_SYSTEM_MOTION))
 	{
 		float nominal_speed = Motion_Core::Planner::Calculator::plan_compute_profile_nominal_speed(planning_block);
 		Motion_Core::Planner::Calculator::plan_compute_profile_parameters(planning_block, nominal_speed, Motion_Core::Planner::Calculator::previous_nominal_speed);
@@ -153,185 +152,187 @@ uint8_t Motion_Core::Planner::Calculator::_plan_buffer_line(NGC_RS274::NGC_Binar
 
 		// Update previous path unit_vector and planner position.
 		memcpy(Motion_Core::Planner::Calculator::previous_unit_vec, unit_vec, sizeof(unit_vec)); // pl.previous_unit_vec[] = unit_vec[]
-		memcpy(Motion_Core::Planner::Calculator::position, target_steps, sizeof(target_steps)); // pl.position[] = target_steps[]
+		//memcpy(Motion_Core::Planner::Calculator::position, target_steps, sizeof(target_steps)); // pl.position[] = target_steps[]
 
 		// New block is all set. Update buffer head and next buffer head indices.
 		// Finish up by recalculating the plan with the new block.
 		Motion_Core::Planner::Calculator::planner_recalculate();
 	}
-	return (PLAN_OK);
+	return (1);
 }
 
-uint8_t Motion_Core::Planner::Calculator::plan_buffer_line(float *target, c_planner::plan_line_data_t *pl_data, NGC_RS274::NGC_Binary_Block *target_block)
-{
-	// Prepare and initialize new block. Copy relevant pl_data for block execution.
-	Motion_Core::Planner::Block_Item *planning_block = Motion_Core::Planner::Buffer::Write();
-
-	planning_block->condition = pl_data->condition;
-	planning_block->spindle_speed = *target_block->persisted_values.active_spindle_speed_S;
-	//planning_block->line_number = *target_block->persisted_values.active_line_number_N;
-	planning_block->line_number = pl_data->line_number;
-
-	// Compute and store initial move distance data.
-	int32_t target_steps[N_AXIS], position_steps[N_AXIS];
-	float unit_vec[N_AXIS], delta_mm;
-	uint8_t idx;
-
-	// Copy position data based on type of motion being planned.
-	if (planning_block->condition & PL_COND_FLAG_SYSTEM_MOTION)
-	{
-		memcpy(position_steps, c_system::sys_position, sizeof(c_system::sys_position));
-	}
-	else
-	{
-		memcpy(position_steps, Motion_Core::Planner::Calculator::position, sizeof(Motion_Core::Planner::Calculator::position));
-	}
-
-
-	for (idx = 0; idx < N_AXIS; idx++)
-	{
-		// Calculate target position in absolute steps, number of steps for each axis, and determine max step events.
-		// Also, compute individual axes distance for move and prep unit vector calculations.
-		// NOTE: Computes true distance from converted step values.
-
-		target_steps[idx] = lround(target[idx] * c_settings::settings.steps_per_mm[idx]);
-		planning_block->steps[idx] = labs(target_steps[idx] - position_steps[idx]);
-		planning_block->step_event_count = max(planning_block->step_event_count, planning_block->steps[idx]);
-		delta_mm = (target_steps[idx] - position_steps[idx]) / c_settings::settings.steps_per_mm[idx];
-
-		unit_vec[idx] = delta_mm; // Store unit vector numerator
-
-		// Set direction bits. Bit enabled always means direction is negative.
-		if (delta_mm < 0.0)
-		{
-			planning_block->direction_bits |= c_settings::get_direction_pin_mask(idx);
-		}
-	}
-
-	// Bail if this is a zero-length block. Highly unlikely to occur.
-	if (planning_block->step_event_count == 0)
-	{
-		return (PLAN_EMPTY_BLOCK);
-	}
-
-	// Calculate the unit vector of the line move and the block maximum feed rate and acceleration scaled
-	// down such that no individual axes maximum values are exceeded with respect to the line direction.
-	// NOTE: This calculation assumes all axes are orthogonal (Cartesian) and works with ABC-axes,
-	// if they are also orthogonal/independent. Operates on the absolute value of the unit vector.
-	planning_block->millimeters = Motion_Core::convert_delta_vector_to_unit_vector(unit_vec);
-	planning_block->acceleration = Motion_Core::limit_value_by_axis_maximum(c_settings::settings.acceleration, unit_vec);
-	planning_block->rapid_rate = Motion_Core::limit_value_by_axis_maximum(c_settings::settings.max_rate, unit_vec);
-
-	// Store programmed rate.
-	if (planning_block->condition & PL_COND_FLAG_RAPID_MOTION)
-	{
-		planning_block->programmed_rate = planning_block->rapid_rate;
-	}
-	else
-	{
-		planning_block->programmed_rate = *target_block->persisted_values.feed_rate_F;
-		if (planning_block->condition & PL_COND_FLAG_INVERSE_TIME)
-		{
-			planning_block->programmed_rate *= planning_block->millimeters;
-		}
-	}
-
-	// TODO: Need to check this method handling zero junction speeds when starting from rest.
-	if (Motion_Core::Planner::Buffer::Available() == 0)
-	{
-
-		// Initialize block entry speed as zero. Assume it will be starting from rest. Planner will correct this later.
-		// If system motion, the system motion block always is assumed to start from rest and end at a complete stop.
-		planning_block->entry_speed_sqr = 0.0;
-		planning_block->max_junction_speed_sqr = 0.0; // Starting from rest. Enforce start from zero velocity.
-
-	}
-	else
-	{
-		// Compute maximum allowable entry speed at junction by centripetal acceleration approximation.
-		// Let a circle be tangent to both previous and current path line segments, where the junction
-		// deviation is defined as the distance from the junction to the closest edge of the circle,
-		// colinear with the circle center. The circular segment joining the two paths represents the
-		// path of centripetal acceleration. Solve for max velocity based on max acceleration about the
-		// radius of the circle, defined indirectly by junction deviation. This may be also viewed as
-		// path width or max_jerk in the previous Grbl version. This approach does not actually deviate
-		// from path, but used as a robust way to compute cornering speeds, as it takes into account the
-		// nonlinearities of both the junction angle and junction velocity.
-		//
-		// NOTE: If the junction deviation value is finite, Grbl executes the motions in an exact path
-		// mode (G61). If the junction deviation value is zero, Grbl will execute the motion in an exact
-		// stop mode (G61.1) manner. In the future, if continuous mode (G64) is desired, the math here
-		// is exactly the same. Instead of motioning all the way to junction point, the machine will
-		// just follow the arc circle defined here. The Arduino doesn't have the CPU cycles to perform
-		// a continuous mode path, but ARM-based microcontrollers most certainly do.
-		//
-		// NOTE: The max junction speed is a fixed value, since machine acceleration limits cannot be
-		// changed dynamically during operation nor can the line move geometry. This must be kept in
-		// memory in the event of a feedrate override changing the nominal speeds of blocks, which can
-		// change the overall maximum entry speed conditions of all blocks.
-
-		float junction_unit_vec[N_AXIS];
-		float junction_cos_theta = 0.0;
-		for (idx = 0; idx < N_AXIS; idx++)
-		{
-			junction_cos_theta -= Motion_Core::Planner::Calculator::previous_unit_vec[idx] * unit_vec[idx];
-			junction_unit_vec[idx] = unit_vec[idx] - Motion_Core::Planner::Calculator::previous_unit_vec[idx];
-		}
-
-		// NOTE: Computed without any expensive trig, sin() or acos(), by trig half angle identity of cos(theta).
-		if (junction_cos_theta > 0.999999)
-		{
-			//  For a 0 degree acute junction, just set minimum junction speed.
-			planning_block->max_junction_speed_sqr = MINIMUM_JUNCTION_SPEED * MINIMUM_JUNCTION_SPEED;
-		}
-		else
-		{
-			if (junction_cos_theta < -0.999999)
-			{
-				// Junction is a straight line or 180 degrees. Junction speed is infinite.
-				planning_block->max_junction_speed_sqr = SOME_LARGE_VALUE;
-			}
-			else
-			{
-				Motion_Core::convert_delta_vector_to_unit_vector(junction_unit_vec);
-				float junction_acceleration = Motion_Core::limit_value_by_axis_maximum(c_settings::settings.acceleration, junction_unit_vec);
-				float sin_theta_d2 = sqrt(0.5 * (1.0 - junction_cos_theta)); // Trig half angle identity. Always positive.
-				planning_block->max_junction_speed_sqr = max(MINIMUM_JUNCTION_SPEED*MINIMUM_JUNCTION_SPEED,
-					(junction_acceleration * c_settings::settings.junction_deviation * sin_theta_d2) / (1.0 - sin_theta_d2));
-			}
-		}
-	}
-
-	// Block system motion from updating this data to ensure next g-code motion is computed correctly.
-	if (!(planning_block->condition & PL_COND_FLAG_SYSTEM_MOTION))
-	{
-		float nominal_speed = Motion_Core::Planner::Calculator::plan_compute_profile_nominal_speed(planning_block);
-		Motion_Core::Planner::Calculator::plan_compute_profile_parameters(planning_block, nominal_speed, Motion_Core::Planner::Calculator::previous_nominal_speed);
-		Motion_Core::Planner::Calculator::previous_nominal_speed = nominal_speed;
-
-		// Update previous path unit_vector and planner position.
-		memcpy(Motion_Core::Planner::Calculator::previous_unit_vec, unit_vec, sizeof(unit_vec)); // pl.previous_unit_vec[] = unit_vec[]
-		memcpy(Motion_Core::Planner::Calculator::position, target_steps, sizeof(target_steps)); // pl.position[] = target_steps[]
-
-		// New block is all set. Update buffer head and next buffer head indices.
-		// Finish up by recalculating the plan with the new block.
-		Motion_Core::Planner::Calculator::planner_recalculate();
-	}
-	return (PLAN_OK);
-}
+//uint8_t Motion_Core::Planner::Calculator::plan_buffer_line(float *target, c_planner::plan_line_data_t *pl_data, NGC_RS274::NGC_Binary_Block *target_block)
+//{
+	//// Prepare and initialize new block. Copy relevant pl_data for block execution.
+	//Motion_Core::Planner::Block_Item *planning_block = Motion_Core::Planner::Buffer::Write();
+//
+	//planning_block->condition = pl_data->condition;
+	//planning_block->spindle_speed = *target_block->persisted_values.active_spindle_speed_S;
+	////planning_block->line_number = *target_block->persisted_values.active_line_number_N;
+	//planning_block->line_number = pl_data->line_number;
+//
+	//// Compute and store initial move distance data.
+	//int32_t target_steps[N_AXIS], position_steps[N_AXIS];
+	//float unit_vec[N_AXIS], delta_mm;
+	//uint8_t idx;
+//
+	//// Copy position data based on type of motion being planned.
+	//if (planning_block->condition & PL_COND_FLAG_SYSTEM_MOTION)
+	//{
+		//memcpy(position_steps, c_system::sys_position, sizeof(c_system::sys_position));
+	//}
+	//else
+	//{
+		//memcpy(position_steps, Motion_Core::Planner::Calculator::position, sizeof(Motion_Core::Planner::Calculator::position));
+	//}
+//
+//
+	//for (idx = 0; idx < N_AXIS; idx++)
+	//{
+		//// Calculate target position in absolute steps, number of steps for each axis, and determine max step events.
+		//// Also, compute individual axes distance for move and prep unit vector calculations.
+		//// NOTE: Computes true distance from converted step values.
+//
+		//target_steps[idx] = lround(target[idx] * c_settings::settings.steps_per_mm[idx]);
+		//planning_block->steps[idx] = labs(target_steps[idx] - position_steps[idx]);
+		//planning_block->step_event_count = max(planning_block->step_event_count, planning_block->steps[idx]);
+		//delta_mm = (target_steps[idx] - position_steps[idx]) / c_settings::settings.steps_per_mm[idx];
+//
+		//unit_vec[idx] = delta_mm; // Store unit vector numerator
+//
+		//// Set direction bits. Bit enabled always means direction is negative.
+		//if (delta_mm < 0.0)
+		//{
+			//planning_block->direction_bits |= c_settings::get_direction_pin_mask(idx);
+		//}
+	//}
+//
+	//// Bail if this is a zero-length block. Highly unlikely to occur.
+	//if (planning_block->step_event_count == 0)
+	//{
+		//return (PLAN_EMPTY_BLOCK);
+	//}
+//
+	//// Calculate the unit vector of the line move and the block maximum feed rate and acceleration scaled
+	//// down such that no individual axes maximum values are exceeded with respect to the line direction.
+	//// NOTE: This calculation assumes all axes are orthogonal (Cartesian) and works with ABC-axes,
+	//// if they are also orthogonal/independent. Operates on the absolute value of the unit vector.
+	//planning_block->millimeters = Motion_Core::convert_delta_vector_to_unit_vector(unit_vec);
+	//planning_block->acceleration = Motion_Core::limit_value_by_axis_maximum(c_settings::settings.acceleration, unit_vec);
+	//planning_block->rapid_rate = Motion_Core::limit_value_by_axis_maximum(c_settings::settings.max_rate, unit_vec);
+//
+	//// Store programmed rate.
+	//if (planning_block->condition & PL_COND_FLAG_RAPID_MOTION)
+	//{
+		//planning_block->programmed_rate = planning_block->rapid_rate;
+	//}
+	//else
+	//{
+		//planning_block->programmed_rate = *target_block->persisted_values.feed_rate_F;
+		//if (planning_block->condition & PL_COND_FLAG_INVERSE_TIME)
+		//{
+			//planning_block->programmed_rate *= planning_block->millimeters;
+		//}
+	//}
+//
+	//// TODO: Need to check this method handling zero junction speeds when starting from rest.
+	//if (Motion_Core::Planner::Buffer::Available() == 0)
+	//{
+//
+		//// Initialize block entry speed as zero. Assume it will be starting from rest. Planner will correct this later.
+		//// If system motion, the system motion block always is assumed to start from rest and end at a complete stop.
+		//planning_block->entry_speed_sqr = 0.0;
+		//planning_block->max_junction_speed_sqr = 0.0; // Starting from rest. Enforce start from zero velocity.
+//
+	//}
+	//else
+	//{
+		//// Compute maximum allowable entry speed at junction by centripetal acceleration approximation.
+		//// Let a circle be tangent to both previous and current path line segments, where the junction
+		//// deviation is defined as the distance from the junction to the closest edge of the circle,
+		//// colinear with the circle center. The circular segment joining the two paths represents the
+		//// path of centripetal acceleration. Solve for max velocity based on max acceleration about the
+		//// radius of the circle, defined indirectly by junction deviation. This may be also viewed as
+		//// path width or max_jerk in the previous Grbl version. This approach does not actually deviate
+		//// from path, but used as a robust way to compute cornering speeds, as it takes into account the
+		//// nonlinearities of both the junction angle and junction velocity.
+		////
+		//// NOTE: If the junction deviation value is finite, Grbl executes the motions in an exact path
+		//// mode (G61). If the junction deviation value is zero, Grbl will execute the motion in an exact
+		//// stop mode (G61.1) manner. In the future, if continuous mode (G64) is desired, the math here
+		//// is exactly the same. Instead of motioning all the way to junction point, the machine will
+		//// just follow the arc circle defined here. The Arduino doesn't have the CPU cycles to perform
+		//// a continuous mode path, but ARM-based microcontrollers most certainly do.
+		////
+		//// NOTE: The max junction speed is a fixed value, since machine acceleration limits cannot be
+		//// changed dynamically during operation nor can the line move geometry. This must be kept in
+		//// memory in the event of a feedrate override changing the nominal speeds of blocks, which can
+		//// change the overall maximum entry speed conditions of all blocks.
+//
+		//float junction_unit_vec[N_AXIS];
+		//float junction_cos_theta = 0.0;
+		//for (idx = 0; idx < N_AXIS; idx++)
+		//{
+			//junction_cos_theta -= Motion_Core::Planner::Calculator::previous_unit_vec[idx] * unit_vec[idx];
+			//junction_unit_vec[idx] = unit_vec[idx] - Motion_Core::Planner::Calculator::previous_unit_vec[idx];
+		//}
+//
+		//// NOTE: Computed without any expensive trig, sin() or acos(), by trig half angle identity of cos(theta).
+		//if (junction_cos_theta > 0.999999)
+		//{
+			////  For a 0 degree acute junction, just set minimum junction speed.
+			//planning_block->max_junction_speed_sqr = MINIMUM_JUNCTION_SPEED * MINIMUM_JUNCTION_SPEED;
+		//}
+		//else
+		//{
+			//if (junction_cos_theta < -0.999999)
+			//{
+				//// Junction is a straight line or 180 degrees. Junction speed is infinite.
+				//planning_block->max_junction_speed_sqr = SOME_LARGE_VALUE;
+			//}
+			//else
+			//{
+				//Motion_Core::convert_delta_vector_to_unit_vector(junction_unit_vec);
+				//float junction_acceleration = Motion_Core::limit_value_by_axis_maximum(c_settings::settings.acceleration, junction_unit_vec);
+				//float sin_theta_d2 = sqrt(0.5 * (1.0 - junction_cos_theta)); // Trig half angle identity. Always positive.
+				//planning_block->max_junction_speed_sqr = max(MINIMUM_JUNCTION_SPEED*MINIMUM_JUNCTION_SPEED,
+				//(junction_acceleration * c_settings::settings.junction_deviation * sin_theta_d2) / (1.0 - sin_theta_d2));
+			//}
+		//}
+	//}
+//
+	//// Block system motion from updating this data to ensure next g-code motion is computed correctly.
+	//if (!(planning_block->condition & PL_COND_FLAG_SYSTEM_MOTION))
+	//{
+		//float nominal_speed = Motion_Core::Planner::Calculator::plan_compute_profile_nominal_speed(planning_block);
+		//Motion_Core::Planner::Calculator::plan_compute_profile_parameters(planning_block, nominal_speed, Motion_Core::Planner::Calculator::previous_nominal_speed);
+		//Motion_Core::Planner::Calculator::previous_nominal_speed = nominal_speed;
+//
+		//// Update previous path unit_vector and planner position.
+		//memcpy(Motion_Core::Planner::Calculator::previous_unit_vec, unit_vec, sizeof(unit_vec)); // pl.previous_unit_vec[] = unit_vec[]
+		//memcpy(Motion_Core::Planner::Calculator::position, target_steps, sizeof(target_steps)); // pl.position[] = target_steps[]
+//
+		//// New block is all set. Update buffer head and next buffer head indices.
+		//// Finish up by recalculating the plan with the new block.
+		//Motion_Core::Planner::Calculator::planner_recalculate();
+	//}
+	//return (PLAN_OK);
+//}
 
 float Motion_Core::Planner::Calculator::plan_compute_profile_nominal_speed(Motion_Core::Planner::Block_Item *block)
-{
+{uint8_t over_ride = 100;
 	float nominal_speed = block->programmed_rate;
-	if (block->condition & PL_COND_FLAG_RAPID_MOTION)
+	//if (block->condition & (PL_COND_FLAG_RAPID_MOTION))
+	if (block->condition & (1<<0))
 	{
-		nominal_speed *= (0.01 * c_system::sys.r_override);
+		nominal_speed *= (0.01 * over_ride);
 	}
 	else
 	{
-		if (!(block->condition & PL_COND_FLAG_NO_FEED_OVERRIDE))
+		//if (!(block->condition & PL_COND_FLAG_NO_FEED_OVERRIDE))
+		if (!(block->condition & (1<<2)))
 		{
-			nominal_speed *= (0.01 * c_system::sys.f_override);
+			nominal_speed *= (0.01 * over_ride);
 		}
 		if (nominal_speed > block->rapid_rate)
 		{

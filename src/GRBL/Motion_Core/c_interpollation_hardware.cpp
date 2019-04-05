@@ -1,5 +1,6 @@
 #include "c_interpollation_hardware.h"
 #include "../hardware_def.h"
+#include "c_motion_core.h"
 
 #ifdef MSVC
 #include <iostream>
@@ -11,7 +12,6 @@ static ofstream myfile;
 #endif // MSVC
 
 Motion_Core::Segment::Bresenham::Bresenham_Item *Motion_Core::Hardware::Interpollation::Change_Check_Exec_Timer_Bresenham; // Tracks the current st_block index. Change indicates new block.
-Motion_Core::Segment::Bresenham::Bresenham_Item *Motion_Core::Hardware::Interpollation::Exec_Timer_Bresenham;   // Pointer to the block data for the segment being executed
 Motion_Core::Segment::Timer::Timer_Item *Motion_Core::Hardware::Interpollation::Exec_Timer_Item;  // Pointer to the segment being executed
 
 uint32_t Motion_Core::Hardware::Interpollation::system_position[N_AXIS];
@@ -111,13 +111,7 @@ void Motion_Core::Hardware::Interpollation::step_tick()
 			Hardware_Abstraction_Layer::Grbl::Stepper::OCR1A_set
 			(Motion_Core::Hardware::Interpollation::Exec_Timer_Item->timer_delay_value);
 			
-			//TCCR1B = (TCCR1B & ~(0x07<<CS10)) | (Motion_Core::Hardware::Interpollation::Exec_Timer_Item->timer_prescaler<<CS10);
-
-			// Initialize step segment timing per step and load number of steps to execute.
-			//OCR1A = Motion_Core::Hardware::Interpollation::Exec_Timer_Item->timer_delay_value;
 			
-			
-
 			// If the new segment starts a new planner block, initialize stepper variables and counters.
 			// NOTE: When the segment data index changes, this indicates a new planner block.
 			if (Motion_Core::Hardware::Interpollation::Change_Check_Exec_Timer_Bresenham !=
@@ -129,8 +123,9 @@ void Motion_Core::Hardware::Interpollation::step_tick()
 
 				Motion_Core::Hardware::Interpollation::Change_Check_Exec_Timer_Bresenham =
 				Motion_Core::Hardware::Interpollation::Exec_Timer_Item->bresenham_in_item;
-				Motion_Core::Hardware::Interpollation::Exec_Timer_Bresenham =
-				Motion_Core::Hardware::Interpollation::Exec_Timer_Item->bresenham_in_item;
+				
+				//Motion_Core::Hardware::Interpollation::Exec_Timer_Bresenham =
+				//Motion_Core::Hardware::Interpollation::Exec_Timer_Item->bresenham_in_item;
 
 				// Initialize Bresenham line and distance counters
 
@@ -140,10 +135,10 @@ void Motion_Core::Hardware::Interpollation::step_tick()
 				= Motion_Core::Hardware::Interpollation::counter[A_AXIS]
 				= Motion_Core::Hardware::Interpollation::counter[B_AXIS]
 				= Motion_Core::Hardware::Interpollation::counter[C_AXIS]
-				=(Motion_Core::Hardware::Interpollation::Exec_Timer_Bresenham->step_event_count);
+				=(Motion_Core::Hardware::Interpollation::Exec_Timer_Item->bresenham_in_item->step_event_count);
 			}
 			Motion_Core::Hardware::Interpollation::dir_outbits
-			= Motion_Core::Hardware::Interpollation::Exec_Timer_Bresenham->direction_bits
+			= Motion_Core::Hardware::Interpollation::Exec_Timer_Item->bresenham_in_item->direction_bits
 			^ Motion_Core::Hardware::Interpollation::dir_port_invert_mask;
 
 		}
@@ -160,55 +155,24 @@ void Motion_Core::Hardware::Interpollation::step_tick()
 		}
 	}
 
-
-	//// Check probing state.
-	//if (c_system::sys_probe_state == PROBE_ACTIVE)
-	//{
-	//	c_probe::probe_state_monitor();
-	//}
-
 	// Reset step out bits.
 	Motion_Core::Hardware::Interpollation::step_outbits = 0;
 	for (int i = 0; i < N_AXIS; i++)
 	{
 		// Execute step displacement profile by Bresenham line algorithm
-		Motion_Core::Hardware::Interpollation::counter[i] += Motion_Core::Hardware::Interpollation::Exec_Timer_Bresenham->steps[i];
+		Motion_Core::Hardware::Interpollation::counter[i] += Motion_Core::Hardware::Interpollation::Exec_Timer_Item->bresenham_in_item->steps[i];
 		if (Motion_Core::Hardware::Interpollation::counter[i] >
-		Motion_Core::Hardware::Interpollation::Exec_Timer_Bresenham->step_event_count)
+		Motion_Core::Hardware::Interpollation::Exec_Timer_Item->bresenham_in_item->step_event_count)
 		{
 			Motion_Core::Hardware::Interpollation::step_outbits |= (1 << i);
 			Motion_Core::Hardware::Interpollation::counter[i] -=
-			Motion_Core::Hardware::Interpollation::Exec_Timer_Bresenham->step_event_count;
-			if (Motion_Core::Hardware::Interpollation::Exec_Timer_Bresenham->direction_bits & (1 << i))
+			Motion_Core::Hardware::Interpollation::Exec_Timer_Item->bresenham_in_item->step_event_count;
+			if (Motion_Core::Hardware::Interpollation::Exec_Timer_Item->bresenham_in_item->direction_bits & (1 << i))
 			Motion_Core::Hardware::Interpollation::system_position[i]--;
 			else
 			Motion_Core::Hardware::Interpollation::system_position[i]++;
 		}
 	}
-
-	//uint8_t i=0;
-	//Motion_Core::Hardware::Interpollation::counter[i] += Motion_Core::Hardware::Interpollation::Exec_Timer_Bresenham->steps[i];
-	//if (Motion_Core::Hardware::Interpollation::counter[i] >
-	//Motion_Core::Hardware::Interpollation::Exec_Timer_Bresenham->step_event_count)
-	//{
-	//Motion_Core::Hardware::Interpollation::step_outbits |= (1 << i);
-	//Motion_Core::Hardware::Interpollation::counter[i] -=
-	//Motion_Core::Hardware::Interpollation::Exec_Timer_Bresenham->step_event_count;
-	//if (Motion_Core::Hardware::Interpollation::Exec_Timer_Bresenham->direction_bits & (1 << i))
-	//Motion_Core::Hardware::Interpollation::system_position[i]--;
-	//else
-	//Motion_Core::Hardware::Interpollation::system_position[i]++;
-	//}
-	
-	//// During a homing cycle, lock out and prevent desired axes from moving.
-	//if (Motion_Core::Hardware::Interpollation::sys.state == STATE_HOMING)
-	//{
-	//	Motion_Core::Hardware::Interpollation::step_outbits &= c_system::sys.homing_axis_lock;
-	//}
-
-
-	//st.step_count--; // Decrement step events count
-
 	
 	Motion_Core::Hardware::Interpollation::Exec_Timer_Item->steps_to_execute_in_this_segment--;
 	
@@ -216,7 +180,6 @@ void Motion_Core::Hardware::Interpollation::step_tick()
 	//if (st.step_count == 0)
 	if (Motion_Core::Hardware::Interpollation::Exec_Timer_Item->steps_to_execute_in_this_segment == 0)
 	{
-
 		// Segment is complete. Discard current segment and advance segment indexing.
 		Motion_Core::Hardware::Interpollation::Exec_Timer_Item = NULL;
 		Motion_Core::Segment::Timer::Buffer::Advance();

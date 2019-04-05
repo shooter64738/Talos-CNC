@@ -13,8 +13,8 @@ Motion_Core::Segment::Bresenham::Bresenham_Item::~Bresenham_Item()
 
 
 Motion_Core::Segment::Bresenham::Bresenham_Item Motion_Core::Segment::Bresenham::Buffer::_buffer[Motion_Core::Segment::Timer::BUFFER_SIZE - 1];
-int16_t Motion_Core::Segment::Bresenham::Buffer::_tail = 0;
-int16_t Motion_Core::Segment::Bresenham::Buffer::_head = 0;
+int8_t Motion_Core::Segment::Bresenham::Buffer::_tail = 0;
+int8_t Motion_Core::Segment::Bresenham::Buffer::_head = 0;
 uint8_t Motion_Core::Segment::Bresenham::Buffer::_full = 0;
 
 /*

@@ -36,7 +36,6 @@ namespace Motion_Core
 			float programmed_rate;        // Programmed rate of this block (mm/min).
 
 										  // Stored spindle speed data used by spindle overrides and resuming methods.
-			float spindle_speed;    // Block spindle speed. Copied from pl_line_data.
 			uint8_t Station;
 			void Reset();
 

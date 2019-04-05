@@ -43,12 +43,15 @@ void Hardware_Abstraction_Layer::Grbl::Stepper::initialize()
 	#ifdef STEP_PULSE_DELAY
 	TIMSK0 |= (1<<OCIE0A); // Enable Timer0 Compare Match A interrupt
 	#endif
+	
+	Hardware_Abstraction_Layer::Grbl::Stepper::st_go_idle();
+	
 }
 
 void Hardware_Abstraction_Layer::Grbl::Stepper::wake_up()
 {
 	// Enable stepper drivers.
-	if (bit_istrue(c_settings::settings.flags, BITFLAG_INVERT_ST_ENABLE))
+	if (bit_istrue(0, BITFLAG_INVERT_ST_ENABLE))
 	{
 		STEPPERS_DISABLE_PORT |= (1 << STEPPERS_DISABLE_BIT);
 	}
@@ -60,12 +63,12 @@ void Hardware_Abstraction_Layer::Grbl::Stepper::wake_up()
 	// Initialize step pulse timing from settings. Here to ensure updating after re-writing.
 	#ifdef STEP_PULSE_DELAY
 	// Set total step pulse time after direction pin set. Ad hoc computation from oscilloscope.
-	Motion_Core::Hardware::Interpollation::Step_Pulse_Length = -(((c_settings::settings.pulse_microseconds+STEP_PULSE_DELAY-2)*TICKS_PER_MICROSECOND) >> 3);
+	Motion_Core::Hardware::Interpollation::Step_Pulse_Length = -(((10+STEP_PULSE_DELAY-2)*TICKS_PER_MICROSECOND) >> 3);
 	// Set delay between direction pin write and step command.
-	OCR0A = -(((c_settings::settings.pulse_microseconds)*TICKS_PER_MICROSECOND) >> 3);
+	OCR0A = -(((10)*TICKS_PER_MICROSECOND) >> 3);
 	#else // Normal operation
 	// Set step pulse time. Ad hoc computation from oscilloscope. Uses two's complement.
-	Motion_Core::Hardware::Interpollation::Step_Pulse_Length = -(((c_settings::settings.pulse_microseconds - 2) * TICKS_PER_MICROSECOND) >> 3);
+	Motion_Core::Hardware::Interpollation::Step_Pulse_Length = -(((10 - 2) * TICKS_PER_MICROSECOND) >> 3);
 	#endif
 
 	// Enable Stepper Driver Interrupt

@@ -7,25 +7,10 @@ Motion_Core::Segment::Timer::Timer_Item::Timer_Item()
 Motion_Core::Segment::Timer::Timer_Item::~Timer_Item()
 {
 }
-Motion_Core::Segment::Timer::Timer_Item::Timer_Item(uint16_t steps_to_execute_in_this_segment
-	, uint16_t timer_delay_value, Motion_Core::Segment::Bresenham::Bresenham_Item *st_block_index
-	, uint8_t timer_prescaler, uint32_t line_number)
-{
-	this->timer_delay_value = timer_delay_value;
-	this->line_number = line_number;
-	this->steps_to_execute_in_this_segment = steps_to_execute_in_this_segment;
-	this->timer_prescaler = timer_prescaler;
-	this->bresenham_in_item = st_block_index;
-}
-uint8_t Motion_Core::Segment::Timer::Timer_Item::Calculate()
-{
-	
-	return 0;
-}
 
 Motion_Core::Segment::Timer::Timer_Item Motion_Core::Segment::Timer::Buffer::_buffer[Motion_Core::Segment::Timer::BUFFER_SIZE];
-int16_t Motion_Core::Segment::Timer::Buffer::_tail = 0;
-int16_t Motion_Core::Segment::Timer::Buffer::_head = 0;
+int8_t Motion_Core::Segment::Timer::Buffer::_tail = 0;
+int8_t Motion_Core::Segment::Timer::Buffer::_head = 0;
 uint8_t Motion_Core::Segment::Timer::Buffer::_full = 0;
 
 /*

@@ -1,7 +1,5 @@
 
 #include <stdint.h>
-
-#include "..\c_planner.h"
 #include "c_planner_compute_block.h"
 #include "c_segment_timer_bresenham.h"
 #include "c_segment_timer_item.h"

@@ -33,5 +33,4 @@ void Block_Item::Reset()
 	this->max_junction_speed_sqr = 0;
 	this->rapid_rate = 0;
 	this->programmed_rate = 0;
-	this->spindle_speed = 0;
 }

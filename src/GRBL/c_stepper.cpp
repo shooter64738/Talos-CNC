@@ -483,28 +483,46 @@ void c_stepper::st_generate_step_dir_invert_masks()
 void c_stepper::st_reset()
 {
 	// Initialize stepper driver idle state.
-	st_go_idle();
+	//st_go_idle();
+
+Hardware_Abstraction_Layer::Grbl::Stepper::st_go_idle();
+	//busy = false;
+//
+	//// Set stepper driver idle state, disabled or enabled, depending on settings and circumstances.
+	//bool pin_state = false; // Keep enabled.
+	//if (((c_settings::settings.stepper_idle_lock_time != 0xff) || c_system::sys_rt_exec_alarm || c_system::sys.state == STATE_SLEEP) && c_system::sys.state != STATE_HOMING)
+	//{
+		//// Force stepper dwell to lock axes for a defined amount of time to ensure the axes come to a complete
+		//// stop and not drift from residual inertial forces at the end of the last movement.
+		//Hardware_Abstraction_Layer::Core::delay_ms(c_settings::settings.stepper_idle_lock_time);
+		//pin_state = true; // Override. Disable steppers.
+	//}
+	//if (bit_istrue(c_settings::settings.flags, BITFLAG_INVERT_ST_ENABLE))
+	//{
+		//pin_state = !pin_state;
+	//} // Apply pin invert.
+	//Hardware_Abstraction_Layer::Grbl::Stepper::port_disable(pin_state);
 
 	// Initialize stepper algorithm variables.
 	//memset(&prep, 0, sizeof(st_prep_t));
 	Motion_Core::Segment::Arbitrator::Reset();
-	memset(&st, 0, sizeof(stepper_t));
-	st.Exec_Timer_Item = NULL;
-	c_stepper::pl_block = NULL;  // Planner block pointer used by segment buffer
-	segment_buffer_tail = 0;
-	segment_buffer_head = 0; // empty = tail
-	segment_next_head = 1;
-	busy = false;
+	//memset(&st, 0, sizeof(stepper_t));
+	//st.Exec_Timer_Item = NULL;
+	//c_stepper::pl_block = NULL;  // Planner block pointer used by segment buffer
+	//segment_buffer_tail = 0;
+	//segment_buffer_head = 0; // empty = tail
+	//segment_next_head = 1;
+	//busy = false;
 
-	st_generate_step_dir_invert_masks();
-	st.dir_outbits = dir_port_invert_mask; // Initialize direction bits to default.
+	//st_generate_step_dir_invert_masks();
+	//st.dir_outbits = dir_port_invert_mask; // Initialize direction bits to default.
 
 	// Initialize step and direction port pins.
 	//STEP_PORT = (STEP_PORT & ~STEP_MASK) | step_port_invert_mask;
-	Hardware_Abstraction_Layer::Grbl::Stepper::port_step((STEP_PORT & ~STEP_MASK) | step_port_invert_mask);
+	//Hardware_Abstraction_Layer::Grbl::Stepper::port_step((STEP_PORT & ~STEP_MASK) | step_port_invert_mask);
 
 	//DIRECTION_PORT = (DIRECTION_PORT & ~DIRECTION_MASK) | dir_port_invert_mask;
-	Hardware_Abstraction_Layer::Grbl::Stepper::port_direction((DIRECTION_PORT & ~DIRECTION_MASK) | dir_port_invert_mask);
+	//Hardware_Abstraction_Layer::Grbl::Stepper::port_direction((DIRECTION_PORT & ~DIRECTION_MASK) | dir_port_invert_mask);
 }
 
 // Initialize and start the stepper motor subsystem

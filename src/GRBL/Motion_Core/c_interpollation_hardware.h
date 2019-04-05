@@ -1,6 +1,8 @@
 #include <stdint.h>
 #include "c_segment_timer_bresenham.h"
 #include "c_segment_timer_item.h"
+#include "c_motion_core.h"
+
 namespace Motion_Core
 {
 	namespace Hardware
@@ -16,16 +18,9 @@ namespace Motion_Core
 #endif
 			static uint8_t step_outbits;         // The next stepping-bits to be output
 			static uint8_t dir_outbits;
-#ifdef ADAPTIVE_MULTI_AXIS_STEP_SMOOTHING
-			uint32_t steps[N_AXIS];
-#endif
-
-			//uint16_t step_count;       // Steps remaining in line segment motion
 			static Motion_Core::Segment::Bresenham::Bresenham_Item *Change_Check_Exec_Timer_Bresenham; // Tracks the current st_block index. Change indicates new block.
-			static Motion_Core::Segment::Bresenham::Bresenham_Item *Exec_Timer_Bresenham;   // Pointer to the block data for the segment being executed
 			static Motion_Core::Segment::Timer::Timer_Item *Exec_Timer_Item;  // Pointer to the segment being executed
 			
-
 			static uint8_t step_port_invert_mask;
 			static uint8_t dir_port_invert_mask;
 

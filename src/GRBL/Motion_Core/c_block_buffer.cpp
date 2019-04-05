@@ -5,8 +5,8 @@
 using namespace Motion_Core::Planner;
 
 Block_Item Buffer::_buffer[BUFFER_SIZE];
-int16_t Buffer::_tail = 0;
-int16_t Buffer::_head = 0;
+int8_t Buffer::_tail = 0;
+int8_t Buffer::_head = 0;
 uint8_t Buffer::_full = 0;
 
 /*

@@ -1,11 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Atmel Studio Solution File, Format Version 11.00
-VisualStudioVersion = 14.0.25420.1
+VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{E66E83B9-2572-4076-B26E-6BE79FF3018A}") = "AVR_2560_Coordinator", "Coordinator\AVR_Coordinator\AVR_2560_Coordinator.cppproj", "{A43646D7-207B-4974-A4C7-D1F89198FF8A}"
-EndProject
-Project("{E66E83B9-2572-4076-B26E-6BE79FF3018A}") = "AVR_MotionDriver", "MotionDriver\AVR_MotionDriver\AVR_MotionDriver.cppproj", "{7ECCFA6D-D802-4EEB-AE26-9CD544023A34}"
 EndProject
 Project("{E66E83B9-2572-4076-B26E-6BE79FF3018A}") = "AVR_Torch_Height_Control", "Torch Height Control\Projects\AVR\AVR_Torch_Height_Control.cppproj", "{DCE6C7E3-EE26-4D79-826B-08594B9AD897}"
 EndProject
@@ -14,6 +12,8 @@ EndProject
 Project("{E66E83B9-2572-4076-B26E-6BE79FF3018A}") = "AVR_328_Spindle", "Spindle\Projects\AVR\AVR_328_Spindle\AVR_328_Spindle.cppproj", "{30833530-04CD-46C5-ACF9-1109B1D0FC0D}"
 EndProject
 Project("{E66E83B9-2572-4076-B26E-6BE79FF3018A}") = "AVR_2560_GRBL", "GRBL\Projects\AVR\AVR_2560_Grbl\AVR_2560_GRBL.cppproj", "{9DCD3F4E-09CE-4A64-8500-FDA8B3D56129}"
+EndProject
+Project("{E66E83B9-2572-4076-B26E-6BE79FF3018A}") = "AVR_2560_MotionDriver", "MotionDriver\AVR_2560_MotionDriver.cppproj", "{34A5F4BA-6C84-414D-BA07-1B1E116E9E6D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,10 +25,6 @@ Global
 		{A43646D7-207B-4974-A4C7-D1F89198FF8A}.Debug|AVR.Build.0 = Debug|AVR
 		{A43646D7-207B-4974-A4C7-D1F89198FF8A}.Release|AVR.ActiveCfg = Release|AVR
 		{A43646D7-207B-4974-A4C7-D1F89198FF8A}.Release|AVR.Build.0 = Release|AVR
-		{7ECCFA6D-D802-4EEB-AE26-9CD544023A34}.Debug|AVR.ActiveCfg = Debug|AVR
-		{7ECCFA6D-D802-4EEB-AE26-9CD544023A34}.Debug|AVR.Build.0 = Debug|AVR
-		{7ECCFA6D-D802-4EEB-AE26-9CD544023A34}.Release|AVR.ActiveCfg = Release|AVR
-		{7ECCFA6D-D802-4EEB-AE26-9CD544023A34}.Release|AVR.Build.0 = Release|AVR
 		{DCE6C7E3-EE26-4D79-826B-08594B9AD897}.Debug|AVR.ActiveCfg = Debug|AVR
 		{DCE6C7E3-EE26-4D79-826B-08594B9AD897}.Debug|AVR.Build.0 = Debug|AVR
 		{DCE6C7E3-EE26-4D79-826B-08594B9AD897}.Release|AVR.ActiveCfg = Release|AVR
@@ -45,6 +41,10 @@ Global
 		{9DCD3F4E-09CE-4A64-8500-FDA8B3D56129}.Debug|AVR.Build.0 = Debug|AVR
 		{9DCD3F4E-09CE-4A64-8500-FDA8B3D56129}.Release|AVR.ActiveCfg = Release|AVR
 		{9DCD3F4E-09CE-4A64-8500-FDA8B3D56129}.Release|AVR.Build.0 = Release|AVR
+		{34A5F4BA-6C84-414D-BA07-1B1E116E9E6D}.Debug|AVR.ActiveCfg = Debug|AVR
+		{34A5F4BA-6C84-414D-BA07-1B1E116E9E6D}.Debug|AVR.Build.0 = Debug|AVR
+		{34A5F4BA-6C84-414D-BA07-1B1E116E9E6D}.Release|AVR.ActiveCfg = Release|AVR
+		{34A5F4BA-6C84-414D-BA07-1B1E116E9E6D}.Release|AVR.Build.0 = Release|AVR
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

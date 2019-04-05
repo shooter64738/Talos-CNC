@@ -25,8 +25,8 @@ namespace Motion_Core
 
 		private:
 			static Block_Item _buffer[];
-			static int16_t _tail;
-			static int16_t _head;
+			static int8_t _tail;
+			static int8_t _head;
 			static uint8_t _full;
 		};
 	};

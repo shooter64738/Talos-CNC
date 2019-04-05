@@ -11,17 +11,17 @@ namespace Motion_Core
 		{
 		public:
 			static void load_block(NGC_RS274::NGC_Binary_Block *block);
-			static void load_buffer();
+			
 			static void _mc_line(NGC_RS274::NGC_Binary_Block *target_block);
 			static void _mc_arc(uint8_t is_clockwise_arc, NGC_RS274::NGC_Binary_Block *target_block);
 
-			static void mc_line(float *target, c_planner::plan_line_data_t *pl_data, NGC_RS274::NGC_Binary_Block *target_block);
-			static void mc_arc(float *target, c_planner::plan_line_data_t *pl_data, float *position, float *offset, float radius
-				, uint8_t axis_0, uint8_t axis_1, uint8_t axis_linear, uint8_t is_clockwise_arc, NGC_RS274::NGC_Binary_Block *target_block);
+			//static void mc_line(float *target, c_planner::plan_line_data_t *pl_data, NGC_RS274::NGC_Binary_Block *target_block);
+			//static void mc_arc(float *target, c_planner::plan_line_data_t *pl_data, float *position, float *offset, float radius
+				//, uint8_t axis_0, uint8_t axis_1, uint8_t axis_linear, uint8_t is_clockwise_arc, NGC_RS274::NGC_Binary_Block *target_block);
 
 
 		public:
-			static NGC_RS274::NGC_Binary_Block previous_state;
+			//static NGC_RS274::NGC_Binary_Block previous_state;
 
 			//Interpollation();
 			//~Interpollation();
