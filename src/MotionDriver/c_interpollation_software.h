@@ -1,26 +1,56 @@
 #include <stdint.h>
 #include "c_planner_compute_block.h"
-#include "../Common/NGC_RS274/NGC_Block.h"
+
+#ifndef __C_SOFTWARE_INTERPOLLATION
+#define __C_SOFTWARE_INTERPOLLATION
 namespace Motion_Core
 {
 	namespace Software
 	{
-#ifndef __C_SOFTWARE_INTERPOLLATION
-#define __C_SOFTWARE_INTERPOLLATION
+		
 		class Interpollation
 		{
-		public:
-			static void load_block(NGC_RS274::NGC_Binary_Block *block);
+			public:
 			
-			static uint8_t _mc_line(NGC_RS274::NGC_Binary_Block *target_block);
-			static uint8_t _mc_arc(uint8_t is_clockwise_arc, NGC_RS274::NGC_Binary_Block *target_block);
+			
+			struct s_arc_values
+			{
+				float horizontal_center = 0 ;
+				float vertical_center = 0;
+				float Radius = 0;
+			};
+			struct s_input_block
+			{
+				e_motion_type motion_type = e_motion_type::rapid_linear;
+				float feed_rate = 0;
+				e_feed_modes feed_rate_mode = e_feed_modes::FEED_RATE_UNITS_PER_MINUTE_MODE;
+				//float word_values[26];
+				uint32_t line_number = 0 ;
+				float axis_values[N_AXIS];
+				s_arc_values arc_values;
+				e_block_flag flag = e_block_flag::normal;
+				
+			};
+			
+			struct s_backlash_comp
+			{
+				uint8_t needs_comp = 0;
+				int8_t last_directions[N_AXIS];
+			};
+			
+			static s_backlash_comp back_comp;
+			
+			static void load_block(s_input_block block);
+			
+			static uint8_t _mc_line(s_input_block target_block);
+			static uint8_t _mc_arc(s_input_block target_block);
 
 			//static void mc_line(float *target, c_planner::plan_line_data_t *pl_data, NGC_RS274::NGC_Binary_Block *target_block);
 			//static void mc_arc(float *target, c_planner::plan_line_data_t *pl_data, float *position, float *offset, float radius
-				//, uint8_t axis_0, uint8_t axis_1, uint8_t axis_linear, uint8_t is_clockwise_arc, NGC_RS274::NGC_Binary_Block *target_block);
+			//, uint8_t axis_0, uint8_t axis_1, uint8_t axis_linear, uint8_t is_clockwise_arc, NGC_RS274::NGC_Binary_Block *target_block);
 
 
-		public:
+			public:
 			//static NGC_RS274::NGC_Binary_Block previous_state;
 
 			//Interpollation();
