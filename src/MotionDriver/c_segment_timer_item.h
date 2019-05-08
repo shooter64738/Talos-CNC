@@ -9,7 +9,7 @@ namespace Motion_Core
 		{
 #ifndef __C_TIMER_ITEM
 #define __C_TIMER_ITEM
-			static const uint8_t BUFFER_SIZE = 40;
+			static const uint8_t BUFFER_SIZE = 20;
 
 			class Timer_Item
 			{

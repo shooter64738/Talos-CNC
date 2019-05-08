@@ -9,6 +9,8 @@
 
 Motion_Core::Software::Interpollation::s_backlash_comp Motion_Core::Software::Interpollation::back_comp;
 
+char Motion_Core::Software::Interpollation::stream[sizeof(Motion_Core::Software::Interpollation::s_input_block)];
+
 void Motion_Core::Software::Interpollation::load_block(s_input_block block)
 {
 	uint8_t return_value = 0;

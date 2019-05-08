@@ -21,84 +21,57 @@ void c_processor::initialize()
 	
 	Motion_Core::initialize();
 	
-	Motion_Core::Software::Interpollation::s_input_block in_block[10];
 	
+	Motion_Core::Software::Interpollation::s_input_block test;
+
+	//copy to block
+	memcpy(&test, Motion_Core::Software::Interpollation::stream, sizeof(Motion_Core::Software::Interpollation::stream));
+	//set some block stuff
+	test.motion_type = Motion_Core::e_motion_type::feed_linear;
+	test.feed_rate_mode = Motion_Core::e_feed_modes::FEED_RATE_UNITS_PER_MINUTE_MODE;
+	test.feed_rate = 5000;
+	test.axis_values[0] = 10;test.axis_values[1] = 10;test.axis_values[2] = 10;
+	test.axis_values[3] = 10; test.axis_values[4] =10 ; test.axis_values[5] = 10;
+	test.line_number = 1;
+	//copy updated block to stream
+	memcpy(Motion_Core::Software::Interpollation::stream, &test,sizeof(Motion_Core::Software::Interpollation::stream));
+	//clear block
+	memset(&test, 0, sizeof(Motion_Core::Software::Interpollation::s_input_block));
+	//copy back to block from stream
+	memcpy(&test, Motion_Core::Software::Interpollation::stream, sizeof(Motion_Core::Software::Interpollation::stream));
+	
+
+
 	host_serial.print_string("hello");
 	host_serial.Write(CR);
 	Hardware_Abstraction_Layer::Core::start_interrupts();
-	int8_t t = 0;
-	
-	in_block[t].motion_type = Motion_Core::e_motion_type::feed_linear;
-	in_block[t].feed_rate_mode = Motion_Core::e_feed_modes::FEED_RATE_UNITS_PER_MINUTE_MODE;
-	in_block[t].feed_rate = 1000;
-	memset(in_block[t].axis_values, 0, sizeof(in_block[t].axis_values));
-	in_block[t].line_number = 1;
-	in_block[t].axis_values[0]=10;in_block[t++].axis_values[1]=10;
-	//Motion_Core::Software::Interpollation::load_block(in_block[t++]);
-	
-	in_block[t].motion_type = Motion_Core::e_motion_type::feed_linear;
-	in_block[t].feed_rate_mode = Motion_Core::e_feed_modes::FEED_RATE_UNITS_PER_MINUTE_MODE;
-	in_block[t].feed_rate = 2000;
-	memset(in_block[t].axis_values,0,sizeof(in_block[t].axis_values));
-	in_block[t].line_number = 2;
-	in_block[t].axis_values[0]=10;in_block[t++].axis_values[1]=-10;
-	//Motion_Core::Software::Interpollation::load_block(in_block[t++]);
-	
-	in_block[t].motion_type = Motion_Core::e_motion_type::feed_linear;
-	in_block[t].feed_rate_mode = Motion_Core::e_feed_modes::FEED_RATE_UNITS_PER_MINUTE_MODE;
-	in_block[t].feed_rate = 1000;
-	memset(in_block[t].axis_values, 0, sizeof(in_block[t].axis_values));
-	in_block[t].line_number = 3;
-	in_block[t].axis_values[0]=10;in_block[t++].axis_values[1]=-10;
-	//Motion_Core::Software::Interpollation::load_block(in_block[t++]);
-
-	in_block[t].motion_type = Motion_Core::e_motion_type::feed_linear;
-	in_block[t].feed_rate_mode = Motion_Core::e_feed_modes::FEED_RATE_UNITS_PER_MINUTE_MODE;
-	in_block[t].feed_rate = 2000;
-	memset(in_block[t].axis_values, 0, sizeof(in_block[t].axis_values));
-	in_block[t].line_number = 4;
-	in_block[t].axis_values[0]=10;in_block[t++].axis_values[1]=10;
-	//Motion_Core::Software::Interpollation::load_block(in_block[t++]);
-
-	in_block[t].motion_type = Motion_Core::e_motion_type::feed_linear;
-	in_block[t].feed_rate_mode = Motion_Core::e_feed_modes::FEED_RATE_UNITS_PER_MINUTE_MODE;
-	in_block[t].feed_rate = 1000;
-	memset(in_block[t].axis_values, 0, sizeof(in_block[t].axis_values));
-	in_block[t].line_number = 5;
-	in_block[t].axis_values[0]=10;in_block[t++].axis_values[1]=-10;
-	//Motion_Core::Software::Interpollation::load_block(in_block[t++]);
-
-	in_block[t].motion_type = Motion_Core::e_motion_type::feed_linear;
-	in_block[t].feed_rate_mode = Motion_Core::e_feed_modes::FEED_RATE_UNITS_PER_MINUTE_MODE;
-	in_block[t].feed_rate = 2000;
-	memset(in_block[t].axis_values, 0, sizeof(in_block[t].axis_values));
-	in_block[t].line_number = 6;
-	in_block[t].axis_values[0]=10;in_block[t++].axis_values[1]=10;
-	//Motion_Core::Software::Interpollation::load_block(in_block[t++]);
-	t=0;
+	uint8_t updated = 1;
 	while (1)
 	{
+		if (!Motion_Core::Hardware::Interpollation::Interpolation_Active && !updated)
+		{
+			host_serial.print_string("End:");
+			for (uint8_t i=0;i<N_AXIS;i++)
+			{
+				host_serial.print_float(Motion_Core::Hardware::Interpollation::system_position[i]);
+				host_serial.Write(',');
+			}
+			host_serial.Write(CR);
+			updated = 1;
+		}
+		
 		#ifndef MSVC
 		if (host_serial.HasEOL())
 		#else
 		if (1==1)
 		#endif
 		{
-			if (Motion_Core::Hardware::Interpollation::Interpolation_Active)
-			{
-				host_serial.print_string("End:");
-				for (uint8_t i=0;i<N_AXIS;i++)
-				{
-					host_serial.print_float(Motion_Core::Hardware::Interpollation::system_position[i]);
-					host_serial.Write(',');
-				}
-				host_serial.Write(CR);
-			}
 			
+			updated = 0;
 			//host_serial.print_string("buff\r");
 			host_serial.SkipToEOL();
 			host_serial.print_string("Line:");
-			host_serial.print_int32(in_block[t].line_number);
+			host_serial.print_int32(test.line_number);
 			host_serial.Write(CR);
 			host_serial.print_string("Start:");
 			for (uint8_t i=0;i<N_AXIS;i++)
@@ -108,9 +81,10 @@ void c_processor::initialize()
 			}
 			host_serial.Write(CR);
 			
-			Motion_Core::Software::Interpollation::load_block(in_block[t]);
-			t++;//UDR0='G';
+			Motion_Core::Software::Interpollation::load_block(test);
+			test.line_number++;
 		}
+		//Let this continuously try to prep the step buffer. If theres no data to process nothing shoudl happen
 		Motion_Core::Segment::Arbitrator::Fill_Step_Segment_Buffer();
 	}
 }

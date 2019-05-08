@@ -19,6 +19,7 @@ namespace Motion_Core
 				float vertical_center = 0;
 				float Radius = 0;
 			};
+			
 			struct s_input_block
 			{
 				e_motion_type motion_type = e_motion_type::rapid_linear;
@@ -31,6 +32,9 @@ namespace Motion_Core
 				e_block_flag flag = e_block_flag::normal;
 				
 			};
+			
+			
+			static char stream[sizeof(s_input_block)];
 			
 			struct s_backlash_comp
 			{
@@ -50,7 +54,7 @@ namespace Motion_Core
 			//, uint8_t axis_0, uint8_t axis_1, uint8_t axis_linear, uint8_t is_clockwise_arc, NGC_RS274::NGC_Binary_Block *target_block);
 
 
-			public:
+			//public:
 			//static NGC_RS274::NGC_Binary_Block previous_state;
 
 			//Interpollation();
