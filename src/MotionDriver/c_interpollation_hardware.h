@@ -32,7 +32,8 @@ namespace Motion_Core
 			static void step_tick();
 			static void Initialize();
 			static void Shutdown();
-			static uint32_t system_position[N_AXIS];
+			static int32_t system_position[N_AXIS];
+			
 
 			Interpollation();
 			~Interpollation();

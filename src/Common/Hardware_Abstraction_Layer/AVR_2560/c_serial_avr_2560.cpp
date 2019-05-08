@@ -13,7 +13,10 @@
 //#include "../../../GRBL/c_serial.h"
 #include <stddef.h>
 
-#define COM_PORT_COUNT 0 //<--how many serial ports does this hardware have (or) how many do you need to use.
+#define COM_PORT_COUNT 1 //<--how many serial ports does this hardware have (or) how many do you need to use.
+#if(COM_PORT_COUNT<1)
+#error COM_PORT_COUNT must be at least 1, or the array will not exist!;
+#endif
 s_Buffer Hardware_Abstraction_Layer::Serial::rxBuffer[COM_PORT_COUNT];
 //c_Serial Hardware_Abstraction_Layer::Serial::port[COM_PORT_COUNT];
 

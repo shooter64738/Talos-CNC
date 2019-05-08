@@ -1,7 +1,7 @@
 #include "c_block.h"
 #include <string.h>
 
-using namespace Motion_Core::Planner;
+//using namespace Motion_Core::Planner;
 
 //Motion_Core::Segment::Timer::Timer_Item::Timer_Item()
 //{
@@ -9,17 +9,17 @@ using namespace Motion_Core::Planner;
 //Motion_Core::Segment::Timer::Timer_Item::~Timer_Item()
 //{
 //}
-Block_Item::Block_Item()
+Motion_Core::Planner::Block_Item::Block_Item()
 {
 
 }
 
-Block_Item::~Block_Item()
+Motion_Core::Planner::Block_Item::~Block_Item()
 {
 
 }
 
-void Block_Item::Reset()
+void Motion_Core::Planner::Block_Item::Reset()
 {
 	memset(this->steps, 0, sizeof(this->steps));
 	this->step_event_count = 0;

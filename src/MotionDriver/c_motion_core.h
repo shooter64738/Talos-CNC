@@ -1,8 +1,9 @@
-//#include "../all_includes.h"
+
 #include <math.h>
 #include <stdint.h>
 #include <stddef.h>
 #define N_AXIS 6
+#define  G_CODE_MULTIPLIER 100
 namespace Motion_Core
 {
 	#define TICKS_PER_MICROSECOND (F_CPU/1000000)
@@ -17,13 +18,36 @@ namespace Motion_Core
 	#define STEP_CONTROL_EXECUTE_HOLD         bit(1)
 	#define REQ_MM_INCREMENT_SCALAR 1.25
 	#define DT_SEGMENT (1.0/(ACCELERATION_TICKS_PER_SECOND*60.0)) // min/segment
+	
 	#ifndef __C_RAMP_TYPE
 	#define __C_RAMP_TYPE
-	enum class Ramp_Type
-	{
-		Accel, Cruise, Decel, Decel_Override
+	enum class e_ramp_type
+	{Accel, Cruise, Decel, Decel_Override};
+	#endif
+	
+	#ifndef __C_MOTION_TYPE
+	#define __C_MOTION_TYPE
+	enum class e_motion_type : uint8_t
+	{rapid_linear = 0,feed_linear = 1,arc_cw = 2,arc_ccw = 3};
+	#endif
+	
+	#ifndef __C_BLOCK_FLAG
+	#define __C_BLOCK_FLAG
+	enum class e_block_flag : uint8_t
+	{normal = 0, compensation = 1};
+	#endif
+	
+	#ifndef __C_FEED_MODES
+	#define __C_FEED_MODES
+	enum class e_feed_modes : uint16_t
+	{	FEED_RATE_MINUTES_PER_UNIT_MODE = 93 * G_CODE_MULTIPLIER,
+		FEED_RATE_UNITS_PER_MINUTE_MODE = 94 * G_CODE_MULTIPLIER,
+		FEED_RATE_UNITS_PER_ROTATION = 95 * G_CODE_MULTIPLIER,
+		FEED_RATE_CONSTANT_SURFACE_SPEED = 96 * G_CODE_MULTIPLIER,
+		FEED_RATE_RPM_MODE = 97 * G_CODE_MULTIPLIER
 	};
 	#endif
+
 	float convert_delta_vector_to_unit_vector(float *vector);
 	float limit_value_by_axis_maximum(float *max_value, float *unit_vec);
 	uint8_t get_direction_pin_mask(uint8_t axis_idx);
@@ -40,6 +64,7 @@ namespace Motion_Core
 		static float junction_deviation;
 		static float arc_tolerance;
 		static uint16_t pulse_length;
+		static float back_lash_comp_distance[N_AXIS];
 	};
 	#endif
 

@@ -6,6 +6,7 @@ float Motion_Core::Settings::max_rate [N_AXIS]{ 5000};
 float Motion_Core::Settings::junction_deviation = 0.01;
 float Motion_Core::Settings::arc_tolerance = 0.002;
 uint16_t Motion_Core::Settings::pulse_length = 10;
+float Motion_Core::Settings::back_lash_comp_distance[N_AXIS]{0.0};
 
 void Motion_Core::initialize()
 {
@@ -14,6 +15,8 @@ void Motion_Core::initialize()
 		Motion_Core::Settings::steps_per_mm[i] = 160;
 		Motion_Core::Settings::acceleration[i] = (100.0 * 60 * 60);
 		Motion_Core::Settings::max_rate[i] = 5000;
+		//arbitrary for testing
+		Motion_Core::Settings::back_lash_comp_distance[i] = 55;
 	}
 
 }

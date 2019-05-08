@@ -16,13 +16,13 @@ Block_Item *Buffer::Read()
 {
 	//If buffer is not full and tail==head, its empty
 	if (Buffer::_full == 0 && Buffer::_head == Buffer::_tail)
-		return NULL;
+	return NULL;
 
 	Block_Item *item = &Buffer::_buffer[Buffer::_tail++];
 
 	//Are we wrapping?
 	if (Buffer::_tail == BUFFER_SIZE)
-		Buffer::_tail = 0;
+	Buffer::_tail = 0;
 	//If we read an item we arent full now.
 	Buffer::_full = 0;
 
@@ -33,7 +33,7 @@ void Buffer::Advance()
 {
 	//If buffer is not full and tail==head, its empty
 	if (Buffer::_full == 0 && Buffer::_head == Buffer::_tail)
-		return;
+	return;
 	Buffer::_tail++;
 
 }
@@ -45,9 +45,23 @@ Block_Item *Buffer::Current()
 {
 	//If buffer is not full and tail==head, its empty
 	if (Buffer::_full == 0 && Buffer::_head == Buffer::_tail)
-		return NULL;
+	return NULL;
 
 	return &Buffer::_buffer[Buffer::_tail];
+}
+
+/*
+Returns a pointer to the previous object for reading (DOES NOT move the tail)
+*/
+Block_Item *Buffer::Previous()
+{
+	//If buffer is not full and tail==head, its empty
+	if (Buffer::_full == 0 && Buffer::_head == Buffer::_tail)
+	return NULL;
+
+	uint8_t work_tail = Buffer::_tail;
+	work_tail-1<0?work_tail = BUFFER_SIZE-1:work_tail--;
+	return &Buffer::_buffer[work_tail];
 }
 
 /*
@@ -56,17 +70,17 @@ Returns a pointer to the current buffer head object for writing
 Block_Item *Buffer::Write()
 {
 	if (Buffer::_full == 1)
-		return NULL;
+	return NULL;
 	uint8_t Station = Buffer::_head;
 	Block_Item *item = &Buffer::_buffer[Buffer::_head++];
 
 	//Are we wrapping?
 	if (Buffer::_head == BUFFER_SIZE)
-		Buffer::_head = 0;
+	Buffer::_head = 0;
 
 	//Have we gotten back to the tail?
 	if (Buffer::_head == Buffer::_tail)
-		Buffer::_full = 1;
+	Buffer::_full = 1;
 
 	item->Reset();
 	item->Station = Station;
@@ -80,7 +94,7 @@ Block_Item *Buffer::Newest()
 {
 	uint8_t index = Buffer::_head - 1;
 	if (index < 0)
-		index = BUFFER_SIZE - 1;
+	index = BUFFER_SIZE - 1;
 
 	return &Buffer::_buffer[index];
 }
@@ -91,7 +105,7 @@ Returns a flag indicating if the buffer is empty
 uint8_t Buffer::Available()
 {
 	if (Buffer::_full == 0 && Buffer::_head == Buffer::_tail)
-		return 0; //<--buffer empty
+	return 0; //<--buffer empty
 
 	return 1;
 }
@@ -111,9 +125,9 @@ Returns a pointer to the item most recenly added
 Block_Item *Buffer::Get(uint8_t From)
 {
 	if (From < 0)
-		From = BUFFER_SIZE - 1;
+	From = BUFFER_SIZE - 1;
 	else if (From >= BUFFER_SIZE)
-		From = 0;
+	From = 0;
 
 	return &Buffer::_buffer[From];
 }
@@ -122,9 +136,9 @@ uint8_t Buffer::IsLastItem()
 {
 	int8_t Index = Buffer::_head - 1;
 	if (Index < 0)
-		Index = BUFFER_SIZE - 1;
+	Index = BUFFER_SIZE - 1;
 	if (Buffer::_tail == Index)
-		return 1;
+	return 1;
 
 	return 0;
 }

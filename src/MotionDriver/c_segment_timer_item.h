@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include "c_segment_timer_bresenham.h"
+#include "c_motion_core.h"
 namespace Motion_Core
 {
 	namespace Segment
@@ -8,7 +9,7 @@ namespace Motion_Core
 		{
 #ifndef __C_TIMER_ITEM
 #define __C_TIMER_ITEM
-			static const uint8_t BUFFER_SIZE = 10;
+			static const uint8_t BUFFER_SIZE = 40;
 
 			class Timer_Item
 			{
@@ -20,6 +21,7 @@ namespace Motion_Core
 
 				uint8_t timer_prescaler;      // Without AMASS, a prescaler is required to adjust for slow timing.
 				uint32_t line_number;
+				Motion_Core::e_block_flag flag;
 
 			public:
 				Timer_Item();

@@ -2,6 +2,7 @@
 #define __C_BLOCK_ITEM
 #include <stdint.h>
 #include "c_motion_core.h"
+//#include "c_interpollation_software.h"
 
 namespace Motion_Core
 {
@@ -37,6 +38,7 @@ namespace Motion_Core
 
 										  // Stored spindle speed data used by spindle overrides and resuming methods.
 			uint8_t Station;
+			Motion_Core::e_block_flag flag;
 			void Reset();
 
 		public:
