@@ -64,7 +64,7 @@ void c_Serial::ClearBuffer()
 
 	//memset(rxBuffer[_port].Buffer,0,RX_BUFFER_SIZE);
 	for (int i=0;i<RX_BUFFER_SIZE;i++)
-		Hardware_Abstraction_Layer::Serial::rxBuffer[_port].Buffer[i] = 0;
+	Hardware_Abstraction_Layer::Serial::rxBuffer[_port].Buffer[i] = 0;
 	
 }
 
@@ -81,6 +81,11 @@ char c_Serial::Get()
 	if (Hardware_Abstraction_Layer::Serial::rxBuffer == NULL)
 	return NULL;
 	
+	if (Hardware_Abstraction_Layer::Serial::rxBuffer[_port].Tail == RX_BUFFER_SIZE)
+	{
+		Hardware_Abstraction_Layer::Serial::rxBuffer[_port].Tail=0;
+	}
+	
 	char byte = Hardware_Abstraction_Layer::Serial::rxBuffer[_port].Buffer[Hardware_Abstraction_Layer::Serial::rxBuffer[_port].Tail];
 	if (byte == CR)
 	{
@@ -91,10 +96,7 @@ char c_Serial::Get()
 	
 	Hardware_Abstraction_Layer::Serial::rxBuffer[_port].Tail++;
 
-	if (Hardware_Abstraction_Layer::Serial::rxBuffer[_port].Tail == RX_BUFFER_SIZE)
-	{
-		Hardware_Abstraction_Layer::Serial::rxBuffer[_port].Tail=0;
-	}
+	
 	
 	return byte;
 }
@@ -148,15 +150,51 @@ uint8_t c_Serial::HasEOL()
 	return Hardware_Abstraction_Layer::Serial::rxBuffer[_port].EOL>0?TRUE:FALSE;
 }
 
+uint16_t c_Serial::HeadPosition()
+{
+	if (Hardware_Abstraction_Layer::Serial::rxBuffer == NULL)
+	return NULL;
+
+	return Hardware_Abstraction_Layer::Serial::rxBuffer[_port].Head;
+}
+
+uint16_t c_Serial::TailPosition()
+{
+	if (Hardware_Abstraction_Layer::Serial::rxBuffer == NULL)
+	return NULL;
+
+	return Hardware_Abstraction_Layer::Serial::rxBuffer[_port].Tail;
+}
+
+uint8_t c_Serial::HasRecord(uint16_t recordsize)
+{
+	if (Hardware_Abstraction_Layer::Serial::rxBuffer == NULL)
+	return NULL;
+
+	if (this->DataSize() >= recordsize)
+	return 1;
+	else
+	return 0;
+}
+
 uint16_t c_Serial::DataSize()
 {
 	if (Hardware_Abstraction_Layer::Serial::rxBuffer == NULL)
 	return NULL;
 
-	uint16_t distane_to_head =
+	if (Hardware_Abstraction_Layer::Serial::rxBuffer[_port].Tail == RX_BUFFER_SIZE)
+	{
+		Hardware_Abstraction_Layer::Serial::rxBuffer[_port].Tail=0;
+	}
+	if (Hardware_Abstraction_Layer::Serial::rxBuffer[_port].Head == RX_BUFFER_SIZE)
+	{
+		Hardware_Abstraction_Layer::Serial::rxBuffer[_port].Head=0;
+	}
+
+	uint16_t distance_to_head =
 	Hardware_Abstraction_Layer::Serial::rxBuffer[_port].Head<Hardware_Abstraction_Layer::Serial::rxBuffer[_port].Tail
 	?Hardware_Abstraction_Layer::Serial::rxBuffer[_port].Head+RX_BUFFER_SIZE:Hardware_Abstraction_Layer::Serial::rxBuffer[_port].Head;
-	return distane_to_head - Hardware_Abstraction_Layer::Serial::rxBuffer[_port].Tail;
+	return distance_to_head - Hardware_Abstraction_Layer::Serial::rxBuffer[_port].Tail;
 	
 }
 
@@ -169,6 +207,8 @@ void c_Serial::SkipToEOL()
 			break;
 		}
 	}
+	if (this->Peek() == LF)
+	this->Get();
 }
 
 uint8_t c_Serial::WaitFOrEOL(uint32_t max_timeout)
@@ -239,6 +279,13 @@ void c_Serial::Write_nf(float val) {
 void c_Serial::print_string(const char *s)
 {
 	while (*s)
+	this->Write(*s++);
+	//this->Write(CR);
+}
+
+void c_Serial::Write_Record(const char *s, uint8_t records_size)
+{
+	for (uint8_t i = 0; i < records_size;i++)
 	this->Write(*s++);
 	//this->Write(CR);
 }

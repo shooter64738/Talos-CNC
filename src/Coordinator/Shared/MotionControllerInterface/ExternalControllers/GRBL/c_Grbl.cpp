@@ -106,8 +106,9 @@ c_motion_controller::e_controller_responses c_grbl::Connect()
 
 	c_processor::controller_serial.print_string("?\r");
 
-	if (c_processor::controller_serial.WaitFOrEOL(500000))
+	if (c_processor::controller_serial.WaitFOrEOL(50))
 	{
+		c_processor::host_serial.print_string("time out");
 		return c_motion_controller::e_controller_responses::TIMEOUT;
 	}
 
@@ -330,7 +331,7 @@ because we are going to load the true axis control count from teh controller now
 		while (_end_xmit < 3)
 		{
 			//Wait until we have an eol. On first loop this should always be true because we waited in the previous method for it.
-			c_processor::controller_serial.WaitFOrEOL(50000);
+			c_processor::controller_serial.WaitFOrEOL(500);
 			char byte = c_processor::controller_serial.Get();
 
 			//we need the 'o','k',and CR to all appear consecutively. This keeps track of that.

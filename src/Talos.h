@@ -58,6 +58,7 @@
 #define MACHINE_V_AXIS 7
 
 #define CR '\r' //<--default line ending value
+#define LF '\n' //<--default line ending value
 
 #define max(a,b) (((a) > (b)) ? (a) : (b))
 #define min(a,b) (((a) < (b)) ? (a) : (b))

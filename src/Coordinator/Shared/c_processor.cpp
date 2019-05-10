@@ -46,6 +46,7 @@
 #include "Encoder/c_encoder.h"
 #include "hardware_def.h"
 #include "../../common/NGC_RS274/NGC_Errors.h"
+#include "../../MotionDriver/c_interpollation_software.h"
 //#include "Spindle/c_spindle.h"
 
 
@@ -77,7 +78,7 @@ void c_processor::startup()
 
 	//if (Settings::c_general::machine.machine_type == Settings::e_machine_types::EDM)
 	//{
-		////c_edm_driver::initialize();
+	////c_edm_driver::initialize();
 	//}
 
 	NGC_RS274::Interpreter::Processor::initialize();
@@ -87,7 +88,6 @@ void c_processor::startup()
 
 	Hardware_Abstraction_Layer::Core::start_interrupts();
 	
-
 	#ifdef MSVC
 	{
 		//If running this on a pc, use this line to fill the serial buffer as if it
@@ -112,7 +112,7 @@ void c_processor::startup()
 	to the array we set the data in.
 	*/
 	c_motion_controller_settings::position_reported = c_machine::axis_position;
-	c_motion_controller::Initialize();
+	//c_motion_controller::Initialize();
 
 	if (c_motion_control_events::get_event(Motion_Control_Events::CONTROL_ONLINE))
 	{
@@ -134,14 +134,14 @@ void c_processor::startup()
 	//uint32_t tickers=0;
 	//while(1)
 	//{
-		//tickers++;
-		//if (tickers>900000)
-		//{
-			//tickers = 0;
-			//c_spindle_com_bus::WriteStream(tdata.stream,c_processor::host_serial);
-			//tdata.s_spindle_detail.rpm++;
-			//
-		//}
+	//tickers++;
+	//if (tickers>900000)
+	//{
+	//tickers = 0;
+	//c_spindle_com_bus::WriteStream(tdata.stream,c_processor::host_serial);
+	//tdata.s_spindle_detail.rpm++;
+	//
+	//}
 	//}
 
 	int16_t return_value = 0;
@@ -151,6 +151,12 @@ void c_processor::startup()
 	while (1)
 	{
 		bool Control_Command = false;
+
+
+		while (c_processor::controller_serial.HasEOL())
+		{
+			c_processor::host_serial.Write(c_processor::controller_serial.Get());
+		}
 
 		if (c_processor::host_serial.HasEOL())
 		{
@@ -259,7 +265,9 @@ uint16_t c_processor::prep_input()
 						if (return_value == Stager_Errors::OK)
 						{
 							//Here is where we send the block to c_machine to start executing it.
+							//c_machine::run_block();
 							c_machine::run_block();
+							
 						}
 
 					}

@@ -44,7 +44,7 @@ void Motion_Core::Hardware::Interpollation::Initialize()
 	{
 		Motion_Core::Hardware::Interpollation::Interpolation_Active = 1;
 		Motion_Core::Hardware::Interpollation::step_outbits = step_port_invert_mask;
-		Hardware_Abstraction_Layer::Grbl::Stepper::wake_up();
+		Hardware_Abstraction_Layer::MotionCore::Stepper::wake_up();
 	}
 
 }
@@ -55,7 +55,7 @@ void Motion_Core::Hardware::Interpollation::Shutdown()
 	myfile.flush();
 	myfile.close();
 	#endif // MSVC
-	Hardware_Abstraction_Layer::Grbl::Stepper::st_go_idle();
+	Hardware_Abstraction_Layer::MotionCore::Stepper::st_go_idle();
 
 	//Hardware_Abstraction_Layer::Grbl::Stepper::port_disable(pin_state);
 
@@ -70,7 +70,7 @@ void Motion_Core::Hardware::Interpollation::step_tick()
 
 	// Set the direction pins a couple of nanoseconds before we step the steppers
 	//DIRECTION_PORT = (DIRECTION_PORT & ~DIRECTION_MASK) | (st.dir_outbits & DIRECTION_MASK);
-	Hardware_Abstraction_Layer::Grbl::Stepper::port_direction((DIRECTION_PORT & ~DIRECTION_MASK)
+	Hardware_Abstraction_Layer::MotionCore::Stepper::port_direction((DIRECTION_PORT & ~DIRECTION_MASK)
 	| (Motion_Core::Hardware::Interpollation::dir_outbits & DIRECTION_MASK));
 
 	// Then pulse the stepping pins
@@ -78,12 +78,12 @@ void Motion_Core::Hardware::Interpollation::step_tick()
 	st.step_bits = (STEP_PORT & ~STEP_MASK) | st.step_outbits; // Store out_bits to prevent overwriting.
 	#else  // Normal operation
 	//STEP_PORT = (STEP_PORT & ~STEP_MASK) | st.step_outbits;
-	Hardware_Abstraction_Layer::Grbl::Stepper::port_step((STEP_PORT & ~STEP_MASK) | Motion_Core::Hardware::Interpollation::step_outbits);
+	Hardware_Abstraction_Layer::MotionCore::Stepper::port_step((STEP_PORT & ~STEP_MASK) | Motion_Core::Hardware::Interpollation::step_outbits);
 	#endif
 
 	// Enable step pulse reset timer so that The Stepper Port Reset Interrupt can reset the signal after
 	// exactly settings.pulse_microseconds microseconds, independent of the main Timer1 prescaler.
-	Hardware_Abstraction_Layer::Grbl::Stepper::pulse_reset_timer();
+	Hardware_Abstraction_Layer::MotionCore::Stepper::pulse_reset_timer();
 
 	Motion_Core::Hardware::Interpollation::Step_Active = 1;
 	//sei();
@@ -106,10 +106,10 @@ void Motion_Core::Hardware::Interpollation::step_tick()
 			myfile.flush();
 			#endif
 
-			Hardware_Abstraction_Layer::Grbl::Stepper::TCCR1B_set
+			Hardware_Abstraction_Layer::MotionCore::Stepper::TCCR1B_set
 			(Motion_Core::Hardware::Interpollation::Exec_Timer_Item->timer_prescaler);
 
-			Hardware_Abstraction_Layer::Grbl::Stepper::OCR1A_set
+			Hardware_Abstraction_Layer::MotionCore::Stepper::OCR1A_set
 			(Motion_Core::Hardware::Interpollation::Exec_Timer_Item->timer_delay_value);
 
 

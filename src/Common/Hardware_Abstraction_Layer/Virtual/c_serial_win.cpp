@@ -33,6 +33,18 @@ void Hardware_Abstraction_Layer::Serial::add_to_buffer(uint8_t port, const char 
 	rxBuffer[port].EOL++;*/
 }
 
+void Hardware_Abstraction_Layer::Serial::add_to_buffer(uint8_t port, const char * data, uint8_t data_size)
+{
+	for (int i=0;i<data_size;i++)
+	{
+		Hardware_Abstraction_Layer::Serial::_add(port, *data++, rxBuffer[port].Head++);
+		if (rxBuffer[port].Head == RX_BUFFER_SIZE)
+			rxBuffer[port].Head = 0;
+	}
+	/*rxBuffer[port].Buffer[rxBuffer[port].Head++] = 13;
+	rxBuffer[port].EOL++;*/
+}
+
 void Hardware_Abstraction_Layer::Serial::_add(uint8_t port, char byte, uint16_t position)
 {
 	rxBuffer[port].Buffer[position] = byte;

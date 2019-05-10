@@ -134,6 +134,13 @@ namespace Serial_Library
             return null;
         }
 
+        public object Send_Message_Serialized(byte[] Data)
+        {
+            if (this._serializer_Type is Message_Serializer.Message_structs.s_motion)
+                this.Port.Write(Data,0,Data.Length);
+            return null;
+        }
+
         public void Drop_Message(int MessageNumber)
         {
             this.DataBuffer.Remove(this.DataBuffer[MessageNumber]);

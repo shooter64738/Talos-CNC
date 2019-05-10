@@ -24,6 +24,7 @@
 #include "NGC_M_Groups.h"
 #include "NGC_G_Codes.h"
 #include "NGC_M_Codes.h"
+#include "..\..\MotionDriver\c_processor.h"
 
 char NGC_RS274::Interpreter::Processor::Line[CYCLE_LINE_LENGTH];
 int NGC_RS274::Interpreter::Processor::HasErrors = 0;
@@ -93,7 +94,7 @@ int NGC_RS274::Interpreter::Processor::process_line(NGC_RS274::NGC_Binary_Block*
 	//We need to call assign planes even if the plane has not changed so the axis defines and arc define pointers get set.
 	//Really this comes down to setting the 'defined' value. If I could call the class member 'get_defined' from the internal
 	//struct then we wouldnt need to set the 'defined' value externally. HOwever if a plane changes from one block to the
-	//next we must rotate the previous blocks axis values so that arc calculation come ot right. 
+	//next we must rotate the previous blocks axis values so that arc calculation come ot right.
 	NGC_RS274::Interpreter::Processor::assign_planes(NGC_RS274::Interpreter::Processor::local_block);
 
 	//Perform a  detailed error check on this block. If it passes, the other libraries should have no trouble processing it.
@@ -373,7 +374,7 @@ int NGC_RS274::Interpreter::Processor::error_check_plane_select(NGC_RS274::NGC_B
 			plane_block.plane_axis.vertical_axis.name = 'Z';
 			plane_block.plane_axis.normal_axis.name = 'X';
 			plane_block.plane_axis.plane_error = NGC_RS274::Interpreter::Errors::MISSING_CIRCLE_AXIS_YZ;
-													   
+			
 			plane_block.arc_values.horizontal_center.name = 'J';
 			plane_block.arc_values.vertical_center.name = 'K';
 			plane_block.arc_values.plane_error = NGC_RS274::Interpreter::Errors::MISSING_CIRCLE_OFFSET_JK;
@@ -394,14 +395,14 @@ void NGC_RS274::Interpreter::Processor::assign_planes(NGC_RS274::NGC_Binary_Bloc
 	we use those previous values in some places, such as arc center calculations.
 	*/
 	if (stager_block->get_g_code_value_x(NGC_RS274::Groups::G::PLANE_SELECTION)
-		!= plane_block.get_g_code_value_x(NGC_RS274::Groups::G::PLANE_SELECTION))
+	!= plane_block.get_g_code_value_x(NGC_RS274::Groups::G::PLANE_SELECTION))
 	{
 		//Set the planes to match
 		stager_block->set_group_value(NGC_RS274::Groups::G::PLANE_SELECTION,
-			local_block.get_g_code_value_x(NGC_RS274::Groups::G::PLANE_SELECTION));
+		local_block.get_g_code_value_x(NGC_RS274::Groups::G::PLANE_SELECTION));
 
 		//We know that the planes have changed from the previous block. Rotate the previous block axis values.
-		//This will chain back into this function and also re-assign the pointers to the previous block arc 
+		//This will chain back into this function and also re-assign the pointers to the previous block arc
 		//and plane axis values.
 		error_check_plane_select(*stager_block);
 	}
@@ -792,9 +793,24 @@ int NGC_RS274::Interpreter::Processor::parse_values()
 	return  NGC_RS274::Interpreter::Errors::LINE_CONTAINS_NO_DATA;
 	else if (*line_pointer <'A' || *line_pointer >'Z')
 	{
-		//Check to see if this is a block skip, comment, etc.
-		if (*line_pointer != '/' && *line_pointer != '(')
-		return  NGC_RS274::Interpreter::Errors::WORD_VALUE_TYPE_INVALID;
+		//Skip any erroneous CR or LF.
+		while (*line_pointer == LF || *line_pointer == CR)
+		{
+			line_pointer++;
+		}
+		
+		if (*line_pointer <'A' || *line_pointer >'Z')
+		{
+			//Check to see if this is a block skip, comment, etc.
+			if (*line_pointer != '/' && *line_pointer != '(')
+			{
+				c_processor::host_serial.print_string("bad char:");
+				c_processor::host_serial.print_int32( *line_pointer);
+				
+				return  NGC_RS274::Interpreter::Errors::WORD_VALUE_TYPE_INVALID;
+			}
+		}
+		
 	}
 
 	while (1)
@@ -833,7 +849,7 @@ int NGC_RS274::Interpreter::Processor::parse_values()
 			return ReturnValue;
 		}
 		//If this is a CR break out of the outer while
-		if (*line_pointer == 13 || *line_pointer == 0)
+		if (*line_pointer == 13 || *line_pointer == 10 || *line_pointer == 0)
 		break;
 	}
 	return ReturnValue;

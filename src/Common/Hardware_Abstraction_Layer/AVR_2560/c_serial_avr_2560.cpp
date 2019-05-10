@@ -13,7 +13,7 @@
 //#include "../../../GRBL/c_serial.h"
 #include <stddef.h>
 
-#define COM_PORT_COUNT 1 //<--how many serial ports does this hardware have (or) how many do you need to use.
+#define COM_PORT_COUNT 3 //<--how many serial ports does this hardware have (or) how many do you need to use.
 #if(COM_PORT_COUNT<1)
 #error COM_PORT_COUNT must be at least 1, or the array will not exist!;
 #endif
@@ -202,8 +202,8 @@ ISR(USART0_RX_vect)
 
 	
 	//keep CR values, throw away LF values
-	if (Byte == 10)
-	return;
+	//if (Byte == 10)
+	//return;
 	
 	Hardware_Abstraction_Layer::Serial::rxBuffer[0].Buffer[Hardware_Abstraction_Layer::Serial::rxBuffer[0].Head] = Byte;
 	

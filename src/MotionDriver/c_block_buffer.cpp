@@ -35,6 +35,9 @@ void Buffer::Advance()
 	if (Buffer::_full == 0 && Buffer::_head == Buffer::_tail)
 	return;
 	Buffer::_tail++;
+	//Are we wrapping?
+	if (Buffer::_tail == BUFFER_SIZE)
+	Buffer::_tail = 0;
 
 }
 
@@ -92,7 +95,7 @@ Returns a pointer to the item most recenly added
 */
 Block_Item *Buffer::Newest()
 {
-	uint8_t index = Buffer::_head - 1;
+	int8_t index = Buffer::_head - 1;
 	if (index < 0)
 	index = BUFFER_SIZE - 1;
 
@@ -122,7 +125,7 @@ uint8_t Buffer::Full()
 /*
 Returns a pointer to the item most recenly added
 */
-Block_Item *Buffer::Get(uint8_t From)
+Block_Item *Buffer::Get(int8_t From)
 {
 	if (From < 0)
 	From = BUFFER_SIZE - 1;

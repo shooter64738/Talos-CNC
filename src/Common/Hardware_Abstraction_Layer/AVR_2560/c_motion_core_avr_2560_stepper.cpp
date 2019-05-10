@@ -15,11 +15,11 @@
 
 
 
-uint8_t Hardware_Abstraction_Layer::Grbl::Stepper::step_port_invert_mask;
-uint8_t Hardware_Abstraction_Layer::Grbl::Stepper::dir_port_invert_mask;
-uint8_t Hardware_Abstraction_Layer::Grbl::Stepper::step_mask = STEP_MASK;
+uint8_t Hardware_Abstraction_Layer::MotionCore::Stepper::step_port_invert_mask;
+uint8_t Hardware_Abstraction_Layer::MotionCore::Stepper::dir_port_invert_mask;
+uint8_t Hardware_Abstraction_Layer::MotionCore::Stepper::step_mask = STEP_MASK;
 
-void Hardware_Abstraction_Layer::Grbl::Stepper::initialize()
+void Hardware_Abstraction_Layer::MotionCore::Stepper::initialize()
 {
 	// Configure step and direction interface pins
 	STEP_DDR |= STEP_MASK;
@@ -43,11 +43,11 @@ void Hardware_Abstraction_Layer::Grbl::Stepper::initialize()
 	TIMSK0 |= (1<<OCIE0A); // Enable Timer0 Compare Match A interrupt
 	#endif
 	
-	Hardware_Abstraction_Layer::Grbl::Stepper::st_go_idle();
+	Hardware_Abstraction_Layer::MotionCore::Stepper::st_go_idle();
 	
 }
 
-void Hardware_Abstraction_Layer::Grbl::Stepper::wake_up()
+void Hardware_Abstraction_Layer::MotionCore::Stepper::wake_up()
 {
 	// Enable stepper drivers.
 	//if (bit_istrue(0, BITFLAG_INVERT_ST_ENABLE))
@@ -74,14 +74,14 @@ void Hardware_Abstraction_Layer::Grbl::Stepper::wake_up()
 	TIMSK1 |= (1 << OCIE1A);
 }
 
-void Hardware_Abstraction_Layer::Grbl::Stepper::st_go_idle()
+void Hardware_Abstraction_Layer::MotionCore::Stepper::st_go_idle()
 {
 	// Disable Stepper Driver Interrupt. Allow Stepper Port Reset Interrupt to finish, if active.
 	TIMSK1 &= ~(1 << OCIE1A); // Disable Timer1 interrupt
 	TCCR1B = (TCCR1B & ~((1 << CS12) | (1 << CS11))) | (1 << CS10); // Reset clock to no prescaling.
 }
 
-void Hardware_Abstraction_Layer::Grbl::Stepper::port_disable(uint8_t inverted)
+void Hardware_Abstraction_Layer::MotionCore::Stepper::port_disable(uint8_t inverted)
 {
 	if (inverted)
 	{
@@ -93,17 +93,17 @@ void Hardware_Abstraction_Layer::Grbl::Stepper::port_disable(uint8_t inverted)
 	}
 }
 
-void Hardware_Abstraction_Layer::Grbl::Stepper::port_direction(uint8_t directions)
+void Hardware_Abstraction_Layer::MotionCore::Stepper::port_direction(uint8_t directions)
 {
 	DIRECTION_PORT = (DIRECTION_PORT & ~DIRECTION_MASK) | (directions & DIRECTION_MASK);
 }
 
-void Hardware_Abstraction_Layer::Grbl::Stepper::port_step(uint8_t steps)
+void Hardware_Abstraction_Layer::MotionCore::Stepper::port_step(uint8_t steps)
 {
 	STEP_PORT = (STEP_PORT & ~STEP_MASK) | steps;
 }
 
-void Hardware_Abstraction_Layer::Grbl::Stepper::pulse_reset_timer()
+void Hardware_Abstraction_Layer::MotionCore::Stepper::pulse_reset_timer()
 {
 	// Enable step pulse reset timer so that The Stepper Port Reset Interrupt can reset the signal after
 	// exactly settings.pulse_microseconds microseconds, independent of the main Timer1 prescaler.
@@ -113,12 +113,12 @@ void Hardware_Abstraction_Layer::Grbl::Stepper::pulse_reset_timer()
 	
 }
 
-void Hardware_Abstraction_Layer::Grbl::Stepper::TCCR1B_set(uint8_t prescaler)
+void Hardware_Abstraction_Layer::MotionCore::Stepper::TCCR1B_set(uint8_t prescaler)
 {
 	TCCR1B = (TCCR1B & ~(0x07<<CS10)) | (prescaler<<CS10);
 }
 
-void Hardware_Abstraction_Layer::Grbl::Stepper::OCR1A_set(uint16_t delay)
+void Hardware_Abstraction_Layer::MotionCore::Stepper::OCR1A_set(uint16_t delay)
 {
 	OCR1A = delay;
 }
@@ -142,6 +142,6 @@ added to Grbl.
 ISR(TIMER0_OVF_vect)
 {
 	// Reset stepping pins (leave the direction pins)
-	STEP_PORT = (STEP_PORT & ~STEP_MASK) | (Hardware_Abstraction_Layer::Grbl::Stepper::step_port_invert_mask & STEP_MASK);
+	STEP_PORT = (STEP_PORT & ~STEP_MASK) | (Hardware_Abstraction_Layer::MotionCore::Stepper::step_port_invert_mask & STEP_MASK);
 	TCCR0B = 0; // Disable Timer0 to prevent re-entering this interrupt when it's not needed.
 }

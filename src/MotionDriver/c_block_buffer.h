@@ -17,7 +17,7 @@ namespace Motion_Core
 			static Block_Item *Current();
 			static Block_Item *Previous();
 			static Block_Item *Newest();
-			static Block_Item *Get(uint8_t From);
+			static Block_Item *Get(int8_t From);
 			static void Advance();
 			static void Reset();
 			static uint8_t IsLastItem();

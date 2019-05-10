@@ -38,6 +38,7 @@
 #include "..\..\..\common\NGC_RS274\NGC_M_Groups.h"
 #include "..\..\..\Common\NGC_RS274\NGC_G_Codes.h"
 #include "..\..\..\common\NGC_RS274\NGC_G_Groups.h"
+#include "..\..\..\MotionDriver\c_interpollation_software.h"
 
 
 uint16_t *c_machine::machine_state_g_group; //There are 14 groups of gcodes (0-13)
@@ -231,7 +232,7 @@ void c_machine::run_block()
 	c_machine::synch_machine_state_g_code();
 	c_machine::synch_machine_state_m_code();
 
-	c_machine::start_motion(c_machine::machine_block);
+	c_machine::start_motion_binary(c_machine::machine_block);
 	//When we are done with the block, move the tail forward.
 	c_gcode_buffer::buffer_tail++;
 	//Since Line in interpreter is used for input and output we should clear it, so that its empty if we use it for input again.
@@ -239,6 +240,8 @@ void c_machine::run_block()
 
 	c_machine::machine_block = NULL;
 }
+
+
 void c_machine::start_motion(NGC_RS274::NGC_Binary_Block* local_block)
 {
 	//If the block is set to 'planned' then its ready to execute
@@ -256,6 +259,71 @@ void c_machine::start_motion(NGC_RS274::NGC_Binary_Block* local_block)
 		{
 			c_motion_controller::send_motion(NGC_RS274::Interpreter::Processor::Line, local_block->is_motion_block); //<--send to motion controller
 		}
+		//See if there is appended motion (cutter comp may have set one for an outside corner)
+		if (local_block->appended_block_pointer != NULL)
+		{
+			c_processor::host_serial.print_string("appended motion start\r");
+			local_block->appended_block_pointer->is_motion_block = true;
+			//Execute the appended motion (either a closing arc at outside corner, or the lead out motion)
+			start_motion(local_block->appended_block_pointer);
+			c_processor::host_serial.print_string("appended motion end\r");
+			return;//<--return here since this is a recursive call, we dont want to move the tail pointer twice!
+		}
+		/*
+		This may be an overuse of function pointers, but this works very neatly..
+		If a canned cycle is activated, the initialize method in c_canned_cycle will set a pointer to a function.
+		Since the function pointer will not be null, we will be calling into the c_canned_cycle::execute_motion function.
+		There is a state machine inside that execute function that will track each state of the canned cycle and until the
+		function pointer is NULL, there must be more to the cycle that needs to run.
+		Since the cutter comp motion (above and when active) will have already executed, we can have cutter comp active AND
+		run a canned cycle! This mimics the Fanuc controller behavior.
+		*/
+		while (local_block->canned_values.PNTR_RECALLS != NULL)
+		{
+			local_block->canned_values.PNTR_RECALLS(local_block);
+			NGC_RS274::Interpreter::Processor::convert_to_line(local_block);
+			c_processor::host_serial.Write("output:"); c_processor::host_serial.Write(NGC_RS274::Interpreter::Processor::Line);
+			c_processor::host_serial.Write(CR);
+			c_motion_controller::send_motion(NGC_RS274::Interpreter::Processor::Line, local_block->is_motion_block); //<--send to motion controller
+
+			//If the pointer is null, the cycle is finished this round. Set the motion mode back to the original cycle motion
+			if (local_block->canned_values.PNTR_RECALLS == NULL)
+			/*
+			Since we have changed the state of this block, we need to re-establish its original motion mode
+			*/
+			local_block->g_group[NGC_RS274::Groups::G::MOTION] = c_canned_cycle::active_cycle_code;
+		}
+
+
+		//if (c_hal::feedback.PNTR_POSITION_DATA == NULL && c_machine::machine_block!= NULL)
+		{
+			//If no feedback is enabled, then the only update we can do for the machine is set it to the target position
+			c_machine::synch_position();
+		}
+	}
+
+}
+
+void c_machine::start_motion_binary(NGC_RS274::NGC_Binary_Block* local_block)
+{
+	//If the block is set to 'planned' then its ready to execute
+	if (local_block->state & (1 << BLOCK_STATE_PLANNED))
+	{
+		c_processor::host_serial.print_string("sent...\r");
+		Motion_Core::Software::Interpollation::s_input_block test;
+		uint8_t record_size = sizeof(Motion_Core::Software::Interpollation::stream);
+		//set some block stuff
+		test.motion_type = Motion_Core::e_motion_type::feed_linear;
+		test.feed_rate_mode = Motion_Core::e_feed_modes::FEED_RATE_UNITS_PER_MINUTE_MODE;
+		test.feed_rate = 5000;
+		for (int i=0;i<MACHINE_AXIS_COUNT;i++)
+		 test.axis_values[i] = *local_block->axis_values.Loop[i];
+		
+		test.line_number = *local_block->persisted_values.active_line_number_N;
+		//copy updated block to stream
+		memcpy(Motion_Core::Software::Interpollation::stream, &test,record_size);
+		c_processor::controller_serial.Write_Record(Motion_Core::Software::Interpollation::stream,record_size);
+
 		//See if there is appended motion (cutter comp may have set one for an outside corner)
 		if (local_block->appended_block_pointer != NULL)
 		{

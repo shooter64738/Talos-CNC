@@ -10,8 +10,8 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 
-#ifndef __C_GRBLAVR_2560_STEPPER_H__
-#define __C_GRBLAVR_2560_STEPPER_H__
+#ifndef __C_MOTIONCORE_AVR_2560_STEPPER_H__
+#define __C_MOTIONCORE_AVR_2560_STEPPER_H__
 
 // Define stepper driver enable/disable output pin.
 #define STEPPERS_DISABLE_DDR   DDRB
@@ -44,7 +44,7 @@
 
 namespace Hardware_Abstraction_Layer
 {
-	namespace Grbl
+	namespace MotionCore
 	{
 		class Stepper
 		{

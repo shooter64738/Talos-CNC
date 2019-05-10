@@ -2,7 +2,7 @@
 #include <math.h>
 #include <stdint.h>
 #include <stddef.h>
-#define N_AXIS 6
+#define N_AXIS 3
 #define  G_CODE_MULTIPLIER 100
 namespace Motion_Core
 {

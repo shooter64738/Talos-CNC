@@ -53,6 +53,9 @@ class c_Serial
 	char Peek();
 	char Peek(uint8_t LookAhead);
 	uint8_t HasEOL();
+	uint16_t HeadPosition();
+	uint16_t TailPosition();
+	uint8_t HasRecord(uint16_t recordsize);
 	void Write(const char*);
 	void Write(char);
 	void Write_ni(int16_t);
@@ -62,6 +65,7 @@ class c_Serial
 	void print_float(float n, uint8_t decimal_places);
 	void print_float(float n);
 	void print_string(const char *s);
+	void Write_Record(const char *s, uint8_t records_size);
 	void SkipToEOL();
 	uint8_t WaitFOrEOL(uint32_t max_timeout);
 	uint16_t DataSize ();

@@ -2,6 +2,7 @@
 #include "c_segment_arbitrator.h"
 #include "c_segment_timer_bresenham.h"
 #include "c_motion_core.h"
+#include "c_processor.h"
 
 
 Motion_Core::Planner::Block_Item *Motion_Core::Planner::Calculator::block_buffer_planned = Motion_Core::Planner::Buffer::Get(0);
@@ -19,8 +20,7 @@ uint8_t Motion_Core::Planner::Calculator::_plan_buffer_line(Motion_Core::Softwar
 	planning_block->flag = target_block.flag;
 	
 	// Compute and store initial move distance data.
-	int32_t target_steps[N_AXIS]{0};
-	float unit_vec[N_AXIS]{0}, delta_mm;
+	float unit_vec[N_AXIS]{0};
 	uint8_t idx;
 
 	//memcpy(position_steps, Motion_Core::Planner::Calculator::position, sizeof(Motion_Core::Planner::Calculator::position));
@@ -30,25 +30,21 @@ uint8_t Motion_Core::Planner::Calculator::_plan_buffer_line(Motion_Core::Softwar
 		// Calculate target position in absolute steps, number of steps for each axis, and determine max step events.
 		// Also, compute individual axes distance for move and prep unit vector calculations.
 		// NOTE: Computes true distance from converted step values.
-
-		target_steps[idx] = lround(target_block.axis_values[idx] * Motion_Core::Settings::steps_per_mm[idx]);
-		planning_block->steps[idx] = labs(target_steps[idx] );
+		planning_block->steps[idx] = labs(target_block.axis_values[idx] * Motion_Core::Settings::steps_per_mm[idx] );
 		planning_block->step_event_count = max(planning_block->step_event_count, planning_block->steps[idx]);
-		delta_mm = (target_steps[idx]) / Motion_Core::Settings::steps_per_mm[idx];
+		
 
-		unit_vec[idx] = delta_mm; // Store unit vector numerator
-		if (delta_mm > 0.0)
+		unit_vec[idx] = target_block.axis_values[idx];
+		if (target_block.axis_values[idx] > 0.0)
 		{
 			Motion_Core::Software::Interpollation::back_comp.last_directions[idx] = 1;
 		}
 		// Set direction bits. Bit enabled always means direction is negative.
-		if (delta_mm < 0.0)
+		else if (target_block.axis_values[idx] < 0.0)
 		{
 			Motion_Core::Software::Interpollation::back_comp.last_directions[idx] = -1;
 			planning_block->direction_bits |= Motion_Core::get_direction_pin_mask(idx);
 		}
-		
-		
 	}
 
 	// Bail if this is a zero-length block. Highly unlikely to occur.
