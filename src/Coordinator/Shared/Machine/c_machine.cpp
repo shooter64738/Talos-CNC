@@ -310,18 +310,18 @@ void c_machine::start_motion_binary(NGC_RS274::NGC_Binary_Block* local_block)
 	if (local_block->state & (1 << BLOCK_STATE_PLANNED))
 	{
 		c_processor::host_serial.print_string("sent...\r");
-		Motion_Core::Software::Interpollation::s_input_block test;
+		Motion_Core::Software::Interpollation::s_input_block motion_block_record;
 		uint8_t record_size = sizeof(Motion_Core::Software::Interpollation::motion_stream);
 		//set some block stuff
-		test.motion_type = Motion_Core::e_motion_type::feed_linear;
-		test.feed_rate_mode = Motion_Core::e_feed_modes::FEED_RATE_UNITS_PER_MINUTE_MODE;
-		test.feed_rate = 5000;
+		motion_block_record.motion_type = Motion_Core::e_motion_type::feed_linear;
+		motion_block_record.feed_rate_mode = Motion_Core::e_feed_modes::FEED_RATE_UNITS_PER_MINUTE_MODE;
+		motion_block_record.feed_rate = 5000;
 		for (int i=0;i<MACHINE_AXIS_COUNT;i++)
-		 test.axis_values[i] = *local_block->axis_values.Loop[i];
+		 motion_block_record.axis_values[i] = *local_block->axis_values.Loop[i];
 		
-		test.line_number = *local_block->persisted_values.active_line_number_N;
+		motion_block_record.line_number = *local_block->persisted_values.active_line_number_N;
 		//copy updated block to stream
-		memcpy(Motion_Core::Software::Interpollation::motion_stream, &test,record_size);
+		memcpy(Motion_Core::Software::Interpollation::motion_stream, &motion_block_record,record_size);
 		c_processor::controller_serial.Write_Record(Motion_Core::Software::Interpollation::motion_stream,record_size);
 
 		//See if there is appended motion (cutter comp may have set one for an outside corner)

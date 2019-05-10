@@ -15,13 +15,14 @@
 #include "c_motion_core.h"
 #include "c_interpollation_hardware.h"
 
-
 class c_processor
 {
 	//variables
 	public:
 	static c_Serial host_serial;
 	static void initialize();
+	static uint8_t load_record(uint8_t record_type);
+	static Motion_Core::Software::Interpollation::s_input_block motion_block;
 	
 	protected:
 	private:

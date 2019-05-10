@@ -22,6 +22,7 @@ namespace Motion_Core
 			
 			struct s_input_block
 			{
+				const uint8_t record_type = MOTION_RECORD;
 				e_motion_type motion_type = e_motion_type::rapid_linear;
 				float feed_rate = 0;
 				e_feed_modes feed_rate_mode = e_feed_modes::FEED_RATE_UNITS_PER_MINUTE_MODE;
