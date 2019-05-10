@@ -174,23 +174,23 @@
     </Compile>
     <Compile Include="..\..\Common\Hardware_Abstraction_Layer\AVR_2560\c_serial_avr_2560.cpp">
       <SubType>compile</SubType>
-      <Link>AVR_MotionDriver\MotionDriver\Common\Hardware Abstraction Layer\AVR 2560\c_serial_avr_2560.cpp</Link>
+      <Link>MotionDriver\Common\Hardware Abstraction Layer\AVR 2560\c_serial_avr_2560.cpp</Link>
     </Compile>
     <Compile Include="..\..\Common\Hardware_Abstraction_Layer\AVR_2560\c_serial_avr_2560.h">
       <SubType>compile</SubType>
-      <Link>AVR_MotionDriver\MotionDriver\Common\Hardware Abstraction Layer\AVR 2560\c_serial_avr_2560.h</Link>
+      <Link>MotionDriver\Common\Hardware Abstraction Layer\AVR 2560\c_serial_avr_2560.h</Link>
     </Compile>
     <Compile Include="..\..\Common\Serial\c_Serial.cpp">
       <SubType>compile</SubType>
-      <Link>AVR_MotionDriver\MotionDriver\Common\Serial\c_Serial.cpp</Link>
+      <Link>MotionDriver\Common\Serial\c_Serial.cpp</Link>
     </Compile>
     <Compile Include="..\..\Common\Serial\c_Serial.h">
       <SubType>compile</SubType>
-      <Link>AVR_MotionDriver\MotionDriver\Common\Serial\c_Serial.h</Link>
+      <Link>MotionDriver\Common\Serial\c_Serial.h</Link>
     </Compile>
     <Compile Include="..\..\Common\Serial\s_buffer.h">
       <SubType>compile</SubType>
-      <Link>AVR_MotionDriver\MotionDriver\Common\Serial\s_buffer.h</Link>
+      <Link>MotionDriver\Common\Serial\s_buffer.h</Link>
     </Compile>
     <Compile Include="..\..\helpers.h">
       <SubType>compile</SubType>

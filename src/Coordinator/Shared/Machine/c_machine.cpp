@@ -311,7 +311,7 @@ void c_machine::start_motion_binary(NGC_RS274::NGC_Binary_Block* local_block)
 	{
 		c_processor::host_serial.print_string("sent...\r");
 		Motion_Core::Software::Interpollation::s_input_block test;
-		uint8_t record_size = sizeof(Motion_Core::Software::Interpollation::stream);
+		uint8_t record_size = sizeof(Motion_Core::Software::Interpollation::motion_stream);
 		//set some block stuff
 		test.motion_type = Motion_Core::e_motion_type::feed_linear;
 		test.feed_rate_mode = Motion_Core::e_feed_modes::FEED_RATE_UNITS_PER_MINUTE_MODE;
@@ -321,8 +321,8 @@ void c_machine::start_motion_binary(NGC_RS274::NGC_Binary_Block* local_block)
 		
 		test.line_number = *local_block->persisted_values.active_line_number_N;
 		//copy updated block to stream
-		memcpy(Motion_Core::Software::Interpollation::stream, &test,record_size);
-		c_processor::controller_serial.Write_Record(Motion_Core::Software::Interpollation::stream,record_size);
+		memcpy(Motion_Core::Software::Interpollation::motion_stream, &test,record_size);
+		c_processor::controller_serial.Write_Record(Motion_Core::Software::Interpollation::motion_stream,record_size);
 
 		//See if there is appended motion (cutter comp may have set one for an outside corner)
 		if (local_block->appended_block_pointer != NULL)

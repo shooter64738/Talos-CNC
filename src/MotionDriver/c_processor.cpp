@@ -24,7 +24,7 @@ void c_processor::initialize()
 	
 	
 	Motion_Core::Software::Interpollation::s_input_block test;
-	uint8_t record_size = sizeof(Motion_Core::Software::Interpollation::stream);
+	uint8_t record_size = sizeof(Motion_Core::Software::Interpollation::motion_stream);
 	////copy to block
 	//memcpy(&test, Motion_Core::Software::Interpollation::stream, sizeof(Motion_Core::Software::Interpollation::stream));
 #ifdef MSVC
@@ -36,8 +36,8 @@ void c_processor::initialize()
 	test.axis_values[3] = 0; test.axis_values[4] =0 ; test.axis_values[5] = 0;
 	test.line_number = 1;
 	//copy updated block to stream
-	memcpy(Motion_Core::Software::Interpollation::stream, &test,sizeof(Motion_Core::Software::Interpollation::stream));
-	Hardware_Abstraction_Layer::Serial::add_to_buffer(0, Motion_Core::Software::Interpollation::stream, record_size);
+	memcpy(Motion_Core::Software::Interpollation::motion_stream, &test,sizeof(Motion_Core::Software::Interpollation::motion_stream));
+	Hardware_Abstraction_Layer::Serial::add_to_buffer(0, Motion_Core::Software::Interpollation::motion_stream, record_size);
 #endif
 	//host_serial.Write_Record(Motion_Core::Software::Interpollation::stream,record_size);
 	//clear block
@@ -69,16 +69,16 @@ uint8_t current_size = host_serial.DataSize();
 			//host_serial.print_string("HAVE RECORD!");
 			//host_serial.Write(CR);
 			//Clear the stream
-			memset(Motion_Core::Software::Interpollation::stream, 0, record_size);
+			memset(Motion_Core::Software::Interpollation::motion_stream, 0, record_size);
 			//Clear the block
 			memset(&test, 0, record_size);
 			for (int i=0;i<record_size;i++)
 			{
-				Motion_Core::Software::Interpollation::stream[i] = host_serial.Get();
+				Motion_Core::Software::Interpollation::motion_stream[i] = host_serial.Get();
 			}
 			
 			
-			memcpy(&test, Motion_Core::Software::Interpollation::stream, record_size);
+			memcpy(&test, Motion_Core::Software::Interpollation::motion_stream, record_size);
 			
 			//host_serial.print_string("test.motion_type = ");host_serial.print_int32((uint32_t)test.motion_type);host_serial.Write(CR);
 			//host_serial.print_string("test.feed_rate_mode = ");host_serial.print_int32((uint32_t)test.feed_rate_mode);host_serial.Write(CR);
@@ -97,8 +97,8 @@ uint8_t current_size = host_serial.DataSize();
 			Motion_Core::Software::Interpollation::load_block(test);
 #ifdef MSVC
 			test.line_number++;
-			memcpy(Motion_Core::Software::Interpollation::stream, &test, sizeof(Motion_Core::Software::Interpollation::stream));
-			Hardware_Abstraction_Layer::Serial::add_to_buffer(0, Motion_Core::Software::Interpollation::stream, record_size);
+			memcpy(Motion_Core::Software::Interpollation::motion_stream, &test, sizeof(Motion_Core::Software::Interpollation::motion_stream));
+			Hardware_Abstraction_Layer::Serial::add_to_buffer(0, Motion_Core::Software::Interpollation::motion_stream, record_size);
 #endif
 		}
 		//Let this continuously try to prep the step buffer. If theres no data to process nothing shoudl happen

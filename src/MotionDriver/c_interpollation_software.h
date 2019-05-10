@@ -34,7 +34,7 @@ namespace Motion_Core
 			};
 			
 			
-			static char stream[sizeof(s_input_block)];
+			static char motion_stream[sizeof(s_input_block)];
 			
 			struct s_backlash_comp
 			{
