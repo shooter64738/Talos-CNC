@@ -10,6 +10,7 @@ using namespace std;
 static ofstream myfile;
 
 #endif // MSVC
+#include "c_processor.h"
 
 Motion_Core::Segment::Bresenham::Bresenham_Item *Motion_Core::Hardware::Interpollation::Change_Check_Exec_Timer_Bresenham; // Tracks the current st_block index. Change indicates new block.
 Motion_Core::Segment::Timer::Timer_Item *Motion_Core::Hardware::Interpollation::Exec_Timer_Item;  // Pointer to the segment being executed
@@ -60,6 +61,9 @@ void Motion_Core::Hardware::Interpollation::Shutdown()
 	//Hardware_Abstraction_Layer::Grbl::Stepper::port_disable(pin_state);
 
 }
+#ifdef MSVC
+static uint32_t test_count = 0;
+#endif
 
 void Motion_Core::Hardware::Interpollation::step_tick()
 {
@@ -67,7 +71,18 @@ void Motion_Core::Hardware::Interpollation::step_tick()
 	{
 		return;
 	} // The busy-flag is used to avoid reentering this interrupt
-
+	
+	#ifdef MSVC 
+	test_count++;
+	if (test_count == 150)
+	{
+		c_processor::remote = 1;
+		while (c_processor::remote == 1)
+		{
+		}
+		c_processor::remote = 0;
+	}
+	#endif
 	// Set the direction pins a couple of nanoseconds before we step the steppers
 	//DIRECTION_PORT = (DIRECTION_PORT & ~DIRECTION_MASK) | (st.dir_outbits & DIRECTION_MASK);
 	Hardware_Abstraction_Layer::MotionCore::Stepper::port_direction((DIRECTION_PORT & ~DIRECTION_MASK)

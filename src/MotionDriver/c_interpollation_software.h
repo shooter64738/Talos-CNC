@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include "c_planner_compute_block.h"
+#include "..\Common\Serial\records_def.h"
 
 #ifndef __C_SOFTWARE_INTERPOLLATION
 #define __C_SOFTWARE_INTERPOLLATION
@@ -13,29 +14,29 @@ namespace Motion_Core
 			public:
 			
 			
-			struct s_arc_values
-			{
-				float horizontal_center = 0 ;
-				float vertical_center = 0;
-				float Radius = 0;
-			};
+			//struct s_arc_values
+			//{
+				//float horizontal_center = 0 ;
+				//float vertical_center = 0;
+				//float Radius = 0;
+			//};
+			//
+			//struct s_input_block
+			//{
+				//const uint8_t record_type = MOTION_RECORD;
+				//e_motion_type motion_type = e_motion_type::rapid_linear;
+				//float feed_rate = 0;
+				//e_feed_modes feed_rate_mode = e_feed_modes::FEED_RATE_UNITS_PER_MINUTE_MODE;
+				////float word_values[26];
+				//uint32_t line_number = 0 ;
+				//float axis_values[N_AXIS];
+				//s_arc_values arc_values;
+				//e_block_flag flag = e_block_flag::normal;
+				//
+			//};
 			
-			struct s_input_block
-			{
-				const uint8_t record_type = MOTION_RECORD;
-				e_motion_type motion_type = e_motion_type::rapid_linear;
-				float feed_rate = 0;
-				e_feed_modes feed_rate_mode = e_feed_modes::FEED_RATE_UNITS_PER_MINUTE_MODE;
-				//float word_values[26];
-				uint32_t line_number = 0 ;
-				float axis_values[N_AXIS];
-				s_arc_values arc_values;
-				e_block_flag flag = e_block_flag::normal;
-				
-			};
 			
-			
-			static char motion_stream[sizeof(s_input_block)];
+			static char motion_stream[sizeof(BinaryRecords::Motion::s_input_block)];
 			
 			struct s_backlash_comp
 			{
@@ -45,10 +46,10 @@ namespace Motion_Core
 			
 			static s_backlash_comp back_comp;
 			
-			static void load_block(s_input_block block);
+			static void load_block(BinaryRecords::Motion::s_input_block block);
 			
-			static uint8_t _mc_line(s_input_block target_block);
-			static uint8_t _mc_arc(s_input_block target_block);
+			static uint8_t _mc_line(BinaryRecords::Motion::s_input_block target_block);
+			static uint8_t _mc_arc(BinaryRecords::Motion::s_input_block target_block);
 
 			//static void mc_line(float *target, c_planner::plan_line_data_t *pl_data, NGC_RS274::NGC_Binary_Block *target_block);
 			//static void mc_arc(float *target, c_planner::plan_line_data_t *pl_data, float *position, float *offset, float radius

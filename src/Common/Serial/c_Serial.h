@@ -48,7 +48,7 @@ class c_Serial
 	
 	uint8_t Available();
 	void ClearBuffer(void);
-	void InitBuffer(void);
+	void Reset(void);
 	char Get();
 	char Peek();
 	char Peek(uint8_t LookAhead);

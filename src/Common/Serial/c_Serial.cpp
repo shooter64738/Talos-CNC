@@ -51,7 +51,7 @@ c_Serial::c_Serial(uint8_t Port, uint32_t BaudRate)
 {
 	this->_port = Port;
 	
-	InitBuffer();
+	Reset();
 	
 	//c_hal::comm.PNTR_INITIALIZE != NULL ? c_hal::comm.PNTR_INITIALIZE(Port, 115200) : void();
 	Hardware_Abstraction_Layer::Serial::initialize(Port,BaudRate);
@@ -63,16 +63,18 @@ void c_Serial::ClearBuffer()
 	return;
 
 	//memset(rxBuffer[_port].Buffer,0,RX_BUFFER_SIZE);
-	for (int i=0;i<RX_BUFFER_SIZE;i++)
-	Hardware_Abstraction_Layer::Serial::rxBuffer[_port].Buffer[i] = 0;
+	memset(Hardware_Abstraction_Layer::Serial::rxBuffer[_port].Buffer,0,RX_BUFFER_SIZE);
+	//for (int i=0;i<RX_BUFFER_SIZE;i++)
+	//Hardware_Abstraction_Layer::Serial::rxBuffer[_port].Buffer[i] = 0;
 	
 }
 
-void c_Serial::InitBuffer()
+void c_Serial::Reset()
 {
 	Hardware_Abstraction_Layer::Serial::rxBuffer[_port].Head = 0;
 	Hardware_Abstraction_Layer::Serial::rxBuffer[_port].Tail = 0;
-	EOL=FALSE;
+	Hardware_Abstraction_Layer::Serial::rxBuffer[_port].EOL=0;
+	Hardware_Abstraction_Layer::Serial::rxBuffer[_port].OverFlow = 0;
 	ClearBuffer();
 }
 

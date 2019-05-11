@@ -11,7 +11,7 @@ float Motion_Core::Planner::Calculator::previous_unit_vec[N_AXIS];
 float Motion_Core::Planner::Calculator::previous_nominal_speed;
 
 
-uint8_t Motion_Core::Planner::Calculator::_plan_buffer_line(Motion_Core::Software::Interpollation::s_input_block target_block)
+uint8_t Motion_Core::Planner::Calculator::_plan_buffer_line(BinaryRecords::Motion::s_input_block target_block)
 {
 	// Prepare and initialize new block. Copy relevant pl_data for block execution.
 	Motion_Core::Planner::Block_Item *planning_block = Motion_Core::Planner::Buffer::Write();

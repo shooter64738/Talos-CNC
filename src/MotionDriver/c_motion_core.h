@@ -3,9 +3,11 @@
 #include <stdint.h>
 #include <stddef.h>
 #define N_AXIS 3
-#define  G_CODE_MULTIPLIER 100
+#define G_CODE_MULTIPLIER 100
 #define MOTION_RECORD 1
 #define SETTING_RECORD 2
+#define SER_ACK_PROCEED 100 //proceed with more instructions
+#define SER_BAD_READ_RE_TRANSMIT 101 //data is bad, re-send
 namespace Motion_Core
 {
 	#define TICKS_PER_MICROSECOND (F_CPU/1000000)

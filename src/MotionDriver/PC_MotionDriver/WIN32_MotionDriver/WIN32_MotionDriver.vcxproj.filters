@@ -25,9 +25,6 @@
     <ClCompile Include="..\..\..\Common\Hardware_Abstraction_Layer\Virtual\c_core_win.cpp">
       <Filter>MotionDriver\Common\HardwareAbstractionLayer\WIN_32</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Common\Hardware_Abstraction_Layer\Virtual\c_grbl_win_stepper.cpp">
-      <Filter>MotionDriver\Common\HardwareAbstractionLayer\WIN_32</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\Common\Serial\c_Serial.cpp">
       <Filter>MotionDriver\Common\Serial</Filter>
     </ClCompile>
@@ -45,12 +42,12 @@
     <ClCompile Include="..\..\c_segment_timer_item.cpp" />
     <ClCompile Include="..\..\main.cpp" />
     <ClCompile Include="..\..\c_processor.cpp" />
+    <ClCompile Include="..\..\..\Common\Hardware_Abstraction_Layer\Virtual\c_motion_core_win_stepper.cpp">
+      <Filter>MotionDriver\Common\HardwareAbstractionLayer\WIN_32</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Common\Hardware_Abstraction_Layer\Virtual\c_core_win.h">
-      <Filter>MotionDriver\Common\HardwareAbstractionLayer\WIN_32</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Common\Hardware_Abstraction_Layer\Virtual\c_grbl_win_stepper.h">
       <Filter>MotionDriver\Common\HardwareAbstractionLayer\WIN_32</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Common\Serial\c_Serial.h">
@@ -73,5 +70,8 @@
     <ClInclude Include="..\..\c_segment_timer_item.h" />
     <ClInclude Include="..\..\hardware_def.h" />
     <ClInclude Include="..\..\c_processor.h" />
+    <ClInclude Include="..\..\..\Common\Hardware_Abstraction_Layer\Virtual\c_motion_core_win_stepper.h">
+      <Filter>MotionDriver\Common\HardwareAbstractionLayer\WIN_32</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

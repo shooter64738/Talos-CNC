@@ -38,7 +38,6 @@
 #include "..\..\..\common\NGC_RS274\NGC_M_Groups.h"
 #include "..\..\..\Common\NGC_RS274\NGC_G_Codes.h"
 #include "..\..\..\common\NGC_RS274\NGC_G_Groups.h"
-#include "..\..\..\MotionDriver\c_interpollation_software.h"
 
 
 uint16_t *c_machine::machine_state_g_group; //There are 14 groups of gcodes (0-13)
@@ -47,6 +46,7 @@ NGC_RS274::NGC_Binary_Block*c_machine::machine_block;
 float c_machine::axis_position[MACHINE_AXIS_COUNT];
 float c_machine::unit_scaler = 1;
 char c_machine::machine_axis_names[MACHINE_AXIS_COUNT];
+char c_machine::motion_stream[sizeof(BinaryRecords::Motion::s_input_block)];
 
 
 /*
@@ -309,21 +309,51 @@ void c_machine::start_motion_binary(NGC_RS274::NGC_Binary_Block* local_block)
 	//If the block is set to 'planned' then its ready to execute
 	if (local_block->state & (1 << BLOCK_STATE_PLANNED))
 	{
-		c_processor::host_serial.print_string("sent...\r");
-		Motion_Core::Software::Interpollation::s_input_block motion_block_record;
-		uint8_t record_size = sizeof(Motion_Core::Software::Interpollation::motion_stream);
+		BinaryRecords::Motion::s_input_block motion_block_record;
+		uint8_t record_size = sizeof(BinaryRecords::Motion::s_input_block);
 		//set some block stuff
 		motion_block_record.motion_type = Motion_Core::e_motion_type::feed_linear;
 		motion_block_record.feed_rate_mode = Motion_Core::e_feed_modes::FEED_RATE_UNITS_PER_MINUTE_MODE;
 		motion_block_record.feed_rate = 5000;
 		for (int i=0;i<MACHINE_AXIS_COUNT;i++)
-		 motion_block_record.axis_values[i] = *local_block->axis_values.Loop[i];
-		
+		motion_block_record.axis_values[i] = *local_block->axis_values.Loop[i];
 		motion_block_record.line_number = *local_block->persisted_values.active_line_number_N;
 		//copy updated block to stream
-		memcpy(Motion_Core::Software::Interpollation::motion_stream, &motion_block_record,record_size);
-		c_processor::controller_serial.Write_Record(Motion_Core::Software::Interpollation::motion_stream,record_size);
-
+		
+		memcpy(motion_stream, &motion_block_record,record_size);
+		//Send to motion controller
+		uint8_t send_count = 0;
+		while(1)
+		{
+			if (send_count>4)
+			{
+				//We tried 4 times to send the record and it kept failing.. SUPER bad..
+				return;
+			}
+			c_processor::controller_serial.Write_Record(motion_stream,record_size);	
+			send_count ++;
+			//Now we need to wait for the motion controller to confirm it go the data
+			if (c_processor::controller_serial.WaitFOrEOL(50000)) //<-- wait until the timeout
+			{
+				//We timed out. this is bad...
+				return ;
+			}
+			else
+			{
+				//get the response code from the controller
+				uint8_t resp = c_processor::controller_serial.Get();
+				//there should be a cr after this, we can throw it away
+				c_processor::controller_serial.Get();
+				//If we get a proceed resp, we can break the while. we are done.
+				if (resp == SER_ACK_PROCEED)
+				{
+					break;
+				}
+				
+				//if we get to here, we didnt get an ack and we need to resend.
+				send_count++;
+			}
+		}
 		//See if there is appended motion (cutter comp may have set one for an outside corner)
 		if (local_block->appended_block_pointer != NULL)
 		{

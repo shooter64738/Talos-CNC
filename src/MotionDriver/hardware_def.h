@@ -62,7 +62,7 @@
 #define F_CPU 16000000
 #include "../Common/Serial/c_Serial.h"
 #include "../Common/Hardware_Abstraction_Layer\Virtual/c_core_win.h"
-#include "../Common/Hardware_Abstraction_Layer/Virtual\c_grbl_win_stepper.h"
+#include "../Common/Hardware_Abstraction_Layer/Virtual\c_motion_core_win_stepper.h"
 #include "../Common/Hardware_Abstraction_Layer/Virtual/c_serial_win.h"
 #endif
 

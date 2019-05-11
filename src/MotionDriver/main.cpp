@@ -27,7 +27,7 @@ int main()
 	//
 	//Motion_Core::initialize();
 	//
-	//Motion_Core::Software::Interpollation::s_input_block in_block[10];
+	//BinaryRecords::Motion::s_input_block in_block[10];
 	//
 	//host_serial.print_string("hello");
 	//Hardware_Abstraction_Layer::Core::start_interrupts();

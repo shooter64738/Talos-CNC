@@ -9,9 +9,9 @@
 
 Motion_Core::Software::Interpollation::s_backlash_comp Motion_Core::Software::Interpollation::back_comp;
 
-char Motion_Core::Software::Interpollation::motion_stream[sizeof(Motion_Core::Software::Interpollation::s_input_block)];
+char Motion_Core::Software::Interpollation::motion_stream[sizeof(BinaryRecords::Motion::s_input_block)];
 
-void Motion_Core::Software::Interpollation::load_block(s_input_block block)
+void Motion_Core::Software::Interpollation::load_block(BinaryRecords::Motion::s_input_block block)
 {
 	uint8_t return_value = 0;
 	
@@ -42,7 +42,7 @@ void Motion_Core::Software::Interpollation::load_block(s_input_block block)
 	if (Motion_Core::Software::Interpollation::back_comp.needs_comp == 1)
 	{
 		//create a rapid motion to take up the compensation distance
-		s_input_block comp_block;
+		BinaryRecords::Motion::s_input_block comp_block;
 		comp_block.feed_rate_mode = e_feed_modes::FEED_RATE_UNITS_PER_MINUTE_MODE;
 		comp_block.motion_type = e_motion_type::rapid_linear;
 		comp_block.flag = e_block_flag::compensation;
@@ -91,7 +91,7 @@ void Motion_Core::Software::Interpollation::load_block(s_input_block block)
 
 
 
-uint8_t Motion_Core::Software::Interpollation::_mc_line(s_input_block target_block)
+uint8_t Motion_Core::Software::Interpollation::_mc_line(BinaryRecords::Motion::s_input_block target_block)
 {
 	return Motion_Core::Planner::Calculator::_plan_buffer_line(target_block);
 }
@@ -122,7 +122,7 @@ uint8_t Motion_Core::Software::Interpollation::_mc_line(s_input_block target_blo
 //}
 
 
-uint8_t Motion_Core::Software::Interpollation::_mc_arc(s_input_block target_block)
+uint8_t Motion_Core::Software::Interpollation::_mc_arc(BinaryRecords::Motion::s_input_block target_block)
 {
 	float center_axis0;//= *Motion_Core::Software::Interpollation::previous_state.plane_axis.horizontal_axis.value
 	//+ *target_block->arc_values.horizontal_center.value;

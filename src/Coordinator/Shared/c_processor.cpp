@@ -46,7 +46,6 @@
 #include "Encoder/c_encoder.h"
 #include "hardware_def.h"
 #include "../../common/NGC_RS274/NGC_Errors.h"
-#include "../../MotionDriver/c_interpollation_software.h"
 //#include "Spindle/c_spindle.h"
 
 

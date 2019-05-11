@@ -24,6 +24,7 @@
 
 #include "../../../talos.h"
 #include "../../../Common/NGC_RS274/NGC_Block.h"
+#include "../../../Common/Serial/records_def.h"
 
 class c_machine
 {
@@ -41,6 +42,7 @@ class c_machine
 	static float axis_position[MACHINE_AXIS_COUNT];
 	static float unit_scaler;
 	static NGC_RS274::NGC_Binary_Block*machine_block;
+	static char motion_stream[sizeof(BinaryRecords::Motion::s_input_block)];
 
 	protected:
 	private:

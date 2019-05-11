@@ -10,10 +10,7 @@
 #define __C_PROCESSOR_H__
 
 #include "hardware_def.h"
-#include "c_segment_arbitrator.h"
-#include "c_interpollation_software.h"
-#include "c_motion_core.h"
-#include "c_interpollation_hardware.h"
+#include "..\Common\Serial\records_def.h"
 
 class c_processor
 {
@@ -22,8 +19,8 @@ class c_processor
 	static c_Serial host_serial;
 	static void initialize();
 	static uint8_t load_record(uint8_t record_type);
-	static Motion_Core::Software::Interpollation::s_input_block motion_block;
-	
+	static BinaryRecords::Motion::s_input_block motion_block;
+	static uint8_t remote;
 	protected:
 	private:
 

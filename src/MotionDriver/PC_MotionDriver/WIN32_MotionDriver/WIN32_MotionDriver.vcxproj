@@ -77,7 +77,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Common\Hardware_Abstraction_Layer\Virtual\c_core_win.cpp" />
-    <ClCompile Include="..\..\..\Common\Hardware_Abstraction_Layer\Virtual\c_grbl_win_stepper.cpp" />
+    <ClCompile Include="..\..\..\Common\Hardware_Abstraction_Layer\Virtual\c_motion_core_win_stepper.cpp" />
     <ClCompile Include="..\..\..\Common\Hardware_Abstraction_Layer\Virtual\c_serial_win.cpp" />
     <ClCompile Include="..\..\..\Common\Serial\c_Serial.cpp" />
     <ClCompile Include="..\..\c_block.cpp" />
@@ -94,7 +94,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Common\Hardware_Abstraction_Layer\Virtual\c_core_win.h" />
-    <ClInclude Include="..\..\..\Common\Hardware_Abstraction_Layer\Virtual\c_grbl_win_stepper.h" />
+    <ClInclude Include="..\..\..\Common\Hardware_Abstraction_Layer\Virtual\c_motion_core_win_stepper.h" />
     <ClInclude Include="..\..\..\Common\Hardware_Abstraction_Layer\Virtual\c_serial_win.h" />
     <ClInclude Include="..\..\..\Common\Serial\c_Serial.h" />
     <ClInclude Include="..\..\..\Common\Serial\s_buffer.h" />

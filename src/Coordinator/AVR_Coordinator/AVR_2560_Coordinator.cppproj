@@ -267,17 +267,13 @@
       <SubType>compile</SubType>
       <Link>Common\Serial\c_Serial.h</Link>
     </Compile>
+    <Compile Include="..\..\Common\Serial\records_def.h">
+      <SubType>compile</SubType>
+      <Link>records_def.h</Link>
+    </Compile>
     <Compile Include="..\..\Common\Serial\s_buffer.h">
       <SubType>compile</SubType>
       <Link>Common\Serial\s_buffer.h</Link>
-    </Compile>
-    <Compile Include="..\..\MotionDriver\c_interpollation_software.cpp">
-      <SubType>compile</SubType>
-      <Link>AVR_Coordinator\AVR_Coordinator\MotionCore\c_interpollation_software.cpp</Link>
-    </Compile>
-    <Compile Include="..\..\MotionDriver\c_interpollation_software.h">
-      <SubType>compile</SubType>
-      <Link>AVR_Coordinator\AVR_Coordinator\MotionCore\c_interpollation_software.h</Link>
     </Compile>
     <Compile Include="..\..\msvc++.h">
       <SubType>compile</SubType>
@@ -509,6 +505,8 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="AVR_Coordinator\" />
+    <Folder Include="AVR_Coordinator\AVR_Coordinator\" />
+    <Folder Include="AVR_Coordinator\AVR_Coordinator\MotionCore\" />
     <Folder Include="AVR_Coordinator\Events\" />
     <Folder Include="AVR_Coordinator\Interpolation\" />
     <Folder Include="AVR_Coordinator\Machine\" />
