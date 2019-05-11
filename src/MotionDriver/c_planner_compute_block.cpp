@@ -11,7 +11,7 @@ float Motion_Core::Planner::Calculator::previous_unit_vec[N_AXIS];
 float Motion_Core::Planner::Calculator::previous_nominal_speed;
 
 
-uint8_t Motion_Core::Planner::Calculator::_plan_buffer_line(BinaryRecords::Motion::s_input_block target_block)
+uint8_t Motion_Core::Planner::Calculator::_plan_buffer_line(BinaryRecords::s_motion_data_block target_block)
 {
 	// Prepare and initialize new block. Copy relevant pl_data for block execution.
 	Motion_Core::Planner::Block_Item *planning_block = Motion_Core::Planner::Buffer::Write();
@@ -30,7 +30,7 @@ uint8_t Motion_Core::Planner::Calculator::_plan_buffer_line(BinaryRecords::Motio
 		// Calculate target position in absolute steps, number of steps for each axis, and determine max step events.
 		// Also, compute individual axes distance for move and prep unit vector calculations.
 		// NOTE: Computes true distance from converted step values.
-		planning_block->steps[idx] = labs(target_block.axis_values[idx] * Motion_Core::Settings::steps_per_mm[idx] );
+		planning_block->steps[idx] = labs(target_block.axis_values[idx] * Motion_Core::Settings::_Settings.steps_per_mm[idx] );
 		planning_block->step_event_count = max(planning_block->step_event_count, planning_block->steps[idx]);
 		
 
@@ -59,18 +59,18 @@ uint8_t Motion_Core::Planner::Calculator::_plan_buffer_line(BinaryRecords::Motio
 	// NOTE: This calculation assumes all axes are orthogonal (Cartesian) and works with ABC-axes,
 	// if they are also orthogonal/independent. Operates on the absolute value of the unit vector.
 	planning_block->millimeters = Motion_Core::convert_delta_vector_to_unit_vector(unit_vec);
-	planning_block->acceleration = Motion_Core::limit_value_by_axis_maximum(Motion_Core::Settings::acceleration, unit_vec);
-	planning_block->rapid_rate = Motion_Core::limit_value_by_axis_maximum(Motion_Core::Settings::max_rate, unit_vec);
+	planning_block->acceleration = Motion_Core::limit_value_by_axis_maximum(Motion_Core::Settings::_Settings.acceleration, unit_vec);
+	planning_block->rapid_rate = Motion_Core::limit_value_by_axis_maximum(Motion_Core::Settings::_Settings.max_rate, unit_vec);
 
 	// Store programmed rate.
-	if (target_block.motion_type == Motion_Core::e_motion_type::rapid_linear)
+	if (target_block.motion_type == BinaryRecords::e_motion_type::rapid_linear)
 	{
 		planning_block->programmed_rate = planning_block->rapid_rate;
 	}
 	else
 	{
 		planning_block->programmed_rate = target_block.feed_rate;
-		if (target_block.feed_rate_mode == Motion_Core::e_feed_modes::FEED_RATE_MINUTES_PER_UNIT_MODE)
+		if (target_block.feed_rate_mode == BinaryRecords::e_feed_modes::FEED_RATE_MINUTES_PER_UNIT_MODE)
 		{
 			planning_block->programmed_rate *= planning_block->millimeters;
 		}
@@ -134,10 +134,10 @@ uint8_t Motion_Core::Planner::Calculator::_plan_buffer_line(BinaryRecords::Motio
 			else
 			{
 				Motion_Core::convert_delta_vector_to_unit_vector(junction_unit_vec);
-				float junction_acceleration = Motion_Core::limit_value_by_axis_maximum(Motion_Core::Settings::acceleration, junction_unit_vec);
+				float junction_acceleration = Motion_Core::limit_value_by_axis_maximum(Motion_Core::Settings::_Settings.acceleration, junction_unit_vec);
 				float sin_theta_d2 = sqrt(0.5 * (1.0 - junction_cos_theta)); // Trig half angle identity. Always positive.
 				planning_block->max_junction_speed_sqr = max(MINIMUM_JUNCTION_SPEED*MINIMUM_JUNCTION_SPEED,
-				(junction_acceleration * Motion_Core::Settings::junction_deviation * sin_theta_d2) / (1.0 - sin_theta_d2));
+					(junction_acceleration * Motion_Core::Settings::_Settings.junction_deviation * sin_theta_d2) / (1.0 - sin_theta_d2));
 			}
 		}
 	}

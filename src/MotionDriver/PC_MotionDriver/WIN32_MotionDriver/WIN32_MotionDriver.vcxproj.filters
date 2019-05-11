@@ -73,5 +73,6 @@
     <ClInclude Include="..\..\..\Common\Hardware_Abstraction_Layer\Virtual\c_motion_core_win_stepper.h">
       <Filter>MotionDriver\Common\HardwareAbstractionLayer\WIN_32</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\Common\Serial\records_def.h" />
   </ItemGroup>
 </Project>

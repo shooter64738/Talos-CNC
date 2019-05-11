@@ -1,6 +1,6 @@
 #include <stdint.h>
 #include "c_segment_timer_bresenham.h"
-#include "c_motion_core.h"
+#include "..\Common\Serial\records_def.h"
 namespace Motion_Core
 {
 	namespace Segment
@@ -21,7 +21,7 @@ namespace Motion_Core
 
 				uint8_t timer_prescaler;      // Without AMASS, a prescaler is required to adjust for slow timing.
 				uint32_t line_number;
-				Motion_Core::e_block_flag flag;
+				BinaryRecords::e_block_flag flag;
 
 			public:
 				Timer_Item();

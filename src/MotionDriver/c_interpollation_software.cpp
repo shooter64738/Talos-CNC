@@ -2,6 +2,7 @@
 #include "c_block_buffer.h"
 #include "c_segment_arbitrator.h"
 #include "c_interpollation_hardware.h"
+#include "..\Common\Serial\records_def.h"
 #ifdef MSVC
 #define M_PI 3.14159265358979323846
 //#include "../../MSVC++.h"
@@ -9,9 +10,9 @@
 
 Motion_Core::Software::Interpollation::s_backlash_comp Motion_Core::Software::Interpollation::back_comp;
 
-char Motion_Core::Software::Interpollation::motion_stream[sizeof(BinaryRecords::Motion::s_input_block)];
+char Motion_Core::Software::Interpollation::motion_stream[sizeof(BinaryRecords::s_motion_data_block)];
 
-void Motion_Core::Software::Interpollation::load_block(BinaryRecords::Motion::s_input_block block)
+void Motion_Core::Software::Interpollation::load_block(BinaryRecords::s_motion_data_block block)
 {
 	uint8_t return_value = 0;
 	
@@ -42,15 +43,15 @@ void Motion_Core::Software::Interpollation::load_block(BinaryRecords::Motion::s_
 	if (Motion_Core::Software::Interpollation::back_comp.needs_comp == 1)
 	{
 		//create a rapid motion to take up the compensation distance
-		BinaryRecords::Motion::s_input_block comp_block;
-		comp_block.feed_rate_mode = e_feed_modes::FEED_RATE_UNITS_PER_MINUTE_MODE;
-		comp_block.motion_type = e_motion_type::rapid_linear;
-		comp_block.flag = e_block_flag::compensation;
+		BinaryRecords::s_motion_data_block comp_block;
+		comp_block.feed_rate_mode = BinaryRecords::e_feed_modes::FEED_RATE_UNITS_PER_MINUTE_MODE;
+		comp_block.motion_type = BinaryRecords::e_motion_type::rapid_linear;
+		comp_block.flag = BinaryRecords::e_block_flag::compensation;
 		for (uint8_t idx = 0; idx < N_AXIS; idx++)
 		{
 			//We can loop through all of them. If the changing_axis value is zero due to no change in direction
 			//then there will be no motion computed for it. 
-			comp_block.axis_values[idx] = Motion_Core::Settings::back_lash_comp_distance[idx]
+			comp_block.axis_values[idx] = Motion_Core::Settings::_Settings.back_lash_comp_distance[idx]
 				* changing_axis[idx];
 		}
 		return_value = Motion_Core::Software::Interpollation::_mc_line(comp_block);
@@ -59,23 +60,23 @@ void Motion_Core::Software::Interpollation::load_block(BinaryRecords::Motion::s_
 	
 	switch (block.motion_type)
 	{
-		case e_motion_type::rapid_linear:
+		case BinaryRecords::e_motion_type::rapid_linear:
 		{
 			
 			return_value = Motion_Core::Software::Interpollation::_mc_line(block);
 			break;
 		}
-		case e_motion_type::feed_linear:
+		case BinaryRecords::e_motion_type::feed_linear:
 		{
 			return_value = Motion_Core::Software::Interpollation::_mc_line(block);
 			break;
 		}
-		case e_motion_type::arc_cw:
+		case BinaryRecords::e_motion_type::arc_cw:
 		{
 			return_value = Motion_Core::Software::Interpollation::_mc_arc(block);
 			break;
 		}
-		case e_motion_type::arc_ccw:
+		case BinaryRecords::e_motion_type::arc_ccw:
 		{
 			return_value = Motion_Core::Software::Interpollation::_mc_arc(block);
 			break;
@@ -91,7 +92,7 @@ void Motion_Core::Software::Interpollation::load_block(BinaryRecords::Motion::s_
 
 
 
-uint8_t Motion_Core::Software::Interpollation::_mc_line(BinaryRecords::Motion::s_input_block target_block)
+uint8_t Motion_Core::Software::Interpollation::_mc_line(BinaryRecords::s_motion_data_block target_block)
 {
 	return Motion_Core::Planner::Calculator::_plan_buffer_line(target_block);
 }
@@ -122,7 +123,7 @@ uint8_t Motion_Core::Software::Interpollation::_mc_line(BinaryRecords::Motion::s
 //}
 
 
-uint8_t Motion_Core::Software::Interpollation::_mc_arc(BinaryRecords::Motion::s_input_block target_block)
+uint8_t Motion_Core::Software::Interpollation::_mc_arc(BinaryRecords::s_motion_data_block target_block)
 {
 	float center_axis0;//= *Motion_Core::Software::Interpollation::previous_state.plane_axis.horizontal_axis.value
 	//+ *target_block->arc_values.horizontal_center.value;
@@ -136,7 +137,7 @@ uint8_t Motion_Core::Software::Interpollation::_mc_arc(BinaryRecords::Motion::s_
 	
 	// CCW angle between position and target from circle center. Only one atan2() trig computation required.
 	float angular_travel = atan2(r_axis0 * rt_axis1 - r_axis1 * rt_axis0, r_axis0 * rt_axis0 + r_axis1 * rt_axis1);
-	if (target_block.motion_type == Motion_Core::e_motion_type::arc_cw)
+	if (target_block.motion_type == BinaryRecords::e_motion_type::arc_cw)
 	{ // Correct atan2 output per direction
 	if (angular_travel >= -ARC_ANGULAR_TRAVEL_EPSILON)
 	{
@@ -156,14 +157,14 @@ uint8_t Motion_Core::Software::Interpollation::_mc_arc(BinaryRecords::Motion::s_
 	// is desired, i.e. least-squares, midpoint on arc, just change the mm_per_arc_segment calculation.
 	// For the intended uses of Grbl, this value shouldn't exceed 2000 for the strictest of cases.
 	uint16_t segments = floor(fabs(0.5 * angular_travel * (target_block.arc_values.Radius))
-	/ sqrt(Motion_Core::Settings::arc_tolerance * (2 * (target_block.arc_values.Radius) - Motion_Core::Settings::arc_tolerance)));
+		/ sqrt(Motion_Core::Settings::_Settings.arc_tolerance * (2 * (target_block.arc_values.Radius) - Motion_Core::Settings::_Settings.arc_tolerance)));
 	
 	if (segments)
 	{
 	// Multiply inverse feed_rate to compensate for the fact that this movement is approximated
 	// by a number of discrete segments. The inverse feed_rate should be correct for the sum of
 	// all segments.
-	if (target_block.feed_rate_mode == Motion_Core::e_feed_modes::FEED_RATE_MINUTES_PER_UNIT_MODE)
+	if (target_block.feed_rate_mode == BinaryRecords::e_feed_modes::FEED_RATE_MINUTES_PER_UNIT_MODE)
 	
 	{
 	target_block.feed_rate *= segments;

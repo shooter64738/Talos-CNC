@@ -1,22 +1,25 @@
 #include "c_motion_core.h"
 #include "../helpers.h"
-int16_t Motion_Core::Settings::steps_per_mm[N_AXIS]{160};
-float Motion_Core::Settings::acceleration[N_AXIS]{ (100.0 * 60 * 60)};
-float Motion_Core::Settings::max_rate [N_AXIS]{ 5000};
-float Motion_Core::Settings::junction_deviation = 0.01;
-float Motion_Core::Settings::arc_tolerance = 0.002;
-uint16_t Motion_Core::Settings::pulse_length = 10;
-float Motion_Core::Settings::back_lash_comp_distance[N_AXIS]{0.0};
+
+BinaryRecords::s_settings Motion_Core::Settings::_Settings;
+
+//int16_t Motion_Core::Settings.steps_per_mm[N_AXIS]{160};
+//float Motion_Core::Settings.acceleration[N_AXIS]{ (100.0 * 60 * 60)};
+//float Motion_Core::Settings.max_rate [N_AXIS]{ 5000};
+//float Motion_Core::Settings.junction_deviation = 0.01;
+//float Motion_Core::Settings.arc_tolerance = 0.002;
+//uint16_t Motion_Core::Settings.pulse_length = 10;
+//float Motion_Core::Settings.back_lash_comp_distance[N_AXIS]{0.0};
 
 void Motion_Core::initialize()
 {
 	for (uint8_t i = 0; i < N_AXIS; i++)
 	{
-		Motion_Core::Settings::steps_per_mm[i] = 160;
-		Motion_Core::Settings::acceleration[i] = (100.0 * 60 * 60);
-		Motion_Core::Settings::max_rate[i] = 5000;
+		Motion_Core::Settings::_Settings.steps_per_mm[i] = 160;
+		Motion_Core::Settings::_Settings.acceleration[i] = (100.0 * 60 * 60);
+		Motion_Core::Settings::_Settings.max_rate[i] = 5000;
 		//arbitrary for testing
-		Motion_Core::Settings::back_lash_comp_distance[i] = 55;
+		Motion_Core::Settings::_Settings.back_lash_comp_distance[i] = 55;
 	}
 
 }

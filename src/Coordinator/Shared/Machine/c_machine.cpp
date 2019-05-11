@@ -46,7 +46,7 @@ NGC_RS274::NGC_Binary_Block*c_machine::machine_block;
 float c_machine::axis_position[MACHINE_AXIS_COUNT];
 float c_machine::unit_scaler = 1;
 char c_machine::machine_axis_names[MACHINE_AXIS_COUNT];
-char c_machine::motion_stream[sizeof(BinaryRecords::Motion::s_input_block)];
+char c_machine::motion_stream[sizeof(BinaryRecords::s_motion_data_block)];
 
 
 /*
@@ -309,11 +309,11 @@ void c_machine::start_motion_binary(NGC_RS274::NGC_Binary_Block* local_block)
 	//If the block is set to 'planned' then its ready to execute
 	if (local_block->state & (1 << BLOCK_STATE_PLANNED))
 	{
-		BinaryRecords::Motion::s_input_block motion_block_record;
-		uint8_t record_size = sizeof(BinaryRecords::Motion::s_input_block);
+		BinaryRecords::s_motion_data_block motion_block_record;
+		uint8_t record_size = sizeof(BinaryRecords::s_motion_data_block);
 		//set some block stuff
-		motion_block_record.motion_type = Motion_Core::e_motion_type::feed_linear;
-		motion_block_record.feed_rate_mode = Motion_Core::e_feed_modes::FEED_RATE_UNITS_PER_MINUTE_MODE;
+		motion_block_record.motion_type = BinaryRecords::e_motion_type::feed_linear;
+		motion_block_record.feed_rate_mode = BinaryRecords::e_feed_modes::FEED_RATE_UNITS_PER_MINUTE_MODE;
 		motion_block_record.feed_rate = 5000;
 		for (int i=0;i<MACHINE_AXIS_COUNT;i++)
 		motion_block_record.axis_values[i] = *local_block->axis_values.Loop[i];

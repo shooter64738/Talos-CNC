@@ -42,7 +42,7 @@ class c_machine
 	static float axis_position[MACHINE_AXIS_COUNT];
 	static float unit_scaler;
 	static NGC_RS274::NGC_Binary_Block*machine_block;
-	static char motion_stream[sizeof(BinaryRecords::Motion::s_input_block)];
+	static char motion_stream[sizeof(BinaryRecords::s_motion_data_block)];
 
 	protected:
 	private:

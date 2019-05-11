@@ -97,6 +97,7 @@
     <ClInclude Include="..\..\..\Common\Hardware_Abstraction_Layer\Virtual\c_motion_core_win_stepper.h" />
     <ClInclude Include="..\..\..\Common\Hardware_Abstraction_Layer\Virtual\c_serial_win.h" />
     <ClInclude Include="..\..\..\Common\Serial\c_Serial.h" />
+    <ClInclude Include="..\..\..\Common\Serial\records_def.h" />
     <ClInclude Include="..\..\..\Common\Serial\s_buffer.h" />
     <ClInclude Include="..\..\c_block.h" />
     <ClInclude Include="..\..\c_block_buffer.h" />

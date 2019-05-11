@@ -32,7 +32,7 @@ namespace Motion_Core
 
 
 			//static uint8_t ramp_type;      // Current segment ramp state
-			static Motion_Core::e_ramp_type ramp_type;
+			static BinaryRecords::e_ramp_type ramp_type;
 			static float mm_complete;      // End of velocity profile from end of current planner block in (mm).
 			// NOTE: This value must coincide with a step(no mantissa) when converted.
 			static float current_speed;    // Current speed at the end of the segment buffer (mm/min)
@@ -44,7 +44,7 @@ namespace Motion_Core
 			static float inv_rate;    // Used by PWM laser mode to speed up segment calculations.
 			static uint16_t current_spindle_pwm;
 			static uint16_t line_number;
-			static Motion_Core::e_block_flag flag;
+			static BinaryRecords::e_block_flag flag;
 
 			//static c_planner::plan_block_t *pl_block;
 			static Motion_Core::Planner::Block_Item *Active_Block;

@@ -10,7 +10,8 @@
 #include "c_interpollation_software.h"
 #include "c_segment_arbitrator.h"
 
-BinaryRecords::Motion::s_input_block c_processor::motion_block;
+BinaryRecords::s_motion_data_block c_processor::motion_block;
+BinaryRecords::s_settings c_processor::settings_block;
 uint8_t c_processor::remote = 0;
 
 c_Serial c_processor::host_serial;
@@ -26,9 +27,9 @@ void c_processor::initialize()
 	//memcpy(&test, Motion_Core::Software::Interpollation::stream, sizeof(Motion_Core::Software::Interpollation::stream));
 	#ifdef MSVC
 	//set some block stuff
-	uint8_t record_size = sizeof(BinaryRecords::Motion::s_input_block);
-	motion_block.motion_type = Motion_Core::e_motion_type::feed_linear;
-	motion_block.feed_rate_mode = Motion_Core::e_feed_modes::FEED_RATE_UNITS_PER_MINUTE_MODE;
+	uint8_t record_size = sizeof(BinaryRecords::s_motion_data_block);
+	motion_block.motion_type = BinaryRecords::e_motion_type::feed_linear;
+	motion_block.feed_rate_mode = BinaryRecords::e_feed_modes::FEED_RATE_UNITS_PER_MINUTE_MODE;
 	motion_block.feed_rate = 5000;
 	motion_block.axis_values[0] = 5; motion_block.axis_values[1] = 0; motion_block.axis_values[2] = 0;
 	motion_block.axis_values[3] = 0; motion_block.axis_values[4] = 0; motion_block.axis_values[5] = 0;
@@ -69,17 +70,17 @@ void c_processor::initialize()
 					{
 						c_processor::host_serial.Write(SER_ACK_PROCEED);c_processor::host_serial.Write(CR);
 						
-						c_processor::host_serial.print_string("test.record_type = "); c_processor::host_serial.print_int32((uint32_t)record_type); c_processor::host_serial.Write(CR);
-						c_processor::host_serial.print_string("test.motion_type = "); c_processor::host_serial.print_int32((uint32_t)c_processor::motion_block.motion_type); c_processor::host_serial.Write(CR);
-						c_processor::host_serial.print_string("test.feed_rate_mode = "); c_processor::host_serial.print_int32((uint32_t)c_processor::motion_block.feed_rate_mode); c_processor::host_serial.Write(CR);
-						c_processor::host_serial.print_string("test.feed_rate = "); c_processor::host_serial.print_int32(c_processor::motion_block.feed_rate); c_processor::host_serial.Write(CR);
-						c_processor::host_serial.print_string("test.axis_values[0] = ");c_processor::host_serial.print_float(c_processor::motion_block.axis_values[0], 4); c_processor::host_serial.Write(CR);
-						c_processor::host_serial.print_string("test.axis_values[1] = ");c_processor::host_serial.print_float(c_processor::motion_block.axis_values[1], 4); c_processor::host_serial.Write(CR);
-						c_processor::host_serial.print_string("test.axis_values[2] = ");c_processor::host_serial.print_float(c_processor::motion_block.axis_values[2], 4); c_processor::host_serial.Write(CR);
-						c_processor::host_serial.print_string("test.axis_values[3] = ");c_processor::host_serial.print_float(c_processor::motion_block.axis_values[3], 4); c_processor::host_serial.Write(CR);
-						c_processor::host_serial.print_string("test.axis_values[4] = ");c_processor::host_serial.print_float(c_processor::motion_block.axis_values[4], 4); c_processor::host_serial.Write(CR);
-						c_processor::host_serial.print_string("test.axis_values[5] = ");c_processor::host_serial.print_float(c_processor::motion_block.axis_values[5], 4); c_processor::host_serial.Write(CR);
-						c_processor::host_serial.print_string("test.line_number = "); c_processor::host_serial.print_int32(c_processor::motion_block.line_number); c_processor::host_serial.Write(CR);
+						//c_processor::host_serial.print_string("test.record_type = "); c_processor::host_serial.print_int32((uint32_t)record_type); c_processor::host_serial.Write(CR);
+						//c_processor::host_serial.print_string("test.motion_type = "); c_processor::host_serial.print_int32((uint32_t)c_processor::motion_block.motion_type); c_processor::host_serial.Write(CR);
+						//c_processor::host_serial.print_string("test.feed_rate_mode = "); c_processor::host_serial.print_int32((uint32_t)c_processor::motion_block.feed_rate_mode); c_processor::host_serial.Write(CR);
+						//c_processor::host_serial.print_string("test.feed_rate = "); c_processor::host_serial.print_int32(c_processor::motion_block.feed_rate); c_processor::host_serial.Write(CR);
+						//c_processor::host_serial.print_string("test.axis_values[0] = ");c_processor::host_serial.print_float(c_processor::motion_block.axis_values[0], 4); c_processor::host_serial.Write(CR);
+						//c_processor::host_serial.print_string("test.axis_values[1] = ");c_processor::host_serial.print_float(c_processor::motion_block.axis_values[1], 4); c_processor::host_serial.Write(CR);
+						//c_processor::host_serial.print_string("test.axis_values[2] = ");c_processor::host_serial.print_float(c_processor::motion_block.axis_values[2], 4); c_processor::host_serial.Write(CR);
+						//c_processor::host_serial.print_string("test.axis_values[3] = ");c_processor::host_serial.print_float(c_processor::motion_block.axis_values[3], 4); c_processor::host_serial.Write(CR);
+						//c_processor::host_serial.print_string("test.axis_values[4] = ");c_processor::host_serial.print_float(c_processor::motion_block.axis_values[4], 4); c_processor::host_serial.Write(CR);
+						//c_processor::host_serial.print_string("test.axis_values[5] = ");c_processor::host_serial.print_float(c_processor::motion_block.axis_values[5], 4); c_processor::host_serial.Write(CR);
+						//c_processor::host_serial.print_string("test.line_number = "); c_processor::host_serial.print_int32(c_processor::motion_block.line_number); c_processor::host_serial.Write(CR);
 						Motion_Core::Software::Interpollation::load_block(c_processor::motion_block);
 
 
@@ -122,7 +123,7 @@ uint8_t c_processor::load_record(uint8_t record_type)
 	{
 		case MOTION_RECORD:
 		{
-			record_size = sizeof(BinaryRecords::Motion::s_input_block);
+			record_size = sizeof(BinaryRecords::s_motion_data_block);
 			//First byte indicates record type of motion. Make sure its all there before we start loading it.
 			if (host_serial.HasRecord(record_size))
 			{
@@ -143,6 +144,23 @@ uint8_t c_processor::load_record(uint8_t record_type)
 		break;
 		case SETTING_RECORD:
 		{
+			record_size = sizeof(BinaryRecords::s_settings);
+			//First byte indicates record type of motion. Make sure its all there before we start loading it.
+			if (host_serial.HasRecord(record_size))
+			{
+				//Clear the stream
+				memset(Motion_Core::Software::Interpollation::motion_stream, 0, record_size);
+				//Clear the block
+				memset(&c_processor::motion_block, 0, record_size);
+				//Load the data into the stream
+				for (int i = 0; i < record_size; i++)
+				{
+					Motion_Core::Software::Interpollation::motion_stream[i] = host_serial.Get();
+				}
+				//Put the stream into the struct
+				memcpy(&c_processor::motion_block, Motion_Core::Software::Interpollation::motion_stream, record_size);
+				return MOTION_RECORD;
+			}
 		}
 		break;
 

@@ -177,7 +177,7 @@ void Motion_Core::Hardware::Interpollation::step_tick()
 			Motion_Core::Hardware::Interpollation::Exec_Timer_Item->bresenham_in_item->step_event_count;
 			
 			//We arent changing system position on a backlash comp motion.
-			if (Motion_Core::Hardware::Interpollation::Exec_Timer_Item->flag == e_block_flag::normal)
+			if (Motion_Core::Hardware::Interpollation::Exec_Timer_Item->flag == BinaryRecords::e_block_flag::normal)
 			{
 				if (Motion_Core::Hardware::Interpollation::Exec_Timer_Item->bresenham_in_item->direction_bits & (1 << i))
 				Motion_Core::Hardware::Interpollation::system_position[i]--;
