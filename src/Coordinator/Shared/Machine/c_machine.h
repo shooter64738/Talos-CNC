@@ -63,7 +63,6 @@ class c_machine
 	static void report();
 
 	static void run_block();
-	static void start_motion(NGC_RS274::NGC_Binary_Block* local_block);
 	static void start_motion_binary(NGC_RS274::NGC_Binary_Block* local_block);
 	protected:
 	private:

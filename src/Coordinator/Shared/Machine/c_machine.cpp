@@ -25,12 +25,9 @@
 //#include "..\Settings\c_general.h"
 
 #include "..\Planner\Compensation\c_cutter_comp.h"
-//#include "..\MotionControllerInterface\c_motion_controller.h"
 #include "..\Planner\Canned Cycles\c_canned_cycle.h"
 #include "..\status\c_status.h"
 #include "..\Events\c_motion_control_events.h"
-#include "..\..\..\Common\MotionControllerInterface\c_motion_controller_settings.h"
-#include "..\..\..\Common\MotionControllerInterface\c_motion_controller.h"
 #include "..\..\..\Common\Bresenham\c_Bresenham.h"
 #include "..\..\..\Common\NGC_RS274\NGC_Interpreter.h"
 #include "..\Planner\c_gcode_buffer.h"
@@ -115,14 +112,10 @@ void c_machine::synch_position()
 	{
 		if (c_machine::machine_block != NULL)
 		{
-			c_machine::axis_position[MACHINE_X_AXIS] = *c_machine::machine_block->axis_values.X;
-			c_machine::axis_position[MACHINE_Y_AXIS] = *c_machine::machine_block->axis_values.Y;
-			c_machine::axis_position[MACHINE_Z_AXIS] = *c_machine::machine_block->axis_values.Z;
-			c_machine::axis_position[MACHINE_A_AXIS] = *c_machine::machine_block->axis_values.A;
-			c_machine::axis_position[MACHINE_B_AXIS] = *c_machine::machine_block->axis_values.B;
-			c_machine::axis_position[MACHINE_C_AXIS] = *c_machine::machine_block->axis_values.C;
-			c_machine::axis_position[MACHINE_U_AXIS] = *c_machine::machine_block->axis_values.U;
-			c_machine::axis_position[MACHINE_V_AXIS] = *c_machine::machine_block->axis_values.V;
+			for (uint8_t axis = 0; axis < MACHINE_AXIS_COUNT; axis++)
+			{
+				c_machine::axis_position[axis] = *c_machine::machine_block->axis_values.Loop[axis];
+			}
 		}
 	}
 	#endif
@@ -151,12 +144,12 @@ void c_machine::synch_position()
 		
 		Coordinator::c_encoder::dirty = 0;
 		
-		for (uint8_t axis = 0;axis < c_motion_controller_settings::axis_count_reported;axis++)
+		for (uint8_t axis = 0;axis < MACHINE_AXIS_COUNT;axis++)
 		{
 			c_machine::axis_position[axis] = ((float)(Coordinator::c_encoder::Axis_Positions[axis]))
-			/ ((float)(c_motion_controller_settings::configuration_settings.steps_per_mm[axis]));
+			/ ((float)(c_processor::motion_control_setting_record.steps_per_mm[axis]));
 		}
-		c_status::axis_values(c_machine::axis_position, c_motion_controller_settings::axis_count_reported, c_machine::unit_scaler);
+		c_status::axis_values(c_machine::axis_position, MACHINE_AXIS_COUNT, c_machine::unit_scaler);
 		c_processor::host_serial.Write(CR);
 	}
 	
@@ -211,7 +204,7 @@ void c_machine::report()
 		case 10:
 		case 13:
 		{
-			c_status::axis_values(c_machine::axis_position, c_motion_controller_settings::axis_count_reported, c_machine::unit_scaler);
+			c_status::axis_values(c_machine::axis_position, MACHINE_AXIS_COUNT, c_machine::unit_scaler);
 			c_processor::host_serial.Write(CR);
 		}
 		break;
@@ -239,69 +232,6 @@ void c_machine::run_block()
 	NGC_RS274::Interpreter::Processor::clear_line();
 
 	c_machine::machine_block = NULL;
-}
-
-
-void c_machine::start_motion(NGC_RS274::NGC_Binary_Block* local_block)
-{
-	//If the block is set to 'planned' then its ready to execute
-	if (local_block->state & (1 << BLOCK_STATE_PLANNED))
-	{
-		NGC_RS274::Interpreter::Processor::convert_to_line(local_block);
-
-		c_processor::host_serial.Write("output:"); c_processor::host_serial.Write(NGC_RS274::Interpreter::Processor::Line);
-		c_processor::host_serial.Write(CR);
-		if (!c_motion_control_events::get_event(Motion_Control_Events::CONTROL_ONLINE))
-		{
-			c_processor::host_serial.print_string("MCO off line!");
-		}
-		else
-		{
-			c_motion_controller::send_motion(NGC_RS274::Interpreter::Processor::Line, local_block->is_motion_block); //<--send to motion controller
-		}
-		//See if there is appended motion (cutter comp may have set one for an outside corner)
-		if (local_block->appended_block_pointer != NULL)
-		{
-			c_processor::host_serial.print_string("appended motion start\r");
-			local_block->appended_block_pointer->is_motion_block = true;
-			//Execute the appended motion (either a closing arc at outside corner, or the lead out motion)
-			start_motion(local_block->appended_block_pointer);
-			c_processor::host_serial.print_string("appended motion end\r");
-			return;//<--return here since this is a recursive call, we dont want to move the tail pointer twice!
-		}
-		/*
-		This may be an overuse of function pointers, but this works very neatly..
-		If a canned cycle is activated, the initialize method in c_canned_cycle will set a pointer to a function.
-		Since the function pointer will not be null, we will be calling into the c_canned_cycle::execute_motion function.
-		There is a state machine inside that execute function that will track each state of the canned cycle and until the
-		function pointer is NULL, there must be more to the cycle that needs to run.
-		Since the cutter comp motion (above and when active) will have already executed, we can have cutter comp active AND
-		run a canned cycle! This mimics the Fanuc controller behavior.
-		*/
-		while (local_block->canned_values.PNTR_RECALLS != NULL)
-		{
-			local_block->canned_values.PNTR_RECALLS(local_block);
-			NGC_RS274::Interpreter::Processor::convert_to_line(local_block);
-			c_processor::host_serial.Write("output:"); c_processor::host_serial.Write(NGC_RS274::Interpreter::Processor::Line);
-			c_processor::host_serial.Write(CR);
-			c_motion_controller::send_motion(NGC_RS274::Interpreter::Processor::Line, local_block->is_motion_block); //<--send to motion controller
-
-			//If the pointer is null, the cycle is finished this round. Set the motion mode back to the original cycle motion
-			if (local_block->canned_values.PNTR_RECALLS == NULL)
-			/*
-			Since we have changed the state of this block, we need to re-establish its original motion mode
-			*/
-			local_block->g_group[NGC_RS274::Groups::G::MOTION] = c_canned_cycle::active_cycle_code;
-		}
-
-
-		//if (c_hal::feedback.PNTR_POSITION_DATA == NULL && c_machine::machine_block!= NULL)
-		{
-			//If no feedback is enabled, then the only update we can do for the machine is set it to the target position
-			c_machine::synch_position();
-		}
-	}
-
 }
 
 void c_machine::start_motion_binary(NGC_RS274::NGC_Binary_Block* local_block)
@@ -360,7 +290,7 @@ void c_machine::start_motion_binary(NGC_RS274::NGC_Binary_Block* local_block)
 			c_processor::host_serial.print_string("appended motion start\r");
 			local_block->appended_block_pointer->is_motion_block = true;
 			//Execute the appended motion (either a closing arc at outside corner, or the lead out motion)
-			start_motion(local_block->appended_block_pointer);
+			start_motion_binary(local_block->appended_block_pointer);
 			c_processor::host_serial.print_string("appended motion end\r");
 			return;//<--return here since this is a recursive call, we dont want to move the tail pointer twice!
 		}
@@ -375,18 +305,18 @@ void c_machine::start_motion_binary(NGC_RS274::NGC_Binary_Block* local_block)
 		*/
 		while (local_block->canned_values.PNTR_RECALLS != NULL)
 		{
-			local_block->canned_values.PNTR_RECALLS(local_block);
-			NGC_RS274::Interpreter::Processor::convert_to_line(local_block);
-			c_processor::host_serial.Write("output:"); c_processor::host_serial.Write(NGC_RS274::Interpreter::Processor::Line);
-			c_processor::host_serial.Write(CR);
-			c_motion_controller::send_motion(NGC_RS274::Interpreter::Processor::Line, local_block->is_motion_block); //<--send to motion controller
-
-			//If the pointer is null, the cycle is finished this round. Set the motion mode back to the original cycle motion
-			if (local_block->canned_values.PNTR_RECALLS == NULL)
-			/*
-			Since we have changed the state of this block, we need to re-establish its original motion mode
-			*/
-			local_block->g_group[NGC_RS274::Groups::G::MOTION] = c_canned_cycle::active_cycle_code;
+			//local_block->canned_values.PNTR_RECALLS(local_block);
+			//NGC_RS274::Interpreter::Processor::convert_to_line(local_block);
+			//c_processor::host_serial.Write("output:"); c_processor::host_serial.Write(NGC_RS274::Interpreter::Processor::Line);
+			//c_processor::host_serial.Write(CR);
+			//c_motion_controller::send_motion(NGC_RS274::Interpreter::Processor::Line, local_block->is_motion_block); //<--send to motion controller
+//
+			////If the pointer is null, the cycle is finished this round. Set the motion mode back to the original cycle motion
+			//if (local_block->canned_values.PNTR_RECALLS == NULL)
+			///*
+			//Since we have changed the state of this block, we need to re-establish its original motion mode
+			//*/
+			//local_block->g_group[NGC_RS274::Groups::G::MOTION] = c_canned_cycle::active_cycle_code;
 		}
 
 

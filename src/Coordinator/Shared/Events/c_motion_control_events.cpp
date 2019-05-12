@@ -20,7 +20,6 @@
 
 #include "c_motion_control_events.h"
 #include "..\c_processor.h"
-#include "..\..\..\Common\MotionControllerInterface\c_motion_controller.h"
 
 uint8_t c_motion_control_events::event_flags;
 uint8_t c_motion_control_events::OK_Event_Count=0;
@@ -30,7 +29,7 @@ void c_motion_control_events::check_events()
 {
 	if (c_motion_control_events::event_flags > 0)
 	{
-		c_motion_controller::read_controller_data();
+		//c_motion_controller::read_controller_data();
 	}
 }
 

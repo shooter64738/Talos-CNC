@@ -144,19 +144,11 @@ int16_t c_gcode_buffer::add()
 	
 	//Process data and convert it into NGC binary data.
 	//The data will go into the buffer head position
-	//uint16_t return_value = c_interpreter::process_serial(local_block);
-	//prime the interpreter 'Line' value
-	uint8_t index = 0;
-	while (c_processor::host_serial.Peek() != CR && c_processor::host_serial.Peek() != NULL)
-	{
-		NGC_RS274::Interpreter::Processor::Line[index] =  toupper(c_processor::host_serial.Get());
-		index++;
-	}
-	//did the buffer end with CR or NULL?
-	if (c_processor::host_serial.Peek() == CR)
-		c_processor::host_serial.Get();
-
+	uint16_t record_size = c_processor::host_serial.FindByte_Position(CR);
+	NGC_RS274::Interpreter::Processor::Line = c_processor::host_serial.Buffer_Pointer() + c_processor::host_serial.TailPosition();
 	uint16_t return_value = NGC_RS274::Interpreter::Processor::process_line(local_block);
+	c_processor::host_serial.AdvanceTail(record_size);
+	c_processor::host_serial.SkipToEOL();
 	
 	//Did the interpreter have any errors with this block of data?
 	if (return_value!= NGC_RS274::Interpreter::Errors::OK)

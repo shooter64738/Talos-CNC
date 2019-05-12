@@ -27,9 +27,7 @@
 #include "Stager_Errors.h"
 #include "../Events/c_block_events.h"
 #include "Compensation/c_cutter_comp.h"
-//#include "../MotionControllerInterface/c_motion_controller.h"
 #include "Canned Cycles/c_canned_cycle.h"
-#include "../../../Common/MotionControllerInterface/c_motion_controller_settings.h"
 #include "../Status/c_status.h"
 #include "c_gcode_buffer.h"
 #include "../../../Common/NGC_RS274/NGC_Interpreter.h"
@@ -116,14 +114,14 @@ void c_stager::report()
 		c_processor::host_serial.Write("Blk #"); c_processor::host_serial.Write_ni(i); c_processor::host_serial.Write(":");
 		c_processor::host_serial.Write(CR); c_processor::host_serial.Write("\t");
 
-		for (uint8_t axis_id = 0; axis_id < c_motion_controller_settings::axis_count_reported; axis_id++)
+		for (uint8_t axis_id = 0; axis_id < MACHINE_AXIS_COUNT; axis_id++)
 		{
 			//print the axis name X,Y,Z,A,B,C,U,V
 			//c_processor::host_serial.Write("Axis ");
 			c_processor::host_serial.Write(c_machine::machine_axis_names[axis_id]);
 			//0=no motion,1=positive motion,-1=negative motion
 			c_processor::host_serial.Write(" Dir:"); c_processor::host_serial.Write_ni(c_gcode_buffer::collection[i].motion_direction[axis_id]);
-			if (axis_id + 1 < c_motion_controller_settings::axis_count_reported)
+			if (axis_id + 1 < MACHINE_AXIS_COUNT)
 				c_processor::host_serial.Write(", ");
 			else
 				c_processor::host_serial.Write(CR);
@@ -134,7 +132,7 @@ void c_stager::report()
 		c_processor::host_serial.Write(CR);
 		c_processor::host_serial.Write("\tPos @ exe: ");
 		c_processor::host_serial.Write(CR);
-		for (uint8_t axis_id = 0; axis_id < c_motion_controller_settings::axis_count_reported; axis_id++)
+		for (uint8_t axis_id = 0; axis_id < MACHINE_AXIS_COUNT; axis_id++)
 		{
 			c_processor::host_serial.Write("\t"); c_processor::host_serial.Write(c_machine::machine_axis_names[axis_id]);
 			c_processor::host_serial.Write_nf(c_gcode_buffer::collection[i].unit_target_positions[axis_id]);
@@ -174,19 +172,7 @@ uint8_t c_stager::post_stage_check()
 		//point the machine block to the current tail block
 		c_machine::machine_block = &c_gcode_buffer::collection[c_gcode_buffer::buffer_tail];
 	}
-
-	//Is this a grbl controller?
-	if (c_motion_controller_settings::configuration_settings.controller_type == c_motion_controller_settings::e_motion_controller::GRBL)
-	{
-		//If theres a block we are going to execute, strip out g41 or g42 words.
-		if (c_machine::machine_block != NULL)
-		{
-			//No g41 or g42 allowed
-			c_machine::machine_block->clear_defined_gcode(NGC_RS274::Groups::G::CUTTER_RADIUS_COMPENSATION);
-			c_machine::machine_block->clear_defined_word('P');
-		}
-	}
-
+	
 	return Stager_Errors::OK;
 }
 
@@ -260,7 +246,7 @@ int16_t c_stager::stage_block_motion()
 		}
 		c_block_events::clear_event(Block_Events::UNITS);
 		c_machine::synch_position();
-		c_status::axis_values(c_machine::axis_position, c_motion_controller_settings::axis_count_reported, c_machine::unit_scaler);
+		c_status::axis_values(c_machine::axis_position, MACHINE_AXIS_COUNT, c_machine::unit_scaler);
 	}
 
 
@@ -600,7 +586,7 @@ void c_stager::update_coordinate_datum(uint16_t parameter_slot)
 int16_t c_stager::calculate_vector_distance(NGC_RS274::NGC_Binary_Block*plan_block)
 {
 
-	for (int axis_id = 0; axis_id < c_motion_controller_settings::axis_count_reported; axis_id++)
+	for (int axis_id = 0; axis_id < MACHINE_AXIS_COUNT; axis_id++)
 	{
 		//Before this is changed, we save of the start position for this motion block.
 		//plan_block->start_position[axis_id] = c_stager::start_motion_position[axis_id];

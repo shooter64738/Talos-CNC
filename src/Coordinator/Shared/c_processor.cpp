@@ -36,9 +36,6 @@
 #include "MotionControllerInterface/ExternalControllers/GRBL/c_Grbl.h"
 #include "Status/c_status.h"
 #include "../../Common/NGC_RS274/NGC_Block.h"
-#include "../../Common/MotionControllerInterface/c_motion_controller_settings.h"
-#include "../../Common/MotionControllerInterface/c_motion_controller.h"
-#include "../../Common/Bresenham/c_Bresenham.h"
 #include "../../Common/AVR_Terminal_IO/c_lcd_display.h"
 #include "../../Common/NGC_RS274/NGC_Interpreter.h"
 #include "../../Torch Height Control/c_configuration.h"
@@ -53,7 +50,10 @@
 c_Serial c_processor::host_serial;
 c_Serial c_processor::controller_serial;
 c_Serial c_processor::spindle_serial;
-c_Bresenham bres;
+BinaryRecords::s_motion_control_settings c_processor::motion_control_setting_record;
+
+
+
 
 //If running this on a pc through Microsoft visual C++, uncomment the MSVC define in Talos.h and recompile.
 void c_processor::startup()
@@ -68,7 +68,7 @@ void c_processor::startup()
 	//This MUST be called first (especially for the ARM processors)
 	Hardware_Abstraction_Layer::Core::initialize();
 	//Hardware_Abstraction_Layer::Lcd::initialize();
-	
+
 	c_processor::host_serial = c_Serial(0, 115200); //<--Connect to host
 	c_processor::controller_serial = c_Serial(1, 115200);//<--Connect to motion board
 	c_processor::spindle_serial = c_Serial(2, 115200);//<--Connect to spindle board
@@ -86,66 +86,49 @@ void c_processor::startup()
 	c_gcode_buffer::initialize();
 
 	Hardware_Abstraction_Layer::Core::start_interrupts();
-	
-	#ifdef MSVC
+
+#ifdef MSVC
 	{
 		//If running this on a pc, use this line to fill the serial buffer as if it
 		//were sent from a terminal to the micro controller over a serial connection
 		//c_hal::comm.PNTR_VIRTUAL_BUFFER_WRITE(0, "g41p.25G0X1Y1F100\rX2Y2\rX3Y3\r"); //<--data from host
-		
-		Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "g98g0z0.5\r");
-		Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "g81x1y0r0.1z-1.0f50\r"); //<--data from host
-		Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "x3\r"); //<--data from host
-		Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "x5\r"); //<--data from host
-		Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "x7\r"); //<--data from host
-		Hardware_Abstraction_Layer::Serial::add_to_buffer(1, "ok\r<Idle|MPos:0.000,0.000,0.000,0.000,0.000,0.000|FS:0,0|Ov:100,100,100>\rok\r");//<--data from motion control
-		Hardware_Abstraction_Layer::Serial::add_to_buffer(2, "rpm=1234\rmode=torque_hold\r");//<--data from spindle control
-	}
-	#endif
 
-	/*
-	If a controller is connected, the axis count for the controller will be used.
-	Just in case the motion controller is not at zero when the coordinator starts up, synch positions
-	by pointing the machine position array to the controller reported position array. This way when
-	we connect to the controller and get the position data for it, the machine will already be pointed
-	to the array we set the data in.
-	*/
-	c_motion_controller_settings::position_reported = c_machine::axis_position;
-	//c_motion_controller::Initialize();
+		//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "@mmx1000\r");
+		Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "g0x100\rg0x9\r"); //<--data from host
+		//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "x3\r"); //<--data from host
+		//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "x5\r"); //<--data from host
+		//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "x7\r"); //<--data from host
+		//Hardware_Abstraction_Layer::Serial::add_to_buffer(1, "ok\r<Idle|MPos:0.000,0.000,0.000,0.000,0.000,0.000|FS:0,0|Ov:100,100,100>\rok\r");//<--data from motion control
+		//Hardware_Abstraction_Layer::Serial::add_to_buffer(2, "rpm=1234\rmode=torque_hold\r");//<--data from spindle control
+	}
+#endif
+
+
+for (uint8_t i = 0; i < N_AXIS; i++)
+{
+	motion_control_setting_record.steps_per_mm[i] = 160;
+	motion_control_setting_record.acceleration[i] = (100.0 * 60.0 * 60.0);
+	motion_control_setting_record.max_rate[i] = 7000.0;
+	
+	//arbitrary for testing
+	motion_control_setting_record.back_lash_comp_distance[i] = 55.0;
+}
+
+motion_control_setting_record.pulse_length = 10;
+
 
 	if (c_motion_control_events::get_event(Motion_Control_Events::CONTROL_ONLINE))
 	{
-		//c_interpreter::normalize_distance_units_to_mm = false;
-		//Now synch the pulse values in the HAL feedback with the pulse counts the machine is reportedly at
-		{
-			for (uint8_t axis_id = 0;axis_id < MACHINE_AXIS_COUNT;axis_id++)
-			{
-				Coordinator::c_encoder::Axis_Positions[axis_id] = (c_machine::axis_position[axis_id] * c_motion_controller_settings::configuration_settings.steps_per_mm[axis_id]);
-			}
-		}
+		
 	}
-	
+
 	//c_feedback needs to know how many axis were reported by the controller. So it must be initialized after the controller
 	//c_hal::feedback.PNTR_INITIALIZE != NULL ? c_hal::feedback.PNTR_INITIALIZE() : void();
 
 	c_processor::host_serial.print_string("Ready\r");
-	
-	//uint32_t tickers=0;
-	//while(1)
-	//{
-	//tickers++;
-	//if (tickers>900000)
-	//{
-	//tickers = 0;
-	//c_spindle_com_bus::WriteStream(tdata.stream,c_processor::host_serial);
-	//tdata.s_spindle_detail.rpm++;
-	//
-	//}
-	//}
 
 	int16_t return_value = 0;
 	c_machine::synch_position();
-	c_status::axis_values(c_machine::axis_position, c_motion_controller_settings::axis_count_reported, c_machine::unit_scaler);
 	c_processor::host_serial.Write(CR);
 	while (1)
 	{
@@ -172,17 +155,23 @@ void c_processor::startup()
 				*/
 				c_processor::host_serial.SkipToEOL();
 			}
+			else if (c_processor::host_serial.Peek() == '@')
+			{
+				//Pull the @ character off the serial buffer
+				c_processor::host_serial.Get();//<--throw away the @
+				uint8_t setting_group = toupper(c_processor::host_serial.Get()); //<--get the settings group
+				uint8_t setting_sub_group = 0;
+				setting_sub_group = toupper(c_processor::host_serial.Peek());
+				if (setting_sub_group == 'A' || setting_sub_group == 'B' || setting_sub_group == 'M' || setting_sub_group == 'S')
+					c_processor::host_serial.Get(); //<--get the settings sub group
+				else
+					setting_sub_group = 0;
+				Settings::c_general::load_from_input(setting_group, setting_sub_group);
+
+			}
 			else if (c_motion_control_events::get_event(Motion_Control_Events::CONTROL_ONLINE))
 			{
-				if (c_motion_controller::PNTR_COMMAND_CHECK_CALLBACK != NULL)
-				{
-					//Check to see if the value send via serial was a command for the controller that is connected
-					Control_Command = c_motion_controller::PNTR_COMMAND_CHECK_CALLBACK(host_serial.Peek());
-					if (Control_Command) //<--Was it a control command, or regular g/m code?
-					{
-						c_motion_controller::PNTR_INQUIRY_CALLBACK(); //<-- Let the motion controller respond to the request
-					}
-				}
+				
 			}
 			/*
 			We may have processed this already as a controller command.
@@ -232,7 +221,7 @@ uint16_t c_processor::prep_input()
 		return_value = c_gcode_buffer::add(); //<--interpret and add this block, or fail it with an error
 
 
-		if (return_value ==  NGC_RS274::Interpreter::Errors::OK)
+		if (return_value == NGC_RS274::Interpreter::Errors::OK)
 		{
 			/*
 			This will read a block from the NGC_BUFFER and 'stage' it.
@@ -266,7 +255,7 @@ uint16_t c_processor::prep_input()
 							//Here is where we send the block to c_machine to start executing it.
 							//c_machine::run_block();
 							c_machine::run_block();
-							
+
 						}
 
 					}

@@ -39,7 +39,7 @@ namespace Motion_Core
 	{
 	public:
 
-		static BinaryRecords::s_settings _Settings;
+		static BinaryRecords::s_motion_control_settings _Settings;
 	};
 #endif
 

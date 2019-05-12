@@ -203,22 +203,6 @@
       <SubType>compile</SubType>
       <Link>Common\Hardware Abstraction Layer\AVR 2560\c_serial_avr_2560.h</Link>
     </Compile>
-    <Compile Include="..\..\Common\MotionControllerInterface\c_motion_controller.cpp">
-      <SubType>compile</SubType>
-      <Link>AVR_Coordinator\MotionControllerInterface\c_motion_controller.cpp</Link>
-    </Compile>
-    <Compile Include="..\..\Common\MotionControllerInterface\c_motion_controller.h">
-      <SubType>compile</SubType>
-      <Link>AVR_Coordinator\MotionControllerInterface\c_motion_controller.h</Link>
-    </Compile>
-    <Compile Include="..\..\Common\MotionControllerInterface\c_motion_controller_settings.cpp">
-      <SubType>compile</SubType>
-      <Link>AVR_Coordinator\MotionControllerInterface\c_motion_controller_settings.cpp</Link>
-    </Compile>
-    <Compile Include="..\..\Common\MotionControllerInterface\c_motion_controller_settings.h">
-      <SubType>compile</SubType>
-      <Link>AVR_Coordinator\MotionControllerInterface\c_motion_controller_settings.h</Link>
-    </Compile>
     <Compile Include="..\..\Common\NGC_RS274\NGC_Block.cpp">
       <SubType>compile</SubType>
       <Link>Common\NGC_RS274\NGC_Block.cpp</Link>
@@ -367,18 +351,6 @@
       <SubType>compile</SubType>
       <Link>AVR_Coordinator\Machine\c_machine.h</Link>
     </Compile>
-    <Compile Include="..\Shared\MotionControllerInterface\ExternalControllers\GRBL\c_Grbl.cpp">
-      <SubType>compile</SubType>
-      <Link>AVR_Coordinator\MotionControllerInterface\ExternalControllers\GRBL\c_Grbl.cpp</Link>
-    </Compile>
-    <Compile Include="..\Shared\MotionControllerInterface\ExternalControllers\GRBL\c_Grbl.h">
-      <SubType>compile</SubType>
-      <Link>AVR_Coordinator\MotionControllerInterface\ExternalControllers\GRBL\c_Grbl.h</Link>
-    </Compile>
-    <Compile Include="..\Shared\MotionControllerInterface\ExternalControllers\GRBL\c_Grbl_Settings.h">
-      <SubType>compile</SubType>
-      <Link>AVR_Coordinator\MotionControllerInterface\ExternalControllers\GRBL\c_Grbl_Settings.h</Link>
-    </Compile>
     <Compile Include="..\Shared\Planner\Canned Cycles\c_canned_cycle.cpp">
       <SubType>compile</SubType>
       <Link>AVR_Coordinator\Planner\Canned Cycles\c_canned_cycle.cpp</Link>
@@ -435,14 +407,6 @@
       <SubType>compile</SubType>
       <Link>AVR_Coordinator\Planner\Stager_Errors.h</Link>
     </Compile>
-    <Compile Include="..\Shared\Settings\c_Edm.cpp">
-      <SubType>compile</SubType>
-      <Link>AVR_Coordinator\Settings\c_Edm.cpp</Link>
-    </Compile>
-    <Compile Include="..\Shared\Settings\c_Edm.h">
-      <SubType>compile</SubType>
-      <Link>AVR_Coordinator\Settings\c_Edm.h</Link>
-    </Compile>
     <Compile Include="..\Shared\Settings\c_general.cpp">
       <SubType>compile</SubType>
       <Link>AVR_Coordinator\Settings\c_general.cpp</Link>
@@ -450,30 +414,6 @@
     <Compile Include="..\Shared\Settings\c_general.h">
       <SubType>compile</SubType>
       <Link>AVR_Coordinator\Settings\c_general.h</Link>
-    </Compile>
-    <Compile Include="..\Shared\Settings\c_Mill.cpp">
-      <SubType>compile</SubType>
-      <Link>AVR_Coordinator\Settings\c_Mill.cpp</Link>
-    </Compile>
-    <Compile Include="..\Shared\Settings\c_Mill.h">
-      <SubType>compile</SubType>
-      <Link>AVR_Coordinator\Settings\c_Mill.h</Link>
-    </Compile>
-    <Compile Include="..\Shared\Settings\c_Plasma.cpp">
-      <SubType>compile</SubType>
-      <Link>AVR_Coordinator\Settings\c_Plasma.cpp</Link>
-    </Compile>
-    <Compile Include="..\Shared\Settings\c_Plasma.h">
-      <SubType>compile</SubType>
-      <Link>AVR_Coordinator\Settings\c_Plasma.h</Link>
-    </Compile>
-    <Compile Include="..\Shared\Settings\c_Turn.cpp">
-      <SubType>compile</SubType>
-      <Link>AVR_Coordinator\Settings\c_Turn.cpp</Link>
-    </Compile>
-    <Compile Include="..\Shared\Settings\c_Turn.h">
-      <SubType>compile</SubType>
-      <Link>AVR_Coordinator\Settings\c_Turn.h</Link>
     </Compile>
     <Compile Include="..\Shared\Spindle\c_spindle.h">
       <SubType>compile</SubType>
@@ -505,14 +445,9 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="AVR_Coordinator\" />
-    <Folder Include="AVR_Coordinator\AVR_Coordinator\" />
-    <Folder Include="AVR_Coordinator\AVR_Coordinator\MotionCore\" />
     <Folder Include="AVR_Coordinator\Events\" />
     <Folder Include="AVR_Coordinator\Interpolation\" />
     <Folder Include="AVR_Coordinator\Machine\" />
-    <Folder Include="AVR_Coordinator\MotionControllerInterface\" />
-    <Folder Include="AVR_Coordinator\MotionControllerInterface\ExternalControllers\" />
-    <Folder Include="AVR_Coordinator\MotionControllerInterface\ExternalControllers\GRBL\" />
     <Folder Include="AVR_Coordinator\Encoder" />
     <Folder Include="AVR_Coordinator\MotionCore" />
     <Folder Include="AVR_Coordinator\Spindle" />

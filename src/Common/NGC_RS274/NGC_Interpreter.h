@@ -35,7 +35,8 @@ namespace NGC_RS274
 		{
 			//variables
 		public:
-			static char Line[CYCLE_LINE_LENGTH];
+			//static char Line[CYCLE_LINE_LENGTH];
+			static char * Line;
 			static int HasErrors;
 			static NGC_RS274::NGC_Binary_Block local_block;
 			static NGC_RS274::NGC_Binary_Block *stager_block;

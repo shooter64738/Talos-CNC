@@ -103,15 +103,47 @@ char c_Serial::Get()
 	return byte;
 }
 
+char * c_Serial::Buffer_Pointer()
+{
+	return Hardware_Abstraction_Layer::Serial::rxBuffer[_port].Buffer;
+}
+
+uint16_t c_Serial::FindByte_Position(uint8_t search_byte)
+{
+	uint16_t peek_distance = 0;
+	while(1)
+	{
+		char peek_byte = this->Peek(peek_distance);
+		if (peek_byte == 0)
+		return 0;
+		if ( peek_byte == search_byte)
+		return peek_distance;
+		peek_distance++;
+	}
+}
+
+void c_Serial::AdvanceTail(uint16_t size)
+{
+	Hardware_Abstraction_Layer::Serial::rxBuffer[_port].Tail += size;
+	if (Hardware_Abstraction_Layer::Serial::rxBuffer[_port].Tail > RX_BUFFER_SIZE)
+		Hardware_Abstraction_Layer::Serial::rxBuffer[_port].Tail -= RX_BUFFER_SIZE;
+}
+
 char c_Serial::Peek()
 {
 	if (Hardware_Abstraction_Layer::Serial::rxBuffer == NULL)
 	return NULL;
 
-	if (Hardware_Abstraction_Layer::Serial::rxBuffer[_port].Tail> Hardware_Abstraction_Layer::Serial::rxBuffer[_port].Head)
-	return 0;
+	/*if (Hardware_Abstraction_Layer::Serial::rxBuffer[_port].Tail > Hardware_Abstraction_Layer::Serial::rxBuffer[_port].Head)
+	{
+		char byte = Hardware_Abstraction_Layer::Serial::rxBuffer[_port].Buffer[Hardware_Abstraction_Layer::Serial::rxBuffer[_port].Tail];
+	}
+	else
+	{*/
+		char byte = Hardware_Abstraction_Layer::Serial::rxBuffer[_port].Buffer[Hardware_Abstraction_Layer::Serial::rxBuffer[_port].Tail];
+	//}
+	//return 0;
 	
-	char byte = Hardware_Abstraction_Layer::Serial::rxBuffer[_port].Buffer[Hardware_Abstraction_Layer::Serial::rxBuffer[_port].Tail];
 	//Write(byte);
 	return byte;
 }

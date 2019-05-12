@@ -10,8 +10,6 @@
 
 Motion_Core::Software::Interpollation::s_backlash_comp Motion_Core::Software::Interpollation::back_comp;
 
-char Motion_Core::Software::Interpollation::motion_stream[sizeof(BinaryRecords::s_motion_data_block)];
-
 void Motion_Core::Software::Interpollation::load_block(BinaryRecords::s_motion_data_block block)
 {
 	uint8_t return_value = 0;

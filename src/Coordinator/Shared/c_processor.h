@@ -21,6 +21,7 @@
 #ifndef __C_PROCESSOR_H__
 #define __C_PROCESSOR_H__
 #include "../../Common/Serial\c_Serial.h"
+#include "../../Common/Serial/records_def.h"
 
 class c_processor
 {
@@ -31,6 +32,7 @@ public:
 	static c_Serial host_serial;
 	static c_Serial controller_serial;
 	static c_Serial spindle_serial;
+	static BinaryRecords::s_motion_control_settings motion_control_setting_record;
 	
 protected:
 private:

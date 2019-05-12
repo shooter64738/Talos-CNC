@@ -26,11 +26,6 @@
 #ifdef MSVC
 #include "../../../MSVC++.h"
 #endif // MSVC++
-#include "c_mill.h"
-#include "c_edm.h"
-#include "c_plasma.h"
-#include "c_turn.h"
-
 
 namespace Settings
 {
@@ -50,36 +45,12 @@ namespace Settings
 	};
 	class c_general
 	{
-	public:
-
-		/*
-		need to come up with a clean way to group settings so they are easier to read and follow.
-		*/
-
-		struct s_machine_settings
-		{
-			float interpolation_error_distance; //<--how far out of synch can interpolation become before faulting?
-			uint16_t backlash_error[MACHINE_AXIS_COUNT]; //<--how many steps does each axis need for backlash comp?
-			e_machine_types machine_type;
-			e_machine_sub_types machine_sub_type;
-		};
-		static s_machine_settings machine;
-
-		//Settings specific to milling
-		static Settings::c_Mill MILLING;
-
-		//Settings specific to electrical discharge machining (EDM)
-		static Settings::c_Edm EDM;
-
-		//Settings specific to plasma torches
-		static Settings::c_Plasma PLASMA;
-
-		//Settings specific to lathe Turning
-		static Settings::c_Turn TURNING;
-
+		public:
 		static void initialize();
-	protected:
-	private:
+		static void load_from_input(uint8_t setting_group, uint8_t sub_group);
+		static	uint8_t write_stream(char * stream, uint8_t record_size);
+		protected:
+		private:
 	};
 };
 #endif //__C_SETTINGS_H__

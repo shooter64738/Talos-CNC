@@ -109,7 +109,7 @@ void Hardware_Abstraction_Layer::MotionCore::Stepper::pulse_reset_timer()
 {
 	// Enable step pulse reset timer so that The Stepper Port Reset Interrupt can reset the signal after
 	// exactly settings.pulse_microseconds microseconds, independent of the main Timer1 prescaler.
-	//TCNT0 = c_stepper::st.step_pulse_time; // Reload Timer0 counter
+	uint16_t _TCNT0 = Motion_Core::Hardware::Interpollation::Step_Pulse_Length; // Reload Timer0 counter
 	//TCCR0B = (1 << CS01); // Begin Timer0. Full speed, 1/8 prescaler
 
 	//sei();

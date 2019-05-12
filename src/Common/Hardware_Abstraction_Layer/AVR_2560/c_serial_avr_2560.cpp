@@ -116,6 +116,35 @@ void Hardware_Abstraction_Layer::Serial::initialize(uint8_t Port, uint32_t BaudR
 	}
 }
 
+void Hardware_Abstraction_Layer::Serial::add_to_buffer(uint8_t port, const char * data)
+{
+	while (*data != 0)
+	{
+		Hardware_Abstraction_Layer::Serial::_add(port, *data++, rxBuffer[port].Head++);
+	}
+	/*rxBuffer[port].Buffer[rxBuffer[port].Head++] = 13;
+	rxBuffer[port].EOL++;*/
+}
+
+void Hardware_Abstraction_Layer::Serial::add_to_buffer(uint8_t port, const char * data, uint8_t data_size)
+{
+	for (int i=0;i<data_size;i++)
+	{
+		Hardware_Abstraction_Layer::Serial::_add(port, *data++, rxBuffer[port].Head++);
+		if (rxBuffer[port].Head == RX_BUFFER_SIZE)
+			rxBuffer[port].Head = 0;
+	}
+	/*rxBuffer[port].Buffer[rxBuffer[port].Head++] = 13;
+	rxBuffer[port].EOL++;*/
+}
+
+void Hardware_Abstraction_Layer::Serial::_add(uint8_t port, char byte, uint16_t position)
+{
+	rxBuffer[port].Buffer[position] = byte;
+	if (rxBuffer[port].Buffer[position] == 13)
+	rxBuffer[port].EOL++;
+}
+
 void Hardware_Abstraction_Layer::Serial::send(uint8_t Port, char byte)
 {
 	switch (Port)

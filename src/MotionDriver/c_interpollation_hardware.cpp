@@ -156,9 +156,6 @@ void Motion_Core::Hardware::Interpollation::step_tick()
 			Motion_Core::Hardware::Interpollation::Shutdown();
 			Motion_Core::Hardware::Interpollation::Interpolation_Active = 0; // Flag main program for cycle end
 			Motion_Core::Hardware::Interpollation::Step_Active = 0;
-
-			//c_planner::block_complete = true;
-			//c_planner::completed_block = Motion_Core::Hardware::Interpollation::Current_Line;
 			return; // Nothing to do but exit.
 		}
 	}
@@ -188,9 +185,7 @@ void Motion_Core::Hardware::Interpollation::step_tick()
 	}
 
 	Motion_Core::Hardware::Interpollation::Exec_Timer_Item->steps_to_execute_in_this_segment--;
-
-
-	//if (st.step_count == 0)
+	
 	if (Motion_Core::Hardware::Interpollation::Exec_Timer_Item->steps_to_execute_in_this_segment == 0)
 	{
 		// Segment is complete. Discard current segment and advance segment indexing.

@@ -50,6 +50,9 @@ class c_Serial
 	void ClearBuffer(void);
 	void Reset(void);
 	char Get();
+	char * Buffer_Pointer();
+	uint16_t FindByte_Position(uint8_t search_byte);
+	void AdvanceTail(uint16_t size);
 	char Peek();
 	char Peek(uint8_t LookAhead);
 	uint8_t HasEOL();

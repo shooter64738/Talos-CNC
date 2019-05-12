@@ -1,7 +1,7 @@
 #include "c_motion_core.h"
 #include "../helpers.h"
 
-BinaryRecords::s_settings Motion_Core::Settings::_Settings;
+BinaryRecords::s_motion_control_settings Motion_Core::Settings::_Settings;
 
 //int16_t Motion_Core::Settings.steps_per_mm[N_AXIS]{160};
 //float Motion_Core::Settings.acceleration[N_AXIS]{ (100.0 * 60 * 60)};
@@ -17,10 +17,12 @@ void Motion_Core::initialize()
 	{
 		Motion_Core::Settings::_Settings.steps_per_mm[i] = 160;
 		Motion_Core::Settings::_Settings.acceleration[i] = (100.0 * 60 * 60);
-		Motion_Core::Settings::_Settings.max_rate[i] = 5000;
+		Motion_Core::Settings::_Settings.max_rate[i] = 8000;
 		//arbitrary for testing
 		Motion_Core::Settings::_Settings.back_lash_comp_distance[i] = 55;
 	}
+	
+	Motion_Core::Settings::_Settings.pulse_length = 4;
 
 }
 

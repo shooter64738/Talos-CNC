@@ -36,7 +36,7 @@ namespace Motion_Core
 			//};
 			
 			
-			static char motion_stream[sizeof(BinaryRecords::s_motion_data_block)];
+			
 			
 			struct s_backlash_comp
 			{

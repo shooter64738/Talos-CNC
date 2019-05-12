@@ -20,8 +20,8 @@
 
 
 #include "c_Bresenham.h"
-#include "..\MotionControllerInterface\c_motion_controller_settings.h"
 #include "..\NGC_RS274\NGC_Errors.h"
+#include "../../Coordinator/Shared/c_processor.h"
 
 //// default constructor
 //c_Bresenham::c_Bresenham()
@@ -148,7 +148,7 @@ uint16_t c_Bresenham::calculate_line(int32_t * currents)
 			if (predicted_lead != 0)
 			{
 				//Its expensive to convert steps to units, so only do it if we are not in perfect step.
-				if (abs((float)((float)predicted_lead / c_motion_controller_settings::configuration_settings.steps_per_mm[axis_id]) > c_motion_controller_settings::configuration_settings.interpolation_error_distance))
+				if (abs((float)((float)predicted_lead / c_processor::motion_control_setting_record.steps_per_mm[axis_id]) > c_processor::motion_control_setting_record.interpolation_error_distance))
 				{
 					faulted = true;
 					return (AXIS_FAULT_BASE_ERROR + axis_id);

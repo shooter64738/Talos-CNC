@@ -19,8 +19,6 @@
 *  along with Talos.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
-//#include "..\..\MotionDriver\c_motion_core.h"
 #ifndef RECORDS_DEF_H
 #define RECORDS_DEF_H
 #define G_CODE_MULTIPLIER 100
@@ -28,7 +26,7 @@
 namespace BinaryRecords
 {
 	#define MOTION_RECORD 1
-	#define SETTING_RECORD 2
+	#define MOTION_CONTROL_SETTING_RECORD 2
 	#define SER_ACK_PROCEED 100 //proceed with more instructions
 	#define SER_BAD_READ_RE_TRANSMIT 101 //data is bad, re-send
 	#ifndef __C_RAMP_TYPE
@@ -81,16 +79,26 @@ namespace BinaryRecords
 		
 	};
 	
-	struct s_settings
+	struct s_motion_control_settings
 	{
+		const uint8_t record_type = MOTION_CONTROL_SETTING_RECORD;
 		float acceleration[N_AXIS];
 		float max_rate[N_AXIS];
-		int16_t steps_per_mm[N_AXIS];
+		uint16_t steps_per_mm[N_AXIS];
 		float junction_deviation;
 		float arc_tolerance;
 		uint16_t pulse_length;
 		float back_lash_comp_distance[N_AXIS];
+		float interpolation_error_distance;
+		
+	};
+	struct s_spindle_control_settings
+	{
+		
 	};
 	
+	//static char motion_stream[sizeof(BinaryRecords::s_motion_data_block)];
+	//static char setting_stream[sizeof(BinaryRecords::s_motion_data_block)];
+	//
 };
 #endif /* RECORDS_DEF_H */

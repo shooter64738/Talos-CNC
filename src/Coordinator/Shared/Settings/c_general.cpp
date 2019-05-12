@@ -20,55 +20,194 @@
 
 
 #include "c_general.h"
-#include "..\..\..\Common\MotionControllerInterface\c_motion_controller_settings.h"
-Settings::c_general::s_machine_settings Settings::c_general::machine;
-
-Settings::c_Mill Settings::c_general::MILLING;
-Settings::c_Edm Settings::c_general::EDM;
-Settings::c_Plasma Settings::c_general::PLASMA;
-Settings::c_Turn Settings::c_general::TURNING;
+#include "..\..\..\Common\NGC_RS274\NGC_Block.h"
+#include "..\c_processor.h"
+#include "..\..\..\Common\Serial\records_def.h"
+#include "..\..\..\common\NGC_RS274\NGC_Errors.h"
+#include "..\..\..\Common\NGC_RS274\NGC_Interpreter.h"
+#include "..\Machine\c_machine.h"
 
 void Settings::c_general::initialize()
 {
-	c_general::machine.interpolation_error_distance = .01;
-	//Had code machine type for now.
-	c_general::machine.machine_type = e_machine_types::MILLING;
-	c_general::machine.machine_sub_type = e_machine_sub_types::RF45;
-	
-	for (int axis_id = 0;axis_id<c_motion_controller_settings::axis_count_reported;axis_id++)
-	c_general::machine.backlash_error[axis_id] = 0; //<-- number of STEPS, not distance for backlash comp.
-	
-	switch (c_general::machine.machine_type)
-	{
-		case e_machine_types::MILLING:
-		{
-			c_general::MILLING.initialize();
-			break;
-		}
-		case e_machine_types::EDM:
-		{
-			c_general::EDM.initialize();
-			break;
-		}
-		case e_machine_types::PLASMA:
-		{
-			//c_general::PLASMA.initialize();
-			break;
-		}
-		case e_machine_types::TURNING:
-		{
-			//c_general::TURNING.initialize();
-			break;
-		}
-		
-		default:
-		{
-			//No machine type set.. Must be a new config
-			break;
-		}
-	}
 
 };
+
+void Settings::c_general::load_from_input(uint8_t setting_group, uint8_t sub_group)
+{
+	//Setting group corresponds to a group of values available for the user to set on the motion controller
+	//or spindle controller.
+
+	NGC_RS274::NGC_Binary_Block local_block;
+	local_block.reset();
+	
+	
+	uint16_t record_size = c_processor::host_serial.FindByte_Position(CR);
+	NGC_RS274::Interpreter::Processor::Line = c_processor::host_serial.Buffer_Pointer() + c_processor::host_serial.TailPosition();
+	uint16_t return_value = NGC_RS274::Interpreter::Processor::process_line(&local_block);
+	c_processor::host_serial.AdvanceTail(record_size);
+	c_processor::host_serial.SkipToEOL();
+
+	//Did the interpreter have any errors with this block of data?
+	if (return_value != NGC_RS274::Interpreter::Errors::OK)
+	{
+		//something was bad on the interpreter processing. Ignore these values.
+		return;
+	}
+	float fAddress = 0.0;
+	record_size = 0;
+	//Motion Control Group Settings
+	if (setting_group == 'M')
+	{
+		//sub groups are categorized like this: A=accel, B=backlash,M=Max rate,S=steps per mm,
+		//P=Pulse length, J=Junction Deviation, T=Arc Tolerance
+		c_processor::host_serial.print_string("Updating motion control ");
+
+		if (sub_group == 'A')
+		{
+			c_processor::host_serial.print_string("acceleration\r");
+			for (int i = 0; i < N_AXIS; i++)
+			{
+				if (local_block.get_defined(c_machine::machine_axis_names[i]))
+				{
+					c_processor::motion_control_setting_record.acceleration[i] = ((*local_block.axis_values.Loop[i]) *60 *60);
+				}
+			}
+		}
+		else if (sub_group == 'B')
+		{
+			c_processor::host_serial.print_string("backlash\r");
+			for (int i = 0; i < N_AXIS; i++)
+			{
+				if (local_block.get_defined(c_machine::machine_axis_names[i]))
+				{
+					c_processor::motion_control_setting_record.back_lash_comp_distance[i] = *local_block.axis_values.Loop[i];
+				}
+			}
+		}
+		else if (sub_group == 'M')
+		{
+			c_processor::host_serial.print_string("max rate\r");
+			for (int i = 0; i < N_AXIS; i++)
+			{
+				if (local_block.get_defined(c_machine::machine_axis_names[i]))
+				{
+					c_processor::motion_control_setting_record.max_rate[i] = *local_block.axis_values.Loop[i];
+				}
+			}
+		}
+		else if (sub_group == 'S')
+		{
+			c_processor::host_serial.print_string("steps per mm\r");
+			for (int i = 0; i < N_AXIS; i++)
+			{
+				if (local_block.get_defined(c_machine::machine_axis_names[i]))
+				{
+					c_processor::motion_control_setting_record.steps_per_mm[i] = (int16_t)*local_block.axis_values.Loop[i];
+				}
+			}
+		}
+		if (local_block.get_value_defined('P', fAddress))
+		{
+			c_processor::host_serial.print_string("pulse length\r");
+			c_processor::motion_control_setting_record.pulse_length = fAddress;
+		}
+		if (local_block.get_value_defined('J', fAddress))
+		{
+			c_processor::host_serial.print_string("junction deviation\r");
+			c_processor::motion_control_setting_record.junction_deviation = fAddress;
+		}
+		if (local_block.get_value_defined('T', fAddress))
+		{
+			c_processor::host_serial.print_string("arc tolerance\r");
+			c_processor::motion_control_setting_record.arc_tolerance = fAddress;
+		}
+		char setting_stream[sizeof(BinaryRecords::s_motion_control_settings)];
+		record_size = sizeof(BinaryRecords::s_motion_control_settings);
+		//copy updated block to stream
+		memcpy(setting_stream, &c_processor::motion_control_setting_record, record_size);
+		
+		//memcpy(&motion_control_setting_record,setting_stream, record_size);	
+		//c_processor::host_serial.print_string("motion_control_setting_record.record_type = "); c_processor::host_serial.print_int32((uint32_t)motion_control_setting_record.record_type); c_processor::host_serial.Write(CR);
+		//for (uint8_t i = 0; i < N_AXIS; i++)
+		//{
+			//c_processor::host_serial.print_string("motion_control_setting_record.steps_per_mm[");
+			//c_processor::host_serial.print_int32(i);
+			//c_processor::host_serial.print_string("] = ");
+			//c_processor::host_serial.print_float(motion_control_setting_record.steps_per_mm[i], 2);
+			//c_processor::host_serial.Write(CR);
+			//
+			//
+			//c_processor::host_serial.print_string("motion_control_setting_record.acceleration[");
+			//c_processor::host_serial.print_int32(i);
+			//c_processor::host_serial.print_string("] = ");
+			//c_processor::host_serial.print_float(motion_control_setting_record.acceleration[i], 2);
+			//c_processor::host_serial.Write(CR);
+			//
+			//c_processor::host_serial.print_string("motion_control_setting_record.max_rate[");
+			//c_processor::host_serial.print_int32(i);
+			//c_processor::host_serial.print_string("] = ");
+			//c_processor::host_serial.print_float(motion_control_setting_record.max_rate[i], 2);
+			//c_processor::host_serial.Write(CR);
+			//
+			//c_processor::host_serial.print_string("motion_control_setting_record.back_lash_comp_distance[");
+			//c_processor::host_serial.print_int32(i);
+			//c_processor::host_serial.print_string("] = ");
+			//c_processor::host_serial.print_float(motion_control_setting_record.back_lash_comp_distance[i], 2);
+			//c_processor::host_serial.Write(CR);
+		//}
+		//c_processor::host_serial.print_string("motion_control_setting_record.pulse_length = ");
+		//c_processor::host_serial.print_int32(motion_control_setting_record.pulse_length);
+		//c_processor::host_serial.Write(CR);
+		//c_processor::host_serial.Write(CR);
+		
+		if (write_stream(setting_stream, record_size) == 0)
+		{
+			c_processor::host_serial.print_string("success.\r");
+		}
+		else
+		{
+			c_processor::host_serial.print_string("failed!\r");
+		}
+	}
+}
+
+uint8_t Settings::c_general::write_stream(char * stream, uint8_t record_size)
+{
+	//Send to motion controller
+	uint8_t send_count = 0;
+	while (1)
+	{
+		if (send_count > 4)
+		{
+			//We tried 4 times to send the record and it kept failing.. SUPER bad..
+			return 2;
+		}
+		c_processor::controller_serial.Write_Record(stream, record_size);
+		send_count++;
+		//Now we need to wait for the motion controller to confirm it go the data
+		if (c_processor::controller_serial.WaitFOrEOL(90000)) //<-- wait until the timeout
+		{
+			//We timed out. this is bad...
+			return 1;
+		}
+		else
+		{
+			//get the response code from the controller
+			uint8_t resp = c_processor::controller_serial.Get();
+			//there should be a cr after this, we can throw it away
+			c_processor::controller_serial.Get();
+			//If we get a proceed resp, we can break the while. we are done.
+			if (resp == SER_ACK_PROCEED)
+			{
+				break;
+			}
+
+			//if we get to here, we didnt get an ack and we need to resend.
+			send_count++;
+		}
+	}
+	return 0;
+}
 
 //// default constructor
 //c_settings::c_settings()

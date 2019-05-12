@@ -26,7 +26,8 @@
 #include "NGC_M_Codes.h"
 #include "..\..\MotionDriver\c_processor.h"
 
-char NGC_RS274::Interpreter::Processor::Line[CYCLE_LINE_LENGTH];
+//char NGC_RS274::Interpreter::Processor::Line[CYCLE_LINE_LENGTH];
+char * NGC_RS274::Interpreter::Processor::Line;
 int NGC_RS274::Interpreter::Processor::HasErrors = 0;
 NGC_RS274::NGC_Binary_Block NGC_RS274::Interpreter::Processor::local_block = NGC_RS274::NGC_Binary_Block();
 NGC_RS274::NGC_Binary_Block*NGC_RS274::Interpreter::Processor::stager_block;
@@ -41,7 +42,7 @@ void NGC_RS274::Interpreter::Processor::initialize()
 
 void NGC_RS274::Interpreter::Processor::clear_line()
 {
-	memset(NGC_RS274::Interpreter::Processor::Line, 0, CYCLE_LINE_LENGTH * sizeof(char));
+	//memset(NGC_RS274::Interpreter::Processor::Line, 0, CYCLE_LINE_LENGTH * sizeof(char));
 }
 
 int NGC_RS274::Interpreter::Processor::process_line(NGC_RS274::NGC_Binary_Block*plan_block)
@@ -784,28 +785,28 @@ int NGC_RS274::Interpreter::Processor::parse_values()
 	*/
 	int ReturnValue = NGC_RS274::Interpreter::Errors::OK;
 	//memset(Line, 0, 256);//<--Clear the line array
-	char *line_pointer = Line;//<--creating a pointer to an array
+	//char *line_pointer = Line;//<--creating a pointer to an array
 	//to simplify building the array data in the loops
-	*line_pointer = toupper(*line_pointer);
+	*NGC_RS274::Interpreter::Processor::Line = toupper(*NGC_RS274::Interpreter::Processor::Line);
 
 
-	if (*line_pointer == 0)
+	if (*NGC_RS274::Interpreter::Processor::Line == 0)
 	return  NGC_RS274::Interpreter::Errors::LINE_CONTAINS_NO_DATA;
-	else if (*line_pointer <'A' || *line_pointer >'Z')
+	else if (*NGC_RS274::Interpreter::Processor::Line <'A' || *NGC_RS274::Interpreter::Processor::Line >'Z')
 	{
 		//Skip any erroneous CR or LF.
-		while (*line_pointer == LF || *line_pointer == CR)
+		while (*NGC_RS274::Interpreter::Processor::Line == LF || *NGC_RS274::Interpreter::Processor::Line == CR)
 		{
-			line_pointer++;
+			NGC_RS274::Interpreter::Processor::Line++;
 		}
 		
-		if (*line_pointer <'A' || *line_pointer >'Z')
+		if (*NGC_RS274::Interpreter::Processor::Line <'A' || *NGC_RS274::Interpreter::Processor::Line >'Z')
 		{
 			//Check to see if this is a block skip, comment, etc.
-			if (*line_pointer != '/' && *line_pointer != '(')
+			if (*NGC_RS274::Interpreter::Processor::Line != '/' && *NGC_RS274::Interpreter::Processor::Line != '(')
 			{
 				c_processor::host_serial.print_string("bad char:");
-				c_processor::host_serial.print_int32( *line_pointer);
+				c_processor::host_serial.print_int32( *NGC_RS274::Interpreter::Processor::Line);
 				
 				return  NGC_RS274::Interpreter::Errors::WORD_VALUE_TYPE_INVALID;
 			}
@@ -816,9 +817,11 @@ int NGC_RS274::Interpreter::Processor::parse_values()
 	while (1)
 	{
 		//Is this a letter between A and Z
-		if (*line_pointer >= 'A' && *line_pointer <= 'Z')
+		if (*NGC_RS274::Interpreter::Processor::Line >= 'A' && *NGC_RS274::Interpreter::Processor::Line <= 'Z')
 		{
-			char Word = *line_pointer; line_pointer++; *line_pointer = toupper(*line_pointer);
+			char Word = *NGC_RS274::Interpreter::Processor::Line;
+			NGC_RS274::Interpreter::Processor::Line++;
+			*NGC_RS274::Interpreter::Processor::Line = toupper(*NGC_RS274::Interpreter::Processor::Line);
 			char _address[10];
 			memset(_address, 0, 10);
 			uint8_t i = 0;
@@ -826,21 +829,29 @@ int NGC_RS274::Interpreter::Processor::parse_values()
 			while (1)
 			{
 				//If this is a letter, or a CR, break out of this inner while
-				if ((*line_pointer >= 'A' && *line_pointer <= 'Z') || *line_pointer == 13 || *line_pointer == 0)
+				if ((*NGC_RS274::Interpreter::Processor::Line >= 'A' 
+				&& *NGC_RS274::Interpreter::Processor::Line <= 'Z')
+				|| *NGC_RS274::Interpreter::Processor::Line == 13
+				|| *NGC_RS274::Interpreter::Processor::Line == 0)
 				break;
-				if ((*line_pointer < '0' || *line_pointer>'9') && (*line_pointer != '.' && *line_pointer != '-'))
+				if ((*NGC_RS274::Interpreter::Processor::Line < '0'
+				|| *NGC_RS274::Interpreter::Processor::Line>'9')
+				&& (*NGC_RS274::Interpreter::Processor::Line != '.'
+				&& *NGC_RS274::Interpreter::Processor::Line != '-'))
 				{
-					while (*line_pointer != 13 && *line_pointer != 0)
+					while (*NGC_RS274::Interpreter::Processor::Line != 13
+					&& *NGC_RS274::Interpreter::Processor::Line != 0)
 					{
-						*line_pointer++;
+						*NGC_RS274::Interpreter::Processor::Line++;
 					}
 
 					return  NGC_RS274::Interpreter::Errors::ADDRESS_VALUE_NOT_NUMERIC;
 				}
-				_address[i] = *line_pointer; i++;
+				_address[i] = *NGC_RS274::Interpreter::Processor::Line; i++;
 
 
-				line_pointer++; *line_pointer = toupper(*line_pointer);
+				NGC_RS274::Interpreter::Processor::Line++;
+				*NGC_RS274::Interpreter::Processor::Line = toupper(*NGC_RS274::Interpreter::Processor::Line);
 			}
 
 			ReturnValue = group_word(Word, evaluate_address(_address));
@@ -849,7 +860,9 @@ int NGC_RS274::Interpreter::Processor::parse_values()
 			return ReturnValue;
 		}
 		//If this is a CR break out of the outer while
-		if (*line_pointer == 13 || *line_pointer == 10 || *line_pointer == 0)
+		if (*NGC_RS274::Interpreter::Processor::Line == 13
+		|| *NGC_RS274::Interpreter::Processor::Line == 10
+		|| *NGC_RS274::Interpreter::Processor::Line == 0)
 		break;
 	}
 	return ReturnValue;

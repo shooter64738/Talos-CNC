@@ -105,11 +105,7 @@
     <ClCompile Include="..\Shared\Planner\c_gcode_buffer.cpp" />
     <ClCompile Include="..\Shared\Planner\c_mirror.cpp" />
     <ClCompile Include="..\Shared\Planner\c_stager.cpp" />
-    <ClCompile Include="..\Shared\Settings\c_Edm.cpp" />
     <ClCompile Include="..\Shared\Settings\c_general.cpp" />
-    <ClCompile Include="..\Shared\Settings\c_Mill.cpp" />
-    <ClCompile Include="..\Shared\Settings\c_Plasma.cpp" />
-    <ClCompile Include="..\Shared\Settings\c_Turn.cpp" />
     <ClCompile Include="..\Shared\Status\c_status.cpp" />
     <ClCompile Include="..\Shared\System\c_parameter_table.cpp" />
     <ClCompile Include="main.cpp" />
@@ -129,6 +125,7 @@
     <ClInclude Include="..\..\Common\NGC_RS274\NGC_M_Groups.h" />
     <ClInclude Include="..\..\Common\NGC_RS274\NGC_Parameters.h" />
     <ClInclude Include="..\..\Common\Serial\c_Serial.h" />
+    <ClInclude Include="..\..\Common\Serial\records_def.h" />
     <ClInclude Include="..\..\Common\Serial\s_buffer.h" />
     <ClInclude Include="..\..\helpers.h" />
     <ClInclude Include="..\..\MSVC++.h" />
@@ -156,11 +153,7 @@
     <ClInclude Include="..\Shared\Planner\c_mirror.h" />
     <ClInclude Include="..\Shared\Planner\c_stager.h" />
     <ClInclude Include="..\Shared\Planner\Stager_Errors.h" />
-    <ClInclude Include="..\Shared\Settings\c_Edm.h" />
     <ClInclude Include="..\Shared\Settings\c_general.h" />
-    <ClInclude Include="..\Shared\Settings\c_Mill.h" />
-    <ClInclude Include="..\Shared\Settings\c_Plasma.h" />
-    <ClInclude Include="..\Shared\Settings\c_Turn.h" />
     <ClInclude Include="..\Shared\Status\c_status.h" />
     <ClInclude Include="..\Shared\System\c_parameter_table.h" />
     <ClInclude Include="..\Shared\System\tool_table.h" />
