@@ -6,8 +6,8 @@
 
 
 Motion_Core::Planner::Block_Item *Motion_Core::Planner::Calculator::block_buffer_planned = Motion_Core::Planner::Buffer::Get(0);
-//int32_t Motion_Core::Planner::Calculator::position[N_AXIS];
-float Motion_Core::Planner::Calculator::previous_unit_vec[N_AXIS];
+//int32_t Motion_Core::Planner::Calculator::position[MACHINE_AXIS_COUNT];
+float Motion_Core::Planner::Calculator::previous_unit_vec[MACHINE_AXIS_COUNT];
 float Motion_Core::Planner::Calculator::previous_nominal_speed;
 
 
@@ -20,12 +20,12 @@ uint8_t Motion_Core::Planner::Calculator::_plan_buffer_line(BinaryRecords::s_mot
 	planning_block->flag = target_block.flag;
 	
 	// Compute and store initial move distance data.
-	float unit_vec[N_AXIS]{0};
+	float unit_vec[MACHINE_AXIS_COUNT]{0};
 	uint8_t idx;
 
 	//memcpy(position_steps, Motion_Core::Planner::Calculator::position, sizeof(Motion_Core::Planner::Calculator::position));
 
-	for (idx = 0; idx < N_AXIS; idx++)
+	for (idx = 0; idx < MACHINE_AXIS_COUNT; idx++)
 	{
 		// Calculate target position in absolute steps, number of steps for each axis, and determine max step events.
 		// Also, compute individual axes distance for move and prep unit vector calculations.
@@ -110,9 +110,9 @@ uint8_t Motion_Core::Planner::Calculator::_plan_buffer_line(BinaryRecords::s_mot
 		// memory in the event of a feedrate override changing the nominal speeds of blocks, which can
 		// change the overall maximum entry speed conditions of all blocks.
 
-		float junction_unit_vec[N_AXIS];
+		float junction_unit_vec[MACHINE_AXIS_COUNT];
 		float junction_cos_theta = 0.0;
-		for (idx = 0; idx < N_AXIS; idx++)
+		for (idx = 0; idx < MACHINE_AXIS_COUNT; idx++)
 		{
 			junction_cos_theta -= Motion_Core::Planner::Calculator::previous_unit_vec[idx] * unit_vec[idx];
 			junction_unit_vec[idx] = unit_vec[idx] - Motion_Core::Planner::Calculator::previous_unit_vec[idx];
@@ -171,8 +171,8 @@ uint8_t Motion_Core::Planner::Calculator::_plan_buffer_line(BinaryRecords::s_mot
 //planning_block->line_number = pl_data->line_number;
 //
 //// Compute and store initial move distance data.
-//int32_t target_steps[N_AXIS], position_steps[N_AXIS];
-//float unit_vec[N_AXIS], delta_mm;
+//int32_t target_steps[MACHINE_AXIS_COUNT], position_steps[MACHINE_AXIS_COUNT];
+//float unit_vec[MACHINE_AXIS_COUNT], delta_mm;
 //uint8_t idx;
 //
 //// Copy position data based on type of motion being planned.
@@ -186,7 +186,7 @@ uint8_t Motion_Core::Planner::Calculator::_plan_buffer_line(BinaryRecords::s_mot
 //}
 //
 //
-//for (idx = 0; idx < N_AXIS; idx++)
+//for (idx = 0; idx < MACHINE_AXIS_COUNT; idx++)
 //{
 //// Calculate target position in absolute steps, number of steps for each axis, and determine max step events.
 //// Also, compute individual axes distance for move and prep unit vector calculations.
@@ -268,9 +268,9 @@ uint8_t Motion_Core::Planner::Calculator::_plan_buffer_line(BinaryRecords::s_mot
 //// memory in the event of a feedrate override changing the nominal speeds of blocks, which can
 //// change the overall maximum entry speed conditions of all blocks.
 //
-//float junction_unit_vec[N_AXIS];
+//float junction_unit_vec[MACHINE_AXIS_COUNT];
 //float junction_cos_theta = 0.0;
-//for (idx = 0; idx < N_AXIS; idx++)
+//for (idx = 0; idx < MACHINE_AXIS_COUNT; idx++)
 //{
 //junction_cos_theta -= Motion_Core::Planner::Calculator::previous_unit_vec[idx] * unit_vec[idx];
 //junction_unit_vec[idx] = unit_vec[idx] - Motion_Core::Planner::Calculator::previous_unit_vec[idx];

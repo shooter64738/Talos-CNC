@@ -13,7 +13,7 @@ namespace Motion_Core
 			class Bresenham_Item
 			{
 			public:
-				uint32_t steps[N_AXIS];
+				uint32_t steps[MACHINE_AXIS_COUNT];
 				uint32_t step_event_count;
 				uint8_t direction_bits;
 

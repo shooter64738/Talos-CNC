@@ -48,7 +48,7 @@ void c_processor::initialize()
 	#endif
 	#ifdef TEST_SETTINGS
 	uint8_t record_size = sizeof(BinaryRecords::s_motion_control_settings);
-	for (uint8_t i = 0; i < N_AXIS; i++)
+	for (uint8_t i = 0; i < MACHINE_AXIS_COUNT; i++)
 	{
 		c_processor::settings_block.steps_per_mm[i] = 160;
 		c_processor::settings_block.acceleration[i] = (100.0 * 60 * 60);
@@ -73,16 +73,16 @@ void c_processor::initialize()
 		if (c_processor::host_serial.DataSize() > 0)
 		{
 			serial_try++;
-			uint8_t record_type = c_processor::host_serial.Peek();
+			BinaryRecords::e_binary_record_types record_type = (BinaryRecords::e_binary_record_types)c_processor::host_serial.Peek();
 			//when a motion is running it ma take several loops for the serial data to arrive.
 			//the serial_try is a way to wait a reasonable amount of times before the failure
 			//is declared.
-			if (record_type == 0 && serial_try > 300)
+			if (record_type == BinaryRecords::e_binary_record_types::Unknown && serial_try > 300)
 			{
 				//There are no record types of 0. if we see a zero, its probably bad serial data, so skip it.
 				//Reset the serial buffer and tell the host to resend
 				c_processor::host_serial.Reset();
-				c_processor::host_serial.Write(SER_BAD_READ_RE_TRANSMIT);
+				c_processor::host_serial.Write((char)BinaryRecords::e_binary_responses::Data_Error);
 				c_processor::host_serial.Write(CR);
 				serial_try = 0;
 
@@ -93,13 +93,13 @@ void c_processor::initialize()
 				record_type = c_processor::load_record(record_type);
 			}
 
-			if (record_type > 0)
+			if (record_type != BinaryRecords::e_binary_record_types::Unknown)
 			{
 				switch (record_type)
 				{
-					case MOTION_RECORD:
+					case BinaryRecords::e_binary_record_types::Motion:
 					{
-						c_processor::host_serial.Write(SER_ACK_PROCEED); c_processor::host_serial.Write(CR);
+						c_processor::host_serial.Write((char)BinaryRecords::e_binary_responses::Ok); c_processor::host_serial.Write(CR);
 
 						//c_processor::host_serial.print_string("test.record_type = "); c_processor::host_serial.print_int32((uint32_t)record_type); c_processor::host_serial.Write(CR);
 						//c_processor::host_serial.print_string("test.motion_type = "); c_processor::host_serial.print_int32((uint32_t)c_processor::motion_block.motion_type); c_processor::host_serial.Write(CR);
@@ -115,13 +115,13 @@ void c_processor::initialize()
 						Motion_Core::Software::Interpollation::load_block(c_processor::motion_block);
 					}
 					break;
-					case MOTION_CONTROL_SETTING_RECORD:
+					case BinaryRecords::e_binary_record_types::Motion_Control_Setting:
 					{
-						c_processor::host_serial.Write(SER_ACK_PROCEED); c_processor::host_serial.Write(CR);
+						c_processor::host_serial.Write((char)BinaryRecords::e_binary_responses::Ok); c_processor::host_serial.Write(CR);
 						memcpy(&Motion_Core::Settings::_Settings, &c_processor::settings_block, sizeof(BinaryRecords::s_motion_control_settings));
 
 						//c_processor::host_serial.print_string("test.record_type = "); c_processor::host_serial.print_int32((uint32_t)record_type); c_processor::host_serial.Write(CR);
-						//for (uint8_t i = 0; i < N_AXIS; i++)
+						//for (uint8_t i = 0; i < MACHINE_AXIS_COUNT; i++)
 						//{
 						//c_processor::host_serial.print_string("test.steps_per_mm[");
 						//c_processor::host_serial.print_int32(i);
@@ -181,12 +181,12 @@ void c_processor::initialize()
 	}
 }
 
-uint8_t c_processor::load_record(uint8_t record_type)
+BinaryRecords::e_binary_record_types c_processor::load_record(BinaryRecords::e_binary_record_types record_type)
 {
 	uint16_t record_size = 0;
 	switch (record_type)
 	{
-		case MOTION_RECORD:
+		case BinaryRecords::e_binary_record_types::Motion:
 		{
 			record_size = sizeof(BinaryRecords::s_motion_data_block);
 			//First byte indicates record type of motion. Make sure its all there before we start loading it.
@@ -200,11 +200,11 @@ uint8_t c_processor::load_record(uint8_t record_type)
 					, record_size);
 				//Move the tail forward to the position we stopped reading the serial buffer from. (probably the head position)
 				c_processor::host_serial.AdvanceTail(record_size);
-				return MOTION_RECORD;
+				return BinaryRecords::e_binary_record_types::Motion;
 			}
 		}
 		break;
-		case MOTION_CONTROL_SETTING_RECORD:
+		case BinaryRecords::e_binary_record_types::Motion_Control_Setting :
 		{
 			record_size = sizeof(BinaryRecords::s_motion_control_settings);
 			//First byte indicates record type of motion. Make sure its all there before we start loading it.
@@ -218,13 +218,13 @@ uint8_t c_processor::load_record(uint8_t record_type)
 					, record_size);
 				//Move the tail forward to the position we stopped reading the serial buffer from. (probably the head position)
 				c_processor::host_serial.AdvanceTail(record_size);
-				return MOTION_CONTROL_SETTING_RECORD;
+				return BinaryRecords::e_binary_record_types::Motion_Control_Setting;
 			}
 		}
 		break;
 
 		default:
-		return 0;
+		return BinaryRecords::e_binary_record_types::Unknown;
 		break;
 	}
 }

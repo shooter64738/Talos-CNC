@@ -15,7 +15,7 @@ namespace Motion_Core
 		public:
 			// Fields used by the bresenham algorithm for tracing the line
 			// NOTE: Used by stepper algorithm to execute the block correctly. Do not alter these values.
-			uint32_t steps[N_AXIS];    // Step count along each axis
+			uint32_t steps[MACHINE_AXIS_COUNT];    // Step count along each axis
 			uint32_t step_event_count; // The maximum step axis count and number of steps required to complete this block.
 			uint8_t direction_bits;    // The direction bit set for this block (refers to *_DIRECTION_BIT in config.h)
 

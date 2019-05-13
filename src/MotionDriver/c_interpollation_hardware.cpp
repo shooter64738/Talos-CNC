@@ -15,8 +15,8 @@ static ofstream myfile;
 Motion_Core::Segment::Bresenham::Bresenham_Item *Motion_Core::Hardware::Interpollation::Change_Check_Exec_Timer_Bresenham; // Tracks the current st_block index. Change indicates new block.
 Motion_Core::Segment::Timer::Timer_Item *Motion_Core::Hardware::Interpollation::Exec_Timer_Item;  // Pointer to the segment being executed
 
-int32_t Motion_Core::Hardware::Interpollation::system_position[N_AXIS];
-uint32_t Motion_Core::Hardware::Interpollation::counter[N_AXIS];
+int32_t Motion_Core::Hardware::Interpollation::system_position[MACHINE_AXIS_COUNT];
+uint32_t Motion_Core::Hardware::Interpollation::counter[MACHINE_AXIS_COUNT];
 #ifdef STEP_PULSE_DELAY
 uint8_t step_bits;  // Stores out_bits output to complete the step pulse delay
 #endif
@@ -141,7 +141,7 @@ void Motion_Core::Hardware::Interpollation::step_tick()
 				Motion_Core::Hardware::Interpollation::Exec_Timer_Item->bresenham_in_item;
 
 				// Initialize Bresenham line and distance counters
-				for (int i = 0; i < N_AXIS; i++)
+				for (int i = 0; i < MACHINE_AXIS_COUNT; i++)
 				Motion_Core::Hardware::Interpollation::counter[i] =
 				Motion_Core::Hardware::Interpollation::Exec_Timer_Item->bresenham_in_item->step_event_count;
 			}
@@ -162,7 +162,7 @@ void Motion_Core::Hardware::Interpollation::step_tick()
 
 	// Reset step out bits.
 	Motion_Core::Hardware::Interpollation::step_outbits = 0;
-	for (int i = 0; i < N_AXIS; i++)
+	for (int i = 0; i < MACHINE_AXIS_COUNT; i++)
 	{
 		// Execute step displacement profile by Bresenham line algorithm
 		Motion_Core::Hardware::Interpollation::counter[i] += Motion_Core::Hardware::Interpollation::Exec_Timer_Item->bresenham_in_item->steps[i];

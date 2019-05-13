@@ -89,7 +89,7 @@ uint8_t Motion_Core::Segment::Arbitrator::Base_Calculate()
 
 		uint8_t idx;
 
-		for (idx = 0; idx < N_AXIS; idx++)
+		for (idx = 0; idx < MACHINE_AXIS_COUNT; idx++)
 		{
 			bresenham_item->steps[idx] = (Motion_Core::Segment::Arbitrator::Active_Block->steps[idx]);
 		}

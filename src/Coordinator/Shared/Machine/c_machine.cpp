@@ -22,8 +22,6 @@
 #include "c_machine.h"
 #include "..\Planner\c_stager.h"
 #include "..\c_processor.h"
-//#include "..\Settings\c_general.h"
-
 #include "..\Planner\Compensation\c_cutter_comp.h"
 #include "..\Planner\Canned Cycles\c_canned_cycle.h"
 #include "..\status\c_status.h"
@@ -35,6 +33,7 @@
 #include "..\..\..\common\NGC_RS274\NGC_M_Groups.h"
 #include "..\..\..\Common\NGC_RS274\NGC_G_Codes.h"
 #include "..\..\..\common\NGC_RS274\NGC_G_Groups.h"
+#include "..\MotionController\c_motion_controller.h"
 
 
 uint16_t *c_machine::machine_state_g_group; //There are 14 groups of gcodes (0-13)
@@ -43,7 +42,7 @@ NGC_RS274::NGC_Binary_Block*c_machine::machine_block;
 float c_machine::axis_position[MACHINE_AXIS_COUNT];
 float c_machine::unit_scaler = 1;
 char c_machine::machine_axis_names[MACHINE_AXIS_COUNT];
-char c_machine::motion_stream[sizeof(BinaryRecords::s_motion_data_block)];
+
 
 
 /*
@@ -228,8 +227,6 @@ void c_machine::run_block()
 	c_machine::start_motion_binary(c_machine::machine_block);
 	//When we are done with the block, move the tail forward.
 	c_gcode_buffer::buffer_tail++;
-	//Since Line in interpreter is used for input and output we should clear it, so that its empty if we use it for input again.
-	NGC_RS274::Interpreter::Processor::clear_line();
 
 	c_machine::machine_block = NULL;
 }
@@ -238,7 +235,7 @@ void c_machine::start_motion_binary(NGC_RS274::NGC_Binary_Block* local_block)
 {
 	//If the block is set to 'planned' then its ready to execute
 	if (local_block->state & (1 << BLOCK_STATE_PLANNED))
-	{
+	{//convert the ngc data into a motion record
 		BinaryRecords::s_motion_data_block motion_block_record;
 		uint8_t record_size = sizeof(BinaryRecords::s_motion_data_block);
 		//set some block stuff
@@ -248,42 +245,11 @@ void c_machine::start_motion_binary(NGC_RS274::NGC_Binary_Block* local_block)
 		for (int i=0;i<MACHINE_AXIS_COUNT;i++)
 		motion_block_record.axis_values[i] = *local_block->axis_values.Loop[i];
 		motion_block_record.line_number = *local_block->persisted_values.active_line_number_N;
-		//copy updated block to stream
 		
-		memcpy(motion_stream, &motion_block_record,record_size);
-		//Send to motion controller
-		uint8_t send_count = 0;
-		while(1)
-		{
-			if (send_count>4)
-			{
-				//We tried 4 times to send the record and it kept failing.. SUPER bad..
-				return;
-			}
-			c_processor::controller_serial.Write_Record(motion_stream,record_size);	
-			send_count ++;
-			//Now we need to wait for the motion controller to confirm it go the data
-			if (c_processor::controller_serial.WaitFOrEOL(50000)) //<-- wait until the timeout
-			{
-				//We timed out. this is bad...
-				return ;
-			}
-			else
-			{
-				//get the response code from the controller
-				uint8_t resp = c_processor::controller_serial.Get();
-				//there should be a cr after this, we can throw it away
-				c_processor::controller_serial.Get();
-				//If we get a proceed resp, we can break the while. we are done.
-				if (resp == SER_ACK_PROCEED)
-				{
-					break;
-				}
-				
-				//if we get to here, we didnt get an ack and we need to resend.
-				send_count++;
-			}
-		}
+		//Send this in binary format to the motion controller.
+		//This only requires 44 bytes (size of birecord::s_motion_data_block) be sent to the motion controller
+		c_motion_controller::send_motion(motion_block_record);
+		
 		//See if there is appended motion (cutter comp may have set one for an outside corner)
 		if (local_block->appended_block_pointer != NULL)
 		{
@@ -310,7 +276,7 @@ void c_machine::start_motion_binary(NGC_RS274::NGC_Binary_Block* local_block)
 			//c_processor::host_serial.Write("output:"); c_processor::host_serial.Write(NGC_RS274::Interpreter::Processor::Line);
 			//c_processor::host_serial.Write(CR);
 			//c_motion_controller::send_motion(NGC_RS274::Interpreter::Processor::Line, local_block->is_motion_block); //<--send to motion controller
-//
+			//
 			////If the pointer is null, the cycle is finished this round. Set the motion mode back to the original cycle motion
 			//if (local_block->canned_values.PNTR_RECALLS == NULL)
 			///*
@@ -319,12 +285,7 @@ void c_machine::start_motion_binary(NGC_RS274::NGC_Binary_Block* local_block)
 			//local_block->g_group[NGC_RS274::Groups::G::MOTION] = c_canned_cycle::active_cycle_code;
 		}
 
-
-		//if (c_hal::feedback.PNTR_POSITION_DATA == NULL && c_machine::machine_block!= NULL)
-		{
-			//If no feedback is enabled, then the only update we can do for the machine is set it to the target position
-			c_machine::synch_position();
-		}
+		c_machine::synch_position();
 	}
 
 }

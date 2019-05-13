@@ -29,7 +29,7 @@ namespace Motion_Core
 				//e_feed_modes feed_rate_mode = e_feed_modes::FEED_RATE_UNITS_PER_MINUTE_MODE;
 				////float word_values[26];
 				//uint32_t line_number = 0 ;
-				//float axis_values[N_AXIS];
+				//float axis_values[MACHINE_AXIS_COUNT];
 				//s_arc_values arc_values;
 				//e_block_flag flag = e_block_flag::normal;
 				//
@@ -41,7 +41,7 @@ namespace Motion_Core
 			struct s_backlash_comp
 			{
 				uint8_t needs_comp = 0;
-				int8_t last_directions[N_AXIS];
+				int8_t last_directions[MACHINE_AXIS_COUNT];
 			};
 			
 			static s_backlash_comp back_comp;

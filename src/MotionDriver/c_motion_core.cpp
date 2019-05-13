@@ -3,17 +3,17 @@
 
 BinaryRecords::s_motion_control_settings Motion_Core::Settings::_Settings;
 
-//int16_t Motion_Core::Settings.steps_per_mm[N_AXIS]{160};
-//float Motion_Core::Settings.acceleration[N_AXIS]{ (100.0 * 60 * 60)};
-//float Motion_Core::Settings.max_rate [N_AXIS]{ 5000};
+//int16_t Motion_Core::Settings.steps_per_mm[MACHINE_AXIS_COUNT]{160};
+//float Motion_Core::Settings.acceleration[MACHINE_AXIS_COUNT]{ (100.0 * 60 * 60)};
+//float Motion_Core::Settings.max_rate [MACHINE_AXIS_COUNT]{ 5000};
 //float Motion_Core::Settings.junction_deviation = 0.01;
 //float Motion_Core::Settings.arc_tolerance = 0.002;
 //uint16_t Motion_Core::Settings.pulse_length = 10;
-//float Motion_Core::Settings.back_lash_comp_distance[N_AXIS]{0.0};
+//float Motion_Core::Settings.back_lash_comp_distance[MACHINE_AXIS_COUNT]{0.0};
 
 void Motion_Core::initialize()
 {
-	for (uint8_t i = 0; i < N_AXIS; i++)
+	for (uint8_t i = 0; i < MACHINE_AXIS_COUNT; i++)
 	{
 		Motion_Core::Settings::_Settings.steps_per_mm[i] = 160;
 		Motion_Core::Settings::_Settings.acceleration[i] = (100.0 * 60 * 60);
@@ -41,7 +41,7 @@ float Motion_Core::convert_delta_vector_to_unit_vector(float *vector)
 {
 	uint8_t idx;
 	float magnitude = 0.0;
-	for (idx = 0; idx < N_AXIS; idx++)
+	for (idx = 0; idx < MACHINE_AXIS_COUNT; idx++)
 	{
 		if (vector[idx] != 0.0)
 		{
@@ -50,7 +50,7 @@ float Motion_Core::convert_delta_vector_to_unit_vector(float *vector)
 	}
 	magnitude = sqrt(magnitude);
 	float inv_magnitude = 1.0 / magnitude;
-	for (idx = 0; idx < N_AXIS; idx++)
+	for (idx = 0; idx < MACHINE_AXIS_COUNT; idx++)
 	{
 		vector[idx] *= inv_magnitude;
 	}
@@ -61,7 +61,7 @@ float Motion_Core::limit_value_by_axis_maximum(float *max_value, float *unit_vec
 {
 	uint8_t idx;
 	float limit_value = SOME_LARGE_VALUE;
-	for (idx = 0; idx < N_AXIS; idx++)
+	for (idx = 0; idx < MACHINE_AXIS_COUNT; idx++)
 	{
 		if (unit_vec[idx] != 0)
 		{  // Avoid divide by zero.

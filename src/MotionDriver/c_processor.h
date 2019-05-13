@@ -18,7 +18,7 @@ class c_processor
 	public:
 	static c_Serial host_serial;
 	static void initialize();
-	static uint8_t load_record(uint8_t record_type);
+	static BinaryRecords::e_binary_record_types load_record(BinaryRecords::e_binary_record_types record_type);
 	static BinaryRecords::s_motion_data_block motion_block;
 	static BinaryRecords::s_motion_control_settings settings_block;
 	static uint8_t remote;

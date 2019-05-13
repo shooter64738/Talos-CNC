@@ -16,8 +16,8 @@ void Motion_Core::Software::Interpollation::load_block(BinaryRecords::s_motion_d
 	
 	//We must determine what directions this motion is moving each axis
 	//and if the directions are different than the previous motion.
-	int8_t changing_axis[N_AXIS]{0};
-	for (uint8_t idx = 0; idx < N_AXIS; idx++)
+	int8_t changing_axis[MACHINE_AXIS_COUNT]{0};
+	for (uint8_t idx = 0; idx < MACHINE_AXIS_COUNT; idx++)
 	{
 		//Determine if there is motion
 		if (block.axis_values[idx] !=0)
@@ -45,7 +45,7 @@ void Motion_Core::Software::Interpollation::load_block(BinaryRecords::s_motion_d
 		comp_block.feed_rate_mode = BinaryRecords::e_feed_modes::FEED_RATE_UNITS_PER_MINUTE_MODE;
 		comp_block.motion_type = BinaryRecords::e_motion_type::rapid_linear;
 		comp_block.flag = BinaryRecords::e_block_flag::compensation;
-		for (uint8_t idx = 0; idx < N_AXIS; idx++)
+		for (uint8_t idx = 0; idx < MACHINE_AXIS_COUNT; idx++)
 		{
 			//We can loop through all of them. If the changing_axis value is zero due to no change in direction
 			//then there will be no motion computed for it. 

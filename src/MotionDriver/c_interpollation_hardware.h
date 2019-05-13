@@ -11,7 +11,7 @@ namespace Motion_Core
 #define __C_HARDWARE_INTERPOLLATION
 		class Interpollation
 		{
-			static uint32_t counter[N_AXIS];
+			static uint32_t counter[MACHINE_AXIS_COUNT];
 			
 #ifdef STEP_PULSE_DELAY
 			uint8_t step_bits;  // Stores out_bits output to complete the step pulse delay
@@ -32,7 +32,7 @@ namespace Motion_Core
 			static void step_tick();
 			static void Initialize();
 			static void Shutdown();
-			static int32_t system_position[N_AXIS];
+			static int32_t system_position[MACHINE_AXIS_COUNT];
 			
 
 			Interpollation();

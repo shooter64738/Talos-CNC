@@ -26,6 +26,7 @@
 #include "..\..\..\common\NGC_RS274\NGC_Errors.h"
 #include "..\..\..\Common\NGC_RS274\NGC_Interpreter.h"
 #include "..\Machine\c_machine.h"
+#include "..\MotionController\c_motion_controller.h"
 
 void Settings::c_general::initialize()
 {
@@ -126,41 +127,7 @@ void Settings::c_general::load_from_input(uint8_t setting_group, uint8_t sub_gro
 		//copy updated block to stream
 		memcpy(setting_stream, &c_processor::motion_control_setting_record, record_size);
 		
-		//memcpy(&motion_control_setting_record,setting_stream, record_size);	
-		//c_processor::host_serial.print_string("motion_control_setting_record.record_type = "); c_processor::host_serial.print_int32((uint32_t)motion_control_setting_record.record_type); c_processor::host_serial.Write(CR);
-		//for (uint8_t i = 0; i < N_AXIS; i++)
-		//{
-			//c_processor::host_serial.print_string("motion_control_setting_record.steps_per_mm[");
-			//c_processor::host_serial.print_int32(i);
-			//c_processor::host_serial.print_string("] = ");
-			//c_processor::host_serial.print_float(motion_control_setting_record.steps_per_mm[i], 2);
-			//c_processor::host_serial.Write(CR);
-			//
-			//
-			//c_processor::host_serial.print_string("motion_control_setting_record.acceleration[");
-			//c_processor::host_serial.print_int32(i);
-			//c_processor::host_serial.print_string("] = ");
-			//c_processor::host_serial.print_float(motion_control_setting_record.acceleration[i], 2);
-			//c_processor::host_serial.Write(CR);
-			//
-			//c_processor::host_serial.print_string("motion_control_setting_record.max_rate[");
-			//c_processor::host_serial.print_int32(i);
-			//c_processor::host_serial.print_string("] = ");
-			//c_processor::host_serial.print_float(motion_control_setting_record.max_rate[i], 2);
-			//c_processor::host_serial.Write(CR);
-			//
-			//c_processor::host_serial.print_string("motion_control_setting_record.back_lash_comp_distance[");
-			//c_processor::host_serial.print_int32(i);
-			//c_processor::host_serial.print_string("] = ");
-			//c_processor::host_serial.print_float(motion_control_setting_record.back_lash_comp_distance[i], 2);
-			//c_processor::host_serial.Write(CR);
-		//}
-		//c_processor::host_serial.print_string("motion_control_setting_record.pulse_length = ");
-		//c_processor::host_serial.print_int32(motion_control_setting_record.pulse_length);
-		//c_processor::host_serial.Write(CR);
-		//c_processor::host_serial.Write(CR);
-		
-		if (write_stream(setting_stream, record_size) == 0)
+		if (c_motion_controller::write_stream(setting_stream, record_size) == BinaryRecords::e_binary_responses::Ok)
 		{
 			c_processor::host_serial.print_string("success.\r");
 		}
@@ -171,43 +138,7 @@ void Settings::c_general::load_from_input(uint8_t setting_group, uint8_t sub_gro
 	}
 }
 
-uint8_t Settings::c_general::write_stream(char * stream, uint8_t record_size)
-{
-	//Send to motion controller
-	uint8_t send_count = 0;
-	while (1)
-	{
-		if (send_count > 4)
-		{
-			//We tried 4 times to send the record and it kept failing.. SUPER bad..
-			return 2;
-		}
-		c_processor::controller_serial.Write_Record(stream, record_size);
-		send_count++;
-		//Now we need to wait for the motion controller to confirm it go the data
-		if (c_processor::controller_serial.WaitFOrEOL(90000)) //<-- wait until the timeout
-		{
-			//We timed out. this is bad...
-			return 1;
-		}
-		else
-		{
-			//get the response code from the controller
-			uint8_t resp = c_processor::controller_serial.Get();
-			//there should be a cr after this, we can throw it away
-			c_processor::controller_serial.Get();
-			//If we get a proceed resp, we can break the while. we are done.
-			if (resp == SER_ACK_PROCEED)
-			{
-				break;
-			}
 
-			//if we get to here, we didnt get an ack and we need to resend.
-			send_count++;
-		}
-	}
-	return 0;
-}
 
 //// default constructor
 //c_settings::c_settings()

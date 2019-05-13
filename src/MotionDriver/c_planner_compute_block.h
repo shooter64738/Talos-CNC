@@ -16,10 +16,10 @@ namespace Motion_Core
 		public:
 
 
-			//static int32_t position[N_AXIS];          // The planner position of the tool in absolute steps. Kept separate
+			//static int32_t position[MACHINE_AXIS_COUNT];          // The planner position of the tool in absolute steps. Kept separate
 													  // from g-code position for movements requiring multiple line motions,
 													  // i.e. arcs, canned cycles, and backlash compensation.
-			static float previous_unit_vec[N_AXIS];   // Unit vector of previous path line segment
+			static float previous_unit_vec[MACHINE_AXIS_COUNT];   // Unit vector of previous path line segment
 			static float previous_nominal_speed;  // Nominal speed of previous path line segment
 			static Motion_Core::Planner::Block_Item *block_buffer_planned;
 			static uint8_t _plan_buffer_line( BinaryRecords::s_motion_data_block target_block);

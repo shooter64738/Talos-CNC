@@ -19,16 +19,18 @@
 *  along with Talos.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "..\..\Talos.h"
 #ifndef RECORDS_DEF_H
 #define RECORDS_DEF_H
-#define G_CODE_MULTIPLIER 100
-#define N_AXIS 3
+//#define G_CODE_MULTIPLIER 100
+
+//#define MACHINE_AXIS_COUNT 3
 namespace BinaryRecords
 {
-	#define MOTION_RECORD 1
-	#define MOTION_CONTROL_SETTING_RECORD 2
-	#define SER_ACK_PROCEED 100 //proceed with more instructions
-	#define SER_BAD_READ_RE_TRANSMIT 101 //data is bad, re-send
+	//#define MOTION_RECORD 1
+	//#define MOTION_CONTROL_SETTING_RECORD 2
+	//#define SER_ACK_PROCEED 100 //proceed with more instructions
+	//#define SER_BAD_READ_RE_TRANSMIT 101 //data is bad, re-send
 	#ifndef __C_RAMP_TYPE
 	#define __C_RAMP_TYPE
 	enum class e_ramp_type
@@ -58,6 +60,18 @@ namespace BinaryRecords
 	};
 	#endif
 	
+	#ifndef __C_BINARY_RECORD_TYPES
+	#define __C_BINARY_RECORD_TYPES
+	enum class e_binary_record_types : uint8_t
+	{Unknown = 0, Motion = 1, Motion_Control_Setting = 2, Spindle_Control_Setting = 3};
+	#endif
+	
+	#ifndef __C_BINARY_RESPONSES
+	#define __C_BINARY_RESPONSES
+	enum class e_binary_responses : uint8_t
+	{Ok = 1, Data_Error = 2,Response_Time_Out = 3};
+	#endif
+	
 	struct s_motion_arc_values
 	{
 		float horizontal_center = 0 ;
@@ -67,13 +81,13 @@ namespace BinaryRecords
 
 	struct s_motion_data_block
 	{
-		const uint8_t record_type = MOTION_RECORD;
+		const BinaryRecords::e_binary_record_types record_type = BinaryRecords::e_binary_record_types::Motion;
 		BinaryRecords::e_motion_type motion_type = BinaryRecords::e_motion_type::rapid_linear;
 		float feed_rate = 0;
 		BinaryRecords::e_feed_modes feed_rate_mode = BinaryRecords::e_feed_modes::FEED_RATE_UNITS_PER_MINUTE_MODE;
 		//float word_values[26];
 		uint32_t line_number = 0 ;
-		float axis_values[N_AXIS];
+		float axis_values[MACHINE_AXIS_COUNT];
 		s_motion_arc_values arc_values;
 		BinaryRecords::e_block_flag flag = BinaryRecords::e_block_flag::normal;
 		
@@ -81,14 +95,14 @@ namespace BinaryRecords
 	
 	struct s_motion_control_settings
 	{
-		const uint8_t record_type = MOTION_CONTROL_SETTING_RECORD;
-		float acceleration[N_AXIS];
-		float max_rate[N_AXIS];
-		uint16_t steps_per_mm[N_AXIS];
+		const BinaryRecords::e_binary_record_types record_type = BinaryRecords::e_binary_record_types::Motion_Control_Setting;
+		float acceleration[MACHINE_AXIS_COUNT];
+		float max_rate[MACHINE_AXIS_COUNT];
+		uint16_t steps_per_mm[MACHINE_AXIS_COUNT];
 		float junction_deviation;
 		float arc_tolerance;
 		uint16_t pulse_length;
-		float back_lash_comp_distance[N_AXIS];
+		float back_lash_comp_distance[MACHINE_AXIS_COUNT];
 		float interpolation_error_distance;
 		
 	};

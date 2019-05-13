@@ -351,6 +351,14 @@
       <SubType>compile</SubType>
       <Link>AVR_Coordinator\Machine\c_machine.h</Link>
     </Compile>
+    <Compile Include="..\Shared\MotionController\c_motion_controller.cpp">
+      <SubType>compile</SubType>
+      <Link>AVR_Coordinator\MotionController\c_motion_controller.cpp</Link>
+    </Compile>
+    <Compile Include="..\Shared\MotionController\c_motion_controller.h">
+      <SubType>compile</SubType>
+      <Link>AVR_Coordinator\AVR_Coordinator\MotionController\c_motion_controller.h</Link>
+    </Compile>
     <Compile Include="..\Shared\Planner\Canned Cycles\c_canned_cycle.cpp">
       <SubType>compile</SubType>
       <Link>AVR_Coordinator\Planner\Canned Cycles\c_canned_cycle.cpp</Link>
@@ -449,7 +457,7 @@
     <Folder Include="AVR_Coordinator\Interpolation\" />
     <Folder Include="AVR_Coordinator\Machine\" />
     <Folder Include="AVR_Coordinator\Encoder" />
-    <Folder Include="AVR_Coordinator\MotionCore" />
+    <Folder Include="AVR_Coordinator\MotionController" />
     <Folder Include="AVR_Coordinator\Spindle" />
     <Folder Include="AVR_Coordinator\Planner\" />
     <Folder Include="AVR_Coordinator\Planner\Canned Cycles\" />
