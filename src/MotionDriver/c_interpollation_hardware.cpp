@@ -45,9 +45,14 @@ void Motion_Core::Hardware::Interpollation::Initialize()
 	{
 		Motion_Core::Hardware::Interpollation::Interpolation_Active = 1;
 		Motion_Core::Hardware::Interpollation::step_outbits = step_port_invert_mask;
-		Hardware_Abstraction_Layer::MotionCore::Stepper::wake_up();
+		
 	}
 
+}
+
+void Motion_Core::Hardware::Interpollation::Drive_With_Timer()
+{
+	Hardware_Abstraction_Layer::MotionCore::Stepper::wake_up();
 }
 
 void Motion_Core::Hardware::Interpollation::Shutdown()

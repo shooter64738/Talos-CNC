@@ -16,23 +16,23 @@ namespace Motion_Core
 			
 			//struct s_arc_values
 			//{
-				//float horizontal_center = 0 ;
-				//float vertical_center = 0;
-				//float Radius = 0;
+			//float horizontal_center = 0 ;
+			//float vertical_center = 0;
+			//float Radius = 0;
 			//};
 			//
 			//struct s_input_block
 			//{
-				//const uint8_t record_type = MOTION_RECORD;
-				//e_motion_type motion_type = e_motion_type::rapid_linear;
-				//float feed_rate = 0;
-				//e_feed_modes feed_rate_mode = e_feed_modes::FEED_RATE_UNITS_PER_MINUTE_MODE;
-				////float word_values[26];
-				//uint32_t line_number = 0 ;
-				//float axis_values[MACHINE_AXIS_COUNT];
-				//s_arc_values arc_values;
-				//e_block_flag flag = e_block_flag::normal;
-				//
+			//const uint8_t record_type = MOTION_RECORD;
+			//e_motion_type motion_type = e_motion_type::rapid_linear;
+			//float feed_rate = 0;
+			//e_feed_modes feed_rate_mode = e_feed_modes::FEED_RATE_UNITS_PER_MINUTE_MODE;
+			////float word_values[26];
+			//uint32_t line_number = 0 ;
+			//float axis_values[MACHINE_AXIS_COUNT];
+			//s_arc_values arc_values;
+			//e_block_flag flag = e_block_flag::normal;
+			//
 			//};
 			
 			
@@ -48,6 +48,7 @@ namespace Motion_Core
 			
 			static void load_block(BinaryRecords::s_motion_data_block block);
 			
+			staticvoid set_feed_mode(e_feed_modes feed_rate_mode);
 			static uint8_t _mc_line(BinaryRecords::s_motion_data_block target_block);
 			static uint8_t _mc_arc(BinaryRecords::s_motion_data_block target_block);
 

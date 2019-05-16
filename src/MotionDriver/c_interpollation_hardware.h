@@ -7,15 +7,15 @@ namespace Motion_Core
 {
 	namespace Hardware
 	{
-#ifndef __C_HARDWARE_INTERPOLLATION
-#define __C_HARDWARE_INTERPOLLATION
+		#ifndef __C_HARDWARE_INTERPOLLATION
+		#define __C_HARDWARE_INTERPOLLATION
 		class Interpollation
 		{
 			static uint32_t counter[MACHINE_AXIS_COUNT];
 			
-#ifdef STEP_PULSE_DELAY
+			#ifdef STEP_PULSE_DELAY
 			uint8_t step_bits;  // Stores out_bits output to complete the step pulse delay
-#endif
+			#endif
 			static uint8_t step_outbits;         // The next stepping-bits to be output
 			static uint8_t dir_outbits;
 			static Motion_Core::Segment::Bresenham::Bresenham_Item *Change_Check_Exec_Timer_Bresenham; // Tracks the current st_block index. Change indicates new block.
@@ -24,13 +24,14 @@ namespace Motion_Core
 			static uint8_t step_port_invert_mask;
 			static uint8_t dir_port_invert_mask;
 
-		public:
+			public:
 			static uint8_t Step_Active;
 			static uint8_t Interpolation_Active;
 			static uint32_t Current_Line;
 			static uint8_t Step_Pulse_Length;  // Step pulse reset time after step rise
 			static void step_tick();
 			static void Initialize();
+			static void Drive_With_Timer();
 			static void Shutdown();
 			static int32_t system_position[MACHINE_AXIS_COUNT];
 			
@@ -38,6 +39,6 @@ namespace Motion_Core
 			Interpollation();
 			~Interpollation();
 		};
-#endif
+		#endif
 	};
 };
