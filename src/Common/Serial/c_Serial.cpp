@@ -31,7 +31,7 @@
 #endif
 
 #ifdef __SAM3X8E__
-
+#include "../Hardware_Abstraction_Layer\ARM_SAM3X8E\c_serial_arm_3x8e.h"
 #endif
 
 #ifdef MSVC

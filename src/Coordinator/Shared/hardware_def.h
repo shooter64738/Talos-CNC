@@ -32,6 +32,7 @@
 #include "../../Common/Hardware_Abstraction_Layer/AVR_2560/c_coordinator_avr_2560.h"
 #include "../../Common/Hardware_Abstraction_Layer/AVR_2560/c_core_avr_2560.h"
 #include "../../Common/Hardware_Abstraction_Layer/AVR_2560/c_serial_avr_2560.h"
+#include "../../Common/Serial/c_Serial.h"
 #endif
 
 #ifdef __SAM3X8E__

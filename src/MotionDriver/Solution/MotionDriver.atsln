@@ -1,0 +1,58 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Atmel Studio Solution File, Format Version 11.00
+VisualStudioVersion = 14.0.23107.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{E66E83B9-2572-4076-B26E-6BE79FF3018A}") = "AVR_2560_MotionDriver", "..\AVR_MotionDriver\AVR_2560_MotionDriver.cppproj", "{34A5F4BA-6C84-414D-BA07-1B1E116E9E6D}"
+EndProject
+Project("{E66E83B9-2572-4076-B26E-6BE79FF3018A}") = "SAM Proto", "..\..\SAM Prototyper\SAM Proto\SAM Proto.cppproj", "{5CCE03A5-A78E-4A81-8E82-B455FE3DAD41}"
+EndProject
+Project("{E66E83B9-2572-4076-B26E-6BE79FF3018A}") = "ARM_3X8E_MotionDriver", "..\ARM_MotionDriver\ARM_3X8E_MotionDriver\ARM_3X8E_MotionDriver.cppproj", "{DCE6C7E3-EE26-4D79-826B-08594B9AD897}"
+EndProject
+Project("{E66E83B9-2572-4076-B26E-6BE79FF3018A}") = "Throttle", "..\..\sam arduino usart\ArduinoSketch1\Throttle\Throttle.cppproj", "{39ECC1B0-1B87-4C3C-ABC1-6CF8ED4F67F4}"
+EndProject
+Project("{E66E83B9-2572-4076-B26E-6BE79FF3018A}") = "ArduinoCore", "..\..\sam arduino usart\ArduinoSketch1\ArduinoCore\ArduinoCore.cppproj", "{BE9B0E89-887E-4950-A72B-6C4571CB10FE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|ARM = Debug|ARM
+		Debug|AVR = Debug|AVR
+		Release|ARM = Release|ARM
+		Release|AVR = Release|AVR
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{34A5F4BA-6C84-414D-BA07-1B1E116E9E6D}.Debug|ARM.ActiveCfg = Debug|AVR
+		{34A5F4BA-6C84-414D-BA07-1B1E116E9E6D}.Debug|AVR.ActiveCfg = Debug|AVR
+		{34A5F4BA-6C84-414D-BA07-1B1E116E9E6D}.Debug|AVR.Build.0 = Debug|AVR
+		{34A5F4BA-6C84-414D-BA07-1B1E116E9E6D}.Release|ARM.ActiveCfg = Release|AVR
+		{34A5F4BA-6C84-414D-BA07-1B1E116E9E6D}.Release|AVR.ActiveCfg = Release|AVR
+		{34A5F4BA-6C84-414D-BA07-1B1E116E9E6D}.Release|AVR.Build.0 = Release|AVR
+		{5CCE03A5-A78E-4A81-8E82-B455FE3DAD41}.Debug|ARM.ActiveCfg = Debug|ARM
+		{5CCE03A5-A78E-4A81-8E82-B455FE3DAD41}.Debug|ARM.Build.0 = Debug|ARM
+		{5CCE03A5-A78E-4A81-8E82-B455FE3DAD41}.Debug|AVR.ActiveCfg = Debug|ARM
+		{5CCE03A5-A78E-4A81-8E82-B455FE3DAD41}.Release|ARM.ActiveCfg = Release|ARM
+		{5CCE03A5-A78E-4A81-8E82-B455FE3DAD41}.Release|ARM.Build.0 = Release|ARM
+		{5CCE03A5-A78E-4A81-8E82-B455FE3DAD41}.Release|AVR.ActiveCfg = Release|ARM
+		{DCE6C7E3-EE26-4D79-826B-08594B9AD897}.Debug|ARM.ActiveCfg = Debug|ARM
+		{DCE6C7E3-EE26-4D79-826B-08594B9AD897}.Debug|ARM.Build.0 = Debug|ARM
+		{DCE6C7E3-EE26-4D79-826B-08594B9AD897}.Debug|AVR.ActiveCfg = Debug|ARM
+		{DCE6C7E3-EE26-4D79-826B-08594B9AD897}.Release|ARM.ActiveCfg = Release|ARM
+		{DCE6C7E3-EE26-4D79-826B-08594B9AD897}.Release|ARM.Build.0 = Release|ARM
+		{DCE6C7E3-EE26-4D79-826B-08594B9AD897}.Release|AVR.ActiveCfg = Release|ARM
+		{39ECC1B0-1B87-4C3C-ABC1-6CF8ED4F67F4}.Debug|ARM.ActiveCfg = Debug|ARM
+		{39ECC1B0-1B87-4C3C-ABC1-6CF8ED4F67F4}.Debug|ARM.Build.0 = Debug|ARM
+		{39ECC1B0-1B87-4C3C-ABC1-6CF8ED4F67F4}.Debug|AVR.ActiveCfg = Debug|ARM
+		{39ECC1B0-1B87-4C3C-ABC1-6CF8ED4F67F4}.Release|ARM.ActiveCfg = Release|ARM
+		{39ECC1B0-1B87-4C3C-ABC1-6CF8ED4F67F4}.Release|ARM.Build.0 = Release|ARM
+		{39ECC1B0-1B87-4C3C-ABC1-6CF8ED4F67F4}.Release|AVR.ActiveCfg = Release|ARM
+		{BE9B0E89-887E-4950-A72B-6C4571CB10FE}.Debug|ARM.ActiveCfg = Debug|ARM
+		{BE9B0E89-887E-4950-A72B-6C4571CB10FE}.Debug|ARM.Build.0 = Debug|ARM
+		{BE9B0E89-887E-4950-A72B-6C4571CB10FE}.Debug|AVR.ActiveCfg = Debug|ARM
+		{BE9B0E89-887E-4950-A72B-6C4571CB10FE}.Release|ARM.ActiveCfg = Release|ARM
+		{BE9B0E89-887E-4950-A72B-6C4571CB10FE}.Release|ARM.Build.0 = Release|ARM
+		{BE9B0E89-887E-4950-A72B-6C4571CB10FE}.Release|AVR.ActiveCfg = Release|ARM
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

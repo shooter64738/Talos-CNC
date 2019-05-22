@@ -25,16 +25,42 @@ void c_motion_controller::initialize()
 {
 }
 
+BinaryRecords::e_binary_responses c_motion_controller::send_jog(BinaryRecords::s_jog_data_block jog_data)
+{
+	char jog_stream[sizeof(BinaryRecords::s_jog_data_block)];
+	memcpy(jog_stream, &jog_data,sizeof(BinaryRecords::s_jog_data_block));
+	//Send to motion controller and wait for response.
+	BinaryRecords::e_binary_responses resp
+	= c_motion_controller::write_stream(jog_stream,sizeof(BinaryRecords::s_jog_data_block),BinaryRecords::e_binary_responses::Ok);
+	uint8_t try_count = 0;
+	
+	//When the control acknowledges that it got the record, we still need to wait for the jog to complete
+	//before we proceed
+	while(try_count<10)
+	{
+		c_processor::controller_serial.WaitFOrEOL(90000);
+		try_count ++;
+		if (c_processor::controller_serial.Peek() == (char) BinaryRecords::e_binary_responses::Jog_Complete)
+		{
+			
+			c_processor::controller_serial.SkipToEOL();
+			return BinaryRecords::e_binary_responses::Ok;
+		}
+	}
+	return BinaryRecords::e_binary_responses::Response_Time_Out;
+}
+
 BinaryRecords::e_binary_responses c_motion_controller::send_motion(BinaryRecords::s_motion_data_block motion_data)
 {
 	char motion_stream[sizeof(BinaryRecords::s_motion_data_block)];
 	memcpy(motion_stream, &motion_data,sizeof(BinaryRecords::s_motion_data_block));
 	//Send to motion controller and wait for response.
-	BinaryRecords::e_binary_responses resp 
-	= c_motion_controller::write_stream(motion_stream,sizeof(BinaryRecords::s_motion_data_block));
+	BinaryRecords::e_binary_responses resp
+	= c_motion_controller::write_stream(motion_stream,sizeof(BinaryRecords::s_motion_data_block), BinaryRecords::e_binary_responses::Ok);
+	return resp ;
 }
 
-BinaryRecords::e_binary_responses c_motion_controller::write_stream(char * stream, uint8_t record_size)
+BinaryRecords::e_binary_responses c_motion_controller::write_stream(char * stream, uint8_t record_size,BinaryRecords::e_binary_responses Ack_Resp)
 {
 	//Send to motion controller
 	uint8_t send_count = 0;
@@ -47,7 +73,7 @@ BinaryRecords::e_binary_responses c_motion_controller::write_stream(char * strea
 		}
 		c_processor::controller_serial.Write_Record(stream, record_size);
 		send_count++;
-		//Now we need to wait for the motion controller to confirm it go the data
+		//Now we need to wait for the motion controller to confirm it got the data
 		if (c_processor::controller_serial.WaitFOrEOL(90000)) //<-- wait until the timeout
 		{
 			//We timed out. this is bad...
@@ -56,13 +82,13 @@ BinaryRecords::e_binary_responses c_motion_controller::write_stream(char * strea
 		else
 		{
 			//get the response code from the controller
-			 BinaryRecords::e_binary_responses resp
-			 = (BinaryRecords::e_binary_responses)c_processor::controller_serial.Get();
-			 
+			BinaryRecords::e_binary_responses resp
+			= (BinaryRecords::e_binary_responses)c_processor::controller_serial.Get();
+			
 			//there should be a cr after this, we can throw it away
 			c_processor::controller_serial.Get();
 			//If we get a proceed resp, we can break the while. we are done.
-			if (resp == BinaryRecords::e_binary_responses::Ok)
+			if (resp == Ack_Resp)
 			{
 				break;
 			}

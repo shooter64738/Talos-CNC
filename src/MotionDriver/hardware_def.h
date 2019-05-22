@@ -32,34 +32,22 @@
 #endif
 
 #ifdef __AVR_ATmega2560__
-#ifndef F_CPU
-#define F_CPU 16000000
-#endif
-
-//#include "../Common/Hardware_Abstraction_Layer/AVR_2560/c_grbl_avr_2560.h"
+#include "..\Common\Hardware_Abstraction_Layer\AVR_2560\c_serial_avr_2560.h"
 #include "../Common/Hardware_Abstraction_Layer/AVR_2560/c_core_avr_2560.h"
-//#include "../Common/Hardware_Abstraction_Layer/AVR_2560/c_serial_avr_2560.h"
 #include "../Common/Hardware_Abstraction_Layer/AVR_2560/c_motion_core_avr_2560_stepper.h"
-//#include "../Common/Hardware_Abstraction_Layer/AVR_2560/c_grbl_avr_2560_control.h"
-//#include "../Common/Hardware_Abstraction_Layer/AVR_2560/c_grbl_avr_2560_spindle.h"
-//#include "../Common/Hardware_Abstraction_Layer/AVR_2560/c_grbl_avr_2560_limits.h"
 #include "../Common/Hardware_Abstraction_Layer/AVR_2560/c_eeprom_avr_2560.h"
-//#include "../Common/Hardware_Abstraction_Layer/AVR_2560/c_grbl_avr_2560_probe.h"
-//#include "../Common/Hardware_Abstraction_Layer/AVR_2560/c_grbl_avr_2560_stepper.h"
-//#include "../Common/Hardware_Abstraction_Layer/AVR_2560/c_grbl_avr_2560_spindle.h"
-//#include "../Common/Hardware_Abstraction_Layer/AVR_2560/c_grbl_avr_2560_probe.h"
-//#include "../Common/Hardware_Abstraction_Layer/AVR_2560/c_grbl_avr_2560_limits.h"
-//#include "../Common/Hardware_Abstraction_Layer/AVR_2560/c_grbl_avr_2560_limits.h"
-//#include "../Common/Hardware_Abstraction_Layer/AVR_2560/c_grbl_avr_2560_coolant.h"
 #include "../Common/Serial/c_Serial.h"
 #endif
 
 #ifdef __SAM3X8E__
 #include "../Common/Hardware_Abstraction_Layer/ARM_SAM3X8E/c_core_arm_3x8e.h"
+#include "../Common/Hardware_Abstraction_Layer/ARM_SAM3X8E/c_motion_core_arm_3x8e_stepper.h"
+#include "../Common/Hardware_Abstraction_Layer/ARM_SAM3X8E/c_serial_arm_3x8e.h"
+#include "../Common/Serial/c_Serial.h"
 #endif
 
 #ifdef MSVC
-#define F_CPU 16000000
+#define xF_CPU 16000000
 #include "../Common/Serial/c_Serial.h"
 #include "../Common/Hardware_Abstraction_Layer\Virtual/c_core_win.h"
 #include "../Common/Hardware_Abstraction_Layer/Virtual\c_motion_core_win_stepper.h"

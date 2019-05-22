@@ -20,17 +20,17 @@
 #ifdef __SAM3X8E__//<--This will stop the multiple ISR definition error
 
 #include "c_usart.h"
-#include <stdint.h>
-#include "..\clock\c_clock.h"
-#include "sam3x8e.h"
 #include "..\pmc\c_pmc.h"
+#include "..\pio\c_ioport.h"
+//#include "..\clock\c_clock.h"
+//#include "sam3x8e.h"
 
 void c_usart::initialize(uint8_t Port, uint16_t BaudRate)
 {
 	uint32_t ul_sr;
 	switch (Port)
 	{
-		case 0:
+		case 1:
 		{
 			// ==> Pin configuration
 			// Disable interrupts on Rx and Tx
@@ -63,7 +63,7 @@ void c_usart::initialize(uint8_t Port, uint16_t BaudRate)
 			//USART0->US_CR = US_CR_RSTRX | US_CR_RSTTX | US_CR_RXDIS | US_CR_TXDIS;
 
 			// Set the baudrate
-			c_usart::baud_rate_set(USART0,115200);
+			c_usart::baud_rate_set(USART0,BaudRate);
 			//USART0->US_BRGR = 46; // 84,000,000 / 16 * x = BaudRate (write x into UART_BRGR)
 
 			// No Parity
@@ -82,7 +82,7 @@ void c_usart::initialize(uint8_t Port, uint16_t BaudRate)
 			//USART0->US_IER = US_IER_RXRDY | US_IER_OVRE | US_IER_FRAME;
 
 			// Enable UART interrupt in NVIC
-			//NVIC_EnableIRQ((IRQn_Type) ID_USART0);
+			NVIC_EnableIRQ(USART0_IRQn);
 
 			// Enable receiver and transmitter
 			c_usart::control_register_set(USART0, US_CR_RXEN | US_CR_TXEN);
@@ -131,17 +131,18 @@ void c_usart::mode_register_set(Usart *_usart, uint32_t flags)
 	_usart->US_MR |= flags;
 }
 
+
+void c_usart::interrupt_disable_register_set(Usart *_usart, uint32_t flags)
+{
+	_usart->US_IDR = 0xFFFFFFFF;
+}
+
+void c_usart::interrupt_enable_register_set(Usart *_usart, uint32_t flags)
+{
+	_usart->US_IER = 0xFFFFFFFF;
+}
+
 #endif
-//void c_usart::interrupt_disable_register_set(Usart *_usart, uint32_t flags)
-//{
-//USART->US_IDR = 0xFFFFFFFF;
-//}
-
-//void c_usart::interrupt_enable_register_set(Usart *_usart, uint32_t flags)
-//{
-	//USART->US_IER = 0xFFFFFFFF;
-//}
-
 
 //// default constructor
 //c_usart::c_usart()

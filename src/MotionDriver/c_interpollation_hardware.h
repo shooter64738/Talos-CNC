@@ -30,6 +30,7 @@ namespace Motion_Core
 			static uint32_t Current_Line;
 			static uint8_t Step_Pulse_Length;  // Step pulse reset time after step rise
 			static void step_tick();
+			static uint8_t is_active();
 			static void Initialize();
 			static void Drive_With_Timer();
 			static void Shutdown();

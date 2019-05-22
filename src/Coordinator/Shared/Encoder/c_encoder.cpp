@@ -20,6 +20,7 @@
 
 #include "c_encoder.h"
 #include "..\..\..\Talos.h"
+#include "..\c_processor.h"
 
 int8_t Coordinator::c_encoder::Axis_Incrimenter[MACHINE_AXIS_COUNT]{0};
 int32_t Coordinator::c_encoder::Axis_Positions[MACHINE_AXIS_COUNT]{0};
@@ -28,14 +29,16 @@ uint8_t Coordinator::c_encoder::dirty;
 void Coordinator::c_encoder::initialize()
 {
 }
+
 void Coordinator::c_encoder::position_change(uint8_t port_values)
-{
+{	
 	int8_t bit_mask = 1;
 	for (uint8_t bit_to_check =0; bit_to_check < MACHINE_AXIS_COUNT;bit_to_check ++)
 	{
 		if ((bit_mask & port_values))
 		{
 			Coordinator::c_encoder::Axis_Positions[bit_to_check]+=Axis_Incrimenter[bit_to_check];
+			c_processor::host_serial.Write('P');
 		}
 		//Shift left and see if the next bit is set.
 		bit_mask = bit_mask << 1;

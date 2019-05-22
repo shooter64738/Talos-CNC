@@ -48,7 +48,7 @@ namespace Motion_Core
 			
 			static void load_block(BinaryRecords::s_motion_data_block block);
 			
-			staticvoid set_feed_mode(e_feed_modes feed_rate_mode);
+			static void set_feed_mode(BinaryRecords::e_feed_modes feed_rate_mode);
 			static uint8_t _mc_line(BinaryRecords::s_motion_data_block target_block);
 			static uint8_t _mc_arc(BinaryRecords::s_motion_data_block target_block);
 

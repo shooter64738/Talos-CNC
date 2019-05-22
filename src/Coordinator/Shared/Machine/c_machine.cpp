@@ -44,7 +44,6 @@ float c_machine::unit_scaler = 1;
 char c_machine::machine_axis_names[MACHINE_AXIS_COUNT];
 
 
-
 /*
 These default values (from machine) are carried into the axis planner on initialize as well. To change them
 in all places we just need to change them here, and the rest of the classes will read them from c_machine.

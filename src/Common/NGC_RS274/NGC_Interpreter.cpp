@@ -24,7 +24,7 @@
 #include "NGC_M_Groups.h"
 #include "NGC_G_Codes.h"
 #include "NGC_M_Codes.h"
-#include "..\..\MotionDriver\c_processor.h"
+#include "..\..\Coordinator\Shared\c_processor.h"
 
 //char NGC_RS274::Interpreter::Processor::Line[CYCLE_LINE_LENGTH];
 char * NGC_RS274::Interpreter::Processor::Line;

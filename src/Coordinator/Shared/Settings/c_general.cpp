@@ -66,7 +66,7 @@ void Settings::c_general::load_from_input(uint8_t setting_group, uint8_t sub_gro
 		if (sub_group == 'A')
 		{
 			c_processor::host_serial.print_string("acceleration\r");
-			for (int i = 0; i < N_AXIS; i++)
+			for (int i = 0; i < MACHINE_AXIS_COUNT; i++)
 			{
 				if (local_block.get_defined(c_machine::machine_axis_names[i]))
 				{
@@ -77,7 +77,7 @@ void Settings::c_general::load_from_input(uint8_t setting_group, uint8_t sub_gro
 		else if (sub_group == 'B')
 		{
 			c_processor::host_serial.print_string("backlash\r");
-			for (int i = 0; i < N_AXIS; i++)
+			for (int i = 0; i < MACHINE_AXIS_COUNT; i++)
 			{
 				if (local_block.get_defined(c_machine::machine_axis_names[i]))
 				{
@@ -88,7 +88,7 @@ void Settings::c_general::load_from_input(uint8_t setting_group, uint8_t sub_gro
 		else if (sub_group == 'M')
 		{
 			c_processor::host_serial.print_string("max rate\r");
-			for (int i = 0; i < N_AXIS; i++)
+			for (int i = 0; i < MACHINE_AXIS_COUNT; i++)
 			{
 				if (local_block.get_defined(c_machine::machine_axis_names[i]))
 				{
@@ -99,7 +99,7 @@ void Settings::c_general::load_from_input(uint8_t setting_group, uint8_t sub_gro
 		else if (sub_group == 'S')
 		{
 			c_processor::host_serial.print_string("steps per mm\r");
-			for (int i = 0; i < N_AXIS; i++)
+			for (int i = 0; i < MACHINE_AXIS_COUNT; i++)
 			{
 				if (local_block.get_defined(c_machine::machine_axis_names[i]))
 				{
@@ -127,7 +127,7 @@ void Settings::c_general::load_from_input(uint8_t setting_group, uint8_t sub_gro
 		//copy updated block to stream
 		memcpy(setting_stream, &c_processor::motion_control_setting_record, record_size);
 		
-		if (c_motion_controller::write_stream(setting_stream, record_size) == BinaryRecords::e_binary_responses::Ok)
+		if (c_motion_controller::write_stream(setting_stream, record_size,BinaryRecords::e_binary_responses::Ok) == BinaryRecords::e_binary_responses::Ok)
 		{
 			c_processor::host_serial.print_string("success.\r");
 		}

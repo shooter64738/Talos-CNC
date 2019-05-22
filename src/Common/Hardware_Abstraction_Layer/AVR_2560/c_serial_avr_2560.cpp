@@ -13,7 +13,7 @@
 //#include "../../../GRBL/c_serial.h"
 #include <stddef.h>
 
-#define COM_PORT_COUNT 3 //<--how many serial ports does this hardware have (or) how many do you need to use.
+#define COM_PORT_COUNT 4 //<--how many serial ports does this hardware have (or) how many do you need to use.
 #if(COM_PORT_COUNT<1)
 #error COM_PORT_COUNT must be at least 1, or the array will not exist!;
 #endif
@@ -85,7 +85,7 @@ void Hardware_Abstraction_Layer::Serial::initialize(uint8_t Port, uint32_t BaudR
 			UBRR2H = UBRR_value >> 8;
 			UBRR2L = UBRR_value;
 
-			UCSR2B |= (1 << RXEN2 | 1 << TXEN2);// | 1 << RXCIE2);
+			UCSR2B |= (1 << RXEN2 | 1 << TXEN2 | 1 << RXCIE2);
 			
 			break;
 		}
@@ -109,7 +109,7 @@ void Hardware_Abstraction_Layer::Serial::initialize(uint8_t Port, uint32_t BaudR
 			UBRR3L = UBRR_value;
 
 			// flags for interrupts
-			UCSR3B |= (1 << RXEN3 | 1 << TXEN3);// | 1 << RXCIE3);
+			UCSR3B |= (1 << RXEN3 | 1 << TXEN3 | 1 << RXCIE3);
 			break;
 		}
 		#endif
@@ -255,8 +255,8 @@ ISR(USART1_RX_vect)
 	{Hardware_Abstraction_Layer::Serial::rxBuffer[1].Head = 0;}
 
 	//keep CR values, throw away LF values
-	if (Byte == 10)
-	return;
+	//if (Byte == 10)
+	//return;
 	
 	Hardware_Abstraction_Layer::Serial::rxBuffer[1].Buffer[Hardware_Abstraction_Layer::Serial::rxBuffer[1].Head] = Byte;
 	
@@ -269,6 +269,55 @@ ISR(USART1_RX_vect)
 	{Hardware_Abstraction_Layer::Serial::rxBuffer[1].OverFlow=true;}
 }
 #endif
+
+#ifdef USART2_RX_vect
+ISR(USART2_RX_vect)
+{
+	char Byte = UDR2;
+
+	if (Hardware_Abstraction_Layer::Serial::rxBuffer[2].Head==RX_BUFFER_SIZE)
+	{Hardware_Abstraction_Layer::Serial::rxBuffer[2].Head = 0;}
+
+	//keep CR values, throw away LF values
+	//if (Byte == 10)
+	//return;
+	
+	Hardware_Abstraction_Layer::Serial::rxBuffer[2].Buffer[Hardware_Abstraction_Layer::Serial::rxBuffer[2].Head] = Byte;
+	
+	if (Hardware_Abstraction_Layer::Serial::rxBuffer[2].Buffer[Hardware_Abstraction_Layer::Serial::rxBuffer[2].Head] == 13)
+	Hardware_Abstraction_Layer::Serial::rxBuffer[2].EOL++;
+	
+	Hardware_Abstraction_Layer::Serial::rxBuffer[2].Head++;
+
+	if (Hardware_Abstraction_Layer::Serial::rxBuffer[2].Head == Hardware_Abstraction_Layer::Serial::rxBuffer[2].Tail)
+	{Hardware_Abstraction_Layer::Serial::rxBuffer[2].OverFlow=true;}
+}
+#endif
+
+#ifdef USART3_RX_vect
+ISR(USART3_RX_vect)
+{
+	char Byte = UDR3;
+
+	if (Hardware_Abstraction_Layer::Serial::rxBuffer[3].Head==RX_BUFFER_SIZE)
+	{Hardware_Abstraction_Layer::Serial::rxBuffer[3].Head = 0;}
+
+	//keep CR values, throw away LF values
+	//if (Byte == 10)
+	//return;
+	
+	Hardware_Abstraction_Layer::Serial::rxBuffer[3].Buffer[Hardware_Abstraction_Layer::Serial::rxBuffer[3].Head] = Byte;
+	
+	if (Hardware_Abstraction_Layer::Serial::rxBuffer[3].Buffer[Hardware_Abstraction_Layer::Serial::rxBuffer[3].Head] == 13)
+	Hardware_Abstraction_Layer::Serial::rxBuffer[3].EOL++;
+	
+	Hardware_Abstraction_Layer::Serial::rxBuffer[3].Head++;
+
+	if (Hardware_Abstraction_Layer::Serial::rxBuffer[3].Head == Hardware_Abstraction_Layer::Serial::rxBuffer[3].Tail)
+	{Hardware_Abstraction_Layer::Serial::rxBuffer[3].OverFlow=true;}
+}
+#endif
+
 
 ISR(USART0_UDRE_vect)
 {

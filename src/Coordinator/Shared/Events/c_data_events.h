@@ -26,13 +26,10 @@
 
 #include "../../../talos.h"
 
-class Data_Events
+enum class e_Data_Events : uint8_t
 {
-	public:
-	static const uint8_t NGC_BUFFER_READY = 0;
-	static const uint8_t NGC_BUFFER_FULL = 1;
-	static const uint8_t PROFILE_BUFFER_READY = 2;
-	static const uint8_t STAGING_BUFFER_FULL = 2;
+	NGC_BUFFER_READY = 0, NGC_BUFFER_FULL = 1, PROFILE_BUFFER_READY = 2, STAGING_BUFFER_FULL = 3
+	, Peripheral_Record_InQueue = 4
 };
 
 class c_data_events
@@ -47,9 +44,9 @@ class c_data_events
 
 	//functions
 	public:
-	static void set_event(uint8_t EventFlag);
-	static uint8_t get_event(uint8_t EventFlag);
-	static void clear_event(uint8_t EventFlag);
+	static void set_event(e_Data_Events EventFlag);
+	static uint8_t get_event(e_Data_Events EventFlag);
+	static void clear_event(e_Data_Events EventFlag);
 	static void check_events();
 
 	protected:

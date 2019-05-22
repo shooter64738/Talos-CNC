@@ -17,6 +17,7 @@ Motion_Core::Segment::Timer::Timer_Item *Motion_Core::Hardware::Interpollation::
 
 int32_t Motion_Core::Hardware::Interpollation::system_position[MACHINE_AXIS_COUNT];
 uint32_t Motion_Core::Hardware::Interpollation::counter[MACHINE_AXIS_COUNT];
+volatile uint8_t active = 0;
 #ifdef STEP_PULSE_DELAY
 uint8_t step_bits;  // Stores out_bits output to complete the step pulse delay
 #endif
@@ -113,6 +114,7 @@ void Motion_Core::Hardware::Interpollation::step_tick()
 
 	if (Motion_Core::Hardware::Interpollation::Exec_Timer_Item == NULL)
 	{
+		active = 1;
 
 		// Anything in the buffer? If so, load and initialize next step segment.
 		if ((Motion_Core::Hardware::Interpollation::Exec_Timer_Item = Motion_Core::Segment::Timer::Buffer::Current()) != NULL)
@@ -161,6 +163,7 @@ void Motion_Core::Hardware::Interpollation::step_tick()
 			Motion_Core::Hardware::Interpollation::Shutdown();
 			Motion_Core::Hardware::Interpollation::Interpolation_Active = 0; // Flag main program for cycle end
 			Motion_Core::Hardware::Interpollation::Step_Active = 0;
+			active = 0;
 			return; // Nothing to do but exit.
 		}
 	}
@@ -201,4 +204,9 @@ void Motion_Core::Hardware::Interpollation::step_tick()
 	Motion_Core::Hardware::Interpollation::step_outbits
 	^= Motion_Core::Hardware::Interpollation::step_port_invert_mask;  // Apply step port invert mask
 	Motion_Core::Hardware::Interpollation::Step_Active = 0;
+}
+
+uint8_t Motion_Core::Hardware::Interpollation::is_active()
+{
+	return active;
 }

@@ -1,5 +1,5 @@
 /*
-*  c_uart.h - NGC_RS274 controller.
+*  c_cpu_ARM_SAM3X8E.cpp - NGC_RS274 controller.
 *  A component of Talos
 *
 *  Copyright (c) 2016-2018 Jeff Dill
@@ -20,34 +20,30 @@
 
 #ifdef __SAM3X8E__//<--This will stop the multiple ISR definition error
 
-#ifndef __C_UART_H__
-#define __C_UART_H__
-#include "../../../../../std_types.h"
-#include <stdint.h>
+#include "c_core_arm_3x8e.h"
+#include "component\usart.h"
+#include "sam3x8e.h"
+#include "pio\c_ioport.h"
+#include "clock\c_clock.h"
+#include "usart\c_usart.h"
+#include "uart\c_uart.h"
 
-class c_uart
+void Hardware_Abstraction_Layer::Core::initialize()
 {
-	//variables
-	public:
-	protected:
-	private:
+	/* Initialize the SAM system */
+	SystemInit();
+	//Initialize main processing loop
+	WDT->WDT_MR = WDT_MR_WDDIS; // Disable the WDT
+}
+void Hardware_Abstraction_Layer::Core::start_interrupts()
+{
+}
+void Hardware_Abstraction_Layer::Core::stop_interrupts()
+{
+}
+uint32_t Hardware_Abstraction_Layer::Core::get_cpu_clock_rate()
+{
+	return CHIP_FREQ_CPU_MAX;
+}
 
-	//functions
-	public:
-	static void initialize(uint32_t BaudRate);
-	//static uint8_t getchar(uint8_t *c);
-	static uint8_t _putchar(const uint8_t c);
-	static void getString(uint8_t *c, int length);
-	static void putString(uint8_t *c, int length);
-
-	protected:
-	private:
-	c_uart();
-	~c_uart();
-	c_uart( const c_uart &c );
-	c_uart& operator=( const c_uart &c );
-
-}; //c_uart
-
-#endif //__C_UART_H__
 #endif

@@ -24,10 +24,11 @@
 #define __C_USART_H__
 
 #include "sam3x8e.h"
-#include "core_cm3.h"
-#include "../../../../std_types.h"
-#include "../pio/c_ioport.h"
+//#include "core_cm3.h"
 #include "component/usart.h"
+#include <stdint.h>
+//#include <usart.h>
+//#include "../../../../../../../Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/SAM3X_DFP/1.0.51/include/component/usart.h"
 
 
 class c_usart
@@ -40,14 +41,14 @@ private:
 
 //functions
 public:
-	
+	static void initialize(uint8_t Port, uint16_t BaudRate);
 protected:
 private:
 	c_usart( const c_usart &c );
 	c_usart& operator=( const c_usart &c );
 	c_usart();
 	~c_usart();
-	static void initialize(uint8_t Port, uint16_t BaudRate);
+	
 	static void control_register_set(Usart *_usart, uint32_t flags);
 	static void control_register_clear(Usart *_usart);
 	static void transfer_control_register_set(Usart *_usart, uint32_t flags);

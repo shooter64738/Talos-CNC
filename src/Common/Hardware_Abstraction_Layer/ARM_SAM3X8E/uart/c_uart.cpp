@@ -20,10 +20,8 @@
 
 #ifdef __SAM3X8E__//<--This will stop the multiple ISR definition error
 #include "c_uart.h"
-
-
-#include "../../c_cpu_ARM_SAM3X8E.h"
-
+#include "..\c_core_arm_3x8e.h"
+#include "..\c_serial_arm_3x8e.h"
 
 void c_uart::initialize(uint32_t BaudRate)
 {
@@ -51,7 +49,7 @@ void c_uart::initialize(uint32_t BaudRate)
 	UART->UART_CR = UART_CR_RSTRX | UART_CR_RSTTX | UART_CR_RXDIS | UART_CR_TXDIS;
 
 	// Set the baudrate
-	UART->UART_BRGR = (84000000/BaudRate)/16; //46; // 84,000,000 / 16 * x = BaudRate (write x into UART_BRGR)
+	UART->UART_BRGR = (F_CPU/BaudRate)/16; //46; // 84,000,000 / 16 * x = BaudRate (write x into UART_BRGR)
 
 	// No Parity
 	UART->UART_MR = UART_MR_PAR_NO | UART_MR_CHMODE_NORMAL;
@@ -77,7 +75,7 @@ void UART_Handler(void)
 	{
 		data = UART->UART_RHR;
 		//Since this must be port 0, because its the UART and not the USART channels. 
-		c_cpu_ARM_SAM3X8E::_incoming_serial_isr(0,data);
+		Hardware_Abstraction_Layer::Serial::_incoming_serial_isr(0,data);
 		
 		//uart_putchar(data);
 	}

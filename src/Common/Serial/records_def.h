@@ -63,13 +63,44 @@ namespace BinaryRecords
 	#ifndef __C_BINARY_RECORD_TYPES
 	#define __C_BINARY_RECORD_TYPES
 	enum class e_binary_record_types : uint8_t
-	{Unknown = 0, Motion = 1, Motion_Control_Setting = 2, Spindle_Control_Setting = 3};
+	{
+		Unknown = 0,
+		Motion = 1,
+		Motion_Control_Setting = 2,
+		Spindle_Control_Setting = 3,
+		Jog = 4,
+		Peripheral_Control_Setting = 5
+	};
 	#endif
 	
 	#ifndef __C_BINARY_RESPONSES
 	#define __C_BINARY_RESPONSES
 	enum class e_binary_responses : uint8_t
-	{Ok = 1, Data_Error = 2,Response_Time_Out = 3};
+	{Ok = 1, Data_Error = 2,Response_Time_Out = 3, Jog_Complete = 4};
+	#endif
+	
+	#ifndef __C_PERIPHERAL_PANEL_PROCESSING
+	#define __C_PERIPHERAL_PANEL_PROCESSING
+	enum class e_peripheral_panel_processing : uint16_t
+	{
+		Block_Skip = 1, //when on any lines begining with the skip '/' char are not executed
+		Single_block = 2, // only on line at a time is processed.
+		Spindle_On_Off = 3,// spindle manual on or off
+		Coolant_On_Off = 4,
+		Coolant_Mist_On_Off = 5,
+		Coolant_Flood_On_Off = 6
+	};
+	#endif
+	
+	#ifndef __C_PERIPHERAL_PANEL_OVERRIDE_RAPIDS
+	#define __C_PERIPHERAL_PANEL_OVERRIDE_RAPIDS
+	enum class e_peripheral_panel_override_rapids : uint8_t
+	{
+		Zero = 0,
+		_25 = 25,
+		_50 = 50,
+		_100 = 100
+	};
 	#endif
 	
 	struct s_motion_arc_values
@@ -89,6 +120,40 @@ namespace BinaryRecords
 		uint32_t line_number = 0 ;
 		float axis_values[MACHINE_AXIS_COUNT];
 		s_motion_arc_values arc_values;
+		BinaryRecords::e_block_flag flag = BinaryRecords::e_block_flag::normal;
+		
+	};
+	
+	struct s_peripheral_group_processing
+	{
+		e_peripheral_panel_processing Toggles; //Bit values set for on/off panel options
+	};
+	struct s_peripheral_group_overrides
+	{
+		e_peripheral_panel_override_rapids RapidFeed;
+		uint8_t TravelFeed; //0-150
+		uint8_t SpindleSpeed; //0-150
+	};
+	struct s_peripheral_group_jogging
+	{
+		uint8_t Axis;
+		float Scale;
+	};
+	
+	struct s_peripheral_panel
+	{
+		const BinaryRecords::e_binary_record_types record_type = BinaryRecords::e_binary_record_types::Peripheral_Control_Setting;
+		s_peripheral_group_processing Processing;
+		s_peripheral_group_overrides OverRides;
+		s_peripheral_group_jogging Jogging;
+		
+	};
+	
+	struct s_jog_data_block
+	{
+		const BinaryRecords::e_binary_record_types record_type = BinaryRecords::e_binary_record_types::Jog;
+		float axis_value;
+		uint8_t axis;
 		BinaryRecords::e_block_flag flag = BinaryRecords::e_block_flag::normal;
 		
 	};

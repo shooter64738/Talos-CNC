@@ -33,7 +33,7 @@
 #include "Events/c_motion_events.h"
 #include "Events/c_motion_control_events.h"
 #include "Planner/Stager_Errors.h"
-#include "MotionControllerInterface/ExternalControllers/GRBL/c_Grbl.h"
+//#include "MotionControllerInterface/ExternalControllers/GRBL/c_Grbl.h"
 #include "Status/c_status.h"
 #include "../../Common/NGC_RS274/NGC_Block.h"
 #include "../../Common/AVR_Terminal_IO/c_lcd_display.h"
@@ -43,14 +43,14 @@
 #include "Encoder/c_encoder.h"
 #include "hardware_def.h"
 #include "../../common/NGC_RS274/NGC_Errors.h"
-//#include "Spindle/c_spindle.h"
-
-
+#include "MotionController\c_motion_controller.h"
 
 c_Serial c_processor::host_serial;
 c_Serial c_processor::controller_serial;
 c_Serial c_processor::spindle_serial;
+c_Serial c_processor::peripheral_serial;
 BinaryRecords::s_motion_control_settings c_processor::motion_control_setting_record;
+BinaryRecords::s_peripheral_panel c_processor::peripheral_settings;
 
 
 
@@ -68,10 +68,13 @@ void c_processor::startup()
 	//This MUST be called first (especially for the ARM processors)
 	Hardware_Abstraction_Layer::Core::initialize();
 	//Hardware_Abstraction_Layer::Lcd::initialize();
+	//Hardware_Abstraction_Layer::Coordination::initialize();
+	//Hardware_Abstraction_Layer::Manual_Pulse_Generator::initialize();
 
 	c_processor::host_serial = c_Serial(0, 115200); //<--Connect to host
 	c_processor::controller_serial = c_Serial(1, 115200);//<--Connect to motion board
 	c_processor::spindle_serial = c_Serial(2, 115200);//<--Connect to spindle board
+	c_processor::peripheral_serial = c_Serial(3, 115200);//<--Connect to peripheral board
 
 	Settings::c_general::initialize();
 
@@ -87,7 +90,7 @@ void c_processor::startup()
 
 	Hardware_Abstraction_Layer::Core::start_interrupts();
 
-#ifdef MSVC
+	#ifdef MSVC
 	{
 		//If running this on a pc, use this line to fill the serial buffer as if it
 		//were sent from a terminal to the micro controller over a serial connection
@@ -101,20 +104,20 @@ void c_processor::startup()
 		//Hardware_Abstraction_Layer::Serial::add_to_buffer(1, "ok\r<Idle|MPos:0.000,0.000,0.000,0.000,0.000,0.000|FS:0,0|Ov:100,100,100>\rok\r");//<--data from motion control
 		//Hardware_Abstraction_Layer::Serial::add_to_buffer(2, "rpm=1234\rmode=torque_hold\r");//<--data from spindle control
 	}
-#endif
+	#endif
 
 
-for (uint8_t i = 0; i < N_AXIS; i++)
-{
-	motion_control_setting_record.steps_per_mm[i] = 160;
-	motion_control_setting_record.acceleration[i] = (100.0 * 60.0 * 60.0);
-	motion_control_setting_record.max_rate[i] = 7000.0;
-	
-	//arbitrary for testing
-	motion_control_setting_record.back_lash_comp_distance[i] = 55.0;
-}
+	for (uint8_t i = 0; i < MACHINE_AXIS_COUNT; i++)
+	{
+		motion_control_setting_record.steps_per_mm[i] = 160;
+		motion_control_setting_record.acceleration[i] = (100.0 * 60.0 * 60.0);
+		motion_control_setting_record.max_rate[i] = 7000.0;
+		
+		//arbitrary for testing
+		motion_control_setting_record.back_lash_comp_distance[i] = 55.0;
+	}
 
-motion_control_setting_record.pulse_length = 10;
+	motion_control_setting_record.pulse_length = 10;
 
 
 	if (c_motion_control_events::get_event(Motion_Control_Events::CONTROL_ONLINE))
@@ -130,15 +133,40 @@ motion_control_setting_record.pulse_length = 10;
 	int16_t return_value = 0;
 	c_machine::synch_position();
 	c_processor::host_serial.Write(CR);
+	c_processor::peripheral_settings.Jogging.Axis = MACHINE_X_AXIS;
+	c_processor::peripheral_settings.Jogging.Scale =0.01;
+	
+	while(1)
+	{
+		c_processor::host_serial.print_string("ping\r");
+		c_processor::spindle_serial.print_string("test from coordinator\r");
+		uint32_t delayer = 9000000;
+		while (delayer>0)
+		{
+			delayer--;
+		}
+	}
+	
 	while (1)
 	{
 		bool Control_Command = false;
 
+		if(c_processor::peripheral_serial.DataSize() > 0)
+		{
+			c_data_events::set_event(e_Data_Events::Peripheral_Record_InQueue);
+		}
 
 		while (c_processor::controller_serial.HasEOL())
 		{
 			c_processor::host_serial.Write(c_processor::controller_serial.Get());
 		}
+
+		//while (c_processor::peripheral_serial.HasEOL())
+		//{
+			//c_processor::host_serial.Write(c_processor::peripheral_serial.Get());
+		//}
+
+
 
 		if (c_processor::host_serial.HasEOL())
 		{
@@ -163,9 +191,9 @@ motion_control_setting_record.pulse_length = 10;
 				uint8_t setting_sub_group = 0;
 				setting_sub_group = toupper(c_processor::host_serial.Peek());
 				if (setting_sub_group == 'A' || setting_sub_group == 'B' || setting_sub_group == 'M' || setting_sub_group == 'S')
-					c_processor::host_serial.Get(); //<--get the settings sub group
+				c_processor::host_serial.Get(); //<--get the settings sub group
 				else
-					setting_sub_group = 0;
+				setting_sub_group = 0;
 				Settings::c_general::load_from_input(setting_group, setting_sub_group);
 
 			}
@@ -201,7 +229,7 @@ uint16_t c_processor::prep_input()
 	that is not a command, we will respond with a buffer full error
 	*/
 	//Host sent data, and the buffer it full. We did not send an ok response, host shoudl have waited.. bad host..
-	if (host_serial.HasEOL() && c_data_events::get_event(Data_Events::NGC_BUFFER_FULL))
+	if (host_serial.HasEOL() && c_data_events::get_event(e_Data_Events::NGC_BUFFER_FULL))
 	{
 		//Throw away data that comes in when the buffer is full.
 		c_processor::host_serial.SkipToEOL();
@@ -210,7 +238,7 @@ uint16_t c_processor::prep_input()
 
 	//Check to see if there is a block available in the machine and serial is available
 	//does serial have and EOL, and is there space in the buffer?
-	if (host_serial.HasEOL() && !c_data_events::get_event(Data_Events::NGC_BUFFER_FULL))
+	if (host_serial.HasEOL() && !c_data_events::get_event(e_Data_Events::NGC_BUFFER_FULL))
 	{
 		/*
 		This will cause the buffer to attempt to load data into the interpreter.
@@ -241,7 +269,7 @@ uint16_t c_processor::prep_input()
 			*/
 
 			//Interpreter threw no errors so see if the buffer is full or not. If not, carry on!
-			if (!c_data_events::get_event(Data_Events::STAGING_BUFFER_FULL))
+			if (!c_data_events::get_event(e_Data_Events::STAGING_BUFFER_FULL))
 			{
 				return_value = c_stager::pre_stage_check(); //<--Currently does nothing, but you never know
 				if (return_value == Stager_Errors::OK)

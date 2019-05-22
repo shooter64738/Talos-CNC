@@ -439,7 +439,7 @@ int16_t c_stager::stage_block_motion()
 	if (local_block->g_group[NGC_RS274::Groups::G::MOTION] != NGC_RS274::G_codes::MOTION_CANCELED
 		&& !c_block_events::get_event(Block_Events::NON_MODAL))
 	{
-		if (!c_data_events::get_event(Data_Events::STAGING_BUFFER_FULL) && local_block->any_axis_was_defined())
+		if (!c_data_events::get_event(e_Data_Events::STAGING_BUFFER_FULL) && local_block->any_axis_was_defined())
 		{
 			local_block->is_motion_block = true;
 			c_motion_events::set_event(Motion_Events::MOTION_IN_QUEUE);

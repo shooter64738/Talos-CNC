@@ -32,7 +32,9 @@ public:
 	static c_Serial host_serial;
 	static c_Serial controller_serial;
 	static c_Serial spindle_serial;
+	static c_Serial peripheral_serial;
 	static BinaryRecords::s_motion_control_settings motion_control_setting_record;
+	static BinaryRecords::s_peripheral_panel peripheral_settings;
 	
 protected:
 private:

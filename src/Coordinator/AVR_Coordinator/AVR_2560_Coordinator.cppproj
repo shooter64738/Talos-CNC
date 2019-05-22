@@ -357,7 +357,7 @@
     </Compile>
     <Compile Include="..\Shared\MotionController\c_motion_controller.h">
       <SubType>compile</SubType>
-      <Link>AVR_Coordinator\AVR_Coordinator\MotionController\c_motion_controller.h</Link>
+      <Link>AVR_Coordinator\MotionController\c_motion_controller.h</Link>
     </Compile>
     <Compile Include="..\Shared\Planner\Canned Cycles\c_canned_cycle.cpp">
       <SubType>compile</SubType>
