@@ -70,7 +70,7 @@ void c_processor::initialize()
 	#endif
 
 	Hardware_Abstraction_Layer::Core::start_interrupts();
-	uint8_t serial_try = 0;
+	uint32_t serial_try = 0;
 	uint8_t mode = 0;
 	
 	c_processor::debug_serial.print_string("motion driver ready\r");
@@ -92,35 +92,46 @@ void c_processor::initialize()
 		//see if there is any data
 		if (c_processor::coordinator_serial.DataSize() > 0)
 		{
+			c_processor::debug_serial.print_string("data\r");
 			serial_try++;
 			BinaryRecords::e_binary_record_types record_type = (BinaryRecords::e_binary_record_types)c_processor::coordinator_serial.Peek();
+			
+			c_processor::debug_serial.print_string("record_type = ");
+			c_processor::debug_serial.print_int32((uint8_t)record_type);
+			c_processor::debug_serial.Write(CR);
+			
 			//when a motion is running it may take several loops for the serial data to arrive.
 			//the serial_try is a way to wait a reasonable amount of times before the failure
 			//is declared.
-			if (record_type == BinaryRecords::e_binary_record_types::Unknown && serial_try > 300)
+			
+			//if (record_type == BinaryRecords::e_binary_record_types::Unknown && serial_try > (300 * BINARY_SERIAL_CYCLE_TIMEOUT))
+			//{
+				////There are no record types of 0. if we see a zero, its probably bad serial data, so skip it.
+				////Reset the serial buffer and tell the host to resend
+				//c_processor::coordinator_serial.Reset();
+				//c_processor::coordinator_serial.Write((char)BinaryRecords::e_binary_responses::Data_Error);
+				//c_processor::coordinator_serial.Write(CR);
+				//serial_try = 0;
+//
+			//}
+			//else
 			{
-				//There are no record types of 0. if we see a zero, its probably bad serial data, so skip it.
-				//Reset the serial buffer and tell the host to resend
-				c_processor::coordinator_serial.Reset();
-				c_processor::coordinator_serial.Write((char)BinaryRecords::e_binary_responses::Data_Error);
-				c_processor::coordinator_serial.Write(CR);
-				serial_try = 0;
-
-			}
-			else
-			{
+				c_processor::debug_serial.print_string("loading record\r");
 				//we have data, determine its type and load it (if its all there yet).
 				record_type = c_processor::load_record(record_type);
 			}
 
 			if (record_type != BinaryRecords::e_binary_record_types::Unknown)
 			{
+				c_processor::debug_serial.print_string("executing instruction ");
 				switch (record_type)
 				{
 					case BinaryRecords::e_binary_record_types::Jog:
 					{
+						c_processor::debug_serial.print_string("jog ");
 						if (!Motion_Core::Hardware::Interpollation::Interpolation_Active)
 						{
+							c_processor::debug_serial.print_string("idle\r");
 							mode = 1;
 							//Tell the host we got the record, and its ok.
 							c_processor::coordinator_serial.Write((char)BinaryRecords::e_binary_responses::Ok); c_processor::coordinator_serial.Write(CR);
@@ -128,10 +139,17 @@ void c_processor::initialize()
 							//c_processor::host_serial.print_string("test.record_type = "); c_processor::host_serial.print_int32((uint32_t)record_type); c_processor::host_serial.Write(CR);
 							//Convert jog to standard motion block.
 							c_processor::motion_block.feed_rate_mode = BinaryRecords::e_feed_modes::FEED_RATE_UNITS_PER_MINUTE_MODE;
+							c_processor::debug_serial.print_string("responded\r");
 							c_processor::motion_block.motion_type = BinaryRecords::e_motion_type::rapid_linear;
-							c_processor::motion_block.axis_values[c_processor::jog_block.axis] = c_processor::jog_block.axis_value;
+							c_processor::debug_serial.print_string("responded\r");
+							c_processor::motion_block.axis_values[0] = 5;
+							c_processor::debug_serial.print_string("loading block\r");
 							Motion_Core::Software::Interpollation::load_block(c_processor::motion_block);
 							
+						}
+						else
+						{
+							c_processor::debug_serial.print_string("active\r");
 						}
 					}
 					break;
@@ -236,6 +254,7 @@ BinaryRecords::e_binary_record_types c_processor::load_record(BinaryRecords::e_b
 			//First byte indicates record type of motion. Make sure its all there before we start loading it.
 			if (coordinator_serial.HasRecord(record_size))
 			{
+				c_processor::debug_serial.print_string("***serializing\r\r");
 				//Clear the struct
 				memset(&c_processor::jog_block, 0, record_size);
 				//Put the stream into the struct
@@ -247,14 +266,25 @@ BinaryRecords::e_binary_record_types c_processor::load_record(BinaryRecords::e_b
 				c_processor::coordinator_serial.Reset();
 				return BinaryRecords::e_binary_record_types::Jog;
 			}
+			else
+			{
+				uint32_t data_size = coordinator_serial.DataSize();
+				c_processor::debug_serial.print_string("***record too small(");
+				c_processor::debug_serial.print_int32(data_size);
+				c_processor::debug_serial.print_string(") bytes. expecting (");
+				c_processor::debug_serial.print_int32(record_size);
+				c_processor::debug_serial.print_string(") bytes\r\r");
+			}
 		}
 		break;
 		case BinaryRecords::e_binary_record_types::Motion:
 		{
 			record_size = sizeof(BinaryRecords::s_motion_data_block);
+			
 			//First byte indicates record type of motion. Make sure its all there before we start loading it.
 			if (coordinator_serial.HasRecord(record_size))
 			{
+				c_processor::debug_serial.print_string("***serializing\r\r");
 				//Clear the struct
 				memset(&c_processor::motion_block, 0, record_size);
 				//Put the stream into the struct
@@ -265,6 +295,15 @@ BinaryRecords::e_binary_record_types c_processor::load_record(BinaryRecords::e_b
 				c_processor::coordinator_serial.AdvanceTail(record_size);
 				c_processor::coordinator_serial.Reset();
 				return BinaryRecords::e_binary_record_types::Motion;
+			}
+			else
+			{
+				uint32_t data_size = coordinator_serial.DataSize();
+				c_processor::debug_serial.print_string("***record too small(");
+				c_processor::debug_serial.print_int32(data_size);
+				c_processor::debug_serial.print_string(") bytes. expecting (");
+				c_processor::debug_serial.print_int32(record_size);
+				c_processor::debug_serial.print_string(") bytes\r\r");
 			}
 		}
 		break;

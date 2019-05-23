@@ -2,6 +2,7 @@
 #include "c_block_buffer.h"
 #include "c_segment_arbitrator.h"
 #include "c_interpollation_hardware.h"
+#include "c_processor.h"
 //#include "..\Common\Serial\records_def.h"
 #ifdef MSVC
 #define M_PI 3.14159265358979323846
@@ -96,7 +97,7 @@ void Motion_Core::Software::Interpollation::set_feed_mode(BinaryRecords::e_feed_
 		//G93 and G94 feed modes
 		case BinaryRecords::e_feed_modes::FEED_RATE_MINUTES_PER_UNIT_MODE:
 		case BinaryRecords::e_feed_modes::FEED_RATE_UNITS_PER_MINUTE_MODE:
-		{
+		{		
 			Motion_Core::Hardware::Interpollation::Drive_With_Timer();
 		}
 		//G95 feed mode

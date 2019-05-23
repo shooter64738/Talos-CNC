@@ -9,10 +9,6 @@ Project("{E66E83B9-2572-4076-B26E-6BE79FF3018A}") = "SAM Proto", "..\..\SAM Prot
 EndProject
 Project("{E66E83B9-2572-4076-B26E-6BE79FF3018A}") = "ARM_3X8E_MotionDriver", "..\ARM_MotionDriver\ARM_3X8E_MotionDriver\ARM_3X8E_MotionDriver.cppproj", "{DCE6C7E3-EE26-4D79-826B-08594B9AD897}"
 EndProject
-Project("{E66E83B9-2572-4076-B26E-6BE79FF3018A}") = "Throttle", "..\..\sam arduino usart\ArduinoSketch1\Throttle\Throttle.cppproj", "{39ECC1B0-1B87-4C3C-ABC1-6CF8ED4F67F4}"
-EndProject
-Project("{E66E83B9-2572-4076-B26E-6BE79FF3018A}") = "ArduinoCore", "..\..\sam arduino usart\ArduinoSketch1\ArduinoCore\ArduinoCore.cppproj", "{BE9B0E89-887E-4950-A72B-6C4571CB10FE}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|ARM = Debug|ARM
@@ -39,18 +35,6 @@ Global
 		{DCE6C7E3-EE26-4D79-826B-08594B9AD897}.Release|ARM.ActiveCfg = Release|ARM
 		{DCE6C7E3-EE26-4D79-826B-08594B9AD897}.Release|ARM.Build.0 = Release|ARM
 		{DCE6C7E3-EE26-4D79-826B-08594B9AD897}.Release|AVR.ActiveCfg = Release|ARM
-		{39ECC1B0-1B87-4C3C-ABC1-6CF8ED4F67F4}.Debug|ARM.ActiveCfg = Debug|ARM
-		{39ECC1B0-1B87-4C3C-ABC1-6CF8ED4F67F4}.Debug|ARM.Build.0 = Debug|ARM
-		{39ECC1B0-1B87-4C3C-ABC1-6CF8ED4F67F4}.Debug|AVR.ActiveCfg = Debug|ARM
-		{39ECC1B0-1B87-4C3C-ABC1-6CF8ED4F67F4}.Release|ARM.ActiveCfg = Release|ARM
-		{39ECC1B0-1B87-4C3C-ABC1-6CF8ED4F67F4}.Release|ARM.Build.0 = Release|ARM
-		{39ECC1B0-1B87-4C3C-ABC1-6CF8ED4F67F4}.Release|AVR.ActiveCfg = Release|ARM
-		{BE9B0E89-887E-4950-A72B-6C4571CB10FE}.Debug|ARM.ActiveCfg = Debug|ARM
-		{BE9B0E89-887E-4950-A72B-6C4571CB10FE}.Debug|ARM.Build.0 = Debug|ARM
-		{BE9B0E89-887E-4950-A72B-6C4571CB10FE}.Debug|AVR.ActiveCfg = Debug|ARM
-		{BE9B0E89-887E-4950-A72B-6C4571CB10FE}.Release|ARM.ActiveCfg = Release|ARM
-		{BE9B0E89-887E-4950-A72B-6C4571CB10FE}.Release|ARM.Build.0 = Release|ARM
-		{BE9B0E89-887E-4950-A72B-6C4571CB10FE}.Release|AVR.ActiveCfg = Release|ARM
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

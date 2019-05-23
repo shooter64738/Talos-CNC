@@ -244,6 +244,10 @@
       <SubType>compile</SubType>
       <Link>MotionDriver\Common\Serial\c_Serial.h</Link>
     </Compile>
+    <Compile Include="..\..\..\Common\Serial\records_def.h">
+      <SubType>compile</SubType>
+      <Link>records_def.h</Link>
+    </Compile>
     <Compile Include="..\..\..\Common\Serial\s_buffer.h">
       <SubType>compile</SubType>
       <Link>MotionDriver\Common\Serial\s_buffer.h</Link>

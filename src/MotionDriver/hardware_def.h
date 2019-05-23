@@ -32,6 +32,7 @@
 #endif
 
 #ifdef __AVR_ATmega2560__
+#define BINARY_SERIAL_CYCLE_TIMEOUT 1
 #include "..\Common\Hardware_Abstraction_Layer\AVR_2560\c_serial_avr_2560.h"
 #include "../Common/Hardware_Abstraction_Layer/AVR_2560/c_core_avr_2560.h"
 #include "../Common/Hardware_Abstraction_Layer/AVR_2560/c_motion_core_avr_2560_stepper.h"
@@ -40,6 +41,7 @@
 #endif
 
 #ifdef __SAM3X8E__
+#define BINARY_SERIAL_CYCLE_TIMEOUT 1000
 #include "../Common/Hardware_Abstraction_Layer/ARM_SAM3X8E/c_core_arm_3x8e.h"
 #include "../Common/Hardware_Abstraction_Layer/ARM_SAM3X8E/c_motion_core_arm_3x8e_stepper.h"
 #include "../Common/Hardware_Abstraction_Layer/ARM_SAM3X8E/c_serial_arm_3x8e.h"

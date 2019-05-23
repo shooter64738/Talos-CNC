@@ -136,17 +136,6 @@ void c_processor::startup()
 	c_processor::peripheral_settings.Jogging.Axis = MACHINE_X_AXIS;
 	c_processor::peripheral_settings.Jogging.Scale =0.01;
 	
-	while(1)
-	{
-		c_processor::host_serial.print_string("ping\r");
-		c_processor::spindle_serial.print_string("test from coordinator\r");
-		uint32_t delayer = 9000000;
-		while (delayer>0)
-		{
-			delayer--;
-		}
-	}
-	
 	while (1)
 	{
 		bool Control_Command = false;

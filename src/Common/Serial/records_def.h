@@ -45,7 +45,7 @@ namespace BinaryRecords
 	
 	#ifndef __C_BLOCK_FLAG
 	#define __C_BLOCK_FLAG
-	enum class e_block_flag : uint8_t
+	enum class e_block_flag : uint32_t
 	{normal = 0, compensation = 1};
 	#endif
 	
@@ -62,7 +62,7 @@ namespace BinaryRecords
 	
 	#ifndef __C_BINARY_RECORD_TYPES
 	#define __C_BINARY_RECORD_TYPES
-	enum class e_binary_record_types : uint8_t
+	enum class e_binary_record_types : uint32_t
 	{
 		Unknown = 0,
 		Motion = 1,
@@ -153,9 +153,8 @@ namespace BinaryRecords
 	{
 		const BinaryRecords::e_binary_record_types record_type = BinaryRecords::e_binary_record_types::Jog;
 		float axis_value;
-		uint8_t axis;
+		uint32_t axis;
 		BinaryRecords::e_block_flag flag = BinaryRecords::e_block_flag::normal;
-		
 	};
 	
 	struct s_motion_control_settings

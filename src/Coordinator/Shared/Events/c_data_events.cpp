@@ -49,6 +49,9 @@ void c_data_events::check_events()
 		if (record_type == BinaryRecords::e_binary_record_types::Jog)
 		{
 			record_size= sizeof(BinaryRecords::s_jog_data_block);
+			c_processor::host_serial.print_string("writing ");
+			c_processor::host_serial.print_int32(record_size);
+			c_processor::host_serial.print_string(" bytes\r");
 			//First byte indicates record type of motion. Make sure its all there before we start loading it.
 			if (c_processor::peripheral_serial.HasRecord(record_size))
 			{

@@ -13,7 +13,7 @@
 //#include "usart/c_usart.h"
 #include "c_core_arm_3x8e.h"
 
-#define COM_PORT_COUNT 3 //<--how many serial ports does this hardware have (or) how many do you need to use.
+#define COM_PORT_COUNT 4 //<--how many serial ports does this hardware have (or) how many do you need to use.
 #if(COM_PORT_COUNT<1)
 #error COM_PORT_COUNT must be at least 1, or the array will not exist!;
 #endif
@@ -69,7 +69,7 @@ void Hardware_Abstraction_Layer::Serial::initialize(uint8_t Port, uint32_t BaudR
 			break;
 		}
 		case 1:
-		{	
+		{
 			//Configure tx
 			PIOA->PIO_OER|= PIO_PA11A_TXD0;
 			PIOA->PIO_IDR |= PIO_PA11A_TXD0;
@@ -163,6 +163,55 @@ void Hardware_Abstraction_Layer::Serial::initialize(uint8_t Port, uint32_t BaudR
 			break;
 		}
 		case 3:
+		//{
+			//
+			////Configure tx
+			//PIOB->PIO_OER|= PIO_PB20A_TXD2;
+			//PIOB->PIO_IDR |= PIO_PB20A_TXD2;
+			//PIOB->PIO_PDR |= PIO_PB20A_TXD2;
+			//PIOB->PIO_ABSR &= ~PIO_PB20A_TXD2;
+			//PIOB->PIO_PUER |= PIO_PB20A_TXD2;
+			////Configure rx
+			//PIOB->PIO_ODR|= PIO_PB21A_RXD2;
+			//PIOB->PIO_IDR |= PIO_PB21A_RXD2;
+			//PIOB->PIO_PDR |= PIO_PB21A_RXD2;
+			//PIOB->PIO_ABSR &= ~PIO_PB21A_RXD2;
+			//PIOB->PIO_PUER |= PIO_PB21A_RXD2;
+			//
+			////Turn on peripheral clock
+			//if ((PMC->PMC_PCSR0 & (1u << ID_USART2)) != (1u << ID_USART2))
+			//{
+				//PMC->PMC_PCER0 = 1 << ID_USART2;
+			//}
+			//
+			////Disable PDC Requests
+			//USART2->US_PTCR = US_PTCR_RXTDIS | US_PTCR_TXTDIS;
+			//
+			////Reset TX, RX & Status Register. Disable TX & RX
+			//USART2->US_CR = US_CR_RSTRX | US_CR_RSTTX | US_CR_RXDIS | US_CR_TXDIS | US_CR_RSTSTA;
+			//
+			////Set the mode: Normal Channel, Master Clock, 8 Bit, and whatever is defined in usartMode
+			//USART2->US_MR = US_MR_USART_MODE_NORMAL | US_MR_USCLKS_MCK| US_MR_CHMODE_NORMAL | US_MR_CHRL_8_BIT|
+			//US_MR_PAR_NO;;
+			//
+			////Set the Baud Rate
+			//USART2->US_BRGR = clockDivisor(BaudRate);
+			//
+			////Disable all interrupts and then config
+			//USART2->US_IDR = 0xFFFFFFFF;
+			//NVIC_DisableIRQ(USART2_IRQn);
+			//NVIC_ClearPendingIRQ(USART2_IRQn);
+			//NVIC_SetPriority(USART2_IRQn, (uint32_t)PRIOR_SERIAL);
+			//NVIC_EnableIRQ(USART2_IRQn);
+			//USART2->US_IER = US_IER_RXRDY;
+			//
+			////Enable TX & RX
+			//USART2->US_CR &= ~(US_CR_RSTRX | US_CR_RSTTX | US_CR_RXDIS | US_CR_TXDIS | US_CR_RSTSTA);
+			//USART2->US_CR = US_CR_RXEN | US_CR_TXEN;
+			//break;
+		//}
+		
+		case 4:
 		{
 			//Configure tx
 			PIOD->PIO_OER|= PIO_PD4B_TXD3;
@@ -273,7 +322,9 @@ void Hardware_Abstraction_Layer::Serial::send(uint8_t Port, char byte)
 		}
 		case 3:
 		{
-			port_usart = USART2;
+			//wtf happened to usart2...
+			//port_usart = USART2;
+			port_usart = USART3;
 			break;
 		}
 		case 4:
@@ -371,17 +422,18 @@ void USART1_Handler(void){	uint32_t status = USART1->US_CSR;
 		Hardware_Abstraction_Layer::Serial::_incoming_serial_isr(2,Byte);
 	}
 }
-void USART2_Handler(void){	uint32_t status = USART2->US_CSR;
-	if((status & US_CSR_RXRDY) == US_CSR_RXRDY)
-	{
-		char Byte = USART2->US_RHR;
-		Hardware_Abstraction_Layer::Serial::_incoming_serial_isr(3,Byte);
-	}
-}
+//if we need 5 serials, we can active usart2. right now 4 seems to be more than enough.
+//void USART2_Handler(void){	//uint32_t status = USART2->US_CSR;
+	//if((status & US_CSR_RXRDY) == US_CSR_RXRDY)
+	//{
+		//char Byte = USART2->US_RHR;
+		//Hardware_Abstraction_Layer::Serial::_incoming_serial_isr(3,Byte);
+	//}
+//}
 void USART3_Handler(void){
 	uint32_t status = USART3->US_CSR;
 	if((status & US_CSR_RXRDY) == US_CSR_RXRDY)
 	{
 		char Byte = USART3->US_RHR;
-		Hardware_Abstraction_Layer::Serial::_incoming_serial_isr(4,Byte);
+		Hardware_Abstraction_Layer::Serial::_incoming_serial_isr(3,Byte);
 	}}

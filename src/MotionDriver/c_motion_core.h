@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include <stddef.h>
 #include "..\Common\Serial\records_def.h"
+#include "hardware_def.h"
 
 
 
