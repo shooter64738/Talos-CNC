@@ -119,17 +119,6 @@ void c_processor::startup()
 
 	motion_control_setting_record.pulse_length = 10;
 
-
-	if (c_motion_control_events::get_event(Motion_Control_Events::CONTROL_ONLINE))
-	{
-		
-	}
-
-	//c_processor::host_serial.print_string("Waiting for motion controller to respond.\r");
-	//while (!c_processor::controller_serial.HasEOL())
-	//{
-		//
-	//}
 	c_processor::controller_serial.Reset();
 	c_processor::host_serial.print_string("Ready\r");
 
@@ -149,9 +138,9 @@ void c_processor::startup()
 			c_data_events::set_event(e_Data_Events::Peripheral_Record_InQueue);
 		}
 
-		while (c_processor::controller_serial.HasEOL())
+		if(c_processor::controller_serial.DataSize() > 0)
 		{
-			c_processor::host_serial.Write(c_processor::controller_serial.Get());
+			c_data_events::set_event(e_Data_Events::Motion_Record_InQueue);
 		}
 
 		//while (c_processor::peripheral_serial.HasEOL())
@@ -190,10 +179,7 @@ void c_processor::startup()
 				Settings::c_general::load_from_input(setting_group, setting_sub_group);
 
 			}
-			else if (c_motion_control_events::get_event(Motion_Control_Events::CONTROL_ONLINE))
-			{
-				
-			}
+			
 			/*
 			We may have processed this already as a controller command.
 			If this wasnt a control command, and not an inquiry command, then it is expected to be a g/m code value.

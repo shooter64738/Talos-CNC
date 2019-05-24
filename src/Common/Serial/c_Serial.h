@@ -70,7 +70,8 @@ class c_Serial
 	void print_string(const char *s);
 	void Write_Record(const char *s, uint8_t records_size);
 	void SkipToEOL();
-	uint8_t WaitFOrEOL(uint32_t max_timeout);
+	uint8_t WaitForEOL(uint32_t max_timeout);
+	uint8_t WaitForData(uint32_t max_timeout);
 	uint16_t DataSize ();
 	
 	

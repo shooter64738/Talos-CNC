@@ -23,12 +23,15 @@ namespace Motion_Core
 			
 			static uint8_t step_port_invert_mask;
 			static uint8_t dir_port_invert_mask;
+			static uint8_t direction_set;
 
 			public:
 			static uint8_t Step_Active;
 			static uint8_t Interpolation_Active;
 			static uint32_t Current_Line;
 			static uint32_t Step_Pulse_Length;  // Step pulse reset time after step rise
+			static uint32_t Current_Sequence;
+			static uint32_t Last_Completed_Sequence;
 			static void step_tick();
 			static uint8_t is_active();
 			static void Initialize();

@@ -245,7 +245,7 @@ void c_Serial::SkipToEOL()
 	this->Get();
 }
 
-uint8_t c_Serial::WaitFOrEOL(uint32_t max_timeout)
+uint8_t c_Serial::WaitForEOL(uint32_t max_timeout)
 {
 	uint32_t counter = 0;
 	while(!this->HasEOL() && counter<max_timeout)
@@ -256,6 +256,19 @@ uint8_t c_Serial::WaitFOrEOL(uint32_t max_timeout)
 	if (counter>=max_timeout){return 1;}
 	else{return 0;}
 }
+
+uint8_t c_Serial::WaitForData(uint32_t max_timeout)
+{
+	uint32_t counter = 0;
+	while(this->DataSize() ==0 && counter<max_timeout)
+	{
+		counter++;
+		//We are just waiting here for an EOL character to come in.
+	}
+	if (counter>=max_timeout){return 1;}
+	else{return 0;}
+}
+
 /*This sends the specified string. It will not return until transmission is complete*/
 void c_Serial::Write(const char *Buffer)
 {

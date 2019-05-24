@@ -23,6 +23,7 @@
 
 uint8_t c_motion_events::motion_queue_count;
 uint8_t c_motion_events::event_flags;
+uint32_t c_motion_events::last_reported_block;
 
 void c_motion_events::check_events()
 {
@@ -41,15 +42,6 @@ void c_motion_events::check_events()
 	if (c_motion_events::get_event(Motion_Events::MOTION_IN_QUEUE))
 	{
 		c_motion_events::clear_event(Motion_Events::MOTION_IN_QUEUE);
-		/*
-		If no motion in progress initiate the stepper HAL.
-		If a motion is in the queue already we dont need to init the HAL
-		*/
-		if (!c_motion_events::motion_queue_count)
-		{		
-			//c_speed::buffer();//<--Must buffer first to get initial accel values. 
-			//c_speed::execute();//<--Enable the timer/driver in the HAL
-		}
 		//We have accounted for this motion queue event, so clear the queue event.
 		c_motion_events::motion_queue_count++;
 	}
@@ -61,7 +53,7 @@ void c_motion_events::check_events()
 		ideally if a motion controller will remote as each motion compeltes that would be best. SOme do, and some dont though. 
 		this flag is used ni the firmware to know when it is okay to send the next motion. In particular when canned cycles are active
 		*/
-		c_motion_events::motion_queue_count = 0;
+		c_motion_events::motion_queue_count --;
 		//if (c_motion_events::motion_queue_count>0) c_motion_events::motion_queue_count--;
 		//if (c_motion_events::motion_queue_count == 0) c_hal::disable();
 	}

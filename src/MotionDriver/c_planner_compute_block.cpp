@@ -17,6 +17,7 @@ uint8_t Motion_Core::Planner::Calculator::_plan_buffer_line(BinaryRecords::s_mot
 	Motion_Core::Planner::Block_Item *planning_block = Motion_Core::Planner::Buffer::Write();
 	
 	planning_block->line_number = target_block.line_number;
+	planning_block->sequence = target_block.sequence;
 	planning_block->flag = target_block.flag;
 	
 	// Compute and store initial move distance data.

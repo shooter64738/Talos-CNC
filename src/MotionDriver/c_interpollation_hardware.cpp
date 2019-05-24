@@ -36,6 +36,10 @@ uint8_t Motion_Core::Hardware::Interpollation::dir_port_invert_mask;
 
 uint8_t Motion_Core::Hardware::Interpollation::Step_Active = 0;
 uint8_t Motion_Core::Hardware::Interpollation::Interpolation_Active = 0;
+uint32_t Motion_Core::Hardware::Interpollation::Current_Sequence = 0;
+uint32_t Motion_Core::Hardware::Interpollation::Last_Completed_Sequence = 0;
+
+uint8_t Motion_Core::Hardware::Interpollation::direction_set = 0;
 
 void Motion_Core::Hardware::Interpollation::Initialize()
 {
@@ -89,10 +93,13 @@ void Motion_Core::Hardware::Interpollation::step_tick()
 		c_processor::remote = 0;
 	}
 	#endif
-	// Set the direction pins a couple of nanoseconds before we step the steppers
-	//DIRECTION_PORT = (DIRECTION_PORT & ~DIRECTION_MASK) | (st.dir_outbits & DIRECTION_MASK);
-	Hardware_Abstraction_Layer::MotionCore::Stepper::port_direction((DIRECTION_PORT & ~DIRECTION_MASK)
-	| (Motion_Core::Hardware::Interpollation::dir_outbits & DIRECTION_MASK));
+	//We do not need to set the direction pins on every interrupt. These should only change when a new block is loaded.
+	if (!Motion_Core::Hardware::Interpollation::direction_set)
+	{
+		Hardware_Abstraction_Layer::MotionCore::Stepper::port_direction((DIRECTION_PORT & ~DIRECTION_MASK)
+		| (Motion_Core::Hardware::Interpollation::dir_outbits & DIRECTION_MASK));
+		Motion_Core::Hardware::Interpollation::direction_set = 1;
+	}
 
 	// Then pulse the stepping pins
 	#ifdef STEP_PULSE_DELAY
@@ -139,9 +146,20 @@ void Motion_Core::Hardware::Interpollation::step_tick()
 			if (Motion_Core::Hardware::Interpollation::Change_Check_Exec_Timer_Bresenham !=
 			Motion_Core::Hardware::Interpollation::Exec_Timer_Item->bresenham_in_item)
 			{
+				//if we are loading a new block directions MIGHT change, so clear the set flag
+				Motion_Core::Hardware::Interpollation::direction_set = 0;
+				
+				//We are starting a new 'block' of gcode. If we were already executing one, report it as complete.
+				
 				//New line segment, so this should be the start of a block.
 				Motion_Core::Hardware::Interpollation::Current_Line
 				= Motion_Core::Hardware::Interpollation::Exec_Timer_Item->line_number;
+				
+				Motion_Core::Hardware::Interpollation::Last_Completed_Sequence =
+				Motion_Core::Hardware::Interpollation::Current_Sequence;
+				
+				Motion_Core::Hardware::Interpollation::Current_Sequence
+				= Motion_Core::Hardware::Interpollation::Exec_Timer_Item->sequence;
 
 				Motion_Core::Hardware::Interpollation::Change_Check_Exec_Timer_Bresenham =
 				Motion_Core::Hardware::Interpollation::Exec_Timer_Item->bresenham_in_item;
@@ -162,6 +180,9 @@ void Motion_Core::Hardware::Interpollation::step_tick()
 			Motion_Core::Hardware::Interpollation::Shutdown();
 			Motion_Core::Hardware::Interpollation::Interpolation_Active = 0; // Flag main program for cycle end
 			Motion_Core::Hardware::Interpollation::Step_Active = 0;
+			Motion_Core::Hardware::Interpollation::Last_Completed_Sequence = Motion_Core::Hardware::Interpollation::Current_Sequence;
+			Motion_Core::Hardware::Interpollation::Current_Sequence = 0;
+			Motion_Core::Hardware::Interpollation::direction_set = 0;
 			active = 0;
 			return; // Nothing to do but exit.
 		}

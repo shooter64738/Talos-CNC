@@ -33,7 +33,7 @@ BinaryRecords::e_binary_responses c_jogger::send_jog(int8_t jog_direction)
 	c_processor::debug_serial.print_string("sending jog\r");
 	while(try_count<10)
 	{
-		c_processor::coordinator_serial.WaitFOrEOL(90000);
+		c_processor::coordinator_serial.WaitForEOL(90000);
 		try_count ++;
 		if (c_processor::coordinator_serial.Peek() == (char) BinaryRecords::e_binary_responses::Jog_Complete)
 		{
@@ -61,7 +61,7 @@ BinaryRecords::e_binary_responses c_jogger::write_stream(char * stream, uint8_t 
 		c_processor::coordinator_serial.Write_Record(stream, record_size);
 		send_count++;
 		//Now we need to wait for the motion controller to confirm it got the data
-		if (c_processor::coordinator_serial.WaitFOrEOL(90000)) //<-- wait until the timeout
+		if (c_processor::coordinator_serial.WaitForEOL(90000)) //<-- wait until the timeout
 		{
 			//We timed out. this is bad...
 			return BinaryRecords::e_binary_responses::Response_Time_Out;

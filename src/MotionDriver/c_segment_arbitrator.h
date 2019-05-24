@@ -11,7 +11,7 @@
 
 namespace Motion_Core
 {
-	#define _TICKS_PER_MICROSECOND (F_CPU/1000000)
+	
 	namespace Segment
 	{
 		
@@ -44,6 +44,7 @@ namespace Motion_Core
 			static float inv_rate;    // Used by PWM laser mode to speed up segment calculations.
 			static uint16_t current_spindle_pwm;
 			static uint16_t line_number;
+			static uint32_t sequence;
 			static BinaryRecords::e_block_flag flag;
 
 			//static c_planner::plan_block_t *pl_block;

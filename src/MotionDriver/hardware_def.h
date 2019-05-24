@@ -34,6 +34,7 @@
 #ifdef __AVR_ATmega2560__
 #define BINARY_SERIAL_CYCLE_TIMEOUT 1
 #define F_CPU 16000000UL
+#define _TICKS_PER_MICROSECOND ((F_CPU)/1000000)
 #include "..\Common\Hardware_Abstraction_Layer\AVR_2560\c_serial_avr_2560.h"
 #include "../Common/Hardware_Abstraction_Layer/AVR_2560/c_core_avr_2560.h"
 #include "../Common/Hardware_Abstraction_Layer/AVR_2560/c_motion_core_avr_2560_stepper.h"
@@ -44,6 +45,11 @@
 #ifdef __SAM3X8E__
 #define BINARY_SERIAL_CYCLE_TIMEOUT 1000
 #define F_CPU 84000000UL
+//in the c_motion_core_arm_3x8e_stepper we define the clock scale at half the cpu speed
+//on the 8bit avr, the clock could run at full cpu speed. To get the motion time computations
+//to come out right we need to adjust ticks per micro second for this cpu at this clock speed
+//#define SELECTED_TIMER_CLOCK TC_CMR_TCCLKS_TIMER_CLOCK1
+#define _TICKS_PER_MICROSECOND ((F_CPU/2)/1000000)
 #include "../Common/Hardware_Abstraction_Layer/ARM_SAM3X8E/c_core_arm_3x8e.h"
 #include "../Common/Hardware_Abstraction_Layer/ARM_SAM3X8E/c_motion_core_arm_3x8e_stepper.h"
 #include "../Common/Hardware_Abstraction_Layer/ARM_SAM3X8E/c_serial_arm_3x8e.h"

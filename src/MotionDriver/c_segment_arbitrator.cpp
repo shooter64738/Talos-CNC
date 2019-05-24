@@ -31,6 +31,7 @@ float Motion_Core::Segment::Arbitrator::decelerate_after = 0; // Deceleration ra
 float Motion_Core::Segment::Arbitrator::inv_rate = 0;    // Used by PWM laser mode to speed up segment calculations.
 uint16_t Motion_Core::Segment::Arbitrator::current_spindle_pwm = 0;
 uint16_t Motion_Core::Segment::Arbitrator::line_number = 0;
+uint32_t Motion_Core::Segment::Arbitrator::sequence = 0;
 BinaryRecords::e_block_flag Motion_Core::Segment::Arbitrator::flag = BinaryRecords::e_block_flag::normal;
 
 void Motion_Core::Segment::Arbitrator::Reset()
@@ -67,6 +68,7 @@ uint8_t Motion_Core::Segment::Arbitrator::Base_Calculate()
 
 	//Adding line number to stepper data. This will track when a line of gcode has finished.
 	Motion_Core::Segment::Arbitrator::line_number = Active_Block->line_number;
+	Motion_Core::Segment::Arbitrator::sequence = Active_Block->sequence;
 	Motion_Core::Segment::Arbitrator::flag = Active_Block->flag;
 
 
@@ -316,6 +318,7 @@ uint8_t Motion_Core::Segment::Arbitrator::Segment_Calculate()
 	//Point this segment item to the executing bresenham item
 	segment_item->bresenham_in_item = Motion_Core::Segment::Bresenham::Buffer::Current();
 	segment_item->line_number = Motion_Core::Segment::Arbitrator::line_number;
+	segment_item->sequence = Motion_Core::Segment::Arbitrator::sequence;
 	segment_item->flag = Motion_Core::Segment::Arbitrator::flag;
 	
 	/*------------------------------------------------------------------------------------
@@ -483,33 +486,6 @@ void Motion_Core::Segment::Arbitrator::Set_Segment_Delay(Motion_Core::Segment::T
 
 	Hardware_Abstraction_Layer::MotionCore::Stepper::set_delay_from_hardware(cycles,update_delay,update_prescale);
 
-	//segment_item->timer_prescaler = _prescale;
-	//segment_item->timer_delay_value = _delay;
-
-	//// Compute step timing and timer prescalar for normal step generation.
-	//if (cycles < (1UL << 16))
-	//{ // < 65536  (4.1ms @ 16MHz)
-	//segment_item->timer_prescaler = 1;// prescaler: 0
-	//segment_item->timer_delay_value = cycles;
-	//}
-	//else if (cycles < (1UL << 19))
-	//{ // < 524288 (32.8ms@16MHz)
-	//segment_item->timer_prescaler = 2;// prescaler: 8
-	//segment_item->timer_delay_value = cycles >> 3;
-	//}
-	//else
-	//{
-	//segment_item->timer_prescaler = 3; // prescaler: 64
-	//
-	//if (cycles < (1UL << 22))
-	//{ // < 4194304 (262ms@16MHz)
-	//segment_item->timer_delay_value = cycles >> 6;
-	//}
-	//else
-	//{ // Just set the slowest speed possible. (Around 4 step/sec.)
-	//segment_item->timer_delay_value = 0xffff;
-	//}
-	//}
 }
 
 // Called by planner_recalculate() when the executing block is updated by the new plan.

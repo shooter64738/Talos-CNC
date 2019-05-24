@@ -22,8 +22,6 @@
 #include "c_motion_events.h"
 #include "c_data_events.h"
 #include "c_block_events.h"
-#include "c_motion_control_events.h"
-
 
 void c_events::check_events()
 {
@@ -37,10 +35,6 @@ void c_events::check_events()
 	
 	//check for block change events
 	c_block_events::check_events();
-
-	//check for motion controller events
-	c_motion_control_events::check_events();
-	
 }
 
 // default constructor

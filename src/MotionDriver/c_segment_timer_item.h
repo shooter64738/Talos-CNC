@@ -22,6 +22,7 @@ namespace Motion_Core
 				uint8_t timer_prescaler;      // Without AMASS, a prescaler is required to adjust for slow timing.
 				uint32_t line_number;
 				BinaryRecords::e_block_flag flag;
+				uint32_t sequence; //Increments as each gcode block is loaded. May match line number, but not always. 
 
 			public:
 				Timer_Item();

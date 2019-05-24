@@ -44,6 +44,7 @@ class c_motion_events
 	public:
 	static uint8_t motion_queue_count;
 	static uint8_t event_flags;
+	static uint32_t last_reported_block;
 
 	protected:
 	private:

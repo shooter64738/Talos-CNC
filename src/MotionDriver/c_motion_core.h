@@ -13,7 +13,7 @@
 //#define SER_BAD_READ_RE_TRANSMIT 101 //data is bad, re-send
 namespace Motion_Core
 {
-#define TICKS_PER_MICROSECOND (F_CPU/1000000)
+//#define TICKS_PER_MICROSECOND (F_CPU/1000000)
 #define ARC_ANGULAR_TRAVEL_EPSILON 5E-7
 #define N_ARC_CORRECTION 12
 #define SOME_LARGE_VALUE 1.0E+38

@@ -1,5 +1,5 @@
 /*
-* c_grbl_avr_2560_limits.h
+* c_motion_core_arm_3x8e_stepper.h
 *
 * Created: 3/7/2019 10:22:11 AM
 * Author: jeff_d
@@ -14,7 +14,7 @@
 #define __C_MOTIONCORE_ARM_3X8E_STEPPER_H__
 #define DIRECTION_PORT 0
 #define STEP_PORT 0
-#define DIRECTION_MASK 0
+#define DIRECTION_MASK 255
 #define STEP_MASK 0
 #define STEPPERS_DISABLE_BIT 0
 //SAM timer irq's are named very confusingly
@@ -34,7 +34,7 @@
 //To keep all the step pins together physically, we have to utilize multiple 'ports'
 //on the DUE. This will allow access to those port as an array. Simplifying the step
 //generation code
-static Pio* Step_Ports[]={PIOB,PIOA,PIOA,PIOD,PIOD,PIOD,PIOD, PIOD};
+static Pio* Step_Ports[]={PIOB,PIOA,PIOA,PIOD,PIOD,PIOD,PIOD,PIOD};
 const uint32_t Step_Pins[]=
 {
 	PIO_PB26, //pin 22 arduino due
@@ -48,7 +48,7 @@ const uint32_t Step_Pins[]=
 };
 
 //Same method for direction pins
-static Pio* Direction_Ports[]={PIOD,PIOA,PIOD,PIOC,PIOC,PIOC,PIOC, PIOC};
+static Pio* Direction_Ports[]={PIOD,PIOA,PIOD,PIOC,PIOC,PIOC,PIOC,PIOC};
 const uint32_t Direction_Pins[]=
 {
 	PIO_PD9, //pin 30 arduino due
@@ -92,7 +92,7 @@ namespace Hardware_Abstraction_Layer
 			static uint16_t set_delay_from_hardware(uint32_t calculed_delay, uint32_t * delay, uint8_t * prescale);
 			static void pulse_reset_timer();
 			static void TCCR1B_set(uint8_t prescaler);
-			static void OCR1A_set(uint16_t delay);
+			static void OCR1A_set(uint32_t delay);
 			protected:
 			private:
 

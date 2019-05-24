@@ -23,6 +23,7 @@
 #include "..\c_processor.h"
 #include "..\MotionController\c_motion_controller.h"
 #include "..\..\..\Common\Serial\records_def.h"
+#include "c_motion_events.h"
 
 uint32_t c_data_events::event_flags;
 
@@ -82,9 +83,60 @@ void c_data_events::check_events()
 				//return BinaryRecords::e_binary_record_types::Jog;
 			}
 		}
+		
+		
 		if (record_type == BinaryRecords::e_binary_record_types::Peripheral_Control_Setting)
 		{
 			
+		}
+	}
+	if (c_data_events::get_event(e_Data_Events::Motion_Record_InQueue))
+	{
+		uint16_t record_size = 0;
+		//c_processor::host_serial.print_string("got data!\r");
+		//get the record type
+		BinaryRecords::e_binary_record_types record_type = (BinaryRecords::e_binary_record_types)c_processor::controller_serial.Peek();
+		if (record_type == BinaryRecords::e_binary_record_types::Status)
+		{
+			record_size= sizeof(BinaryRecords::s_status_message);
+			//First byte indicates record type of motion. Make sure its all there before we start loading it.
+			if (c_processor::controller_serial.HasRecord(record_size))
+			{
+				//clear the peripheral record event
+				c_data_events::clear_event(e_Data_Events::Motion_Record_InQueue);
+				BinaryRecords::s_status_message status_message;
+				//Clear the struct
+				memset(&status_message, 0, record_size);
+				//Put the stream into the struct
+				memcpy(&status_message
+				, c_processor::controller_serial.Buffer_Pointer() + c_processor::controller_serial.TailPosition()
+				, record_size);
+				
+				c_processor::host_serial.print_string("controller status:\r");
+				c_processor::host_serial.print_string("\tstate = ");
+				c_processor::host_serial.print_int32((int32_t)status_message.system_state);c_processor::host_serial.Write(CR);
+				c_processor::host_serial.print_string("\tsub state = ");
+				c_processor::host_serial.print_int32((int32_t)status_message.system_sub_state);c_processor::host_serial.Write(CR);
+				c_processor::host_serial.print_string("\tnum message = ");
+				c_processor::host_serial.print_int32(status_message.num_message);c_processor::host_serial.Write(CR);
+				c_processor::host_serial.print_string("\tchr message = ");
+				c_processor::host_serial.print_string(status_message.chr_message);c_processor::host_serial.Write(CR);
+				
+				//a block has completed so dequeue it
+				if (status_message.system_sub_state == BinaryRecords::e_system_sub_state_record_types::Block_Complete)
+				{
+					c_motion_events::set_event(Motion_Events::MOTION_COMPLETE);
+						c_motion_events::last_reported_block = (uint32_t) status_message.num_message;
+				}
+				
+				c_processor::controller_serial.Reset();
+			}
+		}
+		else
+		{
+			//trashed record.
+			c_processor::controller_serial.Reset();
+			c_data_events::clear_event(e_Data_Events::Motion_Record_InQueue);
 		}
 	}
 }

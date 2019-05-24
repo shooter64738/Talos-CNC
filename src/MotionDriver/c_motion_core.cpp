@@ -13,11 +13,13 @@ BinaryRecords::s_motion_control_settings Motion_Core::Settings::_Settings;
 
 void Motion_Core::initialize()
 {
+	Motion_Core::Settings::_Settings.axis_configuration[Motion_Core::Settings::_Settings.axis_count];
+	
 	for (uint8_t i = 0; i < MACHINE_AXIS_COUNT; i++)
 	{
 		Motion_Core::Settings::_Settings.steps_per_mm[i] = 160;
-		Motion_Core::Settings::_Settings.acceleration[i] = (100.0 * 60 * 60);
-		Motion_Core::Settings::_Settings.max_rate[i] = 30000;
+		Motion_Core::Settings::_Settings.acceleration[i] = (50.0 * 60 * 60);
+		Motion_Core::Settings::_Settings.max_rate[i] = 2000;
 		//arbitrary for testing
 		Motion_Core::Settings::_Settings.back_lash_comp_distance[i] = 55;
 	}

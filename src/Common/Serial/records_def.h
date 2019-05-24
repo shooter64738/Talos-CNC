@@ -69,7 +69,31 @@ namespace BinaryRecords
 		Motion_Control_Setting = 2,
 		Spindle_Control_Setting = 3,
 		Jog = 4,
-		Peripheral_Control_Setting = 5
+		Peripheral_Control_Setting = 5,
+		Status = 6
+	};
+	#endif
+	
+	#ifndef __C_SYSTEM_STATE_RECORD_TYPES
+	#define __C_SYSTEM_STATE_RECORD_TYPES
+	enum class e_system_state_record_types : uint8_t
+	{
+		Motion_Active =		01,
+		Motion_Complete =	02,
+		Motion_Idle =		03,
+		Motion_Jogging =	04,
+		Spindle_Stopped =	20,
+		Spindle_Running =	21,
+	};
+	#endif
+	
+	#ifndef __C_SYSTEM_SUB_STATE_RECORD_TYPES
+	#define __C_SYSTEM_SUB_STATE_RECORD_TYPES
+	enum class e_system_sub_state_record_types : uint8_t
+	{
+		Block_Complete = 01,
+		Block_Starting = 02,
+		Block_Queuing = 02,
 	};
 	#endif
 	
@@ -102,7 +126,12 @@ namespace BinaryRecords
 		_100 = 100
 	};
 	#endif
-	
+	//****************************************************************************************
+	//structs in here are packed and byte aligned on 1. This is due to sending serial data in
+	//binary format from one mcu to another and the mcu's have different architectures.
+	//Some are 8 bit, some are 32 bit. When/if all mcus are using the same architecture this
+	//struct packing can be removed. I am aware that there is a processor cost for this.
+	//****************************************************************************************
 	struct s_motion_arc_values
 	{
 		float horizontal_center = 0 ;
@@ -121,6 +150,7 @@ namespace BinaryRecords
 		float axis_values[MACHINE_AXIS_COUNT];
 		s_motion_arc_values arc_values;
 		BinaryRecords::e_block_flag flag = BinaryRecords::e_block_flag::normal;
+		uint32_t sequence; //system set value, used to track when a block of code as completed.
 		
 	}__attribute__((packed,aligned(1)));;
 	
@@ -157,23 +187,61 @@ namespace BinaryRecords
 		BinaryRecords::e_block_flag flag = BinaryRecords::e_block_flag::normal;
 	}__attribute__((packed,aligned(1)));
 	
+	
+	struct s_motion_control_axis_settings
+	{
+		float acceleration;
+		float max_rate;
+		uint16_t steps_per_mm;
+		float back_lash_comp_distance;
+		float max_travel;
+		uint32_t pulse_pin_assignment;
+		uint32_t direction_pin_assignment;
+	}__attribute__((packed,aligned(1)));
+	
 	struct s_motion_control_settings
 	{
 		const BinaryRecords::e_binary_record_types record_type = BinaryRecords::e_binary_record_types::Motion_Control_Setting;
-		float acceleration[MACHINE_AXIS_COUNT];
-		float max_rate[MACHINE_AXIS_COUNT];
-		uint16_t steps_per_mm[MACHINE_AXIS_COUNT];
+		uint8_t axis_count;
 		float junction_deviation;
 		float arc_tolerance;
 		uint16_t pulse_length;
-		float back_lash_comp_distance[MACHINE_AXIS_COUNT];
 		float interpolation_error_distance;
+		uint16_t arc_angular_correction = 12;
+		uint8_t invert_mpg_directions = 0;
+		s_motion_control_axis_settings axis_configuration[];
 		
-	}__attribute__((packed,aligned(1)));;
+	}__attribute__((packed,aligned(1)));
+	
+	//struct s_motion_control_settings
+	//{
+	//const BinaryRecords::e_binary_record_types record_type = BinaryRecords::e_binary_record_types::Motion_Control_Setting;
+	//float acceleration[MACHINE_AXIS_COUNT];
+	//float max_rate[MACHINE_AXIS_COUNT];
+	//uint16_t steps_per_mm[MACHINE_AXIS_COUNT];
+	//float junction_deviation;
+	//float arc_tolerance;
+	//uint16_t pulse_length;
+	//float back_lash_comp_distance[MACHINE_AXIS_COUNT];
+	//float interpolation_error_distance;
+	//uint16_t arc_angular_correction = 12;
+	//uint8_t invert_mpg_directions = 0;
+	//
+	//}__attribute__((packed,aligned(1)));
+	
 	struct s_spindle_control_settings
 	{
 		
-	};
+	}__attribute__((packed,aligned(1)));
+	struct s_status_message
+	{
+		const BinaryRecords::e_binary_record_types record_type = BinaryRecords::e_binary_record_types::Status;
+		BinaryRecords::e_system_state_record_types system_state;
+		BinaryRecords::e_system_sub_state_record_types system_sub_state;
+		float num_message;
+		char chr_message[17];
+	}__attribute__((packed,aligned(1)));
+	
 	
 	//static char motion_stream[sizeof(BinaryRecords::s_motion_data_block)];
 	//static char setting_stream[sizeof(BinaryRecords::s_motion_data_block)];

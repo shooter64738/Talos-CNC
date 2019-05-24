@@ -55,6 +55,7 @@ class c_motion_control_events
 	static uint8_t event_flags;
 	static uint8_t OK_Event_Count;
 	static uint8_t DONE_Event_Count;
+	
 
 	protected:
 	private:

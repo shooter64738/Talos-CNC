@@ -315,14 +315,6 @@
       <SubType>compile</SubType>
       <Link>AVR_Coordinator\Events\c_events.h</Link>
     </Compile>
-    <Compile Include="..\Shared\Events\c_motion_control_events.cpp">
-      <SubType>compile</SubType>
-      <Link>AVR_Coordinator\Events\c_motion_control_events.cpp</Link>
-    </Compile>
-    <Compile Include="..\Shared\Events\c_motion_control_events.h">
-      <SubType>compile</SubType>
-      <Link>AVR_Coordinator\Events\c_motion_control_events.h</Link>
-    </Compile>
     <Compile Include="..\Shared\Events\c_motion_events.cpp">
       <SubType>compile</SubType>
       <Link>AVR_Coordinator\Events\c_motion_events.cpp</Link>

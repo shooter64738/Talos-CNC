@@ -29,7 +29,7 @@
 enum class e_Data_Events : uint8_t
 {
 	NGC_BUFFER_READY = 0, NGC_BUFFER_FULL = 1, PROFILE_BUFFER_READY = 2, STAGING_BUFFER_FULL = 3
-	, Peripheral_Record_InQueue = 4
+	, Peripheral_Record_InQueue = 4, Motion_Record_InQueue = 5
 };
 
 class c_data_events

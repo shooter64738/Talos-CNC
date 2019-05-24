@@ -16,6 +16,7 @@
 BinaryRecords::s_motion_data_block c_processor::motion_block;
 BinaryRecords::s_motion_control_settings c_processor::settings_block;
 BinaryRecords::s_jog_data_block c_processor::jog_block;
+BinaryRecords::s_status_message c_processor::status_message;
 
 
 uint8_t c_processor::remote = 0;
@@ -71,13 +72,14 @@ void c_processor::initialize()
 
 	Hardware_Abstraction_Layer::Core::start_interrupts();
 	uint32_t serial_try = 0;
-	uint8_t mode = 0;
+	uint8_t control_mode = 0;
 	
 	c_processor::debug_serial.print_string("motion driver ready\r");
 	
 	//We just want to send the coordinator something so it knows we are alive. It just has to end with a CR
 	c_processor::coordinator_serial.print_string("on\r");
-		
+	uint32_t new_sequence = 0;
+	
 	while (1)
 	{
 
@@ -86,11 +88,11 @@ void c_processor::initialize()
 		//another jog command until we acknowledge we are done with the current one)
 		if (Motion_Core::Hardware::Interpollation::Interpolation_Active == 0)
 		{
-			if (mode ==1)
+			if (control_mode ==1)
 			{
 				//Let the coordinator know we are clear to receive another jog command.
 				c_processor::coordinator_serial.Write((char)BinaryRecords::e_binary_responses::Jog_Complete); c_processor::coordinator_serial.Write(CR);
-				mode = 0;
+				control_mode = 0;
 			}
 		}
 		//see if there is any data
@@ -125,10 +127,9 @@ void c_processor::initialize()
 				{
 					case BinaryRecords::e_binary_record_types::Jog:
 					{
-						c_processor::debug_serial.print_string("jog ");
 						if (!Motion_Core::Hardware::Interpollation::Interpolation_Active)
 						{
-							mode = 1;
+							control_mode = 1;
 							//Tell the host we got the record, and its ok.
 							c_processor::coordinator_serial.Write((char)BinaryRecords::e_binary_responses::Ok); c_processor::coordinator_serial.Write(CR);
 
@@ -141,7 +142,7 @@ void c_processor::initialize()
 						}
 						else
 						{
-							c_processor::debug_serial.print_string("active\r");
+							
 						}
 					}
 					break;
@@ -149,7 +150,7 @@ void c_processor::initialize()
 					{
 						c_processor::coordinator_serial.Write((char)BinaryRecords::e_binary_responses::Ok); c_processor::coordinator_serial.Write(CR);
 
-c_processor::motion_block.motion_type = BinaryRecords::e_motion_type::rapid_linear;
+						c_processor::motion_block.motion_type = BinaryRecords::e_motion_type::rapid_linear;
 						c_processor::coordinator_serial.print_string("test.record_type = "); c_processor::coordinator_serial.print_int32((uint32_t)record_type); c_processor::coordinator_serial.Write(CR);
 						c_processor::coordinator_serial.print_string("test.motion_type = "); c_processor::coordinator_serial.print_int32((uint32_t)c_processor::motion_block.motion_type); c_processor::coordinator_serial.Write(CR);
 						c_processor::coordinator_serial.print_string("test.feed_rate_mode = "); c_processor::coordinator_serial.print_int32((uint32_t)c_processor::motion_block.feed_rate_mode); c_processor::coordinator_serial.Write(CR);
@@ -161,45 +162,63 @@ c_processor::motion_block.motion_type = BinaryRecords::e_motion_type::rapid_line
 						c_processor::coordinator_serial.print_string("test.axis_values[4] = ");c_processor::coordinator_serial.print_float(c_processor::motion_block.axis_values[4], 4); c_processor::coordinator_serial.Write(CR);
 						c_processor::coordinator_serial.print_string("test.axis_values[5] = ");c_processor::coordinator_serial.print_float(c_processor::motion_block.axis_values[5], 4); c_processor::coordinator_serial.Write(CR);
 						c_processor::coordinator_serial.print_string("test.line_number = "); c_processor::coordinator_serial.print_int32(c_processor::motion_block.line_number); c_processor::coordinator_serial.Write(CR);
+						c_processor::motion_block.sequence = ++new_sequence;
+						
+						//c_processor::status_message.system_state =
+						//(Motion_Core::Hardware::Interpollation::Interpolation_Active?
+						//BinaryRecords::e_system_state_record_types::Motion_Active
+						//: BinaryRecords::e_system_state_record_types::Motion_Idle);
+						//c_processor::status_message.system_sub_state = BinaryRecords::e_system_sub_state_record_types::Block_Queuing;
+						//c_processor::status_message.num_message = c_processor::motion_block.sequence;
+												//
+						//c_processor::send_status(c_processor::status_message);
+						
+						//Tell the host we got the record, and its ok.
+						//c_processor::coordinator_serial.Write((char)BinaryRecords::e_binary_responses::Ok); c_processor::coordinator_serial.Write(CR);
+
+						
 						Motion_Core::Software::Interpollation::load_block(c_processor::motion_block);
 					}
 					break;
 					case BinaryRecords::e_binary_record_types::Motion_Control_Setting:
 					{
 						c_processor::coordinator_serial.Write((char)BinaryRecords::e_binary_responses::Ok); c_processor::coordinator_serial.Write(CR);
+						
+						
 						memcpy(&Motion_Core::Settings::_Settings, &c_processor::settings_block, sizeof(BinaryRecords::s_motion_control_settings));
 
-						//c_processor::host_serial.print_string("test.record_type = "); c_processor::host_serial.print_int32((uint32_t)record_type); c_processor::host_serial.Write(CR);
-						//for (uint8_t i = 0; i < MACHINE_AXIS_COUNT; i++)
-						//{
-						//c_processor::host_serial.print_string("test.steps_per_mm[");
-						//c_processor::host_serial.print_int32(i);
-						//c_processor::host_serial.print_string("] = ");
-						//c_processor::host_serial.print_float(Motion_Core::Settings::_Settings.steps_per_mm[i], 2);
-						//c_processor::host_serial.Write(CR);
-						//
-						//
-						//c_processor::host_serial.print_string("test.acceleration[");
-						//c_processor::host_serial.print_int32(i);
-						//c_processor::host_serial.print_string("] = ");
-						//c_processor::host_serial.print_float(Motion_Core::Settings::_Settings.acceleration[i], 2);
-						//c_processor::host_serial.Write(CR);
-						//
-						//c_processor::host_serial.print_string("test.max_rate[");
-						//c_processor::host_serial.print_int32(i);
-						//c_processor::host_serial.print_string("] = ");
-						//c_processor::host_serial.print_float(Motion_Core::Settings::_Settings.max_rate[i], 2);
-						//c_processor::host_serial.Write(CR);
-						//
-						//c_processor::host_serial.print_string("test.back_lash_comp_distance[");
-						//c_processor::host_serial.print_int32(i);
-						//c_processor::host_serial.print_string("] = ");
-						//c_processor::host_serial.print_float(Motion_Core::Settings::_Settings.back_lash_comp_distance[i], 2);
-						//c_processor::host_serial.Write(CR);
-						//}
-						//c_processor::host_serial.print_string("test.pulse_length = ");
-						//c_processor::host_serial.print_int32(Motion_Core::Settings::_Settings.pulse_length);
-						//c_processor::host_serial.Write(CR);
+						c_processor::debug_serial.print_string("test.record_type = "); c_processor::debug_serial.print_int32((uint32_t)record_type); c_processor::debug_serial.Write(CR);
+						for (uint8_t i = 0; i < MACHINE_AXIS_COUNT; i++)
+						{
+							c_processor::debug_serial.print_string("test.steps_per_mm[");
+							c_processor::debug_serial.print_int32(i);
+							c_processor::debug_serial.print_string("] = ");
+							c_processor::debug_serial.print_float(Motion_Core::Settings::_Settings.steps_per_mm[i], 2);
+							c_processor::debug_serial.Write(CR);
+							
+							c_processor::debug_serial.print_string("test.acceleration[");
+							c_processor::debug_serial.print_int32(i);
+							c_processor::debug_serial.print_string("] = ");
+							c_processor::debug_serial.print_float(Motion_Core::Settings::_Settings.acceleration[i]/60/60, 2);
+							c_processor::debug_serial.print_string("mm/s");
+							c_processor::debug_serial.Write(CR);
+							
+							c_processor::debug_serial.print_string("test.max_rate[");
+							c_processor::debug_serial.print_int32(i);
+							c_processor::debug_serial.print_string("] = ");
+							c_processor::debug_serial.print_float(Motion_Core::Settings::_Settings.max_rate[i], 2);
+							c_processor::debug_serial.print_string("mm/m");
+							c_processor::debug_serial.Write(CR);
+							
+							c_processor::debug_serial.print_string("test.back_lash_comp_distance[");
+							c_processor::debug_serial.print_int32(i);
+							c_processor::debug_serial.print_string("] = ");
+							c_processor::debug_serial.print_float(Motion_Core::Settings::_Settings.back_lash_comp_distance[i], 2);
+							c_processor::debug_serial.Write(CR);
+						}
+						c_processor::debug_serial.print_string("test.pulse_length = ");
+						c_processor::debug_serial.print_int32(Motion_Core::Settings::_Settings.pulse_length);
+						c_processor::debug_serial.Write(CR);
 					}
 					break;
 					default:
@@ -227,12 +246,33 @@ c_processor::motion_block.motion_type = BinaryRecords::e_motion_type::rapid_line
 			//Let this continuously try to prep the step buffer. If theres no data to process nothing should happen
 			Motion_Core::Segment::Arbitrator::Fill_Step_Segment_Buffer();
 		}
-		
-		//if (was_running !=0 && Motion_Core::Hardware::Interpollation::Interpolation_Active == 0)
-		//{
-		//	c_processor::host_serial.print_string("motion stop\r");
-		//	was_running = 0;
-		//}
+		if (Motion_Core::Hardware::Interpollation::Last_Completed_Sequence != 0)
+		{
+			c_processor::debug_serial.print_string("Block ");
+			c_processor::debug_serial.print_int32(Motion_Core::Hardware::Interpollation::Last_Completed_Sequence);
+			c_processor::debug_serial.print_string(" completed\r");
+			
+			c_processor::status_message.system_state =
+			(Motion_Core::Hardware::Interpollation::Interpolation_Active?
+			BinaryRecords::e_system_state_record_types::Motion_Active
+			: BinaryRecords::e_system_state_record_types::Motion_Idle);
+			c_processor::status_message.system_sub_state = BinaryRecords::e_system_sub_state_record_types::Block_Complete;
+			c_processor::status_message.num_message = Motion_Core::Hardware::Interpollation::Last_Completed_Sequence;
+			Motion_Core::Hardware::Interpollation::Last_Completed_Sequence = 0;
+			
+			c_processor::debug_serial.print_string("state = ");
+			c_processor::debug_serial.print_int32((int32_t)status_message.system_state);c_processor::debug_serial.Write(CR);
+			c_processor::debug_serial.print_string("sub state = ");
+			c_processor::debug_serial.print_int32((int32_t)status_message.system_sub_state);c_processor::debug_serial.Write(CR);
+			c_processor::debug_serial.print_string("num message = ");
+			c_processor::debug_serial.print_int32(status_message.num_message);c_processor::debug_serial.Write(CR);
+			c_processor::debug_serial.print_string("chr message = ");
+			c_processor::debug_serial.print_string(status_message.chr_message);c_processor::debug_serial.Write(CR);
+			
+			c_processor::send_status(c_processor::status_message);
+			
+			
+		}
 	}
 }
 
@@ -322,4 +362,56 @@ BinaryRecords::e_binary_record_types c_processor::load_record(BinaryRecords::e_b
 		return BinaryRecords::e_binary_record_types::Unknown;
 		break;
 	}
+}
+
+BinaryRecords::e_binary_responses c_processor::send_status(BinaryRecords::s_status_message status_data)
+{
+	char motion_stream[sizeof(BinaryRecords::s_status_message)];
+	memcpy(motion_stream, &status_data,sizeof(BinaryRecords::s_motion_data_block));
+	
+	//Send to record and wait for response.
+	BinaryRecords::e_binary_responses resp
+	= c_processor::write_stream(motion_stream,sizeof(BinaryRecords::s_motion_data_block), BinaryRecords::e_binary_responses::Ok);
+
+	return resp ;
+	
+}
+
+BinaryRecords::e_binary_responses c_processor::write_stream(char * stream, uint8_t record_size,BinaryRecords::e_binary_responses Ack_Resp)
+{
+	uint8_t send_count = 0;
+	while (1)
+	{
+		if (send_count > 4)
+		{
+			//We tried 4 times to send the record and it kept failing.. SUPER bad..
+			return BinaryRecords::e_binary_responses::Data_Error;
+		}
+		c_processor::coordinator_serial.Write_Record(stream, record_size);
+		send_count++;
+		//Now we need to wait for the motion controller to confirm it got the data
+		if (c_processor::coordinator_serial.WaitForEOL(90000)) //<-- wait until the timeout
+		{
+			//We timed out. this is bad...
+			return BinaryRecords::e_binary_responses::Response_Time_Out;
+		}
+		else
+		{
+			//get the response code from the controller
+			BinaryRecords::e_binary_responses resp
+			= (BinaryRecords::e_binary_responses)c_processor::coordinator_serial.Get();
+			
+			//there should be a cr after this, we can throw it away
+			c_processor::coordinator_serial.Get();
+			//If we get a proceed resp, we can break the while. we are done.
+			if (resp == Ack_Resp)
+			{
+				break;
+			}
+
+			//if we get to here, we didnt get an ack and we need to resend.
+			send_count++;
+		}
+	}
+	return BinaryRecords::e_binary_responses::Ok;
 }

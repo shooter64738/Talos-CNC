@@ -25,6 +25,7 @@ uint8_t c_motion_control_events::event_flags;
 uint8_t c_motion_control_events::OK_Event_Count=0;
 uint8_t c_motion_control_events::DONE_Event_Count=0;
 
+
 void c_motion_control_events::check_events()
 {
 	if (c_motion_control_events::event_flags > 0)

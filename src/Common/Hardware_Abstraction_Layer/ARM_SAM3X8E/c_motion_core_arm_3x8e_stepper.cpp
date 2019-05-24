@@ -1,5 +1,5 @@
 /*
-* c_grbl_win_limits.cpp
+* c_motion_core_arm_3x8e_stepper.cpp
 *
 * Created: 3/7/2019 10:22:11 AM
 * Author: jeff_d
@@ -18,7 +18,11 @@ uint8_t Hardware_Abstraction_Layer::MotionCore::Stepper::dir_port_invert_mask;
 uint8_t Hardware_Abstraction_Layer::MotionCore::Stepper::step_mask;// = STEP_MASK;
 
 #define SELECTED_TIMER_CLOCK TC_CMR_TCCLKS_TIMER_CLOCK1
-#define STEP_CLOCK_DIVIER 1
+#define STEP_CLOCK_DIVIDER 1
+//There is also some latency for instruction execution. Scope signal shows that to be 104 cycles
+//We will subtract this from the delay time so that the pulse rate comes out exactly as calculated
+#define DEAD_TIME 104 //<--scope is showing 104 cycles are completed between step pulse and step reset.
+
 
 void Hardware_Abstraction_Layer::MotionCore::Stepper::initialize()
 {
@@ -30,6 +34,12 @@ void Hardware_Abstraction_Layer::MotionCore::Stepper::initialize()
 		Step_Ports[i]->PIO_OER = Step_Pins[i];
 	}
 	
+	//Configure direction pins
+	//Set output enable registers (OERs)
+	for (int i=0;i<MACHINE_AXIS_COUNT;i++)
+	{
+		Direction_Ports[i]->PIO_OER = Direction_Pins[i];
+	}
 	
 	//Configure the stepper driver interrupt timer. Leave disabled until we need it
 	//	Enable TC1 power
@@ -100,7 +110,8 @@ void Hardware_Abstraction_Layer::MotionCore::Stepper::wake_up()
 
 	// Initialize step pulse timing from settings. Here to ensure updating after re-writing.
 	Motion_Core::Hardware::Interpollation::Step_Pulse_Length
-	= (float)Motion_Core::Settings::_Settings.pulse_length/(1.0/((F_CPU/1000000.0)/STEP_CLOCK_DIVIER));
+	= (float)Motion_Core::Settings::_Settings.pulse_length/(1.0/((F_CPU/1000000.0)/STEP_CLOCK_DIVIDER));
+	
 	// Enable Stepper Driver Interrupt
 	//TIMSK1 |= (1 << OCIE1A);
 	TC1->TC_CHANNEL[0].TC_CCR = TC_CCR_CLKEN | TC_CCR_SWTRG;
@@ -123,20 +134,20 @@ void Hardware_Abstraction_Layer::MotionCore::Stepper::port_disable(uint8_t inver
 
 void Hardware_Abstraction_Layer::MotionCore::Stepper::port_direction(uint8_t directions)
 {
-
+	
+	for (int i=0;i<MACHINE_AXIS_COUNT;i++)
+		if (directions & (1<<i))
+			Direction_Ports[i]->PIO_SODR = Direction_Pins[i];
+		else
+			Direction_Ports[i]->PIO_CODR = Direction_Pins[i];
 }
 
 void Hardware_Abstraction_Layer::MotionCore::Stepper::port_step(uint8_t steps)
 {
 	//For any step indicated, turn on the 'Set Output Data Register'
 	for (int i=0;i<MACHINE_AXIS_COUNT;i++)
-	{
-
-		//if (steps & (1<<i))
-		{
+		if (steps & (1<<i))
 			Step_Ports[i]->PIO_SODR = Step_Pins[i];
-		}
-	}
 }
 
 uint16_t Hardware_Abstraction_Layer::MotionCore::Stepper::set_delay_from_hardware(
@@ -166,8 +177,18 @@ void Hardware_Abstraction_Layer::MotionCore::Stepper::TCCR1B_set(uint8_t prescal
 	
 }
 
-void Hardware_Abstraction_Layer::MotionCore::Stepper::OCR1A_set(uint16_t delay)
+void Hardware_Abstraction_Layer::MotionCore::Stepper::OCR1A_set(uint32_t delay)
 {
+	
+	//We must account for the 'dead' time while we wait on the stepper to reset.
+	//But we also can't roll delay over to negative or the time will lock up.
+	if (delay>Motion_Core::Hardware::Interpollation::Step_Pulse_Length)
+	delay = delay - (Motion_Core::Hardware::Interpollation::Step_Pulse_Length + DEAD_TIME);
+	
+	//c_processor::debug_serial.print_string("delay =");
+	//c_processor::debug_serial.print_int32(delay);
+	//c_processor::debug_serial.Write(CR);
+	
 	TC1->TC_CHANNEL[0].TC_RC = delay;
 	//TC1->TC_CHANNEL[1].TC_CCR = TC_CCR_CLKEN | TC_CCR_SWTRG;
 }
