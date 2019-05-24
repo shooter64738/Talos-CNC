@@ -81,6 +81,36 @@ void Hardware_Abstraction_Layer::MotionCore::Stepper::st_go_idle()
 	TCCR1B = (TCCR1B & ~((1 << CS12) | (1 << CS11))) | (1 << CS10); // Reset clock to no prescaling.
 }
 
+uint16_t Hardware_Abstraction_Layer::MotionCore::Stepper::set_delay_from_hardware(uint32_t calculated_delay, uint32_t * delay, uint8_t * prescale)
+{
+	// Compute step timing and timer prescalar for normal step generation.
+	if (calculated_delay < (1UL << 16))
+	{ // < 65536  (4.1ms @ 16MHz)
+		*prescale = 1;// prescaler: 0
+		*delay = calculated_delay;
+	}
+	else if (calculated_delay < (1UL << 19))
+	{ // < 524288 (32.8ms@16MHz)
+		*prescale = 2;// prescaler: 8
+		*delay = calculated_delay >> 3;
+	}
+	else
+	{
+		*prescale = 3; // prescaler: 64
+
+		if (calculated_delay < (1UL << 22))
+		{ // < 4194304 (262ms@16MHz)
+			*delay = calculated_delay >> 6;
+		}
+		else
+		{ // Just set the slowest speed possible. (Around 4 step/sec.)
+			*delay = 0xffff;
+		}
+	}
+	return 0;
+}
+
+
 void Hardware_Abstraction_Layer::MotionCore::Stepper::port_disable(uint8_t inverted)
 {
 	if (inverted)

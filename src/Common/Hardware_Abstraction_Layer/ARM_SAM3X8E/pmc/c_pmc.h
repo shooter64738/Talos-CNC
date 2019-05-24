@@ -29,22 +29,22 @@
 
 class c_pmc
 {
-//variables
-public:
-protected:
-private:
+	//variables
+	public:
+	protected:
+	private:
 
-//functions
-public:
+	//functions
+	public:
 	static void initialize();
-	static void peripheral_clock_enable_register(Pmc *_pmc, uint32_t flags);
+	static void peripheral_clock_enable_register(uint32_t id);
 	
-protected:
-private:
-c_pmc();
-~c_pmc();
-	c_pmc( const c_pmc &c );
-	c_pmc& operator=( const c_pmc &c );
+	protected:
+	private:
+	//c_pmc();
+	//~c_pmc();
+	//c_pmc( const c_pmc &c );
+	//c_pmc& operator=( const c_pmc &c );
 }; //c_pmc
 
 #endif //__C_PMC_H__

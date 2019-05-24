@@ -476,31 +476,40 @@ uint8_t Motion_Core::Segment::Arbitrator::Segment_Calculate()
 
 void Motion_Core::Segment::Arbitrator::Set_Segment_Delay(Motion_Core::Segment::Timer::Timer_Item *segment_item, uint32_t cycles)
 {
+//After porting to 32 bit processors I realized this cannot use prescaling like it does on the 8 bit avr.
 
-	// Compute step timing and timer prescalar for normal step generation.
-	if (cycles < (1UL << 16))
-	{ // < 65536  (4.1ms @ 16MHz)
-		segment_item->timer_prescaler = 1;// prescaler: 0
-		segment_item->timer_delay_value = cycles;
-	}
-	else if (cycles < (1UL << 19))
-	{ // < 524288 (32.8ms@16MHz)
-		segment_item->timer_prescaler = 2;// prescaler: 8
-		segment_item->timer_delay_value = cycles >> 3;
-	}
-	else
-	{
-		segment_item->timer_prescaler = 3; // prescaler: 64
+	uint32_t *update_delay = &segment_item->timer_delay_value;
+	uint8_t *update_prescale = &segment_item->timer_prescaler;
 
-		if (cycles < (1UL << 22))
-		{ // < 4194304 (262ms@16MHz)
-			segment_item->timer_delay_value = cycles >> 6;
-		}
-		else
-		{ // Just set the slowest speed possible. (Around 4 step/sec.)
-			segment_item->timer_delay_value = 0xffff;
-		}
-	}
+	Hardware_Abstraction_Layer::MotionCore::Stepper::set_delay_from_hardware(cycles,update_delay,update_prescale);
+
+	//segment_item->timer_prescaler = _prescale;
+	//segment_item->timer_delay_value = _delay;
+
+	//// Compute step timing and timer prescalar for normal step generation.
+	//if (cycles < (1UL << 16))
+	//{ // < 65536  (4.1ms @ 16MHz)
+	//segment_item->timer_prescaler = 1;// prescaler: 0
+	//segment_item->timer_delay_value = cycles;
+	//}
+	//else if (cycles < (1UL << 19))
+	//{ // < 524288 (32.8ms@16MHz)
+	//segment_item->timer_prescaler = 2;// prescaler: 8
+	//segment_item->timer_delay_value = cycles >> 3;
+	//}
+	//else
+	//{
+	//segment_item->timer_prescaler = 3; // prescaler: 64
+	//
+	//if (cycles < (1UL << 22))
+	//{ // < 4194304 (262ms@16MHz)
+	//segment_item->timer_delay_value = cycles >> 6;
+	//}
+	//else
+	//{ // Just set the slowest speed possible. (Around 4 step/sec.)
+	//segment_item->timer_delay_value = 0xffff;
+	//}
+	//}
 }
 
 // Called by planner_recalculate() when the executing block is updated by the new plan.

@@ -15,7 +15,7 @@ namespace Motion_Core
 			{
 			public:
 				uint16_t steps_to_execute_in_this_segment;           // Number of step events to be executed for this segment
-				uint16_t timer_delay_value;  // Step distance traveled per ISR tick, aka step rate.
+				uint32_t timer_delay_value;  // Step distance traveled per ISR tick, aka step rate.
 				//uint8_t st_block_index_4_bresenham;   // Stepper block data index. Uses this information to execute this segment.
 				Motion_Core::Segment::Bresenham::Bresenham_Item *bresenham_in_item;
 

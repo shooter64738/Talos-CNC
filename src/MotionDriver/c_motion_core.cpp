@@ -17,7 +17,7 @@ void Motion_Core::initialize()
 	{
 		Motion_Core::Settings::_Settings.steps_per_mm[i] = 160;
 		Motion_Core::Settings::_Settings.acceleration[i] = (100.0 * 60 * 60);
-		Motion_Core::Settings::_Settings.max_rate[i] = 8000;
+		Motion_Core::Settings::_Settings.max_rate[i] = 30000;
 		//arbitrary for testing
 		Motion_Core::Settings::_Settings.back_lash_comp_distance[i] = 55;
 	}

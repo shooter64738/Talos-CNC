@@ -6,7 +6,7 @@
  */ 
 
 
-#include "sam.h"
+//#include "sam.h"
 #include "..\Shared\c_processor.h"
 
 
@@ -14,7 +14,7 @@
 int main(void)
 {
     /* Initialize the SAM system */
-    SystemInit();
+    //SystemInit();
 
     c_processor::startup();
 }

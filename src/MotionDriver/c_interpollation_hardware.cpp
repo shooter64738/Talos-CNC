@@ -22,7 +22,7 @@ volatile uint8_t active = 0;
 uint8_t step_bits;  // Stores out_bits output to complete the step pulse delay
 #endif
 
-uint8_t Motion_Core::Hardware::Interpollation::Step_Pulse_Length;  // Step pulse reset time after step rise
+uint32_t Motion_Core::Hardware::Interpollation::Step_Pulse_Length;  // Step pulse reset time after step rise
 uint8_t Motion_Core::Hardware::Interpollation::step_outbits;         // The next stepping-bits to be output
 uint8_t Motion_Core::Hardware::Interpollation::dir_outbits;
 uint32_t Motion_Core::Hardware::Interpollation::Current_Line = 0;
@@ -78,7 +78,7 @@ void Motion_Core::Hardware::Interpollation::step_tick()
 		return;
 	} // The busy-flag is used to avoid reentering this interrupt
 	
-	#ifdef MSVC 
+	#ifdef MSVC
 	test_count++;
 	if (test_count == 150)
 	{
@@ -133,7 +133,6 @@ void Motion_Core::Hardware::Interpollation::step_tick()
 
 			Hardware_Abstraction_Layer::MotionCore::Stepper::OCR1A_set
 			(Motion_Core::Hardware::Interpollation::Exec_Timer_Item->timer_delay_value);
-
 
 			// If the new segment starts a new planner block, initialize stepper variables and counters.
 			// NOTE: When the segment data index changes, this indicates a new planner block.

@@ -36,8 +36,9 @@
 #endif
 
 #ifdef __SAM3X8E__
-#include "../Common/Hardware_Abstraction_Layer/ARM_SAM3X8E/c_spindle_arm_3x8e.h"
-#include "../Common/Hardware_Abstraction_Layer/ARM_SAM3X8E/c_core_arm_3x8e.h"
+//#include "../Common/Hardware_Abstraction_Layer/ARM_SAM3X8E/c_spindle_arm_3x8e.h"
+#include "../../Common/Hardware_Abstraction_Layer/ARM_SAM3X8E/c_core_arm_3x8e.h"
+#include "../../Common/Serial/c_Serial.h"
 #endif
 
 #ifdef MSVC

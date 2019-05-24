@@ -21,6 +21,7 @@
 #ifdef __SAM3X8E__//<--This will stop the multiple ISR definition error
 
 #include "c_pmc.h"
+#include "..\clock\c_clock.h"
 
 
 void c_pmc::initialize()
@@ -28,9 +29,29 @@ void c_pmc::initialize()
 
 }
 
-void c_pmc::peripheral_clock_enable_register(Pmc *_pmc, uint32_t flags)
+void c_pmc::peripheral_clock_enable_register(uint32_t id)
 {
-	_pmc->PMC_PCER0 |= flags;
+	//_pmc->PMC_PCER0 |= flags;
+	if (id > MAX_PERIPH_ID) {
+		return;
+	}
+
+	if (id < 32)
+	{
+		if ((PMC->PMC_PCSR0 & (1u << id)) != (1u << id))
+		{
+			PMC->PMC_PCER0 = 1 << id;
+		}
+	}
+	else
+	{
+		id -= 32;
+		if ((PMC->PMC_PCSR1 & (1u << id)) != (1u << id)) {
+			PMC->PMC_PCER1 = 1 << id;
+		}
+	}
+
+	
 }
 #endif
 // default constructor

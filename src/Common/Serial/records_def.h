@@ -45,7 +45,7 @@ namespace BinaryRecords
 	
 	#ifndef __C_BLOCK_FLAG
 	#define __C_BLOCK_FLAG
-	enum class e_block_flag : uint32_t
+	enum class e_block_flag : uint8_t
 	{normal = 0, compensation = 1};
 	#endif
 	
@@ -62,7 +62,7 @@ namespace BinaryRecords
 	
 	#ifndef __C_BINARY_RECORD_TYPES
 	#define __C_BINARY_RECORD_TYPES
-	enum class e_binary_record_types : uint32_t
+	enum class e_binary_record_types : uint8_t
 	{
 		Unknown = 0,
 		Motion = 1,
@@ -108,7 +108,7 @@ namespace BinaryRecords
 		float horizontal_center = 0 ;
 		float vertical_center = 0;
 		float Radius = 0;
-	};
+	}__attribute__((packed,aligned(1)));;
 
 	struct s_motion_data_block
 	{
@@ -122,23 +122,23 @@ namespace BinaryRecords
 		s_motion_arc_values arc_values;
 		BinaryRecords::e_block_flag flag = BinaryRecords::e_block_flag::normal;
 		
-	};
+	}__attribute__((packed,aligned(1)));;
 	
 	struct s_peripheral_group_processing
 	{
 		e_peripheral_panel_processing Toggles; //Bit values set for on/off panel options
-	};
+	}__attribute__((packed,aligned(1)));;
 	struct s_peripheral_group_overrides
 	{
 		e_peripheral_panel_override_rapids RapidFeed;
 		uint8_t TravelFeed; //0-150
 		uint8_t SpindleSpeed; //0-150
-	};
+	}__attribute__((packed,aligned(1)));;
 	struct s_peripheral_group_jogging
 	{
 		uint8_t Axis;
 		float Scale;
-	};
+	}__attribute__((packed,aligned(1)));;
 	
 	struct s_peripheral_panel
 	{
@@ -147,7 +147,7 @@ namespace BinaryRecords
 		s_peripheral_group_overrides OverRides;
 		s_peripheral_group_jogging Jogging;
 		
-	};
+	}__attribute__((packed,aligned(1)));;
 	
 	struct s_jog_data_block
 	{
@@ -155,7 +155,7 @@ namespace BinaryRecords
 		float axis_value;
 		uint32_t axis;
 		BinaryRecords::e_block_flag flag = BinaryRecords::e_block_flag::normal;
-	};
+	}__attribute__((packed,aligned(1)));
 	
 	struct s_motion_control_settings
 	{
@@ -169,7 +169,7 @@ namespace BinaryRecords
 		float back_lash_comp_distance[MACHINE_AXIS_COUNT];
 		float interpolation_error_distance;
 		
-	};
+	}__attribute__((packed,aligned(1)));;
 	struct s_spindle_control_settings
 	{
 		

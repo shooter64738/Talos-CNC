@@ -125,10 +125,14 @@ void c_processor::startup()
 		
 	}
 
-	//c_feedback needs to know how many axis were reported by the controller. So it must be initialized after the controller
-	//c_hal::feedback.PNTR_INITIALIZE != NULL ? c_hal::feedback.PNTR_INITIALIZE() : void();
-
+	//c_processor::host_serial.print_string("Waiting for motion controller to respond.\r");
+	//while (!c_processor::controller_serial.HasEOL())
+	//{
+		//
+	//}
+	c_processor::controller_serial.Reset();
 	c_processor::host_serial.print_string("Ready\r");
+
 
 	int16_t return_value = 0;
 	c_machine::synch_position();
@@ -152,7 +156,7 @@ void c_processor::startup()
 
 		//while (c_processor::peripheral_serial.HasEOL())
 		//{
-			//c_processor::host_serial.Write(c_processor::peripheral_serial.Get());
+		//c_processor::host_serial.Write(c_processor::peripheral_serial.Get());
 		//}
 
 

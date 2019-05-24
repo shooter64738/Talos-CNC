@@ -212,6 +212,14 @@
       <SubType>compile</SubType>
       <Link>MotionDriver\Common\Hardware Abstraction Layer\ARM 3X8E\pio\c_ioport.h</Link>
     </Compile>
+    <Compile Include="..\..\..\Common\Hardware_Abstraction_Layer\ARM_SAM3X8E\pio\pio.cpp">
+      <SubType>compile</SubType>
+      <Link>ARM_3X8E_MotionDriver\MotionDriver\Common\Hardware Abstraction Layer\ARM 3X8E\pio\pio.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\Common\Hardware_Abstraction_Layer\ARM_SAM3X8E\pio\pio.h">
+      <SubType>compile</SubType>
+      <Link>ARM_3X8E_MotionDriver\MotionDriver\Common\Hardware Abstraction Layer\ARM 3X8E\pio\pio.h</Link>
+    </Compile>
     <Compile Include="..\..\..\Common\Hardware_Abstraction_Layer\ARM_SAM3X8E\pmc\c_pmc.cpp">
       <SubType>compile</SubType>
       <Link>MotionDriver\Common\Hardware Abstraction Layer\ARM 3X8E\pmc\c_pmc.cpp</Link>

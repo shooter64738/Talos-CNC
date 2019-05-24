@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectVersion>7.0</ProjectVersion>
     <ToolchainName>com.Atmel.ARMGCC.CPP</ToolchainName>
-    <ProjectGuid>dce6c7e3-ee26-4d79-826b-08594b9ad897</ProjectGuid>
+    <ProjectGuid>{002bb67e-043f-4719-9ffc-8f98bf488c7c}</ProjectGuid>
     <avrdevice>ATSAM3X8E</avrdevice>
     <avrdeviceseries>none</avrdeviceseries>
     <OutputType>Executable</OutputType>
@@ -162,13 +162,10 @@
         <armgcccpp.linker.libraries.Libraries>
           <ListValues>
             <Value>libm</Value>
-            <Value>libARM_SAM3X8E_HAL.a</Value>
           </ListValues>
         </armgcccpp.linker.libraries.Libraries>
         <armgcccpp.linker.libraries.LibrarySearchPaths>
           <ListValues>
-            <Value>..\..\..\Hardware_Abstraction_Layer\ARM_SAM3X8E</Value>
-            <Value>C:\GitHub\Talos-CNC\src\Common\Hardware_Abstraction_Layer\ARM_SAM3X8E\Debug</Value>
             <Value>%24(ProjectDir)\Device_Startup</Value>
           </ListValues>
         </armgcccpp.linker.libraries.LibrarySearchPaths>
@@ -193,61 +190,101 @@
     </ToolchainSettings>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\..\Common\Bresenham\c_Bresenham.cpp">
+    <Compile Include="..\..\Common\Hardware_Abstraction_Layer\ARM_SAM3X8E\clock\c_clock.cpp">
       <SubType>compile</SubType>
-      <Link>Common\Bresenham\c_Bresenham.cpp</Link>
+      <Link>Common\HardwareAbstractionLayer\ARM_3X8E\clock\c_clock.cpp</Link>
     </Compile>
-    <Compile Include="..\..\Common\Bresenham\c_Bresenham.h">
+    <Compile Include="..\..\Common\Hardware_Abstraction_Layer\ARM_SAM3X8E\clock\c_clock.h">
       <SubType>compile</SubType>
-      <Link>Common\Bresenham\c_Bresenham.h</Link>
+      <Link>Common\HardwareAbstractionLayer\ARM_3X8E\clock\c_clock.h</Link>
     </Compile>
-    <Compile Include="..\..\Common\Hardware_Abstraction_Layer\ARM_SAM3X8E\c_cpu_ARM_SAM3X8E.cpp">
+    <Compile Include="..\..\Common\Hardware_Abstraction_Layer\ARM_SAM3X8E\c_core_arm_3x8e.cpp">
       <SubType>compile</SubType>
-      <Link>Common\HardwareAbstractionLayer\ARM_3X8E\c_cpu_ARM_SAM3X8E.cpp</Link>
+      <Link>Common\HardwareAbstractionLayer\ARM_3X8E\c_core_arm_3x8e.cpp</Link>
     </Compile>
-    <Compile Include="..\..\Common\Hardware_Abstraction_Layer\ARM_SAM3X8E\c_cpu_ARM_SAM3X8E.h">
+    <Compile Include="..\..\Common\Hardware_Abstraction_Layer\ARM_SAM3X8E\c_core_arm_3x8e.h">
       <SubType>compile</SubType>
-      <Link>Common\HardwareAbstractionLayer\ARM_3X8E\c_cpu_ARM_SAM3X8E.h</Link>
+      <Link>Common\HardwareAbstractionLayer\ARM_3X8E\c_core_arm_3x8e.h</Link>
     </Compile>
     <Compile Include="..\..\Common\Hardware_Abstraction_Layer\ARM_SAM3X8E\c_serial_arm_3x8e.cpp">
       <SubType>compile</SubType>
-      <Link>ARM_Coordinator\Common\HardwareAbstractionLayer\ARM_3X8E\c_serial_arm_3x8e.cpp</Link>
+      <Link>Common\HardwareAbstractionLayer\ARM_3X8E\c_serial_arm_3x8e.cpp</Link>
     </Compile>
     <Compile Include="..\..\Common\Hardware_Abstraction_Layer\ARM_SAM3X8E\c_serial_arm_3x8e.h">
       <SubType>compile</SubType>
-      <Link>ARM_Coordinator\Common\HardwareAbstractionLayer\ARM_3X8E\c_serial_arm_3x8e.h</Link>
+      <Link>Common\HardwareAbstractionLayer\ARM_3X8E\c_serial_arm_3x8e.h</Link>
+    </Compile>
+    <Compile Include="..\..\Common\Hardware_Abstraction_Layer\ARM_SAM3X8E\pio\c_ioport.cpp">
+      <SubType>compile</SubType>
+      <Link>Common\HardwareAbstractionLayer\ARM_3X8E\pio\c_ioport.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\Common\Hardware_Abstraction_Layer\ARM_SAM3X8E\pio\c_ioport.h">
+      <SubType>compile</SubType>
+      <Link>Common\HardwareAbstractionLayer\ARM_3X8E\pio\c_ioport.h</Link>
+    </Compile>
+    <Compile Include="..\..\Common\Hardware_Abstraction_Layer\ARM_SAM3X8E\pio\pio.cpp">
+      <SubType>compile</SubType>
+      <Link>Common\HardwareAbstractionLayer\ARM_3X8E\pio\pio.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\Common\Hardware_Abstraction_Layer\ARM_SAM3X8E\pio\pio.h">
+      <SubType>compile</SubType>
+      <Link>Common\HardwareAbstractionLayer\ARM_3X8E\pio\pio.h</Link>
+    </Compile>
+    <Compile Include="..\..\Common\Hardware_Abstraction_Layer\ARM_SAM3X8E\pmc\c_pmc.cpp">
+      <SubType>compile</SubType>
+      <Link>Common\HardwareAbstractionLayer\ARM_3X8E\pmc\c_pmc.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\Common\Hardware_Abstraction_Layer\ARM_SAM3X8E\pmc\c_pmc.h">
+      <SubType>compile</SubType>
+      <Link>Common\HardwareAbstractionLayer\ARM_3X8E\pmc\c_pmc.h</Link>
     </Compile>
     <Compile Include="..\..\Common\Hardware_Abstraction_Layer\ARM_SAM3X8E\uart\c_uart.cpp">
       <SubType>compile</SubType>
-      <Link>ARM_Coordinator\Common\HardwareAbstractionLayer\ARM_3X8E\uart\c_uart.cpp</Link>
+      <Link>Common\HardwareAbstractionLayer\ARM_3X8E\uart\c_uart.cpp</Link>
     </Compile>
     <Compile Include="..\..\Common\Hardware_Abstraction_Layer\ARM_SAM3X8E\uart\c_uart.h">
       <SubType>compile</SubType>
-      <Link>ARM_Coordinator\Common\HardwareAbstractionLayer\ARM_3X8E\uart\c_uart.h</Link>
+      <Link>Common\HardwareAbstractionLayer\ARM_3X8E\uart\c_uart.h</Link>
     </Compile>
-    <Compile Include="..\..\Common\Hardware_Abstraction_Layer\ARM_SAM3X8E\usart\c_usart.cpp">
+    <Compile Include="..\..\Common\NGC_RS274\NGC_Block.cpp">
       <SubType>compile</SubType>
-      <Link>ARM_Coordinator\Common\HardwareAbstractionLayer\ARM_3X8E\usart\c_usart.cpp</Link>
+      <Link>Common\NGC_RS274\NGC_Block.cpp</Link>
     </Compile>
-    <Compile Include="..\..\Common\Hardware_Abstraction_Layer\ARM_SAM3X8E\usart\c_usart.h">
+    <Compile Include="..\..\Common\NGC_RS274\NGC_Block.h">
       <SubType>compile</SubType>
-      <Link>ARM_Coordinator\Common\HardwareAbstractionLayer\ARM_3X8E\usart\c_usart.h</Link>
+      <Link>Common\NGC_RS274\NGC_Block.h</Link>
     </Compile>
-    <Compile Include="..\..\Common\MotionControllerInterface\c_motion_controller.cpp">
+    <Compile Include="..\..\Common\NGC_RS274\NGC_Errors.h">
       <SubType>compile</SubType>
-      <Link>Common\MotionControllerInterface\c_motion_controller.cpp</Link>
+      <Link>Common\NGC_RS274\NGC_Errors.h</Link>
     </Compile>
-    <Compile Include="..\..\Common\MotionControllerInterface\c_motion_controller.h">
+    <Compile Include="..\..\Common\NGC_RS274\NGC_G_Codes.h">
       <SubType>compile</SubType>
-      <Link>Common\MotionControllerInterface\c_motion_controller.h</Link>
+      <Link>Common\NGC_RS274\NGC_G_Codes.h</Link>
     </Compile>
-    <Compile Include="..\..\Common\MotionControllerInterface\c_motion_controller_settings.cpp">
+    <Compile Include="..\..\Common\NGC_RS274\NGC_G_Groups.h">
       <SubType>compile</SubType>
-      <Link>Common\MotionControllerInterface\c_motion_controller_settings.cpp</Link>
+      <Link>Common\NGC_RS274\NGC_G_Groups.h</Link>
     </Compile>
-    <Compile Include="..\..\Common\MotionControllerInterface\c_motion_controller_settings.h">
+    <Compile Include="..\..\Common\NGC_RS274\NGC_Interpreter.cpp">
       <SubType>compile</SubType>
-      <Link>Common\MotionControllerInterface\c_motion_controller_settings.h</Link>
+      <Link>Common\NGC_RS274\NGC_Interpreter.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\Common\NGC_RS274\NGC_Interpreter.h">
+      <SubType>compile</SubType>
+      <Link>Common\NGC_RS274\NGC_Interpreter.h</Link>
+    </Compile>
+    <Compile Include="..\..\Common\NGC_RS274\NGC_M_Codes.h">
+      <SubType>compile</SubType>
+      <Link>Common\NGC_RS274\NGC_M_Codes.h</Link>
+    </Compile>
+    <Compile Include="..\..\Common\NGC_RS274\NGC_M_Groups.h">
+      <SubType>compile</SubType>
+      <Link>Common\NGC_RS274\NGC_M_Groups.h</Link>
+    </Compile>
+    <Compile Include="..\..\Common\NGC_RS274\NGC_Parameters.h">
+      <SubType>compile</SubType>
+      <Link>Common\NGC_RS274\NGC_Parameters.h</Link>
     </Compile>
     <Compile Include="..\..\Common\Serial\c_Serial.cpp">
       <SubType>compile</SubType>
@@ -256,6 +293,10 @@
     <Compile Include="..\..\Common\Serial\c_Serial.h">
       <SubType>compile</SubType>
       <Link>Common\Serial\c_Serial.h</Link>
+    </Compile>
+    <Compile Include="..\..\Common\Serial\records_def.h">
+      <SubType>compile</SubType>
+      <Link>records_def.h</Link>
     </Compile>
     <Compile Include="..\..\Common\Serial\s_buffer.h">
       <SubType>compile</SubType>
@@ -268,6 +309,14 @@
     <Compile Include="..\Shared\c_processor.h">
       <SubType>compile</SubType>
       <Link>c_processor.h</Link>
+    </Compile>
+    <Compile Include="..\Shared\Encoder\c_encoder.cpp">
+      <SubType>compile</SubType>
+      <Link>ARM_Coordinator\Encoder\c_encoder.cpp</Link>
+    </Compile>
+    <Compile Include="..\Shared\Encoder\c_encoder.h">
+      <SubType>compile</SubType>
+      <Link>ARM_Coordinator\Encoder\c_encoder.h</Link>
     </Compile>
     <Compile Include="..\Shared\Events\c_block_events.cpp">
       <SubType>compile</SubType>
@@ -309,6 +358,10 @@
       <SubType>compile</SubType>
       <Link>ARM_Coordinator\Events\c_motion_events.h</Link>
     </Compile>
+    <Compile Include="..\Shared\hardware_def.h">
+      <SubType>compile</SubType>
+      <Link>hardware_def.h</Link>
+    </Compile>
     <Compile Include="..\Shared\Interpolation\c_closed_loop.cpp">
       <SubType>compile</SubType>
       <Link>ARM_Coordinator\Interpolation\c_closed_loop.cpp</Link>
@@ -316,14 +369,6 @@
     <Compile Include="..\Shared\Interpolation\c_closed_loop.h">
       <SubType>compile</SubType>
       <Link>ARM_Coordinator\Interpolation\c_closed_loop.h</Link>
-    </Compile>
-    <Compile Include="..\Shared\Interpreter\c_interpreter.cpp">
-      <SubType>compile</SubType>
-      <Link>ARM_Coordinator\Interpreter\c_interpreter.cpp</Link>
-    </Compile>
-    <Compile Include="..\Shared\Interpreter\c_interpreter.h">
-      <SubType>compile</SubType>
-      <Link>ARM_Coordinator\Interpreter\c_interpreter.h</Link>
     </Compile>
     <Compile Include="..\Shared\Machine\c_machine.cpp">
       <SubType>compile</SubType>
@@ -333,17 +378,13 @@
       <SubType>compile</SubType>
       <Link>ARM_Coordinator\Machine\c_machine.h</Link>
     </Compile>
-    <Compile Include="..\Shared\MotionControllerInterface\ExternalControllers\GRBL\c_Grbl.cpp">
+    <Compile Include="..\Shared\MotionController\c_motion_controller.cpp">
       <SubType>compile</SubType>
-      <Link>ARM_Coordinator\MotionControllerInterface\ExternalControllers\GRBL\c_Grbl.cpp</Link>
+      <Link>ARM_Coordinator\MotionController\c_motion_controller.cpp</Link>
     </Compile>
-    <Compile Include="..\Shared\MotionControllerInterface\ExternalControllers\GRBL\c_Grbl.h">
+    <Compile Include="..\Shared\MotionController\c_motion_controller.h">
       <SubType>compile</SubType>
-      <Link>ARM_Coordinator\MotionControllerInterface\ExternalControllers\GRBL\c_Grbl.h</Link>
-    </Compile>
-    <Compile Include="..\Shared\MotionControllerInterface\ExternalControllers\GRBL\c_Grbl_Settings.h">
-      <SubType>compile</SubType>
-      <Link>ARM_Coordinator\MotionControllerInterface\ExternalControllers\GRBL\c_Grbl_Settings.h</Link>
+      <Link>ARM_Coordinator\MotionController\c_motion_controller.h</Link>
     </Compile>
     <Compile Include="..\Shared\Planner\Canned Cycles\c_canned_cycle.cpp">
       <SubType>compile</SubType>
@@ -409,13 +450,13 @@
       <SubType>compile</SubType>
       <Link>ARM_Coordinator\Planner\Stager_Errors.h</Link>
     </Compile>
-    <Compile Include="..\Shared\Settings\c_settings.cpp">
+    <Compile Include="..\Shared\Settings\c_general.cpp">
       <SubType>compile</SubType>
-      <Link>ARM_Coordinator\Settings\c_settings.cpp</Link>
+      <Link>ARM_Coordinator\Settings\c_general.cpp</Link>
     </Compile>
-    <Compile Include="..\Shared\Settings\c_settings.h">
+    <Compile Include="..\Shared\Settings\c_general.h">
       <SubType>compile</SubType>
-      <Link>ARM_Coordinator\Settings\c_settings.h</Link>
+      <Link>ARM_Coordinator\Settings\c_general.h</Link>
     </Compile>
     <Compile Include="..\Shared\Status\c_status.cpp">
       <SubType>compile</SubType>
@@ -455,23 +496,28 @@
     <Folder Include="ARM_Coordinator\" />
     <Folder Include="ARM_Coordinator\Events\" />
     <Folder Include="ARM_Coordinator\Interpolation\" />
-    <Folder Include="ARM_Coordinator\Interpreter\" />
     <Folder Include="ARM_Coordinator\Machine\" />
-    <Folder Include="ARM_Coordinator\MotionControllerInterface\" />
-    <Folder Include="ARM_Coordinator\MotionControllerInterface\ExternalControllers\" />
-    <Folder Include="ARM_Coordinator\MotionControllerInterface\ExternalControllers\GRBL\" />
+    <Folder Include="ARM_Coordinator\MotionController" />
+    <Folder Include="ARM_Coordinator\Encoder" />
+    <Folder Include="ARM_Coordinator\Settings" />
     <Folder Include="ARM_Coordinator\Planner\" />
     <Folder Include="ARM_Coordinator\Planner\Canned Cycles\" />
     <Folder Include="ARM_Coordinator\Planner\Compensation\" />
-    <Folder Include="ARM_Coordinator\Settings\" />
     <Folder Include="ARM_Coordinator\Status\" />
     <Folder Include="ARM_Coordinator\System\" />
-    <Folder Include="Common\Bresenham" />
+    <Folder Include="Common\HardwareAbstractionLayer\" />
+    <Folder Include="Common\HardwareAbstractionLayer\ARM_3X8E\" />
+    <Folder Include="Common\HardwareAbstractionLayer\ARM_3X8E\clock" />
+    <Folder Include="Common\HardwareAbstractionLayer\ARM_3X8E\pmc" />
+    <Folder Include="Common\HardwareAbstractionLayer\ARM_3X8E\pio" />
+    <Folder Include="Common\HardwareAbstractionLayer\ARM_3X8E\uart\" />
+    <Folder Include="Common\HardwareAbstractionLayer\ARM_3X8E\usart\" />
+    <Folder Include="Common\NGC_RS274\" />
     <Folder Include="Common\HardwareAbstractionLayer" />
     <Folder Include="Common\HardwareAbstractionLayer\ARM_3X8E" />
     <Folder Include="Common\HardwareAbstractionLayer\ARM_3X8E\uart\" />
     <Folder Include="Common\HardwareAbstractionLayer\ARM_3X8E\usart" />
-    <Folder Include="Common\MotionControllerInterface" />
+    <Folder Include="Common\NGC_RS274" />
     <Folder Include="Common\Serial" />
     <Folder Include="Device_Startup\" />
     <Folder Include="Common" />

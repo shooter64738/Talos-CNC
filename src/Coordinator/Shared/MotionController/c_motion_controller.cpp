@@ -33,7 +33,7 @@ BinaryRecords::e_binary_responses c_motion_controller::send_jog(BinaryRecords::s
 	BinaryRecords::e_binary_responses resp
 	= c_motion_controller::write_stream(jog_stream,sizeof(BinaryRecords::s_jog_data_block),BinaryRecords::e_binary_responses::Ok);
 	uint8_t try_count = 0;
-	
+c_processor::host_serial.print_string("jog sent\r");
 	//When the control acknowledges that it got the record, we still need to wait for the jog to complete
 	//before we proceed
 	while(try_count<10)
