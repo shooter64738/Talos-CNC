@@ -13,8 +13,6 @@ BinaryRecords::s_motion_control_settings Motion_Core::Settings::_Settings;
 
 void Motion_Core::initialize()
 {
-	Motion_Core::Settings::_Settings.axis_configuration[Motion_Core::Settings::_Settings.axis_count];
-	
 	for (uint8_t i = 0; i < MACHINE_AXIS_COUNT; i++)
 	{
 		Motion_Core::Settings::_Settings.steps_per_mm[i] = 160;

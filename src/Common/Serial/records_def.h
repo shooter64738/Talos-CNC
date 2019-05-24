@@ -188,46 +188,46 @@ namespace BinaryRecords
 	}__attribute__((packed,aligned(1)));
 	
 	
-	struct s_motion_control_axis_settings
-	{
-		float acceleration;
-		float max_rate;
-		uint16_t steps_per_mm;
-		float back_lash_comp_distance;
-		float max_travel;
-		uint32_t pulse_pin_assignment;
-		uint32_t direction_pin_assignment;
-	}__attribute__((packed,aligned(1)));
+	//struct s_motion_control_axis_settings
+	//{
+	//float acceleration;
+	//float max_rate;
+	//uint16_t steps_per_mm;
+	//float back_lash_comp_distance;
+	//float max_travel;
+	//uint32_t pulse_pin_assignment;
+	//uint32_t direction_pin_assignment;
+	//}__attribute__((packed,aligned(1)));
+	//
+	//struct s_motion_control_settings
+	//{
+	//const BinaryRecords::e_binary_record_types record_type = BinaryRecords::e_binary_record_types::Motion_Control_Setting;
+	//uint8_t axis_count;
+	//float junction_deviation;
+	//float arc_tolerance;
+	//uint16_t pulse_length;
+	//float interpolation_error_distance;
+	//uint16_t arc_angular_correction = 12;
+	//uint8_t invert_mpg_directions = 0;
+	//s_motion_control_axis_settings axis_configuration[];
+	//
+	//}__attribute__((packed,aligned(1)));
 	
 	struct s_motion_control_settings
 	{
 		const BinaryRecords::e_binary_record_types record_type = BinaryRecords::e_binary_record_types::Motion_Control_Setting;
-		uint8_t axis_count;
+		float acceleration[MACHINE_AXIS_COUNT];
+		float max_rate[MACHINE_AXIS_COUNT];
+		uint16_t steps_per_mm[MACHINE_AXIS_COUNT];
 		float junction_deviation;
 		float arc_tolerance;
 		uint16_t pulse_length;
+		float back_lash_comp_distance[MACHINE_AXIS_COUNT];
 		float interpolation_error_distance;
 		uint16_t arc_angular_correction = 12;
 		uint8_t invert_mpg_directions = 0;
-		s_motion_control_axis_settings axis_configuration[];
 		
 	}__attribute__((packed,aligned(1)));
-	
-	//struct s_motion_control_settings
-	//{
-	//const BinaryRecords::e_binary_record_types record_type = BinaryRecords::e_binary_record_types::Motion_Control_Setting;
-	//float acceleration[MACHINE_AXIS_COUNT];
-	//float max_rate[MACHINE_AXIS_COUNT];
-	//uint16_t steps_per_mm[MACHINE_AXIS_COUNT];
-	//float junction_deviation;
-	//float arc_tolerance;
-	//uint16_t pulse_length;
-	//float back_lash_comp_distance[MACHINE_AXIS_COUNT];
-	//float interpolation_error_distance;
-	//uint16_t arc_angular_correction = 12;
-	//uint8_t invert_mpg_directions = 0;
-	//
-	//}__attribute__((packed,aligned(1)));
 	
 	struct s_spindle_control_settings
 	{
