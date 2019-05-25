@@ -23,12 +23,14 @@ namespace Motion_Core
 			static uint8_t IsLastItem();
 			static uint8_t Available();
 			static uint8_t Full();
-
-			private:
+			
 			static Block_Item _buffer[];
 			static int8_t _tail;
 			static int8_t _head;
 			static uint8_t _full;
+
+			private:
+			
 		};
 	};
 };

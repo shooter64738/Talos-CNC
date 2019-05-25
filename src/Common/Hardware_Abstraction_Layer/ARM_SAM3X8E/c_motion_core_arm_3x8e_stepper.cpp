@@ -21,7 +21,13 @@ uint8_t Hardware_Abstraction_Layer::MotionCore::Stepper::step_mask;// = STEP_MAS
 #define STEP_CLOCK_DIVIDER 1
 //There is also some latency for instruction execution. Scope signal shows that to be 104 cycles
 //We will subtract this from the delay time so that the pulse rate comes out exactly as calculated
-#define DEAD_TIME 104 //<--scope is showing 104 cycles are completed between step pulse and step reset.
+#define DEAD_TIME 0 //<--scope is showing 104 cycles are completed between step pulse and step reset.
+
+#define SYS_TICKS (84)
+//void SysTick_Handler(void)
+//{
+	//c_processor::debug_serial.print_string("sys tick\r");
+//}
 
 
 void Hardware_Abstraction_Layer::MotionCore::Stepper::initialize()
@@ -40,9 +46,17 @@ void Hardware_Abstraction_Layer::MotionCore::Stepper::initialize()
 	{
 		Direction_Ports[i]->PIO_OER = Direction_Pins[i];
 	}
+
+
+	//SysTick->LOAD = (SYS_TICKS&SysTick_LOAD_RELOAD_Msk)-1;
+	//NVIC_SetPriority(SysTick_IRQn,1);
+	//SysTick->VAL=0;
+	//SysTick->CTRL = SysTick_CTRL_CLKSOURCE_Msk | SysTick_CTRL_TICKINT_Msk | SysTick_CTRL_ENABLE_Msk;
+	
 	
 	//Configure the stepper driver interrupt timer. Leave disabled until we need it
 	//	Enable TC1 power
+	
 	PMC->PMC_PCER0 |= 1 << ID_TC3;
 	// Disable TC clock
 	TC1->TC_CHANNEL[0].TC_CCR = TC_CCR_CLKDIS;
@@ -66,7 +80,7 @@ void Hardware_Abstraction_Layer::MotionCore::Stepper::initialize()
 	TC1->TC_CHANNEL[0].TC_CCR = TC_CCR_CLKDIS;
 
 	NVIC_EnableIRQ (TC3_IRQn);
-	NVIC_SetPriority(TC3_IRQn, 3);
+	NVIC_SetPriority(TC3_IRQn, 2);
 
 	//Configure the stepper pulse reset  interrupt timer
 	//This timer is not enabled by default. It will be enabled after each step pulse
@@ -91,7 +105,7 @@ void Hardware_Abstraction_Layer::MotionCore::Stepper::initialize()
 	TC1->TC_CHANNEL[1].TC_CCR = TC_CCR_CLKDIS;
 	
 	NVIC_EnableIRQ (TC4_IRQn);
-	NVIC_SetPriority(TC4_IRQn, 3);
+	NVIC_SetPriority(TC4_IRQn, 2);
 	
 	Hardware_Abstraction_Layer::MotionCore::Stepper::st_go_idle();
 }
@@ -114,6 +128,7 @@ void Hardware_Abstraction_Layer::MotionCore::Stepper::wake_up()
 	
 	// Enable Stepper Driver Interrupt
 	//TIMSK1 |= (1 << OCIE1A);
+	TC1->TC_CHANNEL[0].TC_RC = 50;
 	TC1->TC_CHANNEL[0].TC_CCR = TC_CCR_CLKEN | TC_CCR_SWTRG;
 	
 }
@@ -136,28 +151,35 @@ void Hardware_Abstraction_Layer::MotionCore::Stepper::port_direction(uint8_t dir
 {
 	
 	for (int i=0;i<MACHINE_AXIS_COUNT;i++)
-		if (directions & (1<<i))
-			Direction_Ports[i]->PIO_SODR = Direction_Pins[i];
-		else
-			Direction_Ports[i]->PIO_CODR = Direction_Pins[i];
+	if (directions & (1<<i))
+	Direction_Ports[i]->PIO_SODR = Direction_Pins[i];
+	else
+	Direction_Ports[i]->PIO_CODR = Direction_Pins[i];
 }
 
 void Hardware_Abstraction_Layer::MotionCore::Stepper::port_step(uint8_t steps)
 {
 	//For any step indicated, turn on the 'Set Output Data Register'
 	for (int i=0;i<MACHINE_AXIS_COUNT;i++)
-		if (steps & (1<<i))
-			Step_Ports[i]->PIO_SODR = Step_Pins[i];
+	if (steps & (1<<i))
+	Step_Ports[i]->PIO_SODR = Step_Pins[i];
 }
 
 uint16_t Hardware_Abstraction_Layer::MotionCore::Stepper::set_delay_from_hardware(
 uint32_t calculated_delay, uint32_t * delay, uint8_t * prescale)
 {
-	//There is no need for a prescaler on the ARM system because the delay value is a uint32. 
+	if (calculated_delay<300)
+	{
+		c_processor::debug_serial.print_string("calculated_delay ");
+		c_processor::debug_serial.print_int32(calculated_delay);
+		c_processor::debug_serial.Write(CR);
+	}
+	
+	//There is no need for a prescaler on the ARM system because the delay value is a uint32.
 	//YOu can put such a large value in it that a stepper can be ran very slowly with a high
-	//value, and extremly fast with a low value.
+	//value, and extremely fast with a low value.
 	*delay = calculated_delay;
-	*prescale = 0; 
+	*prescale = 0;
 	return 0;
 }
 
@@ -168,7 +190,7 @@ void Hardware_Abstraction_Layer::MotionCore::Stepper::pulse_reset_timer()
 	// Enable step pulse reset timer so that The Stepper Port Reset Interrupt can reset the signal after
 	// exactly settings.pulse_microseconds microseconds, independent of the main Timer1 prescaler.
 	
-	TC1->TC_CHANNEL[1].TC_RC = Motion_Core::Hardware::Interpollation::Step_Pulse_Length;
+	TC1->TC_CHANNEL[1].TC_RC = Motion_Core::Hardware::Interpollation::Step_Pulse_Length - DEAD_TIME;
 	TC1->TC_CHANNEL[1].TC_CCR = TC_CCR_CLKEN | TC_CCR_SWTRG;
 }
 
@@ -179,18 +201,7 @@ void Hardware_Abstraction_Layer::MotionCore::Stepper::TCCR1B_set(uint8_t prescal
 
 void Hardware_Abstraction_Layer::MotionCore::Stepper::OCR1A_set(uint32_t delay)
 {
-	
-	//We must account for the 'dead' time while we wait on the stepper to reset.
-	//But we also can't roll delay over to negative or the time will lock up.
-	if (delay>Motion_Core::Hardware::Interpollation::Step_Pulse_Length)
-	delay = delay - (Motion_Core::Hardware::Interpollation::Step_Pulse_Length + DEAD_TIME);
-	
-	//c_processor::debug_serial.print_string("delay =");
-	//c_processor::debug_serial.print_int32(delay);
-	//c_processor::debug_serial.Write(CR);
-	
 	TC1->TC_CHANNEL[0].TC_RC = delay;
-	//TC1->TC_CHANNEL[1].TC_CCR = TC_CCR_CLKEN | TC_CCR_SWTRG;
 }
 
 void Timer1_Chan0_Handler_irq3(void)
@@ -198,23 +209,12 @@ void Timer1_Chan0_Handler_irq3(void)
 	
 	if(!TC1->TC_CHANNEL[0].TC_SR) return;
 
-	//Disable ourselves so we dont over run the step delay timer.
-	//step_tick will execute and call pulse_reset_timer which will enable the stepper reset
-	//timer. That timer will re-activate the main timer, if there is more interpolation to
-	//to do. I have done it this way because the timers on the ARM can run independently
-	//and the main timer will have activated the reset timer which will fire during step
-	//processing and cause steps to be missed. 
-	TC1->TC_CHANNEL[0].TC_CCR = TC_CCR_CLKDIS;
 	Motion_Core::Hardware::Interpollation::step_tick();
 }
 void Timer1_Chan1_Handler_irq4(void)
 {
 	if(!TC1->TC_CHANNEL[1].TC_SR) return;
 	TC1->TC_CHANNEL[1].TC_CCR = TC_CCR_CLKDIS; // Disable Timer0 to prevent re-entering this interrupt when it's not needed.
-	if (Motion_Core::Hardware::Interpollation::Interpolation_Active)
-	{//re-enable the main timer if we still have steps to intepolate.
-		TC1->TC_CHANNEL[0].TC_CCR = TC_CCR_CLKEN | TC_CCR_SWTRG;
-	}
 	// Reset stepping pins (leave the direction pins)
 	//STEP_PORT = (STEP_PORT & ~STEP_MASK) | (Hardware_Abstraction_Layer::MotionCore::Stepper::step_port_invert_mask & STEP_MASK);
 	//set a high bit in the Clear Ouput Data Register to turn the pins off

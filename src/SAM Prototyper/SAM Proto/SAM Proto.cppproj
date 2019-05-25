@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectVersion>7.0</ProjectVersion>
     <ToolchainName>com.Atmel.ARMGCC.CPP</ToolchainName>
-    <ProjectGuid>dce6c7e3-ee26-4d79-826b-08594b9ad897</ProjectGuid>
+    <ProjectGuid>{5cce03a5-a78e-4a81-8e82-b455fe3dad41}</ProjectGuid>
     <avrdevice>ATSAM3X8E</avrdevice>
     <avrdeviceseries>none</avrdeviceseries>
     <OutputType>Executable</OutputType>
@@ -12,9 +12,9 @@
     <OutputFileName>$(MSBuildProjectName)</OutputFileName>
     <OutputFileExtension>.elf</OutputFileExtension>
     <OutputDirectory>$(MSBuildProjectDirectory)\$(Configuration)</OutputDirectory>
-    <AssemblyName>ARM_3X8E_MotionDriver</AssemblyName>
-    <Name>ARM_3X8E_MotionDriver</Name>
-    <RootNamespace>ARM_3X8E_MotionDriver</RootNamespace>
+    <AssemblyName>SAM Proto</AssemblyName>
+    <Name>SAM Proto</Name>
+    <RootNamespace>SAM Proto</RootNamespace>
     <ToolchainFlavour>Native</ToolchainFlavour>
     <KeepTimersRunning>true</KeepTimersRunning>
     <OverrideVtor>false</OverrideVtor>
@@ -172,173 +172,71 @@
     </ToolchainSettings>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\..\..\Common\Hardware_Abstraction_Layer\ARM_SAM3X8E\clock\c_clock.cpp">
+    <Compile Include="..\..\Common\Hardware_Abstraction_Layer\ARM_SAM3X8E\c_core_arm_3x8e.cpp">
       <SubType>compile</SubType>
-      <Link>MotionDriver\Common\Hardware Abstraction Layer\ARM 3X8E\clock\c_clock.cpp</Link>
+      <Link>c_core_arm_3x8e.cpp</Link>
     </Compile>
-    <Compile Include="..\..\..\Common\Hardware_Abstraction_Layer\ARM_SAM3X8E\clock\c_clock.h">
+    <Compile Include="..\..\Common\Hardware_Abstraction_Layer\ARM_SAM3X8E\c_core_arm_3x8e.h">
       <SubType>compile</SubType>
-      <Link>MotionDriver\Common\Hardware Abstraction Layer\ARM 3X8E\clock\c_clock.h</Link>
+      <Link>c_core_arm_3x8e.h</Link>
     </Compile>
-    <Compile Include="..\..\..\Common\Hardware_Abstraction_Layer\ARM_SAM3X8E\c_core_arm_3x8e.cpp">
+    <Compile Include="..\..\Common\Hardware_Abstraction_Layer\ARM_SAM3X8E\c_serial_arm_3x8e.cpp">
       <SubType>compile</SubType>
-      <Link>MotionDriver\Common\Hardware Abstraction Layer\ARM 3X8E\c_core_arm_3x8e.cpp</Link>
+      <Link>c_serial_arm_3x8e.cpp</Link>
     </Compile>
-    <Compile Include="..\..\..\Common\Hardware_Abstraction_Layer\ARM_SAM3X8E\c_core_arm_3x8e.h">
+    <Compile Include="..\..\Common\Hardware_Abstraction_Layer\ARM_SAM3X8E\c_serial_arm_3x8e.h">
       <SubType>compile</SubType>
-      <Link>MotionDriver\Common\Hardware Abstraction Layer\ARM 3X8E\c_core_arm_3x8e.h</Link>
+      <Link>c_serial_arm_3x8e.h</Link>
     </Compile>
-    <Compile Include="..\..\..\Common\Hardware_Abstraction_Layer\ARM_SAM3X8E\c_motion_core_arm_3x8e_stepper.cpp">
+    <Compile Include="..\..\Common\Hardware_Abstraction_Layer\ARM_SAM3X8E\pio\c_ioport.cpp">
       <SubType>compile</SubType>
-      <Link>MotionDriver\Common\Hardware Abstraction Layer\ARM 3X8E\c_motion_core_arm_3x8e_stepper.cpp</Link>
+      <Link>c_ioport.cpp</Link>
     </Compile>
-    <Compile Include="..\..\..\Common\Hardware_Abstraction_Layer\ARM_SAM3X8E\c_motion_core_arm_3x8e_stepper.h">
+    <Compile Include="..\..\Common\Hardware_Abstraction_Layer\ARM_SAM3X8E\pio\c_ioport.h">
       <SubType>compile</SubType>
-      <Link>MotionDriver\Common\Hardware Abstraction Layer\ARM 3X8E\c_motion_core_arm_3x8e_stepper.h</Link>
+      <Link>c_ioport.h</Link>
     </Compile>
-    <Compile Include="..\..\..\Common\Hardware_Abstraction_Layer\ARM_SAM3X8E\c_serial_arm_3x8e.cpp">
+    <Compile Include="..\..\Common\Hardware_Abstraction_Layer\ARM_SAM3X8E\pmc\c_pmc.cpp">
       <SubType>compile</SubType>
-      <Link>MotionDriver\Common\Hardware Abstraction Layer\ARM 3X8E\c_serial_arm_3x8e.cpp</Link>
+      <Link>c_pmc.cpp</Link>
     </Compile>
-    <Compile Include="..\..\..\Common\Hardware_Abstraction_Layer\ARM_SAM3X8E\c_serial_arm_3x8e.h">
+    <Compile Include="..\..\Common\Hardware_Abstraction_Layer\ARM_SAM3X8E\pmc\c_pmc.h">
       <SubType>compile</SubType>
-      <Link>MotionDriver\Common\Hardware Abstraction Layer\ARM 3X8E\c_serial_arm_3x8e.h</Link>
+      <Link>c_pmc.h</Link>
     </Compile>
-    <Compile Include="..\..\..\Common\Hardware_Abstraction_Layer\ARM_SAM3X8E\pio\c_ioport.cpp">
+    <Compile Include="..\..\Common\Hardware_Abstraction_Layer\ARM_SAM3X8E\uart\c_uart.cpp">
       <SubType>compile</SubType>
-      <Link>MotionDriver\Common\Hardware Abstraction Layer\ARM 3X8E\pio\c_ioport.cpp</Link>
+      <Link>c_uart.cpp</Link>
     </Compile>
-    <Compile Include="..\..\..\Common\Hardware_Abstraction_Layer\ARM_SAM3X8E\pio\c_ioport.h">
+    <Compile Include="..\..\Common\Hardware_Abstraction_Layer\ARM_SAM3X8E\uart\c_uart.h">
       <SubType>compile</SubType>
-      <Link>MotionDriver\Common\Hardware Abstraction Layer\ARM 3X8E\pio\c_ioport.h</Link>
+      <Link>c_uart.h</Link>
     </Compile>
-    <Compile Include="..\..\..\Common\Hardware_Abstraction_Layer\ARM_SAM3X8E\pio\pio.cpp">
+    <Compile Include="..\..\Common\Hardware_Abstraction_Layer\ARM_SAM3X8E\usart\c_usart.cpp">
       <SubType>compile</SubType>
-      <Link>MotionDriver\Common\Hardware Abstraction Layer\ARM 3X8E\pio\pio.cpp</Link>
+      <Link>c_usart.cpp</Link>
     </Compile>
-    <Compile Include="..\..\..\Common\Hardware_Abstraction_Layer\ARM_SAM3X8E\pio\pio.h">
+    <Compile Include="..\..\Common\Hardware_Abstraction_Layer\ARM_SAM3X8E\usart\c_usart.h">
       <SubType>compile</SubType>
-      <Link>MotionDriver\Common\Hardware Abstraction Layer\ARM 3X8E\pio\pio.h</Link>
+      <Link>c_usart.h</Link>
     </Compile>
-    <Compile Include="..\..\..\Common\Hardware_Abstraction_Layer\ARM_SAM3X8E\pmc\c_pmc.cpp">
+    <Compile Include="..\..\Common\Serial\c_Serial.cpp">
       <SubType>compile</SubType>
-      <Link>MotionDriver\Common\Hardware Abstraction Layer\ARM 3X8E\pmc\c_pmc.cpp</Link>
+      <Link>c_Serial.cpp</Link>
     </Compile>
-    <Compile Include="..\..\..\Common\Hardware_Abstraction_Layer\ARM_SAM3X8E\pmc\c_pmc.h">
+    <Compile Include="..\..\Common\Serial\c_Serial.h">
       <SubType>compile</SubType>
-      <Link>MotionDriver\Common\Hardware Abstraction Layer\ARM 3X8E\pmc\c_pmc.h</Link>
+      <Link>c_Serial.h</Link>
     </Compile>
-    <Compile Include="..\..\..\Common\Hardware_Abstraction_Layer\ARM_SAM3X8E\uart\c_uart.cpp">
+    <Compile Include="..\..\Common\Serial\s_buffer.h">
       <SubType>compile</SubType>
-      <Link>MotionDriver\Common\Hardware Abstraction Layer\ARM 3X8E\uart\c_uart.cpp</Link>
+      <Link>s_buffer.h</Link>
     </Compile>
-    <Compile Include="..\..\..\Common\Hardware_Abstraction_Layer\ARM_SAM3X8E\uart\c_uart.h">
+    <Compile Include="c_worker.cpp">
       <SubType>compile</SubType>
-      <Link>MotionDriver\Common\Hardware Abstraction Layer\ARM 3X8E\uart\c_uart.h</Link>
     </Compile>
-    <Compile Include="..\..\..\Common\Serial\c_Serial.cpp">
+    <Compile Include="c_worker.h">
       <SubType>compile</SubType>
-      <Link>MotionDriver\Common\Serial\c_Serial.cpp</Link>
-    </Compile>
-    <Compile Include="..\..\..\Common\Serial\c_Serial.h">
-      <SubType>compile</SubType>
-      <Link>MotionDriver\Common\Serial\c_Serial.h</Link>
-    </Compile>
-    <Compile Include="..\..\..\Common\Serial\records_def.h">
-      <SubType>compile</SubType>
-      <Link>records_def.h</Link>
-    </Compile>
-    <Compile Include="..\..\..\Common\Serial\s_buffer.h">
-      <SubType>compile</SubType>
-      <Link>MotionDriver\Common\Serial\s_buffer.h</Link>
-    </Compile>
-    <Compile Include="..\..\c_block.cpp">
-      <SubType>compile</SubType>
-      <Link>c_block.cpp</Link>
-    </Compile>
-    <Compile Include="..\..\c_block.h">
-      <SubType>compile</SubType>
-      <Link>c_block.h</Link>
-    </Compile>
-    <Compile Include="..\..\c_block_buffer.cpp">
-      <SubType>compile</SubType>
-      <Link>c_block_buffer.cpp</Link>
-    </Compile>
-    <Compile Include="..\..\c_block_buffer.h">
-      <SubType>compile</SubType>
-      <Link>c_block_buffer.h</Link>
-    </Compile>
-    <Compile Include="..\..\c_interpollation_hardware.cpp">
-      <SubType>compile</SubType>
-      <Link>c_interpollation_hardware.cpp</Link>
-    </Compile>
-    <Compile Include="..\..\c_interpollation_hardware.h">
-      <SubType>compile</SubType>
-      <Link>c_interpollation_hardware.h</Link>
-    </Compile>
-    <Compile Include="..\..\c_interpollation_software.cpp">
-      <SubType>compile</SubType>
-      <Link>c_interpollation_software.cpp</Link>
-    </Compile>
-    <Compile Include="..\..\c_interpollation_software.h">
-      <SubType>compile</SubType>
-      <Link>c_interpollation_software.h</Link>
-    </Compile>
-    <Compile Include="..\..\c_motion_core.cpp">
-      <SubType>compile</SubType>
-      <Link>c_motion_core.cpp</Link>
-    </Compile>
-    <Compile Include="..\..\c_motion_core.h">
-      <SubType>compile</SubType>
-      <Link>c_motion_core.h</Link>
-    </Compile>
-    <Compile Include="..\..\c_planner_compute_block.cpp">
-      <SubType>compile</SubType>
-      <Link>c_planner_compute_block.cpp</Link>
-    </Compile>
-    <Compile Include="..\..\c_planner_compute_block.h">
-      <SubType>compile</SubType>
-      <Link>c_planner_compute_block.h</Link>
-    </Compile>
-    <Compile Include="..\..\c_processor.cpp">
-      <SubType>compile</SubType>
-      <Link>c_processor.cpp</Link>
-    </Compile>
-    <Compile Include="..\..\c_processor.h">
-      <SubType>compile</SubType>
-      <Link>c_processor.h</Link>
-    </Compile>
-    <Compile Include="..\..\c_segment_arbitrator.cpp">
-      <SubType>compile</SubType>
-      <Link>c_segment_arbitrator.cpp</Link>
-    </Compile>
-    <Compile Include="..\..\c_segment_arbitrator.h">
-      <SubType>compile</SubType>
-      <Link>c_segment_arbitrator.h</Link>
-    </Compile>
-    <Compile Include="..\..\c_segment_timer_bresenham.cpp">
-      <SubType>compile</SubType>
-      <Link>c_segment_timer_bresenham.cpp</Link>
-    </Compile>
-    <Compile Include="..\..\c_segment_timer_bresenham.h">
-      <SubType>compile</SubType>
-      <Link>c_segment_timer_bresenham.h</Link>
-    </Compile>
-    <Compile Include="..\..\c_segment_timer_item.cpp">
-      <SubType>compile</SubType>
-      <Link>c_segment_timer_item.cpp</Link>
-    </Compile>
-    <Compile Include="..\..\c_segment_timer_item.h">
-      <SubType>compile</SubType>
-      <Link>c_segment_timer_item.h</Link>
-    </Compile>
-    <Compile Include="..\..\hardware_def.h">
-      <SubType>compile</SubType>
-      <Link>hardware_def.h</Link>
-    </Compile>
-    <Compile Include="..\..\main.cpp">
-      <SubType>compile</SubType>
-      <Link>main.cpp</Link>
     </Compile>
     <Compile Include="Device_Startup\startup_sam3xa.c">
       <SubType>compile</SubType>
@@ -346,19 +244,18 @@
     <Compile Include="Device_Startup\system_sam3xa.c">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="main.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="pio.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="pio.h">
+      <SubType>compile</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Device_Startup\" />
-    <Folder Include="MotionDriver\" />
-    <Folder Include="MotionDriver\Common\" />
-    <Folder Include="MotionDriver\Common\Hardware Abstraction Layer\" />
-    <Folder Include="MotionDriver\Common\Hardware Abstraction Layer\ARM 3X8E\" />
-    <Folder Include="MotionDriver\Common\Hardware Abstraction Layer\ARM 3X8E\clock\" />
-    <Folder Include="MotionDriver\Common\Hardware Abstraction Layer\ARM 3X8E\pio\" />
-    <Folder Include="MotionDriver\Common\Hardware Abstraction Layer\ARM 3X8E\pmc\" />
-    <Folder Include="MotionDriver\Common\Hardware Abstraction Layer\ARM 3X8E\uart\" />
-    <Folder Include="MotionDriver\Common\Hardware Abstraction Layer\ARM 3X8E\usart\" />
-    <Folder Include="MotionDriver\Common\Serial\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Device_Startup\sam3x8e_flash.ld">

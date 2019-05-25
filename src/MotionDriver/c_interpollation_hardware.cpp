@@ -11,6 +11,7 @@ static ofstream myfile;
 
 #endif // MSVC
 #include "c_processor.h"
+#include "c_segment_arbitrator.h"
 
 Motion_Core::Segment::Bresenham::Bresenham_Item *Motion_Core::Hardware::Interpollation::Change_Check_Exec_Timer_Bresenham; // Tracks the current st_block index. Change indicates new block.
 Motion_Core::Segment::Timer::Timer_Item *Motion_Core::Hardware::Interpollation::Exec_Timer_Item;  // Pointer to the segment being executed
@@ -74,7 +75,8 @@ void Motion_Core::Hardware::Interpollation::Shutdown()
 #ifdef MSVC
 static uint32_t test_count = 0;
 #endif
-
+static uint32_t steps_taken = 0;
+static uint32_t previous_delay = 0;
 void Motion_Core::Hardware::Interpollation::step_tick()
 {
 	if (Motion_Core::Hardware::Interpollation::Step_Active)
@@ -121,6 +123,7 @@ void Motion_Core::Hardware::Interpollation::step_tick()
 
 	if (Motion_Core::Hardware::Interpollation::Exec_Timer_Item == NULL)
 	{
+		
 		active = 1;
 
 		// Anything in the buffer? If so, load and initialize next step segment.
@@ -137,6 +140,8 @@ void Motion_Core::Hardware::Interpollation::step_tick()
 
 			Hardware_Abstraction_Layer::MotionCore::Stepper::TCCR1B_set
 			(Motion_Core::Hardware::Interpollation::Exec_Timer_Item->timer_prescaler);
+
+			previous_delay = Motion_Core::Hardware::Interpollation::Exec_Timer_Item->timer_delay_value;
 
 			Hardware_Abstraction_Layer::MotionCore::Stepper::OCR1A_set
 			(Motion_Core::Hardware::Interpollation::Exec_Timer_Item->timer_delay_value);
@@ -176,6 +181,21 @@ void Motion_Core::Hardware::Interpollation::step_tick()
 		}
 		else
 		{
+			if (steps_taken!=0)
+			{
+				
+				c_processor::debug_serial.print_string("Steps completed =");
+				c_processor::debug_serial.print_int32(steps_taken);c_processor::debug_serial.Write(CR);
+				
+				c_processor::debug_serial.print_string("Previous delay =");
+				c_processor::debug_serial.print_int32(previous_delay);c_processor::debug_serial.Write(CR);
+				
+				c_processor::debug_serial.print_string("Last delay =");
+				c_processor::debug_serial.print_int32(Motion_Core::Hardware::Interpollation::Exec_Timer_Item->timer_delay_value);c_processor::debug_serial.Write(CR);
+				Motion_Core::Hardware::Interpollation::Step_Active = 0;
+				steps_taken = 0;
+				return;
+			}
 			// Segment buffer empty. Shutdown.
 			Motion_Core::Hardware::Interpollation::Shutdown();
 			Motion_Core::Hardware::Interpollation::Interpolation_Active = 0; // Flag main program for cycle end
@@ -224,6 +244,7 @@ void Motion_Core::Hardware::Interpollation::step_tick()
 	Motion_Core::Hardware::Interpollation::step_outbits
 	^= Motion_Core::Hardware::Interpollation::step_port_invert_mask;  // Apply step port invert mask
 	Motion_Core::Hardware::Interpollation::Step_Active = 0;
+	steps_taken++;
 }
 
 uint8_t Motion_Core::Hardware::Interpollation::is_active()

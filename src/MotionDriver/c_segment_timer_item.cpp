@@ -9,8 +9,8 @@ Motion_Core::Segment::Timer::Timer_Item::~Timer_Item()
 }
 
 Motion_Core::Segment::Timer::Timer_Item Motion_Core::Segment::Timer::Buffer::_buffer[Motion_Core::Segment::Timer::BUFFER_SIZE];
-int8_t Motion_Core::Segment::Timer::Buffer::_tail = 0;
-int8_t Motion_Core::Segment::Timer::Buffer::_head = 0;
+int16_t Motion_Core::Segment::Timer::Buffer::_tail = 0;
+int16_t Motion_Core::Segment::Timer::Buffer::_head = 0;
 uint8_t Motion_Core::Segment::Timer::Buffer::_full = 0;
 
 /*
@@ -71,7 +71,7 @@ Motion_Core::Segment::Timer::Timer_Item *Motion_Core::Segment::Timer::Buffer::Cu
 /*
 Returns a pointer to the current buffer head object for writing (DOES move the head)
 */
-Motion_Core::Segment::Timer::Timer_Item *Motion_Core::Segment::Timer::Buffer::Write()
+Motion_Core::Segment::Timer::Timer_Item *Motion_Core::Segment::Timer::Buffer::Writex()
 {
 	if (Motion_Core::Segment::Timer::Buffer::_full == 1)
 	return NULL;
@@ -88,6 +88,26 @@ Motion_Core::Segment::Timer::Timer_Item *Motion_Core::Segment::Timer::Buffer::Wr
 		Motion_Core::Segment::Timer::Buffer::_full = 1;
 	}
 		
+	return item;
+}
+
+int16_t Motion_Core::Segment::Timer::Buffer::WriteableHead()
+{
+	if (Motion_Core::Segment::Timer::Buffer::_full == 1)
+	return -1;
+
+	int16_t item = Motion_Core::Segment::Timer::Buffer::_head++;
+	
+	//Are we wrapping?
+	if (Motion_Core::Segment::Timer::Buffer::_head == Motion_Core::Segment::Timer::BUFFER_SIZE)
+	Motion_Core::Segment::Timer::Buffer::_head = 0;
+	
+	//Have we gotten back to the tail?
+	if (Motion_Core::Segment::Timer::Buffer::_head == Motion_Core::Segment::Timer::Buffer::_tail)
+	{
+		Motion_Core::Segment::Timer::Buffer::_full = 1;
+	}
+	
 	return item;
 }
 

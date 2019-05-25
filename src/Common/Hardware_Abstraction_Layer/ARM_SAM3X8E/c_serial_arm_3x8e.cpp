@@ -9,11 +9,7 @@
 #include "c_serial_arm_3x8e.h"
 #include <stdint.h>
 #include <stddef.h>
-//#include "uart/c_uart.h"
-//#include "usart/c_usart.h"
 #include "c_core_arm_3x8e.h"
-#include "..\..\..\SAM Prototyper\SAM Proto\pio.h"
-#include "pmc\c_pmc.h"
 
 #define COM_PORT_COUNT 4 //<--how many serial ports does this hardware have (or) how many do you need to use.
 #if(COM_PORT_COUNT<1)
@@ -109,35 +105,35 @@ void Hardware_Abstraction_Layer::Serial::initialize(uint8_t Port, uint32_t BaudR
 		}
 		case 1:
 		{
-			////Configure tx
-			//PIOA->PIO_OER|= PIO_PA11A_TXD0;
-			//PIOA->PIO_IDR |= PIO_PA11A_TXD0;
-			//PIOA->PIO_PDR |= PIO_PA11A_TXD0;
-			//PIOA->PIO_ABSR &= ~PIO_PA11A_TXD0;
-			//PIOA->PIO_PUER |= PIO_PA11A_TXD0;
-			//PIOA->PIO_CODR = PIO_PA11A_TXD0;
-			////Configure rx
-			//PIOA->PIO_ODR|= PIO_PA10A_RXD0;
-			//PIOA->PIO_IDR |= PIO_PA10A_RXD0;
-			//PIOA->PIO_PDR |= PIO_PA10A_RXD0;
-			//PIOA->PIO_ABSR &= ~PIO_PA10A_RXD0;
-			//PIOA->PIO_PUER |= PIO_PA10A_RXD0;
-			
 			//Configure tx
-			PIO_configurePin(
-			pinCharacteristic[18].port,
-			pinCharacteristic[18].pinMask,
-			pinCharacteristic[18].peripheralType,
-			pinCharacteristic[18].pinAttribute,
-			OUTPUT);
+			PIOA->PIO_OER|= PIO_PA11A_TXD0;
+			PIOA->PIO_IDR |= PIO_PA11A_TXD0;
+			PIOA->PIO_PDR |= PIO_PA11A_TXD0;
+			PIOA->PIO_ABSR &= ~PIO_PA11A_TXD0;
+			PIOA->PIO_PUER |= PIO_PA11A_TXD0;
+			PIOA->PIO_CODR = PIO_PA11A_TXD0;
+			//Configure rx
+			PIOA->PIO_ODR|= PIO_PA10A_RXD0;
+			PIOA->PIO_IDR |= PIO_PA10A_RXD0;
+			PIOA->PIO_PDR |= PIO_PA10A_RXD0;
+			PIOA->PIO_ABSR &= ~PIO_PA10A_RXD0;
+			PIOA->PIO_PUER |= PIO_PA10A_RXD0;
 			
-			
-			PIO_configurePin(
-			pinCharacteristic[19].port,
-			pinCharacteristic[19].pinMask,
-			pinCharacteristic[19].peripheralType,
-			pinCharacteristic[19].pinAttribute,
-			INPUT);
+			////Configure tx
+			//PIO_configurePin(
+			//pinCharacteristic[18].port,
+			//pinCharacteristic[18].pinMask,
+			//pinCharacteristic[18].peripheralType,
+			//pinCharacteristic[18].pinAttribute,
+			//OUTPUT);
+			//
+			//
+			//PIO_configurePin(
+			//pinCharacteristic[19].port,
+			//pinCharacteristic[19].pinMask,
+			//pinCharacteristic[19].peripheralType,
+			//pinCharacteristic[19].pinAttribute,
+			//INPUT);
 			
 			//uint32_t mode = US_MR_USART_MODE_NORMAL | US_MR_USCLKS_MCK| US_MR_CHMODE_NORMAL | US_MR_CHRL_8_BIT|
 			//US_MR_PAR_NO;

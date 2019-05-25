@@ -467,8 +467,9 @@ float Motion_Core::Planner::Calculator::plan_get_exec_block_exit_speed_sqr()
 		return (0.0);
 	}
 	//Get the block ahead of our current block
-	return (Motion_Core::Planner::Buffer::Get(Motion_Core::Segment::Arbitrator::Active_Block->Station + 1)->entry_speed_sqr);
-	//return (Motion_Core::Segment::Arbitrator::Active_Block->entry_speed_sqr);
+	//return (Motion_Core::Planner::Buffer::Get(Motion_Core::Segment::Arbitrator::Active_Block->Station + 1)->entry_speed_sqr);
+	return (Motion_Core::Planner::Buffer::_buffer[Motion_Core::Segment::Arbitrator::Active_Block->Station + 1].entry_speed_sqr);
+	
 }
 
 
