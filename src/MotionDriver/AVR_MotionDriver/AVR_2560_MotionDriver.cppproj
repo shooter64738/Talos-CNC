@@ -202,51 +202,51 @@
     </Compile>
     <Compile Include="..\c_block.cpp">
       <SubType>compile</SubType>
-      <Link>c_block.cpp</Link>
+      <Link>AVR_MotionDriver\Motion Calculations\c_block.cpp</Link>
     </Compile>
     <Compile Include="..\c_block.h">
       <SubType>compile</SubType>
-      <Link>c_block.h</Link>
+      <Link>AVR_MotionDriver\Motion Calculations\c_block.h</Link>
     </Compile>
     <Compile Include="..\c_block_buffer.cpp">
       <SubType>compile</SubType>
-      <Link>c_block_buffer.cpp</Link>
+      <Link>AVR_MotionDriver\Motion Calculations\c_block_buffer.cpp</Link>
     </Compile>
     <Compile Include="..\c_block_buffer.h">
       <SubType>compile</SubType>
-      <Link>c_block_buffer.h</Link>
+      <Link>AVR_MotionDriver\Motion Calculations\c_block_buffer.h</Link>
     </Compile>
     <Compile Include="..\c_interpollation_hardware.cpp">
       <SubType>compile</SubType>
-      <Link>c_interpollation_hardware.cpp</Link>
+      <Link>AVR_MotionDriver\Motion Calculations\c_interpollation_hardware.cpp</Link>
     </Compile>
     <Compile Include="..\c_interpollation_hardware.h">
       <SubType>compile</SubType>
-      <Link>c_interpollation_hardware.h</Link>
+      <Link>AVR_MotionDriver\Motion Calculations\c_interpollation_hardware.h</Link>
     </Compile>
     <Compile Include="..\c_interpollation_software.cpp">
       <SubType>compile</SubType>
-      <Link>c_interpollation_software.cpp</Link>
+      <Link>AVR_MotionDriver\Motion Calculations\c_interpollation_software.cpp</Link>
     </Compile>
     <Compile Include="..\c_interpollation_software.h">
       <SubType>compile</SubType>
-      <Link>c_interpollation_software.h</Link>
+      <Link>AVR_MotionDriver\Motion Calculations\c_interpollation_software.h</Link>
     </Compile>
     <Compile Include="..\c_motion_core.cpp">
       <SubType>compile</SubType>
-      <Link>c_motion_core.cpp</Link>
+      <Link>AVR_MotionDriver\Motion Calculations\c_motion_core.cpp</Link>
     </Compile>
     <Compile Include="..\c_motion_core.h">
       <SubType>compile</SubType>
-      <Link>c_motion_core.h</Link>
+      <Link>AVR_MotionDriver\Motion Calculations\c_motion_core.h</Link>
     </Compile>
     <Compile Include="..\c_planner_compute_block.cpp">
       <SubType>compile</SubType>
-      <Link>c_planner_compute_block.cpp</Link>
+      <Link>AVR_MotionDriver\Motion Calculations\c_planner_compute_block.cpp</Link>
     </Compile>
     <Compile Include="..\c_planner_compute_block.h">
       <SubType>compile</SubType>
-      <Link>c_planner_compute_block.h</Link>
+      <Link>AVR_MotionDriver\Motion Calculations\c_planner_compute_block.h</Link>
     </Compile>
     <Compile Include="..\c_processor.cpp">
       <SubType>compile</SubType>
@@ -258,27 +258,27 @@
     </Compile>
     <Compile Include="..\c_segment_arbitrator.cpp">
       <SubType>compile</SubType>
-      <Link>c_segment_arbitrator.cpp</Link>
+      <Link>AVR_MotionDriver\Motion Calculations\c_segment_arbitrator.cpp</Link>
     </Compile>
     <Compile Include="..\c_segment_arbitrator.h">
       <SubType>compile</SubType>
-      <Link>c_segment_arbitrator.h</Link>
+      <Link>AVR_MotionDriver\Motion Calculations\c_segment_arbitrator.h</Link>
     </Compile>
     <Compile Include="..\c_segment_timer_bresenham.cpp">
       <SubType>compile</SubType>
-      <Link>c_segment_timer_bresenham.cpp</Link>
+      <Link>AVR_MotionDriver\Motion Calculations\c_segment_timer_bresenham.cpp</Link>
     </Compile>
     <Compile Include="..\c_segment_timer_bresenham.h">
       <SubType>compile</SubType>
-      <Link>c_segment_timer_bresenham.h</Link>
+      <Link>AVR_MotionDriver\Motion Calculations\c_segment_timer_bresenham.h</Link>
     </Compile>
     <Compile Include="..\c_segment_timer_item.cpp">
       <SubType>compile</SubType>
-      <Link>c_segment_timer_item.cpp</Link>
+      <Link>AVR_MotionDriver\Motion Calculations\c_segment_timer_item.cpp</Link>
     </Compile>
     <Compile Include="..\c_segment_timer_item.h">
       <SubType>compile</SubType>
-      <Link>c_segment_timer_item.h</Link>
+      <Link>AVR_MotionDriver\Motion Calculations\c_segment_timer_item.h</Link>
     </Compile>
     <Compile Include="..\hardware_def.h">
       <SubType>compile</SubType>
@@ -295,6 +295,7 @@
     <Folder Include="MotionDriver\Common\Hardware Abstraction Layer\" />
     <Folder Include="MotionDriver\Common\Hardware Abstraction Layer\AVR 2560\" />
     <Folder Include="MotionDriver\Common\Serial" />
+    <Folder Include="Motion Calculations" />
   </ItemGroup>
   <Import Project="$(AVRSTUDIO_EXE_PATH)\\Vs\\Compiler.targets" />
 </Project>

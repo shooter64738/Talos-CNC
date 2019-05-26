@@ -18,7 +18,7 @@ Motion_Core::Segment::Timer::Timer_Item *Motion_Core::Hardware::Interpollation::
 
 int32_t Motion_Core::Hardware::Interpollation::system_position[MACHINE_AXIS_COUNT];
 uint32_t Motion_Core::Hardware::Interpollation::counter[MACHINE_AXIS_COUNT];
-volatile uint8_t active = 0;
+
 #ifdef STEP_PULSE_DELAY
 uint8_t step_bits;  // Stores out_bits output to complete the step pulse delay
 #endif
@@ -41,6 +41,7 @@ uint32_t Motion_Core::Hardware::Interpollation::Current_Sequence = 0;
 uint32_t Motion_Core::Hardware::Interpollation::Last_Completed_Sequence = 0;
 
 uint8_t Motion_Core::Hardware::Interpollation::direction_set = 0;
+BinaryRecords::e_feed_modes Motion_Core::Hardware::Interpollation::drive_mode;
 
 void Motion_Core::Hardware::Interpollation::Initialize()
 {
@@ -52,13 +53,28 @@ void Motion_Core::Hardware::Interpollation::Initialize()
 		Motion_Core::Hardware::Interpollation::Interpolation_Active = 1;
 		Motion_Core::Hardware::Interpollation::step_outbits = step_port_invert_mask;
 		
+		switch (Motion_Core::Hardware::Interpollation::drive_mode)
+		{
+			//G93 and G94 feed modes
+			case BinaryRecords::e_feed_modes::FEED_RATE_MINUTES_PER_UNIT_MODE:
+			case BinaryRecords::e_feed_modes::FEED_RATE_UNITS_PER_MINUTE_MODE:
+			{
+				//This is driven internally by the motion controllers timer
+				Hardware_Abstraction_Layer::MotionCore::Stepper::wake_up();
+			}
+			//G95 feed mode
+			case BinaryRecords::e_feed_modes::FEED_RATE_UNITS_PER_ROTATION:
+			{
+				//Motion_Core::Hardware::Interpollation::Drive_With_Timer();
+			}
+			break;
+			default:
+			/* Your code here */
+			break;
+		}
+		
 	}
 
-}
-
-void Motion_Core::Hardware::Interpollation::Drive_With_Timer()
-{
-	Hardware_Abstraction_Layer::MotionCore::Stepper::wake_up();
 }
 
 void Motion_Core::Hardware::Interpollation::Shutdown()
@@ -72,11 +88,8 @@ void Motion_Core::Hardware::Interpollation::Shutdown()
 	//Hardware_Abstraction_Layer::Grbl::Stepper::port_disable(pin_state);
 
 }
-#ifdef MSVC
-static uint32_t test_count = 0;
-#endif
-static uint32_t steps_taken = 0;
-static uint32_t previous_delay = 0;
+
+
 void Motion_Core::Hardware::Interpollation::step_tick()
 {
 	if (Motion_Core::Hardware::Interpollation::Step_Active)
@@ -84,17 +97,6 @@ void Motion_Core::Hardware::Interpollation::step_tick()
 		return;
 	} // The busy-flag is used to avoid reentering this interrupt
 	
-	#ifdef MSVC
-	test_count++;
-	if (test_count == 150)
-	{
-		c_processor::remote = 1;
-		while (c_processor::remote == 1)
-		{
-		}
-		c_processor::remote = 0;
-	}
-	#endif
 	//We do not need to set the direction pins on every interrupt. These should only change when a new block is loaded.
 	if (!Motion_Core::Hardware::Interpollation::direction_set)
 	{
@@ -102,14 +104,9 @@ void Motion_Core::Hardware::Interpollation::step_tick()
 		| (Motion_Core::Hardware::Interpollation::dir_outbits & DIRECTION_MASK));
 		Motion_Core::Hardware::Interpollation::direction_set = 1;
 	}
-
-	// Then pulse the stepping pins
-	#ifdef STEP_PULSE_DELAY
-	st.step_bits = (STEP_PORT & ~STEP_MASK) | st.step_outbits; // Store out_bits to prevent overwriting.
-	#else  // Normal operation
-	//STEP_PORT = (STEP_PORT & ~STEP_MASK) | st.step_outbits;
+	
 	Hardware_Abstraction_Layer::MotionCore::Stepper::port_step((STEP_PORT & ~STEP_MASK) | Motion_Core::Hardware::Interpollation::step_outbits);
-	#endif
+	
 
 	// Enable step pulse reset timer so that The Stepper Port Reset Interrupt can reset the signal after
 	// exactly settings.pulse_microseconds microseconds, independent of the main Timer1 prescaler.
@@ -123,9 +120,6 @@ void Motion_Core::Hardware::Interpollation::step_tick()
 
 	if (Motion_Core::Hardware::Interpollation::Exec_Timer_Item == NULL)
 	{
-		
-		active = 1;
-
 		// Anything in the buffer? If so, load and initialize next step segment.
 		if ((Motion_Core::Hardware::Interpollation::Exec_Timer_Item = Motion_Core::Segment::Timer::Buffer::Current()) != NULL)
 		{
@@ -140,8 +134,6 @@ void Motion_Core::Hardware::Interpollation::step_tick()
 
 			Hardware_Abstraction_Layer::MotionCore::Stepper::TCCR1B_set
 			(Motion_Core::Hardware::Interpollation::Exec_Timer_Item->timer_prescaler);
-
-			previous_delay = Motion_Core::Hardware::Interpollation::Exec_Timer_Item->timer_delay_value;
 
 			Hardware_Abstraction_Layer::MotionCore::Stepper::OCR1A_set
 			(Motion_Core::Hardware::Interpollation::Exec_Timer_Item->timer_delay_value);
@@ -181,21 +173,6 @@ void Motion_Core::Hardware::Interpollation::step_tick()
 		}
 		else
 		{
-			if (steps_taken!=0)
-			{
-				
-				c_processor::debug_serial.print_string("Steps completed =");
-				c_processor::debug_serial.print_int32(steps_taken);c_processor::debug_serial.Write(CR);
-				
-				c_processor::debug_serial.print_string("Previous delay =");
-				c_processor::debug_serial.print_int32(previous_delay);c_processor::debug_serial.Write(CR);
-				
-				c_processor::debug_serial.print_string("Last delay =");
-				c_processor::debug_serial.print_int32(Motion_Core::Hardware::Interpollation::Exec_Timer_Item->timer_delay_value);c_processor::debug_serial.Write(CR);
-				Motion_Core::Hardware::Interpollation::Step_Active = 0;
-				steps_taken = 0;
-				return;
-			}
 			// Segment buffer empty. Shutdown.
 			Motion_Core::Hardware::Interpollation::Shutdown();
 			Motion_Core::Hardware::Interpollation::Interpolation_Active = 0; // Flag main program for cycle end
@@ -203,7 +180,6 @@ void Motion_Core::Hardware::Interpollation::step_tick()
 			Motion_Core::Hardware::Interpollation::Last_Completed_Sequence = Motion_Core::Hardware::Interpollation::Current_Sequence;
 			Motion_Core::Hardware::Interpollation::Current_Sequence = 0;
 			Motion_Core::Hardware::Interpollation::direction_set = 0;
-			active = 0;
 			return; // Nothing to do but exit.
 		}
 	}
@@ -244,10 +220,4 @@ void Motion_Core::Hardware::Interpollation::step_tick()
 	Motion_Core::Hardware::Interpollation::step_outbits
 	^= Motion_Core::Hardware::Interpollation::step_port_invert_mask;  // Apply step port invert mask
 	Motion_Core::Hardware::Interpollation::Step_Active = 0;
-	steps_taken++;
-}
-
-uint8_t Motion_Core::Hardware::Interpollation::is_active()
-{
-	return active;
 }

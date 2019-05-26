@@ -215,7 +215,35 @@ const uint32_t multiDriveEN, const uint32_t pullUpEN){
 	
 }
 
-extern void PIO_setInput(Pio* port, const uint32_t pinMask, const uint32_t attribute){
+extern void pio_set_output(Pio *p_pio, const uint32_t ul_mask,
+const uint32_t ul_default_level,
+const uint32_t ul_multidrive_enable,
+const uint32_t ul_pull_up_enable)
+{
+	pio_disable_interrupt(p_pio, ul_mask);
+	pio_pull_up(p_pio, ul_mask, ul_pull_up_enable);
+
+	/* Enable multi-drive if necessary */
+	if (ul_multidrive_enable) {
+		p_pio->PIO_MDER = ul_mask;
+		} else {
+		p_pio->PIO_MDDR = ul_mask;
+	}
+
+	/* Set default value */
+	if (ul_default_level) {
+		p_pio->PIO_SODR = ul_mask;
+		} else {
+		p_pio->PIO_CODR = ul_mask;
+	}
+
+	/* Configure pin(s) as output(s) */
+	p_pio->PIO_OER = ul_mask;
+	p_pio->PIO_PER = ul_mask;
+}
+
+extern void PIO_setInput(Pio* port, const uint32_t pinMask, const uint32_t attribute)
+{
 	PIO_disableInterrupt(port, pinMask);
 	PIO_pullUpEnable(port, pinMask);
 	
@@ -241,6 +269,23 @@ extern void PIO_setInput(Pio* port, const uint32_t pinMask, const uint32_t attri
 	port->PIO_PER=pinMask;
 }
 
+extern void pio_set_input(Pio *p_pio, const uint32_t ul_mask,const uint32_t ul_attribute)
+{
+	pio_disable_interrupt(p_pio, ul_mask);
+	pio_pull_up(p_pio, ul_mask, ul_attribute & PIO_PULLUP);
+
+	/* Enable Input Filter if necessary */
+	if (ul_attribute & (PIO_DEGLITCH | PIO_DEBOUNCE)) {
+		p_pio->PIO_IFER = ul_mask;
+		} else {
+		p_pio->PIO_IFDR = ul_mask;
+	}
+
+	/* Configure pin as input */
+	p_pio->PIO_ODR = ul_mask;
+	p_pio->PIO_PER = ul_mask;
+}
+
 extern void PIO_setPin(Pio* port, const uint32_t pinMask){
 	port->PIO_SODR |= pinMask;
 }
@@ -261,8 +306,28 @@ extern void PIO_disableInterrupt(Pio* port, const uint32_t pinMask){
 	port->PIO_IDR |= pinMask;
 }
 
+extern void pio_disable_interrupt(Pio *p_pio, const uint32_t ul_mask)
+{
+	p_pio->PIO_IDR |= ul_mask;
+}
+
+extern void pio_pull_up(Pio *p_pio, const uint32_t ul_mask,const uint32_t ul_pull_up_enable)
+{
+	/* Enable the pull-up(s) if necessary */
+	if (ul_pull_up_enable) {
+		p_pio->PIO_PUER = ul_mask;
+		} else {
+		p_pio->PIO_PUDR = ul_mask;
+	}
+}
+
 extern void PIO_enableInterrupt(Pio* port, const uint32_t pinMask){
 	port->PIO_IER |= pinMask;
+}
+
+extern void pio_enable_interrupt(Pio *p_pio, const uint32_t ul_mask)
+{
+	p_pio->PIO_IER |= ul_mask;
 }
 
 extern void PIO_setPeripheral(Pio* port, const uint32_t pinMask, const EpioType type){
@@ -334,4 +399,107 @@ extern uint32_t PIO_readPinDataStatus(Pio* port, const uint32_t pinMask){
 		} else {
 		return 0;
 	}
+}
+
+extern uint32_t pio_handler_set(Pio *p_pio, uint32_t ul_id, uint32_t ul_mask,uint32_t ul_attr, void (*p_handler) (uint32_t, uint32_t))
+{
+	uint8_t i;
+	struct s_interrupt_source *pSource;
+
+	if (gs_ul_nb_sources >= MAX_INTERRUPT_SOURCES)
+	return 1;
+
+	/* Check interrupt for this pin, if already defined, redefine it. */
+	for (i = 0; i <= gs_ul_nb_sources; i++) {
+		pSource = &(gs_interrupt_sources[i]);
+		if (pSource->id == ul_id && pSource->mask == ul_mask) {
+			break;
+		}
+	}
+
+	/* Define new source */
+	pSource->id = ul_id;
+	pSource->mask = ul_mask;
+	pSource->attr = ul_attr;
+	pSource->handler = p_handler;
+	if (i == gs_ul_nb_sources + 1) {
+		gs_ul_nb_sources++;
+	}
+
+	/* Configure interrupt mode */
+	pio_configure_interrupt(p_pio, ul_mask, ul_attr);
+
+	return 0;
+}
+
+extern void pio_configure_interrupt(Pio *p_pio, const uint32_t ul_mask,		const uint32_t ul_attr)
+{
+	/* Configure additional interrupt mode registers. */
+	if (ul_attr & PIO_IT_AIME) {
+		/* Enable additional interrupt mode. */
+		p_pio->PIO_AIMER = ul_mask;
+
+		/* If bit field of the selected pin is 1, set as
+		   Rising Edge/High level detection event. */
+		if (ul_attr & PIO_IT_RE_OR_HL) {
+			/* Rising Edge or High Level */
+			p_pio->PIO_REHLSR = ul_mask;
+		} else {
+			/* Falling Edge or Low Level */
+			p_pio->PIO_FELLSR = ul_mask;
+		}
+
+		/* If bit field of the selected pin is 1, set as
+		   edge detection source. */
+		if (ul_attr & PIO_IT_EDGE) {
+			/* Edge select */
+			p_pio->PIO_ESR = ul_mask;
+		} else {
+			/* Level select */
+			p_pio->PIO_LSR = ul_mask;
+		}
+	} else {
+		/* Disable additional interrupt mode. */
+		p_pio->PIO_AIMDR = ul_mask;
+	}
+}
+
+extern void pio_handler_process(Pio *p_pio, uint32_t ul_id)
+{
+	//uint32_t status;
+	//uint32_t i;
+//
+	///* Read PIO controller status */
+	//status = pio_get_interrupt_status(p_pio);
+	//status &= pio_get_interrupt_mask(p_pio);
+//
+	///* Check pending events */
+	//if (status != 0) {
+		///* Find triggering source */
+		//i = 0;
+		//while (status != 0) {
+			///* Source is configured on the same controller */
+			//if (gs_interrupt_sources[i].id == ul_id) {
+				///* Source has PIOs whose statuses have changed */
+				//if ((status & gs_interrupt_sources[i].mask) != 0) {
+					//gs_interrupt_sources[i].handler(gs_interrupt_sources[i].id,
+					//gs_interrupt_sources[i].mask);
+					//status &= ~(gs_interrupt_sources[i].mask);
+				//}
+			//}
+			//i++;
+			//if (i >= MAX_INTERRUPT_SOURCES) {
+				//break;
+			//}
+		//}
+	//}
+//
+	///* Check capture events */
+	//#if (SAM3S || SAM4S || SAM4E)
+	//if (pio_capture_enable_flag) {
+		//if (pio_capture_handler) {
+			//pio_capture_handler(p_pio);
+		//}
+	//}
+	//#endif
 }

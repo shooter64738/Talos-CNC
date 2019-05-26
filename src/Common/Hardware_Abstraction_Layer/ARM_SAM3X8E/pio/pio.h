@@ -8,6 +8,32 @@
 #include "component/pio.h"
 
 /********General Constants********/
+#define MAX_INTERRUPT_SOURCES       7
+
+/**
+ * Describes a PIO interrupt source, including the PIO instance triggering the
+ * interrupt and the associated interrupt handler.
+ */
+struct s_interrupt_source {
+	uint32_t id;
+	uint32_t mask;
+	uint32_t attr;
+
+	/* Interrupt handler. */
+	void (*handler) (const uint32_t, const uint32_t);
+};
+
+
+/* List of interrupt sources. */
+static struct s_interrupt_source gs_interrupt_sources[MAX_INTERRUPT_SOURCES];
+
+/* Number of currently defined interrupt sources. */
+static uint32_t gs_ul_nb_sources = 0;
+
+
+
+#define DISABLE   0
+#define ENABLE    1
 #define LOW 0x0
 #define HIGH 0x1
 #define OUTPUT 0x0
@@ -180,20 +206,25 @@ extern const PinDescription pinCharacteristic[];
 extern void PIO_enablePin(Pio* port, const uint32_t pinMask);
 extern void PIO_disablePin(Pio* port, const uint32_t pinMask);
 extern void PIO_setOutput(Pio* port, const uint32_t pinMask, const uint32_t defaultValue,
-const uint32_t multiDriveEN, const uint32_t pullUpEN);
+	const uint32_t multiDriveEN, const uint32_t pullUpEN);
+extern void pio_set_output(Pio *p_pio, const uint32_t ul_mask,const uint32_t ul_default_level,
+	const uint32_t ul_multidrive_enable,const uint32_t ul_pull_up_enable);
 extern void PIO_setInput(Pio* port, const uint32_t pinMask, const uint32_t attribute);
+extern void pio_set_input(Pio *p_pio, const uint32_t ul_mask,const uint32_t ul_attribute);
 extern void PIO_setPin(Pio* port, const uint32_t pinMask);
 extern void PIO_clearPin(Pio* port, const uint32_t pinMask);
 extern void PIO_pullUpEnable(Pio* port, const uint32_t pinMask);
 extern void PIO_pullUpDisable(Pio* port, const uint32_t pinMask);
 extern void PIO_disableInterrupt(Pio* port, const uint32_t pinMask);
+extern void pio_disable_interrupt(Pio *p_pio, const uint32_t ul_mask);
+extern void pio_pull_up(Pio *p_pio, const uint32_t ul_mask,const uint32_t ul_pull_up_enable);
 extern void PIO_enableInterrupt(Pio* port, const uint32_t pinMask);
 extern void PIO_setPeripheral(Pio* port, const uint32_t pinMask, const EpioType type);
 extern uint32_t PIO_configurePin(Pio* port, const uint32_t pinMask, const EpioType type, const uint32_t attribute, const uint32_t ioMode);
 extern uint32_t PIO_readOutputDataStatus(Pio* port, const uint32_t pinMask);
 extern uint32_t PIO_readPinDataStatus(Pio* port, const uint32_t pinMask);
-
-
-
-
+extern uint32_t pio_handler_set(Pio *p_pio, uint32_t ul_id, uint32_t ul_mask,uint32_t ul_attr, void (*p_handler) (uint32_t, uint32_t));
+extern void pio_configure_interrupt(Pio *p_pio, const uint32_t ul_mask, const uint32_t ul_attr);
+extern void pio_enable_interrupt(Pio *p_pio, const uint32_t ul_mask);
+extern void pio_handler_process(Pio *p_pio, uint32_t ul_id);
 #endif /* PIO_H_ */

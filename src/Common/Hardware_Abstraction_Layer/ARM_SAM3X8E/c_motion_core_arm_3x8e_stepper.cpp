@@ -26,7 +26,7 @@ uint8_t Hardware_Abstraction_Layer::MotionCore::Stepper::step_mask;// = STEP_MAS
 #define SYS_TICKS (84)
 //void SysTick_Handler(void)
 //{
-	//c_processor::debug_serial.print_string("sys tick\r");
+//c_processor::debug_serial.print_string("sys tick\r");
 //}
 
 
@@ -168,12 +168,6 @@ void Hardware_Abstraction_Layer::MotionCore::Stepper::port_step(uint8_t steps)
 uint16_t Hardware_Abstraction_Layer::MotionCore::Stepper::set_delay_from_hardware(
 uint32_t calculated_delay, uint32_t * delay, uint8_t * prescale)
 {
-	if (calculated_delay<300)
-	{
-		c_processor::debug_serial.print_string("calculated_delay ");
-		c_processor::debug_serial.print_int32(calculated_delay);
-		c_processor::debug_serial.Write(CR);
-	}
 	
 	//There is no need for a prescaler on the ARM system because the delay value is a uint32.
 	//YOu can put such a large value in it that a stepper can be ran very slowly with a high

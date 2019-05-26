@@ -53,6 +53,7 @@ namespace Motion_Core
 			static void Fill_Step_Segment_Buffer();
 			static uint8_t Segment_Calculate();
 			static void st_update_plan_block_parameters();
+			static void cycle_hold();
 			static void Set_Segment_Delay(Motion_Core::Segment::Timer::Timer_Item *segment_item, uint32_t cycles);
 			static float mm_remaining;
 

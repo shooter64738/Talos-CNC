@@ -82,8 +82,10 @@ namespace BinaryRecords
 		Motion_Complete =	02,
 		Motion_Idle =		03,
 		Motion_Jogging =	04,
+		Motion_Cancel =		05,
 		Spindle_Stopped =	20,
 		Spindle_Running =	21,
+		System_Error =		99
 	};
 	#endif
 	
@@ -91,11 +93,28 @@ namespace BinaryRecords
 	#define __C_SYSTEM_SUB_STATE_RECORD_TYPES
 	enum class e_system_sub_state_record_types : uint8_t
 	{
-		Block_Complete = 01,
-		Block_Starting = 02,
-		Block_Queuing = 02,
+		Block_Complete =			01, //The block has completed. Block sequence # is returned in the num_message
+		Block_Starting =			02, //Block is starting execution
+		Block_Queuing =				03, //The block has been placed in the motion queue
+		Block_Holding =				04, //Block was executing, but feed hold was instructed
+		Block_Reserved1 =			05, //Reserved
+		Block_Reserved2 =			06, //Reserved
+		Block_Reserved3 =			06, //Reserved
+		Block_Reserved4 =			06, //Reserved
+		Error_Axis_Drive_Fault_X =	90, //Closed loop driver error
+		Error_Axis_Drive_Fault_Y =	91, //Closed loop driver error
+		Error_Axis_Drive_Fault_Z =	92, //Closed loop driver error
+		Error_Axis_Drive_Fault_A =	93, //Closed loop driver error
+		Error_Axis_Drive_Fault_B =	94, //Closed loop driver error
+		Error_Axis_Drive_Fault_C =	95, //Closed loop driver error
+		Error_Axis_Drive_Fault_U =	96, //Closed loop driver error
+		Error_Axis_Drive_Fault_V =	97  //Closed loop driver error
+		
 	};
+	
 	#endif
+	
+	
 	
 	#ifndef __C_BINARY_RESPONSES
 	#define __C_BINARY_RESPONSES
@@ -107,12 +126,12 @@ namespace BinaryRecords
 	#define __C_PERIPHERAL_PANEL_PROCESSING
 	enum class e_peripheral_panel_processing : uint16_t
 	{
-		Block_Skip = 1, //when on any lines begining with the skip '/' char are not executed
-		Single_block = 2, // only on line at a time is processed.
-		Spindle_On_Off = 3,// spindle manual on or off
-		Coolant_On_Off = 4,
-		Coolant_Mist_On_Off = 5,
-		Coolant_Flood_On_Off = 6
+		Block_Skip =			1, //when on any lines beginning with the skip '/' char are not executed
+		Single_block =			2, // only one line at a time is processed.
+		Spindle_On_Off =		3, // spindle manual on or off
+		Coolant_On_Off =		4,
+		Coolant_Mist_On_Off =	5,
+		Coolant_Flood_On_Off =	6
 	};
 	#endif
 	
@@ -158,12 +177,14 @@ namespace BinaryRecords
 	{
 		e_peripheral_panel_processing Toggles; //Bit values set for on/off panel options
 	}__attribute__((packed,aligned(1)));;
+	
 	struct s_peripheral_group_overrides
 	{
 		e_peripheral_panel_override_rapids RapidFeed;
 		uint8_t TravelFeed; //0-150
 		uint8_t SpindleSpeed; //0-150
 	}__attribute__((packed,aligned(1)));;
+	
 	struct s_peripheral_group_jogging
 	{
 		uint8_t Axis;
@@ -187,32 +208,6 @@ namespace BinaryRecords
 		BinaryRecords::e_block_flag flag = BinaryRecords::e_block_flag::normal;
 	}__attribute__((packed,aligned(1)));
 	
-	
-	//struct s_motion_control_axis_settings
-	//{
-	//float acceleration;
-	//float max_rate;
-	//uint16_t steps_per_mm;
-	//float back_lash_comp_distance;
-	//float max_travel;
-	//uint32_t pulse_pin_assignment;
-	//uint32_t direction_pin_assignment;
-	//}__attribute__((packed,aligned(1)));
-	//
-	//struct s_motion_control_settings
-	//{
-	//const BinaryRecords::e_binary_record_types record_type = BinaryRecords::e_binary_record_types::Motion_Control_Setting;
-	//uint8_t axis_count;
-	//float junction_deviation;
-	//float arc_tolerance;
-	//uint16_t pulse_length;
-	//float interpolation_error_distance;
-	//uint16_t arc_angular_correction = 12;
-	//uint8_t invert_mpg_directions = 0;
-	//s_motion_control_axis_settings axis_configuration[];
-	//
-	//}__attribute__((packed,aligned(1)));
-	
 	struct s_motion_control_settings
 	{
 		const BinaryRecords::e_binary_record_types record_type = BinaryRecords::e_binary_record_types::Motion_Control_Setting;
@@ -233,6 +228,7 @@ namespace BinaryRecords
 	{
 		
 	}__attribute__((packed,aligned(1)));
+	
 	struct s_status_message
 	{
 		const BinaryRecords::e_binary_record_types record_type = BinaryRecords::e_binary_record_types::Status;
@@ -242,9 +238,5 @@ namespace BinaryRecords
 		char chr_message[17];
 	}__attribute__((packed,aligned(1)));
 	
-	
-	//static char motion_stream[sizeof(BinaryRecords::s_motion_data_block)];
-	//static char setting_stream[sizeof(BinaryRecords::s_motion_data_block)];
-	//
 };
 #endif /* RECORDS_DEF_H */

@@ -19,6 +19,11 @@ class c_processor
 	static c_Serial coordinator_serial;
 	static c_Serial debug_serial;
 	static void initialize();
+	static void check_jog_completed();
+	static void check_process_record(BinaryRecords::e_binary_record_types record_type);
+	static BinaryRecords::e_binary_record_types check_serial_input();
+	static void check_hardware_faults();
+	static void check_sequence_complete();
 	static BinaryRecords::e_binary_record_types load_record(BinaryRecords::e_binary_record_types record_type);
 	static BinaryRecords::e_binary_responses send_status(BinaryRecords::s_status_message status_data);
 	static BinaryRecords::e_binary_responses write_stream(char * stream, uint8_t record_size,BinaryRecords::e_binary_responses Ack_Resp);

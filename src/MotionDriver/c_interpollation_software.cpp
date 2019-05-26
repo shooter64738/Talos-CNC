@@ -84,31 +84,10 @@ void Motion_Core::Software::Interpollation::load_block(BinaryRecords::s_motion_d
 	if (return_value)
 	{
 		Motion_Core::Segment::Arbitrator::Fill_Step_Segment_Buffer();
+		Motion_Core::Hardware::Interpollation::drive_mode = block.feed_rate_mode;
 		Motion_Core::Hardware::Interpollation::Initialize();
-		Motion_Core::Software::Interpollation::set_feed_mode(block.feed_rate_mode);
 		
-	}
-}
-
-void Motion_Core::Software::Interpollation::set_feed_mode(BinaryRecords::e_feed_modes feed_rate_mode)
-{
-	switch (feed_rate_mode)
-	{
-		//G93 and G94 feed modes
-		case BinaryRecords::e_feed_modes::FEED_RATE_MINUTES_PER_UNIT_MODE:
-		case BinaryRecords::e_feed_modes::FEED_RATE_UNITS_PER_MINUTE_MODE:
-		{		
-			Motion_Core::Hardware::Interpollation::Drive_With_Timer();
-		}
-		//G95 feed mode
-		case BinaryRecords::e_feed_modes::FEED_RATE_UNITS_PER_ROTATION:
-		{
-			//Motion_Core::Hardware::Interpollation::Drive_With_Timer();
-		}
-		break;
-		default:
-		/* Your code here */
-		break;
+		
 	}
 }
 

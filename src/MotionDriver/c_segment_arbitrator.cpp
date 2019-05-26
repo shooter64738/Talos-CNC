@@ -7,6 +7,7 @@
 //#include "..\c_system.h"
 #include "c_segment_timer_item.h"
 #include "c_processor.h"
+#include "c_interpollation_hardware.h"
 
 
 uint8_t Motion_Core::Segment::Arbitrator::recalculate_flag = 0;
@@ -62,6 +63,11 @@ void Motion_Core::Segment::Arbitrator::Reset()
 
 void Motion_Core::Segment::Arbitrator::Fill_Step_Segment_Buffer()
 {
+	// Block step prep buffer, while in a suspend state and there is no suspend motion to execute.
+	if (Motion_Core::Settings::StepControl & STEP_CONTROL_END_MOTION)
+	{
+		return;
+	}
 	
 	//If the segment buffer is not full keep adding step data to it
 	while (1)
@@ -101,8 +107,7 @@ void Motion_Core::Segment::Arbitrator::Fill_Step_Segment_Buffer()
 				// Reset prep parameters for resuming and then bail. Allow the stepper ISR to complete
 				// the segment queue, where realtime protocol will set new state upon receiving the
 				// cycle stop flag from the ISR. Prep_segment is blocked until then.
-				//bit_true(c_system::sys.step_control, STEP_CONTROL_END_MOTION);
-				//UDR0='d';
+				bit_true(Motion_Core::Settings::StepControl, STEP_CONTROL_END_MOTION);
 				break; // Bail!
 			}
 			else
@@ -133,7 +138,6 @@ void Motion_Core::Segment::Arbitrator::Fill_Step_Segment_Buffer()
 	}
 }
 
-//static c_planner::plan_block_t *pl_block;
 uint8_t Motion_Core::Segment::Arbitrator::Base_Calculate()
 {
 	//This gets called each time a new block is loaded from the planner. Some base information is set
@@ -170,8 +174,6 @@ uint8_t Motion_Core::Segment::Arbitrator::Base_Calculate()
 			bresenham_item->steps[idx] = (Motion_Core::Segment::Arbitrator::Active_Block->steps[idx]);
 		}
 		bresenham_item->step_event_count = (Motion_Core::Segment::Arbitrator::Active_Block->step_event_count);
-		c_processor::debug_serial.print_string("Total steps = ");
-		c_processor::debug_serial.print_int32(bresenham_item->step_event_count);c_processor::debug_serial.Write(CR);
 
 		// Initialize segment buffer data for generating the segments.
 		Motion_Core::Segment::Arbitrator::steps_remaining = (float)Motion_Core::Segment::Arbitrator::Active_Block->step_event_count;
@@ -179,14 +181,15 @@ uint8_t Motion_Core::Segment::Arbitrator::Base_Calculate()
 		Motion_Core::Segment::Arbitrator::req_mm_increment = REQ_MM_INCREMENT_SCALAR / Motion_Core::Segment::Arbitrator::step_per_mm;
 		Motion_Core::Segment::Arbitrator::dt_remainder = 0.0; // Reset for new segment block
 
+		if ((Motion_Core::Settings::StepControl & STEP_CONTROL_EXECUTE_HOLD) || (Motion_Core::Segment::Arbitrator::recalculate_flag & PREP_FLAG_DECEL_OVERRIDE))
 		//if ((c_system::sys.step_control & STEP_CONTROL_EXECUTE_HOLD) || (Motion_Core::Segment::Arbitrator::recalculate_flag & PREP_FLAG_DECEL_OVERRIDE))
-		//{
-		//// New block loaded mid-hold. Override planner block entry speed to enforce deceleration.
-		//Motion_Core::Segment::Arbitrator::current_speed = Motion_Core::Segment::Arbitrator::exit_speed;
-		//Motion_Core::Segment::Arbitrator::Active_Block->entry_speed_sqr = Motion_Core::Segment::Arbitrator::exit_speed * Motion_Core::Segment::Arbitrator::exit_speed;
-		//Motion_Core::Segment::Arbitrator::recalculate_flag &= ~(PREP_FLAG_DECEL_OVERRIDE);
-		//}
-		//else
+		{
+			// New block loaded mid-hold. Override planner block entry speed to enforce deceleration.
+			Motion_Core::Segment::Arbitrator::current_speed = Motion_Core::Segment::Arbitrator::exit_speed;
+			Motion_Core::Segment::Arbitrator::Active_Block->entry_speed_sqr = Motion_Core::Segment::Arbitrator::exit_speed * Motion_Core::Segment::Arbitrator::exit_speed;
+			Motion_Core::Segment::Arbitrator::recalculate_flag &= ~(PREP_FLAG_DECEL_OVERRIDE);
+		}
+		else
 		{
 			Motion_Core::Segment::Arbitrator::current_speed = sqrt(Motion_Core::Segment::Arbitrator::Active_Block->entry_speed_sqr);
 		}
@@ -200,25 +203,25 @@ uint8_t Motion_Core::Segment::Arbitrator::Base_Calculate()
 	*/
 	Motion_Core::Segment::Arbitrator::mm_complete = 0.0; // Default velocity profile complete at 0.0mm from end of block.
 	float inv_2_accel = 0.5 / Motion_Core::Segment::Arbitrator::Active_Block->acceleration;
-	//if (c_system::sys.step_control & STEP_CONTROL_EXECUTE_HOLD)
-	//{ // [Forced Deceleration to Zero Velocity]
-	//// Compute velocity profile parameters for a feed hold in-progress. This profile overrides
-	//// the planner block profile, enforcing a deceleration to zero speed.
-	//Motion_Core::Segment::Arbitrator::ramp_type = Motion_Core::Ramp_Type::Decel;
-	//// Compute decelerate distance relative to end of block.
-	//float decel_dist = Motion_Core::Segment::Arbitrator::Active_Block->millimeters - inv_2_accel * Motion_Core::Segment::Arbitrator::Active_Block->entry_speed_sqr;
-	//if (decel_dist < 0.0)
-	//{
-	//// Deceleration through entire planner block. End of feed hold is not in this block.
-	//Motion_Core::Segment::Arbitrator::exit_speed = sqrt(Motion_Core::Segment::Arbitrator::Active_Block->entry_speed_sqr - 2 * Motion_Core::Segment::Arbitrator::Active_Block->acceleration * Motion_Core::Segment::Arbitrator::Active_Block->millimeters);
-	//}
-	//else
-	//{
-	//Motion_Core::Segment::Arbitrator::mm_complete = decel_dist; // End of feed hold.
-	//Motion_Core::Segment::Arbitrator::exit_speed = 0.0;
-	//}
-	//}
-	//else
+	if (Motion_Core::Settings::StepControl & STEP_CONTROL_EXECUTE_HOLD)
+	{ // [Forced Deceleration to Zero Velocity]
+		// Compute velocity profile parameters for a feed hold in-progress. This profile overrides
+		// the planner block profile, enforcing a deceleration to zero speed.
+		Motion_Core::Segment::Arbitrator::ramp_type = BinaryRecords::e_ramp_type::Decel;
+		// Compute decelerate distance relative to end of block.
+		float decel_dist = Motion_Core::Segment::Arbitrator::Active_Block->millimeters - inv_2_accel * Motion_Core::Segment::Arbitrator::Active_Block->entry_speed_sqr;
+		if (decel_dist < 0.0)
+		{
+			// Deceleration through entire planner block. End of feed hold is not in this block.
+			Motion_Core::Segment::Arbitrator::exit_speed = sqrt(Motion_Core::Segment::Arbitrator::Active_Block->entry_speed_sqr - 2 * Motion_Core::Segment::Arbitrator::Active_Block->acceleration * Motion_Core::Segment::Arbitrator::Active_Block->millimeters);
+		}
+		else
+		{
+			Motion_Core::Segment::Arbitrator::mm_complete = decel_dist; // End of feed hold.
+			Motion_Core::Segment::Arbitrator::exit_speed = 0.0;
+		}
+	}
+	else
 	{ // [Normal Operation]
 		// Compute or recompute velocity profile parameters of the prepped planner block.
 		Motion_Core::Segment::Arbitrator::ramp_type = BinaryRecords::e_ramp_type::Accel; // Initialize as acceleration ramp.
@@ -293,9 +296,7 @@ uint8_t Motion_Core::Segment::Arbitrator::Base_Calculate()
 	}
 	return 1;
 }
-static uint32_t accel_calcs=0;
-static uint32_t cruise_calcs=0;
-static uint32_t decel_calcs=0;
+
 uint8_t Motion_Core::Segment::Arbitrator::Segment_Calculate()
 {
 	/* -----------------------------------------------------------------------------------
@@ -373,7 +374,6 @@ uint8_t Motion_Core::Segment::Arbitrator::Segment_Calculate()
 			break;
 			case BinaryRecords::e_ramp_type::Accel:
 			{
-				accel_calcs++;
 				// NOTE: Acceleration ramp only computes during first do-while loop.
 				speed_var = Motion_Core::Segment::Arbitrator::Active_Block->acceleration * time_var;
 				mm_remaining -= time_var * (Motion_Core::Segment::Arbitrator::current_speed + 0.5 * speed_var);
@@ -400,7 +400,6 @@ uint8_t Motion_Core::Segment::Arbitrator::Segment_Calculate()
 			}
 			case BinaryRecords::e_ramp_type::Cruise:
 			{
-				cruise_calcs++;
 				// NOTE: mm_var used to retain the last mm_remaining for incomplete segment time_var calculations.
 				// NOTE: If maximum_speed*time_var value is too low, round-off can cause mm_var to not change. To
 				//   prevent this, simply enforce a minimum speed threshold in the planner.
@@ -420,7 +419,6 @@ uint8_t Motion_Core::Segment::Arbitrator::Segment_Calculate()
 			break;
 			default: // case RAMP_DECEL:
 			{
-				decel_calcs++;
 				// NOTE: mm_var used as a misc worker variable to prevent errors when near zero speed.
 				speed_var = Motion_Core::Segment::Arbitrator::Active_Block->acceleration * time_var; // Used as delta speed (mm/min)
 				if (Motion_Core::Segment::Arbitrator::current_speed > speed_var)
@@ -466,6 +464,18 @@ uint8_t Motion_Core::Segment::Arbitrator::Segment_Calculate()
 	float n_steps_remaining = ceil(step_dist_remaining); // Round-up current steps remaining
 	float last_n_steps_remaining = ceil(Motion_Core::Segment::Arbitrator::steps_remaining); // Round-up last steps remaining
 	segment_item->steps_to_execute_in_this_segment = last_n_steps_remaining - n_steps_remaining; // Compute number of steps to execute.
+
+	// Bail if we are at the end of a feed hold and don't have a step to execute.
+	if (segment_item->steps_to_execute_in_this_segment == 0)
+	{
+		if (Motion_Core::Settings::StepControl & STEP_CONTROL_EXECUTE_HOLD)
+		{
+			// Less than one step to decelerate to zero speed, but already very close. AMASS
+			// requires full steps to execute. So, just bail.
+			bit_true(Motion_Core::Settings::StepControl, STEP_CONTROL_END_MOTION);
+			return 0; // Segment not generated, but current step data still retained.
+		}
+	}
 
 	// Compute segment step rate. Since steps are integers and mm distances traveled are not,
 	// the end of every segment can have a partial step of varying magnitudes that are not
@@ -515,5 +525,24 @@ void Motion_Core::Segment::Arbitrator::st_update_plan_block_parameters()
 		//Update the entry speed of the block we jsut loaded in the arbitrator. This should be the same speed we are currently running.
 		Motion_Core::Segment::Arbitrator::Active_Block->entry_speed_sqr = Motion_Core::Segment::Arbitrator::current_speed * Motion_Core::Segment::Arbitrator::current_speed; // Update entry speed.
 		Motion_Core::Segment::Arbitrator::Active_Block = NULL; // Flag st_prep_segment() to load and check active velocity profile.
+	}
+}
+
+void Motion_Core::Segment::Arbitrator::cycle_hold()
+{
+	if (Motion_Core::Settings::StepControl == 0)
+	{
+		st_update_plan_block_parameters(); // Notify stepper module to recompute for hold deceleration.
+		Motion_Core::Settings::StepControl = STEP_CONTROL_EXECUTE_HOLD; // Initiate suspend state with active flag.
+		c_processor::debug_serial.print_string("cycle hold\r");
+	}
+	else
+	{
+		Motion_Core::Settings::StepControl = 0;
+		c_processor::debug_serial.print_string("cycle continue\r");
+		st_update_plan_block_parameters();
+		Motion_Core::Segment::Arbitrator::Fill_Step_Segment_Buffer();
+		Motion_Core::Hardware::Interpollation::Initialize();
+		
 	}
 }
