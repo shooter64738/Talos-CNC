@@ -356,6 +356,18 @@
       <SubType>compile</SubType>
       <Link>main.cpp</Link>
     </Compile>
+    <Compile Include="c_record_handler.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="c_record_handler.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="c_system.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="c_system.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="Device_Startup\startup_sam3xa.c">
       <SubType>compile</SubType>
     </Compile>

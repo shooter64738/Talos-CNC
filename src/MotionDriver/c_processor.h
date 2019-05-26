@@ -12,6 +12,7 @@
 #include "hardware_def.h"
 #include "..\Common\Serial\records_def.h"
 
+
 class c_processor
 {
 	//variables
@@ -19,18 +20,15 @@ class c_processor
 	static c_Serial coordinator_serial;
 	static c_Serial debug_serial;
 	static void initialize();
+	static void run();
 	static void check_jog_completed();
 	static void check_process_record(BinaryRecords::e_binary_record_types record_type);
 	static BinaryRecords::e_binary_record_types check_serial_input();
 	static void check_hardware_faults();
 	static void check_sequence_complete();
-	static BinaryRecords::e_binary_record_types load_record(BinaryRecords::e_binary_record_types record_type);
-	static BinaryRecords::e_binary_responses send_status(BinaryRecords::s_status_message status_data);
-	static BinaryRecords::e_binary_responses write_stream(char * stream, uint8_t record_size,BinaryRecords::e_binary_responses Ack_Resp);
-	static BinaryRecords::s_motion_data_block motion_block;
-	static BinaryRecords::s_motion_control_settings settings_block;
-	static BinaryRecords::s_jog_data_block jog_block;
-	static BinaryRecords::s_status_message status_message;
+	///static BinaryRecords::e_binary_record_types load_record(BinaryRecords::e_binary_record_types record_type);
+		
+	
 	
 	static uint8_t remote;
 	protected:

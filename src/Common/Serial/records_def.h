@@ -78,11 +78,11 @@ namespace BinaryRecords
 	#define __C_SYSTEM_STATE_RECORD_TYPES
 	enum class e_system_state_record_types : uint8_t
 	{
-		Motion_Active =		01,
-		Motion_Complete =	02,
-		Motion_Idle =		03,
-		Motion_Jogging =	04,
-		Motion_Cancel =		05,
+		Motion_Active =		 1,
+		Motion_Complete =	 2,
+		Motion_Idle =		 3,
+		Motion_Jogging =	 4,
+		Motion_Cancel =		 5,
 		Spindle_Stopped =	20,
 		Spindle_Running =	21,
 		System_Error =		99
@@ -93,14 +93,14 @@ namespace BinaryRecords
 	#define __C_SYSTEM_SUB_STATE_RECORD_TYPES
 	enum class e_system_sub_state_record_types : uint8_t
 	{
-		Block_Complete =			01, //The block has completed. Block sequence # is returned in the num_message
-		Block_Starting =			02, //Block is starting execution
-		Block_Queuing =				03, //The block has been placed in the motion queue
-		Block_Holding =				04, //Block was executing, but feed hold was instructed
-		Block_Reserved1 =			05, //Reserved
-		Block_Reserved2 =			06, //Reserved
-		Block_Reserved3 =			06, //Reserved
-		Block_Reserved4 =			06, //Reserved
+		Block_Complete =			 1, //The block has completed. Block sequence # is returned in the num_message
+		Block_Starting =			 2, //Block is starting execution
+		Block_Queuing =				 3, //The block has been placed in the motion queue
+		Block_Holding =				 4, //Block was executing, but feed hold was instructed
+		Block_Resuming =			 5, //Reserved
+		Block_Reserved2 =			 6, //Reserved
+		Block_Reserved3 =			 7, //Reserved
+		Block_Reserved4 =			 8, //Reserved
 		Error_Axis_Drive_Fault_X =	90, //Closed loop driver error
 		Error_Axis_Drive_Fault_Y =	91, //Closed loop driver error
 		Error_Axis_Drive_Fault_Z =	92, //Closed loop driver error
@@ -108,7 +108,8 @@ namespace BinaryRecords
 		Error_Axis_Drive_Fault_B =	94, //Closed loop driver error
 		Error_Axis_Drive_Fault_C =	95, //Closed loop driver error
 		Error_Axis_Drive_Fault_U =	96, //Closed loop driver error
-		Error_Axis_Drive_Fault_V =	97  //Closed loop driver error
+		Error_Axis_Drive_Fault_V =	97, //Closed loop driver error
+		Error_Axis_Drive_Reserved =	98  //Closed loop driver error
 		
 	};
 	

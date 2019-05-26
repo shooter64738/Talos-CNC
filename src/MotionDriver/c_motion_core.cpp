@@ -2,7 +2,7 @@
 #include "../helpers.h"
 
 BinaryRecords::s_motion_control_settings Motion_Core::Settings::_Settings;
-uint8_t Motion_Core::Settings::StepControl = 0;
+
 
 //int16_t Motion_Core::Settings.steps_per_mm[MACHINE_AXIS_COUNT]{160};
 //float Motion_Core::Settings.acceleration[MACHINE_AXIS_COUNT]{ (100.0 * 60 * 60)};

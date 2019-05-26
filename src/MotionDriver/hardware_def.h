@@ -48,10 +48,13 @@
 //in the c_motion_core_arm_3x8e_stepper we define the clock scale at half the cpu speed
 //on the 8bit avr, the clock could run at full cpu speed. To get the motion time computations
 //to come out right we need to adjust ticks per micro second for this cpu at this clock speed
-//#define SELECTED_TIMER_CLOCK TC_CMR_TCCLKS_TIMER_CLOCK1
+//#define SELECTED_TIMER_CLOCK TC_CMR_TCCLKS_TIMER_CLOCK1. THe only clock that actually runs 
+//at cpu speed is the sys_clk and it will be difficult to control as a stepper driver. At 42
+//mhz clock speed I am able to get a reliable 100khz pulse rate from teh processor.
 #define _TICKS_PER_MICROSECOND ((F_CPU/2)/1000000)
 #include "../Common/Hardware_Abstraction_Layer/ARM_SAM3X8E/c_core_arm_3x8e.h"
 #include "../Common/Hardware_Abstraction_Layer/ARM_SAM3X8E/c_motion_core_arm_3x8e_stepper.h"
+#include "..\Common\Hardware_Abstraction_Layer\ARM_SAM3X8E\c_motion_core_arm_3x8e_inputs.h"
 #include "../Common/Hardware_Abstraction_Layer/ARM_SAM3X8E/c_serial_arm_3x8e.h"
 #include "../Common/Serial/c_Serial.h"
 #endif
