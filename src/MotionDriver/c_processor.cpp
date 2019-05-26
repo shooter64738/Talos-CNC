@@ -50,7 +50,7 @@ void c_processor::initialize()
 		//If we were processing a jog record, we will let the coordinator know when we are done with the jog
 		//so that the jog messages do not 'pile up' and over run the serial buffer. (Coordinator will not send
 		//another jog command until we acknowledge we are done with the current one)
-		c_processor::check_jog_completed()
+		c_processor::check_jog_completed();
 
 		//See if there is a record in the serial buffer. If there is load it. 
 		c_processor::check_process_record(c_processor::check_serial_input());
@@ -59,7 +59,7 @@ void c_processor::initialize()
 		Motion_Core::Segment::Arbitrator::Fill_Step_Segment_Buffer();
 		
 		//If a segment has completed, we should report it.
-		c_processor::check_sequence_complete()
+		c_processor::check_sequence_complete();
 		
 	}
 }
@@ -193,7 +193,7 @@ void c_processor::check_process_record(BinaryRecords::e_binary_record_types reco
 
 BinaryRecords::e_binary_record_types c_processor::check_serial_input()
 {
-	BinaryRecords::e_binary_record_types record_type = e_binary_record_types::Unknown;
+	BinaryRecords::e_binary_record_types record_type = BinaryRecords::e_binary_record_types::Unknown;
 	//see if there is any data
 	if (c_processor::coordinator_serial.DataSize() > 0)
 	{
