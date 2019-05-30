@@ -35,7 +35,6 @@
 //on the DUE. This will allow access to those port as an array. Simplifying the step
 //generation code
 
-#define Step_X PIOB->PIO_SODR = PIO_PB26
 static Pio* Step_Ports[]={PIOB,PIOA,PIOA,PIOD,PIOD,PIOD,PIOD,PIOD};
 const uint32_t Step_Pins[]=
 {
