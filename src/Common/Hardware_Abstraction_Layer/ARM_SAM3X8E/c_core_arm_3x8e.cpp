@@ -46,4 +46,23 @@ uint32_t Hardware_Abstraction_Layer::Core::get_cpu_clock_rate()
 	return CHIP_FREQ_CPU_MAX;
 }
 
+void Hardware_Abstraction_Layer::Core::critical_shutdown()
+{
+	//Stop everything that the processor is doing. Something very bad has happened
+	//and the system has determined that the best thing to do is stop everything
+	//except communications. 
+	
+	//Shut down timer peripherals.
+	PMC->PMC_PCER0 = 0;
+	// Disable step pulse clock
+	TC1->TC_CHANNEL[0].TC_CCR = TC_CCR_CLKDIS;
+	//disable timer interrupt
+	NVIC_DisableIRQ (TC3_IRQn);
+	// Disable step reset clock
+	TC1->TC_CHANNEL[1].TC_CCR = TC_CCR_CLKDIS;
+	//disable timer interrupt
+	NVIC_DisableIRQ (TC4_IRQn);
+	
+	
+}
 #endif

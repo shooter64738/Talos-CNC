@@ -33,7 +33,6 @@ uint8_t Motion_Core::Planner::Calculator::_plan_buffer_line(BinaryRecords::s_mot
 		// NOTE: Computes true distance from converted step values.
 		planning_block->steps[idx] = labs(target_block.axis_values[idx] * Motion_Core::Settings::_Settings.steps_per_mm[idx] );
 		planning_block->step_event_count = max(planning_block->step_event_count, planning_block->steps[idx]);
-		
 
 		unit_vec[idx] = target_block.axis_values[idx];
 		if (target_block.axis_values[idx] > 0.0)
@@ -51,6 +50,7 @@ uint8_t Motion_Core::Planner::Calculator::_plan_buffer_line(BinaryRecords::s_mot
 	// Bail if this is a zero-length block. Highly unlikely to occur.
 	if (planning_block->step_event_count == 0)
 	{
+		
 		return (0);
 	}
 

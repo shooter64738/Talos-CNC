@@ -43,7 +43,6 @@
 #endif
 
 #ifdef __SAM3X8E__
-#define BINARY_SERIAL_CYCLE_TIMEOUT 1000
 #define F_CPU 84000000UL
 //in the c_motion_core_arm_3x8e_stepper we define the clock scale at half the cpu speed
 //on the 8bit avr, the clock could run at full cpu speed. To get the motion time computations

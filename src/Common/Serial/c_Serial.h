@@ -28,6 +28,25 @@
 #include "s_Buffer.h"
 #include "../../std_types.h"
 
+#ifdef __AVR_ATmega328P__
+#include "../Hardware_Abstraction_Layer/AVR_328/c_serial_avr_328.h"
+#define SERIAL_TIME_OUT_TICKS 90000
+#endif
+
+#ifdef __AVR_ATmega2560__
+#include "../Hardware_Abstraction_Layer/AVR_2560/c_serial_avr_2560.h"
+#define SERIAL_TIME_OUT_TICKS 90000
+#endif
+
+#ifdef __SAM3X8E__
+#include "../Hardware_Abstraction_Layer\ARM_SAM3X8E\c_serial_arm_3x8e.h"
+#define SERIAL_TIME_OUT_TICKS 5000000
+#endif
+
+#ifdef MSVC
+#include "../Hardware_Abstraction_Layer/Virtual/c_serial_win.h"
+#endif
+
 class c_Serial
 {
 	//variables

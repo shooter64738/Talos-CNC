@@ -124,8 +124,9 @@ void Hardware_Abstraction_Layer::MotionCore::Stepper::wake_up()
 
 	// Initialize step pulse timing from settings. Here to ensure updating after re-writing.
 	Motion_Core::Hardware::Interpollation::Step_Pulse_Length
-	= (float)Motion_Core::Settings::_Settings.pulse_length/(1.0/((F_CPU/1000000.0)/STEP_CLOCK_DIVIDER));
+	= (float)Motion_Core::Settings::_Settings.pulse_length/(1.0/(((F_CPU)/1000000.0)/STEP_CLOCK_DIVIDER));
 	
+	TC1->TC_CHANNEL[1].TC_RC = Motion_Core::Hardware::Interpollation::Step_Pulse_Length - DEAD_TIME;
 	// Enable Stepper Driver Interrupt
 	//TIMSK1 |= (1 << OCIE1A);
 	TC1->TC_CHANNEL[0].TC_RC = 50;
@@ -160,9 +161,15 @@ void Hardware_Abstraction_Layer::MotionCore::Stepper::port_direction(uint8_t dir
 void Hardware_Abstraction_Layer::MotionCore::Stepper::port_step(uint8_t steps)
 {
 	//For any step indicated, turn on the 'Set Output Data Register'
-	for (int i=0;i<MACHINE_AXIS_COUNT;i++)
+	//Step_Ports[0]->PIO_SODR = Step_Pins[0];
+	//return;
+	for (int i=0;i<1;i++)
 	if (steps & (1<<i))
-	Step_Ports[i]->PIO_SODR = Step_Pins[i];
+	{
+		Step_Ports[i]->PIO_SODR = Step_Pins[i];
+		//c_processor::debug_serial.print_string(" ");
+	}
+	//Step_X;
 }
 
 uint16_t Hardware_Abstraction_Layer::MotionCore::Stepper::set_delay_from_hardware(
@@ -216,5 +223,6 @@ void Timer1_Chan1_Handler_irq4(void)
 	{
 		Step_Ports[i]->PIO_CODR = Step_Pins[i];
 	}
+	Motion_Core::Hardware::Interpollation::Step_Active = 0;
 }
 

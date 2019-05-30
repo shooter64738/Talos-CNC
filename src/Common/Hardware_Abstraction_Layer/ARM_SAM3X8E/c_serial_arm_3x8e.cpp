@@ -170,7 +170,7 @@ void Hardware_Abstraction_Layer::Serial::initialize(uint8_t Port, uint32_t BaudR
 			
 			//Reset TX, RX & Status Register. Disable TX & RX
 			USART0->US_CR = US_CR_RSTRX | US_CR_RSTTX | US_CR_RXDIS | US_CR_TXDIS | US_CR_RSTSTA;
-			//Enable TX & RX	
+			//Enable TX & RX
 			USART0->US_CR = US_CR_RXEN | US_CR_TXEN;
 			//USART0->US_CR |= US_CR_RSTTX;
 			
@@ -467,15 +467,21 @@ void Hardware_Abstraction_Layer::Serial::_outgoing_serial_isr(uint8_t Port, char
 
 void USART0_Handler(void)
 {
-	uint32_t status = USART0->US_CSR;
-	if((status & US_CSR_RXRDY) == US_CSR_RXRDY)
+	//while(1)
 	{
-		char Byte = USART0->US_RHR;
-		//UART->UART_THR = Byte;
-		Hardware_Abstraction_Layer::Serial::_incoming_serial_isr(1,Byte);
+		uint32_t status = USART0->US_CSR;
+		if((status & US_CSR_RXRDY) == US_CSR_RXRDY)
+		{
+			char Byte = USART0->US_RHR;
+			//UART->UART_THR = Byte;
+			Hardware_Abstraction_Layer::Serial::_incoming_serial_isr(1,Byte);
+		}
+		else
+		{
+			//break;
+		}
 	}
-	
-	if((status & US_CSR_TXRDY) == US_CSR_TXRDY)
+	//if((status & US_CSR_TXRDY) == US_CSR_TXRDY)
 	{
 		//if(txBuffer.availableToRead()){
 		////Make sure interrupts are still enabled

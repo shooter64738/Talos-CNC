@@ -46,10 +46,10 @@ namespace Motion_Core
 			
 			static s_backlash_comp back_comp;
 			
-			static void load_block(BinaryRecords::s_motion_data_block block);
+			static void load_block(BinaryRecords::s_motion_data_block * block);
 			
-			static uint8_t _mc_line(BinaryRecords::s_motion_data_block target_block);
-			static uint8_t _mc_arc(BinaryRecords::s_motion_data_block target_block);
+			static uint8_t _mc_line(BinaryRecords::s_motion_data_block *target_block);
+			static uint8_t _mc_arc(BinaryRecords::s_motion_data_block *target_block);
 
 			//static void mc_line(float *target, c_planner::plan_line_data_t *pl_data, NGC_RS274::NGC_Binary_Block *target_block);
 			//static void mc_arc(float *target, c_planner::plan_line_data_t *pl_data, float *position, float *offset, float radius

@@ -52,12 +52,12 @@ void c_worker::startup()
 	//{ PIOC, PIO_PC5,    ID_PIOC,       PIO_OUTPUT_0, PIO_DEFAULT, PIN_ATTR_DIGITAL,                  NO_ADC, NO_ADC, NOT_ON_PWM,  NOT_ON_TIMER }, // PIN 37
 
 	
-	//PIO_configurePin(
-	//pinCharacteristic[22].port,
-	//pinCharacteristic[22].pinMask,
-	//pinCharacteristic[22].peripheralType,
-	//pinCharacteristic[22].pinAttribute,
-	//OUTPUT);
+	PIO_configurePin(
+	pinCharacteristic[22].port,
+	pinCharacteristic[22].pinMask,
+	pinCharacteristic[22].peripheralType,
+	pinCharacteristic[22].pinAttribute,
+	OUTPUT);
 	
 	//Configure step pins
 	//Set output enable registers (OERs)

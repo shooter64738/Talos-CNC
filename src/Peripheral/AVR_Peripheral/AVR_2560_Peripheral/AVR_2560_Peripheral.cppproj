@@ -188,6 +188,14 @@
       <SubType>compile</SubType>
       <Link>AVR_2560_Peripheral\Common\Hardware Abstraction Layer\AVR 2560\c_serial_avr_2560.h</Link>
     </Compile>
+    <Compile Include="..\..\..\Common\Serial\c_record_handler.cpp">
+      <SubType>compile</SubType>
+      <Link>c_record_handler.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\Common\Serial\c_record_handler.h">
+      <SubType>compile</SubType>
+      <Link>c_record_handler.h</Link>
+    </Compile>
     <Compile Include="..\..\..\Common\Serial\c_Serial.cpp">
       <SubType>compile</SubType>
       <Link>AVR_2560_Peripheral\Common\Serial\c_Serial.cpp</Link>

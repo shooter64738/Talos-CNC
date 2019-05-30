@@ -9,11 +9,19 @@
 #ifndef __C_SYSTEM_H__
 #define __C_SYSTEM_H__
 #include <stdint.h>
-#define CONTROL_MODE_NONE 0
-#define CONTROL_MODE_JOG 1
 
 #define STEP_CONTROL_EXECUTE_HOLD         bit(1)
 #define STEP_CONTROL_END_MOTION		bit(0)
+
+#define STEP_CONTROL_END			0
+#define MOTION_CONTROL_HOLD			1
+#define MOTION_CONTROL_RESUME		2
+#define EXEC_MOTION_JOG				3
+#define EXEC_MOTION_INTERPOLATION	4
+#define ERR_AXIS_DRIVE_FAULT		5
+#define CRITICAL_FAILURE			31
+
+
 
 namespace Motion_Core
 {
@@ -29,6 +37,9 @@ namespace Motion_Core
 
 		//functions
 		public:
+		static void set_control_state_mode(uint8_t flag);
+		static void clear_control_state_mode(uint8_t flag);
+		static uint8_t get_control_state_mode(uint8_t flag);
 		protected:
 		private:
 

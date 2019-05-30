@@ -64,13 +64,13 @@ namespace BinaryRecords
 	#define __C_BINARY_RECORD_TYPES
 	enum class e_binary_record_types : uint8_t
 	{
-		Unknown = 0,
-		Motion = 1,
-		Motion_Control_Setting = 2,
-		Spindle_Control_Setting = 3,
-		Jog = 4,
-		Peripheral_Control_Setting = 5,
-		Status = 6
+		Unknown =						0,
+		Motion =						1,
+		Motion_Control_Setting =		2,
+		Spindle_Control_Setting =		3,
+		Jog =							4,
+		Peripheral_Control_Setting =	5,
+		Status =6
 	};
 	#endif
 	
@@ -101,6 +101,7 @@ namespace BinaryRecords
 		Block_Reserved2 =			 6, //Reserved
 		Block_Reserved3 =			 7, //Reserved
 		Block_Reserved4 =			 8, //Reserved
+		Jog_Complete =				30, 
 		Error_Axis_Drive_Fault_X =	90, //Closed loop driver error
 		Error_Axis_Drive_Fault_Y =	91, //Closed loop driver error
 		Error_Axis_Drive_Fault_Z =	92, //Closed loop driver error
@@ -120,7 +121,14 @@ namespace BinaryRecords
 	#ifndef __C_BINARY_RESPONSES
 	#define __C_BINARY_RESPONSES
 	enum class e_binary_responses : uint8_t
-	{Ok = 1, Data_Error = 2,Response_Time_Out = 3, Jog_Complete = 4};
+	{
+		Ok =				240,
+		Data_Error =		239,
+		Response_Time_Out = 238,
+		Jog_Complete =		237,
+		Data_Rx_Wait =		236,
+		Check_Sum_Failure = 235
+	};
 	#endif
 	
 	#ifndef __C_PERIPHERAL_PANEL_PROCESSING
@@ -171,6 +179,7 @@ namespace BinaryRecords
 		s_motion_arc_values arc_values;
 		BinaryRecords::e_block_flag flag = BinaryRecords::e_block_flag::normal;
 		uint32_t sequence; //system set value, used to track when a block of code as completed.
+		uint32_t _check_sum;
 		
 	}__attribute__((packed,aligned(1)));;
 	
@@ -198,6 +207,7 @@ namespace BinaryRecords
 		s_peripheral_group_processing Processing;
 		s_peripheral_group_overrides OverRides;
 		s_peripheral_group_jogging Jogging;
+		uint32_t _check_sum = 0;
 		
 	}__attribute__((packed,aligned(1)));;
 	
@@ -205,8 +215,9 @@ namespace BinaryRecords
 	{
 		const BinaryRecords::e_binary_record_types record_type = BinaryRecords::e_binary_record_types::Jog;
 		float axis_value;
-		uint32_t axis;
+		uint8_t axis;
 		BinaryRecords::e_block_flag flag = BinaryRecords::e_block_flag::normal;
+		uint32_t _check_sum = 0;
 	}__attribute__((packed,aligned(1)));
 	
 	struct s_motion_control_settings
@@ -215,19 +226,20 @@ namespace BinaryRecords
 		float acceleration[MACHINE_AXIS_COUNT];
 		float max_rate[MACHINE_AXIS_COUNT];
 		uint16_t steps_per_mm[MACHINE_AXIS_COUNT];
-		float junction_deviation;
-		float arc_tolerance;
-		uint16_t pulse_length;
+		float junction_deviation = 0;
+		float arc_tolerance = 0;
+		uint16_t pulse_length = 0;
 		float back_lash_comp_distance[MACHINE_AXIS_COUNT];
 		float interpolation_error_distance;
 		uint16_t arc_angular_correction = 12;
 		uint8_t invert_mpg_directions = 0;
+		uint32_t _check_sum = 0;
 		
 	}__attribute__((packed,aligned(1)));
 	
 	struct s_spindle_control_settings
 	{
-		
+		uint32_t _check_sum = 0;
 	}__attribute__((packed,aligned(1)));
 	
 	struct s_status_message
@@ -235,8 +247,9 @@ namespace BinaryRecords
 		const BinaryRecords::e_binary_record_types record_type = BinaryRecords::e_binary_record_types::Status;
 		BinaryRecords::e_system_state_record_types system_state;
 		BinaryRecords::e_system_sub_state_record_types system_sub_state;
-		float num_message;
-		char chr_message[17];
+		float num_message = 0.0;
+		char chr_message[17]{0};
+		uint32_t _check_sum = 0;
 	}__attribute__((packed,aligned(1)));
 	
 };

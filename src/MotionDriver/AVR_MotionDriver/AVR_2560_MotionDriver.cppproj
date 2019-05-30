@@ -20,10 +20,10 @@
     <OverrideVtor>false</OverrideVtor>
     <CacheFlash>true</CacheFlash>
     <ProgFlashFromRam>true</ProgFlashFromRam>
-    <RamSnippetAddress />
+    <RamSnippetAddress>0x20000000</RamSnippetAddress>
     <UncachedRange />
     <preserveEEPROM>true</preserveEEPROM>
-    <OverrideVtorValue />
+    <OverrideVtorValue>exception_table</OverrideVtorValue>
     <BootSegment>2</BootSegment>
     <ResetRule>0</ResetRule>
     <eraseonlaunchrule>0</eraseonlaunchrule>
@@ -290,6 +290,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="AVR_MotionDriver\" />
+    <Folder Include="AVR_MotionDriver\Motion Calculations\" />
     <Folder Include="MotionDriver\" />
     <Folder Include="MotionDriver\Common\" />
     <Folder Include="MotionDriver\Common\Hardware Abstraction Layer\" />

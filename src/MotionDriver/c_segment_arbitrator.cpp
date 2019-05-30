@@ -8,7 +8,8 @@
 #include "c_segment_timer_item.h"
 #include "c_processor.h"
 #include "c_interpollation_hardware.h"
-#include "ARM_MotionDriver\ARM_3X8E_MotionDriver\c_system.h"
+#include "c_system.h"
+#include "..\Common\Serial\c_record_handler.h"
 
 
 uint8_t Motion_Core::Segment::Arbitrator::recalculate_flag = 0;
@@ -531,23 +532,34 @@ void Motion_Core::Segment::Arbitrator::st_update_plan_block_parameters()
 
 void Motion_Core::Segment::Arbitrator::cycle_hold()
 {
+	BinaryRecords::s_status_message status;
 	if (Motion_Core::System::StepControl == 0)
 	{
 		
 		st_update_plan_block_parameters(); // Notify stepper module to recompute for hold deceleration.
 		Motion_Core::System::StepControl = STEP_CONTROL_EXECUTE_HOLD; // Initiate suspend state with active flag.
+		Motion_Core::System::set_control_state_mode(MOTION_CONTROL_HOLD);
 		c_processor::debug_serial.print_string("cycle hold\r");
+		//status.num_message = Motion_Core::Segment::Arbitrator::Active_Block->sequence;
+		//status.system_state = BinaryRecords::e_system_state_record_types::Motion_Idle;
+		//status.system_sub_state = BinaryRecords::e_system_sub_state_record_types::Block_Holding;
+		//c_record_handler::handle_outbound_record(status,c_processor::coordinator_serial);
+		//c_processor::send_state_control_status();
 	}
 	else
 	{
-		//Setting this will cause a status update to be sent, reporting that the sequence is running again. 
-		Motion_Core::Hardware::Interpollation::Last_Completed_Sequence = Motion_Core::Segment::Arbitrator::Active_Block->sequence;
+		//status.num_message = Motion_Core::Segment::Arbitrator::Active_Block->sequence;
+		//status.system_state = BinaryRecords::e_system_state_record_types::Motion_Active;
+		//status.system_sub_state = BinaryRecords::e_system_sub_state_record_types::Block_Resuming;
+		//c_record_handler::handle_outbound_record(status,c_processor::coordinator_serial);
 		
+		Motion_Core::System::set_control_state_mode(MOTION_CONTROL_RESUME);
 		Motion_Core::System::StepControl = 0;
 		c_processor::debug_serial.print_string("cycle continue\r");
 		st_update_plan_block_parameters();
 		Motion_Core::Segment::Arbitrator::Fill_Step_Segment_Buffer();
 		Motion_Core::Hardware::Interpollation::Initialize();
-		
+		//c_processor::send_state_control_status();
+		Motion_Core::System::clear_control_state_mode(MOTION_CONTROL_RESUME);
 	}
 }

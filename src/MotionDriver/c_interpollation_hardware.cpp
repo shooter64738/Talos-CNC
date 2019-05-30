@@ -219,5 +219,5 @@ void Motion_Core::Hardware::Interpollation::step_tick()
 	}
 	Motion_Core::Hardware::Interpollation::step_outbits
 	^= Motion_Core::Hardware::Interpollation::step_port_invert_mask;  // Apply step port invert mask
-	Motion_Core::Hardware::Interpollation::Step_Active = 0;
+	
 }

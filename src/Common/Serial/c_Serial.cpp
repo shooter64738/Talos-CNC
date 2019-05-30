@@ -22,21 +22,7 @@
 #include "../../numeric_converters.h"
 #include "../../talos.h"
 
-#ifdef __AVR_ATmega328P__
-#include "../Hardware_Abstraction_Layer/AVR_328/c_serial_avr_328.h"
-#endif
 
-#ifdef __AVR_ATmega2560__
-#include "../Hardware_Abstraction_Layer/AVR_2560/c_serial_avr_2560.h"
-#endif
-
-#ifdef __SAM3X8E__
-#include "../Hardware_Abstraction_Layer\ARM_SAM3X8E\c_serial_arm_3x8e.h"
-#endif
-
-#ifdef MSVC
-#include "../Hardware_Abstraction_Layer/Virtual/c_serial_win.h"
-#endif
 
 
 //static s_Buffer rxBuffer[2];
@@ -124,9 +110,8 @@ uint16_t c_Serial::FindByte_Position(uint8_t search_byte)
 
 void c_Serial::AdvanceTail(uint16_t size)
 {
-	Hardware_Abstraction_Layer::Serial::rxBuffer[_port].Tail += size;
-	if (Hardware_Abstraction_Layer::Serial::rxBuffer[_port].Tail > RX_BUFFER_SIZE)
-		Hardware_Abstraction_Layer::Serial::rxBuffer[_port].Tail -= RX_BUFFER_SIZE;
+	for (uint8_t i = 0;i<size;i++)
+	this->Get();
 }
 
 char c_Serial::Peek()

@@ -23,9 +23,11 @@
 #define HELPERS_H_
 
 #define BitSet(arg,posn) ((arg) | (1UL << (posn)))
+#define BitSet_(arg,posn) ((arg) |= (1UL << (posn)))
 #define BitClr(arg,posn) ((arg) & ~(1UL << (posn)))
+#define BitClr_(arg,posn) ((arg) &= ~(1UL << (posn)))
 #define BitTst(arg,posn) bool((arg) & (1UL << (posn)))
-
+#define BitLong(n) (1UL << (n))
 #define BitGet(p,m) bool((p) & (1UL << (m)))
 
 #define BitFlp(arg,posn) ((arg) ^ (1UL << (posn))

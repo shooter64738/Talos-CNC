@@ -243,6 +243,14 @@
       <SubType>compile</SubType>
       <Link>Common\NGC_RS274\NGC_Parameters.h</Link>
     </Compile>
+    <Compile Include="..\..\Common\Serial\c_record_handler.cpp">
+      <SubType>compile</SubType>
+      <Link>c_record_handler.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\Common\Serial\c_record_handler.h">
+      <SubType>compile</SubType>
+      <Link>c_record_handler.h</Link>
+    </Compile>
     <Compile Include="..\..\Common\Serial\c_Serial.cpp">
       <SubType>compile</SubType>
       <Link>Common\Serial\c_Serial.cpp</Link>

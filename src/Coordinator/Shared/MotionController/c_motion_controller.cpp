@@ -21,6 +21,8 @@
 
 #include "c_motion_controller.h"
 #include "..\c_processor.h"
+#include "..\..\..\Common\Serial\c_record_handler.h"
+static uint32_t new_sequence_key = 0;
 void c_motion_controller::initialize()
 {
 }
@@ -31,7 +33,7 @@ BinaryRecords::e_binary_responses c_motion_controller::send_jog(BinaryRecords::s
 	memcpy(jog_stream, &jog_data,sizeof(BinaryRecords::s_jog_data_block));
 	//Send to motion controller and wait for response.
 	BinaryRecords::e_binary_responses resp
-	= c_motion_controller::write_stream(jog_stream,sizeof(BinaryRecords::s_jog_data_block),BinaryRecords::e_binary_responses::Ok);
+	= c_record_handler::write_stream(jog_stream,sizeof(BinaryRecords::s_jog_data_block),BinaryRecords::e_binary_responses::Ok,c_processor::controller_serial,50000);
 	uint8_t try_count = 0;
 c_processor::host_serial.print_string("jog sent\r");
 	//When the control acknowledges that it got the record, we still need to wait for the jog to complete
@@ -52,50 +54,29 @@ c_processor::host_serial.print_string("jog sent\r");
 
 BinaryRecords::e_binary_responses c_motion_controller::send_motion(BinaryRecords::s_motion_data_block motion_data)
 {
-	char motion_stream[sizeof(BinaryRecords::s_motion_data_block)];
+	motion_data.sequence = ++new_sequence_key;
+	return c_record_handler::handle_outbound_record(&motion_data,c_processor::controller_serial);
+	
+	//This is used as a line tracking system even if line numbers are present in the gcode.
+	//This should prevent a serial failure from sending the same motion twice by accident.
+	motion_data.sequence = ++new_sequence_key;
+	uint8_t recsize = sizeof(BinaryRecords::s_motion_data_block);
+	char motion_stream[recsize];
+	motion_data._check_sum = 0;
+	memcpy(motion_stream, &motion_data,sizeof(BinaryRecords::s_motion_data_block));
+	for (uint8_t i=0;i<recsize;i++)
+	motion_data._check_sum+=motion_stream[i];
+	
+	c_processor::host_serial.print_string("chk sum=");
+	c_processor::host_serial.print_int32((int)motion_data._check_sum);
+	c_processor::host_serial.print_string("\r");
+	
 	memcpy(motion_stream, &motion_data,sizeof(BinaryRecords::s_motion_data_block));
 	//Send to motion controller and wait for response.
 	BinaryRecords::e_binary_responses resp
-	= c_motion_controller::write_stream(motion_stream,sizeof(BinaryRecords::s_motion_data_block), BinaryRecords::e_binary_responses::Ok);
+	= c_record_handler::write_stream(motion_stream,sizeof(BinaryRecords::s_motion_data_block), BinaryRecords::e_binary_responses::Ok,c_processor::controller_serial,99000);
+	c_processor::host_serial.print_string("motion send response:");
+	c_processor::host_serial.print_int32((int)resp);
+	c_processor::host_serial.print_string("\r");
 	return resp ;
-}
-
-BinaryRecords::e_binary_responses c_motion_controller::write_stream(char * stream, uint8_t record_size,BinaryRecords::e_binary_responses Ack_Resp)
-{
-	//Send to motion controller
-	uint8_t send_count = 0;
-	while (1)
-	{
-		if (send_count > 4)
-		{
-			//We tried 4 times to send the record and it kept failing.. SUPER bad..
-			return BinaryRecords::e_binary_responses::Data_Error;
-		}
-		c_processor::controller_serial.Write_Record(stream, record_size);
-		send_count++;
-		//Now we need to wait for the motion controller to confirm it got the data
-		if (c_processor::controller_serial.WaitForEOL(90000)) //<-- wait until the timeout
-		{
-			//We timed out. this is bad...
-			return BinaryRecords::e_binary_responses::Response_Time_Out;
-		}
-		else
-		{
-			//get the response code from the controller
-			BinaryRecords::e_binary_responses resp
-			= (BinaryRecords::e_binary_responses)c_processor::controller_serial.Get();
-			
-			//there should be a cr after this, we can throw it away
-			c_processor::controller_serial.Get();
-			//If we get a proceed resp, we can break the while. we are done.
-			if (resp == Ack_Resp)
-			{
-				break;
-			}
-
-			//if we get to here, we didnt get an ack and we need to resend.
-			send_count++;
-		}
-	}
-	return BinaryRecords::e_binary_responses::Ok;
 }

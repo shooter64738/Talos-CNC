@@ -17,13 +17,13 @@ void Motion_Core::initialize()
 	for (uint8_t i = 0; i < MACHINE_AXIS_COUNT; i++)
 	{
 		Motion_Core::Settings::_Settings.steps_per_mm[i] = 160;
-		Motion_Core::Settings::_Settings.acceleration[i] = (50.0 * 60 * 60);
+		Motion_Core::Settings::_Settings.acceleration[i] = (150.0 * 60 * 60);
 		Motion_Core::Settings::_Settings.max_rate[i] = 5000;
 		//arbitrary for testing
 		Motion_Core::Settings::_Settings.back_lash_comp_distance[i] = 55;
 	}
 	
-	Motion_Core::Settings::_Settings.pulse_length = 2;
+	Motion_Core::Settings::_Settings.pulse_length = 5;
 
 }
 

@@ -27,6 +27,7 @@
 #include "..\..\..\Common\NGC_RS274\NGC_Interpreter.h"
 #include "..\Machine\c_machine.h"
 #include "..\MotionController\c_motion_controller.h"
+#include "..\..\..\Common\Serial\c_record_handler.h"
 
 void Settings::c_general::initialize()
 {
@@ -127,7 +128,7 @@ void Settings::c_general::load_from_input(uint8_t setting_group, uint8_t sub_gro
 		//copy updated block to stream
 		memcpy(setting_stream, &c_processor::motion_control_setting_record, record_size);
 		
-		if (c_motion_controller::write_stream(setting_stream, record_size,BinaryRecords::e_binary_responses::Ok) == BinaryRecords::e_binary_responses::Ok)
+		if (c_record_handler::write_stream(setting_stream, record_size,BinaryRecords::e_binary_responses::Ok,c_processor::controller_serial,50000) == BinaryRecords::e_binary_responses::Ok)
 		{
 			c_processor::host_serial.print_string("success.\r");
 		}

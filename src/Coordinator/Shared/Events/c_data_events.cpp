@@ -24,6 +24,7 @@
 #include "..\MotionController\c_motion_controller.h"
 #include "..\..\..\Common\Serial\records_def.h"
 #include "c_motion_events.h"
+#include "..\..\..\Common\Serial\c_record_handler.h"
 
 uint32_t c_data_events::event_flags;
 
@@ -43,103 +44,112 @@ void c_data_events::check_events()
 	
 	if (c_data_events::get_event(e_Data_Events::Peripheral_Record_InQueue))
 	{
-		uint16_t record_size = 0;
-		//c_processor::host_serial.print_string("got data!\r");
-		//get the record type
+		c_data_events::clear_event(e_Data_Events::Peripheral_Record_InQueue);
 		BinaryRecords::e_binary_record_types record_type = (BinaryRecords::e_binary_record_types)c_processor::peripheral_serial.Peek();
-		if (record_type == BinaryRecords::e_binary_record_types::Jog)
+		if ((uint8_t)record_type == 255)
 		{
-			record_size= sizeof(BinaryRecords::s_jog_data_block);
-			c_processor::host_serial.print_string("writing ");
-			c_processor::host_serial.print_int32(record_size);
-			c_processor::host_serial.print_string(" bytes\r");
-			//First byte indicates record type of motion. Make sure its all there before we start loading it.
-			if (c_processor::peripheral_serial.HasRecord(record_size))
-			{
-				//clear the peripheral record event
-				c_data_events::clear_event(e_Data_Events::Peripheral_Record_InQueue);
-				BinaryRecords::s_jog_data_block jog_block;
-				//Clear the struct
-				memset(&jog_block, 0, record_size);
-				//Put the stream into the struct
-				memcpy(&jog_block
-				, c_processor::peripheral_serial.Buffer_Pointer() + c_processor::peripheral_serial.TailPosition()
-				, record_size);
-				
-				//Tell the peripheral controller we got the data
-				c_processor::peripheral_serial.Write((char)BinaryRecords::e_binary_responses::Ok);c_processor::peripheral_serial.Write(CR);
-				
-				if (c_motion_controller::send_jog(jog_block) == BinaryRecords::e_binary_responses::Response_Time_Out)
-				{
-					c_processor::host_serial.print_string("Jog ACK error\r");
-				}
-				else
-				{
-					//Tell the peripheral controller the jog is complete
-					c_processor::peripheral_serial.Write((char)BinaryRecords::e_binary_responses::Jog_Complete);c_processor::peripheral_serial.Write(CR);
-					//c_processor::host_serial.print_string("Jog Success\r");
-				}
-				c_processor::peripheral_serial.Reset();
-				//return BinaryRecords::e_binary_record_types::Jog;
-			}
+			c_processor::controller_serial.Get();
+			c_data_events::clear_event(e_Data_Events::Peripheral_Record_InQueue);
 		}
+		c_processor::host_serial.print_string("rec type = ");
+		c_processor::host_serial.print_int32((int)record_type);
 		
-		
-		if (record_type == BinaryRecords::e_binary_record_types::Peripheral_Control_Setting)
+		if (record_type == BinaryRecords::e_binary_record_types::Jog )
 		{
+			BinaryRecords::s_jog_data_block mot;
+			BinaryRecords::e_binary_responses resp_value = c_record_handler::handle_inbound_record(&mot,&c_processor::peripheral_serial);
+			if (c_motion_events::get_event(Motion_Events::JOG_IN_QUEUE))
+			{
+				c_processor::host_serial.print_string("jog in progress. skipping\r");
+				return;
+			}
+			c_motion_events::set_event(Motion_Events::JOG_IN_QUEUE);
 			
+			if (resp_value == BinaryRecords::e_binary_responses::Check_Sum_Failure)
+			{
+				c_data_events::clear_event(e_Data_Events::Peripheral_Record_InQueue);
+			}
+			if (resp_value == BinaryRecords::e_binary_responses::Ok)
+			{
+				c_data_events::clear_event(e_Data_Events::Peripheral_Record_InQueue);
+				
+				c_processor::host_serial.print_string("jog forward\r");
+				BinaryRecords::e_binary_responses resp_value = c_record_handler::handle_outbound_record(&mot,c_processor::controller_serial);
+			}
 		}
 	}
 	if (c_data_events::get_event(e_Data_Events::Motion_Record_InQueue))
 	{
-		uint16_t record_size = 0;
-		//c_processor::host_serial.print_string("got data!\r");
-		//get the record type
 		BinaryRecords::e_binary_record_types record_type = (BinaryRecords::e_binary_record_types)c_processor::controller_serial.Peek();
-		if (record_type == BinaryRecords::e_binary_record_types::Status)
+		if ((uint8_t)record_type == 255)
 		{
-			record_size= sizeof(BinaryRecords::s_status_message);
-			//First byte indicates record type of motion. Make sure its all there before we start loading it.
-			if (c_processor::controller_serial.HasRecord(record_size))
-			{
-				//clear the peripheral record event
-				c_data_events::clear_event(e_Data_Events::Motion_Record_InQueue);
-				BinaryRecords::s_status_message status_message;
-				//Clear the struct
-				memset(&status_message, 0, record_size);
-				//Put the stream into the struct
-				memcpy(&status_message
-				, c_processor::controller_serial.Buffer_Pointer() + c_processor::controller_serial.TailPosition()
-				, record_size);
-				
-				c_processor::host_serial.print_string("controller status:\r");
-				c_processor::host_serial.print_string("\tstate = ");
-				c_processor::host_serial.print_int32((int32_t)status_message.system_state);c_processor::host_serial.Write(CR);
-				c_processor::host_serial.print_string("\tsub state = ");
-				c_processor::host_serial.print_int32((int32_t)status_message.system_sub_state);c_processor::host_serial.Write(CR);
-				c_processor::host_serial.print_string("\tnum message = ");
-				c_processor::host_serial.print_int32(status_message.num_message);c_processor::host_serial.Write(CR);
-				c_processor::host_serial.print_string("\tchr message = ");
-				c_processor::host_serial.print_string(status_message.chr_message);c_processor::host_serial.Write(CR);
-				
-				//a block has completed so dequeue it
-				if (status_message.system_sub_state == BinaryRecords::e_system_sub_state_record_types::Block_Complete)
-				{
-					c_motion_events::set_event(Motion_Events::MOTION_COMPLETE);
-						c_motion_events::last_reported_block = (uint32_t) status_message.num_message;
-				}
-				
-				c_processor::controller_serial.Reset();
-			}
-		}
-		else
-		{
-			//trashed record.
-			c_processor::controller_serial.Reset();
+			c_processor::controller_serial.Get();
 			c_data_events::clear_event(e_Data_Events::Motion_Record_InQueue);
 		}
+		
+		if (record_type == BinaryRecords::e_binary_record_types::Status )
+		{
+			BinaryRecords::s_status_message mot;
+			BinaryRecords::s_status_message *p_mot = &mot;
+			
+			BinaryRecords::e_binary_responses resp_value = c_record_handler::handle_inbound_record(p_mot,&c_processor::controller_serial);
+			
+			if (resp_value == BinaryRecords::e_binary_responses::Check_Sum_Failure)
+			{
+				c_data_events::clear_event(e_Data_Events::Motion_Record_InQueue);
+			}
+			if (resp_value == BinaryRecords::e_binary_responses::Ok)
+			{
+				c_data_events::clear_event(e_Data_Events::Motion_Record_InQueue);
+				
+				//c_processor::host_serial.print_string("controller status:\r");
+				//c_processor::host_serial.print_string("\tstate = ");
+				//c_processor::host_serial.print_int32((int32_t)p_mot->system_state);c_processor::host_serial.Write(CR);
+				//c_processor::host_serial.print_string("\tsub state = ");
+				//c_processor::host_serial.print_int32((int32_t)p_mot->system_sub_state);c_processor::host_serial.Write(CR);
+				//c_processor::host_serial.print_string("\tnum message = ");
+				//c_processor::host_serial.print_int32(p_mot->num_message);c_processor::host_serial.Write(CR);
+				//c_processor::host_serial.print_string("\tchr message = ");
+				//c_processor::host_serial.print_string(p_mot->chr_message);c_processor::host_serial.Write(CR);
+				
+				if (p_mot->system_sub_state == BinaryRecords::e_system_sub_state_record_types::Block_Complete)
+				{
+					c_motion_events::set_event(Motion_Events::MOTION_COMPLETE);
+					c_motion_events::last_reported_block = (uint32_t) p_mot->num_message;
+				}
+				else if (p_mot->system_sub_state == BinaryRecords::e_system_sub_state_record_types::Jog_Complete)
+				{
+					c_motion_events::clear_event(Motion_Events::JOG_IN_QUEUE);
+					
+					BinaryRecords::s_status_message new_stat;
+					new_stat.system_state = BinaryRecords::e_system_state_record_types::Motion_Complete;
+					new_stat.system_sub_state = BinaryRecords::e_system_sub_state_record_types::Jog_Complete;
+					
+					BinaryRecords::e_binary_responses resp =
+					c_record_handler::handle_outbound_record(&new_stat,c_processor::peripheral_serial);
+					//c_processor::host_serial.print_string("jog back ack\r");
+					//c_processor::host_serial.print_int32((int)resp);
+					//c_processor::host_serial.print_string("\r");
+					
+					
+				}
+			}
+		}
+		
+		//
+		//c_processor::controller_serial.Reset();
+		//
+		//}
+	}
+	else
+	{
+		//trashed record.
+		c_processor::controller_serial.Reset();
+		c_data_events::clear_event(e_Data_Events::Motion_Record_InQueue);
 	}
 }
+
+
 
 void c_data_events::set_event(e_Data_Events EventFlag)
 {

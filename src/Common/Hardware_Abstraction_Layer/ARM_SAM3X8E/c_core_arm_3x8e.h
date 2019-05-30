@@ -61,9 +61,8 @@ namespace Hardware_Abstraction_Layer
 		static void initialize();
 		static void start_interrupts();
 		static void stop_interrupts();
-
 		static uint32_t get_cpu_clock_rate();
-
+		static void critical_shutdown();
 	}; //c_cpu_ARM_SAM3X8E
 };
 

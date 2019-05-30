@@ -33,6 +33,7 @@ class Motion_Events
 	static const uint8_t MOTION_IN_QUEUE = 0;
 	static const uint8_t MOTION_COMPLETE = 1;
 	static const uint8_t HARDWARE_IDLE = 2;
+	static const uint8_t JOG_IN_QUEUE = 3;
 	
 };
 //volatile static uint8_t c_motion_events_event_flags;
