@@ -51,16 +51,14 @@ void c_data_events::check_events()
 			c_processor::controller_serial.Get();
 			c_data_events::clear_event(e_Data_Events::Peripheral_Record_InQueue);
 		}
-		c_processor::host_serial.print_string("rec type = ");
-		c_processor::host_serial.print_int32((int)record_type);
 		
 		if (record_type == BinaryRecords::e_binary_record_types::Jog )
 		{
+			c_processor::host_serial.print_string("send jog\r");
 			BinaryRecords::s_jog_data_block mot;
 			BinaryRecords::e_binary_responses resp_value = c_record_handler::handle_inbound_record(&mot,&c_processor::peripheral_serial);
 			if (c_motion_events::get_event(Motion_Events::JOG_IN_QUEUE))
 			{
-				c_processor::host_serial.print_string("jog in progress. skipping\r");
 				return;
 			}
 			c_motion_events::set_event(Motion_Events::JOG_IN_QUEUE);
@@ -72,8 +70,6 @@ void c_data_events::check_events()
 			if (resp_value == BinaryRecords::e_binary_responses::Ok)
 			{
 				c_data_events::clear_event(e_Data_Events::Peripheral_Record_InQueue);
-				
-				c_processor::host_serial.print_string("jog forward\r");
 				BinaryRecords::e_binary_responses resp_value = c_record_handler::handle_outbound_record(&mot,c_processor::controller_serial);
 			}
 		}
@@ -102,15 +98,16 @@ void c_data_events::check_events()
 			{
 				c_data_events::clear_event(e_Data_Events::Motion_Record_InQueue);
 				
-				//c_processor::host_serial.print_string("controller status:\r");
-				//c_processor::host_serial.print_string("\tstate = ");
-				//c_processor::host_serial.print_int32((int32_t)p_mot->system_state);c_processor::host_serial.Write(CR);
-				//c_processor::host_serial.print_string("\tsub state = ");
-				//c_processor::host_serial.print_int32((int32_t)p_mot->system_sub_state);c_processor::host_serial.Write(CR);
-				//c_processor::host_serial.print_string("\tnum message = ");
-				//c_processor::host_serial.print_int32(p_mot->num_message);c_processor::host_serial.Write(CR);
-				//c_processor::host_serial.print_string("\tchr message = ");
-				//c_processor::host_serial.print_string(p_mot->chr_message);c_processor::host_serial.Write(CR);
+				c_processor::host_serial.print_string("***controller status:\r");
+				c_processor::host_serial.print_string("\tstate = ");
+				c_processor::host_serial.print_int32((int32_t)p_mot->system_state);c_processor::host_serial.Write(CR);
+				c_processor::host_serial.print_string("\tsub state = ");
+				c_processor::host_serial.print_int32((int32_t)p_mot->system_sub_state);c_processor::host_serial.Write(CR);
+				c_processor::host_serial.print_string("\tnum message = ");
+				c_processor::host_serial.print_int32(p_mot->num_message);c_processor::host_serial.Write(CR);
+				c_processor::host_serial.print_string("\tchr message = ");
+				c_processor::host_serial.print_string(p_mot->chr_message);c_processor::host_serial.Write(CR);
+				c_processor::host_serial.print_string("*********************\r");
 				
 				if (p_mot->system_sub_state == BinaryRecords::e_system_sub_state_record_types::Block_Complete)
 				{

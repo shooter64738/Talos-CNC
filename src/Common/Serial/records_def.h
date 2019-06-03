@@ -102,6 +102,7 @@ namespace BinaryRecords
 		Block_Reserved3 =			 7, //Reserved
 		Block_Reserved4 =			 8, //Reserved
 		Jog_Complete =				30, 
+		Jog_Running =				31,
 		Error_Axis_Drive_Fault_X =	90, //Closed loop driver error
 		Error_Axis_Drive_Fault_Y =	91, //Closed loop driver error
 		Error_Axis_Drive_Fault_Z =	92, //Closed loop driver error

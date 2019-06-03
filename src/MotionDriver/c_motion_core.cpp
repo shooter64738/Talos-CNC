@@ -55,6 +55,7 @@ float Motion_Core::convert_delta_vector_to_unit_vector(float *vector)
 	{
 		vector[idx] *= inv_magnitude;
 	}
+	
 	return (magnitude);
 }
 

@@ -22,6 +22,10 @@ class c_processor
 	static void initialize();
 	static void run();
 	static void send_state_control_status();
+	static void send_status(BinaryRecords::e_system_state_record_types State
+		,BinaryRecords::e_system_sub_state_record_types SubState
+		,uint32_t numeric_message, char* char_message, uint32_t SET_ControlState
+		,uint32_t CLEAR_ControlState);
 	static void check_control_states();
 	static void process_motion(BinaryRecords::s_motion_data_block *mot);
 	static void check_process_record();

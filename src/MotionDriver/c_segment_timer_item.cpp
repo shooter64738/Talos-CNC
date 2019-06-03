@@ -39,6 +39,7 @@ void Motion_Core::Segment::Timer::Buffer::Advance()
 	if (Motion_Core::Segment::Timer::Buffer::_full == 0
 	&& (Motion_Core::Segment::Timer::Buffer::_head == Motion_Core::Segment::Timer::Buffer::_tail))
 	return;
+	
 	Motion_Core::Segment::Timer::Buffer::_tail++;
 
 	//Are we wrapping?
@@ -59,6 +60,10 @@ Motion_Core::Segment::Timer::Timer_Item *Motion_Core::Segment::Timer::Buffer::Cu
 	if (Motion_Core::Segment::Timer::Buffer::_full == 0
 	&& (Motion_Core::Segment::Timer::Buffer::_head == Motion_Core::Segment::Timer::Buffer::_tail))
 	return NULL;
+	
+	////If tail==head, we dont have a new one to give right now. 
+	//if (Motion_Core::Segment::Timer::Buffer::_head == Motion_Core::Segment::Timer::Buffer::_tail)
+	//return NULL;
 
 	Motion_Core::Segment::Timer::Timer_Item *item =
 	&Motion_Core::Segment::Timer::Buffer::_buffer[Motion_Core::Segment::Timer::Buffer::_tail];
@@ -76,7 +81,10 @@ Motion_Core::Segment::Timer::Timer_Item *Motion_Core::Segment::Timer::Buffer::Wr
 	if (Motion_Core::Segment::Timer::Buffer::_full == 1)
 	return NULL;
 
-	Motion_Core::Segment::Timer::Timer_Item *item = &Motion_Core::Segment::Timer::Buffer::_buffer[Motion_Core::Segment::Timer::Buffer::_head++];
+	Motion_Core::Segment::Timer::Timer_Item *item =
+		&Motion_Core::Segment::Timer::Buffer::_buffer[Motion_Core::Segment::Timer::Buffer::_head];
+		
+	Motion_Core::Segment::Timer::Buffer::_head++;
 	
 	//Are we wrapping?
 	if (Motion_Core::Segment::Timer::Buffer::_head == Motion_Core::Segment::Timer::BUFFER_SIZE)

@@ -98,6 +98,8 @@ void Motion_Core::Segment::Arbitrator::Fill_Step_Segment_Buffer()
 			break; //<--if segment buffer fills up and we cant get a new segment, break the loop
 		}
 
+
+
 		//Remaining code is as it was in grbl. I will start converting the planner code next.
 
 		// Check for exit conditions and flag to load next planner block.
@@ -162,7 +164,10 @@ uint8_t Motion_Core::Segment::Arbitrator::Base_Calculate()
 		//TODO:: After planner is converted, move this code into bresenham copy block steps.
 		// Load the Bresenham stepping data for the block.
 		Motion_Core::Segment::Bresenham::Bresenham_Item *bresenham_item = Motion_Core::Segment::Bresenham::Buffer::Write();
-
+		if (bresenham_item == NULL )
+		{
+			c_processor::debug_serial.print_string("bresn null\r");
+		}
 		// Prepare and copy Bresenham algorithm segment data from the new planner block, so that
 		// when the segment buffer completes the planner block, it may be discarded when the
 		// segment buffer finishes the prepped block, but the stepper ISR is still executing it.
@@ -176,6 +181,12 @@ uint8_t Motion_Core::Segment::Arbitrator::Base_Calculate()
 			bresenham_item->steps[idx] = (Motion_Core::Segment::Arbitrator::Active_Block->steps[idx]);
 		}
 		bresenham_item->step_event_count = (Motion_Core::Segment::Arbitrator::Active_Block->step_event_count);
+
+		//c_processor::debug_serial.print_string("bresen step 0 = ");
+		//c_processor::debug_serial.print_int32(bresenham_item->steps[0]);
+		//c_processor::debug_serial.print_string(" bresen total = ");
+		//c_processor::debug_serial.print_int32(bresenham_item->step_event_count);
+		//c_processor::debug_serial.Write(CR);
 
 		// Initialize segment buffer data for generating the segments.
 		Motion_Core::Segment::Arbitrator::steps_remaining = (float)Motion_Core::Segment::Arbitrator::Active_Block->step_event_count;
@@ -311,13 +322,20 @@ uint8_t Motion_Core::Segment::Arbitrator::Segment_Calculate()
 	Fortunately, this scenario is highly unlikely and unrealistic in CNC machines
 	supported by Grbl (i.e. exceeding 10 meters axis travel at 200 step/mm).
 	*/
+	
+	//c_processor::debug_serial.print_string("Active_Block->millimeters = ");
+	//c_processor::debug_serial.print_int32(Active_Block->millimeters);
+	//c_processor::debug_serial.Write(CR);
+	//
 	Motion_Core::Segment::Arbitrator::mm_remaining = Motion_Core::Segment::Arbitrator::Active_Block->millimeters; // New segment distance from end of block.
 	//float step_dist_remaining = Motion_Core::Segment::Arbitrator::step_per_mm * mm_remaining; // Convert mm_remaining to steps
 	//float n_steps_remaining = ceil(step_dist_remaining); // Round-up current steps remaining
 	//float last_n_steps_remaining = ceil(Motion_Core::Segment::Arbitrator::steps_remaining); // Round-up last steps remaining
 
 	// Initialize new segment
-	Motion_Core::Segment::Timer::Timer_Item *segment_item = Motion_Core::Segment::Timer::Buffer::Writex();
+	Motion_Core::Segment::Timer::Timer_Item *segment_item = NULL;
+	segment_item = Motion_Core::Segment::Timer::Buffer::Writex();
+	
 	if (segment_item == NULL)
 	return 0;
 	
@@ -326,6 +344,12 @@ uint8_t Motion_Core::Segment::Arbitrator::Segment_Calculate()
 	segment_item->line_number = Motion_Core::Segment::Arbitrator::line_number;
 	segment_item->sequence = Motion_Core::Segment::Arbitrator::sequence;
 	segment_item->flag = Motion_Core::Segment::Arbitrator::flag;
+	
+	//c_processor::debug_serial.print_string("pnt seg 0 = ");
+	//c_processor::debug_serial.print_int32(segment_item->bresenham_in_item->steps[0]);
+	//c_processor::debug_serial.print_string(" pnt total = ");
+	//c_processor::debug_serial.print_int32(segment_item->bresenham_in_item->step_event_count);
+	//c_processor::debug_serial.Write(CR);
 	
 	/*------------------------------------------------------------------------------------
 	Compute the average velocity of this new segment by determining the total distance
@@ -346,7 +370,7 @@ uint8_t Motion_Core::Segment::Arbitrator::Segment_Calculate()
 	float time_var = dt_max; // Time worker variable
 	float mm_var; // mm-Distance worker variable
 	float speed_var; // Speed worker variable
-	float minimum_mm = mm_remaining - Motion_Core::Segment::Arbitrator::req_mm_increment; // Guarantee at least one step.
+	float minimum_mm = Motion_Core::Segment::Arbitrator::mm_remaining - Motion_Core::Segment::Arbitrator::req_mm_increment; // Guarantee at least one step.
 
 	if (minimum_mm < 0.0)
 	{
@@ -358,33 +382,41 @@ uint8_t Motion_Core::Segment::Arbitrator::Segment_Calculate()
 		switch ((BinaryRecords::e_ramp_type)Motion_Core::Segment::Arbitrator::ramp_type)
 		{
 			case BinaryRecords::e_ramp_type::Decel_Override:
-			speed_var = Motion_Core::Segment::Arbitrator::Active_Block->acceleration * time_var;
-			mm_var = time_var * (Motion_Core::Segment::Arbitrator::current_speed - 0.5 * speed_var);
-			mm_remaining -= mm_var;
-			if ((mm_remaining < Motion_Core::Segment::Arbitrator::accelerate_until) || (mm_var <= 0))
 			{
-				// Cruise or cruise-deceleration types only for deceleration override.
-				mm_remaining = Motion_Core::Segment::Arbitrator::accelerate_until; // NOTE: 0.0 at EOB
-				time_var = 2.0 * (Motion_Core::Segment::Arbitrator::Active_Block->millimeters - mm_remaining) / (Motion_Core::Segment::Arbitrator::current_speed + Motion_Core::Segment::Arbitrator::maximum_speed);
-				Motion_Core::Segment::Arbitrator::ramp_type = BinaryRecords::e_ramp_type::Cruise;
-				Motion_Core::Segment::Arbitrator::current_speed = Motion_Core::Segment::Arbitrator::maximum_speed;
-			}
-			else
-			{ // Mid-deceleration override ramp.
-				Motion_Core::Segment::Arbitrator::current_speed -= speed_var;
+				speed_var = Motion_Core::Segment::Arbitrator::Active_Block->acceleration * time_var;
+				mm_var = time_var * (Motion_Core::Segment::Arbitrator::current_speed - 0.5 * speed_var);
+				Motion_Core::Segment::Arbitrator::mm_remaining -= mm_var;
+				if ((Motion_Core::Segment::Arbitrator::mm_remaining < Motion_Core::Segment::Arbitrator::accelerate_until) || (mm_var <= 0))
+				{
+					// Cruise or cruise-deceleration types only for deceleration override.
+					Motion_Core::Segment::Arbitrator::mm_remaining = Motion_Core::Segment::Arbitrator::accelerate_until; // NOTE: 0.0 at EOB
+					time_var = 2.0 * (Motion_Core::Segment::Arbitrator::Active_Block->millimeters - Motion_Core::Segment::Arbitrator::mm_remaining) / (Motion_Core::Segment::Arbitrator::current_speed + Motion_Core::Segment::Arbitrator::maximum_speed);
+					Motion_Core::Segment::Arbitrator::ramp_type = BinaryRecords::e_ramp_type::Cruise;
+					Motion_Core::Segment::Arbitrator::current_speed = Motion_Core::Segment::Arbitrator::maximum_speed;
+				}
+				else
+				{ // Mid-deceleration override ramp.
+					Motion_Core::Segment::Arbitrator::current_speed -= speed_var;
+				}
+				//c_processor::debug_serial.print_string("Decel_Override, ");
+				//c_processor::debug_serial.print_string("mm_remaining = ");
+				//c_processor::debug_serial.print_int32(Motion_Core::Segment::Arbitrator::mm_remaining);
+				//c_processor::debug_serial.Write(CR);
 			}
 			break;
 			case BinaryRecords::e_ramp_type::Accel:
 			{
 				// NOTE: Acceleration ramp only computes during first do-while loop.
 				speed_var = Motion_Core::Segment::Arbitrator::Active_Block->acceleration * time_var;
-				mm_remaining -= time_var * (Motion_Core::Segment::Arbitrator::current_speed + 0.5 * speed_var);
-				if (mm_remaining < Motion_Core::Segment::Arbitrator::accelerate_until)
+				Motion_Core::Segment::Arbitrator::mm_remaining -= time_var * (Motion_Core::Segment::Arbitrator::current_speed + 0.5 * speed_var);
+				if (Motion_Core::Segment::Arbitrator::mm_remaining < Motion_Core::Segment::Arbitrator::accelerate_until)
 				{ // End of acceleration ramp.
 					// Acceleration-cruise, acceleration-deceleration ramp junction, or end of block.
-					mm_remaining = Motion_Core::Segment::Arbitrator::accelerate_until; // NOTE: 0.0 at EOB
-					time_var = 2.0 * (Motion_Core::Segment::Arbitrator::Active_Block->millimeters - mm_remaining) / (Motion_Core::Segment::Arbitrator::current_speed + Motion_Core::Segment::Arbitrator::maximum_speed);
-					if (mm_remaining == Motion_Core::Segment::Arbitrator::decelerate_after)
+					Motion_Core::Segment::Arbitrator::mm_remaining = Motion_Core::Segment::Arbitrator::accelerate_until; // NOTE: 0.0 at EOB
+					time_var = 2.0 * (Motion_Core::Segment::Arbitrator::Active_Block->millimeters - Motion_Core::Segment::Arbitrator::mm_remaining)
+					/ (Motion_Core::Segment::Arbitrator::current_speed + Motion_Core::Segment::Arbitrator::maximum_speed);
+					
+					if (Motion_Core::Segment::Arbitrator::mm_remaining == Motion_Core::Segment::Arbitrator::decelerate_after)
 					{
 						Motion_Core::Segment::Arbitrator::ramp_type = BinaryRecords::e_ramp_type::Decel;
 					}
@@ -398,25 +430,34 @@ uint8_t Motion_Core::Segment::Arbitrator::Segment_Calculate()
 				{ // Acceleration only.
 					Motion_Core::Segment::Arbitrator::current_speed += speed_var;
 				}
-				break;
+				//c_processor::debug_serial.print_string("Accell, ");
+				//c_processor::debug_serial.print_string("mm_remaining = ");
+				//c_processor::debug_serial.print_int32(Motion_Core::Segment::Arbitrator::mm_remaining);
+				//c_processor::debug_serial.Write(CR);
+
 			}
+			break;
 			case BinaryRecords::e_ramp_type::Cruise:
 			{
 				// NOTE: mm_var used to retain the last mm_remaining for incomplete segment time_var calculations.
 				// NOTE: If maximum_speed*time_var value is too low, round-off can cause mm_var to not change. To
 				//   prevent this, simply enforce a minimum speed threshold in the planner.
-				mm_var = mm_remaining - Motion_Core::Segment::Arbitrator::maximum_speed * time_var;
+				mm_var = Motion_Core::Segment::Arbitrator::mm_remaining - Motion_Core::Segment::Arbitrator::maximum_speed * time_var;
 				if (mm_var < Motion_Core::Segment::Arbitrator::decelerate_after)
 				{ // End of cruise.
 					// Cruise-deceleration junction or end of block.
-					time_var = (mm_remaining - Motion_Core::Segment::Arbitrator::decelerate_after) / Motion_Core::Segment::Arbitrator::maximum_speed;
-					mm_remaining = Motion_Core::Segment::Arbitrator::decelerate_after; // NOTE: 0.0 at EOB
+					time_var = (Motion_Core::Segment::Arbitrator::mm_remaining - Motion_Core::Segment::Arbitrator::decelerate_after) / Motion_Core::Segment::Arbitrator::maximum_speed;
+					Motion_Core::Segment::Arbitrator::mm_remaining = Motion_Core::Segment::Arbitrator::decelerate_after; // NOTE: 0.0 at EOB
 					Motion_Core::Segment::Arbitrator::ramp_type = BinaryRecords::e_ramp_type::Decel;
 				}
 				else
 				{ // Cruising only.
-					mm_remaining = mm_var;
+					Motion_Core::Segment::Arbitrator::mm_remaining = mm_var;
 				}
+				//c_processor::debug_serial.print_string("Cruise, ");
+				//c_processor::debug_serial.print_string("mm_remaining = ");
+				//c_processor::debug_serial.print_int32(Motion_Core::Segment::Arbitrator::mm_remaining);
+				//c_processor::debug_serial.Write(CR);
 			}
 			break;
 			default: // case RAMP_DECEL:
@@ -426,18 +467,26 @@ uint8_t Motion_Core::Segment::Arbitrator::Segment_Calculate()
 				if (Motion_Core::Segment::Arbitrator::current_speed > speed_var)
 				{ // Check if at or below zero speed.
 					// Compute distance from end of segment to end of block.
-					mm_var = mm_remaining - time_var * (Motion_Core::Segment::Arbitrator::current_speed - 0.5 * speed_var); // (mm)
+					mm_var = Motion_Core::Segment::Arbitrator::mm_remaining - time_var * (Motion_Core::Segment::Arbitrator::current_speed - 0.5 * speed_var); // (mm)
 					if (mm_var > Motion_Core::Segment::Arbitrator::mm_complete)
 					{ // Typical case. In deceleration ramp.
-						mm_remaining = mm_var;
+						Motion_Core::Segment::Arbitrator::mm_remaining = mm_var;
 						Motion_Core::Segment::Arbitrator::current_speed -= speed_var;
+						//c_processor::debug_serial.print_string("If//Break, ");
+						//c_processor::debug_serial.print_string("mm_remaining = ");
+						//c_processor::debug_serial.print_int32(Motion_Core::Segment::Arbitrator::mm_remaining);
+						//c_processor::debug_serial.Write(CR);
 						break; // Segment complete. Exit switch-case statement. Continue do-while loop.
 					}
 				}
 				// Otherwise, at end of block or end of forced-deceleration.
-				time_var = 2.0 * (mm_remaining - Motion_Core::Segment::Arbitrator::mm_complete) / (Motion_Core::Segment::Arbitrator::current_speed + Motion_Core::Segment::Arbitrator::exit_speed);
-				mm_remaining = Motion_Core::Segment::Arbitrator::mm_complete;
+				time_var = 2.0 * (Motion_Core::Segment::Arbitrator::mm_remaining - Motion_Core::Segment::Arbitrator::mm_complete) / (Motion_Core::Segment::Arbitrator::current_speed + Motion_Core::Segment::Arbitrator::exit_speed);
+				Motion_Core::Segment::Arbitrator::mm_remaining = Motion_Core::Segment::Arbitrator::mm_complete;
 				Motion_Core::Segment::Arbitrator::current_speed = Motion_Core::Segment::Arbitrator::exit_speed;
+				//c_processor::debug_serial.print_string("Default, ");
+				//c_processor::debug_serial.print_string("mm_remaining = ");
+				//c_processor::debug_serial.print_int32(Motion_Core::Segment::Arbitrator::mm_remaining);
+				//c_processor::debug_serial.Write(CR);
 			}
 		}
 		dt += time_var; // Add computed ramp time to total segment time.
@@ -460,12 +509,27 @@ uint8_t Motion_Core::Segment::Arbitrator::Segment_Calculate()
 			}
 		}
 		
-	} while (mm_remaining > Motion_Core::Segment::Arbitrator::mm_complete); // **Complete** Exit loop. Profile complete.
+	} while (Motion_Core::Segment::Arbitrator::mm_remaining > Motion_Core::Segment::Arbitrator::mm_complete); // **Complete** Exit loop. Profile complete.
+
+	//c_processor::debug_serial.print_string("mm_remaining = ");
+	//c_processor::debug_serial.print_int32(mm_remaining);
+	//c_processor::debug_serial.print_string("mm_complete = ");
+	//c_processor::debug_serial.print_int32(Motion_Core::Segment::Arbitrator::mm_complete);
+	//c_processor::debug_serial.Write(CR);
+
 
 	float step_dist_remaining = Motion_Core::Segment::Arbitrator::step_per_mm * mm_remaining; // Convert mm_remaining to steps
 	float n_steps_remaining = ceil(step_dist_remaining); // Round-up current steps remaining
 	float last_n_steps_remaining = ceil(Motion_Core::Segment::Arbitrator::steps_remaining); // Round-up last steps remaining
 	segment_item->steps_to_execute_in_this_segment = last_n_steps_remaining - n_steps_remaining; // Compute number of steps to execute.
+	//c_processor::debug_serial.print_string("calc steps in seg:");
+	//c_processor::debug_serial.print_int32(segment_item->steps_to_execute_in_this_segment);
+	//c_processor::debug_serial.Write(CR);
+	//lock for debug ead
+	while (segment_item->steps_to_execute_in_this_segment == 0)
+	{
+		
+	}
 
 	// Bail if we are at the end of a feed hold and don't have a step to execute.
 	if (segment_item->steps_to_execute_in_this_segment == 0)
@@ -493,9 +557,12 @@ uint8_t Motion_Core::Segment::Arbitrator::Segment_Calculate()
 	// Compute CPU cycles per step for the prepped segment.
 	uint32_t cycles = ceil((_TICKS_PER_MICROSECOND * 1000000 * 60) * inv_rate); // (cycles/step)
 	Motion_Core::Segment::Arbitrator::Set_Segment_Delay(segment_item, cycles);
+	
+	
+	
 
 	// Update the appropriate planner and segment data.
-	Motion_Core::Segment::Arbitrator::Active_Block->millimeters = mm_remaining;
+	Motion_Core::Segment::Arbitrator::Active_Block->millimeters = Motion_Core::Segment::Arbitrator::mm_remaining;
 	Motion_Core::Segment::Arbitrator::steps_remaining = n_steps_remaining;
 	Motion_Core::Segment::Arbitrator::dt_remainder = (n_steps_remaining - step_dist_remaining) * inv_rate;
 
@@ -515,6 +582,10 @@ void Motion_Core::Segment::Arbitrator::Set_Segment_Delay(Motion_Core::Segment::T
 	uint8_t *update_prescale = &segment_item->timer_prescaler;
 
 	Hardware_Abstraction_Layer::MotionCore::Stepper::set_delay_from_hardware(cycles,update_delay,update_prescale);
+	
+	//c_processor::debug_serial.print_string("delay=");
+	//c_processor::debug_serial.print_int32(cycles);
+	//c_processor::debug_serial.Write(CR);
 
 }
 
@@ -538,28 +609,27 @@ void Motion_Core::Segment::Arbitrator::cycle_hold()
 		
 		st_update_plan_block_parameters(); // Notify stepper module to recompute for hold deceleration.
 		Motion_Core::System::StepControl = STEP_CONTROL_EXECUTE_HOLD; // Initiate suspend state with active flag.
-		Motion_Core::System::set_control_state_mode(MOTION_CONTROL_HOLD);
+		//Motion_Core::System::set_control_state_mode(STATE_MOTION_CONTROL_HOLD);
 		c_processor::debug_serial.print_string("cycle hold\r");
-		//status.num_message = Motion_Core::Segment::Arbitrator::Active_Block->sequence;
-		//status.system_state = BinaryRecords::e_system_state_record_types::Motion_Idle;
-		//status.system_sub_state = BinaryRecords::e_system_sub_state_record_types::Block_Holding;
-		//c_record_handler::handle_outbound_record(status,c_processor::coordinator_serial);
-		//c_processor::send_state_control_status();
+		
+		c_processor::send_status(BinaryRecords::e_system_state_record_types::Motion_Idle
+		,BinaryRecords::e_system_sub_state_record_types::Block_Holding
+		,Motion_Core::Segment::Arbitrator::Active_Block->sequence
+		,NULL,STATE_MOTION_CONTROL_HOLD,STATE_STATUS_IGNORE);
 	}
 	else
 	{
-		//status.num_message = Motion_Core::Segment::Arbitrator::Active_Block->sequence;
-		//status.system_state = BinaryRecords::e_system_state_record_types::Motion_Active;
-		//status.system_sub_state = BinaryRecords::e_system_sub_state_record_types::Block_Resuming;
-		//c_record_handler::handle_outbound_record(status,c_processor::coordinator_serial);
-		
-		Motion_Core::System::set_control_state_mode(MOTION_CONTROL_RESUME);
+		//
+		c_processor::send_status(BinaryRecords::e_system_state_record_types::Motion_Active
+		,BinaryRecords::e_system_sub_state_record_types::Block_Resuming
+		,Motion_Core::Segment::Arbitrator::Active_Block->sequence
+		,NULL,STATE_STATUS_IGNORE, STATE_MOTION_CONTROL_HOLD);
+				
 		Motion_Core::System::StepControl = 0;
 		c_processor::debug_serial.print_string("cycle continue\r");
 		st_update_plan_block_parameters();
 		Motion_Core::Segment::Arbitrator::Fill_Step_Segment_Buffer();
 		Motion_Core::Hardware::Interpollation::Initialize();
-		//c_processor::send_state_control_status();
-		Motion_Core::System::clear_control_state_mode(MOTION_CONTROL_RESUME);
+		//Motion_Core::System::clear_control_state_mode(STATE_MOTION_CONTROL_RESUME);
 	}
 }

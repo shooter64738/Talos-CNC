@@ -9,7 +9,7 @@ namespace Motion_Core
 		{
 			#ifndef __C_TIMER_ITEM
 			#define __C_TIMER_ITEM
-			static const uint8_t BUFFER_SIZE = 80;
+			static const uint8_t BUFFER_SIZE = 15;
 
 			class Timer_Item
 			{
@@ -39,12 +39,13 @@ namespace Motion_Core
 				static void Advance();
 				static void Reset();
 				static Timer_Item _buffer[];
-
-				private:
 				
 				static int16_t _tail;
 				static int16_t _head;
 				static uint8_t _full;
+				private:
+				
+				
 
 			};
 			#endif

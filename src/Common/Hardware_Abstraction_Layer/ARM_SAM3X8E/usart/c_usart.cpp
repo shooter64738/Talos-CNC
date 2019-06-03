@@ -55,7 +55,7 @@ void c_usart::initialize(uint8_t Port, uint16_t BaudRate)
 
 			// ==> Actual uart configuration
 			// Enable the peripheral uart controller
-			c_pmc::peripheral_clock_enable_register(PMC,1 << ID_USART0);
+			//c_pmc::peripheral_clock_enable_register(PMC,1 << ID_USART0);
 			//PMC->PMC_PCER0 = 1 << ID_USART0;
 
 			// Reset and disable receiver and transmitter

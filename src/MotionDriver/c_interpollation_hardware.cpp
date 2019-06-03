@@ -59,6 +59,7 @@ void Motion_Core::Hardware::Interpollation::Initialize()
 			case BinaryRecords::e_feed_modes::FEED_RATE_MINUTES_PER_UNIT_MODE:
 			case BinaryRecords::e_feed_modes::FEED_RATE_UNITS_PER_MINUTE_MODE:
 			{
+				
 				//This is driven internally by the motion controllers timer
 				Hardware_Abstraction_Layer::MotionCore::Stepper::wake_up();
 			}
@@ -84,18 +85,19 @@ void Motion_Core::Hardware::Interpollation::Shutdown()
 	myfile.close();
 	#endif // MSVC
 	Hardware_Abstraction_Layer::MotionCore::Stepper::st_go_idle();
+	
+	Motion_Core::Hardware::Interpollation::Interpolation_Active = 0; // Flag main program for cycle end
+	Motion_Core::Hardware::Interpollation::Last_Completed_Sequence = Motion_Core::Hardware::Interpollation::Current_Sequence;
+	Motion_Core::Hardware::Interpollation::Current_Sequence = 0;
+	Motion_Core::Hardware::Interpollation::direction_set = 0;
+	Motion_Core::Hardware::Interpollation::step_outbits = 0;
 
 	//Hardware_Abstraction_Layer::Grbl::Stepper::port_disable(pin_state);
 
 }
 
-
 void Motion_Core::Hardware::Interpollation::step_tick()
 {
-	if (Motion_Core::Hardware::Interpollation::Step_Active)
-	{
-		return;
-	} // The busy-flag is used to avoid reentering this interrupt
 	
 	//We do not need to set the direction pins on every interrupt. These should only change when a new block is loaded.
 	if (!Motion_Core::Hardware::Interpollation::direction_set)
@@ -106,13 +108,14 @@ void Motion_Core::Hardware::Interpollation::step_tick()
 	}
 	
 	Hardware_Abstraction_Layer::MotionCore::Stepper::port_step((STEP_PORT & ~STEP_MASK) | Motion_Core::Hardware::Interpollation::step_outbits);
-	
+	//c_processor::debug_serial.print_string("t\r");
 
 	// Enable step pulse reset timer so that The Stepper Port Reset Interrupt can reset the signal after
 	// exactly settings.pulse_microseconds microseconds, independent of the main Timer1 prescaler.
 	Hardware_Abstraction_Layer::MotionCore::Stepper::pulse_reset_timer();
-
+//c_processor::debug_serial.print_string("t\r");
 	Motion_Core::Hardware::Interpollation::Step_Active = 1;
+
 	//sei();
 	Hardware_Abstraction_Layer::Core::start_interrupts();
 
@@ -120,9 +123,24 @@ void Motion_Core::Hardware::Interpollation::step_tick()
 
 	if (Motion_Core::Hardware::Interpollation::Exec_Timer_Item == NULL)
 	{
+		Motion_Core::Hardware::Interpollation::Exec_Timer_Item = Motion_Core::Segment::Timer::Buffer::Current();
+		//c_processor::debug_serial.print_string("n\r");
 		// Anything in the buffer? If so, load and initialize next step segment.
-		if ((Motion_Core::Hardware::Interpollation::Exec_Timer_Item = Motion_Core::Segment::Timer::Buffer::Current()) != NULL)
+		if (Motion_Core::Hardware::Interpollation::Exec_Timer_Item != NULL)
 		{
+			//c_processor::debug_serial.print_string("step");
+			//c_processor::debug_serial.print_int32(Motion_Core::Hardware::Interpollation::Exec_Timer_Item->steps_to_execute_in_this_segment);
+			//c_processor::debug_serial.print_string(" tail");
+			//c_processor::debug_serial.print_int32(Motion_Core::Segment::Timer::Buffer::_tail);
+			//c_processor::debug_serial.print_string(" head");
+			//c_processor::debug_serial.print_int32(Motion_Core::Segment::Timer::Buffer::_head);
+			//c_processor::debug_serial.Write(CR);
+			//if (Motion_Core::Hardware::Interpollation::Exec_Timer_Item->steps_to_execute_in_this_segment ==0)
+			//{
+				//Motion_Core::Segment::Timer::Buffer::_tail--;
+				//Motion_Core::Hardware::Interpollation::Shutdown();
+			//}
+			//
 			#ifdef MSVC
 			myfile << Motion_Core::Hardware::Interpollation::Exec_Timer_Item->steps_to_execute_in_this_segment << ",";
 			myfile << Motion_Core::Hardware::Interpollation::Exec_Timer_Item->timer_delay_value << ",";
@@ -132,8 +150,8 @@ void Motion_Core::Hardware::Interpollation::step_tick()
 			myfile.flush();
 			#endif
 
-			Hardware_Abstraction_Layer::MotionCore::Stepper::TCCR1B_set
-			(Motion_Core::Hardware::Interpollation::Exec_Timer_Item->timer_prescaler);
+			//Hardware_Abstraction_Layer::MotionCore::Stepper::TCCR1B_set
+			//(Motion_Core::Hardware::Interpollation::Exec_Timer_Item->timer_prescaler);
 
 			Hardware_Abstraction_Layer::MotionCore::Stepper::OCR1A_set
 			(Motion_Core::Hardware::Interpollation::Exec_Timer_Item->timer_delay_value);
@@ -175,15 +193,11 @@ void Motion_Core::Hardware::Interpollation::step_tick()
 		{
 			// Segment buffer empty. Shutdown.
 			Motion_Core::Hardware::Interpollation::Shutdown();
-			Motion_Core::Hardware::Interpollation::Interpolation_Active = 0; // Flag main program for cycle end
-			Motion_Core::Hardware::Interpollation::Step_Active = 0;
-			Motion_Core::Hardware::Interpollation::Last_Completed_Sequence = Motion_Core::Hardware::Interpollation::Current_Sequence;
-			Motion_Core::Hardware::Interpollation::Current_Sequence = 0;
-			Motion_Core::Hardware::Interpollation::direction_set = 0;
+			
 			return; // Nothing to do but exit.
 		}
 	}
-
+//seems stable to here.
 	// Reset step out bits.
 	Motion_Core::Hardware::Interpollation::step_outbits = 0;
 	for (int i = 0; i < MACHINE_AXIS_COUNT; i++)
@@ -215,9 +229,11 @@ void Motion_Core::Hardware::Interpollation::step_tick()
 		// Segment is complete. Discard current segment and advance segment indexing.
 		Motion_Core::Hardware::Interpollation::Exec_Timer_Item = NULL;
 		Motion_Core::Segment::Timer::Buffer::Advance();
-
+//c_processor::debug_serial.print_string("a\r");
 	}
 	Motion_Core::Hardware::Interpollation::step_outbits
 	^= Motion_Core::Hardware::Interpollation::step_port_invert_mask;  // Apply step port invert mask
+	
+	Motion_Core::Hardware::Interpollation::Step_Active = 0;
 	
 }

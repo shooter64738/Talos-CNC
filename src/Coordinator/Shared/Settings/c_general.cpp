@@ -123,12 +123,9 @@ void Settings::c_general::load_from_input(uint8_t setting_group, uint8_t sub_gro
 			c_processor::host_serial.print_string("arc tolerance\r");
 			c_processor::motion_control_setting_record.arc_tolerance = fAddress;
 		}
-		char setting_stream[sizeof(BinaryRecords::s_motion_control_settings)];
-		record_size = sizeof(BinaryRecords::s_motion_control_settings);
-		//copy updated block to stream
-		memcpy(setting_stream, &c_processor::motion_control_setting_record, record_size);
 		
-		if (c_record_handler::write_stream(setting_stream, record_size,BinaryRecords::e_binary_responses::Ok,c_processor::controller_serial,50000) == BinaryRecords::e_binary_responses::Ok)
+		BinaryRecords::e_binary_responses resp = c_record_handler::handle_outbound_record(&c_processor::motion_control_setting_record,c_processor::controller_serial);
+		if (resp == BinaryRecords::e_binary_responses::Ok)
 		{
 			c_processor::host_serial.print_string("success.\r");
 		}

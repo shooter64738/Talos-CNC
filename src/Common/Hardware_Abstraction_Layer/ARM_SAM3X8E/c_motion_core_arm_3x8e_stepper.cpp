@@ -11,7 +11,7 @@
 #include "../../../MotionDriver/c_motion_core.h"
 #include "../../../MotionDriver/c_processor.h"
 
-
+volatile uint8_t irq = 0;
 
 uint8_t Hardware_Abstraction_Layer::MotionCore::Stepper::step_port_invert_mask;
 uint8_t Hardware_Abstraction_Layer::MotionCore::Stepper::dir_port_invert_mask;
@@ -47,65 +47,16 @@ void Hardware_Abstraction_Layer::MotionCore::Stepper::initialize()
 		Direction_Ports[i]->PIO_OER = Direction_Pins[i];
 	}
 
-
-	//SysTick->LOAD = (SYS_TICKS&SysTick_LOAD_RELOAD_Msk)-1;
-	//NVIC_SetPriority(SysTick_IRQn,1);
-	//SysTick->VAL=0;
-	//SysTick->CTRL = SysTick_CTRL_CLKSOURCE_Msk | SysTick_CTRL_TICKINT_Msk | SysTick_CTRL_ENABLE_Msk;
-	
-	
-	//Configure the stepper driver interrupt timer. Leave disabled until we need it
-	//	Enable TC1 power
-	
 	PMC->PMC_PCER0 |= 1 << ID_TC3;
-	// Disable TC clock
+	TC1->TC_CHANNEL[0].TC_CMR = TC_CMR_WAVE | SELECTED_TIMER_CLOCK | TC_CMR_WAVSEL_UP_RC | TC_CMR_ACPA_TOGGLE;
+	TC1->TC_CHANNEL[0].TC_RA = 240; //<--stepper pulse on time
+	TC1->TC_CHANNEL[0].TC_RC = 2048;//<--total time between steps
+	TC1->TC_CHANNEL[0].TC_IER = TC_IER_CPCS | TC_IER_CPAS;
+	//Enables the clock a software trigger is performed: the counter is reset and the clock is started
 	TC1->TC_CHANNEL[0].TC_CCR = TC_CCR_CLKDIS;
-	// Disable interrupts
-	TC1->TC_CHANNEL[0].TC_IDR = 0xFFFFFFFF;
-	// Clear status register
-	TC1->TC_CHANNEL[0].TC_SR;
-	// Set Mode
-	//TC1->TC_CHANNEL[0].TC_CMR = TC_CMR_CPCTRG | TC_CMR_TCCLKS_TIMER_CLOCK4;
-	TC1->TC_CHANNEL[0].TC_CMR = TC_CMR_CPCTRG | SELECTED_TIMER_CLOCK;
-	// Compare Value
-	TC1->TC_CHANNEL[0].TC_RC = 50;
-	// Configure and enable interrupt on RC compare
-	TC1->TC_CHANNEL[0].TC_IER = TC_IER_CPCS;
-	//*******
-	//TC1->TC_CHANNEL[0].tc_ra
-	//*******
-	// Reset counter (SWTRG) and enable counter clock (CLKEN)
 	//TC1->TC_CHANNEL[0].TC_CCR = TC_CCR_CLKEN | TC_CCR_SWTRG;
-	//Leave the timer off until we need it.
-	TC1->TC_CHANNEL[0].TC_CCR = TC_CCR_CLKDIS;
-
 	NVIC_EnableIRQ (TC3_IRQn);
-	NVIC_SetPriority(TC3_IRQn, 2);
-
-	//Configure the stepper pulse reset  interrupt timer
-	//This timer is not enabled by default. It will be enabled after each step pulse
-	//this will ensure the original grbl soul in here performs as it did on the avr.
-	//	Enable TC1 power
-	PMC->PMC_PCER0 |= 1 << ID_TC4;
-	// Disable TC clock
-	TC1->TC_CHANNEL[1].TC_CCR = TC_CCR_CLKDIS;
-	// Disable interrupts
-	TC1->TC_CHANNEL[1].TC_IDR = 0xFFFFFFFF;
-	// Clear status register
-	TC1->TC_CHANNEL[1].TC_SR;
-	// Set Mode
-	TC1->TC_CHANNEL[1].TC_CMR = TC_CMR_CPCTRG | SELECTED_TIMER_CLOCK;
-	// Compare Value
-	TC1->TC_CHANNEL[1].TC_RC = Motion_Core::Hardware::Interpollation::Step_Pulse_Length;
-	// Configure and enable interrupt on RC compare
-	TC1->TC_CHANNEL[1].TC_IER = TC_IER_CPCS;
-	// Reset counter (SWTRG) and enable counter clock (CLKEN)
-	//TC1->TC_CHANNEL[1].TC_CCR = TC_CCR_CLKEN | TC_CCR_SWTRG;
-	//Leave the timer off until we need it.
-	TC1->TC_CHANNEL[1].TC_CCR = TC_CCR_CLKDIS;
-	
-	NVIC_EnableIRQ (TC4_IRQn);
-	NVIC_SetPriority(TC4_IRQn, 2);
+	NVIC_SetPriority(TC3_IRQn, 0);
 	
 	Hardware_Abstraction_Layer::MotionCore::Stepper::st_go_idle();
 }
@@ -126,21 +77,34 @@ void Hardware_Abstraction_Layer::MotionCore::Stepper::wake_up()
 	Motion_Core::Hardware::Interpollation::Step_Pulse_Length
 	= (float)Motion_Core::Settings::_Settings.pulse_length/(1.0/(((F_CPU)/1000000.0)/STEP_CLOCK_DIVIDER));
 	
-	TC1->TC_CHANNEL[1].TC_RC = Motion_Core::Hardware::Interpollation::Step_Pulse_Length - DEAD_TIME;
-	// Enable Stepper Driver Interrupt
-	//TIMSK1 |= (1 << OCIE1A);
-	TC1->TC_CHANNEL[0].TC_RC = 50;
+	//Stepper pulse on time value. RC can never exceed RA or control will stop.
+	//Also RA should be the minimum pulse on time. For most drives that is the 2.5-5 uS range.
+	TC1->TC_CHANNEL[0].TC_RA = Motion_Core::Hardware::Interpollation::Step_Pulse_Length - DEAD_TIME;
+	//Total pulse time
+	TC1->TC_CHANNEL[0].TC_RC = Motion_Core::Hardware::Interpollation::Step_Pulse_Length - DEAD_TIME;
 	TC1->TC_CHANNEL[0].TC_CCR = TC_CCR_CLKEN | TC_CCR_SWTRG;
-	
 }
 
 void Hardware_Abstraction_Layer::MotionCore::Stepper::st_go_idle()
 {
-	// Disable Stepper Driver Interrupt. Allow Stepper Port Reset Interrupt to finish, if active.
-	//Leave the timer off until we need it.
-	TC1->TC_CHANNEL[0].TC_CCR = TC_CCR_CLKDIS;
-	//TIMSK1 &= ~(1 << OCIE1A); // Disable Timer1 interrupt
-	//TCCR1B = (TCCR1B & ~((1 << CS12) | (1 << CS11))) | (1 << CS10); // Reset clock to no prescaling.
+	////Disable the timer.
+	//TC1->TC_CHANNEL[0].TC_CCR = TC_CCR_CLKDIS;
+	//NVIC_ClearPendingIRQ(TC3_IRQn);
+	//
+	////Shut off all step pin outputs
+	//for (int i=0;i<MACHINE_AXIS_COUNT;i++)
+	//{
+	//Step_Ports[i]->PIO_CODR = Step_Pins[i];
+	//}
+	//Because of the way the timer is not configured, the step_tick and all its subordinate
+	//code runs when the RC_A match occurs. The pins are set low when the RC_C match occurs
+	//which should always be after RC_A. If its not, its because the xtep delay value is much
+	//higher than the step period time (RC_A>RC_C) which will cause the timer to shut down anyway.
+	//In order for the last step to occur with certainy, we must let the timer fire again at the
+	//appropriate time to set the pins low. So we simply set a flag here, so the timer can shut
+	//its self off when we are done.
+	irq = 2;
+
 }
 
 void Hardware_Abstraction_Layer::MotionCore::Stepper::port_disable(uint8_t inverted)
@@ -160,6 +124,8 @@ void Hardware_Abstraction_Layer::MotionCore::Stepper::port_direction(uint8_t dir
 
 void Hardware_Abstraction_Layer::MotionCore::Stepper::port_step(uint8_t steps)
 {
+	//Step_Ports[0]->PIO_SODR = Step_Pins[0];
+	
 	//For any step indicated, turn on the 'Set Output Data Register'
 	//Step_Ports[0]->PIO_SODR = Step_Pins[0];
 	//return;
@@ -167,9 +133,8 @@ void Hardware_Abstraction_Layer::MotionCore::Stepper::port_step(uint8_t steps)
 	if (steps & (1<<i))
 	{
 		Step_Ports[i]->PIO_SODR = Step_Pins[i];
-		//c_processor::debug_serial.print_string(" ");
 	}
-	//Step_X;
+	
 }
 
 uint16_t Hardware_Abstraction_Layer::MotionCore::Stepper::set_delay_from_hardware(
@@ -186,13 +151,6 @@ uint32_t calculated_delay, uint32_t * delay, uint8_t * prescale)
 
 void Hardware_Abstraction_Layer::MotionCore::Stepper::pulse_reset_timer()
 {
-	//I found that simply enabling this interrupt does not work because tcint3 fires too fast and will keep reseting the interrupt.
-	
-	// Enable step pulse reset timer so that The Stepper Port Reset Interrupt can reset the signal after
-	// exactly settings.pulse_microseconds microseconds, independent of the main Timer1 prescaler.
-	
-	TC1->TC_CHANNEL[1].TC_RC = Motion_Core::Hardware::Interpollation::Step_Pulse_Length - DEAD_TIME;
-	TC1->TC_CHANNEL[1].TC_CCR = TC_CCR_CLKEN | TC_CCR_SWTRG;
 }
 
 void Hardware_Abstraction_Layer::MotionCore::Stepper::TCCR1B_set(uint8_t prescaler)
@@ -202,27 +160,50 @@ void Hardware_Abstraction_Layer::MotionCore::Stepper::TCCR1B_set(uint8_t prescal
 
 void Hardware_Abstraction_Layer::MotionCore::Stepper::OCR1A_set(uint32_t delay)
 {
+	//just in case the user tries to go faster than their hardware allows we hold them
+	//at max here.
+	if (delay <Motion_Core::Hardware::Interpollation::Step_Pulse_Length)
+	{
+		delay = Motion_Core::Hardware::Interpollation::Step_Pulse_Length+1;
+	}
 	TC1->TC_CHANNEL[0].TC_RC = delay;
 }
 
 void Timer1_Chan0_Handler_irq3(void)
 {
 	
-	if(!TC1->TC_CHANNEL[0].TC_SR) return;
-
-	Motion_Core::Hardware::Interpollation::step_tick();
-}
-void Timer1_Chan1_Handler_irq4(void)
-{
-	if(!TC1->TC_CHANNEL[1].TC_SR) return;
-	TC1->TC_CHANNEL[1].TC_CCR = TC_CCR_CLKDIS; // Disable Timer0 to prevent re-entering this interrupt when it's not needed.
-	// Reset stepping pins (leave the direction pins)
-	//STEP_PORT = (STEP_PORT & ~STEP_MASK) | (Hardware_Abstraction_Layer::MotionCore::Stepper::step_port_invert_mask & STEP_MASK);
-	//set a high bit in the Clear Ouput Data Register to turn the pins off
-	for (int i=0;i<MACHINE_AXIS_COUNT;i++)
+	//Dont jump back in here if we are running a step. Thsi should not occur but it is possible
+	//when running a high step rate.
+	if (irq ==1 )
+	return;
+	
+	
+	uint32_t status_reg = TC1->TC_CHANNEL[0].TC_SR;
+	
+	//TC1->TC_CHANNEL[0].TC_CCR = TC_CCR_CLKDIS;
+	//Check to see if this is the A interrupt flag. If it is this is the 'on time' pulse start
+	if (status_reg & TC_IER_CPAS)
 	{
-		Step_Ports[i]->PIO_CODR = Step_Pins[i];
+		irq=1;
+		//Make appropriate pins high
+		Motion_Core::Hardware::Interpollation::step_tick();
 	}
-	Motion_Core::Hardware::Interpollation::Step_Active = 0;
+	//Check to see if this is the C interrupt flag. If it is this is the 'total time' pulse end
+	if (status_reg & TC_IER_CPCS)
+	{
+		//Make all pins low. If there were already low they will not step. If they were high this
+		//will cause a step.
+		for (int i=0;i<MACHINE_AXIS_COUNT;i++)
+		{
+			Step_Ports[i]->PIO_CODR = Step_Pins[i];
+		}
+		if (irq==2)
+		{
+			//Timer has been flagged for a shutdown.
+			TC1->TC_CHANNEL[0].TC_CCR = TC_CCR_CLKDIS;
+			NVIC_ClearPendingIRQ(TC3_IRQn);
+		}
+	}
+	irq=0;
+	
 }
-
