@@ -26,6 +26,7 @@
 #ifdef MSVC
 #include "../../../MSVC++.h"
 #endif // MSVC++
+#include "../../../Common/Serial/records_def.h"
 
 namespace Settings
 {
@@ -49,6 +50,7 @@ namespace Settings
 		static void initialize();
 		static void load_from_input(uint8_t setting_group, uint8_t sub_group);
 		static	uint8_t write_stream(char * stream, uint8_t record_size);
+		static BinaryRecords::e_binary_responses update_controller(BinaryRecords::s_motion_control_settings * settings);
 		protected:
 		private:
 	};

@@ -4,6 +4,13 @@
 
 
 
+void Motion_Core::Segment::Bresenham::Bresenham_Item::Reset()
+{
+	this->direction_bits = 0;
+	this->step_event_count = 0;
+	memset(&this->steps,0,sizeof(this->steps));
+}
+
 Motion_Core::Segment::Bresenham::Bresenham_Item::Bresenham_Item()
 {
 }
@@ -24,13 +31,13 @@ Motion_Core::Segment::Bresenham::Bresenham_Item *Motion_Core::Segment::Bresenham
 {
 	//If buffer is not full and tail==head, its empty
 	if (Motion_Core::Segment::Bresenham::Buffer::_full == 0 && Motion_Core::Segment::Bresenham::Buffer::_head == Motion_Core::Segment::Bresenham::Buffer::_tail)
-		return NULL;
+	return NULL;
 
 	Motion_Core::Segment::Bresenham::Bresenham_Item *item = &Motion_Core::Segment::Bresenham::Buffer::_buffer[Motion_Core::Segment::Bresenham::Buffer::_tail++];
 
 	//Are we wrapping?
 	if (Motion_Core::Segment::Bresenham::Buffer::_tail == Motion_Core::Segment::Timer::BUFFER_SIZE - 1)
-		Motion_Core::Segment::Bresenham::Buffer::_tail = 0;
+	Motion_Core::Segment::Bresenham::Buffer::_tail = 0;
 	//If we read an item we arent full now.
 	Motion_Core::Segment::Bresenham::Buffer::_full = 0;
 
@@ -41,7 +48,7 @@ void Motion_Core::Segment::Bresenham::Buffer::Advance()
 {
 	//If buffer is not full and tail==head, its empty
 	if (Motion_Core::Segment::Bresenham::Buffer::_full == 0 && Motion_Core::Segment::Bresenham::Buffer::_head == Motion_Core::Segment::Bresenham::Buffer::_tail)
-		return;
+	return;
 	Motion_Core::Segment::Bresenham::Buffer::_tail++;
 	
 	//Are we wrapping?
@@ -58,9 +65,9 @@ Returns a pointer to the current buffer tail object for reading (DOES NOT move t
 Motion_Core::Segment::Bresenham::Bresenham_Item *Motion_Core::Segment::Bresenham::Buffer::Current()
 {
 	//If buffer is not full and tail==head, its empty
-	if (Motion_Core::Segment::Bresenham::Buffer::_full == 0 
+	if (Motion_Core::Segment::Bresenham::Buffer::_full == 0
 	&& Motion_Core::Segment::Bresenham::Buffer::_head == Motion_Core::Segment::Bresenham::Buffer::_tail)
-		return NULL;
+	return NULL;
 
 	return &Motion_Core::Segment::Bresenham::Buffer::_buffer[Motion_Core::Segment::Bresenham::Buffer::_tail];
 }
@@ -71,18 +78,18 @@ Returns a pointer to the current buffer head object for writing
 Motion_Core::Segment::Bresenham::Bresenham_Item *Motion_Core::Segment::Bresenham::Buffer::Write()
 {
 	if (Motion_Core::Segment::Bresenham::Buffer::_full == 1)
-		return NULL;
+	return NULL;
 
 	Motion_Core::Segment::Bresenham::Bresenham_Item *item = &Motion_Core::Segment::Bresenham::Buffer::_buffer[Motion_Core::Segment::Bresenham::Buffer::_head++];
 
 	//Are we wrapping?
 	if (Motion_Core::Segment::Bresenham::Buffer::_head == Motion_Core::Segment::Timer::BUFFER_SIZE - 1)
-		Motion_Core::Segment::Bresenham::Buffer::_head = 0;
+	Motion_Core::Segment::Bresenham::Buffer::_head = 0;
 
 	//Have we gotten back to the tail?
 	if (Motion_Core::Segment::Bresenham::Buffer::_head == Motion_Core::Segment::Bresenham::Buffer::_tail)
-		Motion_Core::Segment::Bresenham::Buffer::_full = 1;
-
+	Motion_Core::Segment::Bresenham::Buffer::_full = 1;
+	//item->Reset(); these are reset when they are used
 	return item;
 }
 

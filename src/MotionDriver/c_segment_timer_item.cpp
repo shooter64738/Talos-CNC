@@ -1,6 +1,17 @@
 #include "c_segment_timer_item.h"
 #include <stddef.h>
 
+void Motion_Core::Segment::Timer::Timer_Item::Reset()
+{
+	this->bresenham_in_item = NULL;
+	this->flag = BinaryRecords::e_block_flag::normal;
+	this->line_number = 0;
+	this->sequence = 0;
+	this->steps_to_execute_in_this_segment = 0;
+	this->timer_delay_value = 0;
+	this->timer_prescaler = 0;
+}
+
 Motion_Core::Segment::Timer::Timer_Item::Timer_Item()
 {
 }
@@ -61,7 +72,7 @@ Motion_Core::Segment::Timer::Timer_Item *Motion_Core::Segment::Timer::Buffer::Cu
 	&& (Motion_Core::Segment::Timer::Buffer::_head == Motion_Core::Segment::Timer::Buffer::_tail))
 	return NULL;
 	
-	////If tail==head, we dont have a new one to give right now. 
+	////If tail==head, we dont have a new one to give right now.
 	//if (Motion_Core::Segment::Timer::Buffer::_head == Motion_Core::Segment::Timer::Buffer::_tail)
 	//return NULL;
 
@@ -82,8 +93,8 @@ Motion_Core::Segment::Timer::Timer_Item *Motion_Core::Segment::Timer::Buffer::Wr
 	return NULL;
 
 	Motion_Core::Segment::Timer::Timer_Item *item =
-		&Motion_Core::Segment::Timer::Buffer::_buffer[Motion_Core::Segment::Timer::Buffer::_head];
-		
+	&Motion_Core::Segment::Timer::Buffer::_buffer[Motion_Core::Segment::Timer::Buffer::_head];
+	
 	Motion_Core::Segment::Timer::Buffer::_head++;
 	
 	//Are we wrapping?
@@ -95,7 +106,7 @@ Motion_Core::Segment::Timer::Timer_Item *Motion_Core::Segment::Timer::Buffer::Wr
 	{
 		Motion_Core::Segment::Timer::Buffer::_full = 1;
 	}
-		
+	//item->Reset(); these are reset when they are used.
 	return item;
 }
 

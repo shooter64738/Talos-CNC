@@ -18,7 +18,7 @@ namespace Motion_Core
 				uint32_t timer_delay_value;  // Step distance traveled per ISR tick, aka step rate.
 				//uint8_t st_block_index_4_bresenham;   // Stepper block data index. Uses this information to execute this segment.
 				Motion_Core::Segment::Bresenham::Bresenham_Item *bresenham_in_item;
-
+				void Reset();
 				uint8_t timer_prescaler;      // Without AMASS, a prescaler is required to adjust for slow timing.
 				uint32_t line_number;
 				BinaryRecords::e_block_flag flag;

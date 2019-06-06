@@ -33,10 +33,10 @@ class c_record_handler
 	
 	static BinaryRecords::e_binary_responses handle_outbound_record(BinaryRecords::s_motion_data_block * _data, c_Serial outgoing_serial);
 	static BinaryRecords::e_binary_responses handle_outbound_record(BinaryRecords::s_status_message * _data, c_Serial outgoing_serial);
-	static BinaryRecords::e_binary_responses handle_outbound_record(BinaryRecords::s_motion_control_settings *_data, c_Serial outgoing_serial);
 	static BinaryRecords::e_binary_responses handle_outbound_record(BinaryRecords::s_spindle_control_settings *_data, c_Serial outgoing_serial);
 	static BinaryRecords::e_binary_responses handle_outbound_record(BinaryRecords::s_peripheral_panel *_data, c_Serial outgoing_serial);
 	static BinaryRecords::e_binary_responses handle_outbound_record(BinaryRecords::s_jog_data_block *_data, c_Serial outgoing_serial);
+	static BinaryRecords::e_binary_responses handle_outbound_record(BinaryRecords::s_motion_control_settings *_data, c_Serial outgoing_serial);
 
 	static BinaryRecords::e_binary_responses write_stream(char * stream, uint8_t record_size,BinaryRecords::e_binary_responses Ack_Resp, c_Serial outgoing_serial, uint32_t timeout);
 	static BinaryRecords::e_binary_record_types read_stream(c_Serial * inbound_serial);

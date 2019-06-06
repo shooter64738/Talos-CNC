@@ -8,7 +8,7 @@
 #include "c_motion_core_arm_3x8e_inputs.h"
 #include "../../../helpers.h"
 #include "../../../MotionDriver/c_processor.h"
-
+volatile uint32_t reads;
 uint8_t Hardware_Abstraction_Layer::MotionCore::Inputs::Driver_Alarms = 0;
 
 void Hardware_Abstraction_Layer::MotionCore::Inputs::initialize()
@@ -29,17 +29,30 @@ void Hardware_Abstraction_Layer::MotionCore::Inputs::initialize()
 	//configure_input(PIOD,PIO_PD8B_TIOB8);  //arduio due pin 12
 	//configure_input(PIOB,PIO_PB27B_TIOB0); //arduio due pin 13
 	
-	NVIC_EnableIRQ(PIOB_IRQn);NVIC_SetPriority(PIOB_IRQn, 2);
-	NVIC_EnableIRQ(PIOC_IRQn);NVIC_SetPriority(PIOC_IRQn, 2);
-	//NVIC_EnableIRQ(PIOD_IRQn);NVIC_SetPriority(PIOD_IRQn, 2);
+	NVIC_EnableIRQ(PIOB_IRQn);NVIC_SetPriority(PIOB_IRQn, 0);
+	NVIC_EnableIRQ(PIOC_IRQn);NVIC_SetPriority(PIOC_IRQn, 0);
+	//NVIC_EnableIRQ(PIOD_IRQn);NVIC_SetPriority(PIOD_IRQn, 0);
 	PMC->PMC_PCER0 |= (1 << ID_PIOB) | (1 << ID_PIOC);// | (1 << ID_PIOD);
 }
 
 void  Hardware_Abstraction_Layer::MotionCore::Inputs::configure_input(Pio * Port, uint32_t Pin)
 {
+	/*
+	PIO_PER  - write 1's here to override other peripherals and allow GPIO use for pins
+	PIO_OER  - write 1's here to set pins as OUTPUT
+	PIO_ODR  - write 1's here to set pins as INPUT
+	* PIO_SODR   - write 1's here to set output pins HIGH
+	* PIO_CODR   - write 1's here to set output pins LOW
+	* PIO_PDSR  - read's actual state of the pins on the port.
+	PIO_PUDR  - write 1's here to switch off internal pull-up for pins
+	PIO_PUER  - write 1's here to switch on internal pull-up for pins
+	*/
 	//Enable interrupts
-	Port->PIO_IER |=Pin;
+	Port->PIO_CODR |=Pin;
+	Port->PIO_PER |=Pin;
 	Port->PIO_OER |=Pin;
+	Port->PIO_ODR |=Pin;
+	//Port->PIO_OER |=Pin;
 	Port->PIO_PUER |=Pin;
 	//Enable additional interrupt mode
 	
@@ -48,7 +61,7 @@ void  Hardware_Abstraction_Layer::MotionCore::Inputs::configure_input(Pio * Port
 	//Port->PIO_IFDGSR |=Pin;
 	//Port->PIO_SCDR |=Pin;
 	
-	//Set to level detection
+	//Set to edge detection
 	Port->PIO_ESR |= Pin;
 	//Rising edge
 	Port->PIO_REHLSR |= Pin;

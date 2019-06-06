@@ -11,23 +11,11 @@
 uint32_t Motion_Core::System::control_state_modes = 0;
 uint32_t Motion_Core::System::new_sequence = 0;
 uint8_t Motion_Core::System::StepControl = 0;
+Motion_Core::System::s_travel Motion_Core::System::travel_statistics;
+
 
 void Motion_Core::System::set_control_state_mode(uint8_t flag)
 {
-	//Only one control state from each 'group' can be active at a time. 
-	//Clear all the bit flags for that 'group' and then let the single
-	//bit be set at the end. 
-	//if (flag == MOTION_CONTROL_HOLD || flag == MOTION_CONTROL_RESUME)
-	//{
-		//BitClr_(Motion_Core::System::control_state_modes,MOTION_CONTROL_HOLD);
-		//BitClr_(Motion_Core::System::control_state_modes,MOTION_CONTROL_HOLD);
-	//}
-	//if (flag == EXEC_MOTION_JOG || flag == EXEC_MOTION_INTERPOLATION)
-	//{
-		//BitClr_(Motion_Core::System::control_state_modes,EXEC_MOTION_JOG);
-		//BitClr_(Motion_Core::System::control_state_modes,EXEC_MOTION_INTERPOLATION);
-	//}
-	
 	BitSet_(Motion_Core::System::control_state_modes,flag);
 }
 

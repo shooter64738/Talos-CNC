@@ -9,6 +9,7 @@
 #ifndef __C_SYSTEM_H__
 #define __C_SYSTEM_H__
 #include <stdint.h>
+#include "..\Talos.h"
 
 #define STEP_CONTROL_EXECUTE_HOLD         bit(1)
 #define STEP_CONTROL_END_MOTION		bit(0)
@@ -33,6 +34,13 @@ namespace Motion_Core
 		static uint32_t control_state_modes;
 		static uint8_t StepControl;
 		static uint32_t new_sequence;
+		struct s_travel
+		{
+			float session_travel [MACHINE_AXIS_COUNT];
+			float total_travel [MACHINE_AXIS_COUNT];
+		};
+		static s_travel travel_statistics;
+		
 		protected:
 		private:
 

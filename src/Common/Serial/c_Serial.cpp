@@ -367,7 +367,7 @@ void c_Serial::print_int32(long n)
 // techniques are actually just slightly slower. Found this out the hard way.
 void c_Serial::print_float(float n)
 {
-	this->print_float(n,4);
+	this->print_float(n,3);
 }
 void c_Serial::print_float(float n, uint8_t decimal_places)
 {

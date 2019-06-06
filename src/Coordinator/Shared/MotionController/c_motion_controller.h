@@ -36,7 +36,7 @@ class c_motion_controller
 	//functions
 	public:
 	static void initialize();
-	static BinaryRecords::e_binary_responses send_jog(BinaryRecords::s_jog_data_block jog_data);
+	//static BinaryRecords::e_binary_responses send_jog(BinaryRecords::s_jog_data_block jog_data);
 	static BinaryRecords::e_binary_responses send_motion(BinaryRecords::s_motion_data_block motion_data);
 	protected:
 	private:

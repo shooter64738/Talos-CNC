@@ -25,6 +25,8 @@
 #define __C_DATA_EVENTS_H__
 
 #include "../../../talos.h"
+#include "../../../Common/Serial/records_def.h"
+#include "../../../Common/Serial/c_Serial.h"
 
 enum class e_Data_Events : uint8_t
 {
@@ -37,7 +39,10 @@ class c_data_events
 	//variables
 	public:
 	static uint32_t event_flags;
-
+	static void send_status(BinaryRecords::e_system_state_record_types state
+	,BinaryRecords::e_system_sub_state_record_types sub_state, c_Serial outgoing_serial);
+	static BinaryRecords::e_binary_responses handle_periperal_record();
+	static BinaryRecords::e_binary_responses handle_controller_record();
 	protected:
 	private:
 	

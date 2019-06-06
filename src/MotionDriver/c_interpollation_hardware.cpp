@@ -43,11 +43,15 @@ uint32_t Motion_Core::Hardware::Interpollation::Last_Completed_Sequence = 0;
 uint8_t Motion_Core::Hardware::Interpollation::direction_set = 0;
 BinaryRecords::e_feed_modes Motion_Core::Hardware::Interpollation::drive_mode;
 
+
 void Motion_Core::Hardware::Interpollation::Initialize()
 {
 	#ifdef MSVC
 	myfile.open("acceleration.txt");
 	#endif // MSVC
+
+//memset(&Motion_Core::Hardware::Interpollation::system_position,0,sizeof(Motion_Core::Hardware::Interpollation::system_position));
+	
 	//if (!Motion_Core::Hardware::Interpollation::Interpolation_Active)
 	{
 		Motion_Core::Hardware::Interpollation::Interpolation_Active = 1;
@@ -84,6 +88,7 @@ void Motion_Core::Hardware::Interpollation::Shutdown()
 	myfile.flush();
 	myfile.close();
 	#endif // MSVC
+	
 	Hardware_Abstraction_Layer::MotionCore::Stepper::st_go_idle();
 	
 	Motion_Core::Hardware::Interpollation::Interpolation_Active = 0; // Flag main program for cycle end
@@ -107,7 +112,8 @@ void Motion_Core::Hardware::Interpollation::step_tick()
 		Motion_Core::Hardware::Interpollation::direction_set = 1;
 	}
 	
-	Hardware_Abstraction_Layer::MotionCore::Stepper::port_step((STEP_PORT & ~STEP_MASK) | Motion_Core::Hardware::Interpollation::step_outbits);
+	//Hardware_Abstraction_Layer::MotionCore::Stepper::port_step((STEP_PORT & ~STEP_MASK) | Motion_Core::Hardware::Interpollation::step_outbits);
+	Hardware_Abstraction_Layer::MotionCore::Stepper::port_step(Motion_Core::Hardware::Interpollation::step_outbits);
 	//c_processor::debug_serial.print_string("t\r");
 
 	// Enable step pulse reset timer so that The Stepper Port Reset Interrupt can reset the signal after
@@ -193,7 +199,6 @@ void Motion_Core::Hardware::Interpollation::step_tick()
 		{
 			// Segment buffer empty. Shutdown.
 			Motion_Core::Hardware::Interpollation::Shutdown();
-			
 			return; // Nothing to do but exit.
 		}
 	}

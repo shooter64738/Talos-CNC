@@ -16,7 +16,8 @@ namespace Motion_Core
 				uint32_t steps[MACHINE_AXIS_COUNT];
 				uint32_t step_event_count;
 				uint8_t direction_bits;
-
+				void Reset();
+				
 				public:
 				Bresenham_Item();
 				~Bresenham_Item();

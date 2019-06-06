@@ -74,17 +74,27 @@ namespace BinaryRecords
 	};
 	#endif
 	
+	#ifndef __C_UNIT_TYPES
+	#define __C_UNIT_TYPES
+	enum class e_unit_types : uint8_t
+	{
+		MM =		1,
+		INCHES =	2
+	};
+	#endif
+	
 	#ifndef __C_SYSTEM_STATE_RECORD_TYPES
 	#define __C_SYSTEM_STATE_RECORD_TYPES
 	enum class e_system_state_record_types : uint8_t
 	{
-		Motion_Active =		 1,
+		Motion_Active =		 1, //Motion states 1-9
 		Motion_Complete =	 2,
 		Motion_Idle =		 3,
 		Motion_Jogging =	 4,
 		Motion_Cancel =		 5,
-		Spindle_Stopped =	20,
-		Spindle_Running =	21,
+		Motion_Discarded = 	 6,
+		Spindle_Stopped =	10, //spindle states 10-19
+		Spindle_Running =	11,
 		System_Error =		99
 	};
 	#endif
@@ -97,12 +107,14 @@ namespace BinaryRecords
 		Block_Starting =			 2, //Block is starting execution
 		Block_Queuing =				 3, //The block has been placed in the motion queue
 		Block_Holding =				 4, //Block was executing, but feed hold was instructed
-		Block_Resuming =			 5, //Reserved
+		Block_Resuming =			 5, //Feed hold released, block resuming
 		Block_Reserved2 =			 6, //Reserved
 		Block_Reserved3 =			 7, //Reserved
 		Block_Reserved4 =			 8, //Reserved
+		Block_Reserved5 =			 9, //Reserved
 		Jog_Complete =				30, 
 		Jog_Running =				31,
+		Jog_Failed =				32,
 		Error_Axis_Drive_Fault_X =	90, //Closed loop driver error
 		Error_Axis_Drive_Fault_Y =	91, //Closed loop driver error
 		Error_Axis_Drive_Fault_Z =	92, //Closed loop driver error
@@ -111,7 +123,8 @@ namespace BinaryRecords
 		Error_Axis_Drive_Fault_C =	95, //Closed loop driver error
 		Error_Axis_Drive_Fault_U =	96, //Closed loop driver error
 		Error_Axis_Drive_Fault_V =	97, //Closed loop driver error
-		Error_Axis_Drive_Reserved =	98  //Closed loop driver error
+		Error_Axis_Drive_Reserved =	98, //Closed loop driver error
+		Error_Setting_Max_Rate_Exceeded = 100 //Setting error for max rate
 		
 	};
 	
@@ -126,7 +139,7 @@ namespace BinaryRecords
 		Ok =				240,
 		Data_Error =		239,
 		Response_Time_Out = 238,
-		Jog_Complete =		237,
+		//Jog_Complete =		237,
 		Data_Rx_Wait =		236,
 		Check_Sum_Failure = 235
 	};
@@ -224,17 +237,18 @@ namespace BinaryRecords
 	struct s_motion_control_settings
 	{
 		const BinaryRecords::e_binary_record_types record_type = BinaryRecords::e_binary_record_types::Motion_Control_Setting;
-		float acceleration[MACHINE_AXIS_COUNT];
-		float max_rate[MACHINE_AXIS_COUNT];
-		uint16_t steps_per_mm[MACHINE_AXIS_COUNT];
-		float junction_deviation = 0;
-		float arc_tolerance = 0;
-		uint16_t pulse_length = 0;
-		float back_lash_comp_distance[MACHINE_AXIS_COUNT];
-		float interpolation_error_distance;
-		uint16_t arc_angular_correction = 12;
-		uint8_t invert_mpg_directions = 0;
-		uint32_t _check_sum = 0;
+		float acceleration[MACHINE_AXIS_COUNT]; //13
+		float max_rate[MACHINE_AXIS_COUNT];//25
+		uint16_t steps_per_mm[MACHINE_AXIS_COUNT];//31
+		float junction_deviation = 0;//43
+		float arc_tolerance = 0;//47
+		uint16_t pulse_length = 0;//49
+		float back_lash_comp_distance[MACHINE_AXIS_COUNT];//53
+		float interpolation_error_distance;//57
+		uint16_t arc_angular_correction = 12;//59
+		uint8_t invert_mpg_directions = 0;//60
+		BinaryRecords::e_unit_types machine_units = BinaryRecords::e_unit_types::MM;//61
+		uint32_t _check_sum = 0;//65
 		
 	}__attribute__((packed,aligned(1)));
 	
@@ -248,6 +262,7 @@ namespace BinaryRecords
 		const BinaryRecords::e_binary_record_types record_type = BinaryRecords::e_binary_record_types::Status;
 		BinaryRecords::e_system_state_record_types system_state;
 		BinaryRecords::e_system_sub_state_record_types system_sub_state;
+		float position[MACHINE_AXIS_COUNT];
 		float num_message = 0.0;
 		char chr_message[17]{0};
 		uint32_t _check_sum = 0;

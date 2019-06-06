@@ -45,7 +45,7 @@ void c_processor::startup()
 
 void c_processor::check_panel_inputs()
 {
-	uint8_t shift_mode = Hardware_Abstraction_Layer::PeripheralPanel::key_pressed(SHIFT_MODE);
+	uint8_t shift_mode = 0 ;// Hardware_Abstraction_Layer::PeripheralPanel::key_pressed(SHIFT_MODE);
 	
 	if (!shift_mode)
 	{
@@ -62,16 +62,21 @@ void c_processor::check_panel_inputs()
 		//See if the jog scale button was pressed
 		if (Hardware_Abstraction_Layer::PeripheralPanel::key_pressed(JOG_SCALE) != 0)
 		{
-			c_processor::peripheral_record_data.Jogging.Scale = c_processor::peripheral_record_data.Jogging.Scale/10.0;
+			c_processor::peripheral_record_data.Jogging.Scale *= 0.1;
+			
 			if (c_processor::peripheral_record_data.Jogging.Scale<0.001)
 			{
 				c_processor::peripheral_record_data.Jogging.Scale = 1;
 			}
+			c_processor::debug_serial.print_string("jog scale = ");
+			c_processor::debug_serial.print_float(c_processor::peripheral_record_data.Jogging.Scale);
+			c_processor::debug_serial.Write(CR);
 		}
 		
 		//See if the jog axis button was pressed
 		if (Hardware_Abstraction_Layer::PeripheralPanel::key_pressed(JOG_AXIS) != 0)
 		{
+			c_processor::debug_serial.print_string("jog axis = ");
 			c_processor::peripheral_record_data.Jogging.Axis++;
 			if (c_processor::peripheral_record_data.Jogging.Axis>MACHINE_AXIS_COUNT)
 			{
@@ -100,11 +105,12 @@ void c_processor::check_serial_input()
 		
 		if (resp_value == BinaryRecords::e_binary_responses::Ok)
 		{
-			if (mot.system_sub_state == BinaryRecords::e_system_sub_state_record_types::Jog_Complete)
+			if (mot.system_sub_state == BinaryRecords::e_system_sub_state_record_types::Jog_Complete
+			|| mot.system_sub_state == BinaryRecords::e_system_sub_state_record_types::Jog_Failed)
 			{
-				BinaryRecords::s_status_message new_stat;
-				new_stat.system_state = BinaryRecords::e_system_state_record_types::Motion_Complete;
-				new_stat.system_sub_state = BinaryRecords::e_system_sub_state_record_types::Jog_Complete;
+				//BinaryRecords::s_status_message new_stat;
+				//new_stat.system_state = BinaryRecords::e_system_state_record_types::Motion_Complete;
+				//new_stat.system_sub_state = BinaryRecords::e_system_sub_state_record_types::Jog_Complete;
 				
 				c_processor::clear_control_state_mode(EXEC_MOTION_JOG);
 			}

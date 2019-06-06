@@ -68,42 +68,9 @@ void c_processor::run()
 	}
 }
 
-void c_processor::send_state_control_status()
-{
-	//if (Motion_Core::Hardware::Interpollation::Interpolation_Active)
-	//{
-	//c_record_handler::status_record.system_state = BinaryRecords::e_system_state_record_types::Motion_Active;
-	//}
-	//else
-	//{
-	//c_record_handler::status_record.system_state = BinaryRecords::e_system_state_record_types::Motion_Idle;
-	//}
-	//
-	////Default sub state to complete
-	//c_record_handler::status_record.system_sub_state = BinaryRecords::e_system_sub_state_record_types::Block_Complete;
-	//
-	//if (Motion_Core::System::get_control_state_mode(MOTION_CONTROL_HOLD))
-	//c_record_handler::status_record.system_sub_state = BinaryRecords::e_system_sub_state_record_types::Block_Holding;
-	//if (Motion_Core::System::get_control_state_mode(MOTION_CONTROL_RESUME))
-	//c_record_handler::status_record.system_sub_state = BinaryRecords::e_system_sub_state_record_types::Block_Resuming;
-	//
-	//c_record_handler::status_record.num_message = (float)Motion_Core::Segment::Arbitrator::Active_Block->sequence;
-	//
-	////c_processor::debug_serial.print_string("state = ");
-	////c_processor::debug_serial.print_int32((int32_t)c_record_handler::status_record.system_state);c_processor::debug_serial.Write(CR);
-	////c_processor::debug_serial.print_string("sub state = ");
-	////c_processor::debug_serial.print_int32((int32_t)c_record_handler::status_record.system_sub_state);c_processor::debug_serial.Write(CR);
-	////c_processor::debug_serial.print_string("num message = ");
-	////c_processor::debug_serial.print_float(c_record_handler::status_record.num_message,3);c_processor::debug_serial.Write(CR);
-	////c_processor::debug_serial.print_string("chr message = ");
-	////c_processor::debug_serial.print_string(c_record_handler::status_record.chr_message);c_processor::debug_serial.Write(CR);
-	//
-	//c_record_handler::handle_outbound_record(c_record_handler::status_record,c_processor::coordinator_serial);
-}
-
 void c_processor::send_status(BinaryRecords::e_system_state_record_types State
-	,BinaryRecords::e_system_sub_state_record_types SubState ,uint32_t numeric_message
-	,char* char_message, uint32_t SET_ControlState, uint32_t CLEAR_ControlState)
+,BinaryRecords::e_system_sub_state_record_types SubState ,uint32_t numeric_message
+,char* char_message, uint32_t SET_ControlState, uint32_t CLEAR_ControlState)
 {
 	BinaryRecords::s_status_message new_stat;
 	new_stat.system_state = State;
@@ -111,7 +78,24 @@ void c_processor::send_status(BinaryRecords::e_system_state_record_types State
 	new_stat.num_message = numeric_message;
 	if (char_message !=NULL)
 	{
-		memcpy(&new_stat.chr_message,char_message,sizeof(char_message));
+		memcpy(&new_stat.chr_message,char_message,sizeof(new_stat.chr_message));
+	}
+	
+	c_processor::send_status(new_stat, SET_ControlState, CLEAR_ControlState);
+}
+
+BinaryRecords::e_binary_responses c_processor::send_status(BinaryRecords::s_status_message new_stat, uint32_t SET_ControlState, uint32_t CLEAR_ControlState)
+{
+	float unit_factor = 1.0;
+	//translate the machine position at the time into mm/inches
+	unit_factor = ((Motion_Core::Settings::_Settings.machine_units == BinaryRecords::e_unit_types::MM) ? 1.0 : 25.4);
+	for (uint8_t i = 0;i<MACHINE_AXIS_COUNT;i++)
+	{
+		new_stat.position[i] = 
+		((float)Motion_Core::Hardware::Interpollation::system_position[i]
+		 /(float)Motion_Core::Settings::_Settings.steps_per_mm[i])* unit_factor;
+		c_processor::debug_serial.print_int32(Motion_Core::Hardware::Interpollation::system_position[i]);
+		c_processor::debug_serial.Write(CR);
 	}
 	
 	BinaryRecords::e_binary_responses resp =
@@ -123,15 +107,14 @@ void c_processor::send_status(BinaryRecords::e_system_state_record_types State
 	//SET mode.
 	if (SET_ControlState!=STATE_STATUS_IGNORE)
 	Motion_Core::System::set_control_state_mode(SET_ControlState);
+	return resp;
 }
 
 void c_processor::check_control_states()
 {
 	if (!Motion_Core::Hardware::Interpollation::Interpolation_Active)
 	Motion_Core::System::clear_control_state_mode(STATE_EXEC_MOTION_INTERPOLATION);
-	//debug_serial.print_string("state = ");
-	//debug_serial.print_int32(Motion_Core::System::control_state_modes);
-	//debug_serial.print_string("\r");
+	
 	//Were we running a jog interpolation?
 	if (Motion_Core::System::get_control_state_mode(STATE_EXEC_MOTION_JOG))
 	{
@@ -139,8 +122,8 @@ void c_processor::check_control_states()
 		if (!Motion_Core::Hardware::Interpollation::Interpolation_Active)
 		{
 			c_processor::send_status(BinaryRecords::e_system_state_record_types::Motion_Complete
-				,BinaryRecords::e_system_sub_state_record_types::Jog_Complete
-				,0,NULL,STATE_STATUS_IGNORE,STATE_EXEC_MOTION_JOG);
+			,BinaryRecords::e_system_sub_state_record_types::Jog_Complete
+			,0,NULL,STATE_STATUS_IGNORE,STATE_EXEC_MOTION_JOG);
 		}
 		
 	}
@@ -148,8 +131,8 @@ void c_processor::check_control_states()
 
 void c_processor::process_motion(BinaryRecords::s_motion_data_block *mot)
 {
-	//c_processor::debug_serial.print_string("\t***mot test\r");
-	//c_processor::debug_serial.print_string("processing motion \r");
+	c_processor::debug_serial.print_string("***mot test\r");
+	//c_processor::debug_serial.print_string("\tprocessing motion \r");
 	mot->motion_type = BinaryRecords::e_motion_type::rapid_linear;
 	//Did we already process this motion command? We may have had a serial issue that
 	//caused the motion to send twice
@@ -165,9 +148,9 @@ void c_processor::process_motion(BinaryRecords::s_motion_data_block *mot)
 	//c_processor::debug_serial.print_string("\ttest.motion_type = "); c_processor::debug_serial.print_int32((uint32_t)mot->motion_type); c_processor::debug_serial.Write(CR);
 	//c_processor::debug_serial.print_string("\ttest.feed_rate_mode = "); c_processor::debug_serial.print_int32((uint32_t)mot->feed_rate_mode); c_processor::debug_serial.Write(CR);
 	//c_processor::debug_serial.print_string("\ttest.feed_rate = "); c_processor::debug_serial.print_int32(mot->feed_rate); c_processor::debug_serial.Write(CR);
-	//c_processor::debug_serial.print_string("\ttest.axis_values[0] = ");c_processor::debug_serial.print_float(mot->axis_values[0], 4); c_processor::debug_serial.Write(CR);
-	//c_processor::debug_serial.print_string("\ttest.axis_values[1] = ");c_processor::debug_serial.print_float(mot->axis_values[1], 4); c_processor::debug_serial.Write(CR);
-	//c_processor::debug_serial.print_string("\ttest.axis_values[2] = ");c_processor::debug_serial.print_float(mot->axis_values[2], 4); c_processor::debug_serial.Write(CR);
+	//c_processor::debug_serial.print_string("\ttest.axis_values[0] = ");c_processor::debug_serial.print_float(mot->axis_values[0], 3); c_processor::debug_serial.Write(CR);
+	//c_processor::debug_serial.print_string("\ttest.axis_values[1] = ");c_processor::debug_serial.print_float(mot->axis_values[1], 3); c_processor::debug_serial.Write(CR);
+	//c_processor::debug_serial.print_string("\ttest.axis_values[2] = ");c_processor::debug_serial.print_float(mot->axis_values[2], 3); c_processor::debug_serial.Write(CR);
 	//c_processor::debug_serial.print_string("\ttest.axis_values[3] = ");c_processor::debug_serial.print_float(mot->axis_values[3], 4); c_processor::debug_serial.Write(CR);
 	//c_processor::debug_serial.print_string("\ttest.axis_values[4] = ");c_processor::debug_serial.print_float(mot->axis_values[4], 4); c_processor::debug_serial.Write(CR);
 	//c_processor::debug_serial.print_string("\ttest.axis_values[5] = ");c_processor::debug_serial.print_float(mot->axis_values[5], 4); c_processor::debug_serial.Write(CR);
@@ -178,7 +161,9 @@ void c_processor::process_motion(BinaryRecords::s_motion_data_block *mot)
 	//debug_serial.print_float(mot->axis_values[0],3);
 	//debug_serial.Write(CR);
 	
+	//c_processor::debug_serial.print_string("\tload block\r");
 	Motion_Core::Software::Interpollation::load_block(mot);
+	//c_processor::debug_serial.print_string("\tset control state mode\r");
 	Motion_Core::System::set_control_state_mode(STATE_EXEC_MOTION_INTERPOLATION);
 	
 }
@@ -214,6 +199,7 @@ void c_processor::check_process_record()
 		break;
 		case BinaryRecords::e_binary_record_types::Motion_Control_Setting:
 		{
+			
 			BinaryRecords::s_motion_control_settings _blk;
 			resp_value = c_record_handler::handle_inbound_record(&_blk,&c_processor::coordinator_serial);
 			
@@ -226,37 +212,34 @@ void c_processor::check_process_record()
 			
 			if (resp_value == BinaryRecords::e_binary_responses::Ok)
 			{
-				uint8_t recsize = sizeof(BinaryRecords::s_motion_control_settings);
+				uint16_t recsize = sizeof(BinaryRecords::s_motion_control_settings);
+				uint8_t setting_error = 0;
+				for (uint8_t i=0;i<MACHINE_AXIS_COUNT;i++)
+				{
+					uint32_t new_rate = (_blk.max_rate[i] * _blk.steps_per_mm[i])/60;
+					if (new_rate> MAX_STEP_RATE)
+					{
+						debug_serial.print_string("Setting Error : ");
+						debug_serial.print_string("value exceeded.");
+						
+						
+						send_status(BinaryRecords::e_system_state_record_types::System_Error
+						, BinaryRecords::e_system_sub_state_record_types::Error_Setting_Max_Rate_Exceeded
+						, new_rate,"setting reject\0",STATE_STATUS_IGNORE,STATE_STATUS_IGNORE);
+						setting_error = 1;
+					}
+				}
+				if (!setting_error)
+				{
+					_blk._check_sum = 0;
+					//Motion_Core::Settings::_Settings.pulse_length = _blk.pulse_length;
+					memcpy(&Motion_Core::Settings::_Settings,&_blk,recsize);
+					//reset hardware parameters after update.
+					Hardware_Abstraction_Layer::MotionCore::Stepper::initialize();
+				}
 				
-				memcpy(&Motion_Core::Settings::_Settings,&_blk,recsize);
-				Hardware_Abstraction_Layer::MotionCore::Stepper::initialize();
-				c_processor::debug_serial.print_string("_blk.acceleration1 ");c_processor::debug_serial.print_float(Motion_Core::Settings::_Settings.acceleration[0],3);c_processor::debug_serial.Write(CR);
-				c_processor::debug_serial.print_string("_blk.acceleration2 ");c_processor::debug_serial.print_float(Motion_Core::Settings::_Settings.acceleration[1],3);c_processor::debug_serial.Write(CR);
-				c_processor::debug_serial.print_string("_blk.acceleration3 ");c_processor::debug_serial.print_float(Motion_Core::Settings::_Settings.acceleration[2],3);c_processor::debug_serial.Write(CR);
 				
-				c_processor::debug_serial.print_string("_blk.arc_angular_correction");c_processor::debug_serial.Write(CR);
-				c_processor::debug_serial.print_string("_blk.arc_tolerance");c_processor::debug_serial.Write(CR);
 				
-				c_processor::debug_serial.print_string("_blk.back_lash_comp_distance1 ");c_processor::debug_serial.print_float(Motion_Core::Settings::_Settings.back_lash_comp_distance[0],3);c_processor::debug_serial.Write(CR);
-				c_processor::debug_serial.print_string("_blk.back_lash_comp_distance2 ");c_processor::debug_serial.print_float(Motion_Core::Settings::_Settings.back_lash_comp_distance[1],3);c_processor::debug_serial.Write(CR);
-				c_processor::debug_serial.print_string("_blk.back_lash_comp_distance3 ");c_processor::debug_serial.print_float(Motion_Core::Settings::_Settings.back_lash_comp_distance[2],3);c_processor::debug_serial.Write(CR);
-				
-				c_processor::debug_serial.print_string("_blk.interpolation_error_distance ");c_processor::debug_serial.print_float(Motion_Core::Settings::_Settings.interpolation_error_distance,3);c_processor::debug_serial.Write(CR);
-				c_processor::debug_serial.print_string("_blk.invert_mpg_directions ");c_processor::debug_serial.print_int32(Motion_Core::Settings::_Settings.invert_mpg_directions);c_processor::debug_serial.Write(CR);
-				c_processor::debug_serial.print_string("_blk.junction_deviation ");c_processor::debug_serial.print_float(Motion_Core::Settings::_Settings.junction_deviation,3);c_processor::debug_serial.Write(CR);
-				
-				c_processor::debug_serial.print_string("_blk.max_rate1 ");c_processor::debug_serial.print_float(Motion_Core::Settings::_Settings.max_rate[0],3);c_processor::debug_serial.Write(CR);
-				c_processor::debug_serial.print_string("_blk.max_rate2 ");c_processor::debug_serial.print_float(Motion_Core::Settings::_Settings.max_rate[1],3);c_processor::debug_serial.Write(CR);
-				c_processor::debug_serial.print_string("_blk.max_rate3 ");c_processor::debug_serial.print_float(Motion_Core::Settings::_Settings.max_rate[2],3);c_processor::debug_serial.Write(CR);
-				
-				c_processor::debug_serial.print_string("_blk.pulse_length ");c_processor::debug_serial.print_int32(Motion_Core::Settings::_Settings.pulse_length);c_processor::debug_serial.Write(CR);
-				c_processor::debug_serial.print_string("_blk.record_type ");c_processor::debug_serial.print_int32((int)Motion_Core::Settings::_Settings.record_type);c_processor::debug_serial.Write(CR);
-				
-				c_processor::debug_serial.print_string("_blk.steps_per_mm1 ");c_processor::debug_serial.print_float(Motion_Core::Settings::_Settings.steps_per_mm[0],3);c_processor::debug_serial.Write(CR);
-				c_processor::debug_serial.print_string("_blk.steps_per_mm2 ");c_processor::debug_serial.print_float(Motion_Core::Settings::_Settings.steps_per_mm[1],3);c_processor::debug_serial.Write(CR);
-				c_processor::debug_serial.print_string("_blk.steps_per_mm3 ");c_processor::debug_serial.print_float(Motion_Core::Settings::_Settings.steps_per_mm[2],3);c_processor::debug_serial.Write(CR);
-				
-				c_processor::debug_serial.print_string("_blk._check_sum ");c_processor::debug_serial.print_int32(Motion_Core::Settings::_Settings._check_sum);c_processor::debug_serial.Write(CR);
 			}
 		}
 		break;
@@ -316,6 +299,7 @@ void c_processor::check_hardware_faults()
 	//See if there is a hardware alarm from a stepper/servo driver
 	if (Hardware_Abstraction_Layer::MotionCore::Inputs::Driver_Alarms >0)
 	{
+		c_processor::debug_serial.print_string("drive fault\r");
 		Motion_Core::System::set_control_state_mode(STATE_ERR_AXIS_DRIVE_FAULT);
 		//Hardware faults but not interpolating... Very strange..
 		if (Motion_Core::Hardware::Interpollation::Interpolation_Active)
@@ -350,32 +334,30 @@ void c_processor::check_hardware_faults()
 
 void c_processor::check_sequence_complete()
 {
-	
-	
 	//If we are holding, or resuming then we cant be complete can we...
 	if (Motion_Core::Hardware::Interpollation::Last_Completed_Sequence != 0
 	&& !Motion_Core::System::get_control_state_mode(STATE_MOTION_CONTROL_HOLD))
 	//&& !Motion_Core::System::get_control_state_mode(STATE_MOTION_CONTROL_RESUME))
 	{
 		BinaryRecords::s_status_message new_stat;
-		BinaryRecords::s_status_message *status_record = &new_stat;
 		
 		if (Motion_Core::Hardware::Interpollation::Interpolation_Active)
 		{
-			status_record->system_state = BinaryRecords::e_system_state_record_types::Motion_Active;
+			new_stat.system_state = BinaryRecords::e_system_state_record_types::Motion_Active;
 		}
 		else
 		{
-			status_record->system_state = BinaryRecords::e_system_state_record_types::Motion_Idle;
+			new_stat.system_state = BinaryRecords::e_system_state_record_types::Motion_Idle;
 		}
 
-		status_record->system_sub_state = BinaryRecords::e_system_sub_state_record_types::Block_Complete;
+		new_stat.system_sub_state = BinaryRecords::e_system_sub_state_record_types::Block_Complete;
 		
-		status_record->num_message = Motion_Core::Hardware::Interpollation::Last_Completed_Sequence;
+		new_stat.num_message = Motion_Core::Hardware::Interpollation::Last_Completed_Sequence;
 		Motion_Core::Hardware::Interpollation::Last_Completed_Sequence = 0;
 		
-		BinaryRecords::e_binary_responses resp =
-		c_record_handler::handle_outbound_record(status_record,c_processor::coordinator_serial);
+		BinaryRecords::e_binary_responses resp = 
+		c_processor::send_status(new_stat, STATE_STATUS_IGNORE, STATE_STATUS_IGNORE);
+		//c_record_handler::handle_outbound_record(status_record,c_processor::coordinator_serial);
 		
 	}
 }

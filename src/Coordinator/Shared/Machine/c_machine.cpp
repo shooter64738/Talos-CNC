@@ -242,7 +242,13 @@ void c_machine::start_motion_binary(NGC_RS274::NGC_Binary_Block* local_block)
 		motion_block_record.feed_rate_mode = BinaryRecords::e_feed_modes::FEED_RATE_UNITS_PER_MINUTE_MODE;
 		motion_block_record.feed_rate = 5000;
 		for (int i=0;i<MACHINE_AXIS_COUNT;i++)
-		motion_block_record.axis_values[i] = *local_block->axis_values.Loop[i];
+		{
+			//default to 0
+			motion_block_record.axis_values[i] = 0;
+			//only pass axis values that were specified.
+			if (local_block->get_defined(c_machine::machine_axis_names[i]))
+				motion_block_record.axis_values[i] = *local_block->axis_values.Loop[i];
+		}
 		motion_block_record.line_number = *local_block->persisted_values.active_line_number_N;
 		
 		//Send this in binary format to the motion controller.

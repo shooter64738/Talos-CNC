@@ -33,7 +33,6 @@ uint8_t Motion_Core::Planner::Calculator::_plan_buffer_line(BinaryRecords::s_mot
 		// NOTE: Computes true distance from converted step values.
 		planning_block->steps[idx] = labs(target_block.axis_values[idx] * Motion_Core::Settings::_Settings.steps_per_mm[idx] );
 		planning_block->step_event_count = max(planning_block->step_event_count, planning_block->steps[idx]);
-
 		unit_vec[idx] = target_block.axis_values[idx];
 		if (target_block.axis_values[idx] > 0.0)
 		{
@@ -54,20 +53,12 @@ uint8_t Motion_Core::Planner::Calculator::_plan_buffer_line(BinaryRecords::s_mot
 		return (0);
 	}
 
-
-
 	// Calculate the unit vector of the line move and the block maximum feed rate and acceleration scaled
 	// down such that no individual axes maximum values are exceeded with respect to the line direction.
 	// NOTE: This calculation assumes all axes are orthogonal (Cartesian) and works with ABC-axes,
 	// if they are also orthogonal/independent. Operates on the absolute value of the unit vector.
-	//c_processor::debug_serial.print_string("unit_vec (pre) 0 = ");
-	//c_processor::debug_serial.print_float(unit_vec[0]);
-	//c_processor::debug_serial.Write(CR);
+
 	planning_block->millimeters = Motion_Core::convert_delta_vector_to_unit_vector(unit_vec);
-//c_processor::debug_serial.print_string("unit_vec (post) 0 = ");
-//c_processor::debug_serial.print_int32(planning_block->millimeters);
-//c_processor::debug_serial.Write(CR);
-	
 	planning_block->acceleration = Motion_Core::limit_value_by_axis_maximum(Motion_Core::Settings::_Settings.acceleration, unit_vec);
 	planning_block->rapid_rate = Motion_Core::limit_value_by_axis_maximum(Motion_Core::Settings::_Settings.max_rate, unit_vec);
 

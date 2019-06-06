@@ -22,7 +22,6 @@
 #include "c_general.h"
 #include "..\..\..\Common\NGC_RS274\NGC_Block.h"
 #include "..\c_processor.h"
-#include "..\..\..\Common\Serial\records_def.h"
 #include "..\..\..\common\NGC_RS274\NGC_Errors.h"
 #include "..\..\..\Common\NGC_RS274\NGC_Interpreter.h"
 #include "..\Machine\c_machine.h"
@@ -124,7 +123,7 @@ void Settings::c_general::load_from_input(uint8_t setting_group, uint8_t sub_gro
 			c_processor::motion_control_setting_record.arc_tolerance = fAddress;
 		}
 		
-		BinaryRecords::e_binary_responses resp = c_record_handler::handle_outbound_record(&c_processor::motion_control_setting_record,c_processor::controller_serial);
+		BinaryRecords::e_binary_responses resp = Settings::c_general::update_controller(&c_processor::motion_control_setting_record);
 		if (resp == BinaryRecords::e_binary_responses::Ok)
 		{
 			c_processor::host_serial.print_string("success.\r");
@@ -136,6 +135,11 @@ void Settings::c_general::load_from_input(uint8_t setting_group, uint8_t sub_gro
 	}
 }
 
+BinaryRecords::e_binary_responses Settings::c_general::update_controller(BinaryRecords::s_motion_control_settings * settings)
+{
+	return c_record_handler::handle_outbound_record(settings, c_processor::controller_serial);
+	
+}
 
 
 //// default constructor

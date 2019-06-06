@@ -12,6 +12,8 @@
 #include "../../../MotionDriver/c_processor.h"
 
 volatile uint8_t irq = 0;
+volatile uint8_t last_pulse = 0;
+
 
 uint8_t Hardware_Abstraction_Layer::MotionCore::Stepper::step_port_invert_mask;
 uint8_t Hardware_Abstraction_Layer::MotionCore::Stepper::dir_port_invert_mask;
@@ -52,13 +54,12 @@ void Hardware_Abstraction_Layer::MotionCore::Stepper::initialize()
 	TC1->TC_CHANNEL[0].TC_RA = 240; //<--stepper pulse on time
 	TC1->TC_CHANNEL[0].TC_RC = 2048;//<--total time between steps
 	TC1->TC_CHANNEL[0].TC_IER = TC_IER_CPCS | TC_IER_CPAS;
-	//Enables the clock a software trigger is performed: the counter is reset and the clock is started
 	TC1->TC_CHANNEL[0].TC_CCR = TC_CCR_CLKDIS;
-	//TC1->TC_CHANNEL[0].TC_CCR = TC_CCR_CLKEN | TC_CCR_SWTRG;
 	NVIC_EnableIRQ (TC3_IRQn);
 	NVIC_SetPriority(TC3_IRQn, 0);
 	
 	Hardware_Abstraction_Layer::MotionCore::Stepper::st_go_idle();
+	
 }
 
 void Hardware_Abstraction_Layer::MotionCore::Stepper::wake_up()
@@ -81,30 +82,25 @@ void Hardware_Abstraction_Layer::MotionCore::Stepper::wake_up()
 	//Also RA should be the minimum pulse on time. For most drives that is the 2.5-5 uS range.
 	TC1->TC_CHANNEL[0].TC_RA = Motion_Core::Hardware::Interpollation::Step_Pulse_Length - DEAD_TIME;
 	//Total pulse time
-	TC1->TC_CHANNEL[0].TC_RC = Motion_Core::Hardware::Interpollation::Step_Pulse_Length - DEAD_TIME;
+	TC1->TC_CHANNEL[0].TC_RC = Motion_Core::Hardware::Interpollation::Step_Pulse_Length*2;
+	last_pulse = 0;
 	TC1->TC_CHANNEL[0].TC_CCR = TC_CCR_CLKEN | TC_CCR_SWTRG;
 }
 
 void Hardware_Abstraction_Layer::MotionCore::Stepper::st_go_idle()
 {
-	////Disable the timer.
-	//TC1->TC_CHANNEL[0].TC_CCR = TC_CCR_CLKDIS;
-	//NVIC_ClearPendingIRQ(TC3_IRQn);
-	//
-	////Shut off all step pin outputs
-	//for (int i=0;i<MACHINE_AXIS_COUNT;i++)
-	//{
-	//Step_Ports[i]->PIO_CODR = Step_Pins[i];
-	//}
-	//Because of the way the timer is not configured, the step_tick and all its subordinate
+	//Because of the way the timer is now configured, the step_tick and all its subordinate
 	//code runs when the RC_A match occurs. The pins are set low when the RC_C match occurs
-	//which should always be after RC_A. If its not, its because the xtep delay value is much
+	//which should always be after RC_A. If its not, its because the step delay value is much
 	//higher than the step period time (RC_A>RC_C) which will cause the timer to shut down anyway.
-	//In order for the last step to occur with certainy, we must let the timer fire again at the
+	//In order for the last step to occur with certainty, we must let the timer fire again at the
 	//appropriate time to set the pins low. So we simply set a flag here, so the timer can shut
 	//its self off when we are done.
-	irq = 2;
-
+	
+	//can't kill the step timer until we know that the last pulse we set high, has dropped low.
+	last_pulse = 1;
+	c_processor::debug_serial.print_string("ending?\r");
+	
 }
 
 void Hardware_Abstraction_Layer::MotionCore::Stepper::port_disable(uint8_t inverted)
@@ -128,11 +124,20 @@ void Hardware_Abstraction_Layer::MotionCore::Stepper::port_step(uint8_t steps)
 	
 	//For any step indicated, turn on the 'Set Output Data Register'
 	//Step_Ports[0]->PIO_SODR = Step_Pins[0];
+	//Step_Ports[1]->PIO_SODR = Step_Pins[1];
 	//return;
-	for (int i=0;i<1;i++)
-	if (steps & (1<<i))
+	
+	int8_t bit_mask = 1;
+	for (uint8_t bit_to_check =0; bit_to_check < MACHINE_AXIS_COUNT;bit_to_check ++)
 	{
-		Step_Ports[i]->PIO_SODR = Step_Pins[i];
+		if ((bit_mask & steps))
+		{
+			
+			Step_Ports[bit_to_check]->PIO_SODR = Step_Pins[bit_to_check];
+		}
+		//Shift left and see if the next bit is set.
+		bit_mask = bit_mask << 1;
+		
 	}
 	
 }
@@ -185,24 +190,27 @@ void Timer1_Chan0_Handler_irq3(void)
 	if (status_reg & TC_IER_CPAS)
 	{
 		irq=1;
+		
 		//Make appropriate pins high
 		Motion_Core::Hardware::Interpollation::step_tick();
 	}
 	//Check to see if this is the C interrupt flag. If it is this is the 'total time' pulse end
 	if (status_reg & TC_IER_CPCS)
 	{
+		
 		//Make all pins low. If there were already low they will not step. If they were high this
 		//will cause a step.
 		for (int i=0;i<MACHINE_AXIS_COUNT;i++)
 		{
 			Step_Ports[i]->PIO_CODR = Step_Pins[i];
 		}
-		if (irq==2)
+		
+		if (last_pulse)
 		{
-			//Timer has been flagged for a shutdown.
 			TC1->TC_CHANNEL[0].TC_CCR = TC_CCR_CLKDIS;
-			NVIC_ClearPendingIRQ(TC3_IRQn);
+			last_pulse = 0;
 		}
+		
 	}
 	irq=0;
 	

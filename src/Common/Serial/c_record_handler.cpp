@@ -9,7 +9,8 @@
 #include "c_record_handler.h"
 #include "..\..\talos.h"
 //#include "..\..\peripheral\c_processor.h"
-#include "..\..\MotionDriver\c_processor.h"
+//#include "..\..\MotionDriver\c_processor.h"
+#include "..\..\Coordinator\Shared\c_processor.h"
 //#include "..\..\Coordinator\Shared\c_processor.h"
 
 
@@ -29,10 +30,17 @@ BinaryRecords::e_binary_responses c_record_handler::handle_inbound_record(Binary
 	//buffer, and place it into the struct for the record. Easy as cake..
 	uint16_t record_size = 0;
 	record_size = sizeof(BinaryRecords::s_motion_data_block);
+	uint32_t rx_clock = 0;
 	//default response
 	BinaryRecords::e_binary_responses ret_value = BinaryRecords::e_binary_responses::Data_Rx_Wait;
 	while (ret_value == BinaryRecords::e_binary_responses::Data_Rx_Wait)
 	{
+		if (rx_clock >SERIAL_TIME_OUT_TICKS)
+		{
+			ret_value = BinaryRecords::e_binary_responses::Response_Time_Out;
+			break;
+		}
+		rx_clock++;
 		if (incoming_serial->HasRecord(record_size))
 		{
 			
@@ -58,6 +66,7 @@ BinaryRecords::e_binary_responses c_record_handler::handle_inbound_record(Binary
 			
 			incoming_serial->Write((char)ret_value); incoming_serial->Write(CR);
 		}
+		
 	}
 	return ret_value;
 }
@@ -237,6 +246,7 @@ BinaryRecords::e_binary_responses c_record_handler::handle_inbound_record(Binary
 	//buffer, and place it into the struct for the record. Easy as cake..
 	uint16_t record_size = 0;
 	record_size = sizeof(BinaryRecords::s_motion_control_settings);
+	uint32_t buff_check = 0;
 	
 	//default response
 	BinaryRecords::e_binary_responses ret_value = BinaryRecords::e_binary_responses::Data_Rx_Wait;
@@ -251,10 +261,12 @@ BinaryRecords::e_binary_responses c_record_handler::handle_inbound_record(Binary
 			, incoming_serial->Buffer_Pointer() + incoming_serial->TailPosition()
 			, record_size);
 			//Now we pull the bytes out of the buffer one at a time to checksum the data.
-			uint32_t buff_check = 0;
+			
 			
 			for (uint8_t i=0;i<record_size-4;i++)
 			buff_check+=incoming_serial->Get();
+			
+			
 			//we cant use this as a ring buffer. When its time to wrap memcpy will copy data it should not.
 			//reseting it for now.
 			incoming_serial->Reset();
@@ -268,6 +280,7 @@ BinaryRecords::e_binary_responses c_record_handler::handle_inbound_record(Binary
 			incoming_serial->Write((char)ret_value); incoming_serial->Write(CR);
 		}
 	}
+	
 	return ret_value;
 }
 
@@ -436,7 +449,6 @@ BinaryRecords::e_binary_responses c_record_handler::write_stream(char * stream, 
 
 
 }
-
 BinaryRecords::e_binary_record_types c_record_handler::read_stream(c_Serial * inbound_serial)
 {
 	BinaryRecords::e_binary_record_types record_type = BinaryRecords::e_binary_record_types::Unknown;

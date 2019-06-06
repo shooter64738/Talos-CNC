@@ -1,0 +1,105 @@
+﻿<Page
+    x:Class="Talos_UWP_Control.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Talos_UWP_Control"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Width="800" Height="460">
+
+    <Grid Name="mainGrid" Background="Black">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="2*"/>
+                <RowDefinition Height="1*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="60*"/>
+                <ColumnDefinition Width="40*"/>
+            </Grid.ColumnDefinitions>
+            <Grid Name="axis_grid" Grid.Row="0" Grid.Column="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*"/>
+                    <!--Axis Name-->
+                    <ColumnDefinition Width="2*"/> 
+                    <!--Axis Value-->
+                    <ColumnDefinition Width="1*"/> 
+                    <!--Axis Units-->
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                </Grid.RowDefinitions>
+            </Grid>
+            <!--Coordinate display information-->
+            <Pivot x:Name="navigation_axis" Foreground="LightGray" Grid.Column="1" Grid.Row="0">
+                <Pivot.Title>
+                    <Grid>
+                        <TextBlock Foreground="Green" Text="Coordinates"  />
+                    </Grid>
+                </Pivot.Title>
+                <PivotItem>
+                    <PivotItem.Header>
+                        <Grid>
+                            <TextBlock Foreground="Green" Text="Machine"  />
+                        </Grid>
+                    </PivotItem.Header>
+                    <!--Pivot content goes here-->
+                </PivotItem>
+                <PivotItem>
+                    <PivotItem.Header>
+                        <Grid>
+                            <TextBlock Foreground="Green" Text="Work"  />
+                        </Grid>
+                    </PivotItem.Header>
+                    <!--Pivot content goes here-->
+                </PivotItem>
+            </Pivot>
+            
+            <!--Data entry/inspection area-->
+            <Pivot x:Name="navigation_pilot" Foreground="LightGray">
+                <Pivot.Title>
+                    <Grid>
+                        <TextBlock Foreground="Green" Text="User"  />
+                    </Grid>
+                </Pivot.Title>
+                <PivotItem>
+                    <PivotItem.Header>
+                        <Grid>
+                            <TextBlock Foreground="Green" Text="GCode"  />
+                        </Grid>
+                    </PivotItem.Header>
+                    
+                    <TextBox Name="gcode_text" HorizontalAlignment="Stretch"
+                              Text=""
+                     TextWrapping="Wrap"
+                     ScrollViewer.VerticalScrollBarVisibility="Auto"
+                     ScrollViewer.HorizontalScrollBarVisibility="Auto" VerticalAlignment="Stretch"/>
+                </PivotItem>
+                <PivotItem>
+                    <PivotItem.Header>
+                        <Grid>
+                            <TextBlock Foreground="Green" Text="MDI"  />
+                        </Grid>
+                    </PivotItem.Header>
+                    <!--Pivot content goes here-->
+                    <TextBox Name="mdi_text" HorizontalAlignment="Stretch"
+                              Text=""
+                     TextWrapping="Wrap"
+                     ScrollViewer.VerticalScrollBarVisibility="Auto"
+                     ScrollViewer.HorizontalScrollBarVisibility="Auto" VerticalAlignment="Stretch"/>
+                </PivotItem>
+                <PivotItem Header="Pivot Item 3">
+                    <!--Pivot content goes here-->
+                    <TextBlock Text="Content of pivot item 3."/>
+                </PivotItem>
+            </Pivot>
+            
+        </Grid>
+    </Grid>
+</Page>
