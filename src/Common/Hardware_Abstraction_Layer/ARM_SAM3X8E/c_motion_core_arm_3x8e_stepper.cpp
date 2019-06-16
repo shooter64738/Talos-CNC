@@ -55,8 +55,9 @@ void Hardware_Abstraction_Layer::MotionCore::Stepper::initialize()
 	TC1->TC_CHANNEL[0].TC_RC = 2048;//<--total time between steps
 	TC1->TC_CHANNEL[0].TC_IER = TC_IER_CPCS | TC_IER_CPAS;
 	TC1->TC_CHANNEL[0].TC_CCR = TC_CCR_CLKDIS;
-	NVIC_EnableIRQ (TC3_IRQn);
 	NVIC_SetPriority(TC3_IRQn, 0);
+	NVIC_EnableIRQ (TC3_IRQn);
+	
 	
 	Hardware_Abstraction_Layer::MotionCore::Stepper::st_go_idle();
 	
@@ -99,7 +100,7 @@ void Hardware_Abstraction_Layer::MotionCore::Stepper::st_go_idle()
 	
 	//can't kill the step timer until we know that the last pulse we set high, has dropped low.
 	last_pulse = 1;
-	c_processor::debug_serial.print_string("ending?\r");
+	//c_processor::debug_serial.print_string("ending?\r");
 	
 }
 

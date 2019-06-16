@@ -110,9 +110,9 @@ void c_processor::startup()
 
 	for (uint8_t i = 0; i < MACHINE_AXIS_COUNT; i++)
 	{
-		motion_control_setting_record.steps_per_mm[i] = 320;
-		motion_control_setting_record.acceleration[i] = (200.0 * 60.0 * 60.0);
-		motion_control_setting_record.max_rate[i] = 15000.0;
+		motion_control_setting_record.steps_per_mm[i] = 160;
+		motion_control_setting_record.acceleration[i] = (100.0 * 60.0 * 60.0);
+		motion_control_setting_record.max_rate[i] = 12000.0;
 		
 		//arbitrary for testing
 		motion_control_setting_record.back_lash_comp_distance[i] = 55.0;

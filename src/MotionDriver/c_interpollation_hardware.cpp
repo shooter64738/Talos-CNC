@@ -50,9 +50,8 @@ void Motion_Core::Hardware::Interpollation::Initialize()
 	myfile.open("acceleration.txt");
 	#endif // MSVC
 
-//memset(&Motion_Core::Hardware::Interpollation::system_position,0,sizeof(Motion_Core::Hardware::Interpollation::system_position));
-	
-	//if (!Motion_Core::Hardware::Interpollation::Interpolation_Active)
+//If we are already active, there isnt anything we need to do here. 
+	if (!Motion_Core::Hardware::Interpollation::Interpolation_Active)
 	{
 		Motion_Core::Hardware::Interpollation::Interpolation_Active = 1;
 		Motion_Core::Hardware::Interpollation::step_outbits = step_port_invert_mask;

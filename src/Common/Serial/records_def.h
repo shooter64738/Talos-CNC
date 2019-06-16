@@ -40,7 +40,12 @@ namespace BinaryRecords
 	#ifndef __C_MOTION_TYPE
 	#define __C_MOTION_TYPE
 	enum class e_motion_type : uint8_t
-	{rapid_linear = 0,feed_linear = 1,arc_cw = 2,arc_ccw = 3};
+	{
+		rapid_linear = 0 * G_CODE_MULTIPLIER,
+		feed_linear = 1 * G_CODE_MULTIPLIER,
+		arc_cw = 2 * G_CODE_MULTIPLIER,
+		arc_ccw = 3 * G_CODE_MULTIPLIER
+	};
 	#endif
 	
 	#ifndef __C_BLOCK_FLAG

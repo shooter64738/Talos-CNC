@@ -13,10 +13,10 @@
 #include "c_core_arm_3x8e.h"
 #define clockDivisor(baud) F_CPU/(16*baud)
 typedef enum _InterruptPriority{
-	PRIOR_SERIAL = 0u, //Highest priority
-	PRIOR_SPI = 1u,
-	PRIOR_I2C = 2u,
-	PRIOR_TIMER = 3u
+	PRIOR_SERIAL = 3u, //Highest priority
+	//PRIOR_SPI = 1u,
+	//PRIOR_I2C = 2u,
+	//PRIOR_TIMER = 3u
 	
 } InterruptPriority;
 namespace Hardware_Abstraction_Layer

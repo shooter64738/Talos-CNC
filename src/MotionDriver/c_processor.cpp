@@ -133,7 +133,7 @@ void c_processor::process_motion(BinaryRecords::s_motion_data_block *mot)
 {
 	c_processor::debug_serial.print_string("***mot test\r");
 	//c_processor::debug_serial.print_string("\tprocessing motion \r");
-	mot->motion_type = BinaryRecords::e_motion_type::rapid_linear;
+	//mot->motion_type = BinaryRecords::e_motion_type::rapid_linear;
 	//Did we already process this motion command? We may have had a serial issue that
 	//caused the motion to send twice
 	if (Motion_Core::System::new_sequence == mot->sequence)
@@ -145,17 +145,17 @@ void c_processor::process_motion(BinaryRecords::s_motion_data_block *mot)
 	
 	Motion_Core::System::new_sequence = mot->sequence;
 	
-	//c_processor::debug_serial.print_string("\ttest.motion_type = "); c_processor::debug_serial.print_int32((uint32_t)mot->motion_type); c_processor::debug_serial.Write(CR);
-	//c_processor::debug_serial.print_string("\ttest.feed_rate_mode = "); c_processor::debug_serial.print_int32((uint32_t)mot->feed_rate_mode); c_processor::debug_serial.Write(CR);
-	//c_processor::debug_serial.print_string("\ttest.feed_rate = "); c_processor::debug_serial.print_int32(mot->feed_rate); c_processor::debug_serial.Write(CR);
-	//c_processor::debug_serial.print_string("\ttest.axis_values[0] = ");c_processor::debug_serial.print_float(mot->axis_values[0], 3); c_processor::debug_serial.Write(CR);
-	//c_processor::debug_serial.print_string("\ttest.axis_values[1] = ");c_processor::debug_serial.print_float(mot->axis_values[1], 3); c_processor::debug_serial.Write(CR);
-	//c_processor::debug_serial.print_string("\ttest.axis_values[2] = ");c_processor::debug_serial.print_float(mot->axis_values[2], 3); c_processor::debug_serial.Write(CR);
-	//c_processor::debug_serial.print_string("\ttest.axis_values[3] = ");c_processor::debug_serial.print_float(mot->axis_values[3], 4); c_processor::debug_serial.Write(CR);
-	//c_processor::debug_serial.print_string("\ttest.axis_values[4] = ");c_processor::debug_serial.print_float(mot->axis_values[4], 4); c_processor::debug_serial.Write(CR);
-	//c_processor::debug_serial.print_string("\ttest.axis_values[5] = ");c_processor::debug_serial.print_float(mot->axis_values[5], 4); c_processor::debug_serial.Write(CR);
-	//c_processor::debug_serial.print_string("\ttest.line_number = "); c_processor::debug_serial.print_int32(mot->line_number); c_processor::debug_serial.Write(CR);
-	//
+	c_processor::debug_serial.print_string("\ttest.motion_type = "); c_processor::debug_serial.print_int32((uint32_t)mot->motion_type); c_processor::debug_serial.Write(CR);
+	c_processor::debug_serial.print_string("\ttest.feed_rate_mode = "); c_processor::debug_serial.print_int32((uint32_t)mot->feed_rate_mode); c_processor::debug_serial.Write(CR);
+	c_processor::debug_serial.print_string("\ttest.feed_rate = "); c_processor::debug_serial.print_int32(mot->feed_rate); c_processor::debug_serial.Write(CR);
+	c_processor::debug_serial.print_string("\ttest.axis_values[0] = ");c_processor::debug_serial.print_float(mot->axis_values[0], 3); c_processor::debug_serial.Write(CR);
+	c_processor::debug_serial.print_string("\ttest.axis_values[1] = ");c_processor::debug_serial.print_float(mot->axis_values[1], 3); c_processor::debug_serial.Write(CR);
+	c_processor::debug_serial.print_string("\ttest.axis_values[2] = ");c_processor::debug_serial.print_float(mot->axis_values[2], 3); c_processor::debug_serial.Write(CR);
+	c_processor::debug_serial.print_string("\ttest.axis_values[3] = ");c_processor::debug_serial.print_float(mot->axis_values[3], 4); c_processor::debug_serial.Write(CR);
+	c_processor::debug_serial.print_string("\ttest.axis_values[4] = ");c_processor::debug_serial.print_float(mot->axis_values[4], 4); c_processor::debug_serial.Write(CR);
+	c_processor::debug_serial.print_string("\ttest.axis_values[5] = ");c_processor::debug_serial.print_float(mot->axis_values[5], 4); c_processor::debug_serial.Write(CR);
+	c_processor::debug_serial.print_string("\ttest.line_number = "); c_processor::debug_serial.print_int32(mot->line_number); c_processor::debug_serial.Write(CR);
+	
 	
 	//debug_serial.print_string("dist = ");
 	//debug_serial.print_float(mot->axis_values[0],3);

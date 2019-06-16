@@ -10,6 +10,7 @@
 #include <stdint.h>
 #include <stddef.h>
 #include "c_core_arm_3x8e.h"
+#include "component\usart.h"
 
 #define COM_PORT_COUNT 4 //<--how many serial ports does this hardware have (or) how many do you need to use.
 #if(COM_PORT_COUNT<1)
@@ -436,7 +437,7 @@ void Hardware_Abstraction_Layer::Serial::_incoming_serial_isr(uint8_t Port, char
 	
 	Hardware_Abstraction_Layer::Serial::rxBuffer[Port].Buffer[Hardware_Abstraction_Layer::Serial::rxBuffer[Port].Head] = Byte;
 	
-	if (Hardware_Abstraction_Layer::Serial::rxBuffer[Port].Buffer[Hardware_Abstraction_Layer::Serial::rxBuffer[Port].Head] == 13)
+	if (Byte == 13)
 	Hardware_Abstraction_Layer::Serial::rxBuffer[Port].EOL++;
 	
 	Hardware_Abstraction_Layer::Serial::rxBuffer[Port].Head++;
@@ -467,32 +468,14 @@ void Hardware_Abstraction_Layer::Serial::_outgoing_serial_isr(uint8_t Port, char
 
 void USART0_Handler(void)
 {
-	//while(1)
-	{
 		uint32_t status = USART0->US_CSR;
-		if((status & US_CSR_RXRDY) == US_CSR_RXRDY)
+		//if((status & US_CSR_RXRDY) == US_CSR_RXRDY)
+		if((status & US_CSR_RXRDY))
 		{
 			char Byte = USART0->US_RHR;
 			//UART->UART_THR = Byte;
 			Hardware_Abstraction_Layer::Serial::_incoming_serial_isr(1,Byte);
 		}
-		else
-		{
-			//break;
-		}
-	}
-	//if((status & US_CSR_TXRDY) == US_CSR_TXRDY)
-	{
-		//if(txBuffer.availableToRead()){
-		////Make sure interrupts are still enabled
-		//USART0->US_IER |= US_IER_TXRDY;
-		//
-		////Send the data
-		//USART0->US_THR = (uint8_t)txBuffer.read();
-		//}
-		//else
-		//USART0->US_IDR |= US_IDR_TXRDY; //Turn off interrupt. No more data left.
-	}
 }
 void USART1_Handler(void){	uint32_t status = USART1->US_CSR;
 	if((status & US_CSR_RXRDY) == US_CSR_RXRDY)
