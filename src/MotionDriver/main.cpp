@@ -9,7 +9,7 @@
 
 
 
-int main()
+int xmain()
 {
 	c_processor::initialize();
 }

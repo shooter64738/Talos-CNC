@@ -22,9 +22,6 @@
     <Filter Include="Shared\Machine">
       <UniqueIdentifier>{aa09069c-8f6d-48a6-85f4-07c58d99ce9e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Shared\MotionControllerInterface">
-      <UniqueIdentifier>{12c609fd-9e37-4f9e-a188-cba4900d20ce}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Shared\Planner">
       <UniqueIdentifier>{23617352-8b80-48e4-b8ee-eecdcf149c33}</UniqueIdentifier>
     </Filter>
@@ -36,12 +33,6 @@
     </Filter>
     <Filter Include="Shared\System">
       <UniqueIdentifier>{9ec3425b-bf4e-4500-9ece-48dec439b01e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Shared\MotionControllerInterface\ExternalControllers">
-      <UniqueIdentifier>{4e835056-c2f6-4073-820d-4f4ccb2cfe61}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Shared\MotionControllerInterface\ExternalControllers\GRBL">
-      <UniqueIdentifier>{31cd1831-bee0-4dbe-a39c-fa268de3cae5}</UniqueIdentifier>
     </Filter>
     <Filter Include="Shared\Planner\Canned Cycles">
       <UniqueIdentifier>{de8f1248-bb15-4796-9b58-ece15bcf05a6}</UniqueIdentifier>
@@ -60,6 +51,9 @@
     </Filter>
     <Filter Include="Shared\Encoder">
       <UniqueIdentifier>{6f8ff9f1-d689-499b-9849-41a655f78490}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shared\MotionController">
+      <UniqueIdentifier>{57087ff1-8315-4bb6-ade0-d23225c548e3}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -89,15 +83,6 @@
     </ClCompile>
     <ClCompile Include="..\Shared\Machine\c_machine.cpp">
       <Filter>Shared\Machine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Shared\MotionControllerInterface\ExternalControllers\GRBL\c_Grbl.cpp">
-      <Filter>Shared\MotionControllerInterface\ExternalControllers\GRBL</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Common\MotionControllerInterface\c_motion_controller.cpp">
-      <Filter>Shared\MotionControllerInterface</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Common\MotionControllerInterface\c_motion_controller_settings.cpp">
-      <Filter>Shared\MotionControllerInterface</Filter>
     </ClCompile>
     <ClCompile Include="..\Shared\Planner\Canned Cycles\c_canned_cycle.cpp">
       <Filter>Shared\Planner\Canned Cycles</Filter>
@@ -148,6 +133,10 @@
     <ClCompile Include="..\Shared\Encoder\c_encoder.cpp">
       <Filter>Shared\Encoder</Filter>
     </ClCompile>
+    <ClCompile Include="..\Shared\MotionController\c_motion_controller.cpp">
+      <Filter>Shared\MotionController</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Common\Serial\c_record_handler.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Common\Serial\c_Serial.h">
@@ -184,18 +173,6 @@
     </ClInclude>
     <ClInclude Include="..\Shared\Machine\c_machine.h">
       <Filter>Shared\Machine</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Shared\MotionControllerInterface\ExternalControllers\GRBL\c_Grbl.h">
-      <Filter>Shared\MotionControllerInterface\ExternalControllers\GRBL</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Shared\MotionControllerInterface\ExternalControllers\GRBL\c_Grbl_Settings.h">
-      <Filter>Shared\MotionControllerInterface\ExternalControllers\GRBL</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Common\MotionControllerInterface\c_motion_controller.h">
-      <Filter>Shared\MotionControllerInterface</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Common\MotionControllerInterface\c_motion_controller_settings.h">
-      <Filter>Shared\MotionControllerInterface</Filter>
     </ClInclude>
     <ClInclude Include="..\Shared\Planner\Canned Cycles\c_canned_cycle.h">
       <Filter>Shared\Planner\Canned Cycles</Filter>
@@ -245,9 +222,6 @@
     <ClInclude Include="..\..\Common\Hardware_Abstraction_Layer\Virtual\c_serial_win.h">
       <Filter>Common\HardwareAbstractionLayer</Filter>
     </ClInclude>
-    <ClInclude Include="..\Shared\hardware_def.h">
-      <Filter>Shared</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Common\NGC_RS274\NGC_Block.h">
       <Filter>Common\NGC_RS274</Filter>
     </ClInclude>
@@ -278,5 +252,10 @@
     <ClInclude Include="..\..\Common\Serial\records_def.h">
       <Filter>Shared</Filter>
     </ClInclude>
+    <ClInclude Include="..\Shared\MotionController\c_motion_controller.h">
+      <Filter>Shared\MotionController</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\Serial\c_record_handler.h" />
+    <ClInclude Include="..\Shared\hardware_def.h" />
   </ItemGroup>
 </Project>

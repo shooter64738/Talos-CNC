@@ -61,7 +61,12 @@ BinaryRecords::e_binary_responses c_motion_controller::send_motion(BinaryRecords
 	//This should prevent a serial failure from sending the same motion twice by accident.
 	motion_data.sequence = ++new_sequence_key;
 	uint8_t recsize = sizeof(BinaryRecords::s_motion_data_block);
+#ifdef MSVC
+	char motion_stream[44];
+#else
 	char motion_stream[recsize];
+#endif
+	
 	motion_data._check_sum = 0;
 	memcpy(motion_stream, &motion_data,sizeof(BinaryRecords::s_motion_data_block));
 	for (uint8_t i=0;i<recsize;i++)

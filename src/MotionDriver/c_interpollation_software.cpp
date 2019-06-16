@@ -100,14 +100,14 @@ uint8_t Motion_Core::Software::Interpollation::_mc_line(BinaryRecords::s_motion_
 
 uint8_t Motion_Core::Software::Interpollation::_mc_arc(BinaryRecords::s_motion_data_block * target_block)
 {
-	float center_axis0;
-	float center_axis1;
+	float center_axis0 = 0 + target_block->arc_values.horizontal_offset;
+	float center_axis1 = 2 + target_block->arc_values.vertical_offset;
 	
 	
-	float r_axis0 = -target_block->arc_values.horizontal_center;
-	float r_axis1 = -target_block->arc_values.vertical_center;
-	float rt_axis0 = 0;
-	float rt_axis1 = 0;
+	float r_axis0 = -target_block->arc_values.horizontal_offset;
+	float r_axis1 = -target_block->arc_values.vertical_offset;
+	float rt_axis0 = target_block->axis_values[0] - center_axis0;
+	float rt_axis1 = target_block->axis_values[1] - center_axis1;
 	
 	// CCW angle between position and target from circle center. Only one atan2() trig computation required.
 	float angular_travel = atan2(r_axis0 * rt_axis1 - r_axis1 * rt_axis0, r_axis0 * rt_axis0 + r_axis1 * rt_axis1);
@@ -202,10 +202,10 @@ uint8_t Motion_Core::Software::Interpollation::_mc_arc(BinaryRecords::s_motion_d
 				// Compute exact location by applying transformation matrix from initial radius vector(=-offset).
 				cos_Ti = cos(i * theta_per_segment);
 				sin_Ti = sin(i * theta_per_segment);
-				r_axis0 = -target_block->arc_values.horizontal_center * cos_Ti
-				+ target_block->arc_values.vertical_center * sin_Ti;
-				r_axis1 = -target_block->arc_values.horizontal_center * sin_Ti
-				- target_block->arc_values.vertical_center * cos_Ti;
+				r_axis0 = -target_block->arc_values.horizontal_offset * cos_Ti
+				+ target_block->arc_values.vertical_offset * sin_Ti;
+				r_axis1 = -target_block->arc_values.horizontal_offset * sin_Ti
+				- target_block->arc_values.vertical_offset * cos_Ti;
 				count = 0;
 			}
 			

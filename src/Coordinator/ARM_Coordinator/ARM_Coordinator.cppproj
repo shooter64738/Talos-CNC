@@ -198,6 +198,14 @@
       <SubType>compile</SubType>
       <Link>Common\HardwareAbstractionLayer\ARM_3X8E\clock\c_clock.h</Link>
     </Compile>
+    <Compile Include="..\..\Common\Hardware_Abstraction_Layer\ARM_SAM3X8E\c_coordinator_arm_3x8e.cpp">
+      <SubType>compile</SubType>
+      <Link>ARM_Coordinator\Common\HardwareAbstractionLayer\ARM_3X8E\c_coordinator_arm_3x8e.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\Common\Hardware_Abstraction_Layer\ARM_SAM3X8E\c_coordinator_arm_3x8e.h">
+      <SubType>compile</SubType>
+      <Link>ARM_Coordinator\Common\HardwareAbstractionLayer\ARM_3X8E\c_coordinator_arm_3x8e.h</Link>
+    </Compile>
     <Compile Include="..\..\Common\Hardware_Abstraction_Layer\ARM_SAM3X8E\c_core_arm_3x8e.cpp">
       <SubType>compile</SubType>
       <Link>Common\HardwareAbstractionLayer\ARM_3X8E\c_core_arm_3x8e.cpp</Link>
@@ -286,6 +294,14 @@
       <SubType>compile</SubType>
       <Link>Common\NGC_RS274\NGC_Parameters.h</Link>
     </Compile>
+    <Compile Include="..\..\Common\Serial\c_record_handler.cpp">
+      <SubType>compile</SubType>
+      <Link>c_record_handler.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\Common\Serial\c_record_handler.h">
+      <SubType>compile</SubType>
+      <Link>c_record_handler.h</Link>
+    </Compile>
     <Compile Include="..\..\Common\Serial\c_Serial.cpp">
       <SubType>compile</SubType>
       <Link>Common\Serial\c_Serial.cpp</Link>
@@ -301,6 +317,98 @@
     <Compile Include="..\..\Common\Serial\s_buffer.h">
       <SubType>compile</SubType>
       <Link>Common\Serial\s_buffer.h</Link>
+    </Compile>
+    <Compile Include="..\..\MotionDriver\c_block.cpp">
+      <SubType>compile</SubType>
+      <Link>ARM_Coordinator\ARM_Motion_Core\Motion_Calculations\c_block.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\MotionDriver\c_block.h">
+      <SubType>compile</SubType>
+      <Link>ARM_Coordinator\ARM_Motion_Core\Motion_Calculations\c_block.h</Link>
+    </Compile>
+    <Compile Include="..\..\MotionDriver\c_block_buffer.cpp">
+      <SubType>compile</SubType>
+      <Link>ARM_Coordinator\ARM_Motion_Core\Motion_Calculations\c_block_buffer.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\MotionDriver\c_block_buffer.h">
+      <SubType>compile</SubType>
+      <Link>ARM_Coordinator\ARM_Motion_Core\Motion_Calculations\c_block_buffer.h</Link>
+    </Compile>
+    <Compile Include="..\..\MotionDriver\c_interpollation_hardware.cpp">
+      <SubType>compile</SubType>
+      <Link>ARM_Coordinator\ARM_Motion_Core\Motion_Calculations\c_interpollation_hardware.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\MotionDriver\c_interpollation_hardware.h">
+      <SubType>compile</SubType>
+      <Link>ARM_Coordinator\ARM_Motion_Core\Motion_Calculations\c_interpollation_hardware.h</Link>
+    </Compile>
+    <Compile Include="..\..\MotionDriver\c_interpollation_software.cpp">
+      <SubType>compile</SubType>
+      <Link>ARM_Coordinator\ARM_Motion_Core\Motion_Calculations\c_interpollation_software.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\MotionDriver\c_interpollation_software.h">
+      <SubType>compile</SubType>
+      <Link>ARM_Coordinator\ARM_Motion_Core\Motion_Calculations\c_interpollation_software.h</Link>
+    </Compile>
+    <Compile Include="..\..\MotionDriver\c_motion_core.cpp">
+      <SubType>compile</SubType>
+      <Link>ARM_Coordinator\ARM_Motion_Core\Motion_Calculations\c_motion_core.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\MotionDriver\c_motion_core.h">
+      <SubType>compile</SubType>
+      <Link>ARM_Coordinator\ARM_Motion_Core\Motion_Calculations\c_motion_core.h</Link>
+    </Compile>
+    <Compile Include="..\..\MotionDriver\c_planner_compute_block.cpp">
+      <SubType>compile</SubType>
+      <Link>ARM_Coordinator\ARM_Motion_Core\Motion_Calculations\c_planner_compute_block.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\MotionDriver\c_planner_compute_block.h">
+      <SubType>compile</SubType>
+      <Link>ARM_Coordinator\ARM_Motion_Core\Motion_Calculations\c_planner_compute_block.h</Link>
+    </Compile>
+    <Compile Include="..\..\MotionDriver\c_processor.cpp">
+      <SubType>compile</SubType>
+      <Link>ARM_Coordinator\ARM_Motion_Core\Motion_Calculations\c_processor.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\MotionDriver\c_processor.h">
+      <SubType>compile</SubType>
+      <Link>ARM_Coordinator\ARM_Motion_Core\Motion_Calculations\c_processor.h</Link>
+    </Compile>
+    <Compile Include="..\..\MotionDriver\c_segment_arbitrator.cpp">
+      <SubType>compile</SubType>
+      <Link>ARM_Coordinator\ARM_Motion_Core\Motion_Calculations\c_segment_arbitrator.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\MotionDriver\c_segment_arbitrator.h">
+      <SubType>compile</SubType>
+      <Link>ARM_Coordinator\ARM_Motion_Core\Motion_Calculations\c_segment_arbitrator.h</Link>
+    </Compile>
+    <Compile Include="..\..\MotionDriver\c_segment_timer_bresenham.cpp">
+      <SubType>compile</SubType>
+      <Link>ARM_Coordinator\ARM_Motion_Core\Motion_Calculations\c_segment_timer_bresenham.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\MotionDriver\c_segment_timer_bresenham.h">
+      <SubType>compile</SubType>
+      <Link>ARM_Coordinator\ARM_Motion_Core\Motion_Calculations\c_segment_timer_bresenham.h</Link>
+    </Compile>
+    <Compile Include="..\..\MotionDriver\c_segment_timer_item.cpp">
+      <SubType>compile</SubType>
+      <Link>ARM_Coordinator\ARM_Motion_Core\Motion_Calculations\c_segment_timer_item.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\MotionDriver\c_segment_timer_item.h">
+      <SubType>compile</SubType>
+      <Link>ARM_Coordinator\ARM_Motion_Core\Motion_Calculations\c_segment_timer_item.h</Link>
+    </Compile>
+    <Compile Include="..\..\MotionDriver\c_system.cpp">
+      <SubType>compile</SubType>
+      <Link>ARM_Coordinator\ARM_Motion_Core\Motion_Calculations\c_system.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\MotionDriver\c_system.h">
+      <SubType>compile</SubType>
+      <Link>ARM_Coordinator\ARM_Motion_Core\Motion_Calculations\c_system.h</Link>
+    </Compile>
+    <Compile Include="..\..\MotionDriver\main.cpp">
+      <SubType>compile</SubType>
+      <Link>ARM_Coordinator\ARM_Motion_Core\Motion_Calculations\main.cpp</Link>
     </Compile>
     <Compile Include="..\Shared\c_processor.cpp">
       <SubType>compile</SubType>
@@ -505,6 +613,7 @@
     <Folder Include="ARM_Coordinator\Planner\Compensation\" />
     <Folder Include="ARM_Coordinator\Status\" />
     <Folder Include="ARM_Coordinator\System\" />
+    <Folder Include="ARM_Motion_Core\Motion_Calculations" />
     <Folder Include="Common\HardwareAbstractionLayer\" />
     <Folder Include="Common\HardwareAbstractionLayer\ARM_3X8E\" />
     <Folder Include="Common\HardwareAbstractionLayer\ARM_3X8E\clock" />
@@ -521,6 +630,7 @@
     <Folder Include="Common\Serial" />
     <Folder Include="Device_Startup\" />
     <Folder Include="Common" />
+    <Folder Include="ARM_Motion_Core" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Device_Startup\sam3x8e_flash.ld">

@@ -61,13 +61,13 @@ NGC_RS274::NGC_Binary_Block::NGC_Binary_Block()
 	this->canned_values.R_retract_position = &this->block_word_values[R_WORD_BIT];
 	this->canned_values.Z_depth_of_hole = &this->block_word_values[Z_WORD_BIT];
 
-	this->plane_axis.horizontal_axis.value = &this->block_word_values[X_WORD_BIT];
-	this->plane_axis.vertical_axis.value = &this->block_word_values[Y_WORD_BIT];
-	this->plane_axis.normal_axis.value = &this->block_word_values[Z_WORD_BIT];
+	this->active_plane.horizontal_axis.value = &this->block_word_values[X_WORD_BIT];
+	this->active_plane.vertical_axis.value = &this->block_word_values[Y_WORD_BIT];
+	this->active_plane.normal_axis.value = &this->block_word_values[Z_WORD_BIT];
 
-	this->plane_axis.horizontal_axis.name = 'X';
-	this->plane_axis.vertical_axis.name = 'Y';
-	this->plane_axis.normal_axis.name = 'Z';
+	this->active_plane.horizontal_axis.name = 'X';
+	this->active_plane.vertical_axis.name = 'Y';
+	this->active_plane.normal_axis.name = 'Z';
 	
 }
 NGC_RS274::NGC_Binary_Block::~NGC_Binary_Block()
@@ -266,7 +266,7 @@ void NGC_RS274::NGC_Binary_Block::define_value(char Word, float Value)
 /*
 Clears the bit flag for the specified word
 */
-void NGC_RS274::NGC_Binary_Block::clear_defined_word(char Word)
+void NGC_RS274::NGC_Binary_Block::clear_defined(char Word)
 {
 	/*
 	|***************************************************************************************|
@@ -275,6 +275,35 @@ void NGC_RS274::NGC_Binary_Block::clear_defined_word(char Word)
 	|***************************************************************************************|
 	*/
 	this->word_defined_in_block_A_Z = BitClr(this->word_defined_in_block_A_Z, Word - 65);
+}
+
+/*
+Clears the value for the specified word
+*/
+void NGC_RS274::NGC_Binary_Block::clear_value(char Word)
+{
+	/*
+	|***************************************************************************************|
+	|                              IMPORTANT INFORMATION                                    |
+	| Clear the value in the Word array.                          |
+	|***************************************************************************************|
+	*/
+	this->block_word_values[Word - 65] = 0;
+}
+
+/*
+Clears the value for the specified word
+*/
+void NGC_RS274::NGC_Binary_Block::clear_value_defined(char Word)
+{
+	/*
+	|***************************************************************************************|
+	|                              IMPORTANT INFORMATION                                    |
+	| Clear the value in the Word array.                          |
+	|***************************************************************************************|
+	*/
+	this->clear_value(Word);
+	this->clear_defined(Word);
 }
 
 void NGC_RS274::NGC_Binary_Block::clear_all_defined()

@@ -240,9 +240,9 @@ void c_machine::start_motion_binary(NGC_RS274::NGC_Binary_Block* local_block)
 		//set some block stuff
 		motion_block_record.motion_type = (BinaryRecords::e_motion_type) local_block->g_group[NGC_RS274::Groups::G::MOTION];// BinaryRecords::e_motion_type::feed_linear;
 		motion_block_record.feed_rate_mode = (BinaryRecords::e_feed_modes) local_block->g_group[NGC_RS274::Groups::G::FEED_RATE_MODE];//BinaryRecords::e_feed_modes::FEED_RATE_UNITS_PER_MINUTE_MODE;
-		motion_block_record.arc_values.horizontal_center = local_block->arc_values.horizontal_center;
-		motion_block_record.arc_values.vertical_center = local_block->arc_values.vertical_center;
-		motion_block_record.arc_values.Radius = local_block->arc_values.Radius;
+		motion_block_record.arc_values.horizontal_offset = local_block->arc_values.horizontal_relative_offset;
+		motion_block_record.arc_values.vertical_offset = local_block->arc_values.vertical_relative_offset;
+		motion_block_record.arc_values.Radius = *local_block->arc_values.Radius;
 		motion_block_record.feed_rate = local_block->get_value('F');// 5000;
 		for (int i=0;i<MACHINE_AXIS_COUNT;i++)
 		{
@@ -252,7 +252,7 @@ void c_machine::start_motion_binary(NGC_RS274::NGC_Binary_Block* local_block)
 			if (local_block->get_defined(c_machine::machine_axis_names[i]))
 				motion_block_record.axis_values[i] = *local_block->axis_values.Loop[i];
 		}
-		motion_block_record.line_number = *local_block->get_value('N');
+		motion_block_record.line_number = local_block->get_value('N');
 		
 		//Send this in binary format to the motion controller.
 		//This only requires 44 bytes (size of birecord::s_motion_data_block) to be sent to the motion controller

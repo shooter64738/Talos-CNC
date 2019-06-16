@@ -287,7 +287,11 @@ BinaryRecords::e_binary_responses c_record_handler::handle_inbound_record(Binary
 BinaryRecords::e_binary_responses c_record_handler::handle_outbound_record(BinaryRecords::s_motion_data_block *_data, c_Serial outgoing_serial)
 {
 	uint8_t rec_size = sizeof(BinaryRecords::s_motion_data_block);
+#ifdef MSVC
+	char rec_stream[52];
+#else
 	char rec_stream[rec_size];
+#endif
 	_data->_check_sum = 0;
 	memset(rec_stream, 0 ,rec_size);
 	memcpy(rec_stream, _data,rec_size);
@@ -309,7 +313,11 @@ BinaryRecords::e_binary_responses c_record_handler::handle_outbound_record(Binar
 BinaryRecords::e_binary_responses c_record_handler::handle_outbound_record(BinaryRecords::s_status_message *_data, c_Serial outgoing_serial)
 {
 	uint8_t rec_size = sizeof(BinaryRecords::s_status_message);
+#ifdef MSVC
+	char rec_stream[44];
+#else
 	char rec_stream[rec_size];
+#endif
 	_data->_check_sum = 0;
 	memset(rec_stream, 0 ,rec_size);
 	memcpy(rec_stream, _data,rec_size);
@@ -331,7 +339,11 @@ BinaryRecords::e_binary_responses c_record_handler::handle_outbound_record(Binar
 BinaryRecords::e_binary_responses c_record_handler::handle_outbound_record(BinaryRecords::s_jog_data_block *_data, c_Serial outgoing_serial)
 {
 	uint8_t rec_size = sizeof(BinaryRecords::s_jog_data_block);
+#ifdef MSVC
+	char rec_stream[44];
+#else
 	char rec_stream[rec_size];
+#endif
 	_data->_check_sum = 0;
 	memset(rec_stream, 0 ,rec_size);
 	memcpy(rec_stream, _data,rec_size);
@@ -353,7 +365,11 @@ BinaryRecords::e_binary_responses c_record_handler::handle_outbound_record(Binar
 BinaryRecords::e_binary_responses c_record_handler::handle_outbound_record(BinaryRecords::s_peripheral_panel *_data, c_Serial outgoing_serial)
 {
 	uint8_t rec_size = sizeof(BinaryRecords::s_peripheral_panel);
+#ifdef MSVC
+	char rec_stream[44];
+#else
 	char rec_stream[rec_size];
+#endif
 	_data->_check_sum = 0;
 	memset(rec_stream, 0 ,rec_size);
 	memcpy(rec_stream, _data,rec_size);
@@ -375,7 +391,11 @@ BinaryRecords::e_binary_responses c_record_handler::handle_outbound_record(Binar
 BinaryRecords::e_binary_responses c_record_handler::handle_outbound_record(BinaryRecords::s_spindle_control_settings *_data, c_Serial outgoing_serial)
 {
 	uint8_t rec_size = sizeof(BinaryRecords::s_spindle_control_settings);
+#ifdef MSVC
+	char rec_stream[44];
+#else
 	char rec_stream[rec_size];
+#endif
 	_data->_check_sum = 0;
 	memset(rec_stream, 0 ,rec_size);
 	memcpy(rec_stream, _data,rec_size);
@@ -397,7 +417,11 @@ BinaryRecords::e_binary_responses c_record_handler::handle_outbound_record(Binar
 BinaryRecords::e_binary_responses c_record_handler::handle_outbound_record(BinaryRecords::s_motion_control_settings *_data, c_Serial outgoing_serial)
 {
 	uint8_t rec_size = sizeof(BinaryRecords::s_motion_control_settings);
+#ifdef MSVC
+	char rec_stream[72];
+#else
 	char rec_stream[rec_size];
+#endif
 	_data->_check_sum = 0;
 	memset(rec_stream, 0 ,rec_size);
 	memcpy(rec_stream, _data,rec_size);

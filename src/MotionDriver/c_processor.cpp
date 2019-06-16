@@ -91,9 +91,9 @@ BinaryRecords::e_binary_responses c_processor::send_status(BinaryRecords::s_stat
 	unit_factor = ((Motion_Core::Settings::_Settings.machine_units == BinaryRecords::e_unit_types::MM) ? 1.0 : 25.4);
 	for (uint8_t i = 0;i<MACHINE_AXIS_COUNT;i++)
 	{
-		new_stat.position[i] = 
+		new_stat.position[i] =
 		((float)Motion_Core::Hardware::Interpollation::system_position[i]
-		 /(float)Motion_Core::Settings::_Settings.steps_per_mm[i])* unit_factor;
+		/(float)Motion_Core::Settings::_Settings.steps_per_mm[i])* unit_factor;
 		c_processor::debug_serial.print_int32(Motion_Core::Hardware::Interpollation::system_position[i]);
 		c_processor::debug_serial.Write(CR);
 	}
@@ -131,39 +131,29 @@ void c_processor::check_control_states()
 
 void c_processor::process_motion(BinaryRecords::s_motion_data_block *mot)
 {
-	c_processor::debug_serial.print_string("***mot test\r");
-	//c_processor::debug_serial.print_string("\tprocessing motion \r");
-	//mot->motion_type = BinaryRecords::e_motion_type::rapid_linear;
-	//Did we already process this motion command? We may have had a serial issue that
-	//caused the motion to send twice
-	if (Motion_Core::System::new_sequence == mot->sequence)
-	{
-		////c_processor::debug_serial.print_string("\t***duplicate motion \r");
-		////c_processor::debug_serial.print_string("\t***motion ignored \r");
-		//return;//<--Break out of the switch. We already have this motion.
-	}
-	
 	Motion_Core::System::new_sequence = mot->sequence;
 	
 	c_processor::debug_serial.print_string("\ttest.motion_type = "); c_processor::debug_serial.print_int32((uint32_t)mot->motion_type); c_processor::debug_serial.Write(CR);
 	c_processor::debug_serial.print_string("\ttest.feed_rate_mode = "); c_processor::debug_serial.print_int32((uint32_t)mot->feed_rate_mode); c_processor::debug_serial.Write(CR);
 	c_processor::debug_serial.print_string("\ttest.feed_rate = "); c_processor::debug_serial.print_int32(mot->feed_rate); c_processor::debug_serial.Write(CR);
-	c_processor::debug_serial.print_string("\ttest.axis_values[0] = ");c_processor::debug_serial.print_float(mot->axis_values[0], 3); c_processor::debug_serial.Write(CR);
-	c_processor::debug_serial.print_string("\ttest.axis_values[1] = ");c_processor::debug_serial.print_float(mot->axis_values[1], 3); c_processor::debug_serial.Write(CR);
-	c_processor::debug_serial.print_string("\ttest.axis_values[2] = ");c_processor::debug_serial.print_float(mot->axis_values[2], 3); c_processor::debug_serial.Write(CR);
-	c_processor::debug_serial.print_string("\ttest.axis_values[3] = ");c_processor::debug_serial.print_float(mot->axis_values[3], 4); c_processor::debug_serial.Write(CR);
-	c_processor::debug_serial.print_string("\ttest.axis_values[4] = ");c_processor::debug_serial.print_float(mot->axis_values[4], 4); c_processor::debug_serial.Write(CR);
-	c_processor::debug_serial.print_string("\ttest.axis_values[5] = ");c_processor::debug_serial.print_float(mot->axis_values[5], 4); c_processor::debug_serial.Write(CR);
+	c_processor::debug_serial.print_string("\t***axis_data_begin***\r");
+	for(uint8_t i=0;i<MACHINE_AXIS_COUNT;i++)
+	{
+		c_processor::debug_serial.print_string("\t\ttest.axis_values[");
+		c_processor::debug_serial.print_int32(i);
+		c_processor::debug_serial.print_string("] = ");
+		c_processor::debug_serial.print_float(mot->axis_values[i], 3);
+		c_processor::debug_serial.Write(CR);
+	}
+	c_processor::debug_serial.print_string("\t***axis_data_end***\r");
+	c_processor::debug_serial.print_string("\t***arc_data_begin***\r");
+	c_processor::debug_serial.print_string("\t\ttest.arc_values.horizontal_center = ");c_processor::debug_serial.print_float(mot->arc_values.horizontal_offset, 3); c_processor::debug_serial.Write(CR);
+	c_processor::debug_serial.print_string("\t\ttest.arc_values.vertical_center = ");c_processor::debug_serial.print_float(mot->arc_values.vertical_offset, 3); c_processor::debug_serial.Write(CR);
+	c_processor::debug_serial.print_string("\t\ttest.arc_values.radius = ");c_processor::debug_serial.print_float(mot->arc_values.Radius, 3); c_processor::debug_serial.Write(CR);
+	c_processor::debug_serial.print_string("\t***arc_data_end***\r");
 	c_processor::debug_serial.print_string("\ttest.line_number = "); c_processor::debug_serial.print_int32(mot->line_number); c_processor::debug_serial.Write(CR);
 	
-	
-	//debug_serial.print_string("dist = ");
-	//debug_serial.print_float(mot->axis_values[0],3);
-	//debug_serial.Write(CR);
-	
-	//c_processor::debug_serial.print_string("\tload block\r");
 	Motion_Core::Software::Interpollation::load_block(mot);
-	//c_processor::debug_serial.print_string("\tset control state mode\r");
 	Motion_Core::System::set_control_state_mode(STATE_EXEC_MOTION_INTERPOLATION);
 	
 }
@@ -355,7 +345,7 @@ void c_processor::check_sequence_complete()
 		new_stat.num_message = Motion_Core::Hardware::Interpollation::Last_Completed_Sequence;
 		Motion_Core::Hardware::Interpollation::Last_Completed_Sequence = 0;
 		
-		BinaryRecords::e_binary_responses resp = 
+		BinaryRecords::e_binary_responses resp =
 		c_processor::send_status(new_stat, STATE_STATUS_IGNORE, STATE_STATUS_IGNORE);
 		//c_record_handler::handle_outbound_record(status_record,c_processor::coordinator_serial);
 		

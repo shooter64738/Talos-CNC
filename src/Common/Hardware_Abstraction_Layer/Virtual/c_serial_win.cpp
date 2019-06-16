@@ -10,7 +10,7 @@
 #include "c_core_win.h"
 #include <iostream>
 
-#define COM_PORT_COUNT 1 //<--how many serial ports does this hardware have (or) how many do you need to use. 
+#define COM_PORT_COUNT 3 //<--how many serial ports does this hardware have (or) how many do you need to use. 
 s_Buffer Hardware_Abstraction_Layer::Serial::rxBuffer[COM_PORT_COUNT];
 
 void Hardware_Abstraction_Layer::Serial::initialize(uint8_t Port, uint32_t BaudRate)
@@ -48,7 +48,7 @@ void Hardware_Abstraction_Layer::Serial::add_to_buffer(uint8_t port, const char 
 void Hardware_Abstraction_Layer::Serial::_add(uint8_t port, char byte, uint16_t position)
 {
 	rxBuffer[port].Buffer[position] = byte;
-	if (rxBuffer[port].Buffer[position] == 13)
+	if (byte == 13)
 		rxBuffer[port].EOL++;
 }
 

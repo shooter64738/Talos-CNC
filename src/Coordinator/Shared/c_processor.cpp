@@ -98,7 +98,7 @@ void c_processor::startup()
 		//c_hal::comm.PNTR_VIRTUAL_BUFFER_WRITE(0, "g41p.25G0X1Y1F100\rX2Y2\rX3Y3\r"); //<--data from host
 
 		//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "@mmx1000\r");
-		Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "g0x100\rg0x9\r"); //<--data from host
+		Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "g0x0y2\rg2x2y0r2f500\r"); //<--data from host
 		//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "x3\r"); //<--data from host
 		//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "x5\r"); //<--data from host
 		//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "x7\r"); //<--data from host

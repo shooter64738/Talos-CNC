@@ -181,10 +181,14 @@ namespace BinaryRecords
 	//****************************************************************************************
 	struct s_motion_arc_values
 	{
-		float horizontal_center = 0 ;
-		float vertical_center = 0;
+		float horizontal_offset = 0 ;
+		float vertical_offset = 0;
 		float Radius = 0;
-	}__attribute__((packed,aligned(1)));;
+	}
+#ifndef MSVC
+	__attribute__((packed, aligned(1)))
+#endif
+		;
 
 	struct s_motion_data_block
 	{
@@ -200,25 +204,45 @@ namespace BinaryRecords
 		uint32_t sequence; //system set value, used to track when a block of code as completed.
 		uint32_t _check_sum;
 		
-	}__attribute__((packed,aligned(1)));;
+	}
+#ifndef MSVC
+	__attribute__((packed, aligned(1)))
+#endif
+		;
+
 	
 	struct s_peripheral_group_processing
 	{
 		e_peripheral_panel_processing Toggles; //Bit values set for on/off panel options
-	}__attribute__((packed,aligned(1)));;
+	}
+#ifndef MSVC
+	__attribute__((packed, aligned(1)))
+#endif
+		;
+
 	
 	struct s_peripheral_group_overrides
 	{
 		e_peripheral_panel_override_rapids RapidFeed;
 		uint8_t TravelFeed; //0-150
 		uint8_t SpindleSpeed; //0-150
-	}__attribute__((packed,aligned(1)));;
+	}
+#ifndef MSVC
+	__attribute__((packed, aligned(1)))
+#endif
+		;
+
 	
 	struct s_peripheral_group_jogging
 	{
 		uint8_t Axis;
 		float Scale;
-	}__attribute__((packed,aligned(1)));;
+	}
+#ifndef MSVC
+	__attribute__((packed, aligned(1)))
+#endif
+		;
+
 	
 	struct s_peripheral_panel
 	{
@@ -228,7 +252,12 @@ namespace BinaryRecords
 		s_peripheral_group_jogging Jogging;
 		uint32_t _check_sum = 0;
 		
-	}__attribute__((packed,aligned(1)));;
+	}
+#ifndef MSVC
+	__attribute__((packed, aligned(1)))
+#endif
+		;
+
 	
 	struct s_jog_data_block
 	{
@@ -237,7 +266,12 @@ namespace BinaryRecords
 		uint8_t axis;
 		BinaryRecords::e_block_flag flag = BinaryRecords::e_block_flag::normal;
 		uint32_t _check_sum = 0;
-	}__attribute__((packed,aligned(1)));
+	}
+#ifndef MSVC
+	__attribute__((packed, aligned(1)))
+#endif
+		;
+
 	
 	struct s_motion_control_settings
 	{
@@ -255,12 +289,22 @@ namespace BinaryRecords
 		BinaryRecords::e_unit_types machine_units = BinaryRecords::e_unit_types::MM;//61
 		uint32_t _check_sum = 0;//65
 		
-	}__attribute__((packed,aligned(1)));
+	}
+#ifndef MSVC
+	__attribute__((packed, aligned(1)))
+#endif
+		;
+
 	
 	struct s_spindle_control_settings
 	{
 		uint32_t _check_sum = 0;
-	}__attribute__((packed,aligned(1)));
+	}
+#ifndef MSVC
+	__attribute__((packed, aligned(1)))
+#endif
+		;
+
 	
 	struct s_status_message
 	{
@@ -269,9 +313,14 @@ namespace BinaryRecords
 		BinaryRecords::e_system_sub_state_record_types system_sub_state;
 		float position[MACHINE_AXIS_COUNT];
 		float num_message = 0.0;
-		char chr_message[17]{0};
+		char chr_message[17];
 		uint32_t _check_sum = 0;
-	}__attribute__((packed,aligned(1)));
+	}
+#ifndef MSVC
+	__attribute__((packed, aligned(1)))
+#endif
+	;
+
 	
 };
 #endif /* RECORDS_DEF_H */

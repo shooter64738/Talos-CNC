@@ -105,7 +105,9 @@ namespace NGC_RS274
 		typedef struct s_arc_values
 		{
 			s_axis_property horizontal_center;
+			float horizontal_relative_offset;
 			s_axis_property vertical_center;
+			float vertical_relative_offset;
 			uint16_t plane_error;
 			//float *I;
 			//float *J;
@@ -147,7 +149,7 @@ namespace NGC_RS274
 			s_axis_property normal_axis;
 			uint16_t plane_error;
 		}s_plane_axis;
-		s_plane_axis plane_axis;
+		s_plane_axis active_plane;
 
 		NGC_RS274::NGC_Binary_Block*appended_block_pointer;//<--If cutter comp needs a closing corner this points to its block data
 
@@ -181,7 +183,9 @@ namespace NGC_RS274
 		uint8_t get_value_defined(char Word, int& Address);
 		//Returns TRUE if the value was defined in the line. Returns FALSE if it was not.
 		uint8_t get_defined(char Word);
-		void clear_defined_word(char Word);
+		void clear_defined(char Word);
+		void clear_value(char Word);
+		void clear_value_defined(char Word);
 		void clear_all_defined();
 		void clear_defined_gcode(uint8_t gcode_group);
 		void set_defined_gcode(uint8_t gcode_group);

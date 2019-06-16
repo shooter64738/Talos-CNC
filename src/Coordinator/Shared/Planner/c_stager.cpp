@@ -420,7 +420,7 @@ int16_t c_stager::stage_block_motion()
 	if (local_block->g_group[NGC_RS274::Groups::G::MOTION] >= NGC_RS274::G_codes::CANNED_CYCLE_DRILLING
 		&& local_block->g_group[NGC_RS274::Groups::G::MOTION] <= NGC_RS274::G_codes::CANNED_CYCLE_BORING_DWELL_FEED_OUT)
 	{
-		c_canned_cycle::initialize(local_block, *c_stager::previous_block->plane_axis.normal_axis.value);
+		c_canned_cycle::initialize(local_block, *c_stager::previous_block->active_plane.normal_axis.value);
 	}
 
 	return_value = c_stager::update_cutter_compensation(local_block);

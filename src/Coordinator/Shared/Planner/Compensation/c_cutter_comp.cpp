@@ -390,8 +390,8 @@ void c_Cutter_Comp::set_outside_corner_arc(c_Path current_path, c_Path forward_p
 	//c_Cutter_Comp::corner_path.reset();//<--Clear the block of any old data. We dont need the modal g or m codes
 	c_Cutter_Comp::previous_block_pointer->appended_block_pointer = &c_Cutter_Comp::corner_path;
 
-	corner_path.define_value(corner_path.plane_axis.horizontal_axis.name, forward_path.compensated.origin.X); //target point X (plane agnostic)
-	corner_path.define_value(corner_path.plane_axis.vertical_axis.name, forward_path.compensated.origin.Y); //target point Y (plane agnostic)
+	corner_path.define_value(corner_path.active_plane.horizontal_axis.name, forward_path.compensated.origin.X); //target point X (plane agnostic)
+	corner_path.define_value(corner_path.active_plane.vertical_axis.name, forward_path.compensated.origin.Y); //target point Y (plane agnostic)
 	corner_path.define_value('R', c_Cutter_Comp::tool_radius);//<--radius of the comp arc.
 	
 	corner_path.define_value(corner_path.arc_values.horizontal_center.name, current_path.programmed.target.X); //center point X (plane agnostic)
@@ -435,10 +435,10 @@ int16_t c_Cutter_Comp::set_path(NGC_RS274::NGC_Binary_Block* local_block)
 	{
 		//only change these values if they were defined. otherwise leave them alone.
 		c_Cutter_Comp::_current_path.programmed.origin = c_Cutter_Comp::_current_path.programmed.target;
-		if (local_block->get_defined(local_block->plane_axis.horizontal_axis.name))
-			c_Cutter_Comp::_current_path.programmed.target.X = *local_block->plane_axis.horizontal_axis.value;//axis_values.X;
-		if (local_block->get_defined(local_block->plane_axis.vertical_axis.name))
-			c_Cutter_Comp::_current_path.programmed.target.Y = *local_block->plane_axis.vertical_axis.value;//axis_values.Y;
+		if (local_block->get_defined(local_block->active_plane.horizontal_axis.name))
+			c_Cutter_Comp::_current_path.programmed.target.X = *local_block->active_plane.horizontal_axis.value;//axis_values.X;
+		if (local_block->get_defined(local_block->active_plane.vertical_axis.name))
+			c_Cutter_Comp::_current_path.programmed.target.Y = *local_block->active_plane.vertical_axis.value;//axis_values.Y;
 
 		c_Cutter_Comp::_current_path.compensated.target = c_Cutter_Comp::_current_path.programmed.target;
 
@@ -454,10 +454,10 @@ int16_t c_Cutter_Comp::set_path(NGC_RS274::NGC_Binary_Block* local_block)
 		c_Cutter_Comp::_current_path.programmed.origin = c_Cutter_Comp::_current_path.programmed.target;
 
 		//only change these values if they were defined. otherwise leave them alone.
-		if (local_block->get_defined(local_block->plane_axis.horizontal_axis.name))
-			c_Cutter_Comp::_current_path.programmed.target.X = *local_block->plane_axis.horizontal_axis.value; //axis_values.X;
-		if (local_block->get_defined(local_block->plane_axis.vertical_axis.name))
-			c_Cutter_Comp::_current_path.programmed.target.Y = *local_block->plane_axis.vertical_axis.value; //axis_values.Y;
+		if (local_block->get_defined(local_block->active_plane.horizontal_axis.name))
+			c_Cutter_Comp::_current_path.programmed.target.X = *local_block->active_plane.horizontal_axis.value; //axis_values.X;
+		if (local_block->get_defined(local_block->active_plane.vertical_axis.name))
+			c_Cutter_Comp::_current_path.programmed.target.Y = *local_block->active_plane.vertical_axis.value; //axis_values.Y;
 
 		c_Cutter_Comp::_forward_path.programmed.origin = c_Cutter_Comp::_current_path.programmed.target;
 
@@ -555,10 +555,10 @@ int16_t c_Cutter_Comp::gen_comp(NGC_RS274::NGC_Binary_Block* local_block)
 
 		//_current_path.programmed.origin should already be set.
 		//Set _current_path.target.
-		if (local_block->get_defined(local_block->plane_axis.horizontal_axis.name))
-			c_Cutter_Comp::_current_path.programmed.target.X = *local_block->plane_axis.horizontal_axis.value; //axis_values.X;
-		if (local_block->get_defined(local_block->plane_axis.vertical_axis.name))
-			c_Cutter_Comp::_current_path.programmed.target.Y = *local_block->plane_axis.vertical_axis.value; //axis_values.Y;
+		if (local_block->get_defined(local_block->active_plane.horizontal_axis.name))
+			c_Cutter_Comp::_current_path.programmed.target.X = *local_block->active_plane.horizontal_axis.value; //axis_values.X;
+		if (local_block->get_defined(local_block->active_plane.vertical_axis.name))
+			c_Cutter_Comp::_current_path.programmed.target.Y = *local_block->active_plane.vertical_axis.value; //axis_values.Y;
 			//Set _forward_path.programmed.origin to match _current_path.programmed.target
 		c_Cutter_Comp::_forward_path.programmed = c_Cutter_Comp::_current_path.programmed;
 		c_Cutter_Comp::set_object_type(local_block, _current_path);
@@ -612,10 +612,10 @@ int16_t c_Cutter_Comp::gen_comp(NGC_RS274::NGC_Binary_Block* local_block)
 		_forward_path.programmed.origin = _forward_path.programmed.target;
 
 		//Now update the target points. If only one changed, only one will update
-		if (local_block->get_defined(local_block->plane_axis.horizontal_axis.name))
-			c_Cutter_Comp::_forward_path.programmed.target.X = *local_block->plane_axis.horizontal_axis.value; //axis_values.X;
-		if (local_block->get_defined(local_block->plane_axis.vertical_axis.name))
-			c_Cutter_Comp::_forward_path.programmed.target.Y = *local_block->plane_axis.vertical_axis.value; //axis_values.Y;
+		if (local_block->get_defined(local_block->active_plane.horizontal_axis.name))
+			c_Cutter_Comp::_forward_path.programmed.target.X = *local_block->active_plane.horizontal_axis.value; //axis_values.X;
+		if (local_block->get_defined(local_block->active_plane.vertical_axis.name))
+			c_Cutter_Comp::_forward_path.programmed.target.Y = *local_block->active_plane.vertical_axis.value; //axis_values.Y;
 		c_Cutter_Comp::set_object_type(local_block, _forward_path);
 		c_Cutter_Comp::calculate();
 		_current_path.compensated.origin = _current_path.calculated.origin;
@@ -863,11 +863,11 @@ int16_t c_Cutter_Comp::gen_comp(NGC_RS274::NGC_Binary_Block* local_block)
 		previous_block_pointer->set_state(BLOCK_STATE_PLANNED);
 		//change the program line values now.
 		c_Cutter_Comp::previous_block_pointer->set_value
-		(c_Cutter_Comp::previous_block_pointer->plane_axis.horizontal_axis.name
+		(c_Cutter_Comp::previous_block_pointer->active_plane.horizontal_axis.name
 			, c_Cutter_Comp::_current_path.compensated.target.X);
 
 		c_Cutter_Comp::previous_block_pointer->set_value
-		(c_Cutter_Comp::previous_block_pointer->plane_axis.vertical_axis.name
+		(c_Cutter_Comp::previous_block_pointer->active_plane.vertical_axis.name
 			, c_Cutter_Comp::_current_path.compensated.target.Y);
 	}
 	//if comp is turned off, attach the ending comp (lead out) motion to the previous block

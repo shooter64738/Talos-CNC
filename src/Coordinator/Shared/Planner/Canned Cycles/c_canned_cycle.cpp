@@ -82,16 +82,16 @@ void c_canned_cycle::initialize(NGC_RS274::NGC_Binary_Block*local_block, float o
 	local_block->set_defined_gcode(NGC_RS274::Groups::G::MOTION);
 
 	//clear the parameter flags so when this block converts back to plain text, those values arent in there.
-	local_block->clear_defined_word('Q');
-	local_block->clear_defined_word('R');
-	local_block->clear_defined_word('L');
-	local_block->clear_defined_word('P');
+	local_block->clear_defined('Q');
+	local_block->clear_defined('R');
+	local_block->clear_defined('L');
+	local_block->clear_defined('P');
 
 	/*
 	Clear the normal axis (this is the axis that would be drilling). Its ok to move
 	into position, but we cannot move to position and drill at the same time.
 	*/
-	local_block->clear_defined_word(local_block->plane_axis.normal_axis.name);
+	local_block->clear_defined(local_block->active_plane.normal_axis.name);
 
 	//Since feed rate is ignored on a G0 we can leave the F word set as defined.
 }
@@ -211,8 +211,8 @@ void c_canned_cycle::cycle_to_pointer(NGC_RS274::NGC_Binary_Block*local_block)
 
 void c_canned_cycle::clear_positioning_axis(NGC_RS274::NGC_Binary_Block*local_block)
 {
-	local_block->clear_defined_word(local_block->plane_axis.horizontal_axis.name);
-	local_block->clear_defined_word(local_block->plane_axis.vertical_axis.name);
+	local_block->clear_defined(local_block->active_plane.horizontal_axis.name);
+	local_block->clear_defined(local_block->active_plane.vertical_axis.name);
 }
 
 float c_canned_cycle::retract_position(NGC_RS274::NGC_Binary_Block*local_block)
@@ -232,7 +232,7 @@ void c_canned_cycle::set_axis_feed(NGC_RS274::NGC_Binary_Block*local_block, uint
 	if (feed_mode == NGC_RS274::G_codes::LINEAR_INTERPOLATION || feed_mode == NGC_RS274::G_codes::CIRCULAR_INTERPOLATION_CCW || feed_mode == NGC_RS274::G_codes::CIRCULAR_INTERPOLATION_CW)
 		local_block->define_value('F', local_block->get_value('F'));
 	else
-		local_block->clear_defined_word('F');
+		local_block->clear_defined('F');
 
 }
 
@@ -267,7 +267,7 @@ void c_canned_cycle::CANNED_CYCLE_DRILLING(NGC_RS274::NGC_Binary_Block*local_blo
 	{
 		//feed Z to specified depth
 		c_canned_cycle::set_axis_feed(local_block, NGC_RS274::G_codes::LINEAR_INTERPOLATION
-			, local_block->plane_axis.normal_axis.name, c_canned_cycle::Z_depth_of_hole);
+			, local_block->active_plane.normal_axis.name, c_canned_cycle::Z_depth_of_hole);
 
 		c_canned_cycle::state++;
 		break;
@@ -276,7 +276,7 @@ void c_canned_cycle::CANNED_CYCLE_DRILLING(NGC_RS274::NGC_Binary_Block*local_blo
 	{
 		//rapid Z to specified point
 		c_canned_cycle::set_axis_feed(local_block, NGC_RS274::G_codes::RAPID_POSITIONING
-			, local_block->plane_axis.normal_axis.name, c_canned_cycle::retract_position(local_block));
+			, local_block->active_plane.normal_axis.name, c_canned_cycle::retract_position(local_block));
 		c_canned_cycle::state++;
 		//This is the last step for the drill cycle. Clear the callback if we are pointed to this cycle.
 		//Otherwise leave it, because something else is calling the drill cycle as a shared function

@@ -28,6 +28,12 @@
 #include "s_Buffer.h"
 #include "../../std_types.h"
 
+//To enable compilation and debugging in Microsoft Visual C++ define MSCV
+#if !defined(__AVR_ATmega328P__) && !defined(__AVR_ATmega2560__) && !defined(__SAM3X8E__)
+#define MSVC
+#endif
+
+
 #ifdef __AVR_ATmega328P__
 #include "../Hardware_Abstraction_Layer/AVR_328/c_serial_avr_328.h"
 #define SERIAL_TIME_OUT_TICKS 90000
@@ -44,6 +50,7 @@
 #endif
 
 #ifdef MSVC
+#define SERIAL_TIME_OUT_TICKS 1
 #include "../Hardware_Abstraction_Layer/Virtual/c_serial_win.h"
 #endif
 
