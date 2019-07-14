@@ -34,6 +34,7 @@
 #include "..\..\..\Common\NGC_RS274\NGC_G_Codes.h"
 #include "..\..\..\common\NGC_RS274\NGC_G_Groups.h"
 #include "..\MotionController\c_motion_controller.h"
+#include "..\..\..\MotionDriver\c_processor.h"
 
 
 uint16_t *c_machine::machine_state_g_group; //There are 14 groups of gcodes (0-13)
@@ -144,8 +145,8 @@ void c_machine::synch_position()
 		
 		for (uint8_t axis = 0;axis < MACHINE_AXIS_COUNT;axis++)
 		{
-			c_machine::axis_position[axis] = ((float)(Coordinator::c_encoder::Axis_Positions[axis]))
-			/ ((float)(c_processor::motion_control_setting_record.steps_per_mm[axis]));
+			//c_machine::axis_position[axis] = ((float)(Coordinator::c_encoder::Axis_Positions[axis]))
+			/// ((float)(c_processor::motion_control_setting_record.steps_per_mm[axis]));
 		}
 		c_status::axis_values(c_machine::axis_position, MACHINE_AXIS_COUNT, c_machine::unit_scaler);
 		c_processor::host_serial.Write(CR);
@@ -223,6 +224,8 @@ void c_machine::run_block()
 	c_machine::synch_machine_state_g_code();
 	c_machine::synch_machine_state_m_code();
 
+	Motion_Core::c_processor::run();
+
 	c_machine::start_motion_binary(c_machine::machine_block);
 	//When we are done with the block, move the tail forward.
 	c_gcode_buffer::buffer_tail++;
@@ -250,7 +253,7 @@ void c_machine::start_motion_binary(NGC_RS274::NGC_Binary_Block* local_block)
 			motion_block_record.axis_values[i] = 0;
 			//only pass axis values that were specified.
 			if (local_block->get_defined(c_machine::machine_axis_names[i]))
-				motion_block_record.axis_values[i] = *local_block->axis_values.Loop[i];
+			motion_block_record.axis_values[i] = *local_block->axis_values.Loop[i];
 		}
 		motion_block_record.line_number = local_block->get_value('N');
 		

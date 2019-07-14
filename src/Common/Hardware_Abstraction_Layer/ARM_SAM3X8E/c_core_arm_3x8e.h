@@ -23,7 +23,7 @@
 #ifndef __C_CORE_ARM_SAM3X8E_H__
 #define __C_CORE_ARM_SAM3X8E_H__
 #define F_CPU 84000000UL
-#include "../../../Talos.h"
+//#include "../../../Talos.h"
 #include "../../Serial/s_Buffer.h"
 
 #include "sam.h"

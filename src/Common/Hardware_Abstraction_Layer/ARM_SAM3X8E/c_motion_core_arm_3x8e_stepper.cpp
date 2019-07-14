@@ -6,10 +6,8 @@
 */
 
 #include "c_motion_core_arm_3x8e_stepper.h"
-#include "../../../helpers.h"
-#include "../../../MotionDriver/c_interpollation_hardware.h"
-#include "../../../MotionDriver/c_motion_core.h"
-#include "../../../MotionDriver/c_processor.h"
+#include "..\..\..\Talos\ARM_3X8E\Talos_ARM3X8E\physical_machine_parameters.h"
+#include "..\..\..\Talos\ARM_3X8E\Talos_ARM3X8E\Motion_Core\c_interpollation_hardware.h"
 
 volatile uint8_t irq = 0;
 volatile uint8_t last_pulse = 0;

@@ -23,6 +23,19 @@ uint8_t Hardware_Abstraction_Layer::MotionCore::Stepper::step_mask = STEP_MASK;
 std::thread Hardware_Abstraction_Layer::MotionCore::Stepper::timer1_overflow(Hardware_Abstraction_Layer::MotionCore::Stepper::timer1_overflow_thread);
 uint8_t Hardware_Abstraction_Layer::MotionCore::Stepper::_TIMSK1 = 0;
 
+
+uint16_t Hardware_Abstraction_Layer::MotionCore::Stepper::set_delay_from_hardware(
+	uint32_t calculated_delay, uint32_t * delay, uint8_t * prescale)
+{
+
+	//There is no need for a prescaler on the ARM system because the delay value is a uint32.
+	//YOu can put such a large value in it that a stepper can be ran very slowly with a high
+	//value, and extremely fast with a low value.
+	*delay = calculated_delay;
+	*prescale = 0;
+	return 0;
+}
+
 void Hardware_Abstraction_Layer::MotionCore::Stepper::initialize()
 {
 	Hardware_Abstraction_Layer::MotionCore::Stepper::timer1_overflow.detach();

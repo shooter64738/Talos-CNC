@@ -1,0 +1,547 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="14.0">
+  <PropertyGroup>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectVersion>7.0</ProjectVersion>
+    <ToolchainName>com.Atmel.ARMGCC.CPP</ToolchainName>
+    <ProjectGuid>dce6c7e3-ee26-4d79-826b-08594b9ad897</ProjectGuid>
+    <avrdevice>ATSAM3X8E</avrdevice>
+    <avrdeviceseries>none</avrdeviceseries>
+    <OutputType>Executable</OutputType>
+    <Language>CPP</Language>
+    <OutputFileName>$(MSBuildProjectName)</OutputFileName>
+    <OutputFileExtension>.elf</OutputFileExtension>
+    <OutputDirectory>$(MSBuildProjectDirectory)\$(Configuration)</OutputDirectory>
+    <AssemblyName>Talos_ARM3X8E</AssemblyName>
+    <Name>Talos_ARM3X8E</Name>
+    <RootNamespace>Talos_ARM3X8E</RootNamespace>
+    <ToolchainFlavour>Native</ToolchainFlavour>
+    <KeepTimersRunning>true</KeepTimersRunning>
+    <OverrideVtor>false</OverrideVtor>
+    <CacheFlash>true</CacheFlash>
+    <ProgFlashFromRam>true</ProgFlashFromRam>
+    <RamSnippetAddress />
+    <UncachedRange />
+    <preserveEEPROM>true</preserveEEPROM>
+    <OverrideVtorValue />
+    <BootSegment>2</BootSegment>
+    <ResetRule>0</ResetRule>
+    <eraseonlaunchrule>0</eraseonlaunchrule>
+    <EraseKey />
+    <AsfFrameworkConfig>
+      <framework-data xmlns="">
+        <options />
+        <configurations />
+        <files />
+        <documentation help="" />
+        <offline-documentation help="" />
+        <dependencies>
+          <content-extension eid="atmel.asf" uuidref="Atmel.ASF" version="3.35.1" />
+        </dependencies>
+      </framework-data>
+    </AsfFrameworkConfig>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <ToolchainSettings>
+      <ArmGccCpp>
+        <armgcc.common.outputfiles.hex>True</armgcc.common.outputfiles.hex>
+        <armgcc.common.outputfiles.lss>True</armgcc.common.outputfiles.lss>
+        <armgcc.common.outputfiles.eep>True</armgcc.common.outputfiles.eep>
+        <armgcc.common.outputfiles.bin>True</armgcc.common.outputfiles.bin>
+        <armgcc.common.outputfiles.srec>True</armgcc.common.outputfiles.srec>
+        <armgcc.compiler.symbols.DefSymbols>
+          <ListValues>
+            <Value>NDEBUG</Value>
+          </ListValues>
+        </armgcc.compiler.symbols.DefSymbols>
+        <armgcc.compiler.directories.IncludePaths>
+          <ListValues>
+            <Value>%24(PackRepoDir)\arm\cmsis\5.0.1\CMSIS\Include\</Value>
+            <Value>%24(PackRepoDir)\atmel\SAM3X_DFP\1.0.51\include</Value>
+          </ListValues>
+        </armgcc.compiler.directories.IncludePaths>
+        <armgcc.compiler.optimization.level>Optimize for size (-Os)</armgcc.compiler.optimization.level>
+        <armgcc.compiler.optimization.PrepareFunctionsForGarbageCollection>True</armgcc.compiler.optimization.PrepareFunctionsForGarbageCollection>
+        <armgcc.compiler.warnings.AllWarnings>True</armgcc.compiler.warnings.AllWarnings>
+        <armgcccpp.compiler.symbols.DefSymbols>
+          <ListValues>
+            <Value>NDEBUG</Value>
+          </ListValues>
+        </armgcccpp.compiler.symbols.DefSymbols>
+        <armgcccpp.compiler.directories.IncludePaths>
+          <ListValues>
+            <Value>%24(PackRepoDir)\arm\cmsis\5.0.1\CMSIS\Include\</Value>
+            <Value>%24(PackRepoDir)\atmel\SAM3X_DFP\1.0.51\include</Value>
+          </ListValues>
+        </armgcccpp.compiler.directories.IncludePaths>
+        <armgcccpp.compiler.optimization.level>Optimize for size (-Os)</armgcccpp.compiler.optimization.level>
+        <armgcccpp.compiler.optimization.PrepareFunctionsForGarbageCollection>True</armgcccpp.compiler.optimization.PrepareFunctionsForGarbageCollection>
+        <armgcccpp.compiler.warnings.AllWarnings>True</armgcccpp.compiler.warnings.AllWarnings>
+        <armgcccpp.linker.libraries.Libraries>
+          <ListValues>
+            <Value>libm</Value>
+          </ListValues>
+        </armgcccpp.linker.libraries.Libraries>
+        <armgcccpp.linker.libraries.LibrarySearchPaths>
+          <ListValues>
+            <Value>%24(ProjectDir)\Device_Startup</Value>
+          </ListValues>
+        </armgcccpp.linker.libraries.LibrarySearchPaths>
+        <armgcccpp.linker.optimization.GarbageCollectUnusedSections>True</armgcccpp.linker.optimization.GarbageCollectUnusedSections>
+        <armgcccpp.linker.miscellaneous.LinkerFlags>-Tsam3x8e_flash.ld</armgcccpp.linker.miscellaneous.LinkerFlags>
+        <armgcccpp.assembler.general.IncludePaths>
+          <ListValues>
+            <Value>%24(PackRepoDir)\arm\cmsis\5.0.1\CMSIS\Include\</Value>
+            <Value>%24(PackRepoDir)\atmel\SAM3X_DFP\1.0.51\include</Value>
+          </ListValues>
+        </armgcccpp.assembler.general.IncludePaths>
+        <armgcccpp.preprocessingassembler.general.IncludePaths>
+          <ListValues>
+            <Value>%24(PackRepoDir)\arm\cmsis\5.0.1\CMSIS\Include\</Value>
+            <Value>%24(PackRepoDir)\atmel\SAM3X_DFP\1.0.51\include</Value>
+          </ListValues>
+        </armgcccpp.preprocessingassembler.general.IncludePaths>
+      </ArmGccCpp>
+    </ToolchainSettings>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <ToolchainSettings>
+      <ArmGccCpp>
+        <armgcc.common.outputfiles.hex>True</armgcc.common.outputfiles.hex>
+        <armgcc.common.outputfiles.lss>True</armgcc.common.outputfiles.lss>
+        <armgcc.common.outputfiles.eep>True</armgcc.common.outputfiles.eep>
+        <armgcc.common.outputfiles.bin>True</armgcc.common.outputfiles.bin>
+        <armgcc.common.outputfiles.srec>True</armgcc.common.outputfiles.srec>
+        <armgcc.compiler.symbols.DefSymbols>
+          <ListValues>
+            <Value>DEBUG</Value>
+          </ListValues>
+        </armgcc.compiler.symbols.DefSymbols>
+        <armgcc.compiler.directories.IncludePaths>
+          <ListValues>
+            <Value>%24(PackRepoDir)\arm\cmsis\5.0.1\CMSIS\Include\</Value>
+            <Value>%24(PackRepoDir)\atmel\SAM3X_DFP\1.0.51\include</Value>
+          </ListValues>
+        </armgcc.compiler.directories.IncludePaths>
+        <armgcc.compiler.optimization.level>Optimize (-O1)</armgcc.compiler.optimization.level>
+        <armgcc.compiler.optimization.PrepareFunctionsForGarbageCollection>True</armgcc.compiler.optimization.PrepareFunctionsForGarbageCollection>
+        <armgcc.compiler.optimization.DebugLevel>Maximum (-g3)</armgcc.compiler.optimization.DebugLevel>
+        <armgcc.compiler.warnings.AllWarnings>True</armgcc.compiler.warnings.AllWarnings>
+        <armgcccpp.compiler.symbols.DefSymbols>
+          <ListValues>
+            <Value>DEBUG</Value>
+          </ListValues>
+        </armgcccpp.compiler.symbols.DefSymbols>
+        <armgcccpp.compiler.directories.IncludePaths>
+          <ListValues>
+            <Value>%24(PackRepoDir)\arm\cmsis\5.0.1\CMSIS\Include\</Value>
+            <Value>%24(PackRepoDir)\atmel\SAM3X_DFP\1.0.51\include</Value>
+          </ListValues>
+        </armgcccpp.compiler.directories.IncludePaths>
+        <armgcccpp.compiler.optimization.level>Optimize (-O1)</armgcccpp.compiler.optimization.level>
+        <armgcccpp.compiler.optimization.PrepareFunctionsForGarbageCollection>True</armgcccpp.compiler.optimization.PrepareFunctionsForGarbageCollection>
+        <armgcccpp.compiler.optimization.DebugLevel>Maximum (-g3)</armgcccpp.compiler.optimization.DebugLevel>
+        <armgcccpp.compiler.warnings.AllWarnings>True</armgcccpp.compiler.warnings.AllWarnings>
+        <armgcccpp.linker.libraries.Libraries>
+          <ListValues>
+            <Value>libm</Value>
+          </ListValues>
+        </armgcccpp.linker.libraries.Libraries>
+        <armgcccpp.linker.libraries.LibrarySearchPaths>
+          <ListValues>
+            <Value>%24(ProjectDir)\Device_Startup</Value>
+          </ListValues>
+        </armgcccpp.linker.libraries.LibrarySearchPaths>
+        <armgcccpp.linker.optimization.GarbageCollectUnusedSections>True</armgcccpp.linker.optimization.GarbageCollectUnusedSections>
+        <armgcccpp.linker.memorysettings.ExternalRAM />
+        <armgcccpp.linker.miscellaneous.LinkerFlags>-Tsam3x8e_flash.ld</armgcccpp.linker.miscellaneous.LinkerFlags>
+        <armgcccpp.assembler.general.IncludePaths>
+          <ListValues>
+            <Value>%24(PackRepoDir)\arm\cmsis\5.0.1\CMSIS\Include\</Value>
+            <Value>%24(PackRepoDir)\atmel\SAM3X_DFP\1.0.51\include</Value>
+          </ListValues>
+        </armgcccpp.assembler.general.IncludePaths>
+        <armgcccpp.assembler.debugging.DebugLevel>Default (-g)</armgcccpp.assembler.debugging.DebugLevel>
+        <armgcccpp.preprocessingassembler.general.IncludePaths>
+          <ListValues>
+            <Value>%24(PackRepoDir)\arm\cmsis\5.0.1\CMSIS\Include\</Value>
+            <Value>%24(PackRepoDir)\atmel\SAM3X_DFP\1.0.51\include</Value>
+          </ListValues>
+        </armgcccpp.preprocessingassembler.general.IncludePaths>
+        <armgcccpp.preprocessingassembler.debugging.DebugLevel>Default (-Wa,-g)</armgcccpp.preprocessingassembler.debugging.DebugLevel>
+      </ArmGccCpp>
+    </ToolchainSettings>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="..\..\..\bit_manipulation.h">
+      <SubType>compile</SubType>
+      <Link>bit_manipulation.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Common\Serial\c_Serial.cpp">
+      <SubType>compile</SubType>
+      <Link>Common\Serial\c_Serial.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\Common\Serial\c_Serial.h">
+      <SubType>compile</SubType>
+      <Link>Common\Serial\c_Serial.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Common\Serial\s_buffer.h">
+      <SubType>compile</SubType>
+      <Link>Common\Serial\s_buffer.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\communication_def.h">
+      <SubType>compile</SubType>
+      <Link>communication_def.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Events\c_block_events.cpp">
+      <SubType>compile</SubType>
+      <Link>Events\c_block_events.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\Events\c_block_events.h">
+      <SubType>compile</SubType>
+      <Link>Events\c_block_events.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Events\c_data_events.cpp">
+      <SubType>compile</SubType>
+      <Link>Events\c_data_events.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\Events\c_data_events.h">
+      <SubType>compile</SubType>
+      <Link>Events\c_data_events.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Events\c_events.cpp">
+      <SubType>compile</SubType>
+      <Link>Events\c_events.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\Events\c_events.h">
+      <SubType>compile</SubType>
+      <Link>Events\c_events.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Events\c_motion_control_events.cpp">
+      <SubType>compile</SubType>
+      <Link>Events\c_motion_control_events.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\Events\c_motion_control_events.h">
+      <SubType>compile</SubType>
+      <Link>Events\c_motion_control_events.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Events\c_motion_events.cpp">
+      <SubType>compile</SubType>
+      <Link>Events\c_motion_events.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\Events\c_motion_events.h">
+      <SubType>compile</SubType>
+      <Link>Events\c_motion_events.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\GCode_Process.cpp">
+      <SubType>compile</SubType>
+      <Link>Processing\GCode_Process.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\GCode_Process.h">
+      <SubType>compile</SubType>
+      <Link>Processing\GCode_Process.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\hardware_def.h">
+      <SubType>compile</SubType>
+      <Link>hardware_def.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Machine_Parameters_Process.cpp">
+      <SubType>compile</SubType>
+      <Link>Processing\Machine_Parameters_Process.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\Machine_Parameters_Process.h">
+      <SubType>compile</SubType>
+      <Link>Processing\Machine_Parameters_Process.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\main.cpp">
+      <SubType>compile</SubType>
+      <Link>main.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\Main_Process.cpp">
+      <SubType>compile</SubType>
+      <Link>Processing\Main_Process.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\Main_Process.h">
+      <SubType>compile</SubType>
+      <Link>Processing\Main_Process.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Motion_Core\c_block.cpp">
+      <SubType>compile</SubType>
+      <Link>Motion_Core\c_block.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\Motion_Core\c_block.h">
+      <SubType>compile</SubType>
+      <Link>Motion_Core\c_block.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Motion_Core\c_block_buffer.cpp">
+      <SubType>compile</SubType>
+      <Link>Motion_Core\c_block_buffer.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\Motion_Core\c_block_buffer.h">
+      <SubType>compile</SubType>
+      <Link>Motion_Core\c_block_buffer.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Motion_Core\c_interpollation_hardware.cpp">
+      <SubType>compile</SubType>
+      <Link>Motion_Core\c_interpollation_hardware.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\Motion_Core\c_interpollation_hardware.h">
+      <SubType>compile</SubType>
+      <Link>Motion_Core\c_interpollation_hardware.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Motion_Core\c_interpollation_software.cpp">
+      <SubType>compile</SubType>
+      <Link>Motion_Core\c_interpollation_software.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\Motion_Core\c_interpollation_software.h">
+      <SubType>compile</SubType>
+      <Link>Motion_Core\c_interpollation_software.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Motion_Core\c_motion_core.cpp">
+      <SubType>compile</SubType>
+      <Link>Motion_Core\c_motion_core.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\Motion_Core\c_motion_core.h">
+      <SubType>compile</SubType>
+      <Link>Motion_Core\c_motion_core.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Motion_Core\c_planner_compute_block.cpp">
+      <SubType>compile</SubType>
+      <Link>Motion_Core\c_planner_compute_block.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\Motion_Core\c_planner_compute_block.h">
+      <SubType>compile</SubType>
+      <Link>Motion_Core\c_planner_compute_block.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Motion_Core\c_gateway.cpp">
+      <SubType>compile</SubType>
+      <Link>Motion_Core\c_gateway.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\Motion_Core\c_gateway.h">
+      <SubType>compile</SubType>
+      <Link>Motion_Core\c_gateway.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Motion_Core\c_segment_arbitrator.cpp">
+      <SubType>compile</SubType>
+      <Link>Motion_Core\c_segment_arbitrator.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\Motion_Core\c_segment_arbitrator.h">
+      <SubType>compile</SubType>
+      <Link>Motion_Core\c_segment_arbitrator.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Motion_Core\c_segment_timer_bresenham.cpp">
+      <SubType>compile</SubType>
+      <Link>Motion_Core\c_segment_timer_bresenham.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\Motion_Core\c_segment_timer_bresenham.h">
+      <SubType>compile</SubType>
+      <Link>Motion_Core\c_segment_timer_bresenham.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Motion_Core\c_segment_timer_item.cpp">
+      <SubType>compile</SubType>
+      <Link>Motion_Core\c_segment_timer_item.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\Motion_Core\c_segment_timer_item.h">
+      <SubType>compile</SubType>
+      <Link>Motion_Core\c_segment_timer_item.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Motion_Core\c_system.cpp">
+      <SubType>compile</SubType>
+      <Link>Motion_Core\c_system.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\Motion_Core\c_system.h">
+      <SubType>compile</SubType>
+      <Link>Motion_Core\c_system.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\NGC_RS274\NGC_Block.cpp">
+      <SubType>compile</SubType>
+      <Link>NGC_RS274\NGC_Block.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\NGC_RS274\NGC_Block.h">
+      <SubType>compile</SubType>
+      <Link>NGC_RS274\NGC_Block.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\NGC_RS274\NGC_Errors.h">
+      <SubType>compile</SubType>
+      <Link>NGC_RS274\NGC_Errors.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\NGC_RS274\NGC_G_Codes.h">
+      <SubType>compile</SubType>
+      <Link>NGC_RS274\NGC_G_Codes.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\NGC_RS274\NGC_G_Groups.h">
+      <SubType>compile</SubType>
+      <Link>NGC_RS274\NGC_G_Groups.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\NGC_RS274\NGC_Interpreter.cpp">
+      <SubType>compile</SubType>
+      <Link>NGC_RS274\NGC_Interpreter.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\NGC_RS274\NGC_Interpreter.h">
+      <SubType>compile</SubType>
+      <Link>NGC_RS274\NGC_Interpreter.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\NGC_RS274\NGC_M_Codes.h">
+      <SubType>compile</SubType>
+      <Link>NGC_RS274\NGC_M_Codes.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\NGC_RS274\NGC_M_Groups.h">
+      <SubType>compile</SubType>
+      <Link>NGC_RS274\NGC_M_Groups.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\NGC_RS274\NGC_Parameters.h">
+      <SubType>compile</SubType>
+      <Link>NGC_RS274\NGC_Parameters.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\physical_machine_parameters.h">
+      <SubType>compile</SubType>
+      <Link>physical_machine_parameters.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Planner\Canned Cycles\c_canned_cycle.cpp">
+      <SubType>compile</SubType>
+      <Link>Planner\Canned Cycles\c_canned_cycle.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\Planner\Canned Cycles\c_canned_cycle.h">
+      <SubType>compile</SubType>
+      <Link>Planner\Canned Cycles\c_canned_cycle.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Planner\CRC\c_cutter_comp.cpp">
+      <SubType>compile</SubType>
+      <Link>Planner\CRC\c_cutter_comp.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\Planner\CRC\c_cutter_comp.h">
+      <SubType>compile</SubType>
+      <Link>Planner\CRC\c_cutter_comp.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Planner\CRC\c_path.cpp">
+      <SubType>compile</SubType>
+      <Link>Planner\CRC\c_path.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\Planner\CRC\c_path.h">
+      <SubType>compile</SubType>
+      <Link>Planner\CRC\c_path.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Planner\CRC\shared.h">
+      <SubType>compile</SubType>
+      <Link>Planner\CRC\shared.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Planner\c_gcode_buffer.cpp">
+      <SubType>compile</SubType>
+      <Link>Planner\c_gcode_buffer.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\Planner\c_gcode_buffer.h">
+      <SubType>compile</SubType>
+      <Link>Planner\c_gcode_buffer.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Planner\c_machine.cpp">
+      <SubType>compile</SubType>
+      <Link>Planner\c_machine.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\Planner\c_machine.h">
+      <SubType>compile</SubType>
+      <Link>Planner\c_machine.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Planner\c_mirror.cpp">
+      <SubType>compile</SubType>
+      <Link>Planner\c_mirror.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\Planner\c_mirror.h">
+      <SubType>compile</SubType>
+      <Link>Planner\c_mirror.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Planner\c_stager.cpp">
+      <SubType>compile</SubType>
+      <Link>Planner\c_stager.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\Planner\c_stager.h">
+      <SubType>compile</SubType>
+      <Link>Planner\c_stager.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Planner\Stager_Errors.h">
+      <SubType>compile</SubType>
+      <Link>Planner\Stager_Errors.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\records_def.h">
+      <SubType>compile</SubType>
+      <Link>records_def.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\System\tool_table.h">
+      <SubType>compile</SubType>
+      <Link>System\tool_table.h</Link>
+    </Compile>
+    <Compile Include="Device_Startup\startup_sam3xa.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="Device_Startup\system_sam3xa.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="Platform Specific\c_coordinator_arm_3x8e.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="Platform Specific\c_coordinator_arm_3x8e.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="Platform Specific\c_core_arm_3x8e.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="Platform Specific\c_core_arm_3x8e.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="Platform Specific\c_motion_core_arm_3x8e_inputs.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="Platform Specific\c_motion_core_arm_3x8e_inputs.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="Platform Specific\c_motion_core_arm_3x8e_pwm_read.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="Platform Specific\c_motion_core_arm_3x8e_pwm_read.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="Platform Specific\c_motion_core_arm_3x8e_stepper.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="Platform Specific\c_motion_core_arm_3x8e_stepper.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="Platform Specific\c_serial_arm_3x8e.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="Platform Specific\c_serial_arm_3x8e.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="Platform Specific\syscalls.c">
+      <SubType>compile</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Common\Serial" />
+    <Folder Include="Device_Startup\" />
+    <Folder Include="Common" />
+    <Folder Include="Processing" />
+    <Folder Include="Platform Specific" />
+    <Folder Include="Events\" />
+    <Folder Include="Motion_Core" />
+    <Folder Include="NGC_RS274" />
+    <Folder Include="System" />
+    <Folder Include="Planner" />
+    <Folder Include="Planner\CRC" />
+    <Folder Include="Planner\Canned Cycles" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Device_Startup\sam3x8e_flash.ld">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="Device_Startup\sam3x8e_sram.ld">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="Device_Startup\sam3xa_flash.ld">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="Device_Startup\sam3xa_sram.ld">
+      <SubType>compile</SubType>
+    </None>
+  </ItemGroup>
+  <Import Project="$(AVRSTUDIO_EXE_PATH)\\Vs\\Compiler.targets" />
+</Project>

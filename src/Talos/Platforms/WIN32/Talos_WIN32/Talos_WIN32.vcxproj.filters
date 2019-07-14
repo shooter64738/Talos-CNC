@@ -1,0 +1,276 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="System">
+      <UniqueIdentifier>{85e810d6-f8b7-4d2d-88b2-d7394dedf07b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Planner">
+      <UniqueIdentifier>{de5fb7b2-0c29-49c5-bf4e-e1dd9ff09dba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Planner\Canned Cycles">
+      <UniqueIdentifier>{ef4579b1-8aff-4c2a-8767-28a48a0b3032}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Planner\CRC">
+      <UniqueIdentifier>{88a2c293-e702-40b6-ba7e-ed5479429eb1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NGC_RS274">
+      <UniqueIdentifier>{40f65d94-2fd8-49ac-843b-c38f1d840ed3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Motion_Core">
+      <UniqueIdentifier>{d4274911-53f8-4114-803c-a32316c9317e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Events">
+      <UniqueIdentifier>{84519e7a-504a-4bbc-810a-97403f8d1286}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Platform Specific">
+      <UniqueIdentifier>{41b1466a-a29b-4082-8966-c2198a332aee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common">
+      <UniqueIdentifier>{76e16aff-05c7-43c6-9247-542526534f53}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common\Serial">
+      <UniqueIdentifier>{f5827629-f54b-4277-a3df-de391e266095}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Processing">
+      <UniqueIdentifier>{e5d1b8bb-6091-4e72-afa0-249b350baff2}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\Events\c_block_events.cpp">
+      <Filter>Events</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Events\c_data_events.cpp">
+      <Filter>Events</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Events\c_events.cpp">
+      <Filter>Events</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Events\c_motion_control_events.cpp">
+      <Filter>Events</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Events\c_motion_events.cpp">
+      <Filter>Events</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Motion_Core\c_block.cpp">
+      <Filter>Motion_Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Motion_Core\c_block_buffer.cpp">
+      <Filter>Motion_Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Motion_Core\c_interpollation_hardware.cpp">
+      <Filter>Motion_Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Motion_Core\c_interpollation_software.cpp">
+      <Filter>Motion_Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Motion_Core\c_motion_core.cpp">
+      <Filter>Motion_Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Motion_Core\c_planner_compute_block.cpp">
+      <Filter>Motion_Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Motion_Core\c_segment_arbitrator.cpp">
+      <Filter>Motion_Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Motion_Core\c_segment_timer_bresenham.cpp">
+      <Filter>Motion_Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Motion_Core\c_segment_timer_item.cpp">
+      <Filter>Motion_Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Motion_Core\c_system.cpp">
+      <Filter>Motion_Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\NGC_RS274\NGC_Block.cpp">
+      <Filter>NGC_RS274</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\NGC_RS274\NGC_Interpreter.cpp">
+      <Filter>NGC_RS274</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Planner\c_gcode_buffer.cpp">
+      <Filter>Planner</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Planner\c_machine.cpp">
+      <Filter>Planner</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Planner\c_mirror.cpp">
+      <Filter>Planner</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Planner\c_stager.cpp">
+      <Filter>Planner</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Planner\CRC\c_cutter_comp.cpp">
+      <Filter>Planner\CRC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Planner\CRC\c_path.cpp">
+      <Filter>Planner\CRC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Planner\Canned Cycles\c_canned_cycle.cpp">
+      <Filter>Planner\Canned Cycles</Filter>
+    </ClCompile>
+    <ClCompile Include="Platform Specific\c_core_win.cpp">
+      <Filter>Platform Specific</Filter>
+    </ClCompile>
+    <ClCompile Include="Platform Specific\c_motion_core_win_inputs.cpp">
+      <Filter>Platform Specific</Filter>
+    </ClCompile>
+    <ClCompile Include="Platform Specific\c_motion_core_win_stepper.cpp">
+      <Filter>Platform Specific</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Common\Serial\c_Serial.cpp">
+      <Filter>Common\Serial</Filter>
+    </ClCompile>
+    <ClCompile Include="Platform Specific\c_serial_win.cpp">
+      <Filter>Platform Specific</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main.cpp" />
+    <ClCompile Include="..\..\..\Machine_Parameters_Process.cpp">
+      <Filter>Processing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Main_Process.cpp">
+      <Filter>Processing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\GCode_Process.cpp">
+      <Filter>Processing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Motion_Core\c_gateway.cpp">
+      <Filter>Motion_Core</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\Events\c_block_events.h">
+      <Filter>Events</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Events\c_data_events.h">
+      <Filter>Events</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Events\c_events.h">
+      <Filter>Events</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Events\c_motion_control_events.h">
+      <Filter>Events</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Events\c_motion_events.h">
+      <Filter>Events</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Motion_Core\c_block.h">
+      <Filter>Motion_Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Motion_Core\c_block_buffer.h">
+      <Filter>Motion_Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Motion_Core\c_interpollation_hardware.h">
+      <Filter>Motion_Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Motion_Core\c_interpollation_software.h">
+      <Filter>Motion_Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Motion_Core\c_motion_core.h">
+      <Filter>Motion_Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Motion_Core\c_planner_compute_block.h">
+      <Filter>Motion_Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Motion_Core\c_segment_arbitrator.h">
+      <Filter>Motion_Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Motion_Core\c_segment_timer_bresenham.h">
+      <Filter>Motion_Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Motion_Core\c_segment_timer_item.h">
+      <Filter>Motion_Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Motion_Core\c_system.h">
+      <Filter>Motion_Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGC_RS274\NGC_Block.h">
+      <Filter>NGC_RS274</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGC_RS274\NGC_Errors.h">
+      <Filter>NGC_RS274</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGC_RS274\NGC_G_Codes.h">
+      <Filter>NGC_RS274</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGC_RS274\NGC_G_Groups.h">
+      <Filter>NGC_RS274</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGC_RS274\NGC_Interpreter.h">
+      <Filter>NGC_RS274</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGC_RS274\NGC_M_Codes.h">
+      <Filter>NGC_RS274</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGC_RS274\NGC_M_Groups.h">
+      <Filter>NGC_RS274</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGC_RS274\NGC_Parameters.h">
+      <Filter>NGC_RS274</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Planner\c_gcode_buffer.h">
+      <Filter>Planner</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Planner\c_machine.h">
+      <Filter>Planner</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Planner\c_mirror.h">
+      <Filter>Planner</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Planner\c_stager.h">
+      <Filter>Planner</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Planner\Stager_Errors.h">
+      <Filter>Planner</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Planner\CRC\c_cutter_comp.h">
+      <Filter>Planner\CRC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Planner\CRC\c_path.h">
+      <Filter>Planner\CRC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Planner\CRC\shared.h">
+      <Filter>Planner\CRC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Planner\Canned Cycles\c_canned_cycle.h">
+      <Filter>Planner\Canned Cycles</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\System\tool_table.h">
+      <Filter>System</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\bit_manipulation.h" />
+    <ClInclude Include="..\..\..\communication_def.h" />
+    <ClInclude Include="..\..\..\physical_machine_parameters.h" />
+    <ClInclude Include="..\..\..\records_def.h" />
+    <ClInclude Include="..\..\..\hardware_def.h" />
+    <ClInclude Include="Platform Specific\c_core_win.h">
+      <Filter>Platform Specific</Filter>
+    </ClInclude>
+    <ClInclude Include="Platform Specific\c_motion_core_win_inputs.h">
+      <Filter>Platform Specific</Filter>
+    </ClInclude>
+    <ClInclude Include="Platform Specific\c_motion_core_win_stepper.h">
+      <Filter>Platform Specific</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Common\Serial\c_Serial.h">
+      <Filter>Common\Serial</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Common\Serial\s_buffer.h">
+      <Filter>Common\Serial</Filter>
+    </ClInclude>
+    <ClInclude Include="Platform Specific\c_serial_win.h">
+      <Filter>Platform Specific</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Machine_Parameters_Process.h">
+      <Filter>Processing</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Main_Process.h">
+      <Filter>Processing</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\GCode_Process.h">
+      <Filter>Processing</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Motion_Core\c_gateway.h">
+      <Filter>Motion_Core</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

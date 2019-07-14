@@ -45,12 +45,15 @@
 #include "../../common/NGC_RS274/NGC_Errors.h"
 #include "MotionController\c_motion_controller.h"
 #include "../../Common/Serial/records_def.h"
+#include "../../Common/Hardware_Abstraction_Layer/Virtual/c_motion_core_win_stepper.h"
+#include "../../Common/Hardware_Abstraction_Layer/ARM_SAM3X8E/c_motion_core_arm_3x8e_inputs.h"
+#include "../../MotionDriver/c_motion_core.h"
 
 c_Serial c_processor::host_serial;
 c_Serial c_processor::controller_serial;
 c_Serial c_processor::spindle_serial;
 c_Serial c_processor::peripheral_serial;
-BinaryRecords::s_motion_control_settings c_processor::motion_control_setting_record;
+//BinaryRecords::s_motion_control_settings c_processor::motion_control_setting_record;
 BinaryRecords::s_peripheral_panel c_processor::peripheral_settings;
 
 
@@ -68,6 +71,9 @@ void c_processor::startup()
 
 	//This MUST be called first (especially for the ARM processors)
 	Hardware_Abstraction_Layer::Core::initialize();
+	Hardware_Abstraction_Layer::MotionCore::Stepper::initialize();
+	Hardware_Abstraction_Layer::MotionCore::Inputs::initialize();
+	Motion_Core::initialize();
 	//Hardware_Abstraction_Layer::Lcd::initialize();
 	//Hardware_Abstraction_Layer::Coordination::initialize();
 	//Hardware_Abstraction_Layer::Manual_Pulse_Generator::initialize();
@@ -108,28 +114,22 @@ void c_processor::startup()
 	#endif
 
 
-	for (uint8_t i = 0; i < MACHINE_AXIS_COUNT; i++)
-	{
-		motion_control_setting_record.steps_per_mm[i] = 160;
-		motion_control_setting_record.acceleration[i] = (100.0 * 60.0 * 60.0);
-		motion_control_setting_record.max_rate[i] = 12000.0;
-		
-		//arbitrary for testing
-		motion_control_setting_record.back_lash_comp_distance[i] = 55.0;
-	}
+	//for (uint8_t i = 0; i < MACHINE_AXIS_COUNT; i++)
+	//{
+		//motion_control_setting_record.steps_per_mm[i] = 160;
+		//motion_control_setting_record.acceleration[i] = (100.0 * 60.0 * 60.0);
+		//motion_control_setting_record.max_rate[i] = 12000.0;
+		//
+		////arbitrary for testing
+		//motion_control_setting_record.back_lash_comp_distance[i] = 55.0;
+		//
+	//}
+	//motion_control_setting_record.arc_tolerance = 0.002;
+	//motion_control_setting_record.arc_angular_correction = 12;
 
 
-	motion_control_setting_record.pulse_length = 5;
+	//motion_control_setting_record.pulse_length = 5;
 	c_processor::host_serial.print_string("updating motion control...\r");
-	if (Settings::c_general::update_controller(&motion_control_setting_record) == BinaryRecords::e_binary_responses::Ok)
-	{
-		c_processor::host_serial.print_string("Success.\r");
-	}
-	else
-	{
-		c_processor::host_serial.print_string("Failed.\r");
-	}
-	c_processor::controller_serial.Reset();
 	c_processor::host_serial.print_string("Ready\r");
 
 

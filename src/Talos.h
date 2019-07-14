@@ -47,7 +47,7 @@
 #define NGC_BUFFER_SIZE 8 //<--must be at least 2 in order for look-ahead to work MUST BE A 2'S COMPLIMENT SIZE!!!
 
 //Look-ahead is required for cuter radius comp
-#define MACHINE_AXIS_COUNT 3
+#define MACHINE_AXIS_COUNT 6
 #define MACHINE_X_AXIS 0
 #define MACHINE_Y_AXIS 1
 #define MACHINE_Z_AXIS 2

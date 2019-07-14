@@ -22,6 +22,19 @@
 #ifndef NGC_BINARY_BLOCK_H
 #define NGC_BINARY_BLOCK_H
 
+//How many words can a block contain
+#define COUNT_OF_BLOCK_WORDS_ARRAY 26
+//How many elements are in the G code group array
+#define COUNT_OF_G_CODE_GROUPS_ARRAY 16
+//How many elements are in the M code group array
+#define COUNT_OF_M_CODE_GROUPS_ARRAY 6
+//How many tool offset are in the tool table. (Note tool 0 is used when P value is sent)
+#define COUNT_OF_TOOL_TABLE 10
+
+#define G_CODE_MULTIPLIER 10
+#define NGC_BUFFER_SIZE 8 //<--must be at least 2 in order for look-ahead to work MUST BE A 2'S COMPLIMENT SIZE!!!
+
+
 #define A_WORD_BIT 0
 #define B_WORD_BIT 1
 #define C_WORD_BIT 2
@@ -49,7 +62,8 @@
 #define Y_WORD_BIT 24
 #define Z_WORD_BIT 25
 
-#include "..\..\Talos.h"
+#include <stdint.h>
+#include "..\..\Talos\ARM_3X8E\Talos_ARM3X8E\physical_machine_parameters.h"
 #define COMP_SET_BIT 1
 #define BLOCK_STATE_PLANNED 0
 #define BLOCK_STATE_HELD 1
@@ -58,7 +72,7 @@ namespace NGC_RS274
 	class NGC_Binary_Block
 	{
 		//#define IS_ARC(bool BitTst(exec_flags,2));
-	public:
+		public:
 		NGC_Binary_Block();
 		~NGC_Binary_Block();
 
@@ -95,19 +109,25 @@ namespace NGC_RS274
 		}s_axis_values;
 		s_axis_values axis_values;
 
-		struct s_axis_property
+		//typedef struct s_axis_property
+		class s_axis_property
 		{
+			public:
+			s_axis_property();
+			~s_axis_property();
+			
 			float *value;
 			uint8_t name;
-			bool defined;
-		};
+			bool is_defined();
+			uint32_t * words_defined;
+			float get_value_if_defined();
+		};//s_axis_property;
 
 		typedef struct s_arc_values
 		{
-			s_axis_property horizontal_center;
-			float horizontal_relative_offset;
-			s_axis_property vertical_center;
-			float vertical_relative_offset;
+			s_axis_property horizontal_offset;
+			s_axis_property vertical_offset;
+			s_axis_property normal_offset;
 			uint16_t plane_error;
 			//float *I;
 			//float *J;
@@ -143,15 +163,29 @@ namespace NGC_RS274
 		uint16_t m_group[COUNT_OF_M_CODE_GROUPS_ARRAY]; //There are 5 groups of mcodes (0-4)
 
 		typedef struct s_plane_axis
+		//class c_plane_axis
 		{
-			s_axis_property horizontal_axis;
+			//public:
+			//c_plane_axis();
+			//~c_plane_axis();
+			//void rotate(uint16_t plane_select_value);
+			s_axis_property horizontal_axis; //changes depending on plane
+			s_axis_property rotary_horizontal_axis; //complimentary/rotary axis
+			s_axis_property inc_horizontal_axis; //incremental version of same axis, regardless of G90 or G91 state
 			s_axis_property vertical_axis;
+			s_axis_property rotary_vertical_axis;
+			s_axis_property inc_vertical_axis;
 			s_axis_property normal_axis;
+			s_axis_property rotary_normal_axis;
+			s_axis_property inc_normal_axis;
 			uint16_t plane_error;
 		}s_plane_axis;
 		s_plane_axis active_plane;
 
 		NGC_RS274::NGC_Binary_Block*appended_block_pointer;//<--If cutter comp needs a closing corner this points to its block data
+
+
+		void initialize();
 
 		//If the block has motions, each element of the array will have an indicator
 		//of +1,0,-1 to indicate the direction it is moving in this block
@@ -169,6 +203,8 @@ namespace NGC_RS274
 
 		//Return the value in the Gcodes table for the group requested
 		float get_g_code_value(int GroupNumber);
+		bool get_g_code_defined(int GroupNumber);
+		bool get_m_code_defined(int GroupNumber);
 		//Return the value in the Mcodes table for the group requested
 		float get_m_code_value(int GroupNumber);
 		//Return the value in the Gcodes table for the group requested

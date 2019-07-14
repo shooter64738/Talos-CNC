@@ -6,8 +6,8 @@
 */
 
 #include "c_motion_core_arm_3x8e_inputs.h"
-#include "../../../helpers.h"
-#include "../../../MotionDriver/c_processor.h"
+#include "..\..\..\Talos\ARM_3X8E\Talos_ARM3X8E\physical_machine_parameters.h"
+
 volatile uint32_t reads;
 uint8_t Hardware_Abstraction_Layer::MotionCore::Inputs::Driver_Alarms = 0;
 
