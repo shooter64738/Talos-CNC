@@ -1,5 +1,5 @@
 /*
-*  c_events.h - NGC_RS274 controller.
+*  NGC_Lathe.cpp - NGC_RS274 controller.
 *  A component of Talos
 *
 *  Copyright (c) 2016-2019 Jeff Dill
@@ -17,32 +17,9 @@
 *  You should have received a copy of the GNU General Public License
 *  along with Talos.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include <stdint.h>
-#ifndef __C_EVENTS_H__
-#define __C_EVENTS_H__
 
 
-namespace Events
-{
-	class Main_Process
-	{
-		//variables
-		public:
+#include "NGC_Lathe.h"
+#include <string.h>
+#include "..\..\bit_manipulation.h"
 
-		protected:
-		private:
-
-
-		//functions
-		public:
-		static void check_events();
-		static void set_serial_event(uint8_t EventFlag);
-		static uint8_t get_serial_event(uint8_t EventFlag);
-		static void clear_serial_event(uint8_t EventFlag);
-
-
-		protected:
-		private:
-	};
-};
-#endif //__C_EVENTS_H__

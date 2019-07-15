@@ -21,33 +21,30 @@
 #include "c_motion_control_events.h"
 #include "..\bit_manipulation.h"
 
-uint8_t c_motion_control_events::event_flags;
-uint8_t c_motion_control_events::OK_Event_Count=0;
-uint8_t c_motion_control_events::DONE_Event_Count=0;
+uint8_t Events::Motion_Controller::event_flags;
 
-
-void c_motion_control_events::check_events()
+void Events::Motion_Controller::check_events()
 {
-	if (c_motion_control_events::event_flags > 0)
+	if (Events::Motion_Controller::event_flags > 0)
 	{
 		//c_motion_controller::read_controller_data();
 	}
 }
 
-void c_motion_control_events::set_event(uint8_t EventFlag)
+void Events::Motion_Controller::set_event(Events::Motion_Controller::e_event_type EventFlag)
 {
 	//EventFlag == Motion_Control_Events::AWAIT_OK_RESPONSE?OK_Event_Count++:0;
 	//EventFlag == Motion_Control_Events::AWAIT_DONE_RESPONSE?DONE_Event_Count++:0;
 
-	c_motion_control_events::event_flags=(BitSet(c_motion_control_events::event_flags,(EventFlag)));
+	Events::Motion_Controller::event_flags=(BitSet(event_flags,((int)EventFlag)));
 }
 
-uint8_t c_motion_control_events::get_event(uint8_t EventFlag)
+uint8_t Events::Motion_Controller::get_event(Events::Motion_Controller::e_event_type EventFlag)
 {
-	return (BitGet(c_motion_control_events::event_flags,(EventFlag)));
+	return (BitGet(Motion_Controller::event_flags,(int)EventFlag));
 }
 
-void c_motion_control_events::clear_event(uint8_t EventFlag)
+void Events::Motion_Controller::clear_event(Events::Motion_Controller::e_event_type EventFlag)
 {
 
 	//if (EventFlag == Motion_Control_Events::AWAIT_OK_RESPONSE)
@@ -64,7 +61,7 @@ void c_motion_control_events::clear_event(uint8_t EventFlag)
 	//}
 	//else
 	{
-		c_motion_control_events::event_flags=BitClr(c_motion_control_events::event_flags,(EventFlag));
+		Events::Motion_Controller::event_flags=BitClr(Motion_Controller::event_flags,((int)EventFlag));
 	}
 	
 }

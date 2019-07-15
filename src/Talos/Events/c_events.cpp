@@ -23,18 +23,18 @@
 #include "c_data_events.h"
 #include "c_block_events.h"
 
-void c_events::check_events()
+void Events::Main_Process::check_events()
 {
 	//Check for motion events. If there are any act on them accordingly.
-	c_motion_events::check_events();
+	Motion::check_events();
 
 	//Check for serial events. If there are any act on them accordingly.
 	//(NOTE: serial events such as data arrival are handled in the ISR directly.
 	//This event handler is for buffer management and block interpretation.)
-	c_data_events::check_events();
+	Data::check_events();
 	
 	//check for block change events
-	c_block_events::check_events();
+	NGC_Block::check_events();
 }
 
 // default constructor

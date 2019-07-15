@@ -34,6 +34,9 @@
     <Filter Include="Processing">
       <UniqueIdentifier>{e5d1b8bb-6091-4e72-afa0-249b350baff2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="NGC_RS274\Machine Specific">
+      <UniqueIdentifier>{7d86b52c-a379-4bfe-8aa3-4660909d509a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Events\c_block_events.cpp">
@@ -135,6 +138,12 @@
     </ClCompile>
     <ClCompile Include="..\..\..\Motion_Core\c_gateway.cpp">
       <Filter>Motion_Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\NGC_RS274\Machine Specific\NGC_Lathe.cpp">
+      <Filter>NGC_RS274\Machine Specific</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\NGC_RS274\Machine Specific\NGC_Mill.cpp">
+      <Filter>NGC_RS274\Machine Specific</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -271,6 +280,12 @@
     </ClInclude>
     <ClInclude Include="..\..\..\Motion_Core\c_gateway.h">
       <Filter>Motion_Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGC_RS274\Machine Specific\NGC_Lathe.h">
+      <Filter>NGC_RS274\Machine Specific</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGC_RS274\Machine Specific\NGC_Mill.h">
+      <Filter>NGC_RS274\Machine Specific</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

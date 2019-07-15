@@ -23,20 +23,30 @@
 #define __C_NGC_INTERPRETER_H__
 
 #include "..\NGC_RS274\NGC_Block.h"
+#include "..\physical_machine_parameters.h"
 #ifdef MSVC
 #include "../../MSVC++.h"
 #endif // MSVC++
 #include "..\Common\Serial\c_Serial.h"
 
+//Changing the MACHINE_TYPE in the physical_machine_parameters.h file will change what
+//is included to process gcode specific to one machine to or the other. 
+#ifdef MACHINE_TYPE_MILL
+#include "Machine Specific\NGC_Mill.h"
+#endif
+#ifdef MACHINE_TYPE_LATHE
+#include "Machine Specific\NGC_Mill.h"
+#endif
+
 namespace NGC_RS274
 {
 	namespace Interpreter
 	{
-		class Processor
+		class Processor : public NGC_RS274::Interpreter::NGC_Machine_Specific
 		{
 			//variables
 		public:
-		static c_Serial *local_serial;
+			static c_Serial *local_serial;
 			//static char Line[CYCLE_LINE_LENGTH];
 			static char * Line;
 			static int HasErrors;
@@ -58,16 +68,15 @@ namespace NGC_RS274
 			static int _pWord(char Word, float iAddress);
 			static int process_word_values(char Word, float iAddress);
 			static int convert_to_line_index(uint8_t BlockNumber);
-			static int convert_to_line(NGC_RS274::NGC_Binary_Block*local_block);	
+			static int convert_to_line(NGC_RS274::NGC_Binary_Block*local_block);
 
-			private:
+		private:
 			static int parse_values();
 			static int error_check_main();
 			static int error_check_plane_select(NGC_RS274::NGC_Binary_Block &plane_block);
 			static void assign_planes(NGC_RS274::NGC_Binary_Block &plane_block);
 			static int error_check_arc();
-			//static int _ErrorCheck_Linear(void);
-			static int error_check_canned_cycle();
+			//static int error_check_canned_cycle();
 			static int error_check_tool_length_offset();
 			static int error_check_cutter_compensation();
 			static uint8_t IsValidCharacter();
@@ -76,7 +85,7 @@ namespace NGC_RS274
 			static int normalize_distance_units();
 			static int error_check_center_format_arc();
 
-			
+
 
 			static float hypot_f(float x, float y);
 			static float square(float x);

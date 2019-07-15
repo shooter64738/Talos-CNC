@@ -30,14 +30,12 @@
 NGC_RS274::NGC_Binary_Block c_gcode_buffer::collection[NGC_BUFFER_SIZE];
 uint8_t c_gcode_buffer::buffer_head=0;
 uint8_t c_gcode_buffer::buffer_tail=0;
-uint8_t c_gcode_buffer::queued_count = 0;
 
 uint8_t c_gcode_buffer::initialize()
 {
 	//buffer head/tail are moed from 0 to 1 initialy. the 0 position holds the start up default values. 
 	c_gcode_buffer::buffer_head=1;
 	c_gcode_buffer::buffer_tail=1;
-	c_gcode_buffer::queued_count = 0;
 	return 0;
 }
 
@@ -64,15 +62,15 @@ NGC_RS274::NGC_Binary_Block*c_gcode_buffer::get()
 {
 	
 	//Do we have anything queued right now?
-	if (c_gcode_buffer::buffer_tail == c_gcode_buffer::buffer_head && !c_data_events::get_event(e_Data_Events::NGC_BUFFER_FULL))
+	if (c_gcode_buffer::buffer_tail == c_gcode_buffer::buffer_head && !Events::Data::get_event(Events::Data::e_event_type::NGC_buffer_full))
 	{
 		//There is nothing queued so we cannot have an active block
 		return NULL;
 	}
-	c_gcode_buffer::queued_count--;
+	
 	//If there was a pending full event clear it.
 	//its faster to just run this instead of an if operation to check, then conditionally call it.
-	c_data_events::clear_event(e_Data_Events::NGC_BUFFER_FULL);
+	Events::Data::clear_event(Events::Data::e_event_type::NGC_buffer_full);
 	//return what is at the tail and move the tail forward one. If we are on the last item, we will reset the tail
 	NGC_RS274::NGC_Binary_Block*data = &collection[c_gcode_buffer::buffer_tail];
 	c_gcode_buffer::buffer_tail++;
@@ -177,7 +175,7 @@ int16_t c_gcode_buffer::add( char * pntr_buffer)
 	{
 		//c_status::error('i',Stager_Errors::NGC_Buffer_Full,"ngc buffer full");
 		//We set this event so that the caller can check for a buffer full condition before calling add.
-		c_data_events::set_event(e_Data_Events::NGC_BUFFER_FULL);
+		Events::Data::set_event(Events::Data::e_event_type::NGC_buffer_full);
 		//Rollover the tail.. This might not be good...
 		//++c_gcode_buffer::buffer_tail &= PLANNER_BLOCK_BUFFER_SIZE-1;
 	}

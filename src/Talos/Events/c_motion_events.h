@@ -24,45 +24,41 @@
 #define __C_MOTION_EVENTS_H__
 
 #include <stdint.h>
-
-class Motion_Events
+#include "..\Common\Serial\c_Serial.h"
+#include "..\records_def.h"
+namespace Events
 {
-	public:
-	static const uint8_t MOTION_IN_QUEUE = 0;
-	static const uint8_t MOTION_COMPLETE = 1;
-	static const uint8_t HARDWARE_IDLE = 2;
-	static const uint8_t JOG_IN_QUEUE = 3;
-	
+	class Motion
+	{
+		//variables
+		public:
+		enum class e_event_type : uint8_t
+		{
+			Motion_in_queue = 0,
+			Motion_complete = 1,
+			Hardware_idle = 2,
+			Jog_in_queue = 3
+		};
+		static c_Serial *local_serial;
+		static uint8_t motion_queue_count;
+		static uint8_t event_flags;
+		//static uint32_t last_reported_block;
+		static BinaryRecords::s_status_message events_statistics;
+
+		protected:
+		private:
+		//static bool active;
+
+		//functions
+		public:
+		static void set_event(e_event_type EventFlag);
+		static uint8_t get_event(e_event_type EventFlag);
+		static void clear_event(e_event_type EventFlag);
+		static void check_events();
+
+		protected:
+		private:
+
+	}; //c_motion_events
 };
-//volatile static uint8_t c_motion_events_event_flags;
-//volatile static uint8_t c_motion_events_motion_queue_count=0;
-//volatile static bool c_motion_events_active = false;
-class c_motion_events
-{
-	//variables
-	public:
-	static uint8_t motion_queue_count;
-	static uint8_t event_flags;
-	static uint32_t last_reported_block;
-
-	protected:
-	private:
-	//static bool active;
-
-	//functions
-	public:
-	static void set_event(uint8_t EventFlag);
-	static uint8_t get_event(uint8_t EventFlag);
-	static void clear_event(uint8_t EventFlag);
-	static void check_events();
-
-	protected:
-	private:
-	c_motion_events( const c_motion_events &c );
-	c_motion_events& operator=( const c_motion_events &c );
-	c_motion_events();
-	~c_motion_events();
-
-}; //c_motion_events
-
 #endif //__C_MOTION_EVENTS_H__

@@ -32,7 +32,7 @@
 #define COUNT_OF_TOOL_TABLE 10
 
 #define G_CODE_MULTIPLIER 10
-#define NGC_BUFFER_SIZE 40 //<--must be at least 2 in order for look-ahead to work MUST BE A 2'S COMPLIMENT SIZE!!!
+
 
 
 #define A_WORD_BIT 0

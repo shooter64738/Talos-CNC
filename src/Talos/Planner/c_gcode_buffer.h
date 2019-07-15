@@ -22,6 +22,7 @@
 #ifndef __C_BUFFER_H__
 #define __C_BUFFER_H__
 #include "..\NGC_RS274\NGC_Block.h"
+#define NGC_BUFFER_SIZE 16 //<--must be at least 2 in order for look-ahead to work.
 
 class c_gcode_buffer
 {
@@ -31,7 +32,7 @@ class c_gcode_buffer
 	static uint8_t buffer_head;
 	static uint8_t buffer_tail;
 
-	static uint8_t queued_count;
+	//static uint8_t queued_count;
 
 	protected:
 	private:

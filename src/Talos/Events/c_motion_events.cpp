@@ -21,78 +21,73 @@
 #include "c_motion_events.h"
 #include "..\bit_manipulation.h"
 
-uint8_t c_motion_events::motion_queue_count;
-uint8_t c_motion_events::event_flags;
-uint32_t c_motion_events::last_reported_block;
+uint8_t Events::Motion::motion_queue_count;
+uint8_t Events::Motion::event_flags;
+c_Serial *Events::Motion::local_serial;
+BinaryRecords::s_status_message Events::Motion::events_statistics;
 
-void c_motion_events::check_events()
+void Events::Motion::check_events()
 {
 	//If a motion is in the queue, then we need to buffer asap.
-	if (c_motion_events::motion_queue_count)
+	if (Events::Motion::motion_queue_count)
 	{
 		//c_speed::buffer();
 	}
 
 	//If motion events are 0, then there are no motion flags to check
-	if (c_motion_events::event_flags == 0)
+	if (Events::Motion::event_flags == 0)
 	{
 		return;
 	}
 	//See if there is a motion in the queue
-	if (c_motion_events::get_event(Motion_Events::MOTION_IN_QUEUE))
+	if (Events::Motion::get_event(Events::Motion::e_event_type::Motion_in_queue))
 	{
-		c_motion_events::clear_event(Motion_Events::MOTION_IN_QUEUE);
+		Events::Motion::clear_event(Events::Motion::e_event_type::Motion_in_queue);
 		//We have accounted for this motion queue event, so clear the queue event.
-		c_motion_events::motion_queue_count++;
+		Events::Motion::motion_queue_count++;
+		local_serial->print_string("Motion added:");
+		local_serial->print_int32(Events::Motion::motion_queue_count);
+		local_serial->print_string(" motions in queue.\r");
 	}
 	
-	if (c_motion_events::get_event(Motion_Events::MOTION_COMPLETE))
+	if (Events::Motion::get_event(Events::Motion::e_event_type::Motion_complete))
 	{
-		c_motion_events::clear_event(Motion_Events::MOTION_COMPLETE);
+		Events::Motion::clear_event(Events::Motion::e_event_type::Motion_complete);
 		/*
 		ideally if a motion controller will remote as each motion compeltes that would be best. SOme do, and some dont though. 
 		this flag is used ni the firmware to know when it is okay to send the next motion. In particular when canned cycles are active
 		*/
-		c_motion_events::motion_queue_count --;
-		//if (c_motion_events::motion_queue_count>0) c_motion_events::motion_queue_count--;
-		//if (c_motion_events::motion_queue_count == 0) c_hal::disable();
+		Events::Motion::motion_queue_count --;
+		local_serial->print_string("Motion complete:");
+		local_serial->print_int32(Events::Motion::motion_queue_count);
+		local_serial->print_string(" motions in queue.\r");
 	}
 	
-	if (c_motion_events::get_event(Motion_Events::HARDWARE_IDLE))
+	if (Events::Motion::get_event(Events::Motion::e_event_type::Hardware_idle))
 	{
-		c_motion_events::clear_event(Motion_Events::HARDWARE_IDLE);
+		Events::Motion::clear_event(Events::Motion::e_event_type::Hardware_idle);
 	}
 }
 
-void c_motion_events::set_event(uint8_t EventFlag)
+void Events::Motion::set_event(Events::Motion::e_event_type EventFlag)
 {
 	//c_motion_events::event_flags |= EventFlag;
-	c_motion_events::event_flags=(BitSet(c_motion_events::event_flags,(EventFlag)));
+	Events::Motion::event_flags=(BitSet(Events::Motion::event_flags,((int)EventFlag)));
 }
 
-uint8_t c_motion_events::get_event(uint8_t EventFlag)
+uint8_t Events::Motion::get_event(Events::Motion::e_event_type EventFlag)
 {
 	//if (bit_istrue(c_motion_events::event_flags,EventFlag))
 	//return 1;
 	//
 	//return 0;
 	//return (((c_motion_events::event_flags) & (EventFlag)) != 0);
-	return (BitGet(c_motion_events::event_flags,(EventFlag)));
+	return (BitGet(Events::Motion::event_flags,((int)EventFlag)));
 }
 
-void c_motion_events::clear_event(uint8_t EventFlag)
+void Events::Motion::clear_event(Events::Motion::e_event_type EventFlag)
 {
-	c_motion_events::event_flags=BitClr(c_motion_events::event_flags,(EventFlag));
+	Events::Motion::event_flags=BitClr(Events::Motion::event_flags,((int)EventFlag));
 	//c_motion_events::event_flags = bit_false(c_motion_events::event_flags,EventFlag-1);
 	//c_motion_events::event_flags ^= EventFlag;
 }
-
-//// default constructor
-//c_motion_events::c_motion_events()
-//{
-//} //c_motion_events
-//
-//// default destructor
-//c_motion_events::~c_motion_events()
-//{
-//} //~c_motion_events

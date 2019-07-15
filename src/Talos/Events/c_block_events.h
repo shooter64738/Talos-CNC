@@ -22,46 +22,44 @@
 #define __C_BLOCK_EVENTS_H__
 
 #include <stdint.h>
-
-class Block_Events
+namespace Events
 {
-	public:
-	static const uint8_t MOTION = 0;
-	static const uint8_t CUTTER_RADIUS_COMPENSATION = 1;
-	static const uint8_t TOOL_LENGTH_OFFSET = 2;
-	static const uint8_t FEED_RATE_MODE = 3;
-	static const uint8_t FEED_RATE = 4;
-	static const uint8_t SPINDLE_RATE = 5;
-	static const uint8_t TOOL_ID = 6;
-	static const uint8_t NON_MODAL = 7;
-	static const uint8_t UNITS = 8;
-	
+	class NGC_Block
+	{
+		//variables
+		public:
+		enum class e_event_type : uint8_t
+		{
+			Motion = 0,
+			Cutter_radius_compensation = 1,
+			Tool_length_offset = 2,
+			Feed_rate_mode = 3,
+			Feed_rate = 4,
+			Spindle_rate = 5,
+			Tool_id = 6,
+			Non_modal = 7,
+			Units = 8
+		};
+		static uint32_t event_flags;
+
+		protected:
+		private:
+		
+
+		//functions
+		public:
+		static void set_event(e_event_type EventFlag);
+		static uint8_t get_event(e_event_type EventFlag);
+		static void clear_event(e_event_type EventFlag);
+		static void check_events();
+
+		protected:
+		private:
+		NGC_Block( const NGC_Block &c );
+		NGC_Block& operator=( const NGC_Block &c );
+		NGC_Block();
+		~NGC_Block();
+
+	}; //c_block_events
 };
-
-class c_block_events
-{
-	//variables
-	public:
-	static uint32_t event_flags;
-
-	protected:
-	private:
-	
-
-	//functions
-	public:
-	static void set_event(uint8_t EventFlag);
-	static uint8_t get_event(uint8_t EventFlag);
-	static void clear_event(uint8_t EventFlag);
-	static void check_events();
-
-	protected:
-	private:
-	c_block_events( const c_block_events &c );
-	c_block_events& operator=( const c_block_events &c );
-	c_block_events();
-	~c_block_events();
-
-}; //c_block_events
-
 #endif //__C_BLOCK_EVENTS_H__

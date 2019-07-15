@@ -20,15 +20,12 @@ namespace Motion_Core
 		//variables
 		public:
 //		static c_Serial coordinator_serial;
-		static c_Serial debug_serial;
-		static void initialize();
-		static void run();
+		static c_Serial *local_serial;
 		static void add_motion(BinaryRecords::s_motion_data_block new_blk);
 		static void process_loop();
 		
 		static void check_control_states();
 		static void process_motion(BinaryRecords::s_motion_data_block *mot);
-		static void check_process_record();
 		static void check_hardware_faults();
 		static void check_sequence_complete();
 		

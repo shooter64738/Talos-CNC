@@ -19,15 +19,9 @@
 #include "Motion_Core\c_motion_core.h"
 #include "Planner\c_gcode_buffer.h"
 #include "NGC_RS274\NGC_Interpreter.h"
-//// default constructor
-//Main_Process::Main_Process()
-//{
-//} //Main_Process
-//
-//// default destructor
-//Main_Process::~Main_Process()
-//{
-//} //~Main_Process
+#include "Events\c_events.h"
+#include "Motion_Core\c_system.h"
+#include "Events\c_motion_events.h"
 
 c_Serial Talos::Main_Process::host_serial;
 
@@ -44,46 +38,44 @@ void Talos::Main_Process::startup()
 	Talos::Main_Process::host_serial = c_Serial(0, 115200); //<--Connect to host
 	Hardware_Abstraction_Layer::Core::start_interrupts();
 
-#ifdef MSVC
+	#ifdef MSVC
 	{
 		//If running this on a pc, use this line to fill the serial buffer as if it
 		//were sent from a terminal to the micro controller over a serial connection
 		//c_hal::comm.PNTR_VIRTUAL_BUFFER_WRITE(0, "g41p.25G0X1Y1F100\rX2Y2\rX3Y3\r"); //<--data from host
 
 		//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "@mmx1000\r");
-		Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "g0x50\rg0x10\r"); //<--data from host
+		Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "g81x50f500\r\n"); //<--data from host
+		Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "g0x10\r\n"); //<--data from host
 		//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "x3\r"); //<--data from host
 		//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "x5\r"); //<--data from host
 		//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "x7\r"); //<--data from host
 		//Hardware_Abstraction_Layer::Serial::add_to_buffer(1, "ok\r<Idle|MPos:0.000,0.000,0.000,0.000,0.000,0.000|FS:0,0|Ov:100,100,100>\rok\r");//<--data from motion control
 		//Hardware_Abstraction_Layer::Serial::add_to_buffer(2, "rpm=1234\rmode=torque_hold\r");//<--data from spindle control
 	}
-#endif
+	#endif
 
-
-
+	//By default any gcode lines loaded will automatically execute.
+	Motion_Core::System::set_control_state_mode(STATE_AUTO_START_CYCLE);
 	Talos::Main_Process::host_serial.print_string("hello world!\r");
 	int16_t return_value = 0;
 	c_stager::local_serial = &Talos::Main_Process::host_serial;
 	NGC_RS274::Interpreter::Processor::local_serial = &Talos::Main_Process::host_serial;
+	Events::Motion::local_serial = &Talos::Main_Process::host_serial;
+	Talos::GCode_Process::local_serial = &Talos::Main_Process::host_serial;
+	
 	while (1)
 	{
-		c_events::check_events()
-		
+		//Check for any events that have been registered.
+		Events::Main_Process::check_events();
+		//Main processing loop to keep the motion buffer full
 		Motion_Core::Gateway::process_loop();
+		
 		if (Talos::Main_Process::host_serial.HasEOL())
 		{
-			//if (Motion_Core::Hardware::Interpollation::Interpolation_Active)
-			//	continue;
-
-			//Process data and convert it into NGC binary data.
-			//The data will go into the buffer head position
-			uint16_t record_size = Talos::Main_Process::host_serial.FindByte_Position(CR);
-			char * pntr_buffer =  Talos::Main_Process::host_serial.Buffer_Pointer() + host_serial.TailPosition();
-			return_value = Talos::GCode_Process::load_data(pntr_buffer);
-			//Move the tail forward the number of bytes we read.
-			Talos::Main_Process::host_serial.AdvanceTail(record_size);
-			Talos::Main_Process::host_serial.SkipToEOL();
+			//Get data from the specified source
+			return_value = Talos::GCode_Process::load_data(NULL);
+			
 			
 			if (return_value == NGC_RS274::Interpreter::Errors::OK)
 			{
@@ -96,16 +88,11 @@ void Talos::Main_Process::startup()
 				is processed, blocks will be freed in the NGC_BUFFER
 				Stager is the middle layer between the interpreted G Code
 				line data, and the machine. If the machine is not consuming buffer
-				data, then the ngc buffer can fill. There was/is a provision for
-				a stager buffer, but I have removed that for the moment. That was
-				in place when all machine control was on one mPU and I have decided
-				to split the mPU processing into 2 separate modules.
-				The coordinator (this firmware) is on one mCU and the motion control
-				(grbl,tinyG,smoothie,G2, etc...) is on another mCU
+				data, then the ngc buffer can fill.
 				*/
 
 				////Interpreter threw no errors so see if the buffer is full or not. If not, carry on!
-				if (!c_data_events::get_event(e_Data_Events::STAGING_BUFFER_FULL))
+				if (!Events::Data::get_event(Events::Data::e_event_type::Staging_buffer_full))
 				{
 					return_value = c_stager::pre_stage_check(); //<--Currently does nothing, but you never know
 					if (return_value == Stager_Errors::OK)
@@ -118,6 +105,7 @@ void Talos::Main_Process::startup()
 							{
 								//Here is where we send the block to c_machine to start executing it.
 								c_machine::run_block();
+								
 							}
 						}
 					}
@@ -126,10 +114,13 @@ void Talos::Main_Process::startup()
 				//The line should be complete now and the current serial buffer moved to the next eol position.
 				//Tell the host we did good!
 				host_serial.print_string("ok:\r");
-				
-				
 			}
-			
+			else
+			{
+				host_serial.print_string("error:");
+				host_serial.print_int32(return_value);
+				host_serial.Write(CR);
+			}
 		}
 	}
 }

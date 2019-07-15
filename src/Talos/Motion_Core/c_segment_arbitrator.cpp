@@ -163,10 +163,7 @@ uint8_t Motion_Core::Segment::Arbitrator::Base_Calculate()
 		//TODO:: After planner is converted, move this code into bresenham copy block steps.
 		// Load the Bresenham stepping data for the block.
 		Motion_Core::Segment::Bresenham::Bresenham_Item *bresenham_item = Motion_Core::Segment::Bresenham::Buffer::Write();
-		if (bresenham_item == NULL )
-		{
-			Gateway::debug_serial.print_string("bresn null\r");
-		}
+		
 		// Prepare and copy Bresenham algorithm segment data from the new planner block, so that
 		// when the segment buffer completes the planner block, it may be discarded when the
 		// segment buffer finishes the prepped block, but the stepper ISR is still executing it.
@@ -609,8 +606,7 @@ void Motion_Core::Segment::Arbitrator::cycle_hold()
 		st_update_plan_block_parameters(); // Notify stepper module to recompute for hold deceleration.
 		Motion_Core::System::StepControl = STEP_CONTROL_EXECUTE_HOLD; // Initiate suspend state with active flag.
 		//Motion_Core::System::set_control_state_mode(STATE_MOTION_CONTROL_HOLD);
-		Motion_Core::Gateway::debug_serial.print_string("cycle hold\r");
-		
+				
 		//Motion_Core::Gateway::send_status(BinaryRecords::e_system_state_record_types::Motion_Idle
 		//,BinaryRecords::e_system_sub_state_record_types::Block_Holding
 		//,Motion_Core::Segment::Arbitrator::Active_Block->sequence
@@ -625,7 +621,6 @@ void Motion_Core::Segment::Arbitrator::cycle_hold()
 		//,NULL,STATE_STATUS_IGNORE, STATE_MOTION_CONTROL_HOLD);
 				
 		Motion_Core::System::StepControl = 0;
-		Gateway::debug_serial.print_string("cycle continue\r");
 		st_update_plan_block_parameters();
 		Motion_Core::Segment::Arbitrator::Fill_Step_Segment_Buffer();
 		Motion_Core::Hardware::Interpollation::Initialize();

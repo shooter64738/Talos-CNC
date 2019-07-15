@@ -11,8 +11,9 @@
 #include <stddef.h>
 #include "c_core_arm_3x8e.h"
 #include "component\usart.h"
+#include "component\uart.h"
 
-#define COM_PORT_COUNT 4 //<--how many serial ports does this hardware have (or) how many do you need to use.
+#define COM_PORT_COUNT 1 //<--how many serial ports does this hardware have (or) how many do you need to use.
 #if(COM_PORT_COUNT<1)
 #error COM_PORT_COUNT must be at least 1, or the array will not exist!;
 #endif
@@ -438,7 +439,10 @@ void Hardware_Abstraction_Layer::Serial::_incoming_serial_isr(uint8_t Port, char
 	Hardware_Abstraction_Layer::Serial::rxBuffer[Port].Buffer[Hardware_Abstraction_Layer::Serial::rxBuffer[Port].Head] = Byte;
 	
 	if (Byte == 13)
-	Hardware_Abstraction_Layer::Serial::rxBuffer[Port].EOL++;
+	{
+		
+		Hardware_Abstraction_Layer::Serial::rxBuffer[Port].EOL++;
+	}
 	
 	Hardware_Abstraction_Layer::Serial::rxBuffer[Port].Head++;
 
@@ -470,9 +474,11 @@ void UART_Handler(void)
 {
 	uint32_t status = UART->UART_SR;
 	//if((status & US_CSR_RXRDY) == US_CSR_RXRDY)
-	if((status & US_CSR_RXRDY))
+	if((status & UART_SR_RXRDY))
 	{
 		char Byte = UART->UART_RHR;
+		
+		
 		//UART->UART_THR = Byte;
 		Hardware_Abstraction_Layer::Serial::_incoming_serial_isr(0,Byte);
 	}
@@ -480,14 +486,14 @@ void UART_Handler(void)
 
 void USART0_Handler(void)
 {
-		uint32_t status = USART0->US_CSR;
-		//if((status & US_CSR_RXRDY) == US_CSR_RXRDY)
-		if((status & US_CSR_RXRDY))
-		{
-			char Byte = USART0->US_RHR;
-			//UART->UART_THR = Byte;
-			Hardware_Abstraction_Layer::Serial::_incoming_serial_isr(1,Byte);
-		}
+	uint32_t status = USART0->US_CSR;
+	//if((status & US_CSR_RXRDY) == US_CSR_RXRDY)
+	if((status & US_CSR_RXRDY))
+	{
+		char Byte = USART0->US_RHR;
+		//UART->UART_THR = Byte;
+		Hardware_Abstraction_Layer::Serial::_incoming_serial_isr(1,Byte);
+	}
 }
 void USART1_Handler(void){	uint32_t status = USART1->US_CSR;
 	if((status & US_CSR_RXRDY) == US_CSR_RXRDY)

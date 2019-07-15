@@ -45,6 +45,7 @@ class c_machine
 
 	protected:
 	private:
+	
 
 	//functions
 	public:

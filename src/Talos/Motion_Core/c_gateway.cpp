@@ -14,41 +14,18 @@
 #include "c_system.h"
 #include "..\communication_def.h"
 #include <string.h>
+#include "..\Events\c_motion_events.h"
 
 static BinaryRecords::s_motion_data_block jog_mot;
 //c_Serial Motion_Core::c_processor::coordinator_serial;
-c_Serial Motion_Core::Gateway::debug_serial;
+c_Serial *Motion_Core::Gateway::local_serial;
 
-static uint32_t serial_try = 0;
-static uint32_t last_serial_size = 0;
-
-void Motion_Core::Gateway::initialize()
-{
-	Motion_Core::Gateway::debug_serial = c_Serial(0, 115200); //<--Connect to host
-
-	Hardware_Abstraction_Layer::Core::initialize();
-	Hardware_Abstraction_Layer::MotionCore::Stepper::initialize();
-	Hardware_Abstraction_Layer::MotionCore::Inputs::initialize();
-	Motion_Core::initialize();
-	Hardware_Abstraction_Layer::Core::start_interrupts();
-	
-	Motion_Core::Gateway::debug_serial.print_string("motion driver ready\r");
-	
-	
-	Motion_Core::Gateway::run();
-	Hardware_Abstraction_Layer::Core::critical_shutdown();
-	Motion_Core::Gateway::debug_serial.print_string("Critical system fault occurred!\r");
-}
-//static BinaryRecords::s_motion_data_block mot;
+//static uint32_t serial_try = 0;
+//static uint32_t last_serial_size = 0;
 static BinaryRecords::s_motion_data_block mots[10];
 static uint16_t mot_index = 0;
-void Motion_Core::Gateway::run()
-{
-	while (!Motion_Core::System::get_control_state_mode(STATE_CRITICAL_FAILURE))
-	{
-		Motion_Core::Gateway::process_loop();
-	}
-}
+static uint16_t motion_buffer_head = 0;
+static uint16_t motion_buffer_tail = 0;
 
 void Motion_Core::Gateway::add_motion(BinaryRecords::s_motion_data_block new_blk)
 {
@@ -103,152 +80,32 @@ void Motion_Core::Gateway::process_motion(BinaryRecords::s_motion_data_block *mo
 	
 	//mot->axis_values[0]=50;
 	#ifdef DEBUG_REPORTING
-	Motion_Core::Gateway::debug_serial.print_string("\ttest.motion_type = "); Motion_Core::Gateway::debug_serial.print_int32((uint32_t)mot->motion_type); Motion_Core::Gateway::debug_serial.Write(CR);
-	Motion_Core::Gateway::debug_serial.print_string("\ttest.feed_rate_mode = "); Motion_Core::Gateway::debug_serial.print_int32((uint32_t)mot->feed_rate_mode); Motion_Core::Gateway::debug_serial.Write(CR);
-	Motion_Core::Gateway::debug_serial.print_string("\ttest.feed_rate = "); Motion_Core::Gateway::debug_serial.print_int32(mot->feed_rate); Motion_Core::Gateway::debug_serial.Write(CR);
-	Motion_Core::Gateway::debug_serial.print_string("\t***axis_data_begin***\r");
+	Motion_Core::Gateway::local_serial->print_string("\ttest.motion_type = "); Motion_Core::Gateway::local_serial->print_int32((uint32_t)mot->motion_type); Motion_Core::Gateway::local_serial->Write(CR);
+	Motion_Core::Gateway::local_serial->print_string("\ttest.feed_rate_mode = "); Motion_Core::Gateway::local_serial->print_int32((uint32_t)mot->feed_rate_mode); Motion_Core::Gateway::local_serial->Write(CR);
+	Motion_Core::Gateway::local_serial->print_string("\ttest.feed_rate = "); Motion_Core::Gateway::local_serial->print_int32(mot->feed_rate); Motion_Core::Gateway::local_serial->Write(CR);
+	Motion_Core::Gateway::local_serial->print_string("\t***axis_data_begin***\r");
 	for(uint8_t i=0;i<MACHINE_AXIS_COUNT;i++)
 	{
-		Motion_Core::Gateway::debug_serial.print_string("\t\ttest.axis_values[");
-		Motion_Core::Gateway::debug_serial.print_int32(i);
-		Motion_Core::Gateway::debug_serial.print_string("] = ");
-		Motion_Core::Gateway::debug_serial.print_float(mot->axis_values[i], 3);
-		Motion_Core::Gateway::debug_serial.Write(CR);
+		Motion_Core::Gateway::local_serial->print_string("\t\ttest.axis_values[");
+		Motion_Core::Gateway::local_serial->print_int32(i);
+		Motion_Core::Gateway::local_serial->print_string("] = ");
+		Motion_Core::Gateway::local_serial->print_float(mot->axis_values[i], 3);
+		Motion_Core::Gateway::local_serial->Write(CR);
 	}
-	Motion_Core::Gateway::debug_serial.print_string("\t***axis_data_end***\r");
-	Motion_Core::Gateway::debug_serial.print_string("\t***arc_data_begin***\r");
-	Motion_Core::Gateway::debug_serial.print_string("\t\ttest.arc_values.horizontal_center = ");Motion_Core::Gateway::debug_serial.print_float(mot->arc_values.horizontal_offset, 3); Motion_Core::Gateway::debug_serial.Write(CR);
-	Motion_Core::Gateway::debug_serial.print_string("\t\ttest.arc_values.vertical_center = ");Motion_Core::Gateway::debug_serial.print_float(mot->arc_values.vertical_offset, 3); Motion_Core::Gateway::debug_serial.Write(CR);
-	Motion_Core::Gateway::debug_serial.print_string("\t\ttest.arc_values.radius = ");Motion_Core::Gateway::debug_serial.print_float(mot->arc_values.Radius, 3); Motion_Core::Gateway::debug_serial.Write(CR);
-	Motion_Core::Gateway::debug_serial.print_string("\t***arc_data_end***\r");
-	Motion_Core::Gateway::debug_serial.print_string("\ttest.line_number = "); Motion_Core::Gateway::debug_serial.print_int32(mot->line_number); Motion_Core::Gateway::debug_serial.Write(CR);
+	Motion_Core::Gateway::local_serial->print_string("\t***axis_data_end***\r");
+	Motion_Core::Gateway::local_serial->print_string("\t***arc_data_begin***\r");
+	Motion_Core::Gateway::local_serial->print_string("\t\ttest.arc_values.horizontal_center = ");Motion_Core::Gateway::local_serial->print_float(mot->arc_values.horizontal_offset, 3); Motion_Core::Gateway::local_serial->Write(CR);
+	Motion_Core::Gateway::local_serial->print_string("\t\ttest.arc_values.vertical_center = ");Motion_Core::Gateway::local_serial->print_float(mot->arc_values.vertical_offset, 3); Motion_Core::Gateway::local_serial->Write(CR);
+	Motion_Core::Gateway::local_serial->print_string("\t\ttest.arc_values.radius = ");Motion_Core::Gateway::local_serial->print_float(mot->arc_values.Radius, 3); Motion_Core::Gateway::local_serial->Write(CR);
+	Motion_Core::Gateway::local_serial->print_string("\t***arc_data_end***\r");
+	Motion_Core::Gateway::local_serial->print_string("\ttest.line_number = "); Motion_Core::Gateway::local_serial->print_int32(mot->line_number); Motion_Core::Gateway::local_serial->Write(CR);
 	#endif
-	Motion_Core::Software::Interpollation::load_block(mot);
-	Motion_Core::System::set_control_state_mode(STATE_EXEC_MOTION_INTERPOLATION);
-	
-}
-
-void Motion_Core::Gateway::check_process_record()
-{
-	//BinaryRecords::e_binary_record_types stream_type = (BinaryRecords::e_binary_record_types)Motion_Core::c_processor::coordinator_serial.Peek();
-	//if ((uint8_t)stream_type == 0)
-	//return;
-	//BinaryRecords::e_binary_responses resp_value;
-	//switch (stream_type)
-	//{
-	//	case BinaryRecords::e_binary_record_types::Motion:
-	//	{
-	//		BinaryRecords::s_motion_data_block _blk = mots[mot_index];
-	//		//resp_value = c_record_handler::handle_inbound_record(&_blk,&Motion_Core::c_processor::coordinator_serial);
-	//
-	//		if (resp_value != BinaryRecords::e_binary_responses::Ok)
-	//		{
-	//			Motion_Core::c_processor::debug_serial.print_string("Motion Error : ");
-	//			Motion_Core::c_processor::debug_serial.print_int32((int) resp_value);
-	//			return;
-	//		}
-	//
-	//		if (resp_value == BinaryRecords::e_binary_responses::Ok)
-	//		{
-	//			mot_index++;
-	//			if (mot_index==10)
-	//			{mot_index = 0;}
-	//			Motion_Core::c_processor::process_motion(&_blk);
-	//		}
-	//	}
-	//	break;
-	//	case BinaryRecords::e_binary_record_types::Motion_Control_Setting:
-	//	{
-	//
-	//		BinaryRecords::s_motion_control_settings _blk;
-	//		//resp_value = c_record_handler::handle_inbound_record(&_blk,&Motion_Core::c_processor::coordinator_serial);
-	//
-	//		if (resp_value != BinaryRecords::e_binary_responses::Ok)
-	//		{
-	//			Motion_Core::c_processor::debug_serial.print_string("Setting Error : ");
-	//			Motion_Core::c_processor::debug_serial.print_int32((int) resp_value);
-	//			return;
-	//		}
-	//
-	//		if (resp_value == BinaryRecords::e_binary_responses::Ok)
-	//		{
-	//			uint16_t recsize = sizeof(BinaryRecords::s_motion_control_settings);
-	//			uint8_t setting_error = 0;
-	//			for (uint8_t i=0;i<MACHINE_AXIS_COUNT;i++)
-	//			{
-	//				uint32_t new_rate = (_blk.max_rate[i] * _blk.steps_per_mm[i])/60;
-	//				if (new_rate> MAX_STEP_RATE)
-	//				{
-	//					Motion_Core::c_processor::debug_serial.print_string("Setting Error : ");
-	//					Motion_Core::c_processor::debug_serial.print_string("value exceeded.");
-	//
-	//
-	//					Motion_Core::c_processor::send_status(BinaryRecords::e_system_state_record_types::System_Error
-	//					, BinaryRecords::e_system_sub_state_record_types::Error_Setting_Max_Rate_Exceeded
-	//					, new_rate,"setting reject\0",STATE_STATUS_IGNORE,STATE_STATUS_IGNORE);
-	//					setting_error = 1;
-	//				}
-	//			}
-	//			if (!setting_error)
-	//			{
-	//				_blk._check_sum = 0;
-	//				//Motion_Core::Settings::_Settings.pulse_length = _blk.pulse_length;
-	//				memcpy(&Motion_Core::Settings::_Settings,&_blk,recsize);
-	//				//reset hardware parameters after update.
-	//				Hardware_Abstraction_Layer::MotionCore::Stepper::initialize();
-	//			}
-	//
-	//
-	//
-	//		}
-	//	}
-	//	break;
-	//	case BinaryRecords::e_binary_record_types::Jog:
-	//	{
-	//		BinaryRecords::s_jog_data_block _blk;
-	//		//resp_value = c_record_handler::handle_inbound_record(&_blk,&Motion_Core::c_processor::coordinator_serial);
-	//		if (resp_value != BinaryRecords::e_binary_responses::Ok)
-	//		{
-	//			Motion_Core::c_processor::debug_serial.print_string("Jog Error : ");
-	//			Motion_Core::c_processor::debug_serial.print_int32((int) resp_value);
-	//			Motion_Core::c_processor::debug_serial.print_string("\r");
-	//			return;
-	//		}
-	//
-	//		if (resp_value == BinaryRecords::e_binary_responses::Ok)
-	//		{
-	//			//Let em know what we are doing.
-	//			//Motion_Core::System::set_control_state_mode(STATE_EXEC_MOTION_JOG);
-	//			Motion_Core::c_processor::send_status(BinaryRecords::e_system_state_record_types::Motion_Active
-	//			,BinaryRecords::e_system_sub_state_record_types::Jog_Running
-	//			,0,NULL,STATE_EXEC_MOTION_JOG,STATE_STATUS_IGNORE);
-	//
-	//			jog_mot.feed_rate_mode = BinaryRecords::e_feed_modes::FEED_RATE_UNITS_PER_MINUTE_MODE;
-	//			jog_mot.motion_type = BinaryRecords::e_motion_type::rapid_linear;
-	//
-	//			uint32_t jog_steps = labs(_blk.axis_value * Motion_Core::Settings::_Settings.steps_per_mm[_blk.axis]);
-	//			if (jog_steps<1)
-	//			{
-	//				_blk.axis_value = (float)(1.0/(float)Motion_Core::Settings::_Settings.steps_per_mm[_blk.axis])
-	//				* _blk.axis_value<0.0?-1.0:1.0;
-	//			}
-	//			Motion_Core::c_processor::debug_serial.print_string("run jog");
-	//			jog_mot.axis_values[_blk.axis] = _blk.axis_value;
-	//
-	//			jog_mot.flag = _blk.flag;
-	//			jog_mot.sequence = 0;
-	//			//send the jog motion. when it completes, check_State_status will send a new
-	//			//status message to the coordinator.
-	//			Motion_Core::c_processor::process_motion(&jog_mot);
-	//
-	//		}
-	//	}
-	//	break;
-	//	default:
-	//	/* Your code here */
-	//	break;
-	//}
-	//
+	//If cycle start is set then start executing the motion. Otherwise jsut hold it while the buffer fills. 
+	if (Motion_Core::System::get_control_state_mode(STATE_AUTO_START_CYCLE))
+	{
+		Motion_Core::Software::Interpollation::load_block(mot);
+		Motion_Core::System::set_control_state_mode(STATE_EXEC_MOTION_INTERPOLATION);
+	}
 	
 }
 
@@ -259,7 +116,6 @@ void Motion_Core::Gateway::check_hardware_faults()
 	//See if there is a hardware alarm from a stepper/servo driver
 	if (Hardware_Abstraction_Layer::MotionCore::Inputs::Driver_Alarms >0)
 	{
-		Motion_Core::Gateway::debug_serial.print_string("drive fault\r");
 		Motion_Core::System::set_control_state_mode(STATE_ERR_AXIS_DRIVE_FAULT);
 		//Hardware faults but not interpolating... Very strange..
 		if (Motion_Core::Hardware::Interpollation::Interpolation_Active)
@@ -281,9 +137,9 @@ void Motion_Core::Gateway::check_hardware_faults()
 				status->system_sub_state =
 				(BinaryRecords::e_system_sub_state_record_types)axis_id;
 				
-				Motion_Core::Gateway::debug_serial.print_string("Drive on Axis ");
-				Motion_Core::Gateway::debug_serial.print_int32(i);
-				Motion_Core::Gateway::debug_serial.print_string(" reported a motion fault\r");
+				//Motion_Core::Gateway::local_serial->print_string("Drive on Axis ");
+				//Motion_Core::Gateway::local_serial->print_int32(i);
+				//Motion_Core::Gateway::local_serial->print_string(" reported a motion fault\r");
 			}
 			
 		}
@@ -299,28 +155,22 @@ void Motion_Core::Gateway::check_sequence_complete()
 	&& !Motion_Core::System::get_control_state_mode(STATE_MOTION_CONTROL_HOLD))
 	//&& !Motion_Core::System::get_control_state_mode(STATE_MOTION_CONTROL_RESUME))
 	{
-		BinaryRecords::s_status_message new_stat;
-		
 		if (Motion_Core::Hardware::Interpollation::Interpolation_Active)
 		{
-			new_stat.system_state = BinaryRecords::e_system_state_record_types::Motion_Active;
+			Events::Motion::events_statistics.system_state = BinaryRecords::e_system_state_record_types::Motion_Active;
 		}
 		else
 		{
-			new_stat.system_state = BinaryRecords::e_system_state_record_types::Motion_Idle;
+			Events::Motion::events_statistics.system_state = BinaryRecords::e_system_state_record_types::Motion_Idle;
 		}
 
-		new_stat.system_sub_state = BinaryRecords::e_system_sub_state_record_types::Block_Complete;
+		Events::Motion::events_statistics.system_sub_state = BinaryRecords::e_system_sub_state_record_types::Block_Complete;
 		
-		new_stat.num_message = Motion_Core::Hardware::Interpollation::Last_Completed_Sequence;
+		Events::Motion::events_statistics.num_message = Motion_Core::Hardware::Interpollation::Last_Completed_Sequence;
 		Motion_Core::Hardware::Interpollation::Last_Completed_Sequence = 0;
 		
-		c_motion_events::set_event(Motion_Events::MOTION_COMPLETE);
-		
-		//BinaryRecords::e_binary_responses resp =
-		//Motion_Core::Gateway::send_status(new_stat, STATE_STATUS_IGNORE, STATE_STATUS_IGNORE);
-		
-		
+		//flag an event so that Main_Processing can pick it up.
+		Events::Motion::set_event(Events::Motion::e_event_type::Motion_complete);
 	}
 }
 

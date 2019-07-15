@@ -22,43 +22,33 @@
 #include "c_block_events.h"
 #include "..\bit_manipulation.h"
 
-uint32_t c_block_events::event_flags;
+uint32_t Events::NGC_Block::event_flags;
 
 
-void c_block_events::check_events()
+void Events::NGC_Block::check_events()
 {
-	if (c_block_events::event_flags ==0)
+	if (Events::NGC_Block::event_flags ==0)
 	{
 	return;
 	}
 	
-	if (c_block_events::get_event(Block_Events::MOTION))
+	if (Events::NGC_Block::get_event(Events::NGC_Block::e_event_type::Motion))
 	{
 		
 	}
 }
 
-void c_block_events::set_event(uint8_t EventFlag)
+void Events::NGC_Block::set_event(Events::NGC_Block::e_event_type EventFlag)
 {
-	c_block_events::event_flags=(BitSet(c_block_events::event_flags,(EventFlag)));
+	Events::NGC_Block::event_flags=(BitSet(NGC_Block::event_flags,((int)EventFlag)));
 }
 
-uint8_t c_block_events::get_event(uint8_t EventFlag)
+uint8_t Events::NGC_Block::get_event(Events::NGC_Block::e_event_type EventFlag)
 {
-	return (BitGet(c_block_events::event_flags,(EventFlag)));
+	return (BitGet(NGC_Block::event_flags,((int)EventFlag)));
 }
 
-void c_block_events::clear_event(uint8_t EventFlag)
+void Events::NGC_Block::clear_event(Events::NGC_Block::e_event_type EventFlag)
 {
-	c_block_events::event_flags =BitClr(c_block_events::event_flags,(EventFlag));
+	Events::NGC_Block::event_flags =BitClr(NGC_Block::event_flags,((int)EventFlag));
 }
-
-//// default constructor
-//c_data_events::c_data_events()
-//{
-//} //c_data_events
-//
-//// default destructor
-//c_data_events::~c_data_events()
-//{
-//} //~c_data_events

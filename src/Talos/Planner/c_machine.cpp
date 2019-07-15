@@ -38,6 +38,7 @@ NGC_RS274::NGC_Binary_Block*c_machine::machine_block;
 float c_machine::axis_position[MACHINE_AXIS_COUNT];
 float c_machine::unit_scaler = 1;
 char c_machine::machine_axis_names[MACHINE_AXIS_COUNT];
+static uint32_t motion_sequence_number;
 
 
 /*
@@ -194,6 +195,7 @@ void c_machine::start_motion_binary(NGC_RS274::NGC_Binary_Block* local_block)
 			motion_block_record.axis_values[i] = 0;
 			motion_block_record.axis_values[i] = *local_block->axis_values.Loop[i];
 		}
+		motion_block_record.sequence = ++motion_sequence_number;
 		motion_block_record.line_number = local_block->get_value('N');
 		Motion_Core::Gateway::add_motion(motion_block_record);
 	}

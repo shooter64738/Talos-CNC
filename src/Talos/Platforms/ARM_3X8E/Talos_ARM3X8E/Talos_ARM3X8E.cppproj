@@ -353,6 +353,22 @@
       <SubType>compile</SubType>
       <Link>Motion_Core\c_system.h</Link>
     </Compile>
+    <Compile Include="..\..\..\NGC_RS274\Machine Specific\NGC_Lathe.cpp">
+      <SubType>compile</SubType>
+      <Link>NGC_RS274\Machine Specific\NGC_Lathe.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\NGC_RS274\Machine Specific\NGC_Lathe.h">
+      <SubType>compile</SubType>
+      <Link>NGC_RS274\Machine Specific\NGC_Lathe.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\NGC_RS274\Machine Specific\NGC_Mill.cpp">
+      <SubType>compile</SubType>
+      <Link>NGC_RS274\Machine Specific\NGC_Mill.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\NGC_RS274\Machine Specific\NGC_Mill.h">
+      <SubType>compile</SubType>
+      <Link>NGC_RS274\Machine Specific\NGC_Mill.h</Link>
+    </Compile>
     <Compile Include="..\..\..\NGC_RS274\NGC_Block.cpp">
       <SubType>compile</SubType>
       <Link>NGC_RS274\NGC_Block.cpp</Link>
@@ -519,6 +535,7 @@
     <Folder Include="Common\Serial" />
     <Folder Include="Device_Startup\" />
     <Folder Include="Common" />
+    <Folder Include="NGC_RS274\Machine Specific" />
     <Folder Include="Processing" />
     <Folder Include="Platform Specific" />
     <Folder Include="Events\" />

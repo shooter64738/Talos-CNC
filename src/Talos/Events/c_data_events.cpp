@@ -21,29 +21,29 @@
 #include "c_data_events.h"
 #include "..\bit_manipulation.h"
 
-uint32_t c_data_events::event_flags;
+uint32_t Events::Data::event_flags;
 
-void c_data_events::check_events()
+void Events::Data::check_events()
 {
 	
-	if (c_data_events::event_flags ==0)
+	if (Events::Data::event_flags ==0)
 	{
 		return;
 	}
 	//c_processor::host_serial.print_string("e check\r");
-	if (c_data_events::get_event(e_Data_Events::NGC_BUFFER_READY))
+	if (Events::Data::get_event(Events::Data::e_event_type::NGC_buffer_ready))
 	{
 		
 	}
 	
 	//If there is a peripheral record, handle it
-	if (c_data_events::get_event(e_Data_Events::Peripheral_Record_InQueue))
+	if (Data::get_event(Events::Data::e_event_type::Peripheral_record_in_queue))
 	{
 		//c_data_events::handle_periperal_record();
 	}
 	
 	//If there is a controller record, handle it
-	if (c_data_events::get_event(e_Data_Events::Motion_Record_InQueue))
+	if (Data::get_event(Events::Data::e_event_type::Motion_record_in_queue))
 	{
 		//c_data_events::handle_controller_record();
 	}
@@ -51,34 +51,23 @@ void c_data_events::check_events()
 	{
 		//trashed record.
 		//c_processor::controller_serial.Reset();
-		c_data_events::clear_event(e_Data_Events::Motion_Record_InQueue);
+		Data::clear_event(Events::Data::e_event_type::Motion_record_in_queue);
 	}
 }
 
 
 
-void c_data_events::set_event(e_Data_Events EventFlag)
+void Events::Data::set_event(Events::Data::e_event_type EventFlag)
 {
-	c_data_events::event_flags=(BitSet(c_data_events::event_flags,((int)EventFlag)));
+	Data::event_flags=(BitSet(Events::Data::event_flags,((int)EventFlag)));
 }
 
-uint8_t c_data_events::get_event(e_Data_Events EventFlag)
+uint8_t Events::Data::get_event(Events::Data::e_event_type EventFlag)
 {
-	return (BitGet(c_data_events::event_flags,((int)EventFlag)));
+	return (BitGet(Events::Data::event_flags,((int)EventFlag)));
 }
 
-void c_data_events::clear_event(e_Data_Events EventFlag)
+void Events::Data::clear_event(Events::Data::e_event_type EventFlag)
 {
-	c_data_events::event_flags=BitClr(c_data_events::event_flags,((int)EventFlag));
+	Data::event_flags=BitClr(Events::Data::event_flags,((int)EventFlag));
 }
-
-
-//// default constructor
-//c_data_events::c_data_events()
-//{
-//} //c_data_events
-//
-//// default destructor
-//c_data_events::~c_data_events()
-//{
-//} //~c_data_events

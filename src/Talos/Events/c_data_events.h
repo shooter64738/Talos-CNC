@@ -1,6 +1,4 @@
 /*
-* c_motion_events.h
-/*
 *  c_data_events.h - NGC_RS274 controller.
 *  A component of Talos
 *
@@ -26,35 +24,35 @@
 
 #include <stdint.h>
 
-enum class e_Data_Events : uint8_t
+namespace Events
 {
-	NGC_BUFFER_READY = 0, NGC_BUFFER_FULL = 1, PROFILE_BUFFER_READY = 2, STAGING_BUFFER_FULL = 3
-	, Peripheral_Record_InQueue = 4, Motion_Record_InQueue = 5
+	class Data
+	{
+		//variables
+		public:
+		enum class e_event_type : uint8_t
+		{
+			NGC_buffer_ready = 0,
+			NGC_buffer_full = 1,
+			Profile_buffer_ready = 2,
+			Staging_buffer_full = 3,
+			Peripheral_record_in_queue = 4,
+			Motion_record_in_queue = 5
+		};
+		static uint32_t event_flags;
+		protected:
+		private:
+
+
+		//functions
+		public:
+		static void set_event(e_event_type EventFlag);
+		static uint8_t get_event(e_event_type EventFlag);
+		static void clear_event(e_event_type EventFlag);
+		static void check_events();
+
+		protected:
+		private:
+	}; //c_serial_events
 };
-
-class c_data_events
-{
-	//variables
-	public:
-	static uint32_t event_flags;
-	protected:
-	private:
-	
-
-	//functions
-	public:
-	static void set_event(e_Data_Events EventFlag);
-	static uint8_t get_event(e_Data_Events EventFlag);
-	static void clear_event(e_Data_Events EventFlag);
-	static void check_events();
-
-	protected:
-	private:
-	c_data_events( const c_data_events &c );
-	c_data_events& operator=( const c_data_events &c );
-	c_data_events();
-	~c_data_events();
-
-}; //c_serial_events
-
 #endif //__C_DATA_EVENTS_H__
