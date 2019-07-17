@@ -22,6 +22,7 @@
 #define __C_BLOCK_EVENTS_H__
 
 #include <stdint.h>
+#include "..\records_def.h"
 namespace Events
 {
 	class NGC_Block
@@ -40,7 +41,7 @@ namespace Events
 			Non_modal = 7,
 			Units = 8
 		};
-		static uint32_t event_flags;
+		static BinaryRecords::s_bit_flag_controller event_manager;
 
 		protected:
 		private:
@@ -48,17 +49,10 @@ namespace Events
 
 		//functions
 		public:
-		static void set_event(e_event_type EventFlag);
-		static uint8_t get_event(e_event_type EventFlag);
-		static void clear_event(e_event_type EventFlag);
 		static void check_events();
 
 		protected:
 		private:
-		NGC_Block( const NGC_Block &c );
-		NGC_Block& operator=( const NGC_Block &c );
-		NGC_Block();
-		~NGC_Block();
 
 	}; //c_block_events
 };

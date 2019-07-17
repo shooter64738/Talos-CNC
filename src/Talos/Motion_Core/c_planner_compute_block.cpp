@@ -7,6 +7,7 @@
 #include "..\bit_manipulation.h"
 
 
+
 Motion_Core::Planner::Block_Item *Motion_Core::Planner::Calculator::block_buffer_planned = Motion_Core::Planner::Buffer::Get(0);
 //int32_t Motion_Core::Planner::Calculator::position[MACHINE_AXIS_COUNT];
 float Motion_Core::Planner::Calculator::previous_unit_vec[MACHINE_AXIS_COUNT];
@@ -39,8 +40,8 @@ uint8_t Motion_Core::Planner::Calculator::_plan_buffer_line(BinaryRecords::s_mot
 		//planning_block->step_event_count = max(planning_block->step_event_count, planning_block->steps[idx]);
 		//unit_vec[idx] = target_block.axis_values[idx];
 		
-		target_steps[idx] = lround(target_block.axis_values[idx] * Motion_Core::Settings::_Settings.steps_per_mm[idx] );
-		planning_block->steps[idx] = labs(target_steps[idx] - Motion_Core::Software::Interpollation::system_position[idx]);
+		target_steps[idx] = lround(target_block.axis_values[idx] * Motion_Core::Settings::_Settings.Hardware_Settings.steps_per_mm[idx] );
+		planning_block->steps[idx] = labs(target_steps[idx] - Motion_Core::Software::Interpolation::system_position[idx]);
 		
 		//c_processor::debug_serial.print_int32(idx +1);
 		//c_processor::debug_serial.print_string(" steps=");
@@ -48,17 +49,17 @@ uint8_t Motion_Core::Planner::Calculator::_plan_buffer_line(BinaryRecords::s_mot
 		//c_processor::debug_serial.Write(CR);
 		
 		planning_block->step_event_count = max(planning_block->step_event_count, planning_block->steps[idx]);
-		delta_mm = (target_steps[idx] - Motion_Core::Software::Interpollation::system_position[idx])/Motion_Core::Settings::_Settings.steps_per_mm[idx];
+		delta_mm = (target_steps[idx] - Motion_Core::Software::Interpolation::system_position[idx])/Motion_Core::Settings::_Settings.Hardware_Settings.steps_per_mm[idx];
 		unit_vec[idx] = delta_mm;
 		
 		if (delta_mm > 0.0)
 		{
-			Motion_Core::Software::Interpollation::back_comp.last_directions[idx] = 1;
+			Motion_Core::Software::Interpolation::back_comp.last_directions[idx] = 1;
 		}
 		// Set direction bits. Bit enabled always means direction is negative.
 		else if (delta_mm < 0.0)
 		{
-			Motion_Core::Software::Interpollation::back_comp.last_directions[idx] = -1;
+			Motion_Core::Software::Interpolation::back_comp.last_directions[idx] = -1;
 			planning_block->direction_bits |= Motion_Core::get_direction_pin_mask(idx);
 		}
 	}
@@ -76,8 +77,8 @@ uint8_t Motion_Core::Planner::Calculator::_plan_buffer_line(BinaryRecords::s_mot
 	// if they are also orthogonal/independent. Operates on the absolute value of the unit vector.
 
 	planning_block->millimeters = Motion_Core::convert_delta_vector_to_unit_vector(unit_vec);
-	planning_block->acceleration = Motion_Core::limit_value_by_axis_maximum(Motion_Core::Settings::_Settings.acceleration, unit_vec);
-	planning_block->rapid_rate = Motion_Core::limit_value_by_axis_maximum(Motion_Core::Settings::_Settings.max_rate, unit_vec);
+	planning_block->acceleration = Motion_Core::limit_value_by_axis_maximum(Motion_Core::Settings::_Settings.Hardware_Settings.acceleration, unit_vec);
+	planning_block->rapid_rate = Motion_Core::limit_value_by_axis_maximum(Motion_Core::Settings::_Settings.Hardware_Settings.max_rate, unit_vec);
 
 
 	// Store programmed rate.
@@ -152,7 +153,7 @@ uint8_t Motion_Core::Planner::Calculator::_plan_buffer_line(BinaryRecords::s_mot
 			else
 			{
 				Motion_Core::convert_delta_vector_to_unit_vector(junction_unit_vec);
-				float junction_acceleration = Motion_Core::limit_value_by_axis_maximum(Motion_Core::Settings::_Settings.acceleration, junction_unit_vec);
+				float junction_acceleration = Motion_Core::limit_value_by_axis_maximum(Motion_Core::Settings::_Settings.Hardware_Settings.acceleration, junction_unit_vec);
 				float sin_theta_d2 = sqrt(0.5 * (1.0 - junction_cos_theta)); // Trig half angle identity. Always positive.
 				planning_block->max_junction_speed_sqr = max(MINIMUM_JUNCTION_SPEED*MINIMUM_JUNCTION_SPEED,
 					(junction_acceleration * Motion_Core::Settings::_Settings.junction_deviation * sin_theta_d2) / (1.0 - sin_theta_d2));
@@ -169,7 +170,7 @@ uint8_t Motion_Core::Planner::Calculator::_plan_buffer_line(BinaryRecords::s_mot
 
 		// Update previous path unit_vector and planner position.
 		memcpy(Motion_Core::Planner::Calculator::previous_unit_vec, unit_vec, sizeof(unit_vec)); // pl.previous_unit_vec[] = unit_vec[]
-		memcpy(Motion_Core::Software::Interpollation::system_position, target_steps, sizeof(Motion_Core::Software::Interpollation::system_position)); // pl.position[] = target_steps[]
+		memcpy(Motion_Core::Software::Interpolation::system_position, target_steps, sizeof(Motion_Core::Software::Interpolation::system_position)); // pl.position[] = target_steps[]
 
 		// New block is all set. Update buffer head and next buffer head indices.
 		// Finish up by recalculating the plan with the new block.

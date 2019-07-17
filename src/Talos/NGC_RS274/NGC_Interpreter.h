@@ -25,7 +25,10 @@
 #include "..\NGC_RS274\NGC_Block.h"
 #include "..\physical_machine_parameters.h"
 #ifdef MSVC
-#include "../../MSVC++.h"
+static float square(float X)
+{
+	return X*X;
+}
 #endif // MSVC++
 #include "..\Common\Serial\c_Serial.h"
 
@@ -35,7 +38,7 @@
 #include "Machine Specific\NGC_Mill.h"
 #endif
 #ifdef MACHINE_TYPE_LATHE
-#include "Machine Specific\NGC_Mill.h"
+#include "Machine Specific\NGC_Lathe.h"
 #endif
 
 namespace NGC_RS274
@@ -55,7 +58,6 @@ namespace NGC_RS274
 			static bool normalize_distance_units_to_mm;
 
 			static void initialize();
-			static void clear_line();
 			static int process_line(NGC_RS274::NGC_Binary_Block*plan_block);
 			static float evaluate_address(char* Data);
 			//Move G and M codes to the respective groups
@@ -72,20 +74,19 @@ namespace NGC_RS274
 
 		private:
 			static int parse_values();
+			static void assign_planes(NGC_RS274::NGC_Binary_Block &plane_block);
+			
+			//These error checking methods will need to be moved to their machine specific types. 
 			static int error_check_main();
 			static int error_check_plane_select(NGC_RS274::NGC_Binary_Block &plane_block);
-			static void assign_planes(NGC_RS274::NGC_Binary_Block &plane_block);
 			static int error_check_arc();
-			//static int error_check_canned_cycle();
 			static int error_check_tool_length_offset();
 			static int error_check_cutter_compensation();
-			static uint8_t IsValidCharacter();
 			static int error_check_non_modal();
 			static int error_check_radius_format_arc();
-			static int normalize_distance_units();
 			static int error_check_center_format_arc();
-
-
+			
+			static int normalize_distance_units();
 
 			static float hypot_f(float x, float y);
 			static float square(float x);

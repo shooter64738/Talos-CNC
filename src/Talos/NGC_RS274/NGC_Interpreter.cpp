@@ -45,12 +45,6 @@ c_Serial *NGC_RS274::Interpreter::Processor::local_serial;
 void NGC_RS274::Interpreter::Processor::initialize()
 {
 	NGC_RS274::Interpreter::Processor::local_block.initialize();
-	clear_line();
-}
-
-void NGC_RS274::Interpreter::Processor::clear_line()
-{
-	//memset(NGC_RS274::Interpreter::Processor::Line, 0, CYCLE_LINE_LENGTH * sizeof(char));
 }
 
 int NGC_RS274::Interpreter::Processor::process_line(NGC_RS274::NGC_Binary_Block*plan_block)
@@ -64,7 +58,7 @@ int NGC_RS274::Interpreter::Processor::process_line(NGC_RS274::NGC_Binary_Block*
 	NGC_RS274::Interpreter::Processor::local_block.reset(); //<-- Clear EVERYTHING from the local block
 
 	//Synch local block, to the block that was sent in. This block should contain all the values that were set in the last interpretation. This ensures all modal values are kept.
-	memcpy(NGC_RS274::Interpreter::Processor::local_block.unit_target_positions, plan_block->unit_target_positions, MACHINE_AXIS_COUNT * sizeof(float));
+	//memcpy(NGC_RS274::Interpreter::Processor::local_block.unit_target_positions, plan_block->unit_target_positions, MACHINE_AXIS_COUNT * sizeof(float));
 	memcpy(NGC_RS274::Interpreter::Processor::local_block.g_group, plan_block->g_group, COUNT_OF_G_CODE_GROUPS_ARRAY * sizeof(uint16_t));
 	memcpy(NGC_RS274::Interpreter::Processor::local_block.m_group, plan_block->m_group, COUNT_OF_M_CODE_GROUPS_ARRAY * sizeof(uint16_t));
 	memcpy(&NGC_RS274::Interpreter::Processor::local_block.persisted_values, &plan_block->persisted_values, sizeof(NGC_RS274::NGC_Binary_Block::s_persisted_values));
@@ -133,10 +127,6 @@ int NGC_RS274::Interpreter::Processor::process_line(NGC_RS274::NGC_Binary_Block*
 	//memcpy(&plan_block->plane_axis, &NGC_RS274::Interpreter::Processor::local_block.plane_axis, sizeof(NGC_RS274::NGC_Binary_Block::s_plane_axis));
 	//memcpy(&plan_block->arc_values, &NGC_RS274::Interpreter::Processor::local_block.arc_values, sizeof(NGC_RS274::NGC_Binary_Block::s_arc_values));
 
-
-	//Clear the line data so its ready for next time.
-	clear_line();
-
 	return ReturnValue;
 }
 
@@ -162,7 +152,7 @@ int NGC_RS274::Interpreter::Processor::error_check_main()
 		{
 			case NGC_RS274::Groups::G::COORDINATE_SYSTEM_SELECTION: //<--G54,G55,G56,G57,G58,G59,G59.1,G59.2,G59.3
 			{
-				if (!BitTst(NGC_RS274::Interpreter::Processor::local_block.g_code_defined_in_block, NGC_RS274::Groups::G::COORDINATE_SYSTEM_SELECTION))
+				if (!NGC_RS274::Interpreter::Processor::local_block.get_g_code_defined(NGC_RS274::Groups::G::COORDINATE_SYSTEM_SELECTION))
 				break;
 
 				//If cutter radius compensation compensation is on, selecting a new coordinate
@@ -187,7 +177,7 @@ int NGC_RS274::Interpreter::Processor::error_check_main()
 			case NGC_RS274::Groups::G::CUTTER_RADIUS_COMPENSATION: //<--G40,G41,G42
 			{
 				//If cutter compensation was specified in the line, error check it.
-				if (!BitTst(NGC_RS274::Interpreter::Processor::local_block.g_code_defined_in_block, NGC_RS274::Groups::G::CUTTER_RADIUS_COMPENSATION))
+				if (!NGC_RS274::Interpreter::Processor::local_block.get_g_code_defined(NGC_RS274::Groups::G::CUTTER_RADIUS_COMPENSATION))
 				break;
 
 				ReturnValue = NGC_RS274::Interpreter::Processor::error_check_cutter_compensation();
@@ -208,7 +198,7 @@ int NGC_RS274::Interpreter::Processor::error_check_main()
 			{
 				//Was a motion command issued in the block or is the motion command block just 0 because it was never set?
 				//If it wasn't defined ever, just break out of here. We are probably in setup mode.
-				if (!BitTst(NGC_RS274::Interpreter::Processor::local_block.g_code_defined_in_block, NGC_RS274::Groups::G::MOTION))
+				if (!NGC_RS274::Interpreter::Processor::local_block.get_g_code_defined(NGC_RS274::Groups::G::MOTION))
 				//&& ! c_buffer::block_buffer[plan_block].any_axis_was_defined())
 				{
 					break; //<--No motion command defined in the block this is just a default value. Carry on.
@@ -303,7 +293,7 @@ int NGC_RS274::Interpreter::Processor::error_check_main()
 			}
 			case NGC_RS274::Groups::G::NON_MODAL: //<--G4,G10,G28,G28.1,G30,G30.1,G53,G92,G92.1,G92.2,G92.3
 			{
-				if (!BitTst(NGC_RS274::Interpreter::Processor::local_block.g_code_defined_in_block, NGC_RS274::Groups::G::NON_MODAL))
+				if (!NGC_RS274::Interpreter::Processor::local_block.get_g_code_defined(NGC_RS274::Groups::G::NON_MODAL))
 				break;
 				ReturnValue = error_check_non_modal();
 				if (ReturnValue != NGC_RS274::Interpreter::Errors::OK)
@@ -319,7 +309,7 @@ int NGC_RS274::Interpreter::Processor::error_check_main()
 			break;
 			case NGC_RS274::Groups::G::PLANE_SELECTION: //<--G17,G18,G19
 			{
-				if (!BitTst(NGC_RS274::Interpreter::Processor::local_block.g_code_defined_in_block, NGC_RS274::Groups::G::PLANE_SELECTION))
+				if (!NGC_RS274::Interpreter::Processor::local_block.get_g_code_defined(NGC_RS274::Groups::G::PLANE_SELECTION))
 				break;
 
 				NGC_RS274::Interpreter::Processor::error_check_plane_select(NGC_RS274::Interpreter::Processor::local_block);
@@ -332,7 +322,7 @@ int NGC_RS274::Interpreter::Processor::error_check_main()
 			break;
 			case NGC_RS274::Groups::G::TOOL_LENGTH_OFFSET: //<--G43,G44,G49
 			{
-				if (!BitTst(NGC_RS274::Interpreter::Processor::local_block.g_code_defined_in_block, NGC_RS274::Groups::G::TOOL_LENGTH_OFFSET))
+				if (!NGC_RS274::Interpreter::Processor::local_block.get_g_code_defined(NGC_RS274::Groups::G::TOOL_LENGTH_OFFSET))
 				break;
 
 				ReturnValue = error_check_tool_length_offset();
@@ -691,7 +681,7 @@ int NGC_RS274::Interpreter::Processor::error_check_cutter_compensation()
 
 	//If cutter radius compensation was already active, it cannot be set active again, or change sides
 	//It must be turned off, and back on again
-	if (BitTst(NGC_RS274::Interpreter::Processor::local_block.g_code_defined_in_block, NGC_RS274::Groups::G::CUTTER_RADIUS_COMPENSATION))
+	if (NGC_RS274::Interpreter::Processor::local_block.get_g_code_defined(NGC_RS274::Groups::G::CUTTER_RADIUS_COMPENSATION))
 	{
 		//Since cutter comp was defined in the block, we must determine if it was already on
 		//by looking in the stagers g code group states.
@@ -917,19 +907,7 @@ int NGC_RS274::Interpreter::Processor::_gWord(float Address)
 		break;
 
 		case NGC_RS274::G_codes::XY_PLANE_SELECTION: //<-G17
-
-		ngc_working_group = NGC_RS274::Groups::G::PLANE_SELECTION;
-		NGC_RS274::Interpreter::Processor::local_block.g_group[NGC_RS274::Groups::G::PLANE_SELECTION] = (iAddress);
-		NGC_RS274::Interpreter::Processor::error_check_plane_select(NGC_RS274::Interpreter::Processor::local_block);
-		break;
-
 		case NGC_RS274::G_codes::XZ_PLANE_SELECTION: //<-G18
-
-		ngc_working_group = NGC_RS274::Groups::G::PLANE_SELECTION;
-		NGC_RS274::Interpreter::Processor::local_block.g_group[NGC_RS274::Groups::G::PLANE_SELECTION] = (iAddress);
-		NGC_RS274::Interpreter::Processor::error_check_plane_select(NGC_RS274::Interpreter::Processor::local_block);
-		break;
-
 		case NGC_RS274::G_codes::YZ_PLANE_SELECTION: //<-G19
 
 		ngc_working_group = NGC_RS274::Groups::G::PLANE_SELECTION;
@@ -1040,7 +1018,7 @@ int NGC_RS274::Interpreter::Processor::_gWord(float Address)
 	We can make the error more meaningful if we tell it WHICH group
 	was specified more than once.
 	*/
-	if (BitTst(NGC_RS274::Interpreter::Processor::local_block.g_code_defined_in_block, ngc_working_group))
+	if (NGC_RS274::Interpreter::Processor::local_block.get_g_code_defined(ngc_working_group))
 	/*
 	Since _working_g_group is the 'group' number we can add it to the base error
 	value and give the user a more specific error so they know what needs
@@ -1053,8 +1031,7 @@ int NGC_RS274::Interpreter::Processor::_gWord(float Address)
 	gcode group. This will get checked if this method is called again but if a gcode for the same
 	group is on the line again, the logic above will catch it and return an error
 	*/
-	NGC_RS274::Interpreter::Processor::local_block.g_code_defined_in_block =
-	BitSet(NGC_RS274::Interpreter::Processor::local_block.g_code_defined_in_block, ngc_working_group);
+	NGC_RS274::Interpreter::Processor::local_block.g_code_defined_in_block.set(ngc_working_group);
 	return  NGC_RS274::Interpreter::Errors::OK;
 }
 
@@ -1137,7 +1114,7 @@ int NGC_RS274::Interpreter::Processor::_mWord(float Address)
 	We can make the error more meaningful if we tell it WHICH group
 	was specified more than once.
 	*/
-	if (BitTst(NGC_RS274::Interpreter::Processor::local_block.m_code_defined_in_block, ngc_working_group))
+	if (NGC_RS274::Interpreter::Processor::local_block.get_m_code_defined(ngc_working_group))
 	return  NGC_RS274::Interpreter::Errors::M_CODE_GROUP_STOPPING_ALREADY_SPECIFIED + ngc_working_group;
 
 	/*
@@ -1145,8 +1122,7 @@ int NGC_RS274::Interpreter::Processor::_mWord(float Address)
 	mcode group. This will get checked if this method is called again but if a mcode for the same
 	group is on the line again, the logic above will catch it and return an error
 	*/
-	NGC_RS274::Interpreter::Processor::local_block.m_code_defined_in_block =
-	BitSet(NGC_RS274::Interpreter::Processor::local_block.m_code_defined_in_block, ngc_working_group);
+	NGC_RS274::Interpreter::Processor::local_block.m_code_defined_in_block.set(ngc_working_group);
 	return  NGC_RS274::Interpreter::Errors::OK;
 
 }
@@ -1218,7 +1194,7 @@ int NGC_RS274::Interpreter::Processor::process_word_values(char Word, float iAdd
 	the first 'Word'
 	*/
 	uint8_t WordNumber = (Word - 'A');
-	if (BitTst(NGC_RS274::Interpreter::Processor::local_block.word_defined_in_block_A_Z, WordNumber))
+	if (NGC_RS274::Interpreter::Processor::local_block.word_defined_in_block_A_Z.get(WordNumber))
 	//Return the equivalent NGC_Interpreter_Errors number
 	return (G_CODE_MULTIPLIER + WordNumber);
 	/*
@@ -1227,7 +1203,7 @@ int NGC_RS274::Interpreter::Processor::process_word_values(char Word, float iAdd
 	catch it when it comes in again with the code above.
 	*/
 
-	NGC_RS274::Interpreter::Processor::local_block.word_defined_in_block_A_Z = BitSet(NGC_RS274::Interpreter::Processor::local_block.word_defined_in_block_A_Z, WordNumber);
+	NGC_RS274::Interpreter::Processor::local_block.word_defined_in_block_A_Z.set(WordNumber);
 
 	/*
 	Almost all letters of the alphabet are used as words. The easiest and simplest way

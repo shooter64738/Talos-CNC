@@ -22,9 +22,17 @@
 #include "c_motion_events.h"
 #include "c_data_events.h"
 #include "c_block_events.h"
+#include "c_motion_control_events.h"
+#include "c_system_events.h"
 
 void Events::Main_Process::check_events()
 {
+	//Check for motion controller events. If there are any act on them accordingly.
+	System::check_events();
+	
+	//Check for motion controller events. If there are any act on them accordingly.
+	Motion_Controller::check_events();
+	
 	//Check for motion events. If there are any act on them accordingly.
 	Motion::check_events();
 

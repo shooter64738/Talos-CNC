@@ -6,19 +6,18 @@
  */ 
 
 
-#ifndef BIT_MANIPULATION_H_
-#define BIT_MANIPULATION_H_
+//#ifndef BIT_MANIPULATION_H_
+//#define BIT_MANIPULATION_H_
 
 
-#define BitSet(arg,posn) ((arg) | (1UL << (posn)))
+//#define BitSet(arg,posn) ((arg) | (1UL << (posn)))
 #define BitSet_(arg,posn) ((arg) |= (1UL << (posn)))
-#define BitClr(arg,posn) ((arg) & ~(1UL << (posn)))
 #define BitClr_(arg,posn) ((arg) &= ~(1UL << (posn)))
 #define BitTst(arg,posn) bool((arg) & (1UL << (posn)))
 #define BitLong(n) (1UL << (n))
 #define BitGet(p,m) bool((p) & (1UL << (m)))
 
-#define BitFlp(arg,posn) ((arg) ^ (1UL << (posn))
+#define BitFlp(arg,posn) ((arg) ^ (1UL << (posn)))
 #define Bit(x) (0x01 << (x))
 #define LongBit(x) ((unsigned long)0x00000001 << (x))
 
@@ -33,4 +32,4 @@
 #define min(a,b) (((a) < (b)) ? (a) : (b))
 
 
-#endif /* BIT_MANIPULATION_H_ */
+//#endif /* BIT_MANIPULATION_H_ */

@@ -233,6 +233,14 @@
       <SubType>compile</SubType>
       <Link>Events\c_motion_events.h</Link>
     </Compile>
+    <Compile Include="..\..\..\Events\c_system_events.cpp">
+      <SubType>compile</SubType>
+      <Link>Events\c_system_events.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\Events\c_system_events.h">
+      <SubType>compile</SubType>
+      <Link>Events\c_system_events.h</Link>
+    </Compile>
     <Compile Include="..\..\..\GCode_Process.cpp">
       <SubType>compile</SubType>
       <Link>Processing\GCode_Process.cpp</Link>
@@ -377,6 +385,10 @@
       <SubType>compile</SubType>
       <Link>NGC_RS274\NGC_Block.h</Link>
     </Compile>
+    <Compile Include="..\..\..\NGC_RS274\ngc_defines.h">
+      <SubType>compile</SubType>
+      <Link>Talos_ARM3X8E\NGC_RS274\ngc_defines.h</Link>
+    </Compile>
     <Compile Include="..\..\..\NGC_RS274\NGC_Errors.h">
       <SubType>compile</SubType>
       <Link>NGC_RS274\NGC_Errors.h</Link>
@@ -515,6 +527,12 @@
     <Compile Include="Platform Specific\c_motion_core_arm_3x8e_pwm_read.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="Platform Specific\c_motion_core_arm_3x8e_spindle.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="Platform Specific\c_motion_core_arm_3x8e_spindle.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="Platform Specific\c_motion_core_arm_3x8e_stepper.cpp">
       <SubType>compile</SubType>
     </Compile>
@@ -545,6 +563,8 @@
     <Folder Include="Planner" />
     <Folder Include="Planner\CRC" />
     <Folder Include="Planner\Canned Cycles" />
+    <Folder Include="Talos_ARM3X8E\" />
+    <Folder Include="Talos_ARM3X8E\NGC_RS274\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Device_Startup\sam3x8e_flash.ld">

@@ -19,55 +19,32 @@
 */
 
 #include "c_data_events.h"
-#include "..\bit_manipulation.h"
 
-uint32_t Events::Data::event_flags;
+ BinaryRecords::s_bit_flag_controller Events::Data::event_manager;
 
 void Events::Data::check_events()
 {
 	
-	if (Events::Data::event_flags ==0)
+	if (Events::Data::event_manager._flag ==0)
 	{
 		return;
 	}
 	//c_processor::host_serial.print_string("e check\r");
-	if (Events::Data::get_event(Events::Data::e_event_type::NGC_buffer_ready))
+	if (Events::Data::event_manager.get_clr((int)Events::Data::e_event_type::NGC_buffer_ready))
 	{
 		
 	}
 	
 	//If there is a peripheral record, handle it
-	if (Data::get_event(Events::Data::e_event_type::Peripheral_record_in_queue))
+	if (Events::Data::event_manager.get_clr((int)Events::Data::e_event_type::Peripheral_record_in_queue))
 	{
 		//c_data_events::handle_periperal_record();
 	}
 	
 	//If there is a controller record, handle it
-	if (Data::get_event(Events::Data::e_event_type::Motion_record_in_queue))
+	if (Events::Data::event_manager.get_clr((int)Events::Data::e_event_type::Motion_record_in_queue))
 	{
 		//c_data_events::handle_controller_record();
 	}
-	else
-	{
-		//trashed record.
-		//c_processor::controller_serial.Reset();
-		Data::clear_event(Events::Data::e_event_type::Motion_record_in_queue);
-	}
 }
 
-
-
-void Events::Data::set_event(Events::Data::e_event_type EventFlag)
-{
-	Data::event_flags=(BitSet(Events::Data::event_flags,((int)EventFlag)));
-}
-
-uint8_t Events::Data::get_event(Events::Data::e_event_type EventFlag)
-{
-	return (BitGet(Events::Data::event_flags,((int)EventFlag)));
-}
-
-void Events::Data::clear_event(Events::Data::e_event_type EventFlag)
-{
-	Data::event_flags=BitClr(Events::Data::event_flags,((int)EventFlag));
-}

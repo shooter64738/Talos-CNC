@@ -145,6 +145,9 @@
     <ClCompile Include="..\..\..\NGC_RS274\Machine Specific\NGC_Mill.cpp">
       <Filter>NGC_RS274\Machine Specific</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\Events\c_system_events.cpp">
+      <Filter>Events</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Events\c_block_events.h">
@@ -249,7 +252,6 @@
     <ClInclude Include="..\..\..\bit_manipulation.h" />
     <ClInclude Include="..\..\..\communication_def.h" />
     <ClInclude Include="..\..\..\physical_machine_parameters.h" />
-    <ClInclude Include="..\..\..\records_def.h" />
     <ClInclude Include="..\..\..\hardware_def.h" />
     <ClInclude Include="Platform Specific\c_core_win.h">
       <Filter>Platform Specific</Filter>
@@ -286,6 +288,10 @@
     </ClInclude>
     <ClInclude Include="..\..\..\NGC_RS274\Machine Specific\NGC_Mill.h">
       <Filter>NGC_RS274\Machine Specific</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\records_def.h" />
+    <ClInclude Include="..\..\..\Events\c_system_events.h">
+      <Filter>Events</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -18,8 +18,24 @@
 *  along with Talos.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
+#include "..\..\physical_machine_parameters.h"
+#ifdef MACHINE_TYPE_LATHE
 #include "NGC_Lathe.h"
 #include <string.h>
 #include "..\..\bit_manipulation.h"
+//#include "..\NGC_Block.h"
+#include "..\NGC_Errors.h"
+#include "..\NGC_G_Groups.h"
+#include "..\NGC_G_Codes.h"
+#include "..\NGC_Interpreter.h"
 
+
+/*
+If a canned cycle (g81-g89) command was specified, perform detailed parameter check that applies
+only to canned cycles.
+*/
+int NGC_RS274::Interpreter::NGC_Machine_Specific::error_check_canned_cycle()
+{
+	return 0;
+}
+#endif

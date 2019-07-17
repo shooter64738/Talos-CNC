@@ -24,7 +24,6 @@
 #ifndef __C_CORE_WIN_H__
 #define __C_CORE_WIN_H__
 #include <stdint.h>
-#define F_CPU 18*1000000*1000000
 
 #define Hardware_Abstraction_Layer_Core_pgm_read_byte_near(x) ((int)x)
 #define Hardware_Abstraction_Layer_Core_PSTR(x) ((const char*)x) //PSTR

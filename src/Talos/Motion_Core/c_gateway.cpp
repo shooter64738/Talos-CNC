@@ -57,14 +57,14 @@ void Motion_Core::Gateway::process_loop()
 
 void Motion_Core::Gateway::check_control_states()
 {
-	if (!Motion_Core::Hardware::Interpollation::Interpolation_Active)
-	Motion_Core::System::clear_control_state_mode(STATE_EXEC_MOTION_INTERPOLATION);
+	if (!Motion_Core::Hardware::Interpolation::Interpolation_Active)
+	Motion_Core::System::control_state_modes.clear(STATE_EXEC_MOTION_INTERPOLATION);
 	
 	//Were we running a jog interpolation?
-	if (Motion_Core::System::get_control_state_mode(STATE_EXEC_MOTION_JOG))
+	if (Motion_Core::System::control_state_modes.get(STATE_EXEC_MOTION_JOG))
 	{
 		//Is interpolation complete?
-		if (!Motion_Core::Hardware::Interpollation::Interpolation_Active)
+		if (!Motion_Core::Hardware::Interpolation::Interpolation_Active)
 		{
 			//Motion_Core::Gateway::send_status(BinaryRecords::e_system_state_record_types::Motion_Complete
 			//,BinaryRecords::e_system_sub_state_record_types::Jog_Complete
@@ -101,10 +101,10 @@ void Motion_Core::Gateway::process_motion(BinaryRecords::s_motion_data_block *mo
 	Motion_Core::Gateway::local_serial->print_string("\ttest.line_number = "); Motion_Core::Gateway::local_serial->print_int32(mot->line_number); Motion_Core::Gateway::local_serial->Write(CR);
 	#endif
 	//If cycle start is set then start executing the motion. Otherwise jsut hold it while the buffer fills. 
-	if (Motion_Core::System::get_control_state_mode(STATE_AUTO_START_CYCLE))
+	if (Motion_Core::System::control_state_modes.get(STATE_AUTO_START_CYCLE))
 	{
-		Motion_Core::Software::Interpollation::load_block(mot);
-		Motion_Core::System::set_control_state_mode(STATE_EXEC_MOTION_INTERPOLATION);
+		Motion_Core::Software::Interpolation::load_block(mot);
+		Motion_Core::System::control_state_modes.set(STATE_EXEC_MOTION_INTERPOLATION);
 	}
 	
 }
@@ -116,9 +116,9 @@ void Motion_Core::Gateway::check_hardware_faults()
 	//See if there is a hardware alarm from a stepper/servo driver
 	if (Hardware_Abstraction_Layer::MotionCore::Inputs::Driver_Alarms >0)
 	{
-		Motion_Core::System::set_control_state_mode(STATE_ERR_AXIS_DRIVE_FAULT);
+		Motion_Core::System::control_state_modes.set(STATE_ERR_AXIS_DRIVE_FAULT);
 		//Hardware faults but not interpolating... Very strange..
-		if (Motion_Core::Hardware::Interpollation::Interpolation_Active)
+		if (Motion_Core::Hardware::Interpolation::Interpolation_Active)
 		{
 			//Immediately stop motion
 			Motion_Core::Segment::Arbitrator::cycle_hold(); //<--decelerate to a soft stop
@@ -151,11 +151,11 @@ void Motion_Core::Gateway::check_hardware_faults()
 void Motion_Core::Gateway::check_sequence_complete()
 {
 	//If we are holding, or resuming then we cant be complete can we...
-	if (Motion_Core::Hardware::Interpollation::Last_Completed_Sequence != 0
-	&& !Motion_Core::System::get_control_state_mode(STATE_MOTION_CONTROL_HOLD))
+	if (Motion_Core::Hardware::Interpolation::Last_Completed_Sequence != 0
+	&& !Motion_Core::System::control_state_modes.get(STATE_MOTION_CONTROL_HOLD))
 	//&& !Motion_Core::System::get_control_state_mode(STATE_MOTION_CONTROL_RESUME))
 	{
-		if (Motion_Core::Hardware::Interpollation::Interpolation_Active)
+		if (Motion_Core::Hardware::Interpolation::Interpolation_Active)
 		{
 			Events::Motion::events_statistics.system_state = BinaryRecords::e_system_state_record_types::Motion_Active;
 		}
@@ -166,11 +166,11 @@ void Motion_Core::Gateway::check_sequence_complete()
 
 		Events::Motion::events_statistics.system_sub_state = BinaryRecords::e_system_sub_state_record_types::Block_Complete;
 		
-		Events::Motion::events_statistics.num_message = Motion_Core::Hardware::Interpollation::Last_Completed_Sequence;
-		Motion_Core::Hardware::Interpollation::Last_Completed_Sequence = 0;
+		Events::Motion::events_statistics.num_message = Motion_Core::Hardware::Interpolation::Last_Completed_Sequence;
+		Motion_Core::Hardware::Interpolation::Last_Completed_Sequence = 0;
 		
 		//flag an event so that Main_Processing can pick it up.
-		Events::Motion::set_event(Events::Motion::e_event_type::Motion_complete);
+		Events::Motion::event_manager.set((int)Events::Motion::e_event_type::Motion_complete);
 	}
 }
 

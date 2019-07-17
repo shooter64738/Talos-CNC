@@ -29,6 +29,7 @@
 //#include "../../../Common/Hardware_Abstraction_Layer/ARM_SAM3X8E/c_core_arm_3x8e.h"
 #include "Platforms\ARM_3X8E\Talos_ARM3X8E\Platform Specific\c_motion_core_arm_3x8e_stepper.h"
 #include "Platforms\ARM_3X8E\Talos_ARM3X8E\Platform Specific\c_motion_core_arm_3x8e_inputs.h"
+#include "Platforms\ARM_3X8E\Talos_ARM3X8E\Platform Specific\c_motion_core_arm_3x8e_spindle.h"
 #include "Platforms\ARM_3X8E\Talos_ARM3X8E\Platform Specific\c_serial_arm_3x8e.h"
 #include "Common\Serial\c_Serial.h"
 #endif
@@ -37,7 +38,7 @@
 #define MAX_STEP_RATE 172000 //<--This doe not limit anything. It is only for a safety check.
 #define F_CPU 84000000
 #define _TICKS_PER_MICROSECOND ((F_CPU/2)/1000000)
-#include "..\Common\Serial\c_Serial.h"
+#include "Common\Serial\c_Serial.h"
 #include "Platforms\WIN32\Talos_WIN32\Platform Specific\c_core_win.h"
 #include "Platforms\WIN32\Talos_WIN32\Platform Specific\c_motion_core_win_stepper.h"
 #include "Platforms\WIN32\Talos_WIN32\Platform Specific\c_motion_core_win_inputs.h"

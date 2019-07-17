@@ -254,7 +254,7 @@ void c_canned_cycle::clear_callback(NGC_RS274::NGC_Binary_Block*local_block)
 void c_canned_cycle::clear_start(NGC_RS274::NGC_Binary_Block*local_block)
 {
 	//clear all bits so it appears no gcodes we in the block
-	local_block->g_code_defined_in_block = 0;
+	local_block->g_code_defined_in_block.reset();
 	c_canned_cycle::clear_positioning_axis(local_block);
 }
 

@@ -19,49 +19,45 @@
 */
 
 #include "c_motion_control_events.h"
-#include "..\bit_manipulation.h"
+#include "..\Motion_Core\c_interpollation_hardware.h"
+#include "..\hardware_def.h"
 
-uint8_t Events::Motion_Controller::event_flags;
+BinaryRecords::s_bit_flag_controller Events::Motion_Controller::event_manager;
+c_Serial *Events::Motion_Controller::local_serial;
 
 void Events::Motion_Controller::check_events()
 {
-	if (Events::Motion_Controller::event_flags > 0)
+	if (Events::Motion_Controller::event_manager._flag == 0)
 	{
-		//c_motion_controller::read_controller_data();
-	}
-}
-
-void Events::Motion_Controller::set_event(Events::Motion_Controller::e_event_type EventFlag)
-{
-	//EventFlag == Motion_Control_Events::AWAIT_OK_RESPONSE?OK_Event_Count++:0;
-	//EventFlag == Motion_Control_Events::AWAIT_DONE_RESPONSE?DONE_Event_Count++:0;
-
-	Events::Motion_Controller::event_flags=(BitSet(event_flags,((int)EventFlag)));
-}
-
-uint8_t Events::Motion_Controller::get_event(Events::Motion_Controller::e_event_type EventFlag)
-{
-	return (BitGet(Motion_Controller::event_flags,(int)EventFlag));
-}
-
-void Events::Motion_Controller::clear_event(Events::Motion_Controller::e_event_type EventFlag)
-{
-
-	//if (EventFlag == Motion_Control_Events::AWAIT_OK_RESPONSE)
-	//{
-		//c_motion_control_events::OK_Event_Count--;
-		////These should be 1 for 1 matches, but sometimes, OK gets out of synch.
-		//if (c_motion_control_events::OK_Event_Count<0){c_motion_control_events::OK_Event_Count = 0;}
-		//c_motion_control_events::OK_Event_Count == 0 ? bit_clear(c_motion_control_events::event_flags,BIT(EventFlag)) : 0;
-	//}
-	//else if (EventFlag == Motion_Control_Events::AWAIT_DONE_RESPONSE)
-	//{
-		//c_motion_control_events::DONE_Event_Count;
-		//c_motion_control_events::DONE_Event_Count == 0 ? bit_clear(c_motion_control_events::event_flags,BIT(EventFlag)) : 0;
-	//}
-	//else
-	{
-		Events::Motion_Controller::event_flags=BitClr(Motion_Controller::event_flags,((int)EventFlag));
+		return;
 	}
 	
+	if (Events::Motion_Controller::event_manager.get_clr((int)Events::Motion_Controller::e_event_type::Spindle_Error_Speed_Timeout))
+	{
+		local_serial->print_string("Spindle Synchronization has failed!\r");
+	}
+	
+	if (Events::Motion_Controller::event_manager.get((int)Events::Motion_Controller::e_event_type::Spindle_To_Speed_Wait))
+	{
+		//an event was set to wait until the spindle got to certain speed.
+		//we do not know or care why we are waiting, only that we were told to wait.
+		
+		//Check if spindle at speed. If at speed an event will be set for that.
+		Motion_Core::Hardware::Interpolation::check_spindle_at_speed();
+	}
+	if (Events::Motion_Controller::event_manager.get_clr((int)Events::Motion_Controller::e_event_type::Spindle_At_Speed))
+	{
+		//turn off the timeout waiting timer.
+		Hardware_Abstraction_Layer::MotionCore::Spindle::stop_at_speed_timer();
+		
+		//we no longer need to wait. we are at the specified speed.
+		Events::Motion_Controller::event_manager.clear((int)Events::Motion_Controller::e_event_type::Spindle_To_Speed_Wait);
+		//if we are at the speed specified, we can start interpolation.
+		
+		//The arbitrator will calculate values we use for accell and decel.
+		//Once accel is complete crusing state is active and THEN spindle speed controls motion execution
+		//When cruise ends, decel becomes the active state and the arbitrator again controls motion execution
+		Hardware_Abstraction_Layer::MotionCore::Stepper::wake_up();
+	}
 }
+

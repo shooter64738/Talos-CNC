@@ -1,6 +1,6 @@
 
 /*
-*  c_motion_events.h - NGC_RS274 controller.
+*  c_system_events.h - NGC_RS274 controller.
 *  A component of Talos
 *
 *  Copyright (c) 2016-2019 Jeff Dill
@@ -20,8 +20,8 @@
 */
 
 
-#ifndef __C_MOTION_CONTROL_EVENTS_H__
-#define __C_MOTION_CONTROL_EVENTS_H__
+#ifndef __C_SYSTEM_EVENTS_H__
+#define __C_SYSTEM_EVENTS_H__
 
 #include <stdint.h>
 #include "..\records_def.h"
@@ -29,19 +29,13 @@
 namespace Events
 {
 	
-	class Motion_Controller
+	class System
 	{
 		//variables
 		public:
 		enum class e_event_type : uint8_t
 		{
-			Control_online = 0,
-			Await_ok_response = 1,
-			Await_done_response = 2,
-			Control_error = 3,
-			Spindle_Error_Speed_Timeout = 4,
-			Spindle_At_Speed = 5,
-			Spindle_To_Speed_Wait = 6
+			Critical_Must_Shutdown = 0,
 		};
 		static BinaryRecords::s_bit_flag_controller event_manager;
 		static c_Serial *local_serial;
@@ -56,6 +50,6 @@ namespace Events
 
 		protected:
 		private:
-	}; //c_motion_control_events
+	}; 
 };
-#endif //__C_MOTION_CONTROL_EVENTS_H__
+#endif //__C_SYSTEM_EVENTS_H__

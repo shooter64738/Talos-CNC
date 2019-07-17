@@ -10,6 +10,7 @@
 #define __C_SYSTEM_H__
 #include <stdint.h>
 #include "..\physical_machine_parameters.h"
+#include "..\records_def.h"
 
 
 #define STEP_CONTROL_EXECUTE_HOLD         bit(1)
@@ -33,7 +34,7 @@ namespace Motion_Core
 	{
 		//variables
 		public:
-		static uint32_t control_state_modes;
+		static BinaryRecords::s_bit_flag_controller control_state_modes;
 		static uint8_t StepControl;
 		static uint32_t new_sequence;
 		struct s_travel
@@ -42,15 +43,15 @@ namespace Motion_Core
 			float total_travel [MACHINE_AXIS_COUNT];
 		};
 		static s_travel travel_statistics;
-		
+			
 		protected:
 		private:
 
 		//functions
 		public:
-		static void set_control_state_mode(uint8_t flag);
-		static void clear_control_state_mode(uint8_t flag);
-		static uint8_t get_control_state_mode(uint8_t flag);
+		//static void set_control_state_mode(uint8_t flag);
+		//static void clear_control_state_mode(uint8_t flag);
+		//static uint8_t get_control_state_mode(uint8_t flag);
 		protected:
 		private:
 

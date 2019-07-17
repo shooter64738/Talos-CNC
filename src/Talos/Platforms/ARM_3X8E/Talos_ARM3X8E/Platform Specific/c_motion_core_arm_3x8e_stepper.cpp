@@ -74,14 +74,14 @@ void Hardware_Abstraction_Layer::MotionCore::Stepper::wake_up()
 	//}
 
 	// Initialize step pulse timing from settings. Here to ensure updating after re-writing.
-	Motion_Core::Hardware::Interpollation::Step_Pulse_Length
-	= (float)Motion_Core::Settings::_Settings.pulse_length/(1.0/(((F_CPU)/1000000.0)/STEP_CLOCK_DIVIDER));
+	Motion_Core::Hardware::Interpolation::Step_Pulse_Length
+	= (float)Motion_Core::Settings::_Settings.Hardware_Settings.pulse_length/(1.0/(((F_CPU)/1000000.0)/STEP_CLOCK_DIVIDER));
 	
 	//Stepper pulse on time value. RC can never exceed RA or control will stop.
 	//Also RA should be the minimum pulse on time. For most drives that is the 2.5-5 uS range.
-	TC1->TC_CHANNEL[0].TC_RA = Motion_Core::Hardware::Interpollation::Step_Pulse_Length - DEAD_TIME;
+	TC1->TC_CHANNEL[0].TC_RA = Motion_Core::Hardware::Interpolation::Step_Pulse_Length - DEAD_TIME;
 	//Total pulse time
-	TC1->TC_CHANNEL[0].TC_RC = Motion_Core::Hardware::Interpollation::Step_Pulse_Length*2;
+	TC1->TC_CHANNEL[0].TC_RC = Motion_Core::Hardware::Interpolation::Step_Pulse_Length*2;
 	last_pulse = 0;
 	TC1->TC_CHANNEL[0].TC_CCR = TC_CCR_CLKEN | TC_CCR_SWTRG;
 }
@@ -166,9 +166,9 @@ void Hardware_Abstraction_Layer::MotionCore::Stepper::OCR1A_set(uint32_t delay)
 {
 	//just in case the user tries to go faster than their hardware allows we hold them
 	//at max here.
-	if (delay <Motion_Core::Hardware::Interpollation::Step_Pulse_Length)
+	if (delay <Motion_Core::Hardware::Interpolation::Step_Pulse_Length)
 	{
-		delay = Motion_Core::Hardware::Interpollation::Step_Pulse_Length+1;
+		delay = Motion_Core::Hardware::Interpolation::Step_Pulse_Length+1;
 	}
 	TC1->TC_CHANNEL[0].TC_RC = delay;
 }
@@ -191,7 +191,7 @@ void Timer1_Chan0_Handler_irq3(void)
 		irq=1;
 		
 		//Make appropriate pins high
-		Motion_Core::Hardware::Interpollation::step_tick();
+		Motion_Core::Hardware::Interpolation::step_tick();
 	}
 	//Check to see if this is the C interrupt flag. If it is this is the 'total time' pulse end
 	if (status_reg & TC_IER_CPCS)

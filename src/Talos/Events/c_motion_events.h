@@ -41,7 +41,7 @@ namespace Events
 		};
 		static c_Serial *local_serial;
 		static uint8_t motion_queue_count;
-		static uint8_t event_flags;
+		static BinaryRecords::s_bit_flag_controller event_manager;
 		//static uint32_t last_reported_block;
 		static BinaryRecords::s_status_message events_statistics;
 
@@ -51,9 +51,6 @@ namespace Events
 
 		//functions
 		public:
-		static void set_event(e_event_type EventFlag);
-		static uint8_t get_event(e_event_type EventFlag);
-		static void clear_event(e_event_type EventFlag);
 		static void check_events();
 
 		protected:

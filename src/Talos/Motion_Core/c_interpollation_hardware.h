@@ -10,18 +10,14 @@ namespace Motion_Core
 	{
 		#ifndef __C_HARDWARE_INTERPOLLATION
 		#define __C_HARDWARE_INTERPOLLATION
-		class Interpollation
+		class Interpolation
 		{
 			static uint32_t counter[MACHINE_AXIS_COUNT];
-			
-			#ifdef STEP_PULSE_DELAY
-			uint8_t step_bits;  // Stores out_bits output to complete the step pulse delay
-			#endif
 			static uint8_t step_outbits;         // The next stepping-bits to be output
 			static uint8_t dir_outbits;
 			static Motion_Core::Segment::Bresenham::Bresenham_Item *Change_Check_Exec_Timer_Bresenham; // Tracks the current st_block index. Change indicates new block.
 			static Motion_Core::Segment::Timer::Timer_Item *Exec_Timer_Item;  // Pointer to the segment being executed
-			
+
 			static uint8_t step_port_invert_mask;
 			static uint8_t dir_port_invert_mask;
 			static uint8_t direction_set;
@@ -37,13 +33,21 @@ namespace Motion_Core
 			static void step_tick();
 			static uint8_t is_active();
 			static void Initialize();
+			static void spindle_at_speed_timeout(uint32_t parameter);
 			static void Shutdown();
 			static void send_hardware_outputs();
+			static uint8_t check_spindle_at_speed();
 			static int32_t system_position[MACHINE_AXIS_COUNT];
-			
 
-			Interpollation();
-			~Interpollation();
+			static BinaryRecords::s_encoder spindle_encoder;
+
+			private:
+			static uint32_t spindle_calculated_delay;
+			static uint8_t spindle_synch;
+
+
+			Interpolation();
+			~Interpolation();
 		};
 		#endif
 	};

@@ -16,16 +16,26 @@ void Motion_Core::initialize()
 {
 	for (uint8_t i = 0; i < MACHINE_AXIS_COUNT; i++)
 	{
-		Motion_Core::Settings::_Settings.steps_per_mm[i] = 160;
-		Motion_Core::Settings::_Settings.acceleration[i] = (150.0 * 60 * 60);
-		Motion_Core::Settings::_Settings.max_rate[i] = 12000;
+		Motion_Core::Settings::_Settings.Hardware_Settings.steps_per_mm[i] = 160;
+		Motion_Core::Settings::_Settings.Hardware_Settings.acceleration[i] = (150.0 * 60 * 60);
+		Motion_Core::Settings::_Settings.Hardware_Settings.max_rate[i] = 12000;
+		Motion_Core::Settings::_Settings.Hardware_Settings.distance_per_rotation[i] = 5;
 		//arbitrary for testing
-		Motion_Core::Settings::_Settings.back_lash_comp_distance[i] = 55;
+		Motion_Core::Settings::_Settings.Hardware_Settings.back_lash_comp_distance[i] = 55;
 	}
 	
-	Motion_Core::Settings::_Settings.pulse_length = 5;
+	Motion_Core::Settings::_Settings.Hardware_Settings.pulse_length = 5;
+	Motion_Core::Settings::_Settings.Hardware_Settings.spindle_encoder.wait_spindle_at_speed = 1;
+	Motion_Core::Settings::_Settings.Hardware_Settings.spindle_encoder.spindle_synch_wait_time_ms = 5;
+	Motion_Core::Settings::_Settings.Hardware_Settings.spindle_encoder.ticks_per_revolution=400;
+	Motion_Core::Settings::_Settings.Hardware_Settings.spindle_encoder.current_rpm = 0;
+	Motion_Core::Settings::_Settings.Hardware_Settings.spindle_encoder.target_rpm = 0;
+	Motion_Core::Settings::_Settings.Hardware_Settings.spindle_encoder.variable_percent = 5;
+	
+
 	Motion_Core::Settings::_Settings.arc_tolerance = 0.002;
 	Motion_Core::Settings::_Settings.arc_angular_correction = 12;
+	
 
 }
 

@@ -18,6 +18,8 @@
 *  along with Talos.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "..\..\physical_machine_parameters.h"
+#ifdef MACHINE_TYPE_MILL
 
 #include "NGC_Mill.h"
 #include <string.h>
@@ -26,7 +28,7 @@
 #include "..\NGC_G_Groups.h"
 #include "..\NGC_G_Codes.h"
 #include "..\NGC_Interpreter.h"
-
+#include "..\NGC_Block.h"
 
 /*
 If a canned cycle (g81-g89) command was specified, perform detailed parameter check that applies
@@ -44,11 +46,11 @@ int NGC_RS274::Interpreter::NGC_Machine_Specific::error_check_canned_cycle()
 	//Check for rotational axis words. Those should not be used during canned cycles. RS274 standards page 30 section 3.5.16
 	//Technically these CAN be specified, but their values have to be the same as their resting state. In other words if they
 	//are specified they CANNOT cause movement
-	if (BitTst(NGC_RS274::Interpreter::Processor::local_block.word_defined_in_block_A_Z, A_WORD_BIT))
+	if (NGC_RS274::Interpreter::Processor::local_block.word_defined_in_block_A_Z.get(A_WORD_BIT))
 		return  NGC_RS274::Interpreter::Errors::CAN_CYLCE_ROTATIONAL_AXIS_A_DEFINED;
-	if (BitTst(NGC_RS274::Interpreter::Processor::local_block.word_defined_in_block_A_Z, B_WORD_BIT))
+	if (NGC_RS274::Interpreter::Processor::local_block.word_defined_in_block_A_Z.get(B_WORD_BIT))
 		return  NGC_RS274::Interpreter::Errors::CAN_CYLCE_ROTATIONAL_AXIS_B_DEFINED;
-	if (BitTst(NGC_RS274::Interpreter::Processor::local_block.word_defined_in_block_A_Z, C_WORD_BIT))
+	if (NGC_RS274::Interpreter::Processor::local_block.word_defined_in_block_A_Z.get(C_WORD_BIT))
 		return  NGC_RS274::Interpreter::Errors::CAN_CYLCE_ROTATIONAL_AXIS_C_DEFINED;
 
 	//Cutter radius compensation cannot be active in a canned cycle.
@@ -56,7 +58,7 @@ int NGC_RS274::Interpreter::NGC_Machine_Specific::error_check_canned_cycle()
 		return  NGC_RS274::Interpreter::Errors::CAN_CYLCE_CUTTER_RADIUS_COMPENSATION_ACTIVE;
 
 	//if L word specified it must be a positive integer > 1 (L is not required, only use it to repeat a cycle at the present location)
-	if (BitTst(NGC_RS274::Interpreter::Processor::local_block.word_defined_in_block_A_Z, L_WORD_BIT))
+	if (NGC_RS274::Interpreter::Processor::local_block.word_defined_in_block_A_Z.get(L_WORD_BIT))
 	{
 		//L was defined, make sure it >1 and integer
 		if (NGC_RS274::Interpreter::Processor::local_block.block_word_values['L' - 65] < 2)
@@ -76,7 +78,7 @@ int NGC_RS274::Interpreter::NGC_Machine_Specific::error_check_canned_cycle()
 	//if Using R retract method (G99), make sure R was set.
 	if (NGC_RS274::Interpreter::Processor::local_block.g_group[NGC_RS274::Groups::G::RETURN_MODE_CANNED_CYCLE] == NGC_RS274::G_codes::CANNED_CYCLE_RETURN_TO_R)
 	{
-		if (!BitTst(NGC_RS274::Interpreter::Processor::local_block.word_defined_in_block_A_Z, R_WORD_BIT) && NGC_RS274::Interpreter::Processor::local_block.get_value('R') == 0)
+		if (!NGC_RS274::Interpreter::Processor::local_block.word_defined_in_block_A_Z.get(R_WORD_BIT) && NGC_RS274::Interpreter::Processor::local_block.get_value('R') == 0)
 			return  NGC_RS274::Interpreter::Errors::CAN_CYCLE_MISSING_R_VALUE;
 		//R value was set and we are in R retract mode. We cannot have an R value that is less than the current Z
 		//(or whatever the retract axis is in the current plane). We cannot check that in the interpreter though.
@@ -87,7 +89,7 @@ int NGC_RS274::Interpreter::NGC_Machine_Specific::error_check_canned_cycle()
 	//if dwell cycle make sure P is set
 	if (NGC_RS274::Interpreter::Processor::local_block.g_group[NGC_RS274::Groups::G::MOTION] == NGC_RS274::G_codes::CANNED_CYCLE_DRILLING_WITH_DWELL)
 	{
-		if (!BitTst(NGC_RS274::Interpreter::Processor::local_block.word_defined_in_block_A_Z, P_WORD_BIT) && NGC_RS274::Interpreter::Processor::local_block.get_value('P') == 0)
+		if (!NGC_RS274::Interpreter::Processor::local_block.word_defined_in_block_A_Z.get(P_WORD_BIT) && NGC_RS274::Interpreter::Processor::local_block.get_value('P') == 0)
 			return  NGC_RS274::Interpreter::Errors::CAN_CYCLE_MISSING_P_VALUE;
 	}
 
@@ -97,3 +99,4 @@ int NGC_RS274::Interpreter::NGC_Machine_Specific::error_check_canned_cycle()
 
 	return  NGC_RS274::Interpreter::Errors::OK;
 }
+#endif

@@ -9,7 +9,7 @@ namespace Motion_Core
 	namespace Software
 	{
 		
-		class Interpollation
+		class Interpolation
 		{
 			public:
 

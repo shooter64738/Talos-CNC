@@ -3,16 +3,16 @@
 #include "c_segment_arbitrator.h"
 #include "c_interpollation_hardware.h"
 #include "c_gateway.h"
-//#include "..\Common\Serial\records_def.h"
+
 //#ifdef MSVC
 #define M_PI 3.14159265358979323846
 //#include "../../MSVC++.h"
 //#endif // MSVC
 
-Motion_Core::Software::Interpollation::s_backlash_comp Motion_Core::Software::Interpollation::back_comp;
-int32_t Motion_Core::Software::Interpollation::system_position[MACHINE_AXIS_COUNT]{0};
+Motion_Core::Software::Interpolation::s_backlash_comp Motion_Core::Software::Interpolation::back_comp;
+int32_t Motion_Core::Software::Interpolation::system_position[MACHINE_AXIS_COUNT]{0};
 
-void Motion_Core::Software::Interpollation::load_block(BinaryRecords::s_motion_data_block *block)
+void Motion_Core::Software::Interpolation::load_block(BinaryRecords::s_motion_data_block *block)
 {
 	uint8_t return_value = 0;
 	
@@ -59,8 +59,8 @@ void Motion_Core::Software::Interpollation::load_block(BinaryRecords::s_motion_d
 	//}
 	
 	//if we are switching feed modes, we must wait until current interpolation stops before we can proceed
-	if (Motion_Core::Hardware::Interpollation::drive_mode != block->feed_rate_mode
-	&& Motion_Core::Hardware::Interpollation::Interpolation_Active)
+	if (Motion_Core::Hardware::Interpolation::drive_mode != block->feed_rate_mode
+	&& Motion_Core::Hardware::Interpolation::Interpolation_Active)
 	{
 		//Store this block but do nothing with it. We should probably add a layer between the
 		//processor and here, in order to handle these types of conditions.
@@ -71,39 +71,40 @@ void Motion_Core::Software::Interpollation::load_block(BinaryRecords::s_motion_d
 		case BinaryRecords::e_motion_type::rapid_linear:
 		case BinaryRecords::e_motion_type::feed_linear:
 		{
-			return_value = Motion_Core::Software::Interpollation::_mc_line(block);
+			return_value = Motion_Core::Software::Interpolation::_mc_line(block);
 			break;
 		}
 		case BinaryRecords::e_motion_type::arc_cw:
 		case BinaryRecords::e_motion_type::arc_ccw:
 		{
-			return_value = Motion_Core::Software::Interpollation::_mc_arc(block);
+			return_value = Motion_Core::Software::Interpolation::_mc_arc(block);
 			break;
 		}
 	}
 	if (return_value)
 	{
+		//calculate accel/decel timer values, 
 		Motion_Core::Segment::Arbitrator::Fill_Step_Segment_Buffer();
-		Motion_Core::Hardware::Interpollation::drive_mode = block->feed_rate_mode;
+		Motion_Core::Hardware::Interpolation::drive_mode = block->feed_rate_mode;
 		//If interpolation is not active this will start it. If it is active we
 		//already have our segment added to the buffer.
-		Motion_Core::Hardware::Interpollation::Initialize();
+		Motion_Core::Hardware::Interpolation::Initialize();
 		
 		
 	}
 }
 
-uint8_t Motion_Core::Software::Interpollation::_mc_line(BinaryRecords::s_motion_data_block *target_block)
+uint8_t Motion_Core::Software::Interpolation::_mc_line(BinaryRecords::s_motion_data_block *target_block)
 {
 	return Motion_Core::Planner::Calculator::_plan_buffer_line(*target_block);
 }
 
 
-uint8_t Motion_Core::Software::Interpollation::_mc_arc(BinaryRecords::s_motion_data_block * target_block)
+uint8_t Motion_Core::Software::Interpolation::_mc_arc(BinaryRecords::s_motion_data_block * target_block)
 {
 	//x=0, y=2
-	float center_axis0 = Motion_Core::Software::Interpollation::system_position[0] + target_block->arc_values.horizontal_offset;
-	float center_axis1 = Motion_Core::Software::Interpollation::system_position[1] + target_block->arc_values.vertical_offset;
+	float center_axis0 = Motion_Core::Software::Interpolation::system_position[0] + target_block->arc_values.horizontal_offset;
+	float center_axis1 = Motion_Core::Software::Interpolation::system_position[1] + target_block->arc_values.vertical_offset;
 	
 	
 	float r_axis0 = -target_block->arc_values.horizontal_offset;
@@ -212,10 +213,10 @@ uint8_t Motion_Core::Software::Interpollation::_mc_arc(BinaryRecords::s_motion_d
 			}
 			
 			// Update arc_target location
-			target_block->axis_values[0] = (center_axis0 + r_axis0) - Motion_Core::Software::Interpollation::system_position[0];
-			target_block->axis_values[1] = (center_axis1 + r_axis1) - Motion_Core::Software::Interpollation::system_position[1];
+			target_block->axis_values[0] = (center_axis0 + r_axis0) - Motion_Core::Software::Interpolation::system_position[0];
+			target_block->axis_values[1] = (center_axis1 + r_axis1) - Motion_Core::Software::Interpolation::system_position[1];
 			target_block->axis_values[2] = linear_per_segment;
-			Motion_Core::Software::Interpollation::_mc_line(target_block);
+			Motion_Core::Software::Interpolation::_mc_line(target_block);
 			
 			// Update arc_target location
 			//*Motion_Core::Software::Interpollation::previous_state.plane_axis.horizontal_axis.value = center_axis0 + r_axis0;
@@ -227,7 +228,7 @@ uint8_t Motion_Core::Software::Interpollation::_mc_arc(BinaryRecords::s_motion_d
 		}
 	}
 	// Ensure last segment arrives at target location.
-	return Motion_Core::Software::Interpollation::_mc_line(target_block);
+	return Motion_Core::Software::Interpolation::_mc_line(target_block);
 }
 
 

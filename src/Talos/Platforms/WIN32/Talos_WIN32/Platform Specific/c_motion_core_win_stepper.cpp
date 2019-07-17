@@ -61,7 +61,7 @@ void Hardware_Abstraction_Layer::MotionCore::Stepper::wake_up()
 	OCR0A = -(((c_settings::settings.pulse_microseconds)*TICKS_PER_MICROSECOND) >> 3);
 #else // Normal operation
 	// Set step pulse time. Ad hoc computation from oscilloscope. Uses two's complement.
-	Motion_Core::Hardware::Interpollation::Step_Pulse_Length = -(((Motion_Core::Settings::_Settings.pulse_length - 2) * _TICKS_PER_MICROSECOND) >> 3);
+	Motion_Core::Hardware::Interpolation::Step_Pulse_Length = -(((Motion_Core::Settings::_Settings.Hardware_Settings.pulse_length - 2) * _TICKS_PER_MICROSECOND) >> 3);
 #endif
 
 	// Enable Stepper Driver Interrupt
@@ -80,9 +80,9 @@ void Hardware_Abstraction_Layer::MotionCore::Stepper::timer1_overflow_thread()
 		//only run a step timer tick if the 'timer' is enabled
 		if (Hardware_Abstraction_Layer::MotionCore::Stepper::_TIMSK1 & (1 << OCIE1A))
 		{
-			Motion_Core::Hardware::Interpollation::step_tick();
+			Motion_Core::Hardware::Interpolation::step_tick();
 			//c_stepper::step_tick();
-			std::this_thread::sleep_for(std::chrono::microseconds(16));
+			std::this_thread::sleep_for(std::chrono::microseconds(1));
 
 		}
 	}
@@ -122,7 +122,7 @@ void Hardware_Abstraction_Layer::MotionCore::Stepper::pulse_reset_timer()
 {
 	// Enable step pulse reset timer so that The Stepper Port Reset Interrupt can reset the signal after
 	// exactly settings.pulse_microseconds microseconds, independent of the main Timer1 prescaler.
-	uint16_t _TCNT0 = Motion_Core::Hardware::Interpollation::Step_Pulse_Length; // Reload Timer0 counter
+	uint16_t _TCNT0 = Motion_Core::Hardware::Interpolation::Step_Pulse_Length; // Reload Timer0 counter
 	//TCCR0B = (1 << CS01); // Begin Timer0. Full speed, 1/8 prescaler
 
 	//sei();

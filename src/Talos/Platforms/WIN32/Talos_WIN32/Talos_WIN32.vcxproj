@@ -17,6 +17,7 @@
     <ClCompile Include="..\..\..\Events\c_events.cpp" />
     <ClCompile Include="..\..\..\Events\c_motion_control_events.cpp" />
     <ClCompile Include="..\..\..\Events\c_motion_events.cpp" />
+    <ClCompile Include="..\..\..\Events\c_system_events.cpp" />
     <ClCompile Include="..\..\..\GCode_Process.cpp" />
     <ClCompile Include="..\..\..\Machine_Parameters_Process.cpp" />
     <ClCompile Include="..\..\..\main.cpp" />
@@ -58,6 +59,7 @@
     <ClInclude Include="..\..\..\Events\c_events.h" />
     <ClInclude Include="..\..\..\Events\c_motion_control_events.h" />
     <ClInclude Include="..\..\..\Events\c_motion_events.h" />
+    <ClInclude Include="..\..\..\Events\c_system_events.h" />
     <ClInclude Include="..\..\..\GCode_Process.h" />
     <ClInclude Include="..\..\..\hardware_def.h" />
     <ClInclude Include="..\..\..\Machine_Parameters_Process.h" />

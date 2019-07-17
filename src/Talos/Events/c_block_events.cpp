@@ -22,33 +22,18 @@
 #include "c_block_events.h"
 #include "..\bit_manipulation.h"
 
-uint32_t Events::NGC_Block::event_flags;
+BinaryRecords::s_bit_flag_controller Events::NGC_Block::event_manager;
 
 
 void Events::NGC_Block::check_events()
 {
-	if (Events::NGC_Block::event_flags ==0)
+	if (Events::NGC_Block::event_manager._flag ==0)
 	{
 	return;
 	}
 	
-	if (Events::NGC_Block::get_event(Events::NGC_Block::e_event_type::Motion))
+	if (Events::NGC_Block::event_manager.get_clr((int)Events::NGC_Block::e_event_type::Motion))
 	{
 		
 	}
-}
-
-void Events::NGC_Block::set_event(Events::NGC_Block::e_event_type EventFlag)
-{
-	Events::NGC_Block::event_flags=(BitSet(NGC_Block::event_flags,((int)EventFlag)));
-}
-
-uint8_t Events::NGC_Block::get_event(Events::NGC_Block::e_event_type EventFlag)
-{
-	return (BitGet(NGC_Block::event_flags,((int)EventFlag)));
-}
-
-void Events::NGC_Block::clear_event(Events::NGC_Block::e_event_type EventFlag)
-{
-	Events::NGC_Block::event_flags =BitClr(NGC_Block::event_flags,((int)EventFlag));
 }

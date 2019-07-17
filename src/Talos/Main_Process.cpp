@@ -19,9 +19,12 @@
 #include "Motion_Core\c_motion_core.h"
 #include "Planner\c_gcode_buffer.h"
 #include "NGC_RS274\NGC_Interpreter.h"
-#include "Events\c_events.h"
 #include "Motion_Core\c_system.h"
+#include "Events\c_events.h"
 #include "Events\c_motion_events.h"
+#include "Events\c_motion_control_events.h"
+#include "Events\c_system_events.h"
+
 
 c_Serial Talos::Main_Process::host_serial;
 
@@ -30,6 +33,7 @@ void Talos::Main_Process::startup()
 	Hardware_Abstraction_Layer::Core::initialize();
 	Hardware_Abstraction_Layer::MotionCore::Stepper::initialize();
 	Hardware_Abstraction_Layer::MotionCore::Inputs::initialize();
+	Hardware_Abstraction_Layer::MotionCore::Spindle::initialize();
 	Motion_Core::initialize();
 	NGC_RS274::Interpreter::Processor::initialize();
 	c_machine::initialize();
@@ -45,8 +49,9 @@ void Talos::Main_Process::startup()
 		//c_hal::comm.PNTR_VIRTUAL_BUFFER_WRITE(0, "g41p.25G0X1Y1F100\rX2Y2\rX3Y3\r"); //<--data from host
 
 		//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "@mmx1000\r");
-		Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "g81x50f500\r\n"); //<--data from host
-		Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "g0x10\r\n"); //<--data from host
+		Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "g0x1000\r\n"); //<--data from host
+		//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "g0x1000\r\n"); //<--data from host
+		//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "g0x10\r\n"); //<--data from host
 		//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "x3\r"); //<--data from host
 		//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "x5\r"); //<--data from host
 		//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "x7\r"); //<--data from host
@@ -56,12 +61,15 @@ void Talos::Main_Process::startup()
 	#endif
 
 	//By default any gcode lines loaded will automatically execute.
-	Motion_Core::System::set_control_state_mode(STATE_AUTO_START_CYCLE);
+	Motion_Core::System::control_state_modes.set(STATE_AUTO_START_CYCLE);
+	
 	Talos::Main_Process::host_serial.print_string("hello world!\r");
 	int16_t return_value = 0;
 	c_stager::local_serial = &Talos::Main_Process::host_serial;
 	NGC_RS274::Interpreter::Processor::local_serial = &Talos::Main_Process::host_serial;
 	Events::Motion::local_serial = &Talos::Main_Process::host_serial;
+	Events::Motion_Controller::local_serial = &Talos::Main_Process::host_serial;
+	Events::System::local_serial = &Talos::Main_Process::host_serial;
 	Talos::GCode_Process::local_serial = &Talos::Main_Process::host_serial;
 	
 	while (1)
@@ -92,7 +100,7 @@ void Talos::Main_Process::startup()
 				*/
 
 				////Interpreter threw no errors so see if the buffer is full or not. If not, carry on!
-				if (!Events::Data::get_event(Events::Data::e_event_type::Staging_buffer_full))
+				if (!Events::Data::event_manager.get((int)Events::Data::e_event_type::Staging_buffer_full))
 				{
 					return_value = c_stager::pre_stage_check(); //<--Currently does nothing, but you never know
 					if (return_value == Stager_Errors::OK)

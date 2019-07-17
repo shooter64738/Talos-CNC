@@ -1,5 +1,5 @@
 /*
-*  NGC_Mill.h - NGC_RS274 controller.
+*  c_motion_events.cpp - NGC_RS274 controller.
 *  A component of Talos
 *
 *  Copyright (c) 2016-2019 Jeff Dill
@@ -18,25 +18,22 @@
 *  along with Talos.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "..\..\physical_machine_parameters.h"
-#ifdef MACHINE_TYPE_MILL
+#include "c_system_events.h"
 
-#ifndef NGC_MILL_H
-#define NGC_MILL_H
+BinaryRecords::s_bit_flag_controller Events::System::event_manager;
+c_Serial *Events::System::local_serial;
 
-#include <stdint.h>
-#include "..\NGC_Block.h"
-namespace NGC_RS274
+void Events::System::check_events()
 {
-	namespace Interpreter
+	if (Events::System::event_manager._flag == 0)
 	{
-		class NGC_Machine_Specific
-		{
-		public:
-			static int error_check_canned_cycle();
+		return;
+	}
+	
+	if (Events::System::event_manager.get_clr((int)Events::System::e_event_type::Critical_Must_Shutdown))
+	{
+		local_serial->print_string("Critical hardware fault.\r");
+	}
+	
+}
 
-		};
-	};
-};
-#endif 
-#endif

@@ -22,48 +22,10 @@
 #ifndef NGC_BINARY_BLOCK_H
 #define NGC_BINARY_BLOCK_H
 
-//How many words can a block contain
-#define COUNT_OF_BLOCK_WORDS_ARRAY 26
-//How many elements are in the G code group array
-#define COUNT_OF_G_CODE_GROUPS_ARRAY 16
-//How many elements are in the M code group array
-#define COUNT_OF_M_CODE_GROUPS_ARRAY 6
-//How many tool offset are in the tool table. (Note tool 0 is used when P value is sent)
-#define COUNT_OF_TOOL_TABLE 10
-
-#define G_CODE_MULTIPLIER 10
-
-
-
-#define A_WORD_BIT 0
-#define B_WORD_BIT 1
-#define C_WORD_BIT 2
-#define D_WORD_BIT 3
-#define E_WORD_BIT 4
-#define F_WORD_BIT 5
-#define G_WORD_BIT 6
-#define H_WORD_BIT 7
-#define I_WORD_BIT 8
-#define J_WORD_BIT 9
-#define K_WORD_BIT 10
-#define L_WORD_BIT 11
-#define M_WORD_BIT 12
-#define N_WORD_BIT 13
-#define O_WORD_BIT 14
-#define P_WORD_BIT 15
-#define Q_WORD_BIT 16
-#define R_WORD_BIT 17
-#define S_WORD_BIT 18
-#define T_WORD_BIT 19
-#define U_WORD_BIT 20
-#define V_WORD_BIT 21
-#define W_WORD_BIT 22
-#define X_WORD_BIT 23
-#define Y_WORD_BIT 24
-#define Z_WORD_BIT 25
-
 #include <stdint.h>
+#include "ngc_defines.h"
 #include "..\physical_machine_parameters.h"
+#include "..\records_def.h"
 #define COMP_SET_BIT 1
 #define BLOCK_STATE_PLANNED 0
 #define BLOCK_STATE_HELD 1
@@ -154,11 +116,12 @@ namespace NGC_RS274
 
 		float block_word_values[COUNT_OF_BLOCK_WORDS_ARRAY];
 		//This is a 4 byte (32 bit) variable. If a word was defined on the line its respective bit is set.
-		uint32_t word_defined_in_block_A_Z;
+		//uint32_t word_defined_in_block_A_Z;
+		BinaryRecords::s_bit_flag_controller word_defined_in_block_A_Z;
 		//This is a 2 byte (16 bit) variable. If a G command was defined for a G group we store its bits in here.
-		uint16_t g_code_defined_in_block;
+		BinaryRecords::s_bit_flag_controller g_code_defined_in_block;
 		//This is a 2 byte (16 bit) variable. If a M command was defined for an M group we store its bits in here.
-		uint16_t m_code_defined_in_block;
+		BinaryRecords::s_bit_flag_controller m_code_defined_in_block;
 		//These initialize with -1 values. 0 is a valid value for some blocks, so setting them to -1 indicates the value was never explicitly set.
 		uint16_t g_group[COUNT_OF_G_CODE_GROUPS_ARRAY]; //There are 14 groups of gcodes (0-13)
 		uint16_t m_group[COUNT_OF_M_CODE_GROUPS_ARRAY]; //There are 5 groups of mcodes (0-4)
@@ -190,8 +153,8 @@ namespace NGC_RS274
 
 		//If the block has motions, each element of the array will have an indicator
 		//of +1,0,-1 to indicate the direction it is moving in this block
-		int8_t motion_direction[MACHINE_AXIS_COUNT];
-		float unit_target_positions[MACHINE_AXIS_COUNT];
+		//int8_t motion_direction[MACHINE_AXIS_COUNT];
+		//float unit_target_positions[MACHINE_AXIS_COUNT];
 		//float start_position[MACHINE_AXIS_COUNT];
 		//float vector_distance[MACHINE_AXIS_COUNT];
 		bool is_motion_block;

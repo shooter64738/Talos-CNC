@@ -205,7 +205,7 @@ int16_t c_stager::stage_block_motion()
 	//Update non modal gcodes if they were defined.
 	if (local_block->get_g_code_defined(NGC_RS274::Groups::G::NON_MODAL))
 	{
-		Events::NGC_Block::set_event(Events::NGC_Block::e_event_type::Non_modal);
+		Events::NGC_Block::event_manager.set((int)Events::NGC_Block::e_event_type::Non_modal);
 		c_stager::update_non_modals(local_block);
 	}
 
@@ -218,23 +218,23 @@ int16_t c_stager::stage_block_motion()
 			//Set events for the g groups that changed in this block
 			if (group == NGC_RS274::Groups::G::MOTION && local_block->g_group[NGC_RS274::Groups::G::MOTION] != previous_block->g_group[NGC_RS274::Groups::G::MOTION])
 			{
-				Events::NGC_Block::set_event(Events::NGC_Block::e_event_type::Motion);
+				Events::NGC_Block::event_manager.set((int)Events::NGC_Block::e_event_type::Motion);
 			}
 			if (group == NGC_RS274::Groups::G::CUTTER_RADIUS_COMPENSATION)
-				Events::NGC_Block::set_event(Events::NGC_Block::e_event_type::Cutter_radius_compensation);
+				Events::NGC_Block::event_manager.set((int)Events::NGC_Block::e_event_type::Cutter_radius_compensation);
 			if (group == NGC_RS274::Groups::G::TOOL_LENGTH_OFFSET)
-				Events::NGC_Block::set_event(Events::NGC_Block::e_event_type::Tool_length_offset);
+				Events::NGC_Block::event_manager.set((int)Events::NGC_Block::e_event_type::Tool_length_offset);
 			if (group == NGC_RS274::Groups::G::FEED_RATE_MODE)
-				Events::NGC_Block::set_event(Events::NGC_Block::e_event_type::Feed_rate_mode);
+				Events::NGC_Block::event_manager.set((int)Events::NGC_Block::e_event_type::Feed_rate_mode);
 			if (group == NGC_RS274::Groups::G::UNITS)
-				Events::NGC_Block::set_event(Events::NGC_Block::e_event_type::Units);
+				Events::NGC_Block::event_manager.set((int)Events::NGC_Block::e_event_type::Units);
 
 
 			//c_stager::stager_state_g_group[group] = local_block->g_group[group];
 		}
 	}
 
-	if (Events::NGC_Block::get_event(Events::NGC_Block::e_event_type::Units)) //<--block has a units changed command
+	if (Events::NGC_Block::event_manager.get_clr((int)Events::NGC_Block::e_event_type::Units)) //<--block has a units changed command
 	{
 		c_stager::local_serial->print_string("units changed\r");
 		c_machine::unit_scaler = 1;
@@ -242,8 +242,6 @@ int16_t c_stager::stage_block_motion()
 		{
 			c_machine::unit_scaler = 25.4;
 		}
-		Events::NGC_Block::clear_event(Events::NGC_Block::e_event_type::Units);
-		//c_status::axis_values(c_machine::axis_position, MACHINE_AXIS_COUNT, c_machine::unit_scaler);
 	}
 
 
@@ -274,21 +272,21 @@ int16_t c_stager::stage_block_motion()
 	//Set feed rate
 	if (local_block->get_defined('F'))
 	{
-		Events::NGC_Block::set_event(Events::NGC_Block::e_event_type::Feed_rate);
+		Events::NGC_Block::event_manager.set((int)Events::NGC_Block::e_event_type::Feed_rate);
 		//local_block->persisted_values.feed_rate = local_block->get_value('F');
 	}
 
 	//// [4. Set spindle speed ]:
 	if (local_block->get_defined('S'))
 	{
-		Events::NGC_Block::set_event(Events::NGC_Block::e_event_type::Spindle_rate);
+		Events::NGC_Block::event_manager.set((int)Events::NGC_Block::e_event_type::Spindle_rate);
 		//local_block->persisted_values.active_s = local_block->get_value('S');
 	}
 
 	// [5. Select tool ]: NOT SUPPORTED. Only tracks tool value.
 	if (local_block->get_defined('T'))
 	{
-		Events::NGC_Block::set_event(Events::NGC_Block::e_event_type::Tool_id);
+		Events::NGC_Block::event_manager.set((int)Events::NGC_Block::e_event_type::Tool_id);
 		//local_block->persisted_values.active_t = local_block->get_value('T');
 	}
 
@@ -338,7 +336,7 @@ int16_t c_stager::stage_block_motion()
 	Events are not set every time we loop through here. Only when something has changed.
 	*/
 
-	if (Events::NGC_Block::get_event(Events::NGC_Block::e_event_type::Cutter_radius_compensation)) //<--block has a compensation command
+	if (Events::NGC_Block::event_manager.get((int)Events::NGC_Block::e_event_type::Cutter_radius_compensation)) //<--block has a compensation command
 	{
 		//c_block_events::clear_event(Block_Events::CUTTER_RADIUS_COMPENSATION);
 		//c_stager::local_serial->Write("cutter comp change...");
@@ -369,9 +367,8 @@ int16_t c_stager::stage_block_motion()
 	}
 	
 	
-	if (Events::NGC_Block::get_event(Events::NGC_Block::e_event_type::Tool_length_offset)) //<--block has a tool length command
+	if (Events::NGC_Block::event_manager.get_clr((int)Events::NGC_Block::e_event_type::Tool_length_offset)) //<--block has a tool length command
 	{
-		Events::NGC_Block::clear_event(Events::NGC_Block::e_event_type::Tool_length_offset);
 		//c_stager::local_serial->Write("tool length change...");
 		//c_stager::local_serial->Write(CR);
 		/*
@@ -406,10 +403,8 @@ int16_t c_stager::stage_block_motion()
 	full soon after this, and the controller will stop responding with NGC_Planner_Errors::OK
 	so that the host will hold transmitting more data until the ngc buffer has space available.
 	*/
-	if (Events::NGC_Block::get_event(Events::NGC_Block::e_event_type::Motion)) //<--block has a motion command that is different than the previous block
+	if (Events::NGC_Block::event_manager.get_clr((int)Events::NGC_Block::e_event_type::Motion)) //<--block has a motion command that is different than the previous block
 	{
-		//This is only here in case we need to do something special when a motion type changes. 
-		Events::NGC_Block::clear_event(Events::NGC_Block::e_event_type::Motion); //<--clear the motion event.	
 
 		//If motion type has changed and a canned cycle was running, we need to reset it
 		c_canned_cycle::active_cycle_code = 0; //<--If this is zero when a cycle start, the cycle will re-initialize.
@@ -438,17 +433,17 @@ int16_t c_stager::stage_block_motion()
 
 	//see if the motion state requires motion and a non modal was not on the local block.
 	if (local_block->g_group[NGC_RS274::Groups::G::MOTION] != NGC_RS274::G_codes::MOTION_CANCELED
-		&& !Events::NGC_Block::get_event(Events::NGC_Block::e_event_type::Non_modal))
+		&& !Events::NGC_Block::event_manager.get((int)Events::NGC_Block::e_event_type::Non_modal))
 	{
-		if (!Events::Data::get_event(Events::Data::e_event_type::Staging_buffer_full) && local_block->any_axis_was_defined())
+		if (!Events::Data::event_manager.get((int)Events::Data::e_event_type::Staging_buffer_full) && local_block->any_axis_was_defined())
 		{
 			local_block->is_motion_block = true;
-			Events::Motion::set_event(Events::Motion::e_event_type::Motion_in_queue);
+			Events::Motion::event_manager.set((int)Events::Motion::e_event_type::Motion_in_queue);
 		}
 	}
 
 	//clear any non modal events after we finish
-	Events::NGC_Block::clear_event(Events::NGC_Block::e_event_type::Non_modal);
+	Events::NGC_Block::event_manager.clear((int)Events::NGC_Block::e_event_type::Non_modal);
 
 	////We need to know the position that this block took us too.
 	////Set the stager starting position the the processed blocks end position
@@ -471,9 +466,8 @@ int16_t c_stager::update_cutter_compensation(NGC_RS274::NGC_Binary_Block* local_
 	c_Cutter_Comp::tool_radius = tool_table[(uint16_t)local_block->get_value('D')].diameter;
 
 	//was cutter compensation flagged as changed
-	if (Events::NGC_Block::get_event(Events::NGC_Block::e_event_type::Cutter_radius_compensation))
+	if (Events::NGC_Block::event_manager.get_clr((int)Events::NGC_Block::e_event_type::Cutter_radius_compensation))
 	{
-		Events::NGC_Block::clear_event(Events::NGC_Block::e_event_type::Cutter_radius_compensation);
 		if (local_block->g_group[NGC_RS274::Groups::G::CUTTER_RADIUS_COMPENSATION] ==
 			NGC_RS274::G_codes::START_CUTTER_RADIUS_COMPENSATION_LEFT)
 		{
@@ -585,45 +579,45 @@ void c_stager::update_coordinate_datum(uint16_t parameter_slot)
 int16_t c_stager::calculate_vector_distance(NGC_RS274::NGC_Binary_Block*plan_block)
 {
 
-	for (int axis_id = 0; axis_id < MACHINE_AXIS_COUNT; axis_id++)
-	{
-		//Before this is changed, we save of the start position for this motion block.
-		//plan_block->start_position[axis_id] = c_stager::start_motion_position[axis_id];
-		float address = 0;
-		//Check the axis value only if it was defined in the block
-		if (plan_block->get_value_defined(c_machine::machine_axis_names[axis_id], address))
-		{
-			//If distance mode is absolute, we need to check to see if there is a
-			//difference in the last position and the new position
-			if (plan_block->g_group[NGC_RS274::Groups::G::DISTANCE_MODE] == NGC_RS274::G_codes::ABSOLUTE_DISANCE_MODE)
-			{
-
-				plan_block->motion_direction[axis_id] = address - c_stager::start_motion_position[axis_id] < 0
-					? -1 : (address - c_stager::end_motion_position[axis_id] == 0 ? 0 : 1);
-
-				//plan_block->vector_distance[axis_id] = (address - c_stager::start_motion_position[axis_id]);
-				plan_block->unit_target_positions[axis_id] = address;
-			}
-			//If distance mode is incremental, we need to check to see if there is a value set
-			else if (plan_block->g_group[NGC_RS274::Groups::G::DISTANCE_MODE] == NGC_RS274::G_codes::INCREMENTAL_DISTANCE_MODE)
-			{
-				plan_block->motion_direction[axis_id] = address < 0 ? -1 : (address == 0 ? 0 : 1);
-
-				plan_block->unit_target_positions[axis_id] += address;
-				//plan_block->vector_distance[axis_id] = address;
-			}
-		}
-	}
-
-	//if (plan_block->motion_direction[MACHINE_X_AXIS] == 0 &&
-		//plan_block->motion_direction[MACHINE_Y_AXIS] == 0 &&
-		//plan_block->motion_direction[MACHINE_Z_AXIS] == 0 &&
-		//plan_block->motion_direction[MACHINE_A_AXIS] == 0 &&
-		//plan_block->motion_direction[MACHINE_B_AXIS] == 0 &&
-		//plan_block->motion_direction[MACHINE_C_AXIS] == 0 &&
-		//plan_block->motion_direction[MACHINE_U_AXIS] == 0 &&
-		//plan_block->motion_direction[MACHINE_V_AXIS] == 0)
-		//return NGC_Planner_Errors::NO_VECTOR_DISTANCE_MOTION_IGNORED;
+	//for (int axis_id = 0; axis_id < MACHINE_AXIS_COUNT; axis_id++)
+	//{
+		////Before this is changed, we save of the start position for this motion block.
+		////plan_block->start_position[axis_id] = c_stager::start_motion_position[axis_id];
+		//float address = 0;
+		////Check the axis value only if it was defined in the block
+		//if (plan_block->get_value_defined(c_machine::machine_axis_names[axis_id], address))
+		//{
+			////If distance mode is absolute, we need to check to see if there is a
+			////difference in the last position and the new position
+			//if (plan_block->g_group[NGC_RS274::Groups::G::DISTANCE_MODE] == NGC_RS274::G_codes::ABSOLUTE_DISANCE_MODE)
+			//{
+//
+				//plan_block->motion_direction[axis_id] = address - c_stager::start_motion_position[axis_id] < 0
+					//? -1 : (address - c_stager::end_motion_position[axis_id] == 0 ? 0 : 1);
+//
+				////plan_block->vector_distance[axis_id] = (address - c_stager::start_motion_position[axis_id]);
+				//plan_block->unit_target_positions[axis_id] = address;
+			//}
+			////If distance mode is incremental, we need to check to see if there is a value set
+			//else if (plan_block->g_group[NGC_RS274::Groups::G::DISTANCE_MODE] == NGC_RS274::G_codes::INCREMENTAL_DISTANCE_MODE)
+			//{
+				//plan_block->motion_direction[axis_id] = address < 0 ? -1 : (address == 0 ? 0 : 1);
+//
+				//plan_block->unit_target_positions[axis_id] += address;
+				////plan_block->vector_distance[axis_id] = address;
+			//}
+		//}
+	//}
+//
+	////if (plan_block->motion_direction[MACHINE_X_AXIS] == 0 &&
+		////plan_block->motion_direction[MACHINE_Y_AXIS] == 0 &&
+		////plan_block->motion_direction[MACHINE_Z_AXIS] == 0 &&
+		////plan_block->motion_direction[MACHINE_A_AXIS] == 0 &&
+		////plan_block->motion_direction[MACHINE_B_AXIS] == 0 &&
+		////plan_block->motion_direction[MACHINE_C_AXIS] == 0 &&
+		////plan_block->motion_direction[MACHINE_U_AXIS] == 0 &&
+		////plan_block->motion_direction[MACHINE_V_AXIS] == 0)
+		////return NGC_Planner_Errors::NO_VECTOR_DISTANCE_MOTION_IGNORED;
 
 	return NGC_Planner_Errors::OK;
 }

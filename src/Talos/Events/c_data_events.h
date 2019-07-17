@@ -23,6 +23,7 @@
 #define __C_DATA_EVENTS_H__
 
 #include <stdint.h>
+#include "..\records_def.h"
 
 namespace Events
 {
@@ -39,16 +40,13 @@ namespace Events
 			Peripheral_record_in_queue = 4,
 			Motion_record_in_queue = 5
 		};
-		static uint32_t event_flags;
+		static BinaryRecords::s_bit_flag_controller event_manager;
 		protected:
 		private:
 
 
 		//functions
 		public:
-		static void set_event(e_event_type EventFlag);
-		static uint8_t get_event(e_event_type EventFlag);
-		static void clear_event(e_event_type EventFlag);
 		static void check_events();
 
 		protected:

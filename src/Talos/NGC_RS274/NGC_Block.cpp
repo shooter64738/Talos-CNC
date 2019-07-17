@@ -34,21 +34,21 @@ void NGC_RS274::NGC_Binary_Block::initialize()
 {
 	memset(this->block_word_values, 0, sizeof(this->block_word_values));
 
-	this->active_plane.horizontal_axis.words_defined = &this->word_defined_in_block_A_Z;
-	this->active_plane.vertical_axis.words_defined = &this->word_defined_in_block_A_Z;
-	this->active_plane.normal_axis.words_defined = &this->word_defined_in_block_A_Z;
+	this->active_plane.horizontal_axis.words_defined = &this->word_defined_in_block_A_Z._flag;
+	this->active_plane.vertical_axis.words_defined = &this->word_defined_in_block_A_Z._flag;
+	this->active_plane.normal_axis.words_defined = &this->word_defined_in_block_A_Z._flag;
 
-	this->active_plane.rotary_horizontal_axis.words_defined = &this->word_defined_in_block_A_Z;
-	this->active_plane.rotary_vertical_axis.words_defined = &this->word_defined_in_block_A_Z;
-	this->active_plane.rotary_normal_axis.words_defined = &this->word_defined_in_block_A_Z;
+	this->active_plane.rotary_horizontal_axis.words_defined = &this->word_defined_in_block_A_Z._flag;
+	this->active_plane.rotary_vertical_axis.words_defined = &this->word_defined_in_block_A_Z._flag;
+	this->active_plane.rotary_normal_axis.words_defined = &this->word_defined_in_block_A_Z._flag;
 
-	this->active_plane.inc_horizontal_axis.words_defined = &this->word_defined_in_block_A_Z;
-	this->active_plane.inc_vertical_axis.words_defined = &this->word_defined_in_block_A_Z;
-	this->active_plane.inc_normal_axis.words_defined = &this->word_defined_in_block_A_Z;
+	this->active_plane.inc_horizontal_axis.words_defined = &this->word_defined_in_block_A_Z._flag;
+	this->active_plane.inc_vertical_axis.words_defined = &this->word_defined_in_block_A_Z._flag;
+	this->active_plane.inc_normal_axis.words_defined = &this->word_defined_in_block_A_Z._flag;
 
-	this->arc_values.horizontal_offset.words_defined = &this->word_defined_in_block_A_Z;
-	this->arc_values.vertical_offset.words_defined = &this->word_defined_in_block_A_Z;
-	this->arc_values.normal_offset.words_defined = &this->word_defined_in_block_A_Z;
+	this->arc_values.horizontal_offset.words_defined = &this->word_defined_in_block_A_Z._flag;
+	this->arc_values.vertical_offset.words_defined = &this->word_defined_in_block_A_Z._flag;
+	this->arc_values.normal_offset.words_defined = &this->word_defined_in_block_A_Z._flag;
 
 	this->persisted_values.feed_rate_F = &this->block_word_values[F_WORD_BIT];
 	this->persisted_values.active_tool_T = &this->block_word_values[T_WORD_BIT];
@@ -125,14 +125,14 @@ NGC_RS274::NGC_Binary_Block::~NGC_Binary_Block()
 void NGC_RS274::NGC_Binary_Block::reset()
 {
 	
-	word_defined_in_block_A_Z = 0;
-	g_code_defined_in_block = 0;
-	m_code_defined_in_block = 0;
+	word_defined_in_block_A_Z.reset();
+	g_code_defined_in_block.reset();
+	m_code_defined_in_block.reset();
 	memset(g_group, 0, sizeof(g_group));
 	memset(m_group, 0, sizeof(m_group));
 	memset(block_word_values, 0, sizeof(block_word_values));
-	memset(motion_direction, 0, sizeof(motion_direction));
-	memset(unit_target_positions, 0, sizeof(unit_target_positions));
+	//memset(motion_direction, 0, sizeof(motion_direction));
+	//memset(unit_target_positions, 0, sizeof(unit_target_positions));
 	//memset(start_position, 0, sizeof(start_position));
 	//memset(vector_distance, 0, sizeof(vector_distance));
 }
@@ -168,13 +168,13 @@ float NGC_RS274::NGC_Binary_Block::get_g_code_value(int GroupNumber)
 /*Return if a G code value was specified*/
 bool NGC_RS274::NGC_Binary_Block::get_g_code_defined(int GroupNumber)
 {
-	return (BitTst(this->g_code_defined_in_block, GroupNumber));
+	return this->g_code_defined_in_block.get(GroupNumber);
 }
 
 /*Return if a M code value was specified*/
 bool NGC_RS274::NGC_Binary_Block::get_m_code_defined(int GroupNumber)
 {
-	return (BitTst(this->m_code_defined_in_block, GroupNumber));
+	return this->m_code_defined_in_block.get(GroupNumber);
 }
 
 /*Return the active M code value for the specified group*/
@@ -225,7 +225,7 @@ uint8_t NGC_RS274::NGC_Binary_Block::get_value_defined(char Word, int& Address)
 	Address values are stored in the BlockWordValues array;
 	*/
 	Address = (this->block_word_values[Word - 65]);
-	return BitTst(this->word_defined_in_block_A_Z, Word - 65);
+	return this->word_defined_in_block_A_Z.get(Word - 65);
 }
 
 /*
@@ -247,7 +247,7 @@ uint8_t NGC_RS274::NGC_Binary_Block::get_value_defined(char Word, float& Address
 	Address values are stored in the BlockWordValues array;
 	*/
 	Address = (this->block_word_values[Word - 65]);
-	return BitTst(this->word_defined_in_block_A_Z, Word - 65);
+	return this->word_defined_in_block_A_Z.get(Word - 65);
 }
 
 /*
@@ -263,7 +263,7 @@ uint8_t NGC_RS274::NGC_Binary_Block::get_defined(char Word)
 	|***************************************************************************************|
 	*/
 
-	return BitTst(this->word_defined_in_block_A_Z, Word - 65);
+	return this->word_defined_in_block_A_Z.get(Word - 65);
 }
 
 /*
@@ -319,7 +319,7 @@ void NGC_RS274::NGC_Binary_Block::define_value(char Word, float Value)
 	| Set the value in the Word array, DOES mark it as defined.                           |
 	|***************************************************************************************|
 	*/
-	this->word_defined_in_block_A_Z = BitSet(this->word_defined_in_block_A_Z, Word - 65);
+	this->word_defined_in_block_A_Z.set(Word - 65);
 	this->block_word_values[Word - 65] = Value;
 }
 
@@ -334,7 +334,7 @@ void NGC_RS274::NGC_Binary_Block::clear_defined(char Word)
 	| Clear the value in the Word array.                          |
 	|***************************************************************************************|
 	*/
-	this->word_defined_in_block_A_Z = BitClr(this->word_defined_in_block_A_Z, Word - 65);
+	this->word_defined_in_block_A_Z.clear(Word - 65);
 }
 
 /*
@@ -374,9 +374,9 @@ void NGC_RS274::NGC_Binary_Block::clear_all_defined()
 	| Clear the value in the G Group array.                          |
 	|***************************************************************************************|
 	*/
-	this->g_code_defined_in_block = 0;
-	this->m_code_defined_in_block = 0;
-	this->word_defined_in_block_A_Z = 0;
+	this->g_code_defined_in_block.reset();
+	this->m_code_defined_in_block.reset();
+	this->word_defined_in_block_A_Z.reset();
 }
 
 /*
@@ -390,7 +390,7 @@ void NGC_RS274::NGC_Binary_Block::clear_defined_gcode(uint8_t gcode_group)
 	| Clear the value in the G Group array.                          |
 	|***************************************************************************************|
 	*/
-	this->g_code_defined_in_block = BitClr(this->g_code_defined_in_block,gcode_group);
+	this->g_code_defined_in_block.clear(gcode_group);
 }
 
 /*
@@ -404,7 +404,7 @@ void NGC_RS274::NGC_Binary_Block::set_defined_gcode(uint8_t gcode_group)
 	| Clear the value in the G Group array.                          |
 	|***************************************************************************************|
 	*/
-	this->g_code_defined_in_block = BitSet(this->g_code_defined_in_block,gcode_group);
+	this->g_code_defined_in_block.set(gcode_group);
 }
 
 /*
@@ -413,7 +413,7 @@ Returns TRUE if any axis words were set in the block. Returns FALSE if none were
 uint8_t NGC_RS274::NGC_Binary_Block::any_axis_was_defined()
 {
 	//Quick test here, if NO WORD values were set in the block at all, then we know there couldnt be an axis defined
-	if (this->word_defined_in_block_A_Z == 0)
+	if (this->word_defined_in_block_A_Z._flag == 0)
 	return false;
 	//Check all 6 axis words to see if they were set in the block.
 	if (any_linear_axis_was_defined() || any_rotational_axis_was_defined())
@@ -428,14 +428,14 @@ Returns TRUE if any LINEAR axis words were set in the block. Returns FALSE if no
 uint8_t NGC_RS274::NGC_Binary_Block::any_linear_axis_was_defined()
 {
 	//Quick test here, if NO WORD values were set in the block at all, then we know there couldnt be an axis defined
-	if (this->word_defined_in_block_A_Z == 0)
+	if (this->word_defined_in_block_A_Z._flag == 0)
 	return false;
 	//Check all 3 axis words to see if they were set in the block.
-	if (!BitTst(word_defined_in_block_A_Z, X_WORD_BIT)
-	&& !BitTst(word_defined_in_block_A_Z, Y_WORD_BIT)
-	&& !BitTst(word_defined_in_block_A_Z, Z_WORD_BIT)
-	&& !BitTst(word_defined_in_block_A_Z, U_WORD_BIT)
-	&& !BitTst(word_defined_in_block_A_Z, V_WORD_BIT)
+	if (!word_defined_in_block_A_Z.get(X_WORD_BIT)
+	&& !word_defined_in_block_A_Z.get(Y_WORD_BIT)
+	&& !word_defined_in_block_A_Z.get(Z_WORD_BIT)
+	&& !word_defined_in_block_A_Z.get(U_WORD_BIT)
+	&& !word_defined_in_block_A_Z.get(V_WORD_BIT)
 	)
 	return false;
 	return true;
@@ -447,19 +447,19 @@ Returns TRUE if any ROTATIONAL axis words were set in the block. Returns FALSE i
 uint8_t NGC_RS274::NGC_Binary_Block::any_rotational_axis_was_defined()
 {
 	//Quick test here, if NO WORD values were set in the block at all, then we know there couldnt be an axis defined
-	if (this->word_defined_in_block_A_Z == 0)
+	if (this->word_defined_in_block_A_Z._flag == 0)
 	return false;
 	//Check all 3 axis words to see if they were set in the block.
-	if (!BitTst(word_defined_in_block_A_Z, A_WORD_BIT)
-	&& !BitTst(word_defined_in_block_A_Z, B_WORD_BIT)
-	&& !BitTst(word_defined_in_block_A_Z, C_WORD_BIT))
+	if (!word_defined_in_block_A_Z.get(A_WORD_BIT)
+	&& !word_defined_in_block_A_Z.get(B_WORD_BIT)
+	&& !word_defined_in_block_A_Z.get(C_WORD_BIT))
 	return false;
 	return true;
 }
 
 void NGC_RS274::NGC_Binary_Block::set_state(uint8_t bit_flag)
 {
-	this->state= BitSet(this->state,bit_flag);
+	BitSet_(this->state,bit_flag);
 }
 
 NGC_RS274::NGC_Binary_Block::s_axis_property::s_axis_property()

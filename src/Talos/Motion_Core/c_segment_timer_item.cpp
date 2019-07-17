@@ -4,7 +4,7 @@
 void Motion_Core::Segment::Timer::Timer_Item::Reset()
 {
 	this->bresenham_in_item = NULL;
-	this->flag = BinaryRecords::e_block_flag::normal;
+	this->flag.reset();
 	this->line_number = 0;
 	this->sequence = 0;
 	this->steps_to_execute_in_this_segment = 0;
@@ -94,7 +94,8 @@ Motion_Core::Segment::Timer::Timer_Item *Motion_Core::Segment::Timer::Buffer::Wr
 
 	Motion_Core::Segment::Timer::Timer_Item *item =
 	&Motion_Core::Segment::Timer::Buffer::_buffer[Motion_Core::Segment::Timer::Buffer::_head];
-	
+	//clear all segment execution flags. This is a ring buffer and we dont want old values in there. 
+	item->flag.reset();
 	Motion_Core::Segment::Timer::Buffer::_head++;
 	
 	//Are we wrapping?

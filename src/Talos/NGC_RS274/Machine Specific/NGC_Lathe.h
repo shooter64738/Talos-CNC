@@ -17,19 +17,26 @@
 *  You should have received a copy of the GNU General Public License
 *  along with Talos.  If not, see <http://www.gnu.org/licenses/>.
 */
-
-
+#include "..\..\physical_machine_parameters.h"
+#ifdef MACHINE_TYPE_LATHE
 #ifndef NGC_LATHE_H
 #define NGC_LATHE_H
 
 #include <stdint.h>
-#include "..\..\physical_machine_parameters.h"
+
+#include "..\..\NGC_RS274\NGC_Block.h"
+
 namespace NGC_RS274
 {
-	class NGC_Machine_Specific
+	namespace Interpreter
 	{
-		public:
-		
+		class NGC_Machine_Specific
+		{
+			public:
+			static int error_check_canned_cycle();
+
+		};
 	};
 };
-#endif /* NGC_BINARY_BLOCK_H */
+#endif
+#endif

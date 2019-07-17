@@ -45,7 +45,7 @@ namespace Motion_Core
 			static uint16_t current_spindle_pwm;
 			static uint16_t line_number;
 			static uint32_t sequence;
-			static BinaryRecords::e_block_flag flag;
+			static BinaryRecords::s_bit_flag_controller flag;
 
 			//static c_planner::plan_block_t *pl_block;
 			static Motion_Core::Planner::Block_Item *Active_Block;
