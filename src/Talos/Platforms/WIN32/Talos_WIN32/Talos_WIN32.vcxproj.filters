@@ -148,6 +148,9 @@
     <ClCompile Include="..\..\..\Events\c_system_events.cpp">
       <Filter>Events</Filter>
     </ClCompile>
+    <ClCompile Include="Platform Specific\c_motion_core_win_spindle.cpp">
+      <Filter>Platform Specific</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Events\c_block_events.h">
@@ -292,6 +295,9 @@
     <ClInclude Include="..\..\..\records_def.h" />
     <ClInclude Include="..\..\..\Events\c_system_events.h">
       <Filter>Events</Filter>
+    </ClInclude>
+    <ClInclude Include="Platform Specific\c_motion_core_win_spindle.h">
+      <Filter>Platform Specific</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

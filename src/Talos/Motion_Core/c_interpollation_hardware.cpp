@@ -44,16 +44,18 @@ uint32_t Motion_Core::Hardware::Interpolation::Last_Completed_Sequence = 0;
 
 uint8_t Motion_Core::Hardware::Interpolation::direction_set = 0;
 BinaryRecords::e_feed_modes Motion_Core::Hardware::Interpolation::drive_mode;
-BinaryRecords::s_encoder Motion_Core::Hardware::Interpolation::spindle_encoder;
+BinaryRecords::s_encoders * Motion_Core::Hardware::Interpolation::spindle_encoder;
 uint32_t Motion_Core::Hardware::Interpolation::spindle_calculated_delay = 0;
 uint8_t Motion_Core::Hardware::Interpolation::spindle_synch = 0;
 
 
-void Motion_Core::Hardware::Interpolation::Initialize()
+void Motion_Core::Hardware::Interpolation::initialize(BinaryRecords::s_encoders encoder_data)
 {
 	#ifdef MSVC
 	myfile.open("acceleration.txt");
 	#endif // MSVC
+
+Motion_Core::Hardware::Interpolation::spindle_encoder = &encoder_data;
 
 	//If we are already active, there isnt anything we need to do here.
 	if (!Motion_Core::Hardware::Interpolation::Interpolation_Active)
@@ -80,8 +82,7 @@ void Motion_Core::Hardware::Interpolation::Initialize()
 				
 				//Start the delay timer that will timeout if we have reached the
 				//delay period before we reach specified spindle speed.
-				Hardware_Abstraction_Layer::MotionCore::Spindle::configure_timer_for_at_speed_delay
-				(Motion_Core::Settings::_Settings.Hardware_Settings.spindle_encoder.spindle_synch_wait_time_ms );
+				Hardware_Abstraction_Layer::MotionCore::Spindle::configure_timer_for_at_speed_delay();
 				
 				//set the waiting event for spindle synch. the event manager will handle when/if 
 				//interpolation can start.
@@ -154,7 +155,7 @@ uint8_t Motion_Core::Hardware::Interpolation::check_spindle_at_speed()
 	&& !Motion_Core::Hardware::Interpolation::spindle_synch)
 	{
 		//Are we near that speed yet?
-		if (!Motion_Core::Hardware::Interpolation::spindle_encoder.near(
+		if (!Motion_Core::Hardware::Interpolation::spindle_encoder->near(
 		Motion_Core::Settings::_Settings.Hardware_Settings.spindle_encoder.current_rpm
 		, Motion_Core::Settings::_Settings.Hardware_Settings.spindle_encoder.target_rpm
 		, Motion_Core::Settings::_Settings.Hardware_Settings.spindle_encoder.variable_percent)

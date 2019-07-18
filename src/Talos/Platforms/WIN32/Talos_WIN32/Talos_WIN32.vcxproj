@@ -46,6 +46,7 @@
     <ClCompile Include="..\..\..\Planner\c_stager.cpp" />
     <ClCompile Include="Platform Specific\c_core_win.cpp" />
     <ClCompile Include="Platform Specific\c_motion_core_win_inputs.cpp" />
+    <ClCompile Include="Platform Specific\c_motion_core_win_spindle.cpp" />
     <ClCompile Include="Platform Specific\c_motion_core_win_stepper.cpp" />
     <ClCompile Include="Platform Specific\c_serial_win.cpp" />
   </ItemGroup>
@@ -99,6 +100,7 @@
     <ClInclude Include="..\..\..\System\tool_table.h" />
     <ClInclude Include="Platform Specific\c_core_win.h" />
     <ClInclude Include="Platform Specific\c_motion_core_win_inputs.h" />
+    <ClInclude Include="Platform Specific\c_motion_core_win_spindle.h" />
     <ClInclude Include="Platform Specific\c_motion_core_win_stepper.h" />
     <ClInclude Include="Platform Specific\c_serial_win.h" />
   </ItemGroup>

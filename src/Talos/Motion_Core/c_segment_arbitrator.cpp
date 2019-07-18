@@ -621,7 +621,7 @@ void Motion_Core::Segment::Arbitrator::cycle_hold()
 		Motion_Core::System::StepControl = 0;
 		st_update_plan_block_parameters();
 		Motion_Core::Segment::Arbitrator::Fill_Step_Segment_Buffer();
-		Motion_Core::Hardware::Interpolation::Initialize();
+		Motion_Core::Hardware::Interpolation::initialize(Motion_Core::Settings::_Settings.Hardware_Settings.spindle_encoder);
 		//Motion_Core::System::clear_control_state_mode(STATE_MOTION_CONTROL_RESUME);
 	}
 }

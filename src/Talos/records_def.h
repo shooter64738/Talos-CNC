@@ -299,8 +299,9 @@ namespace BinaryRecords
 		uint32_t _check_sum = 0;
 	};
 
-	struct s_encoder
+	struct s_encoders
 	{
+		uint16_t samples_per_second; //How frequently are we going to check the encoder signal
 		uint16_t ticks_per_revolution;//How many ticks are in a rev
 		int32_t current_rpm;//what is the current spindle rpm
 		int32_t target_rpm;//what is the target spindle rpm
@@ -327,7 +328,7 @@ namespace BinaryRecords
 
 	struct s_hardware
 	{
-		s_encoder spindle_encoder;
+		s_encoders spindle_encoder;
 		float back_lash_comp_distance[MACHINE_AXIS_COUNT];//53
 		float distance_per_rotation[MACHINE_AXIS_COUNT];//53
 		float interpolation_error_distance;//57

@@ -1,5 +1,5 @@
 /*
-* c_motion_core_arm_3x8e_spindle.h
+* c_motion_core_win_spindle.h
 *
 * Created: 3/7/2019 10:22:11 AM
 * Author: jeff_d
@@ -7,15 +7,12 @@
 #include <stdint.h>
 
 
-#ifdef __SAM3X8E__
-#include "sam.h"
+#ifdef MSVC
+
 #include <stdint.h>
 #include "..\..\..\..\records_def.h"
-#ifndef __C_MOTIONCORE_ARM_3X8E_SPINDLE_H__
-#define __C_MOTIONCORE_ARM_3X8E_SPINDLE_H__
-
-#define Timer1_Chan0_Handler_irq4 TC4_Handler //<--This naming is less confusing to me. If you dont like it change it.
-
+#ifndef __C_MOTIONCORE_WIN_SPINDLE_H__
+#define __C_MOTIONCORE_WIN_SPINDLE_H__
 
 namespace Hardware_Abstraction_Layer
 {

@@ -33,7 +33,7 @@ void Talos::Main_Process::startup()
 	Hardware_Abstraction_Layer::Core::initialize();
 	Hardware_Abstraction_Layer::MotionCore::Stepper::initialize();
 	Hardware_Abstraction_Layer::MotionCore::Inputs::initialize();
-	Hardware_Abstraction_Layer::MotionCore::Spindle::initialize();
+	Hardware_Abstraction_Layer::MotionCore::Spindle::initialize(Motion_Core::Settings::_Settings.Hardware_Settings.spindle_encoder);
 	Motion_Core::initialize();
 	NGC_RS274::Interpreter::Processor::initialize();
 	c_machine::initialize();
