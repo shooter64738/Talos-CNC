@@ -3,8 +3,6 @@
 #include "c_planner_compute_block.h"
 #include "c_motion_core.h"
 
-//#include "..\c_stepper.h"
-//#include "..\c_system.h"
 #include "c_segment_timer_item.h"
 #include "c_gateway.h"
 #include "c_interpollation_hardware.h"

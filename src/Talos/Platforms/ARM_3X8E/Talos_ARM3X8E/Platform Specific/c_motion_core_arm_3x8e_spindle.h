@@ -11,7 +11,6 @@
 #include "sam.h"
 #include <stdint.h>
 #include "..\..\..\..\records_def.h"
-//#include "arm_3x8e_encoder.h"
 #ifndef __C_MOTIONCORE_ARM_3X8E_SPINDLE_H__
 #define __C_MOTIONCORE_ARM_3X8E_SPINDLE_H__
 

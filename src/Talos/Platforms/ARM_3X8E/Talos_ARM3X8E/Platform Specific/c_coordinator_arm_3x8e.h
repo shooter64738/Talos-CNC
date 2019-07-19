@@ -29,7 +29,6 @@
 #define C_AXIS_PULSE_BIT BIT(5) //a10
 #define U_AXIS_PULSE_BIT BIT(6) //a09
 #define V_AXIS_PULSE_BIT BIT(7) //a08
-//#include "../../../Coordinator/Shared/Encoder/c_encoder.h"
 namespace Hardware_Abstraction_Layer
 {
 

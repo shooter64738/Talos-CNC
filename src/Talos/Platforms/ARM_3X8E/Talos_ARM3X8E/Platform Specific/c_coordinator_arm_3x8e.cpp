@@ -6,12 +6,7 @@
 */
 
 
-//#include <avr/io.h>
-//#include <avr/interrupt.h>
-//#include "../../../Coordinator/Shared/Encoder/c_encoder.h"
 #include "c_coordinator_arm_3x8e.h"
-
-
 
 void Hardware_Abstraction_Layer::Coordination::initialize()
 {

@@ -22,12 +22,7 @@
 #ifdef MACHINE_TYPE_MILL
 
 #include <string.h>
-//#include "..\..\bit_manipulation.h"
-//#include "..\NGC_Errors.h"
-//#include "..\NGC_G_Groups.h"
-//#include "..\NGC_G_Codes.h"
-//#include "..\NGC_Interpreter.h"
-//#include "..\NGC_Block.h"
+
 #include "..\..\NGC_Interpreter.h"
 #include "..\..\NGC_G_Groups.h"
 #include "NGC_G_Codes.h"

@@ -4,8 +4,6 @@
 #include "..\records_def.h"
 #include "..\physical_machine_parameters.h"
 
-//#include "c_interpollation_software.h"
-
 namespace Motion_Core
 {
 	namespace Planner

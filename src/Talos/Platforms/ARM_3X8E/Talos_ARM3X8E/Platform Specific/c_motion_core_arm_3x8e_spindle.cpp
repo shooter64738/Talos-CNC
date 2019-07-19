@@ -5,7 +5,6 @@
 * Author: jeff_d
 */
 
-//#include "c_motion_core_arm_3x8e_spindle.h"
 #include "..\..\..\..\physical_machine_parameters.h"
 #include "..\..\..\..\Motion_Core\c_interpollation_hardware.h"
 

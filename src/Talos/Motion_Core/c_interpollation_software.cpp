@@ -4,10 +4,10 @@
 #include "c_interpollation_hardware.h"
 #include "c_gateway.h"
 
-//#ifdef MSVC
+
 #define M_PI 3.14159265358979323846
-//#include "../../MSVC++.h"
-//#endif // MSVC
+
+
 
 Motion_Core::Software::Interpolation::s_backlash_comp Motion_Core::Software::Interpolation::back_comp;
 int32_t Motion_Core::Software::Interpolation::system_position[MACHINE_AXIS_COUNT]{0};

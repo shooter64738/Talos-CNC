@@ -23,7 +23,6 @@
 #include "..\Planner\c_stager.h"
 #include "..\Planner\CRC\c_cutter_comp.h"
 #include "..\Planner\Canned Cycles\c_canned_cycle.h"
-//#include "..\status\c_status.h"
 #include "..\Events\c_motion_control_events.h"
 #include "c_gcode_buffer.h"
 #include "..\NGC_RS274\NGC_G_Groups.h"

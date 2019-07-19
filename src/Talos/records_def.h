@@ -19,7 +19,6 @@
 *  along with Talos.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-//#include "..\..\Talos.h"
 #ifndef RECORDS_DEF_H
 #define RECORDS_DEF_H
 #include "physical_machine_parameters.h"

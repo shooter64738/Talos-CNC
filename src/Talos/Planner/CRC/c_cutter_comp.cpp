@@ -22,8 +22,6 @@
 #include <math.h>
 #include <stdint.h>
 #include <stdlib.h>
-//#include "..\..\NGC_RS274\NGC_M_Groups.h"
-//#include "..\..\NGC_RS274\NGC_G_Codes.h"
 #include "..\..\NGC_RS274\ngc_defines.h"
 #include "..\..\NGC_RS274\NGC_Errors.h"
 

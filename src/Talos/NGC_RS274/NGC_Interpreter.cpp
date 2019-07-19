@@ -23,13 +23,12 @@
 #include "NGC_Errors.h"
 #include "NGC_M_Groups.h"
 #include "ngc_defines.h"
-//#include "..\..\Coordinator\Shared\c_gateway.h"
 #include <math.h>
 #include <string.h>
 #include <ctype.h>
 #include "..\communication_def.h"
 #include <stdlib.h>
-//#include "..\bit_manipulation.h"
+
 #include <stdlib.h>
 
 //char NGC_RS274::Interpreter::Processor::Line[CYCLE_LINE_LENGTH];

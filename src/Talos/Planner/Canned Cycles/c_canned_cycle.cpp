@@ -41,7 +41,6 @@ the correct axis should be engaged without having to figure out which plane you 
 #include "c_canned_cycle.h"
 #include <string.h>
 #include "..\..\NGC_RS274\NGC_G_Groups.h"
-//#include "..\..\NGC_RS274\NGC_G_Codes.h"
 #include "..\..\NGC_RS274\ngc_defines.h"
 #include "..\..\bit_manipulation.h"
 #include "..\..\Machine_Parameters_Process.h"

@@ -28,7 +28,7 @@
 #define _TICKS_PER_MICROSECOND ((F_CPU/2)/1000000)
 #define F_CPU_2 F_CPU/2
 #define _TICKS_PER_MICROSECOND (F_CPU_2/1000000)
-//#include "../../../Common/Hardware_Abstraction_Layer/ARM_SAM3X8E/c_core_arm_3x8e.h"
+
 #include "Platforms\ARM_3X8E\Talos_ARM3X8E\Platform Specific\c_motion_core_arm_3x8e_stepper.h"
 #include "Platforms\ARM_3X8E\Talos_ARM3X8E\Platform Specific\c_motion_core_arm_3x8e_inputs.h"
 #include "Platforms\ARM_3X8E\Talos_ARM3X8E\Platform Specific\c_motion_core_arm_3x8e_spindle.h"

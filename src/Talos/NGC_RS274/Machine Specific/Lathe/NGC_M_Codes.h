@@ -20,7 +20,7 @@
 
 #ifndef NGC_Mcodes_X_h
 #define NGC_Mcodes_X_h
-//#include "..\..\Talos.h"
+
 /*
 All codes defined in here are multiplied by G_CODE_MULTIPLIER so they can be handled as ints or char's
 Double and float tyeps consume too much memory to have a numberic variable with only one

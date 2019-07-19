@@ -23,7 +23,7 @@
 #define __C_NGC_INTERPRETER_H__
 #include "..\Common\Serial\c_Serial.h"
 #include "..\NGC_RS274\NGC_Block.h"
-//#include "..\physical_machine_parameters.h"
+
 #ifdef MSVC
 static float square(float X)
 {
