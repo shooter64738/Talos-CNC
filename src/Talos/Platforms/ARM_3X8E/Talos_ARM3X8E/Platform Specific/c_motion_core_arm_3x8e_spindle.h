@@ -11,6 +11,7 @@
 #include "sam.h"
 #include <stdint.h>
 #include "..\..\..\..\records_def.h"
+//#include "arm_3x8e_encoder.h"
 #ifndef __C_MOTIONCORE_ARM_3X8E_SPINDLE_H__
 #define __C_MOTIONCORE_ARM_3X8E_SPINDLE_H__
 
@@ -29,6 +30,7 @@ namespace Hardware_Abstraction_Layer
 			public:
 			//static function_pointer Pntr_timer_function;
 			static BinaryRecords::s_encoders * spindle_encoder;
+			//static s_qdec qdec0;
 			protected:
 			private:
 			
@@ -36,12 +38,12 @@ namespace Hardware_Abstraction_Layer
 			
 			//functions
 			public:
-			static void initialize(BinaryRecords::s_encoders encoder_data);
+			static void initialize(BinaryRecords::s_encoders * encoder_data);
 			static void configure_timer_for_at_speed_delay();
 			static void stop_at_speed_timer();
 			static void configure_timer_for_rpm_update(uint32_t interval);
 			static void OCR1A_set(uint32_t delay);
-			static void get_rpm();
+			static int32_t get_rpm();
 			protected:
 			private:
 

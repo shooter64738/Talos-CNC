@@ -299,8 +299,16 @@ namespace BinaryRecords
 		uint32_t _check_sum = 0;
 	};
 
+	struct s_encoder_meta
+	{
+		int32_t reg_tc0_cv1=0;
+		int32_t reg_tc0_ra0=0;
+		float speed_rps=0;
+		float speed_rpm=0;
+	};
 	struct s_encoders
 	{
+		s_encoder_meta meta_data;
 		uint16_t samples_per_second; //How frequently are we going to check the encoder signal
 		uint16_t ticks_per_revolution;//How many ticks are in a rev
 		int32_t current_rpm;//what is the current spindle rpm

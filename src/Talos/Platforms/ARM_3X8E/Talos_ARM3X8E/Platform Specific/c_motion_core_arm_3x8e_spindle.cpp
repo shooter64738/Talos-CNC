@@ -5,7 +5,7 @@
 * Author: jeff_d
 */
 
-#include "c_motion_core_arm_3x8e_spindle.h"
+//#include "c_motion_core_arm_3x8e_spindle.h"
 #include "..\..\..\..\physical_machine_parameters.h"
 #include "..\..\..\..\Motion_Core\c_interpollation_hardware.h"
 
@@ -33,42 +33,47 @@ care, the results may be inaccurate.
 //const uint32_t ENCODER_CPR = 150;                            // Cycles per revolution; this depends on your encoder
 //const uint32_t ENCODER_EDGES_PER_ROTATION = ENCODER_CPR * 4; // PPR = CPR * 4
 //const uint32_t ENCODER_SAMPLES_PER_SECOND = 10;              // this will need to be tuned depending on your use case...
+#define qdec TC0
 
-
-void Hardware_Abstraction_Layer::MotionCore::Spindle::initialize(BinaryRecords::s_encoders encoder_data)
+void Hardware_Abstraction_Layer::MotionCore::Spindle::initialize(BinaryRecords::s_encoders * encoder_data)
 {
-	Hardware_Abstraction_Layer::MotionCore::Spindle::spindle_encoder = &encoder_data;
+	Hardware_Abstraction_Layer::MotionCore::Spindle::spindle_encoder = encoder_data;
+	//qdec0.set_sample_rate(encoder_data.samples_per_second);
 	
-	PMC->PMC_PCER1 = PMC_PCER1_PID33                  // TC6 power ON ; Timer counter 2 channel 0 is TC6
-	| PMC_PCER1_PID34                // TC7 power ON ; Timer counter 2 channel 1 is TC7
-	| PMC_PCER1_PID35;               // TC8 power ON ; Timer counter 2 channel 2 is TC8
+	PMC->PMC_PCER0 |= PMC_PCER0_PID27 // TC0 power ON ; Timer counter 0 channel 0 is TC0
+	| PMC_PCER0_PID28                // TC1 power ON ; Timer counter 0 channel 1 is TC1
+	| PMC_PCER0_PID29;               // TC2 power ON ; Timer counter 2 channel 2 is TC2
+	
+	//PMC->PMC_PCER1 = PMC_PCER1_PID33 // TC6 power ON ; Timer counter 2 channel 0 is TC6
+	//| PMC_PCER1_PID34                // TC7 power ON ; Timer counter 2 channel 1 is TC7
+	//| PMC_PCER1_PID35;               // TC8 power ON ; Timer counter 2 channel 2 is TC8
 
 	// TC8 in waveform mode
-	TC2->TC_CHANNEL[2].TC_CMR = TC_CMR_TCCLKS_TIMER_CLOCK1  // Select Mck/2
+	qdec->TC_CHANNEL[2].TC_CMR = TC_CMR_TCCLKS_TIMER_CLOCK1  // Select Mck/2
 	| TC_CMR_WAVE               // Waveform mode
 	| TC_CMR_ACPC_TOGGLE        // Toggle TIOA of TC2 (TIOA8) on RC compare match
 	| TC_CMR_WAVSEL_UP_RC;      // UP mode with automatic trigger on RC Compare match
 
-	TC2->TC_CHANNEL[2].TC_RC = F_CPU_2 / Hardware_Abstraction_Layer::MotionCore::Spindle::spindle_encoder->samples_per_second;  // F_CPU = 84 MHz
+	qdec->TC_CHANNEL[2].TC_RC = F_CPU_2 / Hardware_Abstraction_Layer::MotionCore::Spindle::spindle_encoder->samples_per_second;  // F_CPU = 84 MHz
 	// Final TC frequency is 84 MHz/2/TC_RC
 
 	// TC6 in capture mode
 	// Timer Counter 2 channel 0 is internally clocked by TIOA8
-	TC2->TC_CHANNEL[0].TC_CMR = TC_CMR_ABETRG               // TIOA8 is used as an external trigger.
+	qdec->TC_CHANNEL[0].TC_CMR = TC_CMR_ABETRG               // TIOA8 is used as an external trigger.
 	| TC_CMR_TCCLKS_XC0         // External clock selected
 	| TC_CMR_LDRA_EDGE          // RA loading on each edge of TIOA6
 	| TC_CMR_ETRGEDG_RISING     // External TC trigger by edge selection of TIOA8
 	| TC_CMR_CPCTRG;            // RC Compare match resets the counter and starts the counter clock
 
-	TC2->TC_BMR = TC_BMR_QDEN                               // Enable QDEC (filter, edge detection and quadrature decoding)
+	qdec->TC_BMR = TC_BMR_QDEN                               // Enable QDEC (filter, edge detection and quadrature decoding)
 	| TC_BMR_SPEEDEN                          // Enable the speed measure on channel 0, the time base being provided by channel 2.
 	| TC_BMR_EDGPHA                           // Edges are detected on both PHA and PHB
 	| TC_BMR_SWAP                             // Swap PHA and PHB if necessary
 	| TC_BMR_MAXFILT(1);                      // Pulses with a period shorter than MAXFILT+1 peripheral clock cycles are discarded
 
-	TC2->TC_CHANNEL[0].TC_CCR = TC_CCR_CLKEN | TC_CCR_SWTRG;
-	TC2->TC_CHANNEL[1].TC_CCR = TC_CCR_CLKEN | TC_CCR_SWTRG;
-	TC2->TC_CHANNEL[2].TC_CCR = TC_CCR_CLKEN | TC_CCR_SWTRG;
+	qdec->TC_CHANNEL[0].TC_CCR = TC_CCR_CLKEN | TC_CCR_SWTRG;
+	qdec->TC_CHANNEL[1].TC_CCR = TC_CCR_CLKEN | TC_CCR_SWTRG;
+	qdec->TC_CHANNEL[2].TC_CCR = TC_CCR_CLKEN | TC_CCR_SWTRG;
 }
 
 void Hardware_Abstraction_Layer::MotionCore::Spindle::configure_timer_for_at_speed_delay()
@@ -129,18 +134,28 @@ void Hardware_Abstraction_Layer::MotionCore::Spindle::OCR1A_set(uint32_t delay)
 
 
 
-void Hardware_Abstraction_Layer::MotionCore::Spindle::get_rpm() {
-	double dSpeedRPS, dSpeedRPM;
-	int32_t iSpeedPPP;
+int32_t Hardware_Abstraction_Layer::MotionCore::Spindle::get_rpm() {
+	BinaryRecords::s_encoders * encode = Hardware_Abstraction_Layer::MotionCore::Spindle::spindle_encoder;
+	
+	encode->meta_data.reg_tc0_ra0 = qdec->TC_CHANNEL[0].TC_RA;
 
-	iSpeedPPP = TC2->TC_CHANNEL[0].TC_RA;
-
-	dSpeedRPS =
-	((iSpeedPPP /
+	encode->meta_data.speed_rps =
+	((encode->meta_data.reg_tc0_ra0 /
 	(Hardware_Abstraction_Layer::MotionCore::Spindle::spindle_encoder->ticks_per_revolution * 1.0))
 	* Hardware_Abstraction_Layer::MotionCore::Spindle::spindle_encoder->samples_per_second);
-	dSpeedRPM =  dSpeedRPS * 60;
-	Hardware_Abstraction_Layer::MotionCore::Spindle::spindle_encoder->current_rpm = (int32_t) dSpeedRPM;
+	encode->meta_data.speed_rpm =  encode->meta_data.speed_rps * 60;
+	Hardware_Abstraction_Layer::MotionCore::Spindle::spindle_encoder->current_rpm = encode->meta_data.speed_rpm;
+	//mm_m = 5*rpm = mm per minute based on rotation
+	//step_rate_for_speed = 160*mm/m = 160steps per mm, per minute
+	//steps_per_second = step_rate_for_speed/60
+	
+	//float mm_m = 5 * encode->meta_data.speed_rpm;
+	//float step_rate_for_speed = 160 * mm_m;
+	//float steps_per_second = step_rate_for_speed/60;
+	//encode->feedrate_delay = 48000000.0/steps_per_second;
+	//
+	
+	return Hardware_Abstraction_Layer::MotionCore::Spindle::spindle_encoder->current_rpm;
 }
 
 

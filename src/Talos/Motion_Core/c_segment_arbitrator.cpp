@@ -64,6 +64,7 @@ void Motion_Core::Segment::Arbitrator::Reset()
 
 void Motion_Core::Segment::Arbitrator::Fill_Step_Segment_Buffer()
 {
+	uint16_t return_value = 0;
 	// Block step prep buffer, while in a suspend state and there is no suspend motion to execute.
 	if (Motion_Core::System::StepControl & STEP_CONTROL_END_MOTION)
 	{
