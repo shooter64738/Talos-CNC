@@ -33,15 +33,13 @@ static float square(float X)
 
 
 //Changing the MACHINE_TYPE in the physical_machine_parameters.h file will change what
-//is included to process gcode specific to one machine to or the other. 
+//is included to process gcode specific to one machine or the other. 
 #ifdef MACHINE_TYPE_MILL
 #include "Machine Specific\Mill\NGC_Mill.h"
 #endif
-//#ifdef MACHINE_TYPE_LATHE
-//#include "Machine Specific\Lathe\NGC_Lathe.h"
-//#endif
-
-//#include "ngc_defines.h"
+#ifdef MACHINE_TYPE_LATHE
+#include "Machine Specific\Lathe\NGC_Lathe.h"
+#endif
 
 namespace NGC_RS274
 {

@@ -66,6 +66,7 @@
 #include "Machine Specific\Mill\NGC_G_Codes.h"
 #include "Machine Specific\Mill\NGC_M_Codes.h"
 #endif
+
 #ifdef MACHINE_TYPE_LATHE
 #include "Machine Specific\Lathe\NGC_G_Codes.h"
 #include "Machine Specific\Lathe\NGC_M_Codes.h"
