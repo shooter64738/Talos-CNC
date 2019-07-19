@@ -25,7 +25,7 @@ interpret gcode for a specific type of machine. Mill gcode cannot be interprette
 the same way as lathe gcode. Plasma machine gcode also has its own flavor, etc..
 */
 //Uncomment out the specific type of machine you need compilation for. 
-//#define MACHINE_TYPE_MILL
-#define MACHINE_TYPE_LATHE
+#define MACHINE_TYPE_MILL
+//#define MACHINE_TYPE_LATHE
 
 #endif /* PHYSICAL_MACHINE_PARAMETERS_H_ */
