@@ -1,5 +1,5 @@
 /*
-*  NGC_Lathe.h - NGC_RS274 controller.
+*  NGC_Lathe.cpp - NGC_RS274 controller.
 *  A component of Talos
 *
 *  Copyright (c) 2016-2019 Jeff Dill
@@ -17,26 +17,27 @@
 *  You should have received a copy of the GNU General Public License
 *  along with Talos.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "..\..\physical_machine_parameters.h"
+#include "NGC_Lathe.h"
 #ifdef MACHINE_TYPE_LATHE
-#ifndef NGC_LATHE_H
-#define NGC_LATHE_H
 
-#include <stdint.h>
+#include <string.h>
+//#include "..\..\bit_manipulation.h"
+//#include "..\NGC_Errors.h"
+//#include "..\NGC_G_Groups.h"
+//#include "..\NGC_G_Codes.h"
+//#include "..\NGC_Interpreter.h"
+//#include "..\NGC_Block.h"
+#include "..\..\NGC_Interpreter.h"
+#include "..\..\NGC_G_Groups.h"
+#include "NGC_G_Codes.h"
+#include "..\..\NGC_Errors.h"
 
-#include "..\..\NGC_RS274\NGC_Block.h"
-
-namespace NGC_RS274
+/*
+If a canned cycle (g81-g89) command was specified, perform detailed parameter check that applies
+only to canned cycles.
+*/
+int NGC_RS274::Interpreter::NGC_Machine_Specific::error_check_canned_cycle()
 {
-	namespace Interpreter
-	{
-		class NGC_Machine_Specific
-		{
-			public:
-			static int error_check_canned_cycle();
-
-		};
-	};
-};
-#endif
+	return 0;
+}
 #endif

@@ -21,25 +21,27 @@
 
 #ifndef __C_NGC_INTERPRETER_H__
 #define __C_NGC_INTERPRETER_H__
-
+#include "..\Common\Serial\c_Serial.h"
 #include "..\NGC_RS274\NGC_Block.h"
-#include "..\physical_machine_parameters.h"
+//#include "..\physical_machine_parameters.h"
 #ifdef MSVC
 static float square(float X)
 {
 	return X*X;
 }
 #endif // MSVC++
-#include "..\Common\Serial\c_Serial.h"
+
 
 //Changing the MACHINE_TYPE in the physical_machine_parameters.h file will change what
 //is included to process gcode specific to one machine to or the other. 
 #ifdef MACHINE_TYPE_MILL
-#include "Machine Specific\NGC_Mill.h"
+#include "Machine Specific\Mill\NGC_Mill.h"
 #endif
-#ifdef MACHINE_TYPE_LATHE
-#include "Machine Specific\NGC_Lathe.h"
-#endif
+//#ifdef MACHINE_TYPE_LATHE
+//#include "Machine Specific\Lathe\NGC_Lathe.h"
+//#endif
+
+//#include "ngc_defines.h"
 
 namespace NGC_RS274
 {

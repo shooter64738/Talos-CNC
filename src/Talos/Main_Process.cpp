@@ -74,7 +74,16 @@ void Talos::Main_Process::startup()
 	Events::Motion_Controller::local_serial = &Talos::Main_Process::host_serial;
 	Events::System::local_serial = &Talos::Main_Process::host_serial;
 	Talos::GCode_Process::local_serial = &Talos::Main_Process::host_serial;
-	Talos::Main_Process::host_serial.print_string("hello world!\r");
+	Talos::Main_Process::host_serial.print_string("Talos\r");
+	Talos::Main_Process::host_serial.print_string("Mode:");
+
+	#ifdef MACHINE_TYPE_MILL
+	Talos::Main_Process::host_serial.print_string("Mill\r");
+	#endif
+	#ifdef MACHINE_TYPE_LATHE
+	Talos::Main_Process::host_serial.print_string("Lathe\r");
+	#endif
+	
 	int32_t ticker = 0;
 	
 	

@@ -1,5 +1,5 @@
 /*
-*  NGC_Mill.h - NGC_RS274 controller.
+*  NGC_Lathe.h - NGC_RS274 controller.
 *  A component of Talos
 *
 *  Copyright (c) 2016-2019 Jeff Dill
@@ -18,25 +18,24 @@
 *  along with Talos.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "..\..\physical_machine_parameters.h"
-#ifdef MACHINE_TYPE_MILL
-
-#ifndef NGC_MILL_H
-#define NGC_MILL_H
+#include "..\..\..\physical_machine_parameters.h"
+#ifdef MACHINE_TYPE_LATHE
+#ifndef NGC_LATHE_H
+#define NGC_LATHE_H
 
 #include <stdint.h>
-#include "..\NGC_Block.h"
+#include "..\..\NGC_Block.h"
 namespace NGC_RS274
 {
 	namespace Interpreter
 	{
 		class NGC_Machine_Specific
 		{
-		public:
+			public:
 			static int error_check_canned_cycle();
 
 		};
 	};
 };
-#endif 
+#endif
 #endif

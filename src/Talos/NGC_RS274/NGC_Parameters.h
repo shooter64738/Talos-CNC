@@ -20,7 +20,8 @@
 
 #ifndef NGC_PARAMETERS_H_
 #define NGC_PARAMETERS_H_
-#include "NGC_G_Codes.h"
+
+#include "ngc_defines.h"
 #define PARAMETER_SLOT_COUNT 24
 //This information was pulled from emc/linux cnc
 namespace NGC_RS274

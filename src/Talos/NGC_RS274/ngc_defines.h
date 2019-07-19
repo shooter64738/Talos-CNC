@@ -33,8 +33,6 @@
 
 #define G_CODE_MULTIPLIER 10
 
-
-
 #define A_WORD_BIT 0
 #define B_WORD_BIT 1
 #define C_WORD_BIT 2
@@ -63,3 +61,12 @@
 #define Z_WORD_BIT 25
 
 #endif /* NGC_DEFINES_H */
+
+#ifdef MACHINE_TYPE_MILL
+#include "Machine Specific\Mill\NGC_G_Codes.h"
+#include "Machine Specific\Mill\NGC_M_Codes.h"
+#endif
+#ifdef MACHINE_TYPE_LATHE
+#include "Machine Specific\Lathe\NGC_G_Codes.h"
+#include "Machine Specific\Lathe\NGC_M_Codes.h"
+#endif

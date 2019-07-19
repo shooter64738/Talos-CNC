@@ -27,7 +27,7 @@
 #include "..\Events\c_motion_control_events.h"
 #include "c_gcode_buffer.h"
 #include "..\NGC_RS274\NGC_G_Groups.h"
-#include "..\NGC_RS274\NGC_G_Codes.h"
+#include "..\NGC_RS274\ngc_defines.h"
 #include "..\communication_def.h"
 #include "..\Motion_Core\c_gateway.h"
 #include "..\Main_Process.h"

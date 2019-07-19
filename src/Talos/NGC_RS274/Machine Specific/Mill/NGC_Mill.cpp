@@ -18,18 +18,20 @@
 *  along with Talos.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "..\..\physical_machine_parameters.h"
+#include "NGC_Mill.h"
 #ifdef MACHINE_TYPE_MILL
 
-#include "NGC_Mill.h"
 #include <string.h>
-#include "..\..\bit_manipulation.h"
-#include "..\NGC_Errors.h"
-#include "..\NGC_G_Groups.h"
-#include "..\NGC_G_Codes.h"
-#include "..\NGC_Interpreter.h"
-#include "..\NGC_Block.h"
-
+//#include "..\..\bit_manipulation.h"
+//#include "..\NGC_Errors.h"
+//#include "..\NGC_G_Groups.h"
+//#include "..\NGC_G_Codes.h"
+//#include "..\NGC_Interpreter.h"
+//#include "..\NGC_Block.h"
+#include "..\..\NGC_Interpreter.h"
+#include "..\..\NGC_G_Groups.h"
+#include "NGC_G_Codes.h"
+#include "..\..\NGC_Errors.h"
 /*
 If a canned cycle (g81-g89) command was specified, perform detailed parameter check that applies
 only to canned cycles.

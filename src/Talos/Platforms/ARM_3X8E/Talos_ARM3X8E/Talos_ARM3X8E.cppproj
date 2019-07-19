@@ -361,21 +361,37 @@
       <SubType>compile</SubType>
       <Link>Motion_Core\c_system.h</Link>
     </Compile>
-    <Compile Include="..\..\..\NGC_RS274\Machine Specific\NGC_Lathe.cpp">
+    <Compile Include="..\..\..\NGC_RS274\Machine Specific\Lathe\NGC_G_Codes.h">
       <SubType>compile</SubType>
-      <Link>NGC_RS274\Machine Specific\NGC_Lathe.cpp</Link>
+      <Link>NGC_RS274\Machine Specific\Lathe\NGC_G_Codes.h</Link>
     </Compile>
-    <Compile Include="..\..\..\NGC_RS274\Machine Specific\NGC_Lathe.h">
+    <Compile Include="..\..\..\NGC_RS274\Machine Specific\Lathe\NGC_Lathe.cpp">
       <SubType>compile</SubType>
-      <Link>NGC_RS274\Machine Specific\NGC_Lathe.h</Link>
+      <Link>NGC_RS274\Machine Specific\Lathe\NGC_Lathe.cpp</Link>
     </Compile>
-    <Compile Include="..\..\..\NGC_RS274\Machine Specific\NGC_Mill.cpp">
+    <Compile Include="..\..\..\NGC_RS274\Machine Specific\Lathe\NGC_Lathe.h">
       <SubType>compile</SubType>
-      <Link>NGC_RS274\Machine Specific\NGC_Mill.cpp</Link>
+      <Link>NGC_RS274\Machine Specific\Lathe\NGC_Lathe.h</Link>
     </Compile>
-    <Compile Include="..\..\..\NGC_RS274\Machine Specific\NGC_Mill.h">
+    <Compile Include="..\..\..\NGC_RS274\Machine Specific\Lathe\NGC_M_Codes.h">
       <SubType>compile</SubType>
-      <Link>NGC_RS274\Machine Specific\NGC_Mill.h</Link>
+      <Link>NGC_RS274\Machine Specific\Lathe\NGC_M_Codes.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\NGC_RS274\Machine Specific\Mill\NGC_G_Codes.h">
+      <SubType>compile</SubType>
+      <Link>NGC_RS274\Machine Specific\Mill\NGC_G_Codes.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\NGC_RS274\Machine Specific\Mill\NGC_Mill.cpp">
+      <SubType>compile</SubType>
+      <Link>NGC_RS274\Machine Specific\Mill\NGC_Mill.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\NGC_RS274\Machine Specific\Mill\NGC_Mill.h">
+      <SubType>compile</SubType>
+      <Link>NGC_RS274\Machine Specific\Mill\NGC_Mill.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\NGC_RS274\Machine Specific\Mill\NGC_M_Codes.h">
+      <SubType>compile</SubType>
+      <Link>NGC_RS274\Machine Specific\Mill\NGC_M_Codes.h</Link>
     </Compile>
     <Compile Include="..\..\..\NGC_RS274\NGC_Block.cpp">
       <SubType>compile</SubType>
@@ -393,10 +409,6 @@
       <SubType>compile</SubType>
       <Link>NGC_RS274\NGC_Errors.h</Link>
     </Compile>
-    <Compile Include="..\..\..\NGC_RS274\NGC_G_Codes.h">
-      <SubType>compile</SubType>
-      <Link>NGC_RS274\NGC_G_Codes.h</Link>
-    </Compile>
     <Compile Include="..\..\..\NGC_RS274\NGC_G_Groups.h">
       <SubType>compile</SubType>
       <Link>NGC_RS274\NGC_G_Groups.h</Link>
@@ -408,10 +420,6 @@
     <Compile Include="..\..\..\NGC_RS274\NGC_Interpreter.h">
       <SubType>compile</SubType>
       <Link>NGC_RS274\NGC_Interpreter.h</Link>
-    </Compile>
-    <Compile Include="..\..\..\NGC_RS274\NGC_M_Codes.h">
-      <SubType>compile</SubType>
-      <Link>NGC_RS274\NGC_M_Codes.h</Link>
     </Compile>
     <Compile Include="..\..\..\NGC_RS274\NGC_M_Groups.h">
       <SubType>compile</SubType>
@@ -554,6 +562,8 @@
     <Folder Include="Device_Startup\" />
     <Folder Include="Common" />
     <Folder Include="NGC_RS274\Machine Specific" />
+    <Folder Include="NGC_RS274\Machine Specific\Lathe\" />
+    <Folder Include="NGC_RS274\Machine Specific\Mill\" />
     <Folder Include="Processing" />
     <Folder Include="Platform Specific" />
     <Folder Include="Events\" />
@@ -563,8 +573,6 @@
     <Folder Include="Planner" />
     <Folder Include="Planner\CRC" />
     <Folder Include="Planner\Canned Cycles" />
-    <Folder Include="Talos_ARM3X8E\" />
-    <Folder Include="Talos_ARM3X8E\NGC_RS274\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Device_Startup\sam3x8e_flash.ld">

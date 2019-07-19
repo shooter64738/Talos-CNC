@@ -23,8 +23,9 @@
 #define NGC_BINARY_BLOCK_H
 
 #include <stdint.h>
-#include "ngc_defines.h"
-#include "..\physical_machine_parameters.h"
+//#include "ngc_defines.h"
+//#include "..\physical_machine_parameters.h"
+//#include "..\records_def.h"
 #include "..\records_def.h"
 #define COMP_SET_BIT 1
 #define BLOCK_STATE_PLANNED 0

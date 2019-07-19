@@ -23,7 +23,6 @@
 #include <string.h>
 #include "..\bit_manipulation.h"
 
-
 NGC_RS274::NGC_Binary_Block::NGC_Binary_Block()
 {
 	NGC_RS274::NGC_Binary_Block::initialize();
