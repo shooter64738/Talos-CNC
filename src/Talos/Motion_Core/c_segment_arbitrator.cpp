@@ -432,7 +432,7 @@ uint8_t Motion_Core::Segment::Arbitrator::Segment_Calculate()
 			break;
 			case BinaryRecords::e_ramp_type::Cruise:
 			{
-				//segment_item->flag.set((int)BinaryRecords::e_block_flag::motion_state_cruising);
+				segment_item->flag.set((int)BinaryRecords::e_block_flag::motion_state_cruising);
 				// NOTE: mm_var used to retain the last mm_remaining for incomplete segment time_var calculations.
 				// NOTE: If maximum_speed*time_var value is too low, round-off can cause mm_var to not change. To
 				//   prevent this, simply enforce a minimum speed threshold in the planner.
@@ -622,7 +622,7 @@ void Motion_Core::Segment::Arbitrator::cycle_hold()
 		Motion_Core::System::StepControl = 0;
 		st_update_plan_block_parameters();
 		Motion_Core::Segment::Arbitrator::Fill_Step_Segment_Buffer();
-		Motion_Core::Hardware::Interpolation::initialize(Motion_Core::Settings::_Settings.Hardware_Settings.spindle_encoder);
+		Motion_Core::Hardware::Interpolation::interpolation_begin();
 		//Motion_Core::System::clear_control_state_mode(STATE_MOTION_CONTROL_RESUME);
 	}
 }

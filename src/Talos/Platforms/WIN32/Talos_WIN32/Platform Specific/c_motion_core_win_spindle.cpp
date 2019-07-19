@@ -35,9 +35,9 @@ care, the results may be inaccurate.
 //const uint32_t ENCODER_SAMPLES_PER_SECOND = 10;              // this will need to be tuned depending on your use case...
 
 
-void Hardware_Abstraction_Layer::MotionCore::Spindle::initialize(BinaryRecords::s_encoders encoder_data)
+void Hardware_Abstraction_Layer::MotionCore::Spindle::initialize(BinaryRecords::s_encoders * encoder_data)
 {
-	Hardware_Abstraction_Layer::MotionCore::Spindle::spindle_encoder = &encoder_data;
+	Hardware_Abstraction_Layer::MotionCore::Spindle::spindle_encoder = encoder_data;
 }
 
 void Hardware_Abstraction_Layer::MotionCore::Spindle::configure_timer_for_at_speed_delay()
@@ -60,16 +60,25 @@ void Hardware_Abstraction_Layer::MotionCore::Spindle::OCR1A_set(uint32_t delay)
 {
 }
 
-void Hardware_Abstraction_Layer::MotionCore::Spindle::get_rpm() {
-	double dSpeedRPS, dSpeedRPM;
-	int32_t iSpeedPPP;
+int32_t Hardware_Abstraction_Layer::MotionCore::Spindle::get_rpm() {
+	BinaryRecords::s_encoders * encode = Hardware_Abstraction_Layer::MotionCore::Spindle::spindle_encoder;
 
-	iSpeedPPP = 128;
+	encode->meta_data.reg_tc0_ra0 = 2;
 
-	dSpeedRPS =
-	((iSpeedPPP /
-	(Hardware_Abstraction_Layer::MotionCore::Spindle::spindle_encoder->ticks_per_revolution * 1.0))
-	* Hardware_Abstraction_Layer::MotionCore::Spindle::spindle_encoder->samples_per_second);
-	dSpeedRPM =  dSpeedRPS * 60;
-	Hardware_Abstraction_Layer::MotionCore::Spindle::spindle_encoder->current_rpm = (int32_t) dSpeedRPM;
+	encode->meta_data.speed_rps =
+		((encode->meta_data.reg_tc0_ra0 /
+		(Hardware_Abstraction_Layer::MotionCore::Spindle::spindle_encoder->ticks_per_revolution * 1.0))
+		* Hardware_Abstraction_Layer::MotionCore::Spindle::spindle_encoder->samples_per_second);
+	encode->meta_data.speed_rpm = encode->meta_data.speed_rps * 60;
+	Hardware_Abstraction_Layer::MotionCore::Spindle::spindle_encoder->current_rpm = encode->meta_data.speed_rpm;
+	//mm_m = 5*rpm = mm per minute based on rotation
+	//step_rate_for_speed = 160*mm/m = 160steps per mm, per minute
+	//steps_per_second = step_rate_for_speed/60
+
+	float mm_m = 5 * encode->meta_data.speed_rpm;
+	float step_rate_for_speed = 160 * mm_m;
+	float steps_per_second = step_rate_for_speed / 60;
+	encode->feedrate_delay = 48000000.0 / steps_per_second;
+
+	return Hardware_Abstraction_Layer::MotionCore::Spindle::spindle_encoder->current_rpm;
 }

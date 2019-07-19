@@ -24,6 +24,7 @@
 #include "Events\c_motion_events.h"
 #include "Events\c_motion_control_events.h"
 #include "Events\c_system_events.h"
+#include "Motion_Core\c_interpollation_hardware.h"
 
 
 c_Serial Talos::Main_Process::host_serial;
@@ -35,6 +36,7 @@ void Talos::Main_Process::startup()
 	Hardware_Abstraction_Layer::MotionCore::Stepper::initialize();
 	Hardware_Abstraction_Layer::MotionCore::Inputs::initialize();
 	Hardware_Abstraction_Layer::MotionCore::Spindle::initialize(&Motion_Core::Settings::_Settings.Hardware_Settings.spindle_encoder);
+	Motion_Core::Hardware::Interpolation::initialize(&Motion_Core::Settings::_Settings.Hardware_Settings.spindle_encoder);
 	
 	NGC_RS274::Interpreter::Processor::initialize();
 	c_machine::initialize();
@@ -50,7 +52,7 @@ void Talos::Main_Process::startup()
 		//c_hal::comm.PNTR_VIRTUAL_BUFFER_WRITE(0, "g41p.25G0X1Y1F100\rX2Y2\rX3Y3\r"); //<--data from host
 
 		//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "@mmx1000\r");
-		Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "g0x10\rg0x10\rg0x20\r"); //<--data from host
+		Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "g95f500g1x1000\r"); //<--data from host
 		//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "g0x1000\r\n"); //<--data from host
 		//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "g0x10\r\n"); //<--data from host
 		//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "x3\r"); //<--data from host
@@ -74,12 +76,15 @@ void Talos::Main_Process::startup()
 	Talos::GCode_Process::local_serial = &Talos::Main_Process::host_serial;
 	Talos::Main_Process::host_serial.print_string("hello world!\r");
 	int32_t ticker = 0;
+	
+	
 	while (1)
 	{
-		if (ticker>100000)
+		Hardware_Abstraction_Layer::MotionCore::Spindle::get_rpm();
+		if (ticker>500000)
 		{
 			ticker = 0;
-			Hardware_Abstraction_Layer::MotionCore::Spindle::get_rpm();
+			
 			Talos::Main_Process::host_serial.print_string("cv=");
 			Talos::Main_Process::host_serial.print_int32(Motion_Core::Settings::_Settings.Hardware_Settings.spindle_encoder.meta_data.reg_tc0_cv1);Talos::Main_Process::host_serial.Write(',');
 			Talos::Main_Process::host_serial.print_string("ra=");
@@ -87,7 +92,7 @@ void Talos::Main_Process::startup()
 			Talos::Main_Process::host_serial.print_string("rps=");
 			Talos::Main_Process::host_serial.print_int32(Motion_Core::Settings::_Settings.Hardware_Settings.spindle_encoder.meta_data.speed_rps);Talos::Main_Process::host_serial.Write(',');
 			Talos::Main_Process::host_serial.print_string("rpm=");
-			Talos::Main_Process::host_serial.print_int32(Motion_Core::Settings::_Settings.Hardware_Settings.spindle_encoder.meta_data.speed_rpm);Talos::Main_Process::host_serial.Write(',');
+			Talos::Main_Process::host_serial.print_int32(Motion_Core::Settings::_Settings.Hardware_Settings.spindle_encoder.meta_data.speed_rpm);
 			Talos::Main_Process::host_serial.Write(CR);
 			
 		}

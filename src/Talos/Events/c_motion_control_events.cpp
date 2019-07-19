@@ -47,6 +47,7 @@ void Events::Motion_Controller::check_events()
 	}
 	if (Events::Motion_Controller::event_manager.get_clr((int)Events::Motion_Controller::e_event_type::Spindle_At_Speed))
 	{
+		local_serial->print_string("Spindle Synchronization set!\r");
 		//turn off the timeout waiting timer.
 		Hardware_Abstraction_Layer::MotionCore::Spindle::stop_at_speed_timer();
 		

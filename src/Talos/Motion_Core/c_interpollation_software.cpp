@@ -88,7 +88,7 @@ void Motion_Core::Software::Interpolation::load_block(BinaryRecords::s_motion_da
 		Motion_Core::Hardware::Interpolation::drive_mode = block->feed_rate_mode;
 		//If interpolation is not active this will start it. If it is active we
 		//already have our segment added to the buffer.
-		Motion_Core::Hardware::Interpolation::initialize(Motion_Core::Settings::_Settings.Hardware_Settings.spindle_encoder);
+		Motion_Core::Hardware::Interpolation::interpolation_begin();
 		
 		
 	}

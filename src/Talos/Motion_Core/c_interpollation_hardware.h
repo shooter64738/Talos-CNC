@@ -32,7 +32,8 @@ namespace Motion_Core
 			static BinaryRecords::e_feed_modes drive_mode;
 			static void step_tick();
 			static uint8_t is_active();
-			static void initialize(BinaryRecords::s_encoders encoder_data);
+			static void initialize(BinaryRecords::s_encoders * encoder_data);
+			static void interpolation_begin();
 			static void spindle_at_speed_timeout(uint32_t parameter);
 			static void Shutdown();
 			static void send_hardware_outputs();

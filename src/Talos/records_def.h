@@ -309,6 +309,7 @@ namespace BinaryRecords
 	struct s_encoders
 	{
 		s_encoder_meta meta_data;
+		uint32_t feedrate_delay;
 		uint16_t samples_per_second; //How frequently are we going to check the encoder signal
 		uint16_t ticks_per_revolution;//How many ticks are in a rev
 		int32_t current_rpm;//what is the current spindle rpm

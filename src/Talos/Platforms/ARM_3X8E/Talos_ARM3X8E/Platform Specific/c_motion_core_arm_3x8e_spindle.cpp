@@ -134,8 +134,11 @@ void Hardware_Abstraction_Layer::MotionCore::Spindle::OCR1A_set(uint32_t delay)
 
 
 
-int32_t Hardware_Abstraction_Layer::MotionCore::Spindle::get_rpm() {
+int32_t Hardware_Abstraction_Layer::MotionCore::Spindle::get_rpm()
+{
+	
 	BinaryRecords::s_encoders * encode = Hardware_Abstraction_Layer::MotionCore::Spindle::spindle_encoder;
+	uint32_t prior_delay = encode->feedrate_delay;
 	
 	encode->meta_data.reg_tc0_ra0 = qdec->TC_CHANNEL[0].TC_RA;
 
@@ -149,11 +152,18 @@ int32_t Hardware_Abstraction_Layer::MotionCore::Spindle::get_rpm() {
 	//step_rate_for_speed = 160*mm/m = 160steps per mm, per minute
 	//steps_per_second = step_rate_for_speed/60
 	
-	//float mm_m = 5 * encode->meta_data.speed_rpm;
-	//float step_rate_for_speed = 160 * mm_m;
-	//float steps_per_second = step_rate_for_speed/60;
-	//encode->feedrate_delay = 48000000.0/steps_per_second;
-	//
+	if (encode->meta_data.speed_rpm<0)
+	encode->meta_data.speed_rpm *=-1;
+	
+	float mm_m = 5 * encode->meta_data.speed_rpm;
+	float step_rate_for_speed = 160 * mm_m;
+	float steps_per_second = step_rate_for_speed/60;
+	float temp_delay = 48000000.0/steps_per_second;
+
+	if (temp_delay < 1.0 )
+	encode->feedrate_delay = prior_delay;
+	else
+	encode->feedrate_delay = temp_delay;
 	
 	return Hardware_Abstraction_Layer::MotionCore::Spindle::spindle_encoder->current_rpm;
 }

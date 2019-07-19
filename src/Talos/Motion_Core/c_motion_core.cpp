@@ -29,8 +29,8 @@ void Motion_Core::initialize()
 	Motion_Core::Settings::_Settings.Hardware_Settings.spindle_encoder.spindle_synch_wait_time_ms = 5;
 	Motion_Core::Settings::_Settings.Hardware_Settings.spindle_encoder.ticks_per_revolution=400;
 	Motion_Core::Settings::_Settings.Hardware_Settings.spindle_encoder.current_rpm = 0;
-	Motion_Core::Settings::_Settings.Hardware_Settings.spindle_encoder.target_rpm = 0;
-	Motion_Core::Settings::_Settings.Hardware_Settings.spindle_encoder.variable_percent = 5;
+	Motion_Core::Settings::_Settings.Hardware_Settings.spindle_encoder.target_rpm = 100;
+	Motion_Core::Settings::_Settings.Hardware_Settings.spindle_encoder.variable_percent = 50;
 	Motion_Core::Settings::_Settings.Hardware_Settings.spindle_encoder.samples_per_second = 10;
 	
 

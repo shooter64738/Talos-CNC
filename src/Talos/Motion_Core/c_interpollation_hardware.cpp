@@ -48,14 +48,18 @@ BinaryRecords::s_encoders * Motion_Core::Hardware::Interpolation::spindle_encode
 uint32_t Motion_Core::Hardware::Interpolation::spindle_calculated_delay = 0;
 uint8_t Motion_Core::Hardware::Interpolation::spindle_synch = 0;
 
+void Motion_Core::Hardware::Interpolation::initialize(BinaryRecords::s_encoders * encoder_data)
+{
+	Motion_Core::Hardware::Interpolation::spindle_encoder = encoder_data;
+}
 
-void Motion_Core::Hardware::Interpolation::initialize(BinaryRecords::s_encoders encoder_data)
+void Motion_Core::Hardware::Interpolation::interpolation_begin()
 {
 	#ifdef MSVC
 	myfile.open("acceleration.txt");
 	#endif // MSVC
 
-Motion_Core::Hardware::Interpolation::spindle_encoder = &encoder_data;
+	
 
 	//If we are already active, there isnt anything we need to do here.
 	if (!Motion_Core::Hardware::Interpolation::Interpolation_Active)
@@ -84,7 +88,7 @@ Motion_Core::Hardware::Interpolation::spindle_encoder = &encoder_data;
 				//delay period before we reach specified spindle speed.
 				Hardware_Abstraction_Layer::MotionCore::Spindle::configure_timer_for_at_speed_delay();
 				
-				//set the waiting event for spindle synch. the event manager will handle when/if 
+				//set the waiting event for spindle synch. the event manager will handle when/if
 				//interpolation can start.
 				Events::Motion_Controller::event_manager.set((int)Events::Motion_Controller::e_event_type::Spindle_To_Speed_Wait);
 				
@@ -280,6 +284,29 @@ void Motion_Core::Hardware::Interpolation::step_tick()
 
 	Motion_Core::Hardware::Interpolation::Exec_Timer_Item->steps_to_execute_in_this_segment--;
 
+	//If feedmode is spindle synch, calculate the correct delay value for
+	//the feedrate, based on spindle current speed
+	//TODO: is there a better way to do this without several if statements?
+	if (Motion_Core::Hardware::Interpolation::drive_mode == BinaryRecords::e_feed_modes::FEED_RATE_UNITS_PER_ROTATION)
+	{
+		//only adjust the delay value if we are in 'cruise' state.
+		//The arbitrator still controls motion during accel and decel
+		if (Motion_Core::Hardware::Interpolation::Exec_Timer_Item->flag.get((int)BinaryRecords::e_block_flag::motion_state_cruising))
+		{
+			
+			if (Hardware_Abstraction_Layer::MotionCore::Spindle::spindle_encoder->feedrate_delay <1)
+			{
+				//UART->UART_THR = 'A';
+			}
+			else
+			{
+				//UART->UART_THR = 'X';
+				Hardware_Abstraction_Layer::MotionCore::Stepper::OCR1A_set
+				(Hardware_Abstraction_Layer::MotionCore::Spindle::spindle_encoder->feedrate_delay);
+			}
+		}
+	}
+
 	if (Motion_Core::Hardware::Interpolation::Exec_Timer_Item->steps_to_execute_in_this_segment == 0)
 	{
 		// Segment is complete. Discard current segment and advance segment indexing.
@@ -292,19 +319,6 @@ void Motion_Core::Hardware::Interpolation::step_tick()
 
 	Motion_Core::Hardware::Interpolation::Step_Active = 0;
 	
-	//If feedmode is spindle synch, calculate the correct delay value for
-	//the feedrate, based on spindle current speed
-	//TODO: is there a better way to do this without several if statements?
-	//if (Motion_Core::Hardware::Interpolation::drive_mode == BinaryRecords::e_feed_modes::FEED_RATE_UNITS_PER_ROTATION)
-	//{
-	////only adjust the delay value if we are in 'cruise' state.
-	////The arbitrator still controls motion during accel and decel
-	//if (Motion_Core::Hardware::Interpolation::Exec_Timer_Item->flag.get((int)BinaryRecords::e_block_flag::motion_state_cruising))
-	//{
-	//Hardware_Abstraction_Layer::MotionCore::Stepper::OCR1A_set
-	//(Motion_Core::Hardware::Interpolation::spindle_calculated_delay);
-	//}
-	//
-	//}
+	
 
 }

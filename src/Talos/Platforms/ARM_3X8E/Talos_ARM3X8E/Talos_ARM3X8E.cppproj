@@ -387,7 +387,7 @@
     </Compile>
     <Compile Include="..\..\..\NGC_RS274\ngc_defines.h">
       <SubType>compile</SubType>
-      <Link>Talos_ARM3X8E\NGC_RS274\ngc_defines.h</Link>
+      <Link>NGC_RS274\ngc_defines.h</Link>
     </Compile>
     <Compile Include="..\..\..\NGC_RS274\NGC_Errors.h">
       <SubType>compile</SubType>

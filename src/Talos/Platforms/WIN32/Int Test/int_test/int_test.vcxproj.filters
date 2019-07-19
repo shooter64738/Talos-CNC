@@ -1,0 +1,78 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="NGC_RS274">
+      <UniqueIdentifier>{c453e625-d525-4ed2-bfd2-9d7773a024f3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NGC_RS274\Machine Specific">
+      <UniqueIdentifier>{3b638057-fb5c-41c7-8a62-6ef7bf6fba53}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NGC_RS274\Machine Specific\Mill">
+      <UniqueIdentifier>{c0d48802-3809-4a52-9fcf-1f0aca2c503e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NGC_RS274\Machine Specific\Lathe">
+      <UniqueIdentifier>{06841aaf-a5a5-4207-9804-f468ff60b97b}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="NGC_RS274\NGC_Block.cpp">
+      <Filter>NGC_RS274</Filter>
+    </ClCompile>
+    <ClCompile Include="NGC_RS274\NGC_Interpreter.cpp">
+      <Filter>NGC_RS274</Filter>
+    </ClCompile>
+    <ClCompile Include="NGC_RS274\Machine Specific\Mill\NGC_Mill.cpp">
+      <Filter>NGC_RS274\Machine Specific\Mill</Filter>
+    </ClCompile>
+    <ClCompile Include="NGC_RS274\Machine Specific\Lathe\NGC_Lathe.cpp">
+      <Filter>NGC_RS274\Machine Specific\Lathe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Common\Serial\c_Serial.cpp" />
+    <ClCompile Include="..\..\Talos_WIN32\Platform Specific\c_serial_win.cpp" />
+    <ClCompile Include="main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="NGC_RS274\NGC_Block.h">
+      <Filter>NGC_RS274</Filter>
+    </ClInclude>
+    <ClInclude Include="NGC_RS274\ngc_defines.h">
+      <Filter>NGC_RS274</Filter>
+    </ClInclude>
+    <ClInclude Include="NGC_RS274\NGC_Errors.h">
+      <Filter>NGC_RS274</Filter>
+    </ClInclude>
+    <ClInclude Include="NGC_RS274\NGC_G_Groups.h">
+      <Filter>NGC_RS274</Filter>
+    </ClInclude>
+    <ClInclude Include="NGC_RS274\NGC_Interpreter.h">
+      <Filter>NGC_RS274</Filter>
+    </ClInclude>
+    <ClInclude Include="NGC_RS274\NGC_M_Groups.h">
+      <Filter>NGC_RS274</Filter>
+    </ClInclude>
+    <ClInclude Include="NGC_RS274\NGC_Parameters.h">
+      <Filter>NGC_RS274</Filter>
+    </ClInclude>
+    <ClInclude Include="NGC_RS274\Machine Specific\Mill\NGC_Mill.h">
+      <Filter>NGC_RS274\Machine Specific\Mill</Filter>
+    </ClInclude>
+    <ClInclude Include="NGC_RS274\Machine Specific\Lathe\NGC_Lathe.h">
+      <Filter>NGC_RS274\Machine Specific\Lathe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Common\Serial\c_Serial.h" />
+    <ClInclude Include="..\..\..\..\Common\Serial\s_buffer.h" />
+    <ClInclude Include="..\..\Talos_WIN32\Platform Specific\c_serial_win.h" />
+    <ClInclude Include="NGC_RS274\Machine Specific\Mill\NGC_G_Codes.h">
+      <Filter>NGC_RS274\Machine Specific\Mill</Filter>
+    </ClInclude>
+    <ClInclude Include="NGC_RS274\Machine Specific\Mill\NGC_M_Codes.h">
+      <Filter>NGC_RS274\Machine Specific\Mill</Filter>
+    </ClInclude>
+    <ClInclude Include="NGC_RS274\Machine Specific\Lathe\NGC_G_Codes.h">
+      <Filter>NGC_RS274\Machine Specific\Lathe</Filter>
+    </ClInclude>
+    <ClInclude Include="NGC_RS274\Machine Specific\Lathe\NGC_M_Codes.h">
+      <Filter>NGC_RS274\Machine Specific\Lathe</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
