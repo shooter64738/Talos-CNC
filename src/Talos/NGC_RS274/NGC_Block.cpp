@@ -601,14 +601,9 @@ uint8_t NGC_RS274::NGC_Binary_Block::any_rotational_axis_was_defined()
 	return true;
 }
 
-void NGC_RS274::NGC_Binary_Block::set_state(uint8_t bit_flag)
-{
-	BitSet_(this->state,bit_flag);
-}
-
 NGC_RS274::NGC_Binary_Block::s_axis_property::s_axis_property()
 {
-	int x = 0;
+
 }
 
 NGC_RS274::NGC_Binary_Block::s_axis_property::~s_axis_property()

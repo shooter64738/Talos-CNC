@@ -24,9 +24,7 @@
 
 #include <stdint.h>
 #include "..\records_def.h"
-#define COMP_SET_BIT 1
-#define BLOCK_STATE_PLANNED 0
-#define BLOCK_STATE_HELD 1
+
 namespace NGC_RS274
 {
 	class NGC_Binary_Block
@@ -49,7 +47,9 @@ namespace NGC_RS274
 			Non_modal = 8,
 			Units = 9,
 			Coolant = 10,
-			Tool_Change_Request = 11
+			Tool_Change_Request = 11,
+			Block_Set_To_Execute = 12,
+			Block_Set_To_Held = 13
 		};
 
 		BinaryRecords::s_bit_flag_controller_16 event_manager;
@@ -126,8 +126,6 @@ namespace NGC_RS274
 		}s_canned_values;
 		s_canned_values canned_values;
 
-		uint8_t state;
-
 		//uint8_t exec_flags;
 
 		float block_word_values[COUNT_OF_BLOCK_WORDS_ARRAY];
@@ -178,8 +176,6 @@ namespace NGC_RS274
 		uint8_t any_linear_axis_was_defined(void);
 		uint8_t any_rotational_axis_was_defined(void);
 
-		//uint8_t is_compensation_set();
-		void set_state(uint8_t bit_flag);
 
 		//Return the value in the Gcodes table for the group requested
 		float get_g_code_value(int GroupNumber);

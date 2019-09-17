@@ -54,3 +54,26 @@ void Events::Main_Process::check_events()
 //c_events::~c_events()
 //{
 //} //~c_events
+/*
+01 Comment(including message)
+02 Set feed rate mode(G93, G94).
+03 Set feed rate(F).
+04 Set spindle speed(S).
+05 Select tool(T).
+06 Change tool(M6).
+07 Spindle on or off(M3, M4, M5).
+08 Coolant on or off(M7, M8, M9).
+09 Enable or disable overrides(M48, M49).
+10 Dwell(G4).
+11 Set active plane(G17, G18, G19).
+12 Set length units(G20, G21).
+13 Cutter radius compensation on or off(G40, G41, G42)
+14 Cutter length compensation on or off(G43, G49)
+15 Coordinate system selection(G54, G55, G56, G57, G58, G59, G59.1, G59.2, G59.3).
+16 Set path control mode(G61, G61.1, G64)
+17 Set distance mode(G90, G91).
+18 Set retract mode(G98, G99).
+19 Go to reference location(G28, G30) or change coordinate system data(G10) or set axis offsets(G92, G92.1, G92.2, G94).
+20 Perform motion(G0 to G3, G33, G73, G76, G80 to G89), as modified(possibly) by G53.
+21 Stop(M0, M1, M2, M30, M60).
+*/

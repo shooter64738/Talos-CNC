@@ -133,43 +133,8 @@ uint8_t c_Cutter_Comp::line_offset_intersect(s_point &p1_target, s_point p1_orig
 	return false;
 }
 
-//c_Path c_Cutter_Comp::tangents(s_point center, s_point external_point, float radius)
-//{
-//	// Find the distance squared from the
-//	// external point to the circle's center.
-//	s_point p1;
-//	s_point p2;
-//	c_Path int_path;
-//
-//	float dx = center.X - external_point.X;
-//	float dy = center.Y - external_point.Y;
-//	float D_squared = dx * dx + dy * dy;
-//	if (D_squared < radius * radius)
-//	{
-//		int_path.origin.X = -1; int_path.origin.Y = -1;
-//		int_path.target.X = -1; int_path.target.Y = -1;
-//		return int_path;
-//	}
-//
-//	// Find the distance from the external point
-//	// to the tangent points.
-//	float L = sqrt(D_squared - radius * radius);
-//
-//	// Find the points of intersection between
-//	// the original circle and the circle with
-//	// center external_point and radius dist.
-//	s_point int1;
-//	s_point int2;
-//	arc_arc_intersect(center, radius, external_point, L,
-//		int1, int2);
-//
-//	return int_path;
-//}
-
 uint8_t c_Cutter_Comp::arc_arc_intersect(s_point c0, float c0_radius, s_point c1, float c1_radius, s_point &intersection1, s_point &intersection2)
 {
-
-
 	// Find the distance between the centers.
 	float dx = c0.X - c1.X;
 	float dy = c0.Y - c1.Y;
@@ -346,40 +311,6 @@ e_corner_type c_Cutter_Comp::get_corner_type(c_Path current_path, c_Path forward
 	return return_type;
 }
 
-//void c_Cutter_Comp::set_outside_corner_arc(c_Path current_path, c_Path forward_path, s_point arc_center)
-//{
-//	//c_Cutter_Comp::corner_path = &c_Path();
-//
-//	corner_path.object_type = e_object_type::APPENDED_ARC; //<--Comp type is arc
-//	corner_path.programmed.center = current_path.programmed.target; //<--Center X of the comp arc is the original program destination
-//	corner_path.programmed.origin = current_path.compensated.target;//<--Where does the arc start
-//	corner_path.programmed.target = forward_path.compensated.origin;//<--Where does the arc end
-//	corner_path.programmed.radius = c_Cutter_Comp::tool_radius;//<--Probably dont need this but, radius of the comp arc.
-//
-//
-//
-//	/*
-//	Sometimes there isnt enough room to fit the cutter to the compensated point without invading another path.
-//	If we are generating an outside corner arc, we check the calculated radius size, and make sure its not
-//	less than the tool radius. IF it is smaller than the tool radius, it is a compensation error.
-//	*/
-//
-//	//Assume CCW arc.
-//	corner_path.programmed.arc_direction = e_arc_winding_direction::CCW;
-//	//do we need a CW arc instead?
-//	float c = (corner_path.programmed.origin.X - corner_path.programmed.center.X)
-//		*(corner_path.programmed.target.Y - corner_path.programmed.center.Y)
-//		- (corner_path.programmed.origin.Y - corner_path.programmed.center.Y)
-//		*(corner_path.programmed.target.X - corner_path.programmed.center.X);
-//	if (signbit(c))
-//		corner_path.programmed.arc_direction = e_arc_winding_direction::CW;
-//	else if (c == 0)
-//	{
-//		corner_path.object_type == e_object_type::UNSPECIFIED;
-//	}
-//}
-
-
 void c_Cutter_Comp::set_outside_corner_arc(c_Path current_path, c_Path forward_path, s_point arc_center)
 {
 	/*
@@ -409,7 +340,7 @@ void c_Cutter_Comp::set_outside_corner_arc(c_Path current_path, c_Path forward_p
 	if (signbit(c))
 	{
 		corner_path.g_group[NGC_RS274::Groups::G::Motion] = NGC_RS274::G_codes::CIRCULAR_INTERPOLATION_CW;
-		c_Cutter_Comp::previous_block_pointer->appended_block_pointer->set_state(BLOCK_STATE_PLANNED);
+		c_Cutter_Comp::previous_block_pointer->appended_block_pointer->event_manager.set((int)NGC_RS274::NGC_Binary_Block::e_block_event::Block_Set_To_Execute);
 	}
 	else if (c == 0)
 	{
@@ -417,7 +348,6 @@ void c_Cutter_Comp::set_outside_corner_arc(c_Path current_path, c_Path forward_p
 		c_Cutter_Comp::previous_block_pointer->appended_block_pointer = NULL;
 	}
 }
-
 
 int16_t c_Cutter_Comp::set_path(NGC_RS274::NGC_Binary_Block* local_block)
 {
@@ -432,44 +362,29 @@ int16_t c_Cutter_Comp::set_path(NGC_RS274::NGC_Binary_Block* local_block)
 	We are only preparing for cutter compensation in case it is turned on. We keep the last_path
 	values updated so if comp is turned on, it is aware of the prior motions that have been executed.
 	*/
-	if (!c_Cutter_Comp::comp_activated)
+	//only change these values if they were defined. otherwise leave them alone.
+	c_Cutter_Comp::_current_path.programmed.origin = c_Cutter_Comp::_current_path.programmed.target;
+
+	if (local_block->get_defined(local_block->active_plane.horizontal_axis.name))
+		c_Cutter_Comp::_current_path.programmed.target.X = *local_block->active_plane.horizontal_axis.value;//axis_values.X;
+	if (local_block->get_defined(local_block->active_plane.vertical_axis.name))
+		c_Cutter_Comp::_current_path.programmed.target.Y = *local_block->active_plane.vertical_axis.value;//axis_values.Y;
+
+	c_Cutter_Comp::_current_path.programmed.radius = *local_block->arc_values.Radius;
+	c_Cutter_Comp::_current_path.programmed.center.X = *local_block->arc_values.horizontal_offset.value;
+	c_Cutter_Comp::_current_path.programmed.center.Y = *local_block->arc_values.vertical_offset.value;
+	c_Cutter_Comp::_forward_path.programmed.origin = c_Cutter_Comp::_current_path.programmed.target;
+		
+	if (c_Cutter_Comp::comp_activated)
 	{
-		//only change these values if they were defined. otherwise leave them alone.
-		c_Cutter_Comp::_current_path.programmed.origin = c_Cutter_Comp::_current_path.programmed.target;
-		if (local_block->get_defined(local_block->active_plane.horizontal_axis.name))
-			c_Cutter_Comp::_current_path.programmed.target.X = *local_block->active_plane.horizontal_axis.value;//axis_values.X;
-		if (local_block->get_defined(local_block->active_plane.vertical_axis.name))
-			c_Cutter_Comp::_current_path.programmed.target.Y = *local_block->active_plane.vertical_axis.value;//axis_values.Y;
-
-		c_Cutter_Comp::_current_path.compensated.target = c_Cutter_Comp::_current_path.programmed.target;
-
-
-		c_Cutter_Comp::_current_path.programmed.radius = *local_block->arc_values.Radius;
-		c_Cutter_Comp::_current_path.programmed.center.X = *local_block->arc_values.horizontal_offset.value;
-		c_Cutter_Comp::_current_path.programmed.center.Y = *local_block->arc_values.vertical_offset.value;
 		c_Cutter_Comp::_forward_path.programmed.origin = c_Cutter_Comp::_current_path.programmed.target;
-		c_Cutter_Comp::set_object_type(local_block, _current_path);
+		c_Cutter_Comp::set_object_type(local_block, _forward_path);
 	}
 	else
 	{
-		c_Cutter_Comp::_current_path.programmed.origin = c_Cutter_Comp::_current_path.programmed.target;
-
-		//only change these values if they were defined. otherwise leave them alone.
-		if (local_block->get_defined(local_block->active_plane.horizontal_axis.name))
-			c_Cutter_Comp::_current_path.programmed.target.X = *local_block->active_plane.horizontal_axis.value; //axis_values.X;
-		if (local_block->get_defined(local_block->active_plane.vertical_axis.name))
-			c_Cutter_Comp::_current_path.programmed.target.Y = *local_block->active_plane.vertical_axis.value; //axis_values.Y;
-
-		c_Cutter_Comp::_forward_path.programmed.origin = c_Cutter_Comp::_current_path.programmed.target;
-
-
-		c_Cutter_Comp::_current_path.programmed.radius = *local_block->arc_values.Radius;
-		c_Cutter_Comp::_current_path.programmed.center.X = *local_block->arc_values.horizontal_offset.value;
-		c_Cutter_Comp::_current_path.programmed.center.Y = *local_block->arc_values.vertical_offset.value;
-		c_Cutter_Comp::set_object_type(local_block, _forward_path);
+		c_Cutter_Comp::_current_path.compensated.target = c_Cutter_Comp::_current_path.programmed.target;
+		c_Cutter_Comp::set_object_type(local_block, _current_path);
 	}
-
-
 
 	//If comp is not on, we can just exit.
 	if (!c_Cutter_Comp::comp_activated)
@@ -579,7 +494,7 @@ int16_t c_Cutter_Comp::gen_comp(NGC_RS274::NGC_Binary_Block* local_block)
 			return NGC_Planner_Errors::CUTTER_RADIUS_COMP_LEADIN_TOO_SMALL;
 		}
 		//Set this block to held. It well be set to planned if we get through all the cutter compensation
-		local_block->set_state(BLOCK_STATE_HELD);
+		local_block->event_manager.set((int)NGC_RS274::NGC_Binary_Block::e_block_event::Block_Set_To_Held);
 		previous_block_pointer = local_block;
 		return NGC_Planner_Errors::OK; //<--Cant do anything until we get the next motion block in here.
 	}
@@ -611,7 +526,7 @@ int16_t c_Cutter_Comp::gen_comp(NGC_RS274::NGC_Binary_Block* local_block)
 	{
 		//set this block to held.
 		if (c_Cutter_Comp::comp_activated)
-			local_block->set_state(BLOCK_STATE_HELD);
+			local_block->event_manager.set((int)NGC_RS274::NGC_Binary_Block::e_block_event::Block_Set_To_Held);
 
 		_forward_path.programmed.origin = _forward_path.programmed.target;
 
@@ -864,7 +779,7 @@ int16_t c_Cutter_Comp::gen_comp(NGC_RS274::NGC_Binary_Block* local_block)
 	//release the hold on the previous block
 	if (c_Cutter_Comp::previous_block_pointer != NULL)
 	{
-		previous_block_pointer->set_state(BLOCK_STATE_PLANNED);
+		previous_block_pointer->event_manager.set((int)NGC_RS274::NGC_Binary_Block::e_block_event::Block_Set_To_Execute);
 		//change the program line values now.
 		c_Cutter_Comp::previous_block_pointer->set_value
 		(c_Cutter_Comp::previous_block_pointer->active_plane.horizontal_axis.name
@@ -877,7 +792,7 @@ int16_t c_Cutter_Comp::gen_comp(NGC_RS274::NGC_Binary_Block* local_block)
 	//if comp is turned off, attach the ending comp (lead out) motion to the previous block
 	if (c_Cutter_Comp::state == e_compensation_state::OFF)
 	{
-		local_block->set_state(BLOCK_STATE_PLANNED);//<--end of comp so we can release this block.
+		local_block->event_manager.set((int)NGC_RS274::NGC_Binary_Block::e_block_event::Block_Set_To_Execute);
 		previous_block_pointer->appended_block_pointer = local_block;
 		
 	}

@@ -158,7 +158,7 @@ uint8_t c_stager::post_stage_check()
 
 	//Does cutter compensation have a block buffered waiting for a motion command?
 	if (c_Cutter_Comp::previous_block_pointer != NULL
-	&& c_Cutter_Comp::previous_block_pointer->state & (1 << BLOCK_STATE_PLANNED))
+	&& c_Cutter_Comp::previous_block_pointer->event_manager.get((int)NGC_RS274::NGC_Binary_Block::e_block_event::Block_Set_To_Execute))
 	{
 		//point the machine block to the previous block in cutter compensation. This block
 		// is being held for cutter compensation
@@ -382,7 +382,7 @@ int16_t c_stager::stage_block_motion()
 		//In order for the machine to execute a block, its state must be set to 'planned'
 		//If compensation is on, then we let crc manage the plan state. But if its off,
 		//we need to set the state to planned here.
-		local_block->set_state(BLOCK_STATE_PLANNED);
+		local_block->event_manager.set((int)NGC_RS274::NGC_Binary_Block::e_block_event::Block_Set_To_Execute);
 	}
 
 	//see if the motion state requires motion and a non modal was not on the local block.

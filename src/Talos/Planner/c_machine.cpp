@@ -195,7 +195,7 @@ c_machine::e_responses c_machine::start_motion_binary(NGC_RS274::NGC_Binary_Bloc
 {
 	
 	//If the block is set to 'planned' then its ready to execute
-	if (local_block->state & (1 << BLOCK_STATE_PLANNED))
+	if (local_block->event_manager.get((int)NGC_RS274::NGC_Binary_Block::e_block_event::Block_Set_To_Execute))
 	{//convert the ngc data into a motion record
 		BinaryRecords::s_motion_data_block motion_block_record;
 		//set some block stuff
