@@ -29,6 +29,15 @@ class c_machine
 {
 	//variables
 	public:
+	public:
+	enum class e_responses : uint8_t
+	{
+		Ok = 0,
+		Wait_for_complete = 1,
+		Cannot_execute_critical = 20,
+		Control_error_critical = 21
+	};
+	
 	////This is a 2 byte (16 bit) variable. If a G command was defined for a G group we store its bits in here.
 	//static uint16_t g_code_defined_in_block = 0;
 	////This is a 1 byte (8 bit) variable. If a M command was defined for an M group we store its bits in here.
@@ -58,8 +67,8 @@ class c_machine
 	static void check_panel_input();
 	static void report();
 
-	static void run_block();
-	static void start_motion_binary(NGC_RS274::NGC_Binary_Block* local_block);
+	static e_responses run_block();
+	static e_responses start_motion_binary(NGC_RS274::NGC_Binary_Block* local_block);
 	protected:
 	private:
 

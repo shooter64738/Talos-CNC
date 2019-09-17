@@ -27,7 +27,7 @@
 //How many elements are in the G code group array
 #define COUNT_OF_G_CODE_GROUPS_ARRAY 16
 //How many elements are in the M code group array
-#define COUNT_OF_M_CODE_GROUPS_ARRAY 6
+#define COUNT_OF_M_CODE_GROUPS_ARRAY 11
 //How many tool offset are in the tool table. (Note tool 0 is used when P value is sent)
 #define COUNT_OF_TOOL_TABLE 10
 

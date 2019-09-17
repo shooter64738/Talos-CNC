@@ -33,7 +33,7 @@ static float square(float X)
 
 
 //Changing the MACHINE_TYPE in the physical_machine_parameters.h file will change what
-//is included to process gcode specific to one machine or the other. 
+//is included to process gcode specific to one machine or the other.
 #ifdef MACHINE_TYPE_MILL
 #include "Machine Specific\Mill\NGC_Mill.h"
 #endif
@@ -48,7 +48,7 @@ namespace NGC_RS274
 		class Processor : public NGC_RS274::Interpreter::NGC_Machine_Specific
 		{
 			//variables
-		public:
+			public:
 			static c_Serial *local_serial;
 			//static char Line[CYCLE_LINE_LENGTH];
 			static char * Line;
@@ -72,11 +72,11 @@ namespace NGC_RS274
 			static int convert_to_line_index(uint8_t BlockNumber);
 			static int convert_to_line(NGC_RS274::NGC_Binary_Block*local_block);
 
-		private:
+			private:
 			static int parse_values();
 			static void assign_planes(NGC_RS274::NGC_Binary_Block &plane_block);
 			
-			//These error checking methods will need to be moved to their machine specific types. 
+			//These error checking methods will need to be moved to their machine specific types.
 			static int error_check_main();
 			static int error_check_plane_select(NGC_RS274::NGC_Binary_Block &plane_block);
 			static int error_check_arc();
@@ -90,6 +90,7 @@ namespace NGC_RS274
 
 			static float hypot_f(float x, float y);
 			static float square(float x);
+			static bool determine_motion(NGC_RS274::NGC_Binary_Block*local_block);
 			//c_interpreter(const c_interpreter &c);
 			//c_interpreter& operator=(const c_interpreter &c);
 			//c_interpreter();

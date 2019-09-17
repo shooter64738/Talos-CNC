@@ -37,6 +37,12 @@
     <Filter Include="NGC_RS274\Machine Specific">
       <UniqueIdentifier>{7d86b52c-a379-4bfe-8aa3-4660909d509a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="NGC_RS274\Machine Specific\Mill">
+      <UniqueIdentifier>{4f2f3e9c-f553-496d-8e70-74bf65b47276}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NGC_RS274\Machine Specific\Lathe">
+      <UniqueIdentifier>{2f586632-59c3-4453-8759-53d0500b55c2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Events\c_block_events.cpp">
@@ -139,17 +145,20 @@
     <ClCompile Include="..\..\..\Motion_Core\c_gateway.cpp">
       <Filter>Motion_Core</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\NGC_RS274\Machine Specific\NGC_Lathe.cpp">
-      <Filter>NGC_RS274\Machine Specific</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\NGC_RS274\Machine Specific\NGC_Mill.cpp">
-      <Filter>NGC_RS274\Machine Specific</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\Events\c_system_events.cpp">
       <Filter>Events</Filter>
     </ClCompile>
     <ClCompile Include="Platform Specific\c_motion_core_win_spindle.cpp">
       <Filter>Platform Specific</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\NGC_RS274\Machine Specific\Mill\NGC_Mill.cpp">
+      <Filter>NGC_RS274\Machine Specific\Mill</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\NGC_RS274\Machine Specific\Lathe\NGC_Lathe.cpp">
+      <Filter>NGC_RS274\Machine Specific\Lathe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Planner\c_event_control.cpp">
+      <Filter>Planner</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -204,16 +213,10 @@
     <ClInclude Include="..\..\..\NGC_RS274\NGC_Errors.h">
       <Filter>NGC_RS274</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\NGC_RS274\NGC_G_Codes.h">
-      <Filter>NGC_RS274</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\NGC_RS274\NGC_G_Groups.h">
       <Filter>NGC_RS274</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\NGC_RS274\NGC_Interpreter.h">
-      <Filter>NGC_RS274</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\NGC_RS274\NGC_M_Codes.h">
       <Filter>NGC_RS274</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\NGC_RS274\NGC_M_Groups.h">
@@ -286,12 +289,6 @@
     <ClInclude Include="..\..\..\Motion_Core\c_gateway.h">
       <Filter>Motion_Core</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\NGC_RS274\Machine Specific\NGC_Lathe.h">
-      <Filter>NGC_RS274\Machine Specific</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\NGC_RS274\Machine Specific\NGC_Mill.h">
-      <Filter>NGC_RS274\Machine Specific</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\records_def.h" />
     <ClInclude Include="..\..\..\Events\c_system_events.h">
       <Filter>Events</Filter>
@@ -301,6 +298,27 @@
     </ClInclude>
     <ClInclude Include="..\..\..\NGC_RS274\ngc_defines.h">
       <Filter>NGC_RS274</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGC_RS274\Machine Specific\Mill\NGC_G_Codes.h">
+      <Filter>NGC_RS274\Machine Specific\Mill</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGC_RS274\Machine Specific\Mill\NGC_M_Codes.h">
+      <Filter>NGC_RS274\Machine Specific\Mill</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGC_RS274\Machine Specific\Mill\NGC_Mill.h">
+      <Filter>NGC_RS274\Machine Specific\Mill</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGC_RS274\Machine Specific\Lathe\NGC_G_Codes.h">
+      <Filter>NGC_RS274\Machine Specific\Lathe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGC_RS274\Machine Specific\Lathe\NGC_Lathe.h">
+      <Filter>NGC_RS274\Machine Specific\Lathe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGC_RS274\Machine Specific\Lathe\NGC_M_Codes.h">
+      <Filter>NGC_RS274\Machine Specific\Lathe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Planner\c_event_control.h">
+      <Filter>Planner</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

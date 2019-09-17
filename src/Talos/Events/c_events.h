@@ -28,7 +28,6 @@ namespace Events
 	{
 		//variables
 		public:
-
 		protected:
 		private:
 

@@ -461,6 +461,14 @@
       <SubType>compile</SubType>
       <Link>Planner\CRC\shared.h</Link>
     </Compile>
+    <Compile Include="..\..\..\Planner\c_event_control.cpp">
+      <SubType>compile</SubType>
+      <Link>Planner\c_event_control.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\Planner\c_event_control.h">
+      <SubType>compile</SubType>
+      <Link>Planner\c_event_control.h</Link>
+    </Compile>
     <Compile Include="..\..\..\Planner\c_gcode_buffer.cpp">
       <SubType>compile</SubType>
       <Link>Planner\c_gcode_buffer.cpp</Link>

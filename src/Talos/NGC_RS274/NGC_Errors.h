@@ -41,35 +41,41 @@ namespace NGC_RS274
 			static const uint8_t MOTION_CANCELED_AXIS_VALUES_INVALID = 1;
 			static const uint8_t NO_AXIS_DEFINED_FOR_MOTION = 2;
 			static const uint8_t NO_FEED_RATE_SPECIFIED = 3;
-			static const uint8_t NO_FEED_RATE_SPECIFIED_FOR_G93 = 4;
-			static const uint8_t MISSING_CIRCLE_OFFSET_IJ = 5;
-			static const uint8_t MISSING_CIRCLE_OFFSET_IK = 6;
-			static const uint8_t MISSING_CIRCLE_OFFSET_JK = 7;
-			static const uint8_t MISSING_CIRCLE_AXIS_XY = 8;
-			static const uint8_t MISSING_CIRCLE_AXIS_XZ = 9;
-			static const uint8_t MISSING_CIRCLE_AXIS_YZ = 10;
-			static const uint8_t ACTIVE_PLANE_UNSPECIFIED = 11;
-			static const uint8_t RADIUS_FORMAT_ARC_RADIUS_LESS_THAN_ZERO = 12;
-			static const uint8_t CENTER_FORMAT_ARC_RADIUS_ERROR_EXCEEDS_005 = 13;
-			static const uint8_t CENTER_FORMAT_ARC_RADIUS_ERROR_EXCEEDS_PERCENTAGE = 14;
+			static const uint8_t NO_FEED_RATE_SPECIFIED_FOR_UNIT_PER_MINUTE = 4;
+			static const uint8_t NO_SPINDLE_VALUE_FOR_UNIT_PER_ROTATION = 5;
+			static const uint8_t NO_SPINDLE_MODE_FOR_UNIT_PER_ROTATION = 6;
+			
+			static const uint8_t MISSING_CIRCLE_OFFSET_IJ = 15;
+			static const uint8_t MISSING_CIRCLE_OFFSET_IK = 16;
+			static const uint8_t MISSING_CIRCLE_OFFSET_JK = 17;
+			static const uint8_t RADIUS_FORMAT_ARC_RADIUS_LESS_THAN_ZERO = 18;
+			static const uint8_t CENTER_FORMAT_ARC_RADIUS_ERROR_EXCEEDS_005 = 19;
+			static const uint8_t CENTER_FORMAT_ARC_RADIUS_ERROR_EXCEEDS_PERCENTAGE = 20;
+			
+			static const uint8_t MISSING_CIRCLE_AXIS_XY = 30;
+			static const uint8_t MISSING_CIRCLE_AXIS_XZ = 31;
+			static const uint8_t MISSING_CIRCLE_AXIS_YZ = 32;
+			static const uint8_t ACTIVE_PLANE_UNSPECIFIED = 33;
+			
 
 			//These errors are obviously for group issues. I don't want to have to change it in multiple
-			//places/code files so I am connecting the error values together. I add 15 to each one to make
-			//each group error unique
-#define BASE_ERROR_G_ERROR 20
+			//places/code files so I am connecting the error values together. 
+#define BASE_ERROR_G_ERROR 40
 			static const uint8_t G_CODE_GROUP_NON_MODAL_ALREADY_SPECIFIED = NGC_RS274::Groups::G::NON_MODAL + BASE_ERROR_G_ERROR;
-			static const uint8_t G_CODE_GROUP_MOTION_GROUP_ALREADY_SPECIFIED = NGC_RS274::Groups::G::MOTION + BASE_ERROR_G_ERROR;
+			static const uint8_t G_CODE_GROUP_NON_MODAL_AXIS_CANNOT_BE_SPECIFIED = NGC_RS274::Groups::G::NON_MODAL + BASE_ERROR_G_ERROR;
+			static const uint8_t G_CODE_GROUP_MOTION_GROUP_ALREADY_SPECIFIED = NGC_RS274::Groups::G::Motion + BASE_ERROR_G_ERROR;
 			static const uint8_t G_CODE_GROUP_PLANE_SELECTION_ALREADY_SPECIFIED = NGC_RS274::Groups::G::PLANE_SELECTION + BASE_ERROR_G_ERROR;
 			static const uint8_t G_CODE_GROUP_DISTANCE_MODE_ALREADY_SPECIFIED = NGC_RS274::Groups::G::DISTANCE_MODE + BASE_ERROR_G_ERROR;
-			static const uint8_t G_CODE_GROUP_FEED_RATE_MODE_ALREADY_SPECIFIED = NGC_RS274::Groups::G::FEED_RATE_MODE + BASE_ERROR_G_ERROR;
-			static const uint8_t G_CODE_GROUP_UNITS_ALREADY_SPECIFIED = NGC_RS274::Groups::G::UNITS + BASE_ERROR_G_ERROR;
-			static const uint8_t G_CODE_GROUP_CUTTER_RADIUS_COMPENSATION_ALREADY_SPECIFIED = NGC_RS274::Groups::G::CUTTER_RADIUS_COMPENSATION + BASE_ERROR_G_ERROR;
-			static const uint8_t G_CODE_GROUP_TOOL_LENGTH_OFFSET_ALREADY_SPECIFIED = NGC_RS274::Groups::G::TOOL_LENGTH_OFFSET + BASE_ERROR_G_ERROR;
+			static const uint8_t G_CODE_GROUP_FEED_RATE_MODE_ALREADY_SPECIFIED = NGC_RS274::Groups::G::Feed_rate_mode + BASE_ERROR_G_ERROR;
+			static const uint8_t G_CODE_GROUP_UNITS_ALREADY_SPECIFIED = NGC_RS274::Groups::G::Units + BASE_ERROR_G_ERROR;
+			static const uint8_t G_CODE_GROUP_CUTTER_RADIUS_COMPENSATION_ALREADY_SPECIFIED = NGC_RS274::Groups::G::Cutter_radius_compensation + BASE_ERROR_G_ERROR;
+			static const uint8_t G_CODE_GROUP_TOOL_LENGTH_OFFSET_ALREADY_SPECIFIED = NGC_RS274::Groups::G::Tool_length_offset + BASE_ERROR_G_ERROR;
 			static const uint8_t G_CODE_GROUP_RETURN_MODE_CANNED_CYCLE_ALREADY_SPECIFIED = NGC_RS274::Groups::G::RETURN_MODE_CANNED_CYCLE + BASE_ERROR_G_ERROR;
 			static const uint8_t G_CODE_GROUP_COORDINATE_SYSTEM_SELECTION_ALREADY_SPECIFIED = NGC_RS274::Groups::G::COORDINATE_SYSTEM_SELECTION + BASE_ERROR_G_ERROR;
 			static const uint8_t G_CODE_GROUP_PATH_CONTROL_MODE_ALREADY_SPECIFIED = NGC_RS274::Groups::G::PATH_CONTROL_MODE + BASE_ERROR_G_ERROR;
 
-#define BASE_ERROR_M_ERROR 30
+#define BASE_ERROR_M_ERROR BASE_ERROR_G_ERROR+10
+
 			static const uint8_t M_CODE_GROUP_STOPPING_ALREADY_SPECIFIED = NGC_RS274::Groups::M::STOPPING + BASE_ERROR_M_ERROR;
 			static const uint8_t M_CODE_GROUP_TOOL_CHANGE_ALREADY_SPECIFIED = NGC_RS274::Groups::M::TOOL_CHANGE + BASE_ERROR_M_ERROR;
 			static const uint8_t M_CODE_GROUP_SPINDLE_ALREADY_SPECIFIED = NGC_RS274::Groups::M::SPINDLE + BASE_ERROR_M_ERROR;

@@ -95,9 +95,9 @@ namespace NGC_RS274
 		static const unsigned int SET_COORDINATE_OFFSET = 92 * G_CODE_MULTIPLIER;
 		static const unsigned int FEED_RATE_MINUTES_PER_UNIT_MODE = 93 * G_CODE_MULTIPLIER;
 		static const unsigned int FEED_RATE_UNITS_PER_MINUTE_MODE = 94 * G_CODE_MULTIPLIER;
-		static const unsigned int FEED_RATE_UNITS_PER_ROTATION = 95 * G_CODE_MULTIPLIER;
 		static const unsigned int FEED_RATE_CONSTANT_SURFACE_SPEED = 96 * G_CODE_MULTIPLIER;
 		static const unsigned int FEED_RATE_RPM_MODE = 97 * G_CODE_MULTIPLIER;
+		static const unsigned int FEED_RATE_UNITS_PER_ROTATION = 99 * G_CODE_MULTIPLIER;
 	};
 };
 #endif

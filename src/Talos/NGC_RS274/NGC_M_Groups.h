@@ -29,13 +29,18 @@ namespace NGC_RS274
 	{
 		class M
 		{
-		public:
-			static const uint8_t STOPPING = 0;// 4;
-			static const uint8_t TOOL_CHANGE = 1;// 6;
-			static const uint8_t SPINDLE = 2;// 7;
-			static const uint8_t COOLANT = 3;// 8;
-			static const uint8_t OVERRIDE = 4;// 9;
-			static const uint8_t USER_DEFINED = 5;// 10;
+			public:
+			static const uint8_t UNUSED_0 = 0;
+			static const uint8_t UNUSED_1 = 1;
+			static const uint8_t UNUSED_2 = 2;
+			static const uint8_t UNUSED_3 = 3;
+			static const uint8_t STOPPING = 4;
+			static const uint8_t UNUSED_4 = 5;
+			static const uint8_t TOOL_CHANGE = 6;
+			static const uint8_t SPINDLE = 7;
+			static const uint8_t COOLANT = 8;
+			static const uint8_t OVERRIDE = 9;
+			static const uint8_t USER_DEFINED = 10;
 		};
 	};
 }

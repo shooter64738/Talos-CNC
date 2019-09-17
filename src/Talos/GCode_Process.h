@@ -23,6 +23,7 @@ namespace Talos
 			Disk = 2,
 		};
 		
+		static e_input_type input_mode;
 		static c_Serial * local_serial;
 		static int16_t load_data(char * pntr_data);
 		static char * get_data_from_serial();

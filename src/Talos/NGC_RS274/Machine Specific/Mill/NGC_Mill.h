@@ -31,11 +31,11 @@ namespace NGC_RS274
 	{
 		class NGC_Machine_Specific
 		{
-		public:
+			public:
 			static int error_check_canned_cycle();
-
+			static int error_check_feed_mode(int gCode);
 		};
 	};
 };
-#endif 
-#endif 
+#endif
+#endif

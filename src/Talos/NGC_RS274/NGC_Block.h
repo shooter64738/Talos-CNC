@@ -36,6 +36,24 @@ namespace NGC_RS274
 		NGC_Binary_Block();
 		~NGC_Binary_Block();
 
+		enum class e_block_event : uint8_t
+		{
+			Motion = 0,
+			Cutter_radius_compensation = 1,
+			Tool_length_offset = 2,
+			Feed_rate_mode = 3,
+			Feed_rate = 4,
+			Spindle_rate = 5,
+			Spindle_mode = 6,
+			Tool_id = 7,
+			Non_modal = 8,
+			Units = 9,
+			Coolant = 10,
+			Tool_Change_Request = 11
+		};
+
+		BinaryRecords::s_bit_flag_controller_16 event_manager;
+
 		typedef struct s_persisted_values
 		{
 			//float feed_rate;
@@ -115,11 +133,11 @@ namespace NGC_RS274
 		float block_word_values[COUNT_OF_BLOCK_WORDS_ARRAY];
 		//This is a 4 byte (32 bit) variable. If a word was defined on the line its respective bit is set.
 		//uint32_t word_defined_in_block_A_Z;
-		BinaryRecords::s_bit_flag_controller word_defined_in_block_A_Z;
+		BinaryRecords::s_bit_flag_controller_32 word_defined_in_block_A_Z;
 		//This is a 2 byte (16 bit) variable. If a G command was defined for a G group we store its bits in here.
-		BinaryRecords::s_bit_flag_controller g_code_defined_in_block;
+		BinaryRecords::s_bit_flag_controller_32 g_code_defined_in_block;
 		//This is a 2 byte (16 bit) variable. If a M command was defined for an M group we store its bits in here.
-		BinaryRecords::s_bit_flag_controller m_code_defined_in_block;
+		BinaryRecords::s_bit_flag_controller_32 m_code_defined_in_block;
 		//These initialize with -1 values. 0 is a valid value for some blocks, so setting them to -1 indicates the value was never explicitly set.
 		uint16_t g_group[COUNT_OF_G_CODE_GROUPS_ARRAY]; //There are 14 groups of gcodes (0-13)
 		uint16_t m_group[COUNT_OF_M_CODE_GROUPS_ARRAY]; //There are 5 groups of mcodes (0-4)
@@ -165,14 +183,15 @@ namespace NGC_RS274
 
 		//Return the value in the Gcodes table for the group requested
 		float get_g_code_value(int GroupNumber);
+		uint16_t get_g_code_value_x(int GroupNumber);
 		bool get_g_code_defined(int GroupNumber);
-		bool get_m_code_defined(int GroupNumber);
+		
+		
 		//Return the value in the Mcodes table for the group requested
 		float get_m_code_value(int GroupNumber);
-		//Return the value in the Gcodes table for the group requested
-		uint16_t get_g_code_value_x(int GroupNumber);
-		//Return the value in the Mcodes table for the group requested
 		uint16_t get_m_code_value_x(int GroupNumber);
+		bool get_m_code_defined(int GroupNumber);
+		
 
 		//Returns TRUE if the value was defined in the line. Returns FALSE if it was not.
 		//In either case the ref value for *Address will be returned even if it was not
@@ -195,6 +214,14 @@ namespace NGC_RS274
 		void reset();
 		void clear_axis_values();
 		void clear_word_values();
+		static void set_events(NGC_RS274::NGC_Binary_Block* local_block, NGC_RS274::NGC_Binary_Block* previous_block);
+		
+		private:
+		
+		static void assign_g_event(NGC_RS274::NGC_Binary_Block* local_block, uint16_t group_number);
+		static void assign_m_event(NGC_RS274::NGC_Binary_Block* local_block, uint16_t group_number);
+		static void assign_other_event(NGC_RS274::NGC_Binary_Block* local_block);
+		static bool group_has_changed(uint16_t * original_value, uint16_t * updated_value, uint8_t group_number);
 	};
 };
 #endif /* NGC_BINARY_BLOCK_H */

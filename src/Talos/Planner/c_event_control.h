@@ -1,5 +1,5 @@
 /*
-*  c_block_events.cpp - NGC_RS274 controller.
+*  c_event_control.h - NGC_RS274 controller.
 *  A component of Talos
 *
 *  Copyright (c) 2016-2019 Jeff Dill
@@ -18,22 +18,20 @@
 *  along with Talos.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef __C_EVENT_CONTROL_H__
+#define __C_EVENT_CONTROL_H__
+#include <stdint.h>
 
-#include "c_block_events.h"
-#include "..\bit_manipulation.h"
-
-BinaryRecords::s_bit_flag_controller_16 Events::NGC_Block::xevent_manager;
-
-
-void Events::NGC_Block::check_events()
+class c_event_control
 {
-	if (Events::NGC_Block::xevent_manager._flag ==0)
-	{
-	return;
-	}
-	
-	//if (Events::NGC_Block::xevent_manager.get_clr((int)Events::NGC_Block::e_event_type::Motion))
-	//{
-		//
-	//}
-}
+	//variables
+	public:
+	protected:
+	private:
+
+	//functions
+	public:
+	protected:
+	private:
+};
+#endif

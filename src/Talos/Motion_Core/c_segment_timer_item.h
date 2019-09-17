@@ -24,7 +24,7 @@ namespace Motion_Core
 				//BinaryRecords::e_block_flag flag;
 
 				uint32_t sequence; //Increments as each gcode block is loaded. May match line number, but not always.
-				BinaryRecords::s_bit_flag_controller flag;
+				BinaryRecords::s_bit_flag_controller_32 flag;
 			public:
 				Timer_Item();
 				~Timer_Item();

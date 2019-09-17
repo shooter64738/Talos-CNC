@@ -37,7 +37,7 @@ namespace Events
 		{
 			Critical_Must_Shutdown = 0,
 		};
-		static BinaryRecords::s_bit_flag_controller event_manager;
+		static BinaryRecords::s_bit_flag_controller_32 event_manager;
 		static c_Serial *local_serial;
 
 		protected:

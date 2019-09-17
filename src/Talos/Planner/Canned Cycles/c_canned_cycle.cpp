@@ -72,15 +72,15 @@ void c_canned_cycle::initialize(NGC_RS274::NGC_Binary_Block*local_block, float o
 	c_canned_cycle::L_repeat_count = (local_block->get_defined('L') ? (uint16_t)*local_block->canned_values.L_repeat_count : 1);
 	c_canned_cycle::P_dwell_time_at_bottom = (local_block->get_defined('P') ? *local_block->canned_values.P_dwell_time_at_bottom : c_canned_cycle::P_dwell_time_at_bottom);
 	c_canned_cycle::Z_depth_of_hole = (local_block->get_defined('Z') ? *local_block->canned_values.Z_depth_of_hole : c_canned_cycle::Z_depth_of_hole);
-	c_canned_cycle::active_cycle_code = local_block->g_group[NGC_RS274::Groups::G::MOTION];
+	c_canned_cycle::active_cycle_code = local_block->g_group[NGC_RS274::Groups::G::Motion];
 	c_canned_cycle::state = 0;
 
 	c_canned_cycle::cycle_to_pointer(local_block);
 
 	//local_block->canned_values.PNTR_RECALLS = c_canned_cycle::cycle_to_pointer;
 	//change the block from a canned cycle to standard rapid motion line (for initial position)
-	local_block->g_group[NGC_RS274::Groups::G::MOTION] = NGC_RS274::G_codes::RAPID_POSITIONING;
-	local_block->set_defined_gcode(NGC_RS274::Groups::G::MOTION);
+	local_block->g_group[NGC_RS274::Groups::G::Motion] = NGC_RS274::G_codes::RAPID_POSITIONING;
+	local_block->set_defined_gcode(NGC_RS274::Groups::G::Motion);
 
 	//clear the parameter flags so when this block converts back to plain text, those values arent in there.
 	local_block->clear_defined('Q');
@@ -227,8 +227,8 @@ float c_canned_cycle::retract_position(NGC_RS274::NGC_Binary_Block*local_block)
 
 void c_canned_cycle::set_axis_feed(NGC_RS274::NGC_Binary_Block*local_block, uint16_t feed_mode, char axis, float value)
 {
-	local_block->set_defined_gcode(NGC_RS274::Groups::G::MOTION);
-	local_block->g_group[NGC_RS274::Groups::G::MOTION] = feed_mode;
+	local_block->set_defined_gcode(NGC_RS274::Groups::G::Motion);
+	local_block->g_group[NGC_RS274::Groups::G::Motion] = feed_mode;
 	local_block->define_value(axis, value);
 	if (feed_mode == NGC_RS274::G_codes::LINEAR_INTERPOLATION || feed_mode == NGC_RS274::G_codes::CIRCULAR_INTERPOLATION_CCW || feed_mode == NGC_RS274::G_codes::CIRCULAR_INTERPOLATION_CW)
 		local_block->define_value('F', local_block->get_value('F'));

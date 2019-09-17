@@ -53,7 +53,7 @@ void Motion_Core::Hardware::Interpolation::initialize(BinaryRecords::s_encoders 
 	Motion_Core::Hardware::Interpolation::spindle_encoder = encoder_data;
 }
 
-void Motion_Core::Hardware::Interpolation::interpolation_begin()
+void Motion_Core::Hardware::Interpolation::interpolation_begin_new_block(BinaryRecords::s_motion_data_block block )
 {
 	#ifdef MSVC
 	myfile.open("acceleration.txt");
@@ -66,46 +66,53 @@ void Motion_Core::Hardware::Interpolation::interpolation_begin()
 	{
 		Motion_Core::Hardware::Interpolation::Interpolation_Active = 1;
 		Motion_Core::Hardware::Interpolation::step_outbits = step_port_invert_mask;
-
-		switch (Motion_Core::Hardware::Interpolation::drive_mode)
-		{
-			//G93 and G94 feed modes
-			case BinaryRecords::e_feed_modes::FEED_RATE_MINUTES_PER_UNIT_MODE:
-			case BinaryRecords::e_feed_modes::FEED_RATE_UNITS_PER_MINUTE_MODE:
-			{
-
-				//This is driven internally by the motion controllers timer
-				Hardware_Abstraction_Layer::MotionCore::Stepper::wake_up();
-				break;
-			}
-			//G95 feed mode
-			case BinaryRecords::e_feed_modes::FEED_RATE_UNITS_PER_ROTATION:
-			{
-				//TODO:Setup a timer for the specified delay time. Error if synch is not complete by then
-				//on time out call Motion_Core::Hardware::Interpollation::spindle_synch_timeout()
-				
-				//Start the delay timer that will timeout if we have reached the
-				//delay period before we reach specified spindle speed.
-				Hardware_Abstraction_Layer::MotionCore::Spindle::configure_timer_for_at_speed_delay();
-				
-				//set the waiting event for spindle synch. the event manager will handle when/if
-				//interpolation can start.
-				Events::Motion_Controller::event_manager.set((int)Events::Motion_Controller::e_event_type::Spindle_To_Speed_Wait);
-				
-				//This is driven externally by the encoder input from the spindle
-				//If feedmode is spindle synch, what for spindle to get to speed if
-				//spindle wait is configured
-				Motion_Core::Hardware::Interpolation::check_spindle_at_speed();
-				
-				break;
-			}
-			default:
-			/* Your code here */
-			break;
-		}
+		Motion_Core::Hardware::Interpolation::spindle_encoder->target_rpm = block.spindle_state;
+		Motion_Core::Hardware::Interpolation::drive_mode = block.feed_rate_mode;
+		
+		Motion_Core::Hardware::Interpolation::interpolation_begin();
 
 	}
 
+}
+
+void Motion_Core::Hardware::Interpolation::interpolation_begin()
+{
+	switch (Motion_Core::Hardware::Interpolation::drive_mode)
+	{
+		//G93 and G94 feed modes
+		case BinaryRecords::e_feed_modes::FEED_RATE_MINUTES_PER_UNIT_MODE:
+		case BinaryRecords::e_feed_modes::FEED_RATE_UNITS_PER_MINUTE_MODE:
+		{
+
+			//This is driven internally by the motion controllers timer
+			Hardware_Abstraction_Layer::MotionCore::Stepper::wake_up();
+			break;
+		}
+		//G95 feed mode
+		case BinaryRecords::e_feed_modes::FEED_RATE_UNITS_PER_ROTATION:
+		{
+			//TODO:Setup a timer for the specified delay time. Error if synch is not complete by then
+			//on time out call Motion_Core::Hardware::Interpollation::spindle_synch_timeout()
+			
+			//Start the delay timer that will timeout if we have reached the
+			//delay period before we reach specified spindle speed.
+			Hardware_Abstraction_Layer::MotionCore::Spindle::configure_timer_for_at_speed_delay();
+			
+			//set the waiting event for spindle synch. the event manager will handle when/if
+			//interpolation can start.
+			Events::Motion_Controller::event_manager.set((int)Events::Motion_Controller::e_event_type::Spindle_To_Speed_Wait);
+			
+			//This is driven externally by the encoder input from the spindle
+			//If feedmode is spindle synch, what for spindle to get to speed if
+			//spindle wait is configured
+			Motion_Core::Hardware::Interpolation::check_spindle_at_speed();
+			
+			break;
+		}
+		default:
+		/* Your code here */
+		break;
+	}
 }
 
 void Motion_Core::Hardware::Interpolation::spindle_at_speed_timeout(uint32_t parameter)

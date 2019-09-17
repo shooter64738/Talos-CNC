@@ -62,6 +62,9 @@ namespace NGC_RS274
 		static const unsigned int ENABLE_FEED_RATE_OVERRIDE = 50 * G_CODE_MULTIPLIER; //Can have a P1-9 value
 		static const unsigned int DISABLE_FEED_RATE_OVERRIDE = 51 * G_CODE_MULTIPLIER; //MUST have P0 value
 		
+		static const unsigned int MAIN_PROGRAM_END = 30 * G_CODE_MULTIPLIER; 
+		static const unsigned int SUB_PROGRAM_END = 99 * G_CODE_MULTIPLIER; 
+		
 //M6 Tool Change
 //M19	Orient Spindle
 //M50	Feed Override Control

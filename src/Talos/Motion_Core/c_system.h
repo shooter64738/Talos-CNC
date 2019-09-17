@@ -34,7 +34,7 @@ namespace Motion_Core
 	{
 		//variables
 		public:
-		static BinaryRecords::s_bit_flag_controller control_state_modes;
+		static BinaryRecords::s_bit_flag_controller_32 control_state_modes;
 		static uint8_t StepControl;
 		static uint32_t new_sequence;
 		struct s_travel

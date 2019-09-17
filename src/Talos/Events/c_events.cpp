@@ -28,21 +28,21 @@
 void Events::Main_Process::check_events()
 {
 	//Check for motion controller events. If there are any act on them accordingly.
-	System::check_events();
+	Events::System::check_events();
 	
 	//Check for motion controller events. If there are any act on them accordingly.
-	Motion_Controller::check_events();
+	Events::Motion_Controller::check_events();
 	
 	//Check for motion events. If there are any act on them accordingly.
-	Motion::check_events();
+	Events::Motion::check_events();
 
 	//Check for serial events. If there are any act on them accordingly.
 	//(NOTE: serial events such as data arrival are handled in the ISR directly.
 	//This event handler is for buffer management and block interpretation.)
-	Data::check_events();
+	Events::Data::check_events();
 	
 	//check for block change events
-	NGC_Block::check_events();
+	Events::NGC_Block::check_events();
 }
 
 // default constructor

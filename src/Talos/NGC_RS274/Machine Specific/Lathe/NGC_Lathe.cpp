@@ -50,7 +50,7 @@ int NGC_RS274::Interpreter::NGC_Machine_Specific::error_check_canned_cycle()
 	return  NGC_RS274::Interpreter::Errors::CAN_CYLCE_ROTATIONAL_AXIS_C_DEFINED;
 
 	//Cutter radius compensation cannot be active in a canned cycle.
-	if (NGC_RS274::Interpreter::Processor::local_block.g_group[NGC_RS274::Groups::G::CUTTER_RADIUS_COMPENSATION] != NGC_RS274::G_codes::CANCEL_CUTTER_RADIUS_COMPENSATION)
+	if (NGC_RS274::Interpreter::Processor::local_block.g_group[NGC_RS274::Groups::G::Cutter_radius_compensation] != NGC_RS274::G_codes::CANCEL_CUTTER_RADIUS_COMPENSATION)
 	return  NGC_RS274::Interpreter::Errors::CAN_CYLCE_CUTTER_RADIUS_COMPENSATION_ACTIVE;
 
 	//if L word specified it must be a positive integer > 1 (L is not required, only use it to repeat a cycle at the present location)
@@ -83,7 +83,7 @@ int NGC_RS274::Interpreter::NGC_Machine_Specific::error_check_canned_cycle()
 	}
 
 	//if dwell cycle make sure P is set
-	if (NGC_RS274::Interpreter::Processor::local_block.g_group[NGC_RS274::Groups::G::MOTION] == NGC_RS274::G_codes::CANNED_CYCLE_DRILLING_WITH_DWELL)
+	if (NGC_RS274::Interpreter::Processor::local_block.g_group[NGC_RS274::Groups::G::Motion] == NGC_RS274::G_codes::CANNED_CYCLE_DRILLING_WITH_DWELL)
 	{
 		if (!NGC_RS274::Interpreter::Processor::local_block.word_defined_in_block_A_Z.get(P_WORD_BIT) && NGC_RS274::Interpreter::Processor::local_block.get_value('P') == 0)
 		return  NGC_RS274::Interpreter::Errors::CAN_CYCLE_MISSING_P_VALUE;

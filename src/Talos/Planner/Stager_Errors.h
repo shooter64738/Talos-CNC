@@ -35,6 +35,8 @@ class Stager_Errors
 	static const uint8_t NGC_Buffer_Full=7;
 	static const uint8_t Hold_Block_For_Cutter_Compensation=8;
 	static const uint8_t Staging_Buffer_Full = 9;
+	static const uint8_t Spindle_Synch_Creates_Zero_Feedrate = 10;
+	static const uint8_t Spindle_Synch_Feedrate_Excedes_Max = 11;
 };
 
 

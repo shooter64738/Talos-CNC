@@ -41,9 +41,10 @@ namespace Events
 			Control_error = 3,
 			Spindle_Error_Speed_Timeout = 4,
 			Spindle_At_Speed = 5,
-			Spindle_To_Speed_Wait = 6
+			Spindle_To_Speed_Wait = 6,
+			Block_Executing = 10
 		};
-		static BinaryRecords::s_bit_flag_controller event_manager;
+		static BinaryRecords::s_bit_flag_controller_32 event_manager;
 		static c_Serial *local_serial;
 
 		protected:

@@ -189,7 +189,44 @@ namespace BinaryRecords
 		_100 = 100
 	};
 #endif
-	struct s_bit_flag_controller
+	struct s_bit_flag_controller_64
+	{
+		bool get(int get_value)
+		{
+			return (BitGet(_flag, get_value));
+		};
+
+		bool get_clr(int get_value)
+		{
+			bool ret = (BitGet(_flag, get_value));
+			clear(get_value);
+			return ret;
+		};
+
+		void flip(int flip_value)
+		{
+			BitFlp(_flag, flip_value);
+		};
+
+		void set(int set_value)
+		{
+			BitSet_(_flag, set_value);
+		};
+
+		void clear(int clear_value)
+		{
+			BitClr_(_flag, clear_value);
+		};
+
+		void reset()
+		{
+			_flag = 0;
+		};
+
+		uint64_t _flag;
+	};
+
+	struct s_bit_flag_controller_32
 	{
 		bool get(int get_value)
 		{
@@ -225,6 +262,81 @@ namespace BinaryRecords
 	
 		uint32_t _flag;
 	};
+	
+	struct s_bit_flag_controller_16
+	{
+		bool get(int get_value)
+		{
+			return (BitGet(_flag, get_value));
+		};
+
+		bool get_clr(int get_value)
+		{
+			bool ret = (BitGet(_flag, get_value));
+			clear(get_value);
+			return ret;
+		};
+
+		void flip(int flip_value)
+		{
+			BitFlp(_flag, flip_value);
+		};
+
+		void set(int set_value)
+		{
+			BitSet_(_flag, set_value);
+		};
+
+		void clear(int clear_value)
+		{
+			BitClr_(_flag, clear_value);
+		};
+
+		void reset()
+		{
+			_flag = 0;
+		};
+
+		uint16_t _flag;
+	};
+
+	struct s_bit_flag_controller_8
+	{
+		bool get(int get_value)
+		{
+			return (BitGet(_flag, get_value));
+		};
+
+		bool get_clr(int get_value)
+		{
+			bool ret = (BitGet(_flag, get_value));
+			clear(get_value);
+			return ret;
+		};
+
+		void flip(int flip_value)
+		{
+			BitFlp(_flag, flip_value);
+		};
+
+		void set(int set_value)
+		{
+			BitSet_(_flag, set_value);
+		};
+
+		void clear(int clear_value)
+		{
+			BitClr_(_flag, clear_value);
+		};
+
+		void reset()
+		{
+			_flag = 0;
+		};
+
+		uint8_t _flag;
+	};
+
 	//****************************************************************************************
 	//structs in here are packed and byte aligned on 1. This is due to sending serial data in
 	//binary format from one mcu to another and the mcu's have different architectures.
@@ -248,12 +360,14 @@ namespace BinaryRecords
 		const BinaryRecords::e_binary_record_types record_type = BinaryRecords::e_binary_record_types::Motion;
 		BinaryRecords::e_motion_type motion_type = BinaryRecords::e_motion_type::rapid_linear;
 		float feed_rate = 0;
+		float spindle_speed = 0;
+		uint8_t spindle_state = 0;
 		BinaryRecords::e_feed_modes feed_rate_mode = BinaryRecords::e_feed_modes::FEED_RATE_UNITS_PER_MINUTE_MODE;
 		//float word_values[26];
 		uint32_t line_number = 0;
 		float axis_values[MACHINE_AXIS_COUNT];
 		s_motion_arc_values arc_values;
-		s_bit_flag_controller flag;
+		s_bit_flag_controller_32 flag;
 		uint32_t sequence = 0; //system set value, used to track when a block of code as completed.
 		uint32_t _check_sum = 0;
 

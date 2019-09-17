@@ -20,7 +20,7 @@
 
 #include "c_system_events.h"
 
-BinaryRecords::s_bit_flag_controller Events::System::event_manager;
+BinaryRecords::s_bit_flag_controller_32 Events::System::event_manager;
 c_Serial *Events::System::local_serial;
 
 void Events::System::check_events()

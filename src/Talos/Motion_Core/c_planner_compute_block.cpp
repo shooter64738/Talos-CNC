@@ -22,6 +22,8 @@ uint8_t Motion_Core::Planner::Calculator::_plan_buffer_line(BinaryRecords::s_mot
 	planning_block->line_number = target_block.line_number;
 	planning_block->sequence = target_block.sequence;
 	planning_block->flag = target_block.flag;
+	planning_block->programmed_spindle_speed = target_block.spindle_speed;
+	planning_block->spindle_state = target_block.spindle_state;
 	
 	// Compute and store initial move distance data.
 	int32_t target_steps[MACHINE_AXIS_COUNT]{0};
@@ -92,6 +94,10 @@ uint8_t Motion_Core::Planner::Calculator::_plan_buffer_line(BinaryRecords::s_mot
 		if (target_block.feed_rate_mode == BinaryRecords::e_feed_modes::FEED_RATE_MINUTES_PER_UNIT_MODE)
 		{
 			planning_block->programmed_rate *= planning_block->millimeters;
+		}
+		else if (target_block.feed_rate_mode == BinaryRecords::e_feed_modes::FEED_RATE_UNITS_PER_ROTATION)
+		{
+			planning_block->programmed_rate *= planning_block->millimeters * planning_block->programmed_spindle_speed;
 		}
 	}
 

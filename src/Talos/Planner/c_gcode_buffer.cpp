@@ -180,7 +180,7 @@ int16_t c_gcode_buffer::add( char * pntr_buffer)
 		//Rollover the tail.. This might not be good...
 		//++c_gcode_buffer::buffer_tail &= PLANNER_BLOCK_BUFFER_SIZE-1;
 	}
-
+	
 	return return_value;
 }
 

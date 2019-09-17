@@ -30,6 +30,7 @@
 #include "..\communication_def.h"
 #include "..\Motion_Core\c_gateway.h"
 #include "..\Main_Process.h"
+#include "..\NGC_RS274\NGC_M_Groups.h"
 
 uint16_t *c_machine::machine_state_g_group; //There are 14 groups of gcodes (0-13)
 uint16_t *c_machine::machine_state_m_group; //There are 5 groups of mcodes (0-4)
@@ -37,7 +38,7 @@ NGC_RS274::NGC_Binary_Block*c_machine::machine_block;
 float c_machine::axis_position[MACHINE_AXIS_COUNT];
 float c_machine::unit_scaler = 1;
 char c_machine::machine_axis_names[MACHINE_AXIS_COUNT];
-static uint32_t motion_sequence_number;
+static uint32_t motion_sequence_number = 0;
 
 
 /*
@@ -73,19 +74,19 @@ void c_machine::initialize()
 	*/
 
 	//default the motion state to canceled
-	c_machine::machine_state_g_group[NGC_RS274::Groups::G::MOTION] = NGC_RS274::G_codes::MOTION_CANCELED;
+	c_machine::machine_state_g_group[NGC_RS274::Groups::G::Motion] = NGC_RS274::G_codes::MOTION_CANCELED;
 	//default plane selection
 	c_machine::machine_state_g_group[NGC_RS274::Groups::G::PLANE_SELECTION] = NGC_RS274::G_codes::XY_PLANE_SELECTION;
 	//default the machines distance mode to absolute
 	c_machine::machine_state_g_group[NGC_RS274::Groups::G::DISTANCE_MODE] = NGC_RS274::G_codes::ABSOLUTE_DISANCE_MODE;
 	//default feed rate mode
-	c_machine::machine_state_g_group[NGC_RS274::Groups::G::FEED_RATE_MODE] = NGC_RS274::G_codes::FEED_RATE_UNITS_PER_MINUTE_MODE;
+	c_machine::machine_state_g_group[NGC_RS274::Groups::G::Feed_rate_mode] = NGC_RS274::G_codes::FEED_RATE_UNITS_PER_MINUTE_MODE;
 	//default the machines units to inches
-	c_machine::machine_state_g_group[NGC_RS274::Groups::G::UNITS] = NGC_RS274::G_codes::MILLIMETER_SYSTEM_SELECTION;
+	c_machine::machine_state_g_group[NGC_RS274::Groups::G::Units] = NGC_RS274::G_codes::MILLIMETER_SYSTEM_SELECTION;
 	//default the machines cutter comp to off
-	c_machine::machine_state_g_group[NGC_RS274::Groups::G::CUTTER_RADIUS_COMPENSATION] = NGC_RS274::G_codes::CANCEL_CUTTER_RADIUS_COMPENSATION;
+	c_machine::machine_state_g_group[NGC_RS274::Groups::G::Cutter_radius_compensation] = NGC_RS274::G_codes::CANCEL_CUTTER_RADIUS_COMPENSATION;
 	//default tool length offset
-	c_machine::machine_state_g_group[NGC_RS274::Groups::G::TOOL_LENGTH_OFFSET] = NGC_RS274::G_codes::CANCEL_TOOL_LENGTH_OFFSET;
+	c_machine::machine_state_g_group[NGC_RS274::Groups::G::Tool_length_offset] = NGC_RS274::G_codes::CANCEL_TOOL_LENGTH_OFFSET;
 	//default tool length offset
 	c_machine::machine_state_g_group[NGC_RS274::Groups::G::RETURN_MODE_CANNED_CYCLE] = NGC_RS274::G_codes::CANNED_CYCLE_RETURN_TO_Z;
 	//default coordinate system selection
@@ -96,6 +97,10 @@ void c_machine::initialize()
 	c_machine::machine_state_g_group[NGC_RS274::Groups::G::RECTANGLAR_POLAR_COORDS_SELECTION] = NGC_RS274::G_codes::RECTANGULAR_COORDINATE_SYSTEM;
 	//default canned cycle return mode
 	c_machine::machine_state_g_group[NGC_RS274::Groups::G::RETURN_MODE_CANNED_CYCLE] = NGC_RS274::G_codes::CANNED_CYCLE_RETURN_TO_R;
+	//default spindle mode
+	c_machine::machine_state_m_group[NGC_RS274::Groups::M::SPINDLE] = NGC_RS274::M_codes::SPINDLE_STOP;
+	//default coolant mode
+	c_machine::machine_state_m_group[NGC_RS274::Groups::M::COOLANT] = NGC_RS274::M_codes::COOLANT_OFF;
 }
 
 void c_machine::synch_machine_state_g_code()
@@ -159,22 +164,34 @@ void c_machine::report()
 	////update the machine position for the axis_id sent.
 }
 
-void c_machine::run_block()
+c_machine::e_responses c_machine::run_block()
 {
+	c_machine::e_responses response = e_responses::Ok;
+	//c_machine::machine_block was set in the stager. if it is null there was nothing
+	//for the machine to do with the block.
 	if (c_machine::machine_block == NULL)
-	return;
+	{
+		return response;
+	}
+
 	//synchronize the machine g/m code states with the block we are going to execute.
 	c_machine::synch_machine_state_g_code();
 	c_machine::synch_machine_state_m_code();
 
-	c_machine::start_motion_binary(c_machine::machine_block);
-	//When we are done with the block, move the tail forward.
+	response = c_machine::start_motion_binary(c_machine::machine_block);
+	//was there a failure sending this block to the controller?
+	if (response != e_responses::Ok)
+	{
+		return response;
+	}
+	
+	//should be ok if we made it to here. Advance and get ready for the next one.
 	c_gcode_buffer::buffer_tail++;
-
 	c_machine::machine_block = NULL;
+	return response;
 }
 
-void c_machine::start_motion_binary(NGC_RS274::NGC_Binary_Block* local_block)
+c_machine::e_responses c_machine::start_motion_binary(NGC_RS274::NGC_Binary_Block* local_block)
 {
 	
 	//If the block is set to 'planned' then its ready to execute
@@ -182,12 +199,15 @@ void c_machine::start_motion_binary(NGC_RS274::NGC_Binary_Block* local_block)
 	{//convert the ngc data into a motion record
 		BinaryRecords::s_motion_data_block motion_block_record;
 		//set some block stuff
-		motion_block_record.motion_type = (BinaryRecords::e_motion_type) local_block->g_group[NGC_RS274::Groups::G::MOTION];// BinaryRecords::e_motion_type::feed_linear;
-		motion_block_record.feed_rate_mode = (BinaryRecords::e_feed_modes) local_block->g_group[NGC_RS274::Groups::G::FEED_RATE_MODE];//BinaryRecords::e_feed_modes::FEED_RATE_UNITS_PER_MINUTE_MODE;
+		motion_block_record.motion_type = (BinaryRecords::e_motion_type) local_block->g_group[NGC_RS274::Groups::G::Motion];// BinaryRecords::e_motion_type::feed_linear;
+		motion_block_record.feed_rate_mode = (BinaryRecords::e_feed_modes) local_block->g_group[NGC_RS274::Groups::G::Feed_rate_mode];//BinaryRecords::e_feed_modes::FEED_RATE_UNITS_PER_MINUTE_MODE;
 		motion_block_record.arc_values.horizontal_offset = *local_block->arc_values.horizontal_offset.value;
 		motion_block_record.arc_values.vertical_offset = *local_block->arc_values.vertical_offset.value;
 		motion_block_record.arc_values.Radius = *local_block->arc_values.Radius;
-		motion_block_record.feed_rate = local_block->get_value('F');// 5000;
+		motion_block_record.feed_rate = *local_block->persisted_values.feed_rate_F;
+		motion_block_record.spindle_speed = *local_block->persisted_values.active_spindle_speed_S;
+		motion_block_record.spindle_state = local_block->get_m_code_value(NGC_RS274::Groups::M::SPINDLE);
+		
 		for (int i=0;i<MACHINE_AXIS_COUNT;i++)
 		{
 			//default to 0
@@ -195,7 +215,7 @@ void c_machine::start_motion_binary(NGC_RS274::NGC_Binary_Block* local_block)
 			motion_block_record.axis_values[i] = *local_block->axis_values.Loop[i];
 		}
 		motion_block_record.sequence = ++motion_sequence_number;
-		motion_block_record.line_number = local_block->get_value('N');
+		motion_block_record.line_number = *local_block->persisted_values.active_line_number_N;
 		Motion_Core::Gateway::add_motion(motion_block_record);
 	}
 	////Send this in binary format to the motion controller.
@@ -237,7 +257,7 @@ void c_machine::start_motion_binary(NGC_RS274::NGC_Binary_Block* local_block)
 		//local_block->g_group[NGC_RS274::Groups::G::MOTION] = c_canned_cycle::active_cycle_code;
 	}
 
-	
+	return e_responses::Ok;
 }
 
 

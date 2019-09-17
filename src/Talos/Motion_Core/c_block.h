@@ -39,7 +39,9 @@ namespace Motion_Core
 										  // Stored spindle speed data used by spindle overrides and resuming methods.
 			uint8_t Station;
 			uint32_t sequence;
-			BinaryRecords::s_bit_flag_controller flag;
+			BinaryRecords::s_bit_flag_controller_32 flag;
+			float programmed_spindle_speed;
+			uint8_t spindle_state;
 			void Reset();
 
 		public:

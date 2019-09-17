@@ -22,7 +22,7 @@
 #include "..\Motion_Core\c_interpollation_hardware.h"
 #include "..\hardware_def.h"
 
-BinaryRecords::s_bit_flag_controller Events::Motion_Controller::event_manager;
+BinaryRecords::s_bit_flag_controller_32 Events::Motion_Controller::event_manager;
 c_Serial *Events::Motion_Controller::local_serial;
 
 void Events::Motion_Controller::check_events()

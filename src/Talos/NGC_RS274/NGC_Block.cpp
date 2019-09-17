@@ -22,6 +22,8 @@
 #include "NGC_Block.h"
 #include <string.h>
 #include "..\bit_manipulation.h"
+#include "NGC_G_Groups.h"
+#include "NGC_M_Groups.h"
 
 NGC_RS274::NGC_Binary_Block::NGC_Binary_Block()
 {
@@ -121,6 +123,148 @@ NGC_RS274::NGC_Binary_Block::~NGC_Binary_Block()
 {
 } //~c_Block
 
+void NGC_RS274::NGC_Binary_Block::set_events(NGC_RS274::NGC_Binary_Block* local_block, NGC_RS274::NGC_Binary_Block* previous_block)
+{
+	uint8_t group = 1;
+	
+	//Non modals are not held from block to block. If a non modal is specified it only applies once
+	if (local_block->get_g_code_defined(NGC_RS274::Groups::G::NON_MODAL))
+	{
+		assign_g_event(local_block, NGC_RS274::Groups::G::NON_MODAL);
+		//Events::NGC_Block::event_manager.set((int)Events::NGC_Block::e_event_type::Non_modal);
+		//c_stager::update_non_modals(local_block);
+	}
+	
+	//assign any events found in the G group, skipping non-modal. Here we only set a change event
+	//if the value has changed from teh last modal value that was set.
+	for (group = 1; group < COUNT_OF_G_CODE_GROUPS_ARRAY; group++)
+	{
+		if (local_block->get_g_code_defined(group))
+		{
+			if (NGC_RS274::NGC_Binary_Block::group_has_changed(local_block->g_group, previous_block->g_group, group))
+			{
+				assign_g_event(local_block, group);
+			}
+		}
+	}
+	
+	//Assign any events found in the M group
+	for (group = 0; group < COUNT_OF_M_CODE_GROUPS_ARRAY; group++)
+	{
+		if (local_block->get_m_code_defined(group))
+		{
+			if (NGC_RS274::NGC_Binary_Block::group_has_changed(local_block->m_group, previous_block->m_group, group))
+			{
+				assign_m_event(local_block, group);
+			}
+		}
+	}
+	
+	//assign any events that arent in a specific group, but we need to track
+	NGC_RS274::NGC_Binary_Block::assign_other_event(local_block);
+}
+
+void NGC_RS274::NGC_Binary_Block::assign_g_event(NGC_RS274::NGC_Binary_Block* local_block, uint16_t group_number)
+{
+	switch (group_number)
+	{
+		case NGC_RS274::Groups::G::NON_MODAL:
+		{
+			local_block->event_manager.set((int)NGC_RS274::NGC_Binary_Block::e_block_event::Non_modal);
+			break;
+		}
+		case NGC_RS274::Groups::G::Motion:
+		{
+			local_block->event_manager.set((int)NGC_RS274::NGC_Binary_Block::e_block_event::Motion);
+			break;
+		}
+		
+		case (int)NGC_RS274::Groups::G::Cutter_radius_compensation :
+		{
+			local_block->event_manager.set((int)NGC_RS274::NGC_Binary_Block::e_block_event::Cutter_radius_compensation);
+			break;
+		}
+		
+		case (int)NGC_RS274::Groups::G::Tool_length_offset :
+		{
+			local_block->event_manager.set((int)NGC_RS274::NGC_Binary_Block::e_block_event::Tool_length_offset);
+			break;
+		}
+		case (int)NGC_RS274::Groups::G::Feed_rate_mode :
+		{
+			local_block->event_manager.set((int)NGC_RS274::NGC_Binary_Block::e_block_event::Feed_rate_mode);
+			break;
+		}
+		case (int)NGC_RS274::Groups::G::Units :
+		{
+			local_block->event_manager.set((int)NGC_RS274::NGC_Binary_Block::e_block_event::Units);
+			break;
+		}
+		
+		default:
+		/* Your code here */
+		break;
+	}
+
+}
+
+void NGC_RS274::NGC_Binary_Block::assign_m_event(NGC_RS274::NGC_Binary_Block* local_block, uint16_t group_number)
+{
+	switch (group_number)
+	{
+		case NGC_RS274::Groups::M::TOOL_CHANGE:
+		{
+			local_block->event_manager.set((int)NGC_RS274::NGC_Binary_Block::e_block_event::Tool_Change_Request);
+			break;
+		}
+		case NGC_RS274::Groups::M::SPINDLE:
+		{
+			local_block->event_manager.set((int)NGC_RS274::NGC_Binary_Block::e_block_event::Spindle_mode);
+			break;
+		}
+		case NGC_RS274::Groups::M::COOLANT:
+		{
+			local_block->event_manager.set((int)NGC_RS274::NGC_Binary_Block::e_block_event::Coolant);
+			break;
+		}
+		default:
+		/* Your code here */
+		break;
+	}
+
+}
+
+void NGC_RS274::NGC_Binary_Block::assign_other_event(NGC_RS274::NGC_Binary_Block* local_block)
+{
+	//Comments are not feasible unless/until someone gets off their ass and adds display support
+	//Set feed rate
+	if (local_block->get_defined('F'))
+	{
+		local_block->event_manager.set((int)NGC_RS274::NGC_Binary_Block::e_block_event::Feed_rate);
+		//local_block->persisted_values.feed_rate = local_block->get_value('F');
+	}
+
+	//// [4. Set spindle speed ]:
+	if (local_block->get_defined('S'))
+	{
+		local_block->event_manager.set((int)NGC_RS274::NGC_Binary_Block::e_block_event::Spindle_rate);
+		//local_block->persisted_values.active_s = local_block->get_value('S');
+	}
+
+	// [5. Select tool ]: NOT SUPPORTED. Only tracks tool value.
+	if (local_block->get_defined('T'))
+	{
+		local_block->event_manager.set((int)NGC_RS274::NGC_Binary_Block::e_block_event::Tool_id);
+		//local_block->persisted_values.active_t = local_block->get_value('T');
+	}
+
+}
+
+bool NGC_RS274::NGC_Binary_Block::group_has_changed(uint16_t * original_value, uint16_t * updated_value, uint8_t group_number)
+{
+	return original_value[group_number] != updated_value[group_number];
+}
+
 void NGC_RS274::NGC_Binary_Block::reset()
 {
 	
@@ -130,6 +274,7 @@ void NGC_RS274::NGC_Binary_Block::reset()
 	memset(g_group, 0, sizeof(g_group));
 	memset(m_group, 0, sizeof(m_group));
 	memset(block_word_values, 0, sizeof(block_word_values));
+	event_manager.reset();
 	//memset(motion_direction, 0, sizeof(motion_direction));
 	//memset(unit_target_positions, 0, sizeof(unit_target_positions));
 	//memset(start_position, 0, sizeof(start_position));

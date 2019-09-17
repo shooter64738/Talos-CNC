@@ -24,6 +24,7 @@
 
 #include <stdint.h>
 #include "..\records_def.h"
+#include "..\Common\Serial\c_Serial.h"
 
 namespace Events
 {
@@ -35,12 +36,15 @@ namespace Events
 		{
 			NGC_buffer_ready = 0,
 			NGC_buffer_full = 1,
-			Profile_buffer_ready = 2,
-			Staging_buffer_full = 3,
-			Peripheral_record_in_queue = 4,
-			Motion_record_in_queue = 5
+			NGC_item_added = 2,
+			Profile_buffer_ready = 3,
+			Staging_buffer_full = 4,
+			Peripheral_record_in_queue = 5,
+			Serial_data_inbound = 6
+			
 		};
-		static BinaryRecords::s_bit_flag_controller event_manager;
+		static BinaryRecords::s_bit_flag_controller_32 event_manager;
+		static c_Serial * local_serial;
 		protected:
 		private:
 
@@ -49,6 +53,7 @@ namespace Events
 		public:
 		static void check_events();
 
+		static uint16_t process_ngc_item_added_event();
 		protected:
 		private:
 	}; //c_serial_events

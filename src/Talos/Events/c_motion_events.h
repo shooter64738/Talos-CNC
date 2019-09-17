@@ -37,11 +37,13 @@ namespace Events
 			Motion_in_queue = 0,
 			Motion_complete = 1,
 			Hardware_idle = 2,
-			Jog_in_queue = 3
+			Jog_in_queue = 3,
+			Motion_Pending_For_Machine = 4,
+			Parameter_in_queue = 5
 		};
 		static c_Serial *local_serial;
 		static uint8_t motion_queue_count;
-		static BinaryRecords::s_bit_flag_controller event_manager;
+		static BinaryRecords::s_bit_flag_controller_32 event_manager;
 		//static uint32_t last_reported_block;
 		static BinaryRecords::s_status_message events_statistics;
 

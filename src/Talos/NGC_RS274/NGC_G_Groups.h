@@ -31,14 +31,14 @@ namespace NGC_RS274
 		{
 		public:
 			static const uint8_t NON_MODAL = 0;
-			static const uint8_t MOTION = 1;
+			static const uint8_t Motion = 1;
 			static const uint8_t PLANE_SELECTION = 2;
 			static const uint8_t DISTANCE_MODE = 3;
 			static const uint8_t UNASSIGNED_4 = 4;
-			static const uint8_t FEED_RATE_MODE = 5;
-			static const uint8_t UNITS = 6;
-			static const uint8_t CUTTER_RADIUS_COMPENSATION = 7;
-			static const uint8_t TOOL_LENGTH_OFFSET = 8;
+			static const uint8_t Feed_rate_mode = 5;
+			static const uint8_t Units = 6;
+			static const uint8_t Cutter_radius_compensation = 7;
+			static const uint8_t Tool_length_offset = 8;
 			static const uint8_t UNASSIGNED_9 = 9;
 			static const uint8_t RETURN_MODE_CANNED_CYCLE = 10;
 			static const uint8_t UNASSIGNED_11 = 11;

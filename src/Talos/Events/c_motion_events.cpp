@@ -19,20 +19,17 @@
 */
 
 #include "c_motion_events.h"
+#include "..\Planner\c_machine.h"
+#include "c_motion_control_events.h"
+#include "c_system_events.h"
 
 uint8_t Events::Motion::motion_queue_count;
-BinaryRecords::s_bit_flag_controller Events::Motion::event_manager;
+BinaryRecords::s_bit_flag_controller_32 Events::Motion::event_manager;
 c_Serial *Events::Motion::local_serial;
 BinaryRecords::s_status_message Events::Motion::events_statistics;
 
 void Events::Motion::check_events()
 {
-	//If a motion is in the queue, then we need to buffer asap.
-	if (Events::Motion::motion_queue_count)
-	{
-		//c_speed::buffer();
-	}
-
 	//If motion events are 0, then there are no motion flags to check
 	if (Events::Motion::event_manager._flag == 0)
 	{
@@ -41,11 +38,29 @@ void Events::Motion::check_events()
 	//See if there is a motion in the queue
 	if (Events::Motion::event_manager.get_clr((int)Events::Motion::e_event_type::Motion_in_queue))
 	{
-		//We have accounted for this motion queue event, so clear the queue event.
 		Events::Motion::motion_queue_count++;
 		local_serial->print_string("Motion added:");
 		local_serial->print_int32(Events::Motion::motion_queue_count);
 		local_serial->print_string(" motions in queue.\r");
+		
+		//Send the block to the machine. If the machine is ready it will transfer this
+		//block to the motion controller. THe machine will also move the gcode buffer
+		//tail forward. After this executes the NGC block buffer will have a new free space.
+		c_machine::e_responses response = c_machine::run_block();
+		if (response == c_machine::e_responses::Ok)
+		{
+			Events::Motion_Controller::event_manager.set((int)Events::Motion_Controller::e_event_type::Block_Executing);
+		}
+		else if (response == c_machine::e_responses::Wait_for_complete)
+		{
+			Events::Motion::event_manager.set((int)Events::Motion::e_event_type::Motion_Pending_For_Machine);
+		}
+		else 
+		{
+			//Something really bad occurred and we have to shut down.
+			Events::System::event_manager.set((int)Events::System::e_event_type::Critical_Must_Shutdown);
+			return;
+		}
 	}
 	
 	if (Events::Motion::event_manager.get_clr((int)Events::Motion::e_event_type::Motion_complete))

@@ -51,8 +51,27 @@ void Talos::Main_Process::startup()
 		//were sent from a terminal to the micro controller over a serial connection
 		//c_hal::comm.PNTR_VIRTUAL_BUFFER_WRITE(0, "g41p.25G0X1Y1F100\rX2Y2\rX3Y3\r"); //<--data from host
 
+		Hardware_Abstraction_Layer::Serial::add_to_buffer(0,"O1000\r");
+		Hardware_Abstraction_Layer::Serial::add_to_buffer(0,"T1 M6\r");
+		//Hardware_Abstraction_Layer::Serial::add_to_buffer(0,"G0 G90 G40 G21 G17 G94 G80\r");
+		Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "G90 G40 G21 G17 G94 G80\r");
+		Hardware_Abstraction_Layer::Serial::add_to_buffer(0,"G54 X-75 Y-25 S500 M3  (Start Point)\r");
+		Hardware_Abstraction_Layer::Serial::add_to_buffer(0,"G43 Z100 H1\r");
+		Hardware_Abstraction_Layer::Serial::add_to_buffer(0,"Z5\r");
+		Hardware_Abstraction_Layer::Serial::add_to_buffer(0,"G1 Z-20 F100\r");
+		Hardware_Abstraction_Layer::Serial::add_to_buffer(0,"X-50 M8               (Position 1)\r");
+		Hardware_Abstraction_Layer::Serial::add_to_buffer(0,"Y0                    (Position 2)\r");
+		Hardware_Abstraction_Layer::Serial::add_to_buffer(0,"X0 Y50                (Position 3)\r");
+		Hardware_Abstraction_Layer::Serial::add_to_buffer(0,"X50 Y0                (Position 4)\r");
+		Hardware_Abstraction_Layer::Serial::add_to_buffer(0,"X0 Y-50               (Position 5)\r");
+		Hardware_Abstraction_Layer::Serial::add_to_buffer(0,"X-50 Y0               (Position 6)\r");
+		Hardware_Abstraction_Layer::Serial::add_to_buffer(0,"Y25                   (Position 7)\r");
+		Hardware_Abstraction_Layer::Serial::add_to_buffer(0,"X-75                  (Position 8)\r");
+		Hardware_Abstraction_Layer::Serial::add_to_buffer(0,"G0 Z100\r");
+		Hardware_Abstraction_Layer::Serial::add_to_buffer(0,"M30\r");
+
 		//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "@mmx1000\r");
-		Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "g95f500g1x1000\r"); //<--data from host
+		//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "m3s1000\rg95f1.5g1x1000\r"); //<--data from host
 		//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "g0x1000\r\n"); //<--data from host
 		//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "g0x10\r\n"); //<--data from host
 		//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "x3\r"); //<--data from host
@@ -73,7 +92,11 @@ void Talos::Main_Process::startup()
 	Events::Motion::local_serial = &Talos::Main_Process::host_serial;
 	Events::Motion_Controller::local_serial = &Talos::Main_Process::host_serial;
 	Events::System::local_serial = &Talos::Main_Process::host_serial;
+	Events::Data::local_serial = &Talos::Main_Process::host_serial;
+	Talos::GCode_Process::input_mode = GCode_Process::e_input_type::Serial;
 	Talos::GCode_Process::local_serial = &Talos::Main_Process::host_serial;
+
+
 	Talos::Main_Process::host_serial.print_string("Talos\r");
 	Talos::Main_Process::host_serial.print_string("Mode:");
 
@@ -114,54 +137,16 @@ void Talos::Main_Process::startup()
 		
 		if (Talos::Main_Process::host_serial.HasEOL())
 		{
-			//Get data from the specified source
-			return_value = Talos::GCode_Process::load_data(NULL);
-			
-			
-			if (return_value == NGC_RS274::Interpreter::Errors::OK)
-			{
-				/*
-				This will read a block from the NGC_BUFFER and 'stage' it.
-				Staging will process any non machine values directly. For
-				instance G10 values L2,L20,P2,P20, set feed rate and tool id
-				in the stager and ready the block to be processed by the machine.
-				Stager data only gets used by the c_machine class. As stager data
-				is processed, blocks will be freed in the NGC_BUFFER
-				Stager is the middle layer between the interpreted G Code
-				line data, and the machine. If the machine is not consuming buffer
-				data, then the ngc buffer can fill.
-				*/
-
-				////Interpreter threw no errors so see if the buffer is full or not. If not, carry on!
-				if (!Events::Data::event_manager.get((int)Events::Data::e_event_type::Staging_buffer_full))
-				{
-					return_value = c_stager::pre_stage_check(); //<--Currently does nothing, but you never know
-					if (return_value == Stager_Errors::OK)
-					{
-						return_value = c_stager::stage_block_motion(); //<--set tool id, cutter comp, parameters, etc...
-						if (return_value == Stager_Errors::OK)
-						{
-							return_value = c_stager::post_stage_check();
-							if (return_value == Stager_Errors::OK)
-							{
-								//Here is where we send the block to c_machine to start executing it.
-								c_machine::run_block();
-								
-							}
-						}
-					}
-				}
-				//Block was interpreted, staged, and sent to the machine (which sent it to the motion controller).
-				//The line should be complete now and the current serial buffer moved to the next eol position.
-				//Tell the host we did good!
-				host_serial.print_string("ok:\r");
-			}
-			else
-			{
-				host_serial.print_string("error:");
-				host_serial.print_int32(return_value);
-				host_serial.Write(CR);
-			}
+			//Set inbound serial event
+			Events::Data::event_manager.set((int)Events::Data::e_event_type::Serial_data_inbound);
 		}
+		
+		/*else
+		{
+		host_serial.print_string("error:");
+		host_serial.print_int32(return_value);
+		host_serial.Write(CR);
+		}*/
 	}
 }
+
