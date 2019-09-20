@@ -12,7 +12,7 @@
 Motion_Core::Software::Interpolation::s_backlash_comp Motion_Core::Software::Interpolation::back_comp;
 int32_t Motion_Core::Software::Interpolation::system_position[MACHINE_AXIS_COUNT]{0};
 
-void Motion_Core::Software::Interpolation::load_block(BinaryRecords::s_motion_data_block *block)
+uint16_t Motion_Core::Software::Interpolation::load_block(BinaryRecords::s_motion_data_block *block)
 {
 	uint8_t return_value = 0;
 	
@@ -91,6 +91,7 @@ void Motion_Core::Software::Interpolation::load_block(BinaryRecords::s_motion_da
 		
 		
 	}
+	return return_value;
 }
 
 uint8_t Motion_Core::Software::Interpolation::_mc_line(BinaryRecords::s_motion_data_block *target_block)

@@ -237,6 +237,7 @@ void NGC_RS274::NGC_Binary_Block::assign_m_event(NGC_RS274::NGC_Binary_Block* lo
 void NGC_RS274::NGC_Binary_Block::assign_other_event(NGC_RS274::NGC_Binary_Block* local_block)
 {
 	//Comments are not feasible unless/until someone gets off their ass and adds display support
+
 	//Set feed rate
 	if (local_block->get_defined('F'))
 	{
@@ -244,25 +245,43 @@ void NGC_RS274::NGC_Binary_Block::assign_other_event(NGC_RS274::NGC_Binary_Block
 		//local_block->persisted_values.feed_rate = local_block->get_value('F');
 	}
 
-	//// [4. Set spindle speed ]:
+	// Set spindle speed
 	if (local_block->get_defined('S'))
 	{
 		local_block->event_manager.set((int)NGC_RS274::NGC_Binary_Block::e_block_event::Spindle_rate);
 		//local_block->persisted_values.active_s = local_block->get_value('S');
 	}
 
-	// [5. Select tool ]: NOT SUPPORTED. Only tracks tool value.
+	//Select tool
 	if (local_block->get_defined('T'))
 	{
 		local_block->event_manager.set((int)NGC_RS274::NGC_Binary_Block::e_block_event::Tool_id);
 		//local_block->persisted_values.active_t = local_block->get_value('T');
 	}
 
+	//Set canned cycle
+	if (local_block->g_group[NGC_RS274::Groups::G::Motion] >= NGC_RS274::G_codes::CANNED_CYCLE_DRILLING
+		&& local_block->g_group[NGC_RS274::Groups::G::Motion] <= NGC_RS274::G_codes::CANNED_CYCLE_BORING_DWELL_FEED_OUT)
+	{
+		local_block->event_manager.set((int)NGC_RS274::NGC_Binary_Block::e_block_event::Canned_Cycle_Active);
+	}
+	else
+	{
+		local_block->event_manager.clear((int)NGC_RS274::NGC_Binary_Block::e_block_event::Canned_Cycle_Active);
+	}
 }
 
 bool NGC_RS274::NGC_Binary_Block::group_has_changed(uint16_t * original_value, uint16_t * updated_value, uint8_t group_number)
 {
 	return original_value[group_number] != updated_value[group_number];
+}
+
+void NGC_RS274::NGC_Binary_Block::copy_persisted_data(NGC_RS274::NGC_Binary_Block* source_block, NGC_RS274::NGC_Binary_Block* destination_block)
+{
+	memcpy(destination_block->g_group, source_block->g_group, COUNT_OF_G_CODE_GROUPS_ARRAY * sizeof(uint16_t));
+	memcpy(destination_block->m_group, source_block->m_group, COUNT_OF_M_CODE_GROUPS_ARRAY * sizeof(uint16_t));
+	memcpy(&destination_block->persisted_values, &source_block->persisted_values, sizeof(NGC_RS274::NGC_Binary_Block::s_persisted_values));
+	memcpy(destination_block->block_word_values, source_block->block_word_values, COUNT_OF_BLOCK_WORDS_ARRAY * sizeof(float));
 }
 
 void NGC_RS274::NGC_Binary_Block::reset()

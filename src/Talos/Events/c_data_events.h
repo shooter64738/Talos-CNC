@@ -37,10 +37,9 @@ namespace Events
 			NGC_buffer_ready = 0,
 			NGC_buffer_full = 1,
 			NGC_item_added = 2,
-			Profile_buffer_ready = 3,
-			Staging_buffer_full = 4,
-			Peripheral_record_in_queue = 5,
-			Serial_data_inbound = 6
+			NGC_Data_Idle = 3,
+			Peripheral_record_in_queue = 4,
+			Serial_data_inbound = 5
 			
 		};
 		static BinaryRecords::s_bit_flag_controller_32 event_manager;
@@ -51,7 +50,8 @@ namespace Events
 
 		//functions
 		public:
-		static void check_events();
+			static void set_events();
+			static void check_events();
 
 		static uint16_t process_ngc_item_added_event();
 		protected:

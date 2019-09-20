@@ -34,18 +34,23 @@ namespace Events
 		public:
 		enum class e_event_type : uint8_t
 		{
-			Motion_in_queue = 0,
-			Motion_complete = 1,
-			Hardware_idle = 2,
-			Jog_in_queue = 3,
-			Motion_Pending_For_Machine = 4,
-			Parameter_in_queue = 5
+			Motion_enqueue = 0,
+			Motion_DeQueue = 1,
+			//Motion_Segment_Finished = 2,
+			//Hardware_idle = 2,
+			//Jog_in_queue = 3,
+			//Motion_Pending_For_Machine = 4,
+			Parameter_in_queue = 5,
+			Buffered_CRC_Cycle_Waiting = 6,
+			Buffered_Canned_Cycle_Waiting = 7,
+			Buffered_Standard_Cycle_Waiting = 8,
+			Block_Ready_To_Execute = 9
 		};
 		static c_Serial *local_serial;
 		static uint8_t motion_queue_count;
 		static BinaryRecords::s_bit_flag_controller_32 event_manager;
 		//static uint32_t last_reported_block;
-		static BinaryRecords::s_status_message events_statistics;
+		//static BinaryRecords::s_status_message events_statistics;
 
 		protected:
 		private:

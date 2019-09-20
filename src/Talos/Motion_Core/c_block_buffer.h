@@ -16,6 +16,7 @@ namespace Motion_Core
 			static Block_Item *Write();
 			static Block_Item *Current();
 			static Block_Item *Previous();
+			static Block_Item * Write_No_reset();
 			static Block_Item *Newest();
 			static Block_Item *Get(int8_t From);
 			static void Advance();

@@ -20,6 +20,7 @@
 
 #include "c_data_events.h"
 #include "c_motion_events.h"
+#include "c_system_events.h"
 #include "..\Planner\c_stager.h"
 #include "..\Planner\Stager_Errors.h"
 #include "..\GCode_Process.h"
@@ -28,18 +29,36 @@
 BinaryRecords::s_bit_flag_controller_32 Events::Data::event_manager;
 c_Serial * Events::Data::local_serial;
 
+void Events::Data::set_events()
+{
+	if (Events::Data::local_serial->HasEOL())
+	{
+		//Set inbound serial event
+		Events::Data::event_manager.set((int)Events::Data::e_event_type::Serial_data_inbound);
+	}
+
+}
+
 void Events::Data::check_events()
 {
 	uint16_t return_value = 0;
 	
 	if (Events::Data::event_manager._flag ==0)
 	{
+		if (!Events::Data::event_manager.get((int)Events::Data::e_event_type::NGC_Data_Idle))
+		{
+			Events::Data::event_manager.set((int)Events::Data::e_event_type::NGC_Data_Idle);
+			local_serial->print_string("Data idle.\r\n");
+		}
+		//this indicates a motion is ready to be processed by 'machine'
 		return;
 	}
 	
 	//If there is inbound serial data, check and see what type of data it is
 	if (Events::Data::event_manager.get_clr((int)Events::Data::e_event_type::Serial_data_inbound)) //<--get&clear
 	{
+		Events::Data::event_manager.clear((int)Events::Data::e_event_type::NGC_Data_Idle);
+
 		//If the first byte is not a printable character, this is not expected to
 		//be gcode data.
 		if (local_serial->Peek()<32)
@@ -48,12 +67,23 @@ void Events::Data::check_events()
 		}
 		else
 		{
-			//Get data from the specified source
-			return_value = Talos::GCode_Process::load_data(NULL);
-			//If no errors reported, an item was added to the buffer and we set the event
-			if (return_value == NGC_RS274::Interpreter::Errors::OK )
+			//see if our buffer is full before we try.
+			if (!Events::Data::event_manager.get((int)Events::Data::e_event_type::NGC_buffer_full))
 			{
-				Events::Data::event_manager.set((int)Events::Data::e_event_type::NGC_item_added);
+				
+				//Get data from the specified source
+				return_value = Talos::GCode_Process::load_data(NULL);
+				if (Events::System::event_manager.get((int)Events::System::e_event_type::NGC_Error))
+				{
+					//A system error has occured. Probably poorly formed gcode data. 
+					//This if block is here in case we want to act on it. Right now I
+					//cant think of anything that we need to do except tell the user.
+				}
+			}
+			else
+			{
+				
+				local_serial->print_string("Ngc buffer full.\r\n");
 			}
 		}
 	}
@@ -89,18 +119,19 @@ void Events::Data::check_events()
 
 uint16_t Events::Data::process_ngc_item_added_event()
 {
-	//assume buffer is full
-	uint16_t return_value = Stager_Errors::NGC_Buffer_Full;
+	uint16_t return_value = Stager_Errors::OK;
 	
-	if (!Events::Data::event_manager.get((int)Events::Data::e_event_type::Staging_buffer_full))
+//	if (!Events::Data::event_manager.get((int)Events::Data::e_event_type::Staging_buffer_full))
 	{
-		return_value = c_stager::pre_stage_check(); //<--Currently does nothing, but you never know
+		NGC_RS274::NGC_Binary_Block* current_block = c_stager::get_added_block();
+
+		return_value = c_stager::stage_validation(current_block); //<--Currently does nothing, but you never know
 		if (return_value == Stager_Errors::OK)
 		{
-			return_value = c_stager::stage_block_motion(); //<--set tool id, cutter comp, parameters, etc...
+			return_value = c_stager::stage_updates(current_block); //<--set tool id, cutter comp, parameters, etc...
 			if (return_value == Stager_Errors::OK)
 			{
-				return_value = c_stager::post_stage_check();
+				return_value = c_stager::stage_final(current_block);
 				if (return_value == Stager_Errors::OK)
 				{
 					

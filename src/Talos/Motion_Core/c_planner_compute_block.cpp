@@ -16,8 +16,9 @@ float Motion_Core::Planner::Calculator::previous_nominal_speed;
 
 uint8_t Motion_Core::Planner::Calculator::_plan_buffer_line(BinaryRecords::s_motion_data_block target_block)
 {
-	// Prepare and initialize new block. Copy relevant pl_data for block execution.
-	Motion_Core::Planner::Block_Item *planning_block = Motion_Core::Planner::Buffer::Write();
+	//this is a 'temporary' get from teh buffer. We may find this block has no distance to move and we dont want to advance
+	//the buffer unless we will actually execute this block of data.
+	Motion_Core::Planner::Block_Item *planning_block = &Motion_Core::Planner::Buffer::_buffer[Motion_Core::Planner::Buffer::_head];
 	
 	planning_block->line_number = target_block.line_number;
 	planning_block->sequence = target_block.sequence;
@@ -69,9 +70,13 @@ uint8_t Motion_Core::Planner::Calculator::_plan_buffer_line(BinaryRecords::s_mot
 	// Bail if this is a zero-length block. Highly unlikely to occur.
 	if (planning_block->step_event_count == 0)
 	{
-		
+		planning_block->Reset();//<--we didnt use this after all. reset it now. 
 		return (0);
 	}
+
+	//Since this was accessed via pointer, everything we set above should remain. this will 
+	//just advance the buffer pointers for us. 
+	planning_block = Motion_Core::Planner::Buffer::Write_No_reset(); //<--get a writeable buffer pointer
 
 	// Calculate the unit vector of the line move and the block maximum feed rate and acceleration scaled
 	// down such that no individual axes maximum values are exceeded with respect to the line direction.

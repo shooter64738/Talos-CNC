@@ -22,7 +22,7 @@
 #ifndef __C_BUFFER_H__
 #define __C_BUFFER_H__
 #include "..\NGC_RS274\NGC_Block.h"
-#define NGC_BUFFER_SIZE 16 //<--must be at least 2 in order for look-ahead to work.
+#define NGC_BUFFER_SIZE 5 //<--must be at least 2 in order for look-ahead to work.
 
 class c_gcode_buffer
 {

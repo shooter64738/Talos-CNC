@@ -25,6 +25,7 @@ namespace Motion_Core
 		static void process_loop();
 		
 		static void check_control_states();
+		static void process_motion();
 		static void process_motion(BinaryRecords::s_motion_data_block *mot);
 		static void check_hardware_faults();
 		static void check_sequence_complete();

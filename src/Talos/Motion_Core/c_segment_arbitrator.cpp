@@ -64,7 +64,7 @@ void Motion_Core::Segment::Arbitrator::Fill_Step_Segment_Buffer()
 {
 	uint16_t return_value = 0;
 	// Block step prep buffer, while in a suspend state and there is no suspend motion to execute.
-	if (Motion_Core::System::StepControl & STEP_CONTROL_END_MOTION)
+	if (Motion_Core::System::state_mode.step_modes.get((int)Motion_Core::System::e_step_event_type::Step_motion_terminate))
 	{
 		return;
 	}
@@ -109,7 +109,7 @@ void Motion_Core::Segment::Arbitrator::Fill_Step_Segment_Buffer()
 				// Reset prep parameters for resuming and then bail. Allow the stepper ISR to complete
 				// the segment queue, where realtime protocol will set new state upon receiving the
 				// cycle stop flag from the ISR. Prep_segment is blocked until then.
-				bit_true(Motion_Core::System::StepControl, STEP_CONTROL_END_MOTION);
+				Motion_Core::System::state_mode.step_modes.set((int)Motion_Core::System::e_step_event_type::Step_motion_terminate);
 				break; // Bail!
 			}
 			else
@@ -183,7 +183,10 @@ uint8_t Motion_Core::Segment::Arbitrator::Base_Calculate()
 		Motion_Core::Segment::Arbitrator::req_mm_increment = REQ_MM_INCREMENT_SCALAR / Motion_Core::Segment::Arbitrator::step_per_mm;
 		Motion_Core::Segment::Arbitrator::dt_remainder = 0.0; // Reset for new segment block
 
-		if ((Motion_Core::System::StepControl & STEP_CONTROL_EXECUTE_HOLD) || (Motion_Core::Segment::Arbitrator::recalculate_flag & PREP_FLAG_DECEL_OVERRIDE))
+		
+		if ((Motion_Core::System::state_mode.step_modes.get((int)Motion_Core::System::e_step_event_type::Step_motion_hold))
+			|| (Motion_Core::Segment::Arbitrator::recalculate_flag & PREP_FLAG_DECEL_OVERRIDE))
+		//if ((Motion_Core::System::StepControl & STEP_CONTROL_EXECUTE_HOLD) || (Motion_Core::Segment::Arbitrator::recalculate_flag & PREP_FLAG_DECEL_OVERRIDE))
 		//if ((c_system::sys.step_control & STEP_CONTROL_EXECUTE_HOLD) || (Motion_Core::Segment::Arbitrator::recalculate_flag & PREP_FLAG_DECEL_OVERRIDE))
 		{
 			// New block loaded mid-hold. Override planner block entry speed to enforce deceleration.
@@ -205,7 +208,7 @@ uint8_t Motion_Core::Segment::Arbitrator::Base_Calculate()
 	*/
 	Motion_Core::Segment::Arbitrator::mm_complete = 0.0; // Default velocity profile complete at 0.0mm from end of block.
 	float inv_2_accel = 0.5 / Motion_Core::Segment::Arbitrator::Active_Block->acceleration;
-	if (Motion_Core::System::StepControl & STEP_CONTROL_EXECUTE_HOLD)
+	if (Motion_Core::System::state_mode.step_modes.get((int)Motion_Core::System::e_step_event_type::Step_motion_hold))
 	{ // [Forced Deceleration to Zero Velocity]
 		// Compute velocity profile parameters for a feed hold in-progress. This profile overrides
 		// the planner block profile, enforcing a deceleration to zero speed.
@@ -527,11 +530,11 @@ uint8_t Motion_Core::Segment::Arbitrator::Segment_Calculate()
 	// Bail if we are at the end of a feed hold and don't have a step to execute.
 	if (segment_item->steps_to_execute_in_this_segment == 0)
 	{
-		if (Motion_Core::System::StepControl & STEP_CONTROL_EXECUTE_HOLD)
+		if (Motion_Core::System::state_mode.step_modes.get((int)Motion_Core::System::e_step_event_type::Step_motion_hold))
 		{
 			// Less than one step to decelerate to zero speed, but already very close. AMASS
 			// requires full steps to execute. So, just bail.
-			bit_true(Motion_Core::System::StepControl, STEP_CONTROL_END_MOTION);
+			Motion_Core::System::state_mode.step_modes.set((int)Motion_Core::System::e_step_event_type::Step_motion_terminate);
 			return 0; // Segment not generated, but current step data still retained.
 		}
 	}
@@ -597,11 +600,11 @@ void Motion_Core::Segment::Arbitrator::st_update_plan_block_parameters()
 void Motion_Core::Segment::Arbitrator::cycle_hold()
 {
 	BinaryRecords::s_status_message status;
-	if (Motion_Core::System::StepControl == 0)
+	if (Motion_Core::System::state_mode.step_modes._flag == 0)
 	{
 
 		st_update_plan_block_parameters(); // Notify stepper module to recompute for hold deceleration.
-		Motion_Core::System::StepControl = STEP_CONTROL_EXECUTE_HOLD; // Initiate suspend state with active flag.
+		Motion_Core::System::state_mode.step_modes.set((int)Motion_Core::System::e_step_event_type::Step_motion_hold);
 		//Motion_Core::System::set_control_state_mode(STATE_MOTION_CONTROL_HOLD);
 
 		//Motion_Core::Gateway::send_status(BinaryRecords::e_system_state_record_types::Motion_Idle
@@ -617,7 +620,7 @@ void Motion_Core::Segment::Arbitrator::cycle_hold()
 		//,Motion_Core::Segment::Arbitrator::Active_Block->sequence
 		//,NULL,STATE_STATUS_IGNORE, STATE_MOTION_CONTROL_HOLD);
 
-		Motion_Core::System::StepControl = 0;
+		Motion_Core::System::state_mode.step_modes.reset();
 		st_update_plan_block_parameters();
 		Motion_Core::Segment::Arbitrator::Fill_Step_Segment_Buffer();
 		Motion_Core::Hardware::Interpolation::interpolation_begin();

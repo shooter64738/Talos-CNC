@@ -26,7 +26,7 @@
 uint8_t Events::Motion::motion_queue_count;
 BinaryRecords::s_bit_flag_controller_32 Events::Motion::event_manager;
 c_Serial *Events::Motion::local_serial;
-BinaryRecords::s_status_message Events::Motion::events_statistics;
+
 
 void Events::Motion::check_events()
 {
@@ -35,44 +35,37 @@ void Events::Motion::check_events()
 	{
 		return;
 	}
-	//See if there is a motion in the queue
-	if (Events::Motion::event_manager.get_clr((int)Events::Motion::e_event_type::Motion_in_queue))
+	//See if there is a motion in the queue, and clear it if there is.
+	if (Events::Motion::event_manager.get_clr((int)Events::Motion::e_event_type::Motion_enqueue))
 	{
 		Events::Motion::motion_queue_count++;
-		local_serial->print_string("Motion added:");
+		local_serial->print_string("Motion Queued:");
 		local_serial->print_int32(Events::Motion::motion_queue_count);
-		local_serial->print_string(" motions in queue.\r");
-		
-		//Send the block to the machine. If the machine is ready it will transfer this
-		//block to the motion controller. THe machine will also move the gcode buffer
-		//tail forward. After this executes the NGC block buffer will have a new free space.
-		c_machine::e_responses response = c_machine::run_block();
-		if (response == c_machine::e_responses::Ok)
-		{
-			Events::Motion_Controller::event_manager.set((int)Events::Motion_Controller::e_event_type::Block_Executing);
-		}
-		else if (response == c_machine::e_responses::Wait_for_complete)
-		{
-			Events::Motion::event_manager.set((int)Events::Motion::e_event_type::Motion_Pending_For_Machine);
-		}
-		else 
-		{
-			//Something really bad occurred and we have to shut down.
-			Events::System::event_manager.set((int)Events::System::e_event_type::Critical_Must_Shutdown);
-			return;
-		}
+		local_serial->print_string(" motions in queue.\r\n");
+		//this indicates a motion is ready to be processed by 'machine'
+		//Events::Motion::event_manager.set((int)Events::Motion::e_event_type::Block_Ready_To_Execute);
 	}
 	
-	if (Events::Motion::event_manager.get_clr((int)Events::Motion::e_event_type::Motion_complete))
+	if (Events::Motion::motion_queue_count>0)
 	{
-		Events::Motion::motion_queue_count --;
-		local_serial->print_string("Motion complete:");
-		local_serial->print_int32(Events::Motion::motion_queue_count);
-		local_serial->print_string(" motions in queue.\r");
+		Events::Motion::event_manager.set((int)Events::Motion::e_event_type::Block_Ready_To_Execute);
+		//anytime we have a motion prepped, let the machine controller handle it. 
+		if (1==1)
+			c_machine::run_block();
 	}
-	
-	if (Events::Motion::event_manager.get_clr((int)Motion::e_event_type::Hardware_idle))
+
+	if (Events::Motion::event_manager.get_clr((int)Events::Motion::e_event_type::Motion_DeQueue))
+	{
+		Events::Motion::motion_queue_count--;
+		local_serial->print_string("Motion De-Queued:");
+		local_serial->print_int32(Events::Motion::motion_queue_count);
+		local_serial->print_string(" motions in queue.\r\n");
+	}
+
+	/*if (Events::Motion::event_manager.get_clr((int)Events::Motion::e_event_type::Motion_Segment_Finished))
 	{
 		
-	}
+	}*/
+	
+	
 }

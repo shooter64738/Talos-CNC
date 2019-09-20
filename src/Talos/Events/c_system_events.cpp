@@ -20,7 +20,7 @@
 
 #include "c_system_events.h"
 
-BinaryRecords::s_bit_flag_controller_32 Events::System::event_manager;
+BinaryRecords::s_bit_flag_controller_16 Events::System::event_manager;
 c_Serial *Events::System::local_serial;
 
 void Events::System::check_events()
@@ -33,6 +33,11 @@ void Events::System::check_events()
 	if (Events::System::event_manager.get_clr((int)Events::System::e_event_type::Critical_Must_Shutdown))
 	{
 		local_serial->print_string("Critical hardware fault.\r");
+	}
+
+	if (Events::System::event_manager.get_clr((int)Events::System::e_event_type::NGC_Error))
+	{
+		local_serial->print_string("Error processing GCode data.\r");
 	}
 	
 }

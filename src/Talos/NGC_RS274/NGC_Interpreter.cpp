@@ -116,7 +116,7 @@ int NGC_RS274::Interpreter::Processor::process_line(NGC_RS274::NGC_Binary_Block*
 	//Before we move the new data in, set the events for the block.
 	//this makes it easy to track changes made and what events need to execute.
 
-	plan_block->set_events(&NGC_RS274::Interpreter::Processor::local_block, NGC_RS274::Interpreter::Processor::stager_block);
+	NGC_RS274::NGC_Binary_Block::set_events(&NGC_RS274::Interpreter::Processor::local_block, NGC_RS274::Interpreter::Processor::stager_block);
 	plan_block->event_manager = NGC_RS274::Interpreter::Processor::local_block.event_manager;
 	//This line interpreted without errors. Move the new values into 'plan_block' which will be updated for use by the calling method.
 	memcpy(plan_block->g_group, NGC_RS274::Interpreter::Processor::local_block.g_group, COUNT_OF_G_CODE_GROUPS_ARRAY * sizeof(uint16_t));

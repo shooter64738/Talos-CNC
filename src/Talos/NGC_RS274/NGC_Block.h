@@ -49,7 +49,8 @@ namespace NGC_RS274
 			Coolant = 10,
 			Tool_Change_Request = 11,
 			Block_Set_To_Execute = 12,
-			Block_Set_To_Held = 13
+			Block_Set_To_Held = 13,
+			Canned_Cycle_Active = 14
 		};
 
 		BinaryRecords::s_bit_flag_controller_16 event_manager;
@@ -211,7 +212,7 @@ namespace NGC_RS274
 		void clear_axis_values();
 		void clear_word_values();
 		static void set_events(NGC_RS274::NGC_Binary_Block* local_block, NGC_RS274::NGC_Binary_Block* previous_block);
-		
+		static void copy_persisted_data(NGC_RS274::NGC_Binary_Block* source_block, NGC_RS274::NGC_Binary_Block* destination_block);
 		private:
 		
 		static void assign_g_event(NGC_RS274::NGC_Binary_Block* local_block, uint16_t group_number);

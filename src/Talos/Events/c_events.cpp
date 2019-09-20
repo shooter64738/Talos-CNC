@@ -25,21 +25,39 @@
 #include "c_motion_control_events.h"
 #include "c_system_events.h"
 
+void Events::Main_Process::initialize()
+{
+	Events::Motion_Controller::event_manager.set((int)Events::Motion_Controller::e_event_type::Motion_buffer_empty);
+}
+
+void Events::Main_Process::set_events()
+{
+	//Set events for data input.
+	Events::Data::set_events();
+}
+
 void Events::Main_Process::check_events()
 {
-	//Check for motion controller events. If there are any act on them accordingly.
+	//Check for system events. These are 'highest' priority events
 	Events::System::check_events();
 	
-	//Check for motion controller events. If there are any act on them accordingly.
+	//As a saefty net, if there are any system level errors, we stop
+	//processing any other events
+	if (Events::System::event_manager._flag > 0)
+	{
+		return;
+	}
+
+	//Check for data events. Any events set here are data related. Either from gcode or
+	//'data' such as button presses, and configuration
+	Events::Data::check_events();
+
+	//Check for motion controller events. These events are set by the motion control system
 	Events::Motion_Controller::check_events();
 	
-	//Check for motion events. If there are any act on them accordingly.
+	//Check for motion events. Motion events are events that occured during block processing,
+	//but are not actually being executed by the motion controller yet
 	Events::Motion::check_events();
-
-	//Check for serial events. If there are any act on them accordingly.
-	//(NOTE: serial events such as data arrival are handled in the ISR directly.
-	//This event handler is for buffer management and block interpretation.)
-	Events::Data::check_events();
 	
 	//check for block change events
 	Events::NGC_Block::check_events();

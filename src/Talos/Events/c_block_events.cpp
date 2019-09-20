@@ -22,18 +22,7 @@
 #include "c_block_events.h"
 #include "..\bit_manipulation.h"
 
-BinaryRecords::s_bit_flag_controller_16 Events::NGC_Block::xevent_manager;
-
-
 void Events::NGC_Block::check_events()
 {
-	if (Events::NGC_Block::xevent_manager._flag ==0)
-	{
-	return;
-	}
-	
-	//if (Events::NGC_Block::xevent_manager.get_clr((int)Events::NGC_Block::e_event_type::Motion))
-	//{
-		//
-	//}
+
 }

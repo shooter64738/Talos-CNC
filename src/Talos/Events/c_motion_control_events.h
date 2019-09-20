@@ -42,9 +42,16 @@ namespace Events
 			Spindle_Error_Speed_Timeout = 4,
 			Spindle_At_Speed = 5,
 			Spindle_To_Speed_Wait = 6,
-			Block_Executing = 10
+			Motion_buffer_full = 7,
+			Motion_buffer_empty = 8,
+			Block_Executing = 10,
+			Block_Complete = 11,
+			Block_Discarded = 12,
+			Motion_Added_to_Buffer = 13
 		};
+		static uint8_t motion_segments_queue_count;
 		static BinaryRecords::s_bit_flag_controller_32 event_manager;
+		static BinaryRecords::s_status_message events_statistics;
 		static c_Serial *local_serial;
 
 		protected:

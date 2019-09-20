@@ -47,13 +47,7 @@ NGC_RS274::NGC_Binary_Block*c_stager::current_block;
 c_Serial *c_stager::local_serial;
 c_globals::s_tool_table c_stager::tool_table[COUNT_OF_TOOL_TABLE];
 
-/*
-Where were the axis's located before we executed this block?
-pre_motion_position will always contain the location the planner was at before the block executed.
-Obviously the code block that we are processing will contain the new position we are going to.
-*/
-float c_stager::end_motion_position[MACHINE_AXIS_COUNT];
-float c_stager::start_motion_position[MACHINE_AXIS_COUNT];
+
 
 
 void c_stager::initialize()
@@ -72,225 +66,60 @@ void c_stager::initialize()
 	c_stager::previous_block = &c_gcode_buffer::collection[0];
 }
 
-void c_stager::report()
+int16_t c_stager::stage_validation(NGC_RS274::NGC_Binary_Block* local_block)
 {
-	////We peeked into serial and found a ?, thats how we got here.
-	////But maybe its a more detailed inquiry, peek again to see if
-	////its a detail query
-	//uint8_t peek_value = c_stager::local_serial->Peek();
-	//switch (peek_value)
-	//{
-	////case 'G'://<--request is for a detail of all gcode states.
-	////{
-	////c_stager::local_serial->Write("Sta G St:");
-	////c_status::modal_codes(c_stager::stager_state_g_group, COUNT_OF_G_CODE_GROUPS_ARRAY);
-	////c_stager::local_serial->Write(CR);
-	////}
-	////break;
-	////case 'M'://<--request is for a detail of all mcode states.
-	////{
-	////c_stager::local_serial->Write("Sta M St:");
-	////c_status::modal_codes(c_stager::stager_state_m_group, COUNT_OF_M_CODE_GROUPS_ARRAY);
-	////c_stager::local_serial->Write(CR);
-	////}
-	//default://<--request is for single word value
-	//{
-	//if (peek_value >= 'A' && peek_value <= 'Z')
-	//{
-	//c_stager::local_serial->Write(peek_value);
-	//c_stager::local_serial->Write('=');
-	//c_stager::local_serial->print_float(c_stager::get_added_block()->get_value((char)peek_value));
-	//c_stager::local_serial->Write(CR);
-	//return;
-	//}
-	//}
-	//break;
-	//
-	//}
-	//
-	//for (uint8_t i = 0; i < NGC_BUFFER_SIZE; i++)
-	//{
-	//c_stager::local_serial->print_string("Blk #"); c_stager::local_serial->print_int32(i); c_stager::local_serial->print_string(":");
-	//c_stager::local_serial->Write(CR); c_stager::local_serial->Write("\t");
-	//
-	//for (uint8_t axis_id = 0; axis_id < MACHINE_AXIS_COUNT; axis_id++)
-	//{
-	////print the axis name X,Y,Z,A,B,C,U,V
-	////c_stager::local_serial->Write("Axis ");
-	//c_stager::local_serial->print_int32(c_machine::machine_axis_names[axis_id]);
-	////0=no motion,1=positive motion,-1=negative motion
-	//c_stager::local_serial->Write(" Dir:"); c_stager::local_serial->Write_ni(c_gcode_buffer::collection[i].motion_direction[axis_id]);
-	//if (axis_id + 1 < MACHINE_AXIS_COUNT)
-	//c_stager::local_serial->Write(", ");
-	//else
-	//c_stager::local_serial->Write(CR);
-	//}
-	//
-	//NGC_RS274::Interpreter::Processor::convert_to_line_index(i);
-	//c_stager::local_serial->print_string("\tString "); c_stager::local_serial->print_string(NGC_RS274::Interpreter::Processor::Line);
-	//c_stager::local_serial->Write(CR);
-	//c_stager::local_serial->print_string("\tPos @ exe: ");
-	//c_stager::local_serial->Write(CR);
-	//for (uint8_t axis_id = 0; axis_id < MACHINE_AXIS_COUNT; axis_id++)
-	//{
-	//c_stager::local_serial->print_string("\t"); c_stager::local_serial->print_string(c_machine::machine_axis_names[axis_id]);
-	//c_stager::local_serial->print_float(c_gcode_buffer::collection[i].unit_target_positions[axis_id]);
-	//c_stager::local_serial->print_string(" ");
-	//}
-	//c_stager::local_serial->Write(CR);
-	//
-	//
-	//}
-}
-
-uint8_t c_stager::pre_stage_check()
-{
-	//anything that needs to happen to the block before staging goes here.
-	return Stager_Errors::OK;
-}
-
-uint8_t c_stager::post_stage_check()
-{
-	//anything that needs to happen to the block after staging goes here.
-
-	if (c_gcode_buffer::buffer_tail == NGC_BUFFER_SIZE)
-	c_gcode_buffer::buffer_tail = 0;
-
-	//Does cutter compensation have a block buffered waiting for a motion command?
-	if (c_Cutter_Comp::previous_block_pointer != NULL
-	&& c_Cutter_Comp::previous_block_pointer->event_manager.get((int)NGC_RS274::NGC_Binary_Block::e_block_event::Block_Set_To_Execute))
-	{
-		//point the machine block to the previous block in cutter compensation. This block
-		// is being held for cutter compensation
-		c_machine::machine_block = c_Cutter_Comp::previous_block_pointer;
-
-	}
-	//NO blocks held in compensation buffer
-	else if (c_Cutter_Comp::previous_block_pointer == NULL)
-	{
-		//point the machine block to the current tail block
-		c_machine::machine_block = &c_gcode_buffer::collection[c_gcode_buffer::buffer_tail];
-	}
-
-	return Stager_Errors::OK;
-}
-
-
-NGC_RS274::NGC_Binary_Block*c_stager::get_added_block()
-{
-	//buffer_head-1 is the last block we added. Tail may still be way behind, but the machine executes the tail
-	if (c_gcode_buffer::buffer_head == 0)
-	return &c_gcode_buffer::collection[NGC_BUFFER_SIZE - 1];
-	else
-	return &c_gcode_buffer::collection[c_gcode_buffer::buffer_head - 1];
-}
-
-//Stages the motion for the block passed in.
-int16_t c_stager::stage_block_motion()
-{
-	/*
-	Ive decided to allow this to move forward in the block buffer each time a block comes in.
-	Each block has a 'copy' of the g/m code states as the block was processed, so effectively each block
-	can be used to update the machine state just before the block executes. This will help simplify the
-	complexities of cutter radius compensation.
-	*/
-	
-	
-	NGC_RS274::NGC_Binary_Block* local_block = c_stager::get_added_block();
-
 	int16_t return_value = 0;
 
-	//copy the current position into the post_position
-	memcpy(c_stager::start_motion_position, c_stager::end_motion_position, MACHINE_AXIS_COUNT*(sizeof(float)));
-
+	
 
 	//Execute non modal changes
-	if (local_block->event_manager.get((int) NGC_RS274::NGC_Binary_Block::e_block_event::Non_modal))
+	if (local_block->event_manager.get((int)NGC_RS274::NGC_Binary_Block::e_block_event::Non_modal))
 	{
 		c_stager::update_non_modals(local_block);
-	}
-
-	if (local_block->event_manager.get_clr((int)NGC_RS274::NGC_Binary_Block::e_block_event::Units)) //<--block has a units changed command
-	{
-		c_machine::unit_scaler = 1;
-		if (local_block->g_group[NGC_RS274::Groups::G::Units] == NGC_RS274::G_codes::INCH_SYSTEM_SELECTION)
-		{
-			c_machine::unit_scaler = 25.4;
-		}
 	}
 
 	//Update line number if it has changed. Line numbers change all the time.
 	//We dont need an event for that because honestly, we dont care..
 	c_stager::line_number = local_block->get_value('N');
 
-
-	// [6. Change tool ]: NOT SUPPORTED
-	// TODO: implement tool changes
-	// - stop spindle if started, save position
-	// - [homing]
-	// - [output tool ID on GPIO] up to 32 tools
-	// - hold, wait for feed
-	// - [restore position]
-	// - restore spindle
-	// New mode, process it in hold/feed
-
-	// [7. Spindle control ]:
-	//if (gc_state.modal.spindle != gc_block.modal.spindle)
-	//{
-	//// Update spindle control and apply spindle speed when enabling it in this block.
-	//// NOTE: All spindle state changes are synced, even in laser mode. Also, pl_data,
-	//// rather than gc_state, is used to manage laser state for non-laser motions.
-	//spindle_sync(gc_block.modal.spindle, pl_data->spindle_speed);
-	//gc_state.modal.spindle = gc_block.modal.spindle;
-	//}
-	//pl_data->condition |= gc_state.modal.spindle; // Set condition flag for planner use.
-
-	// [8. Coolant control ]:
-	//if (gc_state.modal.coolant != gc_block.modal.coolant)
-	//{
-	//// NOTE: Coolant M-codes are modal. Only one command per line is allowed. But, multiple states
-	//// can exist at the same time, while coolant disable clears all states.
-	//coolant_sync(gc_block.modal.coolant);
-	//if (gc_block.modal.coolant == COOLANT_DISABLE)
-	//gc_state.modal.coolant = COOLANT_DISABLE;
-	//else
-	//gc_state.modal.coolant |= gc_block.modal.coolant;
-	//}
-	//pl_data->condition |= gc_state.modal.coolant; // Set condition flag for planner use.
-
-	// [9. Enable/disable feed rate or spindle overrides ]: NOT SUPPORTED. Always enabled.
-
-	// [10. Dwell ]:
-	//if (gc_block.non_modal_command == NON_MODAL_DWELL)
-	//mc_dwell(gc_block.values.p);
-
-
-	/*
-	NOTE!!! Events only signal that something changed in the g or m code modal blocks!
-	Events are not set every time we loop through here. Only when something has changed.
-	*/
-
 	//If feed mode change, see if its a spindle synch change and ensure we arent synchronizing to
 	//a spindle speed thats too fast.
 	if (local_block->event_manager.get((int)NGC_RS274::NGC_Binary_Block::e_block_event::Feed_rate_mode) //<-- block feed mode changed
-	&& local_block->g_group[NGC_RS274::Groups::G::Feed_rate_mode] == NGC_RS274::G_codes::FEED_RATE_UNITS_PER_ROTATION) //<--units per rotation mode
+		&& local_block->g_group[NGC_RS274::Groups::G::Feed_rate_mode] == NGC_RS274::G_codes::FEED_RATE_UNITS_PER_ROTATION) //<--units per rotation mode
 	{
 		float travel_speed = local_block->get_value('F') * local_block->get_value('S');
 		if (travel_speed == 0)
-		return_value = Stager_Errors::Spindle_Synch_Creates_Zero_Feedrate;
-		
+			return_value = Stager_Errors::Spindle_Synch_Creates_Zero_Feedrate;
+
 		//See if we will exceed the max rate for slowest of any axis defined in the block
 		for (uint8_t i = 0; i<MACHINE_AXIS_COUNT; i++)
 		{
 			if (local_block->get_defined(c_machine::machine_axis_names[i]))
 			{
-				
+
 				if (travel_speed > Motion_Core::Settings::_Settings.Hardware_Settings.max_rate[i])
-				return_value = Stager_Errors::Spindle_Synch_Feedrate_Excedes_Max;
+					return_value = Stager_Errors::Spindle_Synch_Feedrate_Excedes_Max;
 			}
 		}
 	}
 
+	//copy the current position into the post_position
+	//memcpy(c_stager::start_motion_position, c_stager::end_motion_position, MACHINE_AXIS_COUNT*(sizeof(float)));
+
+	//anything that needs to happen to the block before staging goes here.
+	return Stager_Errors::OK;
+}
+
+//Stages the motion for the block passed in.
+int16_t c_stager::stage_updates(NGC_RS274::NGC_Binary_Block* local_block)
+{
+	int16_t return_value = 0;
+	/*
+	Ive decided to allow this to move forward in the block buffer each time a block comes in.
+	Each block has a 'copy' of the g/m code states as the block was processed, so effectively each block
+	can be used to update the machine state just before the block executes. This will help simplify the
+	complexities of cutter radius compensation.
+	*/
 
 	if (local_block->event_manager.get((int)NGC_RS274::NGC_Binary_Block::e_block_event::Cutter_radius_compensation)) //<--block has a compensation command
 	{
@@ -313,7 +142,7 @@ int16_t c_stager::stage_block_motion()
 		*/
 		//if P value was sent, store it in slot 0. Slot 0 changes anytime a P value is sent
 		if (local_block->get_defined('P'))
-		c_stager::tool_table[0].diameter = local_block->get_value('P');
+			c_stager::tool_table[0].diameter = local_block->get_value('P');
 		//If D was not set, or it specified D0 we will now use the P value
 		//If D = 0 and a previous P value was set, that previous value now becomes active
 		//local_block->persisted_values.active_d = local_block->get_value('D');
@@ -321,7 +150,7 @@ int16_t c_stager::stage_block_motion()
 	}
 
 
-	if (local_block->event_manager.get_clr((int)NGC_RS274::NGC_Binary_Block::e_block_event::Tool_length_offset)) //<--block has a tool length command
+	if (local_block->event_manager.get((int)NGC_RS274::NGC_Binary_Block::e_block_event::Tool_length_offset)) //<--block has a tool length command
 	{
 		//c_stager::local_serial->Write("tool length change...");
 		//c_stager::local_serial->Write(CR);
@@ -343,7 +172,7 @@ int16_t c_stager::stage_block_motion()
 		*/
 		//if P value was sent, store it in slot 0. Slot 0 changes anytime a P value is sent
 		if (local_block->get_defined('P'))
-		c_stager::tool_table[0].height = local_block->get_value('P');
+			c_stager::tool_table[0].height = local_block->get_value('P');
 		//If H was not set, or it specified H0 we will now use the P value
 		//If H = 0 and a previous P value was set, that previous value now becomes active
 		//local_block->persisted_values.active_h = local_block->get_value('H');
@@ -357,25 +186,22 @@ int16_t c_stager::stage_block_motion()
 	full soon after this, and the controller will stop responding with NGC_Planner_Errors::OK
 	so that the host will hold transmitting more data until the ngc buffer has space available.
 	*/
-	if (local_block->event_manager.get_clr((int)NGC_RS274::NGC_Binary_Block::e_block_event::Motion)) //<--block has a motion command that is different than the previous block
+	if (local_block->event_manager.get((int)NGC_RS274::NGC_Binary_Block::e_block_event::Motion)) //<--block has a motion command that is different than the previous block
 	{
-
 		//If motion type has changed and a canned cycle was running, we need to reset it
 		c_canned_cycle::active_cycle_code = 0; //<--If this is zero when a cycle starts, the cycle will re-initialize.
 	}
 
-	//is the motion a canned cycle? (But NOT cancel_cycle)
-	if (local_block->g_group[NGC_RS274::Groups::G::Motion] >= NGC_RS274::G_codes::CANNED_CYCLE_DRILLING
-	&& local_block->g_group[NGC_RS274::Groups::G::Motion] <= NGC_RS274::G_codes::CANNED_CYCLE_BORING_DWELL_FEED_OUT)
+	//is the motion a canned cycle? 
+	if (local_block->event_manager.get((int)NGC_RS274::NGC_Binary_Block::e_block_event::Canned_Cycle_Active))
 	{
 		c_canned_cycle::initialize(local_block, *c_stager::previous_block->active_plane.normal_axis.value);
 	}
 
-
 	return_value = c_stager::update_cutter_compensation(local_block);
 
 	if (return_value != NGC_Planner_Errors::OK)
-	return return_value;
+		return return_value;
 
 	if (c_Cutter_Comp::state == e_compensation_state::OFF)
 	{
@@ -388,18 +214,12 @@ int16_t c_stager::stage_block_motion()
 	//see if the motion state requires motion and a non modal was not on the local block.
 	if (local_block->is_motion_block)
 	{
-		if (!Events::Data::event_manager.get((int)Events::Data::e_event_type::Staging_buffer_full) && local_block->any_axis_was_defined())
-		{
-			Events::Motion::event_manager.set((int)Events::Motion::e_event_type::Motion_in_queue);
-		}
+			Events::Motion::event_manager.set((int)Events::Motion::e_event_type::Motion_enqueue);
 	}
 	else
 	{
 		Events::Motion::event_manager.set((int)Events::Motion::e_event_type::Parameter_in_queue);
 	}
-
-	//clear any non modal events after we finish
-	local_block->event_manager.clear((int)NGC_RS274::NGC_Binary_Block::e_block_event::Non_modal);
 
 	////We need to know the position that this block took us too.
 	////Set the stager starting position the the processed blocks end position
@@ -409,6 +229,67 @@ int16_t c_stager::stage_block_motion()
 	c_stager::previous_block = local_block;
 	return return_value;
 }
+
+int16_t c_stager::stage_final(NGC_RS274::NGC_Binary_Block* local_block)
+{
+	//anything that needs to happen to the block after staging goes here.
+	
+
+	/*
+	During a standard cycle the block that was jsut added is sent to c_machine. This
+	starts a series of steps that causes the ngc block to be convert to a motion command
+	and sent to the controller. However there are soem exceptions to this.
+	
+	1. Any single block can be split up into multiple motion commands. Cutter radius
+	compensation can cause a block to have an appended motion. These are usually to close
+	and outside corner.
+	
+	2. Canned cycles can cause a single block to split into 1 or more different motions.
+	Each one of those motions is still actually part of a single line of G code. But we
+	cannot exacute teh next line of prper gcode until all the sub parts of the current
+	block have executed.
+
+	*/
+
+	//Does cutter compensation have a block buffered waiting for a motion command?
+	if (c_Cutter_Comp::previous_block_pointer != NULL
+	&& c_Cutter_Comp::previous_block_pointer->event_manager.get((int)NGC_RS274::NGC_Binary_Block::e_block_event::Block_Set_To_Execute))
+	{
+		//point the machine block to the previous block in cutter compensation. This block
+		// is being held for cutter compensation
+		//c_machine::machine_block = c_Cutter_Comp::previous_block_pointer;
+		Events::Motion::event_manager.set((int)Events::Motion::e_event_type::Buffered_CRC_Cycle_Waiting);
+	}
+	
+	if (c_canned_cycle::active_cycle_code != 0)
+	{
+		Events::Motion::event_manager.set((int)Events::Motion::e_event_type::Buffered_Canned_Cycle_Waiting);
+		//point the machine block to the current tail block
+		//c_machine::machine_block = &c_gcode_buffer::collection[c_gcode_buffer::buffer_tail];
+	}
+
+	//NO blocks held in compensation buffer
+	if (c_Cutter_Comp::previous_block_pointer == NULL)
+	{
+		Events::Motion::event_manager.set((int)Events::Motion::e_event_type::Buffered_Standard_Cycle_Waiting);
+		//point the machine block to the current tail block
+		//c_machine::machine_block = &c_gcode_buffer::collection[c_gcode_buffer::buffer_tail];
+	}
+
+	return Stager_Errors::OK;
+}
+
+
+NGC_RS274::NGC_Binary_Block*c_stager::get_added_block()
+{
+	//buffer_head-1 is the last block we added. Tail may still be way behind, but the machine executes the tail
+	if (c_gcode_buffer::buffer_head == 0)
+	return &c_gcode_buffer::collection[NGC_BUFFER_SIZE - 1];
+	else
+	return &c_gcode_buffer::collection[c_gcode_buffer::buffer_head - 1];
+}
+
+
 
 int16_t c_stager::update_cutter_compensation(NGC_RS274::NGC_Binary_Block* local_block)
 {
@@ -534,47 +415,6 @@ void c_stager::update_coordinate_datum(uint16_t parameter_slot)
 
 int16_t c_stager::calculate_vector_distance(NGC_RS274::NGC_Binary_Block*plan_block)
 {
-
-	//for (int axis_id = 0; axis_id < MACHINE_AXIS_COUNT; axis_id++)
-	//{
-	////Before this is changed, we save of the start position for this motion block.
-	////plan_block->start_position[axis_id] = c_stager::start_motion_position[axis_id];
-	//float address = 0;
-	////Check the axis value only if it was defined in the block
-	//if (plan_block->get_value_defined(c_machine::machine_axis_names[axis_id], address))
-	//{
-	////If distance mode is absolute, we need to check to see if there is a
-	////difference in the last position and the new position
-	//if (plan_block->g_group[NGC_RS274::Groups::G::DISTANCE_MODE] == NGC_RS274::G_codes::ABSOLUTE_DISANCE_MODE)
-	//{
-	//
-	//plan_block->motion_direction[axis_id] = address - c_stager::start_motion_position[axis_id] < 0
-	//? -1 : (address - c_stager::end_motion_position[axis_id] == 0 ? 0 : 1);
-	//
-	////plan_block->vector_distance[axis_id] = (address - c_stager::start_motion_position[axis_id]);
-	//plan_block->unit_target_positions[axis_id] = address;
-	//}
-	////If distance mode is incremental, we need to check to see if there is a value set
-	//else if (plan_block->g_group[NGC_RS274::Groups::G::DISTANCE_MODE] == NGC_RS274::G_codes::INCREMENTAL_DISTANCE_MODE)
-	//{
-	//plan_block->motion_direction[axis_id] = address < 0 ? -1 : (address == 0 ? 0 : 1);
-	//
-	//plan_block->unit_target_positions[axis_id] += address;
-	////plan_block->vector_distance[axis_id] = address;
-	//}
-	//}
-	//}
-	//
-	////if (plan_block->motion_direction[MACHINE_X_AXIS] == 0 &&
-	////plan_block->motion_direction[MACHINE_Y_AXIS] == 0 &&
-	////plan_block->motion_direction[MACHINE_Z_AXIS] == 0 &&
-	////plan_block->motion_direction[MACHINE_A_AXIS] == 0 &&
-	////plan_block->motion_direction[MACHINE_B_AXIS] == 0 &&
-	////plan_block->motion_direction[MACHINE_C_AXIS] == 0 &&
-	////plan_block->motion_direction[MACHINE_U_AXIS] == 0 &&
-	////plan_block->motion_direction[MACHINE_V_AXIS] == 0)
-	////return NGC_Planner_Errors::NO_VECTOR_DISTANCE_MOTION_IGNORED;
-
 	return NGC_Planner_Errors::OK;
 }
 

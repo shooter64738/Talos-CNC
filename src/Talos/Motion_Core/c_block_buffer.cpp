@@ -91,6 +91,29 @@ Block_Item *Buffer::Write()
 }
 
 /*
+Returns a pointer to the current buffer head object for writing (does not clear existing data)
+*/
+Block_Item *Buffer::Write_No_reset()
+{
+	if (Buffer::_full == 1)
+		return NULL;
+	uint8_t Station = Buffer::_head;
+	Block_Item *item = &Buffer::_buffer[Buffer::_head++];
+
+	//Are we wrapping?
+	if (Buffer::_head == BUFFER_SIZE)
+		Buffer::_head = 0;
+
+	//Have we gotten back to the tail?
+	if (Buffer::_head == Buffer::_tail)
+		Buffer::_full = 1;
+	
+	item->Station = Station;
+	return item;
+}
+
+
+/*
 Returns a pointer to the item most recenly added
 */
 Block_Item *Buffer::Newest()

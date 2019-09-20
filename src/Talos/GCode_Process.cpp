@@ -10,6 +10,10 @@
 #include "Planner\c_gcode_buffer.h"
 #include "communication_def.h"
 #include <stddef.h>
+#include "NGC_RS274\NGC_Errors.h"
+#include "Events\c_data_events.h"
+#include "Events\c_system_events.h"
+
 Talos::GCode_Process::e_input_type Talos::GCode_Process::input_mode;
 c_Serial * Talos::GCode_Process::local_serial;
 
@@ -56,6 +60,16 @@ int16_t Talos::GCode_Process::load_data(char * pntr_buffer)
 			}
 		}
 		return_value = c_gcode_buffer::add(pntr_buffer); //<--interpret and add this block, or fail it with an error
+		//If no errors reported, an item was added to the buffer and we set the event
+		if (return_value == NGC_RS274::Interpreter::Errors::OK)
+		{
+			Events::Data::event_manager.set((int)Events::Data::e_event_type::NGC_item_added);
+		}
+		else
+		{
+			Events::System::event_manager.set((int)Events::System::e_event_type::NGC_Error);
+		}
+
 		
 	}
 	return return_value;

@@ -45,11 +45,13 @@ class c_machine
 	//These initialize with -1 values. 0 is a valid value for some blocks, so setting them to -1 indicates the value was never explicitly set.
 	static uint16_t *machine_state_g_group; //There are 14 groups of gcodes (0-13)
 	static uint16_t *machine_state_m_group; //There are 5 groups of mcodes (0-4)
+	static float end_motion_position[];
+	static float start_motion_position[];
 	static char machine_axis_names[];
 	static void update_position(uint8_t,int8_t);
 	static float axis_position[MACHINE_AXIS_COUNT];
 	static float unit_scaler;
-	static NGC_RS274::NGC_Binary_Block*machine_block;
+	//static NGC_RS274::NGC_Binary_Block*machine_block;
 		
 
 	protected:
@@ -59,8 +61,8 @@ class c_machine
 	//functions
 	public:
 	static void initialize();
-	static void synch_machine_state_g_code();
-	static void synch_machine_state_m_code();
+	static void synch_machine_state_g_code(NGC_RS274::NGC_Binary_Block* local_block);
+	static void synch_machine_state_m_code(NGC_RS274::NGC_Binary_Block* local_block);
 	static uint8_t machine_block_buffer_tail;
 	//static void synch_machine_state_g_code(NGC_RS274::c_block*local_block);
 	//static void synch_machine_state_m_code(NGC_RS274::c_block*local_block);
@@ -68,10 +70,10 @@ class c_machine
 	static void report();
 
 	static e_responses run_block();
-	static e_responses start_motion_binary(NGC_RS274::NGC_Binary_Block* local_block);
+	static BinaryRecords::s_motion_data_block convert_ngc_to_motion(NGC_RS274::NGC_Binary_Block* local_block);
 	protected:
 	private:
-
+		static void update_end_position(NGC_RS274::NGC_Binary_Block* local_block);
 
 	//c_machine( const c_machine &c );
 	//c_machine& operator=( const c_machine &c );

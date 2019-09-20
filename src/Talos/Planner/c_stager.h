@@ -59,8 +59,6 @@ public:
 	//static uint16_t stager_state_g_group[]; //There are 14 groups of gcodes (0-13)
 	//static uint16_t stager_state_m_group[]; //There are 5 groups of mcodes (0-4)
 	static c_Serial *local_serial;
-	static float end_motion_position[];
-	static float start_motion_position[];
 	static uint32_t line_number;
 	static s_coord_datum coordinate_datum[9];
 	static NGC_RS274::NGC_Binary_Block*previous_block;
@@ -73,16 +71,16 @@ private:
 	//functions
 public:
 	static void initialize();
-	static int16_t stage_block_motion();
-
+	
 	static int16_t update_cutter_compensation(NGC_RS274::NGC_Binary_Block* local_block);
 	static void update_non_modals(NGC_RS274::NGC_Binary_Block* block);
 	static void parmeter_write(NGC_RS274::NGC_Binary_Block* local_block);
 	static void update_coordinate_datum(uint16_t parameter_slot);
 	static int16_t calculate_vector_distance(NGC_RS274::NGC_Binary_Block* plan_block);
 	static void report();
-	static uint8_t pre_stage_check();
-	static uint8_t post_stage_check();
+	static int16_t stage_validation(NGC_RS274::NGC_Binary_Block* local_block);
+	static int16_t stage_updates(NGC_RS274::NGC_Binary_Block* local_block);
+	static int16_t stage_final(NGC_RS274::NGC_Binary_Block* local_block);
 	static NGC_RS274::NGC_Binary_Block*get_added_block();
 	//static c_Path current_path;
 	//static c_Path forward_path;

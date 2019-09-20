@@ -34,11 +34,9 @@ namespace Events
 
 		//functions
 		public:
-		static void check_events();
-		static void set_serial_event(uint8_t EventFlag);
-		static uint8_t get_serial_event(uint8_t EventFlag);
-		static void clear_serial_event(uint8_t EventFlag);
-
+			static void initialize();
+			static void set_events();
+			static void check_events();
 
 		protected:
 		private:

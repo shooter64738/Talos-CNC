@@ -51,9 +51,19 @@ void Talos::Main_Process::startup()
 		//were sent from a terminal to the micro controller over a serial connection
 		//c_hal::comm.PNTR_VIRTUAL_BUFFER_WRITE(0, "g41p.25G0X1Y1F100\rX2Y2\rX3Y3\r"); //<--data from host
 
-		Hardware_Abstraction_Layer::Serial::add_to_buffer(0,"O1000\r");
+		Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "G0 x0y0\r");
+		Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "G0 x2y2\r");
+		Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "G0 x3y3\r");
+		Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "G0 x4y4\r");
+		Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "G0 x5y5\r");
+		Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "G0 x6y6\r");
+		Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "G0 x7y7\r");
+		Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "G0 x8y8\r");
+		Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "G0 x9y9\r");
+		Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "G0 x10y10\r");
+
+		/*Hardware_Abstraction_Layer::Serial::add_to_buffer(0,"O1000\r");
 		Hardware_Abstraction_Layer::Serial::add_to_buffer(0,"T1 M6\r");
-		//Hardware_Abstraction_Layer::Serial::add_to_buffer(0,"G0 G90 G40 G21 G17 G94 G80\r");
 		Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "G90 G40 G21 G17 G94 G80\r");
 		Hardware_Abstraction_Layer::Serial::add_to_buffer(0,"G54 X-75 Y-25 S500 M3  (Start Point)\r");
 		Hardware_Abstraction_Layer::Serial::add_to_buffer(0,"G43 Z100 H1\r");
@@ -68,7 +78,7 @@ void Talos::Main_Process::startup()
 		Hardware_Abstraction_Layer::Serial::add_to_buffer(0,"Y25                   (Position 7)\r");
 		Hardware_Abstraction_Layer::Serial::add_to_buffer(0,"X-75                  (Position 8)\r");
 		Hardware_Abstraction_Layer::Serial::add_to_buffer(0,"G0 Z100\r");
-		Hardware_Abstraction_Layer::Serial::add_to_buffer(0,"M30\r");
+		Hardware_Abstraction_Layer::Serial::add_to_buffer(0,"M30\r");*/
 
 		//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "@mmx1000\r");
 		//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "m3s1000\rg95f1.5g1x1000\r"); //<--data from host
@@ -83,7 +93,7 @@ void Talos::Main_Process::startup()
 	#endif
 
 	//By default any gcode lines loaded will automatically execute.
-	Motion_Core::System::control_state_modes.set(STATE_AUTO_START_CYCLE);
+	Motion_Core::System::state_mode.control_modes.set((int)Motion_Core::System::e_control_event_type::Control_auto_cycle_start);
 	
 	
 	int16_t return_value = 0;
@@ -93,6 +103,7 @@ void Talos::Main_Process::startup()
 	Events::Motion_Controller::local_serial = &Talos::Main_Process::host_serial;
 	Events::System::local_serial = &Talos::Main_Process::host_serial;
 	Events::Data::local_serial = &Talos::Main_Process::host_serial;
+	Events::Main_Process::initialize();
 	Talos::GCode_Process::input_mode = GCode_Process::e_input_type::Serial;
 	Talos::GCode_Process::local_serial = &Talos::Main_Process::host_serial;
 
@@ -112,7 +123,7 @@ void Talos::Main_Process::startup()
 	
 	while (1)
 	{
-		Hardware_Abstraction_Layer::MotionCore::Spindle::get_rpm();
+		/*Hardware_Abstraction_Layer::MotionCore::Spindle::get_rpm();
 		if (ticker>500000)
 		{
 			ticker = 0;
@@ -128,25 +139,20 @@ void Talos::Main_Process::startup()
 			Talos::Main_Process::host_serial.Write(CR);
 			
 		}
-		ticker ++;
+		ticker ++;*/
+		
+		//Set whatever events we need to.. this is mostly for testing.
+		//Later this will be driven by keypresses or something similar
+		Events::Main_Process::set_events();
 		
 		//Check for any events that have been registered.
 		Events::Main_Process::check_events();
-		//Main processing loop to keep the motion buffer full
-		Motion_Core::Gateway::process_loop();
 		
-		if (Talos::Main_Process::host_serial.HasEOL())
+		//If any system level error events occur stop processing motion data. 
+		if (Events::System::event_manager._flag == 0)
 		{
-			//Set inbound serial event
-			Events::Data::event_manager.set((int)Events::Data::e_event_type::Serial_data_inbound);
+			//Main processing loop to keep the motion buffer full
+			Motion_Core::Gateway::process_loop();
 		}
-		
-		/*else
-		{
-		host_serial.print_string("error:");
-		host_serial.print_int32(return_value);
-		host_serial.Write(CR);
-		}*/
 	}
 }
-

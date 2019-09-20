@@ -28,8 +28,8 @@
 class c_canned_cycle
 {
 	//variables
-	public:
-
+public:
+	static NGC_RS274::NGC_Binary_Block ngc_block;
 	static float Z_at_start;
 	static float Q_peck_step_depth; //<--Depth increase per peck
 	static float R_retract_position; //<--Retract. Z to R at rapid speed. R to bottom is feed speed
@@ -39,16 +39,16 @@ class c_canned_cycle
 	static uint16_t active_cycle_code;
 	static uint8_t state;
 	static float Z_step;
-	protected:
-	private:
+protected:
+private:
 
 	//functions
-	public:
+public:
 	static void initialize(NGC_RS274::NGC_Binary_Block*local_block, float old_Z);
 	static void cycle_to_pointer(NGC_RS274::NGC_Binary_Block*local_block);
 	static void clear_positioning_axis(NGC_RS274::NGC_Binary_Block* local_block);
 	//Some cycles (especially lathe threading) must be stopped in a safe way. THe unwinder is intended to do that.
-	static void (*PNTR_UNWINDER)(NGC_RS274::NGC_Binary_Block*);
+	static void(*PNTR_UNWINDER)(NGC_RS274::NGC_Binary_Block*);
 	static float retract_position(NGC_RS274::NGC_Binary_Block*local_block);
 	static void set_axis_feed(NGC_RS274::NGC_Binary_Block*local_block, uint16_t feed_mode, char axis, float value);
 	static void set_dwell(NGC_RS274::NGC_Binary_Block*local_block, float value);
@@ -68,10 +68,10 @@ class c_canned_cycle
 	static void CANNED_CYCLE_LEFT_HAND_TAPPING_RIGID_HOLDER(NGC_RS274::NGC_Binary_Block*local_block);
 	static void CANNED_CYCLE_PECK_DRILLING_HIGH_SPEED(NGC_RS274::NGC_Binary_Block*local_block);
 	static void CANNED_CYCLE_FINE_BORING(NGC_RS274::NGC_Binary_Block*local_block);
-	
 
-	protected:
-	private:
+
+protected:
+private:
 	//c_canned_cycle();
 	//~c_canned_cycle();
 	//c_canned_cycle( const c_canned_cycle &c );

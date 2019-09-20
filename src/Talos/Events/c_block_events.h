@@ -29,22 +29,6 @@ namespace Events
 	{
 		//variables
 		public:
-		enum class e_event_type : uint8_t
-		{
-			//Motion = 0,
-			//Cutter_radius_compensation = 1,
-			//Tool_length_offset = 2,
-			//Feed_rate_mode = 3,
-			//Feed_rate = 4,
-			//Spindle_rate = 5,
-			//Spindle_mode = 6,
-			//Tool_id = 7,
-			//Non_modal = 8,
-			//Units = 9,
-			//Coolant = 10
-		};
-		static BinaryRecords::s_bit_flag_controller_16 xevent_manager;
-
 		protected:
 		private:
 		

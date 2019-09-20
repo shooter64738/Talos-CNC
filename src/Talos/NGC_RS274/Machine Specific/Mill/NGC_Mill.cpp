@@ -90,9 +90,12 @@ int NGC_RS274::Interpreter::NGC_Machine_Specific::error_check_canned_cycle()
 		return  NGC_RS274::Interpreter::Errors::CAN_CYCLE_MISSING_P_VALUE;
 	}
 
+	//Not sure if we need to check this again. It would have failed before here if no axis is defined. 
 	//if neither axis defined, it is an error
-	if (!NGC_RS274::Interpreter::Processor::local_block.active_plane.horizontal_axis.is_defined() && !NGC_RS274::Interpreter::Processor::local_block.active_plane.vertical_axis.is_defined())
-	return  NGC_RS274::Interpreter::Errors::CAN_CYCLE_LINEAR_AXIS_UNDEFINED;
+	/*if (!NGC_RS274::Interpreter::Processor::local_block.active_plane.horizontal_axis.is_defined() 
+		&& !NGC_RS274::Interpreter::Processor::local_block.active_plane.vertical_axis.is_defined()
+		&& !NGC_RS274::Interpreter::Processor::local_block.active_plane.normal_axis.is_defined())
+	return  NGC_RS274::Interpreter::Errors::CAN_CYCLE_LINEAR_AXIS_UNDEFINED;*/
 
 	return  NGC_RS274::Interpreter::Errors::OK;
 }

@@ -56,12 +56,14 @@ float c_canned_cycle::Z_depth_of_hole = 0; //<--Hole Bottom
 uint16_t c_canned_cycle::active_cycle_code = 0; //<--Which canned cycle is active
 uint8_t c_canned_cycle::state = 0;
 float c_canned_cycle::Z_step = 0;
+//NGC_RS274::NGC_Binary_Block c_canned_cycle::ngc_block = NGC_RS274::NGC_Binary_Block();
 
 /*
 This stores the values at the start of a canned cycle in case they are replaced later in the program.
 */
 void c_canned_cycle::initialize(NGC_RS274::NGC_Binary_Block*local_block, float old_Z)
 {
+	
 	//When the canned cycle is started, record the last z position. This will all get reset on a G81
 	if (c_canned_cycle::active_cycle_code == 0)
 		c_canned_cycle::Z_at_start = old_Z;
@@ -75,24 +77,26 @@ void c_canned_cycle::initialize(NGC_RS274::NGC_Binary_Block*local_block, float o
 	c_canned_cycle::active_cycle_code = local_block->g_group[NGC_RS274::Groups::G::Motion];
 	c_canned_cycle::state = 0;
 
+	//c_canned_cycle::ngc_block.reset();
 	c_canned_cycle::cycle_to_pointer(local_block);
+	//NGC_RS274::NGC_Binary_Block::copy_persisted_data(local_block, &c_canned_cycle::ngc_block);
 
 	//local_block->canned_values.PNTR_RECALLS = c_canned_cycle::cycle_to_pointer;
 	//change the block from a canned cycle to standard rapid motion line (for initial position)
-	local_block->g_group[NGC_RS274::Groups::G::Motion] = NGC_RS274::G_codes::RAPID_POSITIONING;
-	local_block->set_defined_gcode(NGC_RS274::Groups::G::Motion);
+	//local_block->g_group[NGC_RS274::Groups::G::Motion] = NGC_RS274::G_codes::RAPID_POSITIONING;
+	//local_block->set_defined_gcode(NGC_RS274::Groups::G::Motion);
 
 	//clear the parameter flags so when this block converts back to plain text, those values arent in there.
-	local_block->clear_defined('Q');
-	local_block->clear_defined('R');
-	local_block->clear_defined('L');
-	local_block->clear_defined('P');
+	//local_block->clear_defined('Q');
+	//local_block->clear_defined('R');
+	//local_block->clear_defined('L');
+	//local_block->clear_defined('P');
 
 	/*
 	Clear the normal axis (this is the axis that would be drilling). Its ok to move
 	into position, but we cannot move to position and drill at the same time.
 	*/
-	local_block->clear_defined(local_block->active_plane.normal_axis.name);
+	//local_block->clear_defined(local_block->active_plane.normal_axis.name);
 
 	//Since feed rate is ignored on a G0 we can leave the F word set as defined.
 }
@@ -254,8 +258,8 @@ void c_canned_cycle::clear_callback(NGC_RS274::NGC_Binary_Block*local_block)
 void c_canned_cycle::clear_start(NGC_RS274::NGC_Binary_Block*local_block)
 {
 	//clear all bits so it appears no gcodes we in the block
-	local_block->g_code_defined_in_block.reset();
-	c_canned_cycle::clear_positioning_axis(local_block);
+	//local_block->g_code_defined_in_block.reset();
+	//c_canned_cycle::clear_positioning_axis(local_block);
 }
 
 void c_canned_cycle::CANNED_CYCLE_DRILLING(NGC_RS274::NGC_Binary_Block*local_block)
@@ -275,7 +279,7 @@ void c_canned_cycle::CANNED_CYCLE_DRILLING(NGC_RS274::NGC_Binary_Block*local_blo
 	}
 	case 2: //<--Step two for drill cycle
 	{
-		//rapid Z to specified point
+		//rapid Z to specified return point
 		c_canned_cycle::set_axis_feed(local_block, NGC_RS274::G_codes::RAPID_POSITIONING
 			, local_block->active_plane.normal_axis.name, c_canned_cycle::retract_position(local_block));
 		c_canned_cycle::state++;

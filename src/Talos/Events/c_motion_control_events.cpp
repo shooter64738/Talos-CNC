@@ -24,6 +24,8 @@
 
 BinaryRecords::s_bit_flag_controller_32 Events::Motion_Controller::event_manager;
 c_Serial *Events::Motion_Controller::local_serial;
+uint8_t Events::Motion_Controller::motion_segments_queue_count;
+BinaryRecords::s_status_message Events::Motion_Controller::events_statistics;
 
 void Events::Motion_Controller::check_events()
 {
@@ -45,6 +47,7 @@ void Events::Motion_Controller::check_events()
 		//Check if spindle at speed. If at speed an event will be set for that.
 		Motion_Core::Hardware::Interpolation::check_spindle_at_speed();
 	}
+
 	if (Events::Motion_Controller::event_manager.get_clr((int)Events::Motion_Controller::e_event_type::Spindle_At_Speed))
 	{
 		local_serial->print_string("Spindle Synchronization set!\r");
@@ -60,5 +63,42 @@ void Events::Motion_Controller::check_events()
 		//When cruise ends, decel becomes the active state and the arbitrator again controls motion execution
 		Hardware_Abstraction_Layer::MotionCore::Stepper::wake_up();
 	}
+
+	if (Events::Motion_Controller::event_manager.get_clr((int)Events::Motion_Controller::e_event_type::Motion_Added_to_Buffer))
+	{
+		Events::Motion_Controller::motion_segments_queue_count++;
+		local_serial->print_string("Motion Controller started:");
+		local_serial->print_int32(Events::Motion_Controller::motion_segments_queue_count);
+		local_serial->print_string(" segments in queue.\r\n");
+	}
+	
+	if (Events::Motion_Controller::event_manager.get_clr((int)Events::Motion_Controller::e_event_type::Block_Executing))
+	{
+		
+	}
+
+	if (Events::Motion_Controller::event_manager.get_clr((int)Events::Motion_Controller::e_event_type::Block_Discarded))
+	{
+		Events::Motion_Controller::motion_segments_queue_count--;
+		local_serial->print_string("Motion Controller queued:");
+		local_serial->print_int32(Events::Motion_Controller::motion_segments_queue_count);
+		local_serial->print_string(" segments. Block id:");
+		local_serial->print_int32(Events::Motion_Controller::events_statistics.num_message);
+		local_serial->print_string(" discarded.\r\n");
+		
+	}
+
+	if (Events::Motion_Controller::event_manager.get_clr((int)Events::Motion_Controller::e_event_type::Block_Complete))
+	{
+		Events::Motion_Controller::motion_segments_queue_count--;
+		local_serial->print_string("Motion Controller queued:");
+		local_serial->print_int32(Events::Motion_Controller::motion_segments_queue_count);
+		local_serial->print_string(" segments. Block id:");
+		local_serial->print_int32(Events::Motion_Controller::events_statistics.num_message);
+		local_serial->print_string(" completed.\r\n");
+		
+	}
+
+	
 }
 

@@ -133,10 +133,11 @@ int16_t c_gcode_buffer::add( char * pntr_buffer)
 	If we do not reload these values each time, an error in the interpreter will cause the persisted
 	states to be lost.
 	*/
-	memcpy(local_block->g_group, c_stager::previous_block->g_group, COUNT_OF_G_CODE_GROUPS_ARRAY*sizeof(uint16_t));
-	memcpy(local_block->m_group, c_stager::previous_block->m_group, COUNT_OF_M_CODE_GROUPS_ARRAY*sizeof(uint16_t));
-	memcpy(&local_block->persisted_values, &c_stager::previous_block->persisted_values, sizeof(NGC_RS274::NGC_Binary_Block::s_persisted_values));
-	memcpy(local_block->block_word_values, c_stager::previous_block->block_word_values, COUNT_OF_BLOCK_WORDS_ARRAY * sizeof(float));
+	//memcpy(local_block->g_group, c_stager::previous_block->g_group, COUNT_OF_G_CODE_GROUPS_ARRAY*sizeof(uint16_t));
+	//memcpy(local_block->m_group, c_stager::previous_block->m_group, COUNT_OF_M_CODE_GROUPS_ARRAY*sizeof(uint16_t));
+	//memcpy(&local_block->persisted_values, &c_stager::previous_block->persisted_values, sizeof(NGC_RS274::NGC_Binary_Block::s_persisted_values));
+	//memcpy(local_block->block_word_values, c_stager::previous_block->block_word_values, COUNT_OF_BLOCK_WORDS_ARRAY * sizeof(float));
+	NGC_RS274::NGC_Binary_Block::copy_persisted_data(c_stager::previous_block, local_block);
 	
 	//Clear the non modal codes if there were any. These would have been carried over by the stager, and non modals are 'not modal' obviously
 	local_block->g_group[NGC_RS274::Groups::G::NON_MODAL] = 0;

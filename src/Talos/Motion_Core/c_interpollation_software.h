@@ -23,7 +23,7 @@ namespace Motion_Core
 			
 			static s_backlash_comp back_comp;
 			
-			static void load_block(BinaryRecords::s_motion_data_block * block);
+			static uint16_t load_block(BinaryRecords::s_motion_data_block * block);
 			
 			static uint8_t _mc_line(BinaryRecords::s_motion_data_block *target_block);
 			static uint8_t _mc_arc(BinaryRecords::s_motion_data_block *target_block);
