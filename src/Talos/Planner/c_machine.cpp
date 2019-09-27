@@ -204,18 +204,7 @@ c_machine::e_responses c_machine::run_block()
 	//synchronize the machine g/m code states with the block we are going to execute.
 	c_machine::synch_machine_state_g_code(&c_gcode_buffer::collection[c_gcode_buffer::buffer_tail]);
 	c_machine::synch_machine_state_m_code(&c_gcode_buffer::collection[c_gcode_buffer::buffer_tail]);
-	c_machine::update_end_position(&c_gcode_buffer::collection[c_gcode_buffer::buffer_tail]);
 	
-	BinaryRecords::s_motion_data_block motion_record = c_machine::convert_ngc_to_motion(&c_gcode_buffer::collection[c_gcode_buffer::buffer_tail]);
-
-	Motion_Core::Gateway::add_motion(motion_record);
-	Motion_Core::Gateway::process_motion();
-
-	//was there a failure sending this block to the controller?
-	if (response != e_responses::Ok)
-	{
-		return response;
-	}
 
 	//If a canned cycle is running this block actually has multiple steps to it. 
 	//We cant just dump the block to the motion controller because its buffer may
@@ -246,6 +235,19 @@ c_machine::e_responses c_machine::run_block()
 		//event set, the next loop of the processor will execute step 1 of the cycle, and then
 		//reconfigure the block again for step 2. This process will repeat for N times until 
 		//the cycle marks its self as done. (PNTR_RECALLS will be NULL)
+	}
+
+	c_machine::update_end_position(&c_gcode_buffer::collection[c_gcode_buffer::buffer_tail]);
+
+	BinaryRecords::s_motion_data_block motion_record = c_machine::convert_ngc_to_motion(&c_gcode_buffer::collection[c_gcode_buffer::buffer_tail]);
+
+	Motion_Core::Gateway::add_motion(motion_record);
+	Motion_Core::Gateway::process_motion();
+
+	//was there a failure sending this block to the controller?
+	if (response != e_responses::Ok)
+	{
+		return response;
 	}
 	
 	//copy the current position into the post_position

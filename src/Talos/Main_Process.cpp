@@ -51,16 +51,30 @@ void Talos::Main_Process::startup()
 		//were sent from a terminal to the micro controller over a serial connection
 		//c_hal::comm.PNTR_VIRTUAL_BUFFER_WRITE(0, "g41p.25G0X1Y1F100\rX2Y2\rX3Y3\r"); //<--data from host
 
-		Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "G0 x0y0\r");
-		Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "G0 x2y2\r");
-		Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "G0 x3y3\r");
-		Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "G0 x4y4\r");
-		Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "G0 x5y5\r");
-		Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "G0 x6y6\r");
-		Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "G0 x7y7\r");
-		Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "G0 x8y8\r");
-		Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "G0 x9y9\r");
-		Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "G0 x10y10\r");
+		//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "G0 x0y0\r");
+		//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "G0 x2y2\r");
+		//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "G0 x3y3\r");
+		//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "G0 x4y4\r");
+		//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "G0 x5y5\r");
+		//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "G0 x6y6\r");
+		//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "G0 x7y7\r");
+		//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "G0 x8y8\r");
+		//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "G0 x9y9\r");
+		//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "G0 x10y10\r");
+		Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "G90 G81 G98 X4 Y5 Z1.5 f100\r");
+		//start = x=1,y=2,z=3
+		//raid x,y to 4,5 (absolute)
+		//rapid z to 2.8
+		//feed z to 1.5
+		//rapid z to 3 (because g98)
+		
+		Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "G91 G81 G98 X4 Y5 Z-0.6 R1.8 L3 f100\r");
+		//start = horizontal 1,vertical 2, normal 3
+		//rapid x,y to 5,7 (current + new incriemntal)
+		//rapid z to 4.8 (r value + current)
+		//feed z to 4.2 ( (rvalue + current)+-0.6)
+		//rapid z to 4.8 (because g98)
+		//repeat 3 times adding 4 to the x, and 5 to the y (because incrimental)
 
 		/*Hardware_Abstraction_Layer::Serial::add_to_buffer(0,"O1000\r");
 		Hardware_Abstraction_Layer::Serial::add_to_buffer(0,"T1 M6\r");

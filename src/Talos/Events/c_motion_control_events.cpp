@@ -19,6 +19,7 @@
 */
 
 #include "c_motion_control_events.h"
+#include "c_system_events.h"
 #include "..\Motion_Core\c_interpollation_hardware.h"
 #include "..\hardware_def.h"
 
@@ -37,6 +38,7 @@ void Events::Motion_Controller::check_events()
 	if (Events::Motion_Controller::event_manager.get_clr((int)Events::Motion_Controller::e_event_type::Spindle_Error_Speed_Timeout))
 	{
 		local_serial->print_string("Spindle Synchronization has failed!\r");
+		Events::System::event_manager.set((int)Events::System::e_event_type::Non_Critical_Hardware);
 	}
 	
 	if (Events::Motion_Controller::event_manager.get((int)Events::Motion_Controller::e_event_type::Spindle_To_Speed_Wait))
@@ -61,6 +63,7 @@ void Events::Motion_Controller::check_events()
 		//The arbitrator will calculate values we use for accell and decel.
 		//Once accel is complete crusing state is active and THEN spindle speed controls motion execution
 		//When cruise ends, decel becomes the active state and the arbitrator again controls motion execution
+		//However we still have to START the motion from here.
 		Hardware_Abstraction_Layer::MotionCore::Stepper::wake_up();
 	}
 

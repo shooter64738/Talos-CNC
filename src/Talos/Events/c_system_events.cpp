@@ -22,6 +22,7 @@
 
 BinaryRecords::s_bit_flag_controller_16 Events::System::event_manager;
 c_Serial *Events::System::local_serial;
+BinaryRecords::s_status_message Events::System::events_statistics;
 
 void Events::System::check_events()
 {
@@ -32,12 +33,20 @@ void Events::System::check_events()
 	
 	if (Events::System::event_manager.get_clr((int)Events::System::e_event_type::Critical_Must_Shutdown))
 	{
-		local_serial->print_string("Critical hardware fault.\r");
+		local_serial->print_string("Critical hardware fault.\r\n");
 	}
 
 	if (Events::System::event_manager.get_clr((int)Events::System::e_event_type::NGC_Error))
 	{
-		local_serial->print_string("Error processing GCode data.\r");
+		local_serial->print_string("Error processing GCode data.\r\n");
+		local_serial->print_string(Events::System::events_statistics.chr_message);
+		
+		if (Events::System::events_statistics.num_message != 0)
+		{
+			local_serial->print_string("Error code:");
+			local_serial->print_int32(Events::System::events_statistics.num_message);
+			local_serial->print_string("\r\n");
+		}
 	}
 	
 }

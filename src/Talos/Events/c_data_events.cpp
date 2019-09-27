@@ -75,6 +75,8 @@ void Events::Data::check_events()
 				return_value = Talos::GCode_Process::load_data(NULL);
 				if (Events::System::event_manager.get((int)Events::System::e_event_type::NGC_Error))
 				{
+					Events::System::events_statistics.num_message = return_value;
+					Events::System::events_statistics.chr_message = "Interpreter error.\r\n";
 					//A system error has occured. Probably poorly formed gcode data. 
 					//This if block is here in case we want to act on it. Right now I
 					//cant think of anything that we need to do except tell the user.

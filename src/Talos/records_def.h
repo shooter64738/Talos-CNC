@@ -484,7 +484,7 @@ namespace BinaryRecords
 		BinaryRecords::e_system_sub_state_record_types system_sub_state;
 		float position[MACHINE_AXIS_COUNT];
 		float num_message = 0.0;
-		char chr_message[17];
+		char * chr_message;
 		uint32_t _check_sum = 0;
 	};
 
