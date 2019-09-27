@@ -25,6 +25,8 @@
 #include "Events\c_motion_control_events.h"
 #include "Events\c_system_events.h"
 #include "Motion_Core\c_interpollation_hardware.h"
+#include "Platforms\ARM_3X8E\Talos_ARM3X8E\Spindle\_pid_calculate.h"
+#include "Platforms\ARM_3X8E\Talos_ARM3X8E\Spindle\Velocity.h"
 
 
 c_Serial Talos::Main_Process::host_serial;
@@ -134,11 +136,11 @@ void Talos::Main_Process::startup()
 	
 	int32_t ticker = 0;
 	
-	
+	Spindle::Velocity::initialize();
 	while (1)
 	{
-		/*Hardware_Abstraction_Layer::MotionCore::Spindle::get_rpm();
-		if (ticker>500000)
+		Hardware_Abstraction_Layer::MotionCore::Spindle::get_rpm();
+		if (ticker>50000)
 		{
 			ticker = 0;
 			
@@ -149,11 +151,16 @@ void Talos::Main_Process::startup()
 			Talos::Main_Process::host_serial.print_string("rps=");
 			Talos::Main_Process::host_serial.print_int32(Motion_Core::Settings::_Settings.Hardware_Settings.spindle_encoder.meta_data.speed_rps);Talos::Main_Process::host_serial.Write(',');
 			Talos::Main_Process::host_serial.print_string("rpm=");
-			Talos::Main_Process::host_serial.print_int32(Motion_Core::Settings::_Settings.Hardware_Settings.spindle_encoder.meta_data.speed_rpm);
+			Talos::Main_Process::host_serial.print_int32(Motion_Core::Settings::_Settings.Hardware_Settings.spindle_encoder.meta_data.speed_rpm);Talos::Main_Process::host_serial.Write(',');
+			
+			float test = Spindle::Velocity::velocity_terms.calculate(Motion_Core::Settings::_Settings.Hardware_Settings.spindle_encoder.meta_data.speed_rpm,100);
+			Talos::Main_Process::host_serial.print_string("pid out=");
+			Talos::Main_Process::host_serial.print_int32(test);
+			
 			Talos::Main_Process::host_serial.Write(CR);
 			
 		}
-		ticker ++;*/
+		ticker ++;
 		
 		//Set whatever events we need to.. this is mostly for testing.
 		//Later this will be driven by keypresses or something similar

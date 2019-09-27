@@ -564,11 +564,27 @@
     <Compile Include="Platform Specific\syscalls.c">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="Spindle\Position.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="Spindle\Position.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="Spindle\Velocity.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="Spindle\Velocity.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="Spindle\_pid_calculate.h">
+      <SubType>compile</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Common\Serial" />
     <Folder Include="Device_Startup\" />
     <Folder Include="Common" />
+    <Folder Include="Spindle" />
     <Folder Include="NGC_RS274\Machine Specific" />
     <Folder Include="NGC_RS274\Machine Specific\Lathe\" />
     <Folder Include="NGC_RS274\Machine Specific\Mill\" />
