@@ -43,6 +43,11 @@ class c_spi_data_events
 
 	//functions
 	public:
+		c_spi_data_events();
+		~c_spi_data_events();
+		c_spi_data_events(const c_spi_data_events &c);
+		c_spi_data_events& operator=(const c_spi_data_events &c);
+
 	void collect();
 	void set(e_event_type event_id);
 	void get();

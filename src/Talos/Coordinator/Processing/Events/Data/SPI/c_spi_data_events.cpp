@@ -21,8 +21,14 @@
 #include "c_spi_data_events.h"
 #include "../../../Main/Main_Process.h"
 
-//BinaryRecords::s_bit_flag_controller_32 c_data_events::event_manager;
-//c_Serial * c_data_events::local_serial;
+// default constructor
+c_spi_data_events::c_spi_data_events()
+{
+}
+// default destructor
+c_spi_data_events::~c_spi_data_events()
+{
+}
 
 void c_spi_data_events::collect()
 {

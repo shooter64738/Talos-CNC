@@ -21,22 +21,45 @@
 #include "c_serial_data_events.h"
 #include "../../../Main\Main_Process.h"
 
-//BinaryRecords::s_bit_flag_controller_32 c_data_events::event_manager;
-//c_Serial * c_data_events::local_serial;
+// default constructor
+c_serial_data_events::c_serial_data_events()
+{
+}
+// default destructor
+c_serial_data_events::~c_serial_data_events()
+{
+}
 
 void c_serial_data_events::collect()
 {
 	//We were called because there is an event for serial data.
 	//First we must know what type it is.
 	uint8_t first_byte = Talos::Coordinator::Main_Process::host_serial.Peek();
-	if (first_byte<32){
+
+	//need to clear the data type bit (1-4. 0 is reserved for invalid data)
+	this->event_manager.clear((int)c_serial_data_events::e_event_type::TextDataInbound);
+	this->event_manager.clear((int)c_serial_data_events::e_event_type::BinaryDataInbound);
+	this->event_manager.clear((int)c_serial_data_events::e_event_type::ControlDataInbound);
+	this->event_manager.clear((int)c_serial_data_events::e_event_type::InvalidDataError);
+
+	if (first_byte>=32 && first_byte <= 127) //<--printable data
+	{
 		this->set( c_serial_data_events::e_event_type::TextDataInbound);
 	}
-	else{
+	else if (first_byte > 0 && first_byte <32) //<--binary record
+	{
 		this->set( c_serial_data_events::e_event_type::BinaryDataInbound);
 	}
+	else if (first_byte > 127) //<--control record
+	{
+		this->set(c_serial_data_events::e_event_type::ControlDataInbound);
+	}
+	else //<--garbage?
+	{
+		this->set(c_serial_data_events::e_event_type::InvalidDataError);
+	}
 	
-	Talos::Coordinator::Main_Process::host_serial.print_string("data get");
+	Talos::Coordinator::Main_Process::host_serial.print_string("data get\r");
 	Talos::Coordinator::Main_Process::host_serial.SkipToEOL();
 }
 
@@ -49,13 +72,19 @@ void c_serial_data_events::get()
 {
 
 }
+
 void c_serial_data_events::execute()
 {
-	if (this->event_manager.get((int)this->e_event_type::TextDataInbound))
+	/* (this->event_manager.get((int)this->e_event_type::TextDataInbound))
+	{
+	default:
+		break;
+	}
+	if ()
 	{
 		Talos::Coordinator::Main_Process::host_serial.print_string("\t\tserial_data_event::execute.host_data\r");
 		Talos::Coordinator::Main_Process::host_serial.print_string("\t\t\tfull cycle!\r");
 		Talos::Coordinator::Main_Process::host_serial.SkipToEOL();
-	}
+	}*/
 }
 

@@ -1,0 +1,115 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Coordinator">
+      <UniqueIdentifier>{c940afa2-1653-4aeb-a94a-94b02ad50e21}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Coordinator\Processing">
+      <UniqueIdentifier>{9f348bb4-3b38-4210-b301-e59fb5d7542e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Coordinator\Processing\Events">
+      <UniqueIdentifier>{c88e137f-ec18-4d60-9b47-51f3022816f1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Coordinator\Processing\Events\Data">
+      <UniqueIdentifier>{8029b0a1-ff9a-4b45-ba5c-f44dcc772780}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Coordinator\Processing\Events\Data\Network">
+      <UniqueIdentifier>{6788a9e8-765f-4e2b-96a6-e4cdc5a8cde0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Coordinator\Processing\Events\Data\Serial">
+      <UniqueIdentifier>{372cfbc1-211f-47d7-b6d9-e2153eb5b885}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Coordinator\Processing\Events\Data\SPI">
+      <UniqueIdentifier>{a3d031c6-b34d-458f-bd1a-55891509b527}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Coordinator\Processing\Events\System">
+      <UniqueIdentifier>{3ea72c04-2d77-4551-86aa-7845e03d1ffd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Coordinator\Processing\GCode">
+      <UniqueIdentifier>{b7659d18-1774-4b01-abf4-dd6ae20aa73b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Coordinator\Processing\Main">
+      <UniqueIdentifier>{02a61e4e-f97e-4a39-a614-c25fa6914312}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Platform Specific">
+      <UniqueIdentifier>{51d1af73-ac0a-4e0f-8bf5-f4995cf5d2e6}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\..\bit_manipulation.h" />
+    <ClInclude Include="..\..\..\..\communication_def.h" />
+    <ClInclude Include="..\..\..\..\physical_machine_parameters.h" />
+    <ClInclude Include="..\..\..\..\records_def.h" />
+    <ClInclude Include="..\..\..\..\Coordinator\coordinator_hardware_def.h">
+      <Filter>Coordinator</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Coordinator\Processing\Main\Main_Process.h">
+      <Filter>Coordinator\Processing\Main</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Coordinator\Processing\Events\c_events.h">
+      <Filter>Coordinator\Processing\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Coordinator\Processing\Events\System\c_system_events.h">
+      <Filter>Coordinator\Processing\Events\System</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Coordinator\Processing\Events\Data\c_data_events.h">
+      <Filter>Coordinator\Processing\Events\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Coordinator\Processing\Events\Data\Serial\c_serial_data_events.h">
+      <Filter>Coordinator\Processing\Events\Data\Serial</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Coordinator\Processing\Events\Data\SPI\c_spi_data_events.h">
+      <Filter>Coordinator\Processing\Events\Data\SPI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Coordinator\Processing\Events\Data\Network\c_network_data_events.h">
+      <Filter>Coordinator\Processing\Events\Data\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Platform Specific\c_core_win.h">
+      <Filter>Platform Specific</Filter>
+    </ClInclude>
+    <ClInclude Include="Platform Specific\c_serial_win.h">
+      <Filter>Platform Specific</Filter>
+    </ClInclude>
+    <ClInclude Include="Platform Specific\c_Serial.h">
+      <Filter>Platform Specific</Filter>
+    </ClInclude>
+    <ClInclude Include="Platform Specific\s_buffer.h">
+      <Filter>Platform Specific</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\..\Coordinator\coordinator_main.cpp">
+      <Filter>Coordinator</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Coordinator\Processing\Main\Main_Process.cpp">
+      <Filter>Coordinator\Processing\Main</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Coordinator\Processing\Events\c_events.cpp">
+      <Filter>Coordinator\Processing\Events</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Coordinator\Processing\Events\System\c_system_events.cpp">
+      <Filter>Coordinator\Processing\Events\System</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Coordinator\Processing\Events\Data\c_data_events.cpp">
+      <Filter>Coordinator\Processing\Events\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Coordinator\Processing\Events\Data\Serial\c_serial_data_events.cpp">
+      <Filter>Coordinator\Processing\Events\Data\Serial</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Coordinator\Processing\Events\Data\SPI\c_spi_data_events.cpp">
+      <Filter>Coordinator\Processing\Events\Data\SPI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Coordinator\Processing\Events\Data\Network\c_network_data_events.cpp">
+      <Filter>Coordinator\Processing\Events\Data\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Platform Specific\c_core_win.cpp">
+      <Filter>Platform Specific</Filter>
+    </ClCompile>
+    <ClCompile Include="Platform Specific\c_serial_win.cpp">
+      <Filter>Platform Specific</Filter>
+    </ClCompile>
+    <ClCompile Include="Platform Specific\c_Serial.cpp">
+      <Filter>Platform Specific</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

@@ -21,8 +21,14 @@
 #include "c_data_events.h"
 #include "..\..\Main\Main_Process.h"
 
-//BinaryRecords::s_bit_flag_controller_32 c_data_events::event_manager;
-//c_Serial * c_data_events::local_serial;
+// default constructor
+c_data_events::c_data_events()
+{
+}
+// default destructor
+c_data_events::~c_data_events()
+{
+}
 
 void c_data_events::collect()
 {
@@ -31,6 +37,7 @@ void c_data_events::collect()
 	{
 		Talos::Coordinator::Main_Process::host_serial.print_string("\tdata_event::collect.host_data\r");
 		this->event_manager.set((int)this->e_event_type::HostSerialDataArrival);
+		this->serial_events.collect();
 	}
 	//Check for spi data
 	//if (Talos::Coordinator::Main_Process::host_serial.HasData())
@@ -52,18 +59,12 @@ void c_data_events::set(e_event_type event_id)
 
 void c_data_events::get()
 {
-	//Do we have inbound data from the host serial
-	if (this->event_manager.get_clr((int)this->e_event_type::HostSerialDataArrival))
-	{
-		this->serial_events.collect();		
-	}
-
 }
 void c_data_events::execute()
 {
 	
 	//see if we have any serial events to execute
-	if (this->serial_events.event_manager._flag > 0)
+	if (this->event_manager._flag > 0)
 	{
 		Talos::Coordinator::Main_Process::host_serial.print_string("\tdata_event::execute.host_data\r");
 		this->serial_events.execute();

@@ -21,6 +21,15 @@
 #include "c_system_events.h"
 #include "..\..\Main\Main_Process.h"
 
+// default constructor
+c_system_events::c_system_events()
+{
+}
+// default destructor
+c_system_events::~c_system_events()
+{
+}
+
 void c_system_events::set(e_event_type event_id)
 {
 	this->event_manager.set((int)event_id);

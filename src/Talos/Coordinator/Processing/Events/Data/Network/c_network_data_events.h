@@ -43,6 +43,11 @@ class c_network_data_events
 
 	//functions
 	public:
+		c_network_data_events();
+		~c_network_data_events();
+		c_network_data_events(const c_network_data_events &c);
+		c_network_data_events& operator=(const c_network_data_events &c);
+
 	void collect();
 	void set(e_event_type event_id);
 	void get();

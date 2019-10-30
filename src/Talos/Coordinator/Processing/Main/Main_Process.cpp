@@ -34,5 +34,6 @@ void Talos::Coordinator::Main_Process::run()
 		//This firmware is mostly event driven. This is the main entry point for checking
 		//which events have been set to execute, and then executing them.
 		Talos::Coordinator::Events::process();
+		Talos::Coordinator::Events::data_events.serial_events.collect();
 	}
 }

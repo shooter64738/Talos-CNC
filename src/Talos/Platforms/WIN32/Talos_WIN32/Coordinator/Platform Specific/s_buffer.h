@@ -1,5 +1,6 @@
+
 /*
-*  c_data_events.h - NGC_RS274 controller.
+*  s_Buffer.h - NGC_RS274 controller.
 *  A component of Talos
 *
 *  Copyright (c) 2016-2019 Jeff Dill
@@ -19,38 +20,21 @@
 */
 
 
-#ifndef __C_COORDINATOR_SYSTEM_EVENTS_H__
-#define __C_COORDINATOR_SYSTEM_EVENTS_H__
-
+#ifndef S_BUFFER_H_
+#define S_BUFFER_H_
+#define RX_BUFFER_SIZE 256
 #include <stdint.h>
-#include "../../../coordinator_hardware_def.h"
-#include "../../../../records_def.h"
 
-class c_system_events
+typedef struct
 {
-	//variables
-	public:
-	enum class e_event_type : uint8_t
-	{
-		SystemAllOk = 1,
-		SystemCritical = 31
-	};
-	BinaryRecords::s_bit_flag_controller_32 event_manager;
-	
-	protected:
-	private:
+	char Buffer[RX_BUFFER_SIZE];
+	uint16_t volatile Head;
+	uint16_t volatile Tail;
+	uint8_t OverFlow;
+	uint8_t volatile EOL;
+
+} s_Buffer;
 
 
-	//functions
-	public:
-		c_system_events();
-		~c_system_events();
-		c_system_events(const c_system_events &c);
-		c_system_events& operator=(const c_system_events &c);
 
-	void set(e_event_type event_id);
-	void get();
-	protected:
-	private:
-}; 
-#endif 
+#endif /* S_BUFFER_H_ */

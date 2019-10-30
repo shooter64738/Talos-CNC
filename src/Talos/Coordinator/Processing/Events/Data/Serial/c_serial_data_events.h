@@ -32,8 +32,10 @@ class c_serial_data_events
 	public:
 	enum class e_event_type : uint8_t
 	{
+		InvalidDataError = 0,
 		TextDataInbound = 1,
-		BinaryDataInbound = 2
+		BinaryDataInbound = 2,
+		ControlDataInbound = 3
 	};
 	BinaryRecords::s_bit_flag_controller_32 event_manager;
 	
@@ -43,6 +45,11 @@ class c_serial_data_events
 
 	//functions
 	public:
+		c_serial_data_events();
+		~c_serial_data_events();
+		c_serial_data_events(const c_serial_data_events &c);
+		c_serial_data_events& operator=(const c_serial_data_events &c);
+
 	void collect();
 	void set(e_event_type event_id);
 	void get();

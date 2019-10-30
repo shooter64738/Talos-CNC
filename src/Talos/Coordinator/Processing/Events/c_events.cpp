@@ -24,6 +24,14 @@
 c_data_events Talos::Coordinator::Events::data_events;
 c_system_events Talos::Coordinator::Events::system_events;
 
+//// default constructor
+//Talos::Coordinator::Events::Events()
+//{
+//}
+//// default destructor
+//Talos::Coordinator::Events::~Events()
+//{
+//}
 
 void Talos::Coordinator::Events::initialize()
 {

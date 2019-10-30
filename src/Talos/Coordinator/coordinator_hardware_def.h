@@ -15,23 +15,16 @@
 
 #ifdef __AVR_ATmega2560__
 #define F_CPU 16000000UL
-//#include "../Common/Serial/s_buffer.h"
 #include "../Platforms/AVR_2560/Talos_AVR2560_Coordinator/PlatformSpecific/c_serial_avr_2560.h"
 #include "../Platforms/AVR_2560/Talos_AVR2560_Coordinator/PlatformSpecific/c_core_avr_2560.h"
 #include "../Platforms/AVR_2560/Talos_AVR2560_Coordinator/PlatformSpecific/c_Serial.h"
 #endif
 
 #ifdef MSVC
-#define MAX_STEP_RATE 172000 //<--This doe not limit anything. It is only for a safety check.
-#define F_CPU 84000000
-#define F_CPU_2 F_CPU/2
-#define _TICKS_PER_MICROSECOND (F_CPU_2/1000000)
-#include "Common\Serial\c_Serial.h"
-#include "Platforms\WIN32\Talos_WIN32\Platform Specific\c_core_win.h"
-#include "Platforms\WIN32\Talos_WIN32\Platform Specific\c_motion_core_win_stepper.h"
-#include "Platforms\WIN32\Talos_WIN32\Platform Specific\c_motion_core_win_inputs.h"
-#include "Platforms\WIN32\Talos_WIN32\Platform Specific\c_motion_core_win_spindle.h"
-#include "Platforms\WIN32\Talos_WIN32\Platform Specific\c_serial_win.h"
+#define F_CPU 16000000
+#include "../Platforms/WIN32/Talos_WIN32/Coordinator/Platform Specific/c_serial_win.h"
+#include "../Platforms/WIN32/Talos_WIN32/Coordinator/Platform Specific/c_core_win.h"
+#include "../Platforms/WIN32/Talos_WIN32/Coordinator/Platform Specific/c_Serial.h"
 #endif
 
 
