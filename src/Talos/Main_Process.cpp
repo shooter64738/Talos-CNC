@@ -139,11 +139,11 @@ void Talos::Main_Process::startup()
 	Spindle::Velocity::initialize();
 	while (1)
 	{
-		Hardware_Abstraction_Layer::MotionCore::Spindle::get_rpm();
+		Hardware_Abstraction_Layer::MotionCore::Spindle::get_rpm_qdec();
 		if (ticker>50000)
 		{
 			ticker = 0;
-			
+			Hardware_Abstraction_Layer::MotionCore::Spindle::set_speed(752);
 			Talos::Main_Process::host_serial.print_string("cv=");
 			Talos::Main_Process::host_serial.print_int32(Motion_Core::Settings::_Settings.Hardware_Settings.spindle_encoder.meta_data.reg_tc0_cv1);Talos::Main_Process::host_serial.Write(',');
 			Talos::Main_Process::host_serial.print_string("ra=");

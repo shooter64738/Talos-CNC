@@ -23,6 +23,7 @@ namespace Hardware_Abstraction_Layer
 	{
 		class Spindle
 		{
+			
 			//typedef void(*function_pointer)(uint32_t parameter);
 			
 			//variables
@@ -38,11 +39,14 @@ namespace Hardware_Abstraction_Layer
 			//functions
 			public:
 			static void initialize(BinaryRecords::s_encoders * encoder_data);
+			static void qdec_speed_config();
+			static void pwm_drive_configure();
+			static void set_speed(int32_t new_speed);
 			static void configure_timer_for_at_speed_delay();
 			static void stop_at_speed_timer();
 			static void configure_timer_for_rpm_update(uint32_t interval);
-			static void OCR1A_set(uint32_t delay);
-			static int32_t get_rpm();
+			//static void OCR1A_set(uint32_t delay);
+			static int32_t get_rpm_qdec();
 			protected:
 			private:
 

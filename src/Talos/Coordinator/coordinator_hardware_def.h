@@ -1,0 +1,38 @@
+/*
+ * hardware_def.h
+ *
+ * Created: 7/12/2019 6:30:30 PM
+ *  Author: Family
+ */
+
+//To enable compilation and debugging in Microsoft Visual C++ define MSCV
+#if !defined(__AVR_ATmega328P__) && !defined(__AVR_ATmega2560__) && !defined(__SAM3X8E__)
+#define MSVC
+#endif
+
+#ifndef COORDINATOR_HARDWARE_DEF_H_
+#define COORDINATOR_HARDWARE_DEF_H_
+
+#ifdef __AVR_ATmega2560__
+#define F_CPU 16000000UL
+//#include "../Common/Serial/s_buffer.h"
+#include "../Platforms/AVR_2560/Talos_AVR2560_Coordinator/PlatformSpecific/c_serial_avr_2560.h"
+#include "../Platforms/AVR_2560/Talos_AVR2560_Coordinator/PlatformSpecific/c_core_avr_2560.h"
+#include "../Platforms/AVR_2560/Talos_AVR2560_Coordinator/PlatformSpecific/c_Serial.h"
+#endif
+
+#ifdef MSVC
+#define MAX_STEP_RATE 172000 //<--This doe not limit anything. It is only for a safety check.
+#define F_CPU 84000000
+#define F_CPU_2 F_CPU/2
+#define _TICKS_PER_MICROSECOND (F_CPU_2/1000000)
+#include "Common\Serial\c_Serial.h"
+#include "Platforms\WIN32\Talos_WIN32\Platform Specific\c_core_win.h"
+#include "Platforms\WIN32\Talos_WIN32\Platform Specific\c_motion_core_win_stepper.h"
+#include "Platforms\WIN32\Talos_WIN32\Platform Specific\c_motion_core_win_inputs.h"
+#include "Platforms\WIN32\Talos_WIN32\Platform Specific\c_motion_core_win_spindle.h"
+#include "Platforms\WIN32\Talos_WIN32\Platform Specific\c_serial_win.h"
+#endif
+
+
+#endif /* COORDINATOR_HARDWARE_DEF_H_ */

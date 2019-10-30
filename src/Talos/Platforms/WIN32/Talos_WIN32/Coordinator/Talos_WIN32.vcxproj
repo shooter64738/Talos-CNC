@@ -1,0 +1,180 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\Common\Serial\c_Serial.cpp" />
+    <ClCompile Include="..\..\..\Events\c_block_events.cpp" />
+    <ClCompile Include="..\..\..\Events\c_data_events.cpp" />
+    <ClCompile Include="..\..\..\Events\c_events.cpp" />
+    <ClCompile Include="..\..\..\Events\c_motion_control_events.cpp" />
+    <ClCompile Include="..\..\..\Events\c_motion_events.cpp" />
+    <ClCompile Include="..\..\..\Events\c_system_events.cpp" />
+    <ClCompile Include="..\..\..\GCode_Process.cpp" />
+    <ClCompile Include="..\..\..\Machine_Parameters_Process.cpp" />
+    <ClCompile Include="..\..\..\main.cpp" />
+    <ClCompile Include="..\..\..\Main_Process.cpp" />
+    <ClCompile Include="..\..\..\Motion_Core\c_block.cpp" />
+    <ClCompile Include="..\..\..\Motion_Core\c_block_buffer.cpp" />
+    <ClCompile Include="..\..\..\Motion_Core\c_gateway.cpp" />
+    <ClCompile Include="..\..\..\Motion_Core\c_interpollation_hardware.cpp" />
+    <ClCompile Include="..\..\..\Motion_Core\c_interpollation_software.cpp" />
+    <ClCompile Include="..\..\..\Motion_Core\c_motion_core.cpp" />
+    <ClCompile Include="..\..\..\Motion_Core\c_planner_compute_block.cpp" />
+    <ClCompile Include="..\..\..\Motion_Core\c_segment_arbitrator.cpp" />
+    <ClCompile Include="..\..\..\Motion_Core\c_segment_timer_bresenham.cpp" />
+    <ClCompile Include="..\..\..\Motion_Core\c_segment_timer_item.cpp" />
+    <ClCompile Include="..\..\..\Motion_Core\c_system.cpp" />
+    <ClCompile Include="..\..\..\NGC_RS274\Machine Specific\Lathe\NGC_Lathe.cpp" />
+    <ClCompile Include="..\..\..\NGC_RS274\Machine Specific\Mill\NGC_Mill.cpp" />
+    <ClCompile Include="..\..\..\NGC_RS274\NGC_Block.cpp" />
+    <ClCompile Include="..\..\..\NGC_RS274\NGC_Interpreter.cpp" />
+    <ClCompile Include="..\..\..\Planner\Canned Cycles\c_canned_cycle.cpp" />
+    <ClCompile Include="..\..\..\Planner\CRC\c_cutter_comp.cpp" />
+    <ClCompile Include="..\..\..\Planner\CRC\c_path.cpp" />
+    <ClCompile Include="..\..\..\Planner\c_event_control.cpp" />
+    <ClCompile Include="..\..\..\Planner\c_gcode_buffer.cpp" />
+    <ClCompile Include="..\..\..\Planner\c_machine.cpp" />
+    <ClCompile Include="..\..\..\Planner\c_mirror.cpp" />
+    <ClCompile Include="..\..\..\Planner\c_stager.cpp" />
+    <ClCompile Include="Platform Specific\c_core_win.cpp" />
+    <ClCompile Include="Platform Specific\c_motion_core_win_inputs.cpp" />
+    <ClCompile Include="Platform Specific\c_motion_core_win_spindle.cpp" />
+    <ClCompile Include="Platform Specific\c_motion_core_win_stepper.cpp" />
+    <ClCompile Include="Platform Specific\c_serial_win.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\bit_manipulation.h" />
+    <ClInclude Include="..\..\..\Common\Serial\c_Serial.h" />
+    <ClInclude Include="..\..\..\Common\Serial\s_buffer.h" />
+    <ClInclude Include="..\..\..\communication_def.h" />
+    <ClInclude Include="..\..\..\Events\c_block_events.h" />
+    <ClInclude Include="..\..\..\Events\c_data_events.h" />
+    <ClInclude Include="..\..\..\Events\c_events.h" />
+    <ClInclude Include="..\..\..\Events\c_motion_control_events.h" />
+    <ClInclude Include="..\..\..\Events\c_motion_events.h" />
+    <ClInclude Include="..\..\..\Events\c_system_events.h" />
+    <ClInclude Include="..\..\..\GCode_Process.h" />
+    <ClInclude Include="..\..\..\hardware_def.h" />
+    <ClInclude Include="..\..\..\Machine_Parameters_Process.h" />
+    <ClInclude Include="..\..\..\Main_Process.h" />
+    <ClInclude Include="..\..\..\Motion_Core\c_block.h" />
+    <ClInclude Include="..\..\..\Motion_Core\c_block_buffer.h" />
+    <ClInclude Include="..\..\..\Motion_Core\c_gateway.h" />
+    <ClInclude Include="..\..\..\Motion_Core\c_interpollation_hardware.h" />
+    <ClInclude Include="..\..\..\Motion_Core\c_interpollation_software.h" />
+    <ClInclude Include="..\..\..\Motion_Core\c_motion_core.h" />
+    <ClInclude Include="..\..\..\Motion_Core\c_planner_compute_block.h" />
+    <ClInclude Include="..\..\..\Motion_Core\c_segment_arbitrator.h" />
+    <ClInclude Include="..\..\..\Motion_Core\c_segment_timer_bresenham.h" />
+    <ClInclude Include="..\..\..\Motion_Core\c_segment_timer_item.h" />
+    <ClInclude Include="..\..\..\Motion_Core\c_system.h" />
+    <ClInclude Include="..\..\..\NGC_RS274\Machine Specific\Lathe\NGC_G_Codes.h" />
+    <ClInclude Include="..\..\..\NGC_RS274\Machine Specific\Lathe\NGC_Lathe.h" />
+    <ClInclude Include="..\..\..\NGC_RS274\Machine Specific\Lathe\NGC_M_Codes.h" />
+    <ClInclude Include="..\..\..\NGC_RS274\Machine Specific\Mill\NGC_G_Codes.h" />
+    <ClInclude Include="..\..\..\NGC_RS274\Machine Specific\Mill\NGC_Mill.h" />
+    <ClInclude Include="..\..\..\NGC_RS274\Machine Specific\Mill\NGC_M_Codes.h" />
+    <ClInclude Include="..\..\..\NGC_RS274\NGC_Block.h" />
+    <ClInclude Include="..\..\..\NGC_RS274\ngc_defines.h" />
+    <ClInclude Include="..\..\..\NGC_RS274\NGC_Errors.h" />
+    <ClInclude Include="..\..\..\NGC_RS274\NGC_G_Groups.h" />
+    <ClInclude Include="..\..\..\NGC_RS274\NGC_Interpreter.h" />
+    <ClInclude Include="..\..\..\NGC_RS274\NGC_M_Groups.h" />
+    <ClInclude Include="..\..\..\NGC_RS274\NGC_Parameters.h" />
+    <ClInclude Include="..\..\..\physical_machine_parameters.h" />
+    <ClInclude Include="..\..\..\Planner\Canned Cycles\c_canned_cycle.h" />
+    <ClInclude Include="..\..\..\Planner\CRC\c_cutter_comp.h" />
+    <ClInclude Include="..\..\..\Planner\CRC\c_path.h" />
+    <ClInclude Include="..\..\..\Planner\CRC\shared.h" />
+    <ClInclude Include="..\..\..\Planner\c_event_control.h" />
+    <ClInclude Include="..\..\..\Planner\c_gcode_buffer.h" />
+    <ClInclude Include="..\..\..\Planner\c_machine.h" />
+    <ClInclude Include="..\..\..\Planner\c_mirror.h" />
+    <ClInclude Include="..\..\..\Planner\c_stager.h" />
+    <ClInclude Include="..\..\..\Planner\Stager_Errors.h" />
+    <ClInclude Include="..\..\..\records_def.h" />
+    <ClInclude Include="..\..\..\System\tool_table.h" />
+    <ClInclude Include="Platform Specific\c_core_win.h" />
+    <ClInclude Include="Platform Specific\c_motion_core_win_inputs.h" />
+    <ClInclude Include="Platform Specific\c_motion_core_win_spindle.h" />
+    <ClInclude Include="Platform Specific\c_motion_core_win_stepper.h" />
+    <ClInclude Include="Platform Specific\c_serial_win.h" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{842D3902-7944-4D31-868D-EDAD55DD8A7E}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>Talos_WIN32</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

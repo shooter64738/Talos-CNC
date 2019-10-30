@@ -37,6 +37,14 @@ care, the results may be inaccurate.
 void Hardware_Abstraction_Layer::MotionCore::Spindle::initialize(BinaryRecords::s_encoders * encoder_data)
 {
 	Hardware_Abstraction_Layer::MotionCore::Spindle::spindle_encoder = encoder_data;
+	
+	Hardware_Abstraction_Layer::MotionCore::Spindle::qdec_speed_config();
+	
+	Hardware_Abstraction_Layer::MotionCore::Spindle::pwm_drive_configure();
+}
+
+void Hardware_Abstraction_Layer::MotionCore::Spindle::qdec_speed_config()
+{
 	//qdec0.set_sample_rate(encoder_data.samples_per_second);
 	
 	PMC->PMC_PCER0 |= PMC_PCER0_PID27 // TC0 power ON ; Timer counter 0 channel 0 is TC0
@@ -73,6 +81,27 @@ void Hardware_Abstraction_Layer::MotionCore::Spindle::initialize(BinaryRecords::
 	qdec->TC_CHANNEL[0].TC_CCR = TC_CCR_CLKEN | TC_CCR_SWTRG;
 	qdec->TC_CHANNEL[1].TC_CCR = TC_CCR_CLKEN | TC_CCR_SWTRG;
 	qdec->TC_CHANNEL[2].TC_CCR = TC_CCR_CLKEN | TC_CCR_SWTRG;
+}
+
+void Hardware_Abstraction_Layer::MotionCore::Spindle::pwm_drive_configure()
+{
+	PMC->PMC_PCER1 |= PMC_PCER1_PID36; //REG_PMC_PCER1 |= PMC_PCER1_PID36;                     // Enable PWM
+	PIOB->PIO_ABSR |= PIO_ABSR_P16;//REG_PIOB_ABSR |= PIO_ABSR_P16;                        // Set PWM pin perhipheral type A or B, in this case B
+	PIOB->PIO_PDR |= PIO_PDR_P16;//REG_PIOB_PDR |= PIO_PDR_P16;                          // Set PWM pin to an output
+	PIOB->PIO_PUER |= PIO_PDR_P16;
+	PWM->PWM_CLK = PWM_CLK_PREA(0) | PWM_CLK_DIVA(1);//REG_PWM_CLK = PWM_CLK_PREA(0) | PWM_CLK_DIVA(1);      // Set the PWM clock rate to 84MHz (84MHz/1)
+	PWM->PWM_CH_NUM[0].PWM_CMR |= PWM_CMR_CPRE_CLKA;//REG_PWM_CMR0 = PWM_CMR_CPRE_CLKA;                     // Enable single slope PWM and set the clock source as CLKA
+	PWM->PWM_CH_NUM[0].PWM_CPRD = 840;//2840;//REG_PWM_CPRD0 = 2100;                                  // Set the PWM frequency 84MHz/40kHz = 2100
+	//PWM->PWM_CH_NUM[0].PWM_CDTY = 420;//REG_PWM_CDTY0 = 1050;  
+	//PWM->PWM_CH_NUM[0].PWM_CDTYUPD = 420;//REG_PWM_CDTY0 = 1050;  
+	                                // Set the PWM duty cycle 50% (2100/2=1050)
+	//PWM->PWM_CH_NUM[0].PWM_DT = 200;
+	PWM->PWM_ENA |= PWM_ENA_CHID0;//REG_PWM_ENA = PWM_ENA_CHID0;                          // Enable the PWM channel
+}
+
+void Hardware_Abstraction_Layer::MotionCore::Spindle::set_speed(int32_t new_speed)
+{
+	PWM->PWM_CH_NUM[0].PWM_CDTYUPD = new_speed;//REG_PWM_CDTY0 = 1050;  
 }
 
 void Hardware_Abstraction_Layer::MotionCore::Spindle::configure_timer_for_at_speed_delay()
@@ -120,20 +149,18 @@ void Hardware_Abstraction_Layer::MotionCore::Spindle::configure_timer_for_rpm_up
 	//&Motion_Core::Hardware::Interpolation::spindle_calculate_interp_delay;
 }
 
-void Hardware_Abstraction_Layer::MotionCore::Spindle::OCR1A_set(uint32_t delay)
-{
-	//just in case the user tries to go faster than their hardware allows we hold them
-	//at max here.
-	if (delay <Motion_Core::Hardware::Interpolation::Step_Pulse_Length)
-	{
-		delay = Motion_Core::Hardware::Interpolation::Step_Pulse_Length+1;
-	}
-	TC1->TC_CHANNEL[1].TC_RC = delay;
-}
+//void Hardware_Abstraction_Layer::MotionCore::Spindle::OCR1A_set(uint32_t delay)
+//{
+	////just in case the user tries to go faster than their hardware allows we hold them
+	////at max here.
+	//if (delay <Motion_Core::Hardware::Interpolation::Step_Pulse_Length)
+	//{
+		//delay = Motion_Core::Hardware::Interpolation::Step_Pulse_Length+1;
+	//}
+	//TC1->TC_CHANNEL[1].TC_RC = delay;
+//}
 
-
-
-int32_t Hardware_Abstraction_Layer::MotionCore::Spindle::get_rpm()
+int32_t Hardware_Abstraction_Layer::MotionCore::Spindle::get_rpm_qdec()
 {
 	
 	BinaryRecords::s_encoders * encode = Hardware_Abstraction_Layer::MotionCore::Spindle::spindle_encoder;
@@ -166,6 +193,7 @@ int32_t Hardware_Abstraction_Layer::MotionCore::Spindle::get_rpm()
 	
 	return Hardware_Abstraction_Layer::MotionCore::Spindle::spindle_encoder->current_rpm;
 }
+
 
 
 void Timer1_Chan0_Handler_irq4(void)
