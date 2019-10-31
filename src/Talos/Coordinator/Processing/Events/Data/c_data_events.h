@@ -34,11 +34,13 @@ class c_data_events
 	enum class e_event_type : uint8_t
 	{
 		HostSerialDataArrival = 1,
-		test2 = 2
+		SPIBusDataArrival = 2,
+		NetworkDataArrival = 2
 	};
 	BinaryRecords::s_bit_flag_controller_32 event_manager;
 	
 	c_serial_data_events serial_events;
+	c_spi_data_events spi_events;
 	
 	
 	protected:

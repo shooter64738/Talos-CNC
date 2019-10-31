@@ -32,10 +32,25 @@ c_spi_data_events::~c_spi_data_events()
 
 void c_spi_data_events::collect()
 {
-	//Check for serial host data
-	if (Talos::Coordinator::Main_Process::host_serial.HasData())
+	//We were called because there is an event for spi data.
+	//First we must know what type it is.
+	uint8_t first_byte = Talos::Coordinator::Main_Process::host_serial.Peek();
+	
+	if (first_byte>=32 && first_byte <= 127) //<--printable data
 	{
-		this->event_manager.set((int)this->e_event_type::HostSerialDataArrival);
+		this->set( c_spi_data_events::e_event_type::TextDataInbound);
+	}
+	else if (first_byte > 0 && first_byte <32) //<--binary record
+	{
+		this->set( c_spi_data_events::e_event_type::BinaryDataInbound);
+	}
+	else if (first_byte > 127) //<--control record
+	{
+		this->set(c_spi_data_events::e_event_type::ControlDataInbound);
+	}
+	else //<--garbage?
+	{
+		this->set(c_spi_data_events::e_event_type::InvalidDataError);
 	}
 }
 
@@ -46,11 +61,42 @@ void c_spi_data_events::set(e_event_type event_id)
 
 void c_spi_data_events::get()
 {
-	if (this->event_manager.get_clr((int)this->e_event_type::HostSerialDataArrival))
+
+}
+
+void c_spi_data_events::process()
+{
+	//We only call this minor process method if the major execute method
+	//determined it necessary
+	
+	//get and clear the serial events as we process
+	if (this->event_manager.get_clr((int)this->e_event_type::TextDataInbound))
 	{
-		Talos::Coordinator::Main_Process::host_serial.print_string("data get");
+		Talos::Coordinator::Main_Process::host_serial.print_string("\t\tserial_data_event::process.text\r");
+		Talos::Coordinator::Main_Process::host_serial.print_string("\t\t\ttext processed!\r");
 		Talos::Coordinator::Main_Process::host_serial.SkipToEOL();
 	}
-
+	
+	if (this->event_manager.get_clr((int)this->e_event_type::BinaryDataInbound))
+	{
+		Talos::Coordinator::Main_Process::host_serial.print_string("\t\tserial_data_event::process.binary\r");
+		Talos::Coordinator::Main_Process::host_serial.print_string("\t\t\tbinary processed!\r");
+		Talos::Coordinator::Main_Process::host_serial.SkipToEOL();
+		
+	}
+	
+	if (this->event_manager.get_clr((int)this->e_event_type::ControlDataInbound))
+	{
+		Talos::Coordinator::Main_Process::host_serial.print_string("\t\tserial_data_event::process.control\r");
+		Talos::Coordinator::Main_Process::host_serial.print_string("\t\t\tcontrol processed!\r");
+		Talos::Coordinator::Main_Process::host_serial.SkipToEOL();
+	}
+	
+	if (this->event_manager.get_clr((int)this->e_event_type::ControlDataInbound))
+	{
+		Talos::Coordinator::Main_Process::host_serial.print_string("\t\tserial_data_event::process.invalid\r");
+		Talos::Coordinator::Main_Process::host_serial.print_string("\t\t\t::dicarded::\r");
+		Talos::Coordinator::Main_Process::host_serial.SkipToEOL();
+	}
 }
 

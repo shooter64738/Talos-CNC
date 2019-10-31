@@ -37,6 +37,8 @@ class c_serial_data_events
 		BinaryDataInbound = 2,
 		ControlDataInbound = 3
 	};
+	
+	
 	BinaryRecords::s_bit_flag_controller_32 event_manager;
 	
 	protected:
@@ -53,7 +55,7 @@ class c_serial_data_events
 	void collect();
 	void set(e_event_type event_id);
 	void get();
-	void execute();
+	void process();
 	protected:
 	private:
 }; //c_serial_events

@@ -32,11 +32,16 @@ class c_spi_data_events
 	public:
 	enum class e_event_type : uint8_t
 	{
-		HostSerialDataArrival = 1,
-		test2 = 2
+		InvalidDataError = 0,
+		TextDataInbound = 1,
+		BinaryDataInbound = 2,
+		ControlDataInbound = 3
 	};
+	
 	BinaryRecords::s_bit_flag_controller_32 event_manager;
 	
+	
+
 	protected:
 	private:
 
@@ -51,6 +56,7 @@ class c_spi_data_events
 	void collect();
 	void set(e_event_type event_id);
 	void get();
+	void process();
 	protected:
 	private:
 }; //c_serial_events

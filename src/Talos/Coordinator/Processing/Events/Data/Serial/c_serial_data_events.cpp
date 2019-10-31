@@ -58,9 +58,6 @@ void c_serial_data_events::collect()
 	{
 		this->set(c_serial_data_events::e_event_type::InvalidDataError);
 	}
-	
-	Talos::Coordinator::Main_Process::host_serial.print_string("data get\r");
-	Talos::Coordinator::Main_Process::host_serial.SkipToEOL();
 }
 
 void c_serial_data_events::set(e_event_type event_id)
@@ -73,18 +70,39 @@ void c_serial_data_events::get()
 
 }
 
-void c_serial_data_events::execute()
+void c_serial_data_events::process()
 {
-	/* (this->event_manager.get((int)this->e_event_type::TextDataInbound))
+	//We only call this minor process method if the major execute method 
+	//determined it necessary
+	
+	//get and clear the serial events as we process
+	if (this->event_manager.get_clr((int)this->e_event_type::TextDataInbound))
 	{
-	default:
-		break;
-	}
-	if ()
-	{
-		Talos::Coordinator::Main_Process::host_serial.print_string("\t\tserial_data_event::execute.host_data\r");
-		Talos::Coordinator::Main_Process::host_serial.print_string("\t\t\tfull cycle!\r");
+		Talos::Coordinator::Main_Process::host_serial.print_string("\t\tserial_data_event::process.text\r");
+		Talos::Coordinator::Main_Process::host_serial.print_string("\t\t\ttext processed!\r");
 		Talos::Coordinator::Main_Process::host_serial.SkipToEOL();
-	}*/
+	}
+	
+	if (this->event_manager.get_clr((int)this->e_event_type::BinaryDataInbound))
+	{
+		Talos::Coordinator::Main_Process::host_serial.print_string("\t\tserial_data_event::process.binary\r");
+		Talos::Coordinator::Main_Process::host_serial.print_string("\t\t\tbinary processed!\r");
+		Talos::Coordinator::Main_Process::host_serial.SkipToEOL();
+	
+	}
+	
+	if (this->event_manager.get_clr((int)this->e_event_type::ControlDataInbound))
+	{
+		Talos::Coordinator::Main_Process::host_serial.print_string("\t\tserial_data_event::process.control\r");
+		Talos::Coordinator::Main_Process::host_serial.print_string("\t\t\tcontrol processed!\r");
+		Talos::Coordinator::Main_Process::host_serial.SkipToEOL();
+	}
+	
+	if (this->event_manager.get_clr((int)this->e_event_type::ControlDataInbound))
+	{
+		Talos::Coordinator::Main_Process::host_serial.print_string("\t\tserial_data_event::process.invalid\r");
+		Talos::Coordinator::Main_Process::host_serial.print_string("\t\t\t::dicarded::\r");
+		Talos::Coordinator::Main_Process::host_serial.SkipToEOL();
+	}
 }
 

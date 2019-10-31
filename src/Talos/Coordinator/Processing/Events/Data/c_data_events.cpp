@@ -40,10 +40,11 @@ void c_data_events::collect()
 		this->serial_events.collect();
 	}
 	//Check for spi data
-	//if (Talos::Coordinator::Main_Process::host_serial.HasData())
-	//{
-	//	this->event_manager.set((int)this->e_event_type::HostSerialDataArrival);
-	//}
+	if (Hardware_Abstraction_Layer::Spi::has_data())
+	{
+		this->event_manager.set((int)this->e_event_type::SPIBusDataArrival);
+		this->spi_events.collect();
+	}
 	
 	//Check for network data
 	//if (Talos::Coordinator::Main_Process::host_serial.HasData())
@@ -60,14 +61,24 @@ void c_data_events::set(e_event_type event_id)
 void c_data_events::get()
 {
 }
+
 void c_data_events::execute()
 {
 	
-	//see if we have any serial events to execute
-	if (this->event_manager._flag > 0)
+	//see if we have any data events to execute
+	if (this->event_manager._flag == 0)
+	{
+		return;
+	}
+	
+	//We have something to execute so see what it is
+	
+	//get and clear each major event type
+	if (this->event_manager.get_clr((int)this->e_event_type::HostSerialDataArrival))
 	{
 		Talos::Coordinator::Main_Process::host_serial.print_string("\tdata_event::execute.host_data\r");
-		this->serial_events.execute();
+		//there is a serial data event. process it.
+		this->serial_events.process();
 	}
 	
 }
