@@ -91,6 +91,12 @@ char * c_Serial::Buffer_Pointer()
 	return Hardware_Abstraction_Layer::Serial::rxBuffer[_port].Buffer;
 }
 
+s_Buffer * c_Serial::_Buffer()
+{
+	return &Hardware_Abstraction_Layer::Serial::rxBuffer[_port];
+}
+
+
 uint16_t c_Serial::FindByte_Position(uint8_t search_byte)
 {
 	uint16_t peek_distance = 0;

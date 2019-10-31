@@ -21,6 +21,9 @@
 #include "c_data_events.h"
 #include "..\..\Main\Main_Process.h"
 
+#define __DATA_POINTERS__
+#include "extern_data_pointers.h"
+
 // default constructor
 c_data_events::c_data_events()
 {
@@ -36,13 +39,14 @@ void c_data_events::collect()
 	if (Talos::Coordinator::Main_Process::host_serial.HasData())
 	{
 		Talos::Coordinator::Main_Process::host_serial.print_string("\tdata_event::collect.host_data\r");
-		this->event_manager.set((int)this->e_event_type::HostSerialDataArrival);
+		this->set((int)this->e_event_type::HostSerialDataArrival);
 		this->serial_events.collect();
+		
 	}
 	//Check for spi data
 	if (Hardware_Abstraction_Layer::Spi::has_data())
 	{
-		this->event_manager.set((int)this->e_event_type::SPIBusDataArrival);
+		this->set((int)this->e_event_type::SPIBusDataArrival);
 		this->spi_events.collect();
 	}
 	
@@ -60,26 +64,5 @@ void c_data_events::set(e_event_type event_id)
 
 void c_data_events::get()
 {
-}
-
-void c_data_events::execute()
-{
-	
-	//see if we have any data events to execute
-	if (this->event_manager._flag == 0)
-	{
-		return;
-	}
-	
-	//We have something to execute so see what it is
-	
-	//get and clear each major event type
-	if (this->event_manager.get_clr((int)this->e_event_type::HostSerialDataArrival))
-	{
-		Talos::Coordinator::Main_Process::host_serial.print_string("\tdata_event::execute.host_data\r");
-		//there is a serial data event. process it.
-		this->serial_events.process();
-	}
-	
 }
 

@@ -24,6 +24,8 @@
 c_data_events Talos::Coordinator::Events::data_events;
 c_system_events Talos::Coordinator::Events::system_events;
 
+#include "Data/extern_data_pointers.h"
+
 //// default constructor
 //Talos::Coordinator::Events::Events()
 //{
@@ -59,8 +61,40 @@ void Talos::Coordinator::Events::collect()
 //Execute the events that have their flags set
 void Talos::Coordinator::Events::execute()
 {
+	//First check to make sure the system is healty
+	if (!system_events.event_manager.get((int)c_system_events::e_event_type::SystemAllOk))
+		return;
+
 	//Go through the data events and act on any having a bit set.
-	Talos::Coordinator::Events::data_events.execute();
+	if (Talos::Coordinator::Events::data_events.event_manager._flag > 0)//<--does the major manager show an event?
+	{
+		Talos::Coordinator::Events::handle_data_events();
+	}
+	
+}
+
+void Talos::Coordinator::Events::handle_data_events()
+{
+	//We have a major event, check the minor event for details
+	if (Talos::Coordinator::Events::data_events.serial_events.event_manager._flag > 0)//<--the minor manager should show something
+	{
+		//Should NOT have differnt event types from the same source.
+		//We can have multiple data events, but only 1 from serial, 1 from network, 1 from spi, 1 from disk, etc...
+
+		//Check the bit and clear at the same time
+		if (Talos::Coordinator::Events::data_events.serial_events.event_manager.get_clr((int)c_serial_data_events::e_event_type::GCodeInbound))
+		{
+			//Here is where we link the gcode reader buffer, to its data source.
+			extern_data_pointers._buffer_pointer->
+		}
+		//check the bit and clear at the same time
+		if (Talos::Coordinator::Events::data_events.serial_events.event_manager.get_clr((int)c_serial_data_events::e_event_type::GCodeInbound))
+		{
+			//Here is where we link the gcode reader buffer, to its data source.
+			extern_data_pointers._buffer_pointer->
+		}
+
+	}
 }
 
 /*

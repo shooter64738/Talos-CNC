@@ -26,6 +26,7 @@
 #include "../../../coordinator_hardware_def.h"
 #include "../../../../records_def.h"
 #include "Serial/c_serial_data_events.h"
+#include "SPI/c_spi_data_events.h"
 
 class c_data_events
 {
@@ -35,10 +36,17 @@ class c_data_events
 	{
 		HostSerialDataArrival = 1,
 		SPIBusDataArrival = 2,
-		NetworkDataArrival = 2
+		NetworkDataArrival = 3
 	};
 	BinaryRecords::s_bit_flag_controller_32 event_manager;
 	
+	enum class e_event_errors : uint8_t
+	{
+		SerialDataError = 1
+		
+		
+	};
+
 	c_serial_data_events serial_events;
 	c_spi_data_events spi_events;
 	
@@ -57,7 +65,6 @@ class c_data_events
 	void collect();
 	void set(e_event_type event_id);
 	void get();
-	void execute();
 	protected:
 	private:
 }; //c_serial_events

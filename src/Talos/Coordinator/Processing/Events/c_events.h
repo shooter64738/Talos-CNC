@@ -56,6 +56,8 @@ namespace Talos
 			static void collect();
 			static void execute();
 
+			static void handle_data_events();
+
 		};
 	};
 };

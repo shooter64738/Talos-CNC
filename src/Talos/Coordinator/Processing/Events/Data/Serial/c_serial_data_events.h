@@ -33,7 +33,7 @@ class c_serial_data_events
 	enum class e_event_type : uint8_t
 	{
 		InvalidDataError = 0,
-		TextDataInbound = 1,
+		GCodeInbound = 1,
 		BinaryDataInbound = 2,
 		ControlDataInbound = 3
 	};
@@ -54,9 +54,8 @@ class c_serial_data_events
 
 	void collect();
 	void set(e_event_type event_id);
-	void get();
-	void process();
-	protected:
+
+protected:
 	private:
 }; //c_serial_events
 #endif //__C_DATA_EVENTS_H__

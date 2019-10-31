@@ -21,6 +21,8 @@
 #include "c_serial_data_events.h"
 #include "../../../Main\Main_Process.h"
 
+#include "../extern_data_pointers.h"
+
 // default constructor
 c_serial_data_events::c_serial_data_events()
 {
@@ -37,20 +39,25 @@ void c_serial_data_events::collect()
 	uint8_t first_byte = Talos::Coordinator::Main_Process::host_serial.Peek();
 
 	//need to clear the data type bit (1-4. 0 is reserved for invalid data)
-	this->event_manager.clear((int)c_serial_data_events::e_event_type::TextDataInbound);
+	this->event_manager.clear((int)c_serial_data_events::e_event_type::GCodeInbound);
 	this->event_manager.clear((int)c_serial_data_events::e_event_type::BinaryDataInbound);
 	this->event_manager.clear((int)c_serial_data_events::e_event_type::ControlDataInbound);
 	this->event_manager.clear((int)c_serial_data_events::e_event_type::InvalidDataError);
 
-	if (first_byte>=32 && first_byte <= 127) //<--printable data
+	extern_data_pointers._text = NULL;
+	extern_data_pointers._binary = NULL;
+
+	if (first_byte>=32 && first_byte <= 127) //<--printable data (gcode)
 	{
-		this->set( c_serial_data_events::e_event_type::TextDataInbound);
+		this->set( c_serial_data_events::e_event_type::GCodeInbound);
+		extern_data_pointers._text = Talos::Coordinator::Main_Process::host_serial.Buffer_Pointer;
 	}
-	else if (first_byte > 0 && first_byte <32) //<--binary record
+	else if (first_byte > 0 && first_byte <32) //<--binary record (data from another peripheral)
 	{
 		this->set( c_serial_data_events::e_event_type::BinaryDataInbound);
+		extern_data_pointers._binary = Talos::Coordinator::Main_Process::host_serial.Buffer_Pointer;
 	}
-	else if (first_byte > 127) //<--control record
+	else if (first_byte > 127) //<--control record (settings udpate for something)
 	{
 		this->set(c_serial_data_events::e_event_type::ControlDataInbound);
 	}
@@ -63,46 +70,5 @@ void c_serial_data_events::collect()
 void c_serial_data_events::set(e_event_type event_id)
 {
 	this->event_manager.set((int)event_id);
-}
-
-void c_serial_data_events::get()
-{
-
-}
-
-void c_serial_data_events::process()
-{
-	//We only call this minor process method if the major execute method 
-	//determined it necessary
-	
-	//get and clear the serial events as we process
-	if (this->event_manager.get_clr((int)this->e_event_type::TextDataInbound))
-	{
-		Talos::Coordinator::Main_Process::host_serial.print_string("\t\tserial_data_event::process.text\r");
-		Talos::Coordinator::Main_Process::host_serial.print_string("\t\t\ttext processed!\r");
-		Talos::Coordinator::Main_Process::host_serial.SkipToEOL();
-	}
-	
-	if (this->event_manager.get_clr((int)this->e_event_type::BinaryDataInbound))
-	{
-		Talos::Coordinator::Main_Process::host_serial.print_string("\t\tserial_data_event::process.binary\r");
-		Talos::Coordinator::Main_Process::host_serial.print_string("\t\t\tbinary processed!\r");
-		Talos::Coordinator::Main_Process::host_serial.SkipToEOL();
-	
-	}
-	
-	if (this->event_manager.get_clr((int)this->e_event_type::ControlDataInbound))
-	{
-		Talos::Coordinator::Main_Process::host_serial.print_string("\t\tserial_data_event::process.control\r");
-		Talos::Coordinator::Main_Process::host_serial.print_string("\t\t\tcontrol processed!\r");
-		Talos::Coordinator::Main_Process::host_serial.SkipToEOL();
-	}
-	
-	if (this->event_manager.get_clr((int)this->e_event_type::ControlDataInbound))
-	{
-		Talos::Coordinator::Main_Process::host_serial.print_string("\t\tserial_data_event::process.invalid\r");
-		Talos::Coordinator::Main_Process::host_serial.print_string("\t\t\t::dicarded::\r");
-		Talos::Coordinator::Main_Process::host_serial.SkipToEOL();
-	}
 }
 

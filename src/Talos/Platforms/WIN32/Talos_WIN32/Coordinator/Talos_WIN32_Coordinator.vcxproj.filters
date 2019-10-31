@@ -76,6 +76,12 @@
     <ClInclude Include="Platform Specific\s_buffer.h">
       <Filter>Platform Specific</Filter>
     </ClInclude>
+    <ClInclude Include="Platform Specific\c_spi_win.h">
+      <Filter>Platform Specific</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Coordinator\Processing\Events\Data\extern_data_pointers.h">
+      <Filter>Coordinator\Processing\Events\Data</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\..\Coordinator\coordinator_main.cpp">
@@ -109,6 +115,9 @@
       <Filter>Platform Specific</Filter>
     </ClCompile>
     <ClCompile Include="Platform Specific\c_Serial.cpp">
+      <Filter>Platform Specific</Filter>
+    </ClCompile>
+    <ClCompile Include="Platform Specific\c_spi_win.cpp">
       <Filter>Platform Specific</Filter>
     </ClCompile>
   </ItemGroup>

@@ -56,6 +56,7 @@ class c_Serial
 	void Reset(void);
 	char Get();
 	char * Buffer_Pointer();
+	s_Buffer * _Buffer();
 	uint16_t FindByte_Position(uint8_t search_byte);
 	void AdvanceTail(uint16_t size);
 	char Peek();

@@ -16,6 +16,7 @@
     <ClInclude Include="..\..\..\..\Coordinator\coordinator_hardware_def.h" />
     <ClInclude Include="..\..\..\..\Coordinator\Processing\Events\c_events.h" />
     <ClInclude Include="..\..\..\..\Coordinator\Processing\Events\Data\c_data_events.h" />
+    <ClInclude Include="..\..\..\..\Coordinator\Processing\Events\Data\extern_data_pointers.h" />
     <ClInclude Include="..\..\..\..\Coordinator\Processing\Events\Data\Network\c_network_data_events.h" />
     <ClInclude Include="..\..\..\..\Coordinator\Processing\Events\Data\Serial\c_serial_data_events.h" />
     <ClInclude Include="..\..\..\..\Coordinator\Processing\Events\Data\SPI\c_spi_data_events.h" />
@@ -26,6 +27,7 @@
     <ClInclude Include="Platform Specific\c_core_win.h" />
     <ClInclude Include="Platform Specific\c_Serial.h" />
     <ClInclude Include="Platform Specific\c_serial_win.h" />
+    <ClInclude Include="Platform Specific\c_spi_win.h" />
     <ClInclude Include="Platform Specific\s_buffer.h" />
   </ItemGroup>
   <ItemGroup>
@@ -40,6 +42,7 @@
     <ClCompile Include="Platform Specific\c_core_win.cpp" />
     <ClCompile Include="Platform Specific\c_Serial.cpp" />
     <ClCompile Include="Platform Specific\c_serial_win.cpp" />
+    <ClCompile Include="Platform Specific\c_spi_win.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{842D3902-7944-4D31-868D-EDAD55DD8A7E}</ProjectGuid>
