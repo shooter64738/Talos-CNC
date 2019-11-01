@@ -5,7 +5,7 @@ struct s_data_pointers
 {
 	uint8_t *_text;
 	uint8_t *_binary;
-	s_Buffer * _buffer_pointer;
+	
 
 };
 

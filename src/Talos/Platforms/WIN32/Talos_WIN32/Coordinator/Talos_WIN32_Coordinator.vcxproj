@@ -22,13 +22,13 @@
     <ClInclude Include="..\..\..\..\Coordinator\Processing\Events\Data\SPI\c_spi_data_events.h" />
     <ClInclude Include="..\..\..\..\Coordinator\Processing\Events\System\c_system_events.h" />
     <ClInclude Include="..\..\..\..\Coordinator\Processing\Main\Main_Process.h" />
+    <ClInclude Include="..\..\..\..\Coordinator\Serial\c_Serial.h" />
+    <ClInclude Include="..\..\..\..\c_ring_template.h" />
     <ClInclude Include="..\..\..\..\physical_machine_parameters.h" />
     <ClInclude Include="..\..\..\..\records_def.h" />
     <ClInclude Include="Platform Specific\c_core_win.h" />
-    <ClInclude Include="Platform Specific\c_Serial.h" />
     <ClInclude Include="Platform Specific\c_serial_win.h" />
     <ClInclude Include="Platform Specific\c_spi_win.h" />
-    <ClInclude Include="Platform Specific\s_buffer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\..\Coordinator\coordinator_main.cpp" />
@@ -39,8 +39,8 @@
     <ClCompile Include="..\..\..\..\Coordinator\Processing\Events\Data\SPI\c_spi_data_events.cpp" />
     <ClCompile Include="..\..\..\..\Coordinator\Processing\Events\System\c_system_events.cpp" />
     <ClCompile Include="..\..\..\..\Coordinator\Processing\Main\Main_Process.cpp" />
+    <ClCompile Include="..\..\..\..\Coordinator\Serial\c_Serial.cpp" />
     <ClCompile Include="Platform Specific\c_core_win.cpp" />
-    <ClCompile Include="Platform Specific\c_Serial.cpp" />
     <ClCompile Include="Platform Specific\c_serial_win.cpp" />
     <ClCompile Include="Platform Specific\c_spi_win.cpp" />
   </ItemGroup>

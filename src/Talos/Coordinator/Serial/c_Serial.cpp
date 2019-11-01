@@ -19,8 +19,8 @@
 */
 
 #include "c_Serial.h"
-#include "..\..\hardware_def.h"
-#include "..\..\communication_def.h"
+#include "../coordinator_hardware_def.h"
+#include "../../communication_def.h"
 #include "../../c_ring_template.h"
 
 static c_ring_buffer<char> rxBuffer[2];
@@ -41,7 +41,13 @@ c_Serial::c_Serial(uint8_t Port, uint32_t BaudRate)
 
 bool c_Serial::HasData()
 {
-	Hardware_Abstraction_Layer::Serial::hasdata(this->_port);
+	return Hardware_Abstraction_Layer::Serial::rxBuffer[this->_port].has_data();
+
+}
+
+char c_Serial::Peek()
+{
+	return Hardware_Abstraction_Layer::Serial::rxBuffer[0].peek();
 }
 
 /*This sends the specified string. It will not return until transmission is complete*/

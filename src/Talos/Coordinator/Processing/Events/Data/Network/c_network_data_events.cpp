@@ -49,7 +49,7 @@ void c_network_data_events::get()
 	if (this->event_manager.get_clr((int)this->e_event_type::HostSerialDataArrival))
 	{
 		Talos::Coordinator::Main_Process::host_serial.print_string("data get");
-		Talos::Coordinator::Main_Process::host_serial.SkipToEOL();
+		
 	}
 
 }

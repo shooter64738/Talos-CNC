@@ -28,8 +28,10 @@ void Hardware_Abstraction_Layer::Spi::init_slave()
 
 uint8_t Hardware_Abstraction_Layer::Spi::rx_tx(uint8_t data)
 {
+	return 0;
 }
 
 bool Hardware_Abstraction_Layer::Spi::has_data()
 {
+	return false;
 }

@@ -4,10 +4,11 @@
 * Created: 2/27/2019 10:45:58 AM
 * Author: jeff_d
 */
-#include "s_buffer.h"
 
 #ifndef __C_SERIAL_WIN_H__
 #define __C_SERIAL_WIN_H__
+
+#include "../../../../../c_ring_template.h"
 
 namespace Hardware_Abstraction_Layer
 {
@@ -15,7 +16,7 @@ namespace Hardware_Abstraction_Layer
 	{
 		//variables
 		public:
-		static s_Buffer rxBuffer[];
+		static c_ring_buffer<char> rxBuffer[];
 		protected:
 		private:
 
@@ -24,8 +25,7 @@ namespace Hardware_Abstraction_Layer
 		static void initialize(uint8_t Port, uint32_t BaudRate);
 		static void send(uint8_t Port, char byte);
 		static void add_to_buffer(uint8_t port, const char * data);
-		static void add_to_buffer(uint8_t port, const char * data, uint8_t data_size);
-		static void _add(uint8_t port, char byte, uint16_t position);
+		static bool hasdata(uint8_t port);
 
 		static void disable_tx_isr();
 		static void enable_tx_isr();

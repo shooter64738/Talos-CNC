@@ -9,13 +9,15 @@
 #include "c_serial_win.h"
 #include "c_core_win.h"
 #include <iostream>
+#include "../../../../../c_ring_template.h"
 
 #define COM_PORT_COUNT 3 //<--how many serial ports does this hardware have (or) how many do you need to use. 
-s_Buffer Hardware_Abstraction_Layer::Serial::rxBuffer[COM_PORT_COUNT];
+c_ring_buffer<char> Hardware_Abstraction_Layer::Serial::rxBuffer[COM_PORT_COUNT];
+static char port1_buffer[256];
 
 void Hardware_Abstraction_Layer::Serial::initialize(uint8_t Port, uint32_t BaudRate)
 {
-
+	Hardware_Abstraction_Layer::Serial::rxBuffer[Port].initialize(port1_buffer, 256);
 }
 
 void Hardware_Abstraction_Layer::Serial::send(uint8_t Port, char byte)
@@ -27,29 +29,15 @@ void Hardware_Abstraction_Layer::Serial::add_to_buffer(uint8_t port, const char 
 {
 	while (*data != 0)
 	{
-		Hardware_Abstraction_Layer::Serial::_add(port, *data++, rxBuffer[port].Head++);
+		Hardware_Abstraction_Layer::Serial::rxBuffer[port].put(*data,'\r');
 	}
 	/*rxBuffer[port].Buffer[rxBuffer[port].Head++] = 13;
 	rxBuffer[port].EOL++;*/
 }
 
-void Hardware_Abstraction_Layer::Serial::add_to_buffer(uint8_t port, const char * data, uint8_t data_size)
+bool Hardware_Abstraction_Layer::Serial::hasdata(uint8_t port)
 {
-	for (int i=0;i<data_size;i++)
-	{
-		Hardware_Abstraction_Layer::Serial::_add(port, *data++, rxBuffer[port].Head++);
-		if (rxBuffer[port].Head == RX_BUFFER_SIZE)
-			rxBuffer[port].Head = 0;
-	}
-	/*rxBuffer[port].Buffer[rxBuffer[port].Head++] = 13;
-	rxBuffer[port].EOL++;*/
-}
-
-void Hardware_Abstraction_Layer::Serial::_add(uint8_t port, char byte, uint16_t position)
-{
-	rxBuffer[port].Buffer[position] = byte;
-	if (byte == 13)
-		rxBuffer[port].EOL++;
+	return Hardware_Abstraction_Layer::Serial::rxBuffer[port].has_data();
 }
 
 void Hardware_Abstraction_Layer::Serial::disable_tx_isr()

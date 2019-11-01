@@ -4,9 +4,8 @@
 * Created: 2/27/2019 10:45:58 AM
 * Author: jeff_d
 */
-#include "..\..\..\..\hardware_def.h"
-#include "..\..\..\..\Common\Serial\s_Buffer.h"
-#ifdef MSVC
+
+
 
 #ifndef __C_SERIAL_WIN_H__
 #define __C_SERIAL_WIN_H__
@@ -17,7 +16,7 @@ namespace Hardware_Abstraction_Layer
 	{
 		//variables
 		public:
-		static s_Buffer rxBuffer[];
+		//static s_Buffer rxBuffer[];
 		protected:
 		private:
 
@@ -36,4 +35,3 @@ namespace Hardware_Abstraction_Layer
 	}; 
 };
 #endif //__C_SERIAL_WIN_H__
-#endif

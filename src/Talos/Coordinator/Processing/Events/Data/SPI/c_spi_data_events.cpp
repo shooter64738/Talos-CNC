@@ -74,14 +74,12 @@ void c_spi_data_events::process()
 	{
 		Talos::Coordinator::Main_Process::host_serial.print_string("\t\tserial_data_event::process.text\r");
 		Talos::Coordinator::Main_Process::host_serial.print_string("\t\t\ttext processed!\r");
-		Talos::Coordinator::Main_Process::host_serial.SkipToEOL();
 	}
 	
 	if (this->event_manager.get_clr((int)this->e_event_type::BinaryDataInbound))
 	{
 		Talos::Coordinator::Main_Process::host_serial.print_string("\t\tserial_data_event::process.binary\r");
 		Talos::Coordinator::Main_Process::host_serial.print_string("\t\t\tbinary processed!\r");
-		Talos::Coordinator::Main_Process::host_serial.SkipToEOL();
 		
 	}
 	
@@ -89,14 +87,12 @@ void c_spi_data_events::process()
 	{
 		Talos::Coordinator::Main_Process::host_serial.print_string("\t\tserial_data_event::process.control\r");
 		Talos::Coordinator::Main_Process::host_serial.print_string("\t\t\tcontrol processed!\r");
-		Talos::Coordinator::Main_Process::host_serial.SkipToEOL();
 	}
 	
 	if (this->event_manager.get_clr((int)this->e_event_type::ControlDataInbound))
 	{
 		Talos::Coordinator::Main_Process::host_serial.print_string("\t\tserial_data_event::process.invalid\r");
 		Talos::Coordinator::Main_Process::host_serial.print_string("\t\t\t::dicarded::\r");
-		Talos::Coordinator::Main_Process::host_serial.SkipToEOL();
 	}
 }
 

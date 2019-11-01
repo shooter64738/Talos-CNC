@@ -16,11 +16,13 @@
 #if(COM_PORT_COUNT<1)
 #error COM_PORT_COUNT must be at least 1, or the array will not exist!;
 #endif
-s_Buffer Hardware_Abstraction_Layer::Serial::rxBuffer[COM_PORT_COUNT];
-//c_Serial Hardware_Abstraction_Layer::Serial::port[COM_PORT_COUNT];
+c_ring_buffer<char> Hardware_Abstraction_Layer::Serial::rxBuffer[COM_PORT_COUNT];
+static char port1_buffer[256];
+
 
 void Hardware_Abstraction_Layer::Serial::initialize(uint8_t Port, uint32_t BaudRate)
 {
+Hardware_Abstraction_Layer::Serial::rxBuffer[Port].initialize(port1_buffer, 256);
 	
 	uint16_t UBRR_value =0;
 	switch (Port)

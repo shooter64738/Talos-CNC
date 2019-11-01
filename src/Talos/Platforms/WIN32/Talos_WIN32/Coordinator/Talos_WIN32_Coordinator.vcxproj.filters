@@ -34,6 +34,9 @@
     <Filter Include="Platform Specific">
       <UniqueIdentifier>{51d1af73-ac0a-4e0f-8bf5-f4995cf5d2e6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Coordinator\Serial">
+      <UniqueIdentifier>{24bee58c-eb2d-4480-8ac8-0886749428b0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\bit_manipulation.h" />
@@ -70,17 +73,15 @@
     <ClInclude Include="Platform Specific\c_serial_win.h">
       <Filter>Platform Specific</Filter>
     </ClInclude>
-    <ClInclude Include="Platform Specific\c_Serial.h">
-      <Filter>Platform Specific</Filter>
-    </ClInclude>
-    <ClInclude Include="Platform Specific\s_buffer.h">
-      <Filter>Platform Specific</Filter>
-    </ClInclude>
     <ClInclude Include="Platform Specific\c_spi_win.h">
       <Filter>Platform Specific</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\Coordinator\Processing\Events\Data\extern_data_pointers.h">
       <Filter>Coordinator\Processing\Events\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\c_ring_template.h" />
+    <ClInclude Include="..\..\..\..\Coordinator\Serial\c_Serial.h">
+      <Filter>Coordinator\Serial</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -114,11 +115,11 @@
     <ClCompile Include="Platform Specific\c_serial_win.cpp">
       <Filter>Platform Specific</Filter>
     </ClCompile>
-    <ClCompile Include="Platform Specific\c_Serial.cpp">
-      <Filter>Platform Specific</Filter>
-    </ClCompile>
     <ClCompile Include="Platform Specific\c_spi_win.cpp">
       <Filter>Platform Specific</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Coordinator\Serial\c_Serial.cpp">
+      <Filter>Coordinator\Serial</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -50,12 +50,12 @@ void c_serial_data_events::collect()
 	if (first_byte>=32 && first_byte <= 127) //<--printable data (gcode)
 	{
 		this->set( c_serial_data_events::e_event_type::GCodeInbound);
-		extern_data_pointers._text = Talos::Coordinator::Main_Process::host_serial.Buffer_Pointer;
+		//extern_data_pointers._text = Talos::Coordinator::Main_Process::host_serial.Buffer_Pointer;
 	}
 	else if (first_byte > 0 && first_byte <32) //<--binary record (data from another peripheral)
 	{
 		this->set( c_serial_data_events::e_event_type::BinaryDataInbound);
-		extern_data_pointers._binary = Talos::Coordinator::Main_Process::host_serial.Buffer_Pointer;
+		//extern_data_pointers._binary = Talos::Coordinator::Main_Process::host_serial.Buffer_Pointer;
 	}
 	else if (first_byte > 127) //<--control record (settings udpate for something)
 	{

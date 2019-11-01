@@ -6,9 +6,8 @@
 */
 
 #ifdef __AVR_ATmega2560__
-#ifndef __C_CORE_AVR_2560_H__
-#define __C_CORE_AVR_2560_H__
-#define F_CPU 16000000UL
+#ifndef __C_SPI_AVR_2560_H__
+#define __C_SPI_AVR_2560_H__
 #include <stdint.h>
 #include <avr/pgmspace.h>
 #include <util/delay.h>

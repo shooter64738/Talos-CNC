@@ -39,14 +39,14 @@ void c_data_events::collect()
 	if (Talos::Coordinator::Main_Process::host_serial.HasData())
 	{
 		Talos::Coordinator::Main_Process::host_serial.print_string("\tdata_event::collect.host_data\r");
-		this->set((int)this->e_event_type::HostSerialDataArrival);
+		this->set(this->e_event_type::HostSerialDataArrival);
 		this->serial_events.collect();
 		
 	}
 	//Check for spi data
 	if (Hardware_Abstraction_Layer::Spi::has_data())
 	{
-		this->set((int)this->e_event_type::SPIBusDataArrival);
+		this->set(this->e_event_type::SPIBusDataArrival);
 		this->spi_events.collect();
 	}
 	

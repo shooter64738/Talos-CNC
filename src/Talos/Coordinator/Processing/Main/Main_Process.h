@@ -10,6 +10,7 @@
 #define __MAIN_PROCESS_H__
 
 #include "../../coordinator_hardware_def.h"
+#include "../../Serial/c_Serial.h"
 
 namespace Talos
 {

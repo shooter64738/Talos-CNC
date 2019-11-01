@@ -6,7 +6,7 @@
 */
 
 
-#include "c_core_avr_2560.h"
+#include "c_spi_avr_2560.h"
 #include <avr/interrupt.h>
 
 void Hardware_Abstraction_Layer::Spi::initialize()

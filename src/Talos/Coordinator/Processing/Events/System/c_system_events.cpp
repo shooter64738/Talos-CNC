@@ -41,7 +41,6 @@ void c_system_events::get()
 	if (this->event_manager.get_clr((int)this->e_event_type::SystemAllOk ))
 	{
 		Talos::Coordinator::Main_Process::host_serial.print_string("system error. shut down.");
-		Talos::Coordinator::Main_Process::host_serial.SkipToEOL();
 	}
 
 }

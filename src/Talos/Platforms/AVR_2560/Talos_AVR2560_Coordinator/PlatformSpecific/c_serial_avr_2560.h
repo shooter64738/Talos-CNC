@@ -9,7 +9,8 @@
 #ifndef __C_SERIAL_AVR_2560_H__
 #define __C_SERIAL_AVR_2560_H__
 #include <stdint.h>
-#include "s_buffer.h"
+#include "../../../../c_ring_template.h"
+
 
 namespace Hardware_Abstraction_Layer
 {
@@ -17,7 +18,7 @@ namespace Hardware_Abstraction_Layer
 	{
 		//variables
 		public:
-		static s_Buffer rxBuffer[];
+		static c_ring_buffer<char> rxBuffer[];
 		protected:
 		private:
 

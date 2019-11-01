@@ -85,13 +85,13 @@ void Talos::Coordinator::Events::handle_data_events()
 		if (Talos::Coordinator::Events::data_events.serial_events.event_manager.get_clr((int)c_serial_data_events::e_event_type::GCodeInbound))
 		{
 			//Here is where we link the gcode reader buffer, to its data source.
-			extern_data_pointers._buffer_pointer->
+			//extern_data_pointers._buffer_pointer->
 		}
 		//check the bit and clear at the same time
 		if (Talos::Coordinator::Events::data_events.serial_events.event_manager.get_clr((int)c_serial_data_events::e_event_type::GCodeInbound))
 		{
 			//Here is where we link the gcode reader buffer, to its data source.
-			extern_data_pointers._buffer_pointer->
+			//extern_data_pointers._buffer_pointer->
 		}
 
 	}
