@@ -20,24 +20,14 @@
 
 #include "c_events.h"
 #include "..\Main\Main_Process.h"
+#define __EXTERN_EVENTS__
+#include "extern_events_types.h"
+#include "EventHandlers\c_serial_event_handler.h"
 
-c_data_events Talos::Coordinator::Events::data_events;
-c_system_events Talos::Coordinator::Events::system_events;
-
-#include "Data/extern_data_pointers.h"
-
-//// default constructor
-//Talos::Coordinator::Events::Events()
-//{
-//}
-//// default destructor
-//Talos::Coordinator::Events::~Events()
-//{
-//}
 
 void Talos::Coordinator::Events::initialize()
 {
-	Talos::Coordinator::Events::system_events.set(c_system_events::e_event_type::SystemAllOk);
+	extern_system_events.event_manager.set((int)s_system_events::e_event_type::SystemAllOk);
 }
 
 //This is the main entry point that checks to see if an event needs to
@@ -45,8 +35,9 @@ void Talos::Coordinator::Events::initialize()
 //or in some cases on the next loop iteration
 void Talos::Coordinator::Events::process()
 {
-	//Determine which events will need to be set for execution
-	Talos::Coordinator::Events::collect();
+	//First check to make sure the system is healthy
+	if (!extern_system_events.event_manager.get((int)s_system_events::e_event_type::SystemAllOk))
+	return;
 	
 	//Execute the events having their bit flags set
 	Talos::Coordinator::Events::execute();
@@ -55,46 +46,31 @@ void Talos::Coordinator::Events::process()
 //Determine which events need their flags set
 void Talos::Coordinator::Events::collect()
 {
-	Talos::Coordinator::Events::data_events.collect();
+	
 }
 
 //Execute the events that have their flags set
 void Talos::Coordinator::Events::execute()
 {
-	//First check to make sure the system is healty
-	if (!system_events.event_manager.get((int)c_system_events::e_event_type::SystemAllOk))
-		return;
-
-	//Go through the data events and act on any having a bit set.
-	if (Talos::Coordinator::Events::data_events.event_manager._flag > 0)//<--does the major manager show an event?
+	//see if there is a data events pending
+	if (extern_data_events.event_manager._flag > 0)
 	{
-		Talos::Coordinator::Events::handle_data_events();
+		Talos::Coordinator::Events::handle_serial_events();
 	}
 	
 }
 
-void Talos::Coordinator::Events::handle_data_events()
+void Talos::Coordinator::Events::handle_serial_events()
 {
-	//We have a major event, check the minor event for details
-	if (Talos::Coordinator::Events::data_events.serial_events.event_manager._flag > 0)//<--the minor manager should show something
+	//if the event is set, check it, clear it and process it.
+	if (extern_data_events.event_manager.get_clr((int)s_data_events::e_event_type::Usart0DataArrival))
 	{
-		//Should NOT have differnt event types from the same source.
-		//We can have multiple data events, but only 1 from serial, 1 from network, 1 from spi, 1 from disk, etc...
-
-		//Check the bit and clear at the same time
-		if (Talos::Coordinator::Events::data_events.serial_events.event_manager.get_clr((int)c_serial_data_events::e_event_type::GCodeInbound))
-		{
-			//Here is where we link the gcode reader buffer, to its data source.
-			//extern_data_pointers._buffer_pointer->
-		}
-		//check the bit and clear at the same time
-		if (Talos::Coordinator::Events::data_events.serial_events.event_manager.get_clr((int)c_serial_data_events::e_event_type::GCodeInbound))
-		{
-			//Here is where we link the gcode reader buffer, to its data source.
-			//extern_data_pointers._buffer_pointer->
-		}
-
+		Talos::Coordinator::Main_Process::host_serial.print_string("data loop\r");
+		//this is a serial event, so we use the serial event handler.
+		//since it is coming from usart0, we pass that as the data buffer.
+		c_serial_event_handler::process(&Hardware_Abstraction_Layer::Serial::_usart0_buffer);
 	}
+	
 }
 
 /*

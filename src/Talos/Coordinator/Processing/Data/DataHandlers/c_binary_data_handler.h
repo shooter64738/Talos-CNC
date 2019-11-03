@@ -19,45 +19,32 @@
 */
 
 
-#ifndef __C_COORDINATOR_SPI_DATA_EVENTS_H__
-#define __C_COORDINATOR_SPI_DATA_EVENTS_H__
+#ifndef __C_COORDINATOR_BINARY_DATA_HANDLER_H__
+#define __C_COORDINATOR_BINARY_DATA_HANDLER_H__
 
 #include <stdint.h>
-#include "../../../../coordinator_hardware_def.h"
-#include "../../../../../records_def.h"
+#include "../../../../c_ring_template.h"
 
-class c_spi_data_events
+typedef void (*ret_pointer)(c_ring_buffer <char> * buffer);
+
+class c_binary_data_handler
 {
 	//variables
 	public:
-	enum class e_event_type : uint8_t
-	{
-		InvalidDataError = 0,
-		TextDataInbound = 1,
-		BinaryDataInbound = 2,
-		ControlDataInbound = 3
-	};
+	static void(*pntr_data_handler_release)();
 	
-	BinaryRecords::s_bit_flag_controller_32 event_manager;
-	
-	
-
 	protected:
 	private:
 
 
 	//functions
 	public:
-		c_spi_data_events();
-		~c_spi_data_events();
-		c_spi_data_events(const c_spi_data_events &c);
-		c_spi_data_events& operator=(const c_spi_data_events &c);
-
-	void collect();
-	void set(e_event_type event_id);
-	void get();
-	void process();
+	static ret_pointer assign_handler(c_ring_buffer <char> * buffer);
+	static void motion_control_setting_handler(c_ring_buffer <char> * buffer);
+	static void unkown_data_handler(c_ring_buffer <char> * buffer);
 	protected:
 	private:
+	
+	
 }; //c_serial_events
 #endif //__C_DATA_EVENTS_H__

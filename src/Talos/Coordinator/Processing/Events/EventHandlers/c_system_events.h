@@ -19,43 +19,29 @@
 */
 
 
-#ifndef __C_COORDINATOR_SERIAL_DATA_EVENTS_H__
-#define __C_COORDINATOR_SERIAL_DATA_EVENTS_H__
+#ifndef __C_COORDINATOR_SYSTEM_EVENTS_H__
+#define __C_COORDINATOR_SYSTEM_EVENTS_H__
 
 #include <stdint.h>
-#include "../../../../coordinator_hardware_def.h"
-#include "../../../../../records_def.h"
+#include "../../../coordinator_hardware_def.h"
+#include "../../../../records_def.h"
 
-class c_serial_data_events
+class c_system_events
 {
 	//variables
 	public:
-	enum class e_event_type : uint8_t
-	{
-		InvalidDataError = 0,
-		GCodeInbound = 1,
-		BinaryDataInbound = 2,
-		ControlDataInbound = 3
-	};
-	
-	
-	BinaryRecords::s_bit_flag_controller_32 event_manager;
-	
 	protected:
 	private:
 
 
 	//functions
 	public:
-		c_serial_data_events();
-		~c_serial_data_events();
-		c_serial_data_events(const c_serial_data_events &c);
-		c_serial_data_events& operator=(const c_serial_data_events &c);
+		c_system_events();
+		~c_system_events();
+		c_system_events(const c_system_events &c);
+		c_system_events& operator=(const c_system_events &c);
 
-	void collect();
-	void set(e_event_type event_id);
-
-protected:
+	protected:
 	private:
-}; //c_serial_events
-#endif //__C_DATA_EVENTS_H__
+}; 
+#endif 

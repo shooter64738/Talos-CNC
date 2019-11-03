@@ -41,13 +41,12 @@ c_Serial::c_Serial(uint8_t Port, uint32_t BaudRate)
 
 bool c_Serial::HasData()
 {
-	return Hardware_Abstraction_Layer::Serial::rxBuffer[this->_port].has_data();
-
+	return Hardware_Abstraction_Layer::Serial::_usart0_buffer.has_data();
 }
 
 char c_Serial::Peek()
 {
-	return Hardware_Abstraction_Layer::Serial::rxBuffer[0].peek();
+	
 }
 
 /*This sends the specified string. It will not return until transmission is complete*/
@@ -176,81 +175,3 @@ void c_Serial::print_float(float n, uint8_t decimal_places)
 	}
 	//this->Write(CR);
 }
-
-//uint8_t c_Serial::_check_tx_port_data(char ByteBuffer)
-//{
-//switch (this->_port)
-//{
-//case 0:
-//{
-//while(! (UCSR0A & (1 << UDRE0)));
-//UDR0 = ByteBuffer;
-//break;
-//}
-//case 1:
-//{
-//while(! (UCSR1A & (1 << UDRE1)));
-//UDR1 = ByteBuffer;
-//break;
-//}
-//case 2:
-//{
-//while(! (UCSR2A & (1 << UDRE2))){}
-//UDR2 = ByteBuffer;
-//break;
-//}
-//case 3:
-//{
-//while(! (UCSR3A & (1 << UDRE3))){}
-//UDR3 = ByteBuffer;
-//break;
-//}
-//
-//}
-//return FALSE;
-//}
-//
-//ISR(USART0_RX_vect)
-//{
-//char Byte = UDR0;
-//
-//if (rxBuffer[0].Head==RX_BUFFER_SIZE)
-//{rxBuffer[0].Head = 0;}
-//
-//
-////keep CR values, throw away LF values
-//if (Byte == 10)
-//return;
-//
-//rxBuffer[0].Buffer[rxBuffer[0].Head] = Byte;
-//
-//if (rxBuffer[0].Buffer[rxBuffer[0].Head] == 13)
-//rxBuffer[0].EOL++;
-//
-//rxBuffer[0].Head++;
-//
-//if (rxBuffer[0].Head == rxBuffer[0].Tail)
-//{rxBuffer[0].OverFlow=TRUE;}
-//}
-//
-//ISR(USART1_RX_vect)
-//{
-//char Byte = UDR1;
-//
-//if (rxBuffer[1].Head==RX_BUFFER_SIZE)
-//{rxBuffer[1].Head = 0;}
-//
-////keep CR values, throw away LF values
-//if (Byte == 10)
-//return;
-//
-//rxBuffer[1].Buffer[rxBuffer[1].Head] = Byte;
-//
-//if (rxBuffer[1].Buffer[rxBuffer[1].Head] == 13)
-//rxBuffer[1].EOL++;
-//
-//rxBuffer[1].Head++;
-//
-//if (rxBuffer[1].Head == rxBuffer[1].Tail)
-//{rxBuffer[1].OverFlow=TRUE;}
-//}

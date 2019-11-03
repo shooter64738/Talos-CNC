@@ -1,5 +1,5 @@
 /*
-*  c_data_events.cpp - NGC_RS274 controller.
+*  c_data_events.h - NGC_RS274 controller.
 *  A component of Talos
 *
 *  Copyright (c) 2016-2019 Jeff Dill
@@ -18,30 +18,28 @@
 *  along with Talos.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "c_system_events.h"
-#include "..\..\Main\Main_Process.h"
 
-// default constructor
-c_system_events::c_system_events()
+#ifndef __C_COORDINATOR_DATA_EVENTS_H__
+#define __C_COORDINATOR_DATA_EVENTS_H__
+
+#include <stdint.h>
+
+class c_data_events
 {
-}
-// default destructor
-c_system_events::~c_system_events()
-{
-}
+	//variables
+	public:
+	protected:
+	private:
 
-void c_system_events::set(e_event_type event_id)
-{
-	this->event_manager.set((int)event_id);
 
-}
+	//functions
+	public:
+		c_data_events();
+		~c_data_events();
+		c_data_events(const c_data_events &c);
+		c_data_events& operator=(const c_data_events &c);
 
-void c_system_events::get()
-{
-	if (this->event_manager.get_clr((int)this->e_event_type::SystemAllOk ))
-	{
-		Talos::Coordinator::Main_Process::host_serial.print_string("system error. shut down.");
-	}
-
-}
-
+	protected:
+	private:
+}; //c_serial_events
+#endif //__C_DATA_EVENTS_H__

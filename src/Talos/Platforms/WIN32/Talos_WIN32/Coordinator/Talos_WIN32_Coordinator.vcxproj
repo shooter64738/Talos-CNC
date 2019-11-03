@@ -14,6 +14,7 @@
     <ClInclude Include="..\..\..\..\bit_manipulation.h" />
     <ClInclude Include="..\..\..\..\communication_def.h" />
     <ClInclude Include="..\..\..\..\Coordinator\coordinator_hardware_def.h" />
+    <ClInclude Include="..\..\..\..\Coordinator\Processing\Data\c_data_container.h" />
     <ClInclude Include="..\..\..\..\Coordinator\Processing\Events\c_events.h" />
     <ClInclude Include="..\..\..\..\Coordinator\Processing\Events\Data\c_data_events.h" />
     <ClInclude Include="..\..\..\..\Coordinator\Processing\Events\Data\extern_data_pointers.h" />
@@ -32,6 +33,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\..\Coordinator\coordinator_main.cpp" />
+    <ClCompile Include="..\..\..\..\Coordinator\Processing\Data\c_data_container.cpp" />
     <ClCompile Include="..\..\..\..\Coordinator\Processing\Events\c_events.cpp" />
     <ClCompile Include="..\..\..\..\Coordinator\Processing\Events\Data\c_data_events.cpp" />
     <ClCompile Include="..\..\..\..\Coordinator\Processing\Events\Data\Network\c_network_data_events.cpp" />

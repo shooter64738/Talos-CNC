@@ -13,12 +13,13 @@ then move to their respective modules.
 #include "Main_Process.h"
 #include "..\Events\c_events.h"
 #include "../../../c_ring_template.h"
+#include "..\Events\extern_events_types.h"
 
-struct s_tester
-{
-	uint8_t value1;
-	uint8_t value2;
-};
+//struct s_tester
+//{
+	//uint8_t value1;
+	//uint8_t value2;
+//};
 
 c_Serial Talos::Coordinator::Main_Process::host_serial;
 
@@ -71,8 +72,7 @@ void Talos::Coordinator::Main_Process::run()
 	
 
 	//Start the eventing loop, stop loop if a critical system error occurs
-	while (Talos::Coordinator::Events::
-	system_events.event_manager.get((int)c_system_events::e_event_type::SystemAllOk))
+	while (extern_system_events.event_manager.get((int)s_system_events::e_event_type::SystemAllOk))
 	{
 		//This firmware is mostly event driven. This is the main entry point for checking
 		//which events have been set to execute, and then executing them.

@@ -84,6 +84,7 @@ namespace BinaryRecords
 #define __C_BINARY_RECORD_TYPES
 	enum class e_binary_record_types : uint8_t
 	{
+		//DO NOT use 10 or 13 as binary record type identifiers.
 		Unknown = 0,
 		Motion = 1,
 		Motion_Control_Setting = 2,
@@ -189,81 +190,9 @@ namespace BinaryRecords
 		_100 = 100
 	};
 #endif
-	struct s_bit_flag_controller_64
-	{
-		bool get(int get_value)
-		{
-			return (BitGet(_flag, get_value));
-		};
-
-		bool get_clr(int get_value)
-		{
-			bool ret = (BitGet(_flag, get_value));
-			clear(get_value);
-			return ret;
-		};
-
-		void flip(int flip_value)
-		{
-			BitFlp(_flag, flip_value);
-		};
-
-		void set(int set_value)
-		{
-			BitSet_(_flag, set_value);
-		};
-
-		void clear(int clear_value)
-		{
-			BitClr_(_flag, clear_value);
-		};
-
-		void reset()
-		{
-			_flag = 0;
-		};
-
-		uint64_t _flag;
-	};
-
-	struct s_bit_flag_controller_32
-	{
-		bool get(int get_value)
-		{
-			return (BitGet(_flag, get_value));
-		};
-		
-		bool get_clr(int get_value)
-		{
-			bool ret = (BitGet(_flag, get_value));
-			clear(get_value);
-			return ret;
-		};
-		
-		void flip(int flip_value)
-		{
-			BitFlp(_flag, flip_value);
-		};
-
-		void set(int set_value)
-		{
-			BitSet_(_flag, set_value);
-		};
-
-		void clear(int clear_value)
-		{
-			BitClr_(_flag, clear_value);
-		};
-
-		void reset()
-		{
-			_flag = 0;
-		};
 	
-		uint32_t _flag;
-	};
-	
-	struct s_bit_flag_controller_16
+	template <typename TN>
+	struct s_bit_flag_controller
 	{
 		bool get(int get_value)
 		{
@@ -297,45 +226,9 @@ namespace BinaryRecords
 			_flag = 0;
 		};
 
-		uint16_t _flag;
+		volatile TN _flag;//because this can be accessed by interrupts, i am making it volatile
 	};
 
-	struct s_bit_flag_controller_8
-	{
-		bool get(int get_value)
-		{
-			return (BitGet(_flag, get_value));
-		};
-
-		bool get_clr(int get_value)
-		{
-			bool ret = (BitGet(_flag, get_value));
-			clear(get_value);
-			return ret;
-		};
-
-		void flip(int flip_value)
-		{
-			BitFlp(_flag, flip_value);
-		};
-
-		void set(int set_value)
-		{
-			BitSet_(_flag, set_value);
-		};
-
-		void clear(int clear_value)
-		{
-			BitClr_(_flag, clear_value);
-		};
-
-		void reset()
-		{
-			_flag = 0;
-		};
-
-		uint8_t _flag;
-	};
 
 	//****************************************************************************************
 	//structs in here are packed and byte aligned on 1. This is due to sending serial data in
@@ -367,7 +260,7 @@ namespace BinaryRecords
 		uint32_t line_number = 0;
 		float axis_values[MACHINE_AXIS_COUNT];
 		s_motion_arc_values arc_values;
-		s_bit_flag_controller_32 flag;
+		s_bit_flag_controller<uint32_t> flag;
 		uint32_t sequence = 0; //system set value, used to track when a block of code as completed.
 		uint32_t _check_sum = 0;
 

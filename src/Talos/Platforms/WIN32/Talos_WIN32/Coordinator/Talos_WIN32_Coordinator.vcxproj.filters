@@ -37,6 +37,9 @@
     <Filter Include="Coordinator\Serial">
       <UniqueIdentifier>{24bee58c-eb2d-4480-8ac8-0886749428b0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Coordinator\Processing\Data">
+      <UniqueIdentifier>{4a087561-1a76-437d-9cd2-8cad15f89c95}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\bit_manipulation.h" />
@@ -83,6 +86,9 @@
     <ClInclude Include="..\..\..\..\Coordinator\Serial\c_Serial.h">
       <Filter>Coordinator\Serial</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\..\Coordinator\Processing\Data\c_data_container.h">
+      <Filter>Coordinator\Processing\Data</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\..\Coordinator\coordinator_main.cpp">
@@ -120,6 +126,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\..\Coordinator\Serial\c_Serial.cpp">
       <Filter>Coordinator\Serial</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Coordinator\Processing\Data\c_data_container.cpp">
+      <Filter>Coordinator\Processing\Data</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -18,7 +18,7 @@ namespace Hardware_Abstraction_Layer
 	{
 		//variables
 		public:
-		static c_ring_buffer<char> rxBuffer[];
+		static c_ring_buffer<char> _usart0_buffer;
 		protected:
 		private:
 
@@ -33,6 +33,7 @@ namespace Hardware_Abstraction_Layer
 		static void enable_tx_isr();
 		protected:
 		private:
+		
 		
 
 	}; //c_serial_avr_2560

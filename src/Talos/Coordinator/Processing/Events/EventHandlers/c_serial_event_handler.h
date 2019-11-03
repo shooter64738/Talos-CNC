@@ -19,38 +19,36 @@
 */
 
 
-#ifndef __C_COORDINATOR_SYSTEM_EVENTS_H__
-#define __C_COORDINATOR_SYSTEM_EVENTS_H__
+#ifndef __C_COORDINATOR_SERIAL_DATA_EVENTS_H__
+#define __C_COORDINATOR_SERIAL_DATA_EVENTS_H__
 
 #include <stdint.h>
-#include "../../../coordinator_hardware_def.h"
-#include "../../../../records_def.h"
+#include "..\..\..\..\c_ring_template.h"
 
-class c_system_events
+class c_serial_event_handler
 {
 	//variables
 	public:
-	enum class e_event_type : uint8_t
-	{
-		SystemAllOk = 1,
-		SystemCritical = 31
-	};
-	BinaryRecords::s_bit_flag_controller_32 event_manager;
-	
+	static void(*pntr_data_handler)(c_ring_buffer<char> * buffer);
 	protected:
 	private:
 
 
 	//functions
 	public:
-		c_system_events();
-		~c_system_events();
-		c_system_events(const c_system_events &c);
-		c_system_events& operator=(const c_system_events &c);
+	static void process(c_ring_buffer<char> * buffer);
+	static void data_handler_releaser();
+	//c_serial_event_handler();
+	//~c_serial_event_handler();
+	
+	//c_serial_event_handler(const c_serial_event_handler &c);
+	//c_serial_event_handler& operator=(const c_serial_event_handler &c);
 
-	void set(e_event_type event_id);
-	void get();
 	protected:
 	private:
-}; 
-#endif 
+	static void __unkown_handler(c_ring_buffer <char> * buffer);
+	static void __control_handler(c_ring_buffer <char> * buffer);
+	static void __assign_handler(c_ring_buffer<char> *buffer);
+	
+}; //c_serial_events
+#endif //__C_DATA_EVENTS_H__

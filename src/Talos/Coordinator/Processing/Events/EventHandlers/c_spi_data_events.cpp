@@ -18,39 +18,14 @@
 *  along with Talos.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "c_network_data_events.h"
-#include "../../../Main/Main_Process.h"
+#include "c_spi_data_events.h"
+#include "../../Main/Main_Process.h"
 
 // default constructor
-c_network_data_events::c_network_data_events()
+c_spi_data_events::c_spi_data_events()
 {
-} 
-  // default destructor
-c_network_data_events::~c_network_data_events()
-{
-} 
-
-void c_network_data_events::collect()
-{
-	//Check for serial host data
-	if (Talos::Coordinator::Main_Process::host_serial.HasData())
-	{
-		this->event_manager.set((int)this->e_event_type::HostSerialDataArrival);
-	}
 }
-
-void c_network_data_events::set(e_event_type event_id)
+// default destructor
+c_spi_data_events::~c_spi_data_events()
 {
-	this->event_manager.set((int)event_id);
 }
-
-void c_network_data_events::get()
-{
-	if (this->event_manager.get_clr((int)this->e_event_type::HostSerialDataArrival))
-	{
-		Talos::Coordinator::Main_Process::host_serial.print_string("data get");
-		
-	}
-
-}
-

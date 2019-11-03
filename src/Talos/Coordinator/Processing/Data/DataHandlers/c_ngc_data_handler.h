@@ -19,37 +19,19 @@
 */
 
 
-#ifndef __C_COORDINATOR_DATA_EVENTS_H__
-#define __C_COORDINATOR_DATA_EVENTS_H__
+#ifndef __C_COORDINATOR_NGC_DATA_HANDLER_H__
+#define __C_COORDINATOR_NGC_DATA_HANDLER_H__
 
 #include <stdint.h>
-#include "../../../coordinator_hardware_def.h"
-#include "../../../../records_def.h"
-#include "Serial/c_serial_data_events.h"
-#include "SPI/c_spi_data_events.h"
+#include "../../../../c_ring_template.h"
 
-class c_data_events
+typedef void (*ret_pointer)(c_ring_buffer <char> * buffer);
+
+class c_ngc_data_handler
 {
 	//variables
 	public:
-	enum class e_event_type : uint8_t
-	{
-		HostSerialDataArrival = 1,
-		SPIBusDataArrival = 2,
-		NetworkDataArrival = 3
-	};
-	BinaryRecords::s_bit_flag_controller_32 event_manager;
-	
-	enum class e_event_errors : uint8_t
-	{
-		SerialDataError = 1
-		
-		
-	};
-
-	c_serial_data_events serial_events;
-	c_spi_data_events spi_events;
-	
+	static void(*pntr_data_handler_release)();
 	
 	protected:
 	private:
@@ -57,14 +39,9 @@ class c_data_events
 
 	//functions
 	public:
-		c_data_events();
-		~c_data_events();
-		c_data_events(const c_data_events &c);
-		c_data_events& operator=(const c_data_events &c);
+	static ret_pointer assign_handler(c_ring_buffer <char> * buffer);
+	static void ngc_handler(c_ring_buffer <char> * buffer);
 
-	void collect();
-	void set(e_event_type event_id);
-	void get();
 	protected:
 	private:
 }; //c_serial_events

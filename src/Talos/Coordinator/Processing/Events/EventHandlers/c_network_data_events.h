@@ -23,20 +23,11 @@
 #define __C_COORDINATOR_NETWORK_DATA_EVENTS_H__
 
 #include <stdint.h>
-#include "../../../../coordinator_hardware_def.h"
-#include "../../../../../records_def.h"
 
 class c_network_data_events
 {
 	//variables
 	public:
-	enum class e_event_type : uint8_t
-	{
-		HostSerialDataArrival = 1,
-		test2 = 2
-	};
-	BinaryRecords::s_bit_flag_controller_32 event_manager;
-	
 	protected:
 	private:
 
@@ -48,9 +39,6 @@ class c_network_data_events
 		c_network_data_events(const c_network_data_events &c);
 		c_network_data_events& operator=(const c_network_data_events &c);
 
-	void collect();
-	void set(e_event_type event_id);
-	void get();
 	protected:
 	private:
 }; //c_serial_events

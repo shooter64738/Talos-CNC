@@ -25,8 +25,6 @@ public:
 		this->_head = 0;
 		this->_tail = 0;
 		this->_newest = 0;
-		this->_flags_count = 0;
-
 	}
 
 
@@ -38,7 +36,6 @@ public:
 		this->_head = 0;
 		this->_tail = 0;
 		this->_newest = 0;
-		this->_flags_count = 0;
 	}
 
 	void release()
@@ -58,9 +55,13 @@ public:
 		return true;
 	}
 
-	char peek()
+	char peek_tail()
 	{
 		return this->_storage_pointer[this->_tail];
+	}
+	char peek_newest()
+	{
+		return this->_storage_pointer[this->_newest];
 	}
 
 	//Return the specified type
@@ -88,19 +89,6 @@ public:
 		return data;
 	}
 
-	//Return the specified type
-	TN get(char flag)
-	{
-		//caller should check has_data before calling this. 
-
-		
-		TN data = this->get();
-		
-		if (data == flag)
-			_flags_count--;
-		return data;
-	}
-
 	//Add as the type, but copied from a byte stream
 	uint8_t put(char * data)
 	{
@@ -111,31 +99,6 @@ public:
 		//	return 0;
 		//convert byte stream to type,place data at head position, increment head
 		memcpy(&this->_storage_pointer[this->_head++], data, sizeof(TN));
-		//if we are at the size of the buffer, wrap back to zero
-		if (this->_head == this->_buffer_size)
-		{
-			this->_head = 0;
-		}
-		//if head is equal to tail after a write, we are full
-		if (this->_head == this->_tail)
-			this->_full = true;
-
-		return 1;
-	}
-
-	//Add as byte, check for flag byte
-	uint8_t put(char data, char flag)
-	{
-		//caller should check for full before calling this
-
-		//buffer is full cant add
-		//if (this->_full)
-		//	return 0;
-		
-		if (data == flag)
-			_flags_count++;
-
-		this->_storage_pointer[this->_head++] = data;
 		//if we are at the size of the buffer, wrap back to zero
 		if (this->_head == this->_buffer_size)
 		{
@@ -180,7 +143,5 @@ private:
 	uint16_t _head = 0;
 	uint16_t _tail = 0;
 	uint16_t _newest = 0;
-	uint16_t _flags_count = 0;
-
 };
 

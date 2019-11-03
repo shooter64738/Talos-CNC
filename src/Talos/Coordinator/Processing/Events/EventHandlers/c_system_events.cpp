@@ -1,5 +1,5 @@
 /*
-*  c_events.h - NGC_RS274 controller.
+*  c_data_events.cpp - NGC_RS274 controller.
 *  A component of Talos
 *
 *  Copyright (c) 2016-2019 Jeff Dill
@@ -18,42 +18,14 @@
 *  along with Talos.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef __C_COORDINATOR_EVENTS_H__
-#define __C_COORDINATOR_EVENTS_H__
+#include "c_system_events.h"
+#include "../../Main/Main_Process.h"
 
-#include <stdint.h>
-
-namespace Talos
+// default constructor
+c_system_events::c_system_events()
 {
-	namespace Coordinator
-	{
-		class Events
-		{
-			//variables
-			public:
-			protected:
-			private:
-
-
-			//functions
-			public:
-				/*Events();
-				~Events();
-				Events(const Events &c);
-				Events& operator=(const Events &c);*/
-
-			static void initialize();
-			static void process();
-			
-
-			protected:
-			private:
-			static void collect();
-			static void execute();
-
-			static void handle_serial_events();
-
-		};
-	};
-};
-#endif //__C_EVENTS_H__
+}
+// default destructor
+c_system_events::~c_system_events()
+{
+}
