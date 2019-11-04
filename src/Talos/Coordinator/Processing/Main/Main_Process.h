@@ -28,6 +28,8 @@ namespace Talos
 			public:
 			static void initialize();
 			static void run();
+
+			
 			//Main_Process();
 			//~Main_Process();
 			protected:
@@ -39,3 +41,9 @@ namespace Talos
 	};
 };
 #endif //__MAIN_PROCESS_H__
+
+
+int8_t findword(char * _word, c_ring_buffer<char> * buffer);
+int8_t findvaluetype(c_ring_buffer<char> * buffer);
+int8_t findvalue(char _word_value[], int8_t * value_type, c_ring_buffer<char> * buffer);
+void findeol(c_ring_buffer<char> * buffer);

@@ -101,9 +101,12 @@ namespace NGC_RS274
 			static float hypot_f(float x, float y);
 			static float square(float x);
 			static bool determine_motion(NGC_RS274::NGC_Binary_Block*local_block);
-			static int16_t get_word(char byte);
-			static int16_t get_value(char byte, e_value_types value_type);
-			static e_value_types get_value_type(char byte);
+			static int16_t get_word(char byte, c_ring_buffer<char> * buffer);
+			static int16_t get_value(char byte, e_value_types value_type, c_ring_buffer<char> * buffer);
+			static e_value_types get_value_type(char byte, c_ring_buffer<char> * buffer);
+			static bool is_line_terminator(char byte, c_ring_buffer<char> * buffer);
+			static void skip_ignoreables(c_ring_buffer<char>* buffer);
+			static void read_to_end_of_line(c_ring_buffer<char>* buffer);
 			//c_interpreter(const c_interpreter &c);
 			//c_interpreter& operator=(const c_interpreter &c);
 			//c_interpreter();
