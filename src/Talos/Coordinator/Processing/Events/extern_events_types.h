@@ -2,6 +2,17 @@
 #include <stdint.h>
 #include "..\..\..\records_def.h"
 
+struct s_ancillary_events
+{
+	enum class e_event_type : uint8_t
+	{
+		NGCLineReadyUsart0 = 0,
+		NGCLineErrorUsart0 = 1
+		
+	};
+	BinaryRecords::s_bit_flag_controller<uint32_t> event_manager;
+};
+
 struct s_data_events
 {
 	enum class e_event_type : uint8_t
@@ -11,9 +22,7 @@ struct s_data_events
 		Usart2DataArrival = 2,
 		Usart3DataArrival = 3,
 		SPIBusDataArrival = 4,
-		NetworkDataArrival = 5,
-		NGCLineReadyUsart0 = 6
-		
+		NetworkDataArrival = 5
 	};
 	BinaryRecords::s_bit_flag_controller<uint32_t> event_manager;
 };
@@ -29,9 +38,11 @@ struct s_system_events
 };
 #ifdef __EXTERN_EVENTS__
 s_data_events extern_data_events;
+s_ancillary_events extern_ancillary_events;
 s_system_events extern_system_events;
 
 #else
 extern s_data_events extern_data_events;
+extern s_ancillary_events extern_ancillary_events;
 extern s_system_events extern_system_events;
 #endif

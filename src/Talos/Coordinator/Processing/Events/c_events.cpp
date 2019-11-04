@@ -22,8 +22,10 @@
 #include "..\Main\Main_Process.h"
 #define __EXTERN_EVENTS__
 #include "extern_events_types.h"
-#include "EventHandlers\c_serial_event_handler.h"
 
+c_data_events Talos::Coordinator::Events::data_event_handler;
+c_system_events Talos::Coordinator::Events::system_event_handler;
+c_ancillary_event_handler Talos::Coordinator::Events::ancillary_event_handler;
 
 void Talos::Coordinator::Events::initialize()
 {
@@ -40,37 +42,27 @@ void Talos::Coordinator::Events::process()
 	return;
 	
 	//Execute the events having their bit flags set
-	Talos::Coordinator::Events::execute();
-}
+	/*
+	Need to consider handler priority. At the moment I propose this priority
+	0. system events. This could stop processing in its tracks so check this first
+	1. hardware input events. Not implemented but probably will be.
+	2. data events, such as incoming gcode, configuration records, disk or network data, etc..
+	3. ancillary events, events that spawn off because other events have taken place. (ngc data ready etc..)
+	*/
+	//0: Handle system events
+	//Talos::Coordinator::Events::system_event_handler.process();
+	//if there are any system critical events check them here and do not process further
 
-//Determine which events need their flags set
-void Talos::Coordinator::Events::collect()
-{
-	
-}
+	//1: Handle hardware events
+	//Talos::Coordinator::Events::hardware_event_handler.process();
 
-//Execute the events that have their flags set
-void Talos::Coordinator::Events::execute()
-{
-	//see if there is a data events pending
-	if (extern_data_events.event_manager._flag > 0)
-	{
-		Talos::Coordinator::Events::handle_serial_events();
-	}
-	
-}
+	//2: Handle data events
+	Talos::Coordinator::Events::data_event_handler.process();
 
-void Talos::Coordinator::Events::handle_serial_events()
-{
-	//if the event is set, check it, clear it and process it.
-	if (extern_data_events.event_manager.get_clr((int)s_data_events::e_event_type::Usart0DataArrival))
-	{
-		Talos::Coordinator::Main_Process::host_serial.print_string("data loop\r");
-		//this is a serial event, so we use the serial event handler.
-		//since it is coming from usart0, we pass that as the data buffer.
-		c_serial_event_handler::process(&Hardware_Abstraction_Layer::Serial::_usart0_buffer);
-	}
-	
+	//3: Handle ancillary events
+	Talos::Coordinator::Events::ancillary_event_handler.process();
+
+
 }
 
 /*

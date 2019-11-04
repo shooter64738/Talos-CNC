@@ -35,21 +35,21 @@ void NGC_RS274::NGC_Binary_Block::initialize()
 {
 	memset(this->block_word_values, 0, sizeof(this->block_word_values));
 
-	this->active_plane.horizontal_axis.words_defined = &this->word_defined_in_block_A_Z._flag;
-	this->active_plane.vertical_axis.words_defined = &this->word_defined_in_block_A_Z._flag;
-	this->active_plane.normal_axis.words_defined = &this->word_defined_in_block_A_Z._flag;
+	this->active_plane.horizontal_axis.words_defined =(uint32_t*) &this->word_defined_in_block_A_Z._flag;
+	this->active_plane.vertical_axis.words_defined = (uint32_t*)&this->word_defined_in_block_A_Z._flag;
+	this->active_plane.normal_axis.words_defined = (uint32_t*)&this->word_defined_in_block_A_Z._flag;
 
-	this->active_plane.rotary_horizontal_axis.words_defined = &this->word_defined_in_block_A_Z._flag;
-	this->active_plane.rotary_vertical_axis.words_defined = &this->word_defined_in_block_A_Z._flag;
-	this->active_plane.rotary_normal_axis.words_defined = &this->word_defined_in_block_A_Z._flag;
+	this->active_plane.rotary_horizontal_axis.words_defined = (uint32_t*)&this->word_defined_in_block_A_Z._flag;
+	this->active_plane.rotary_vertical_axis.words_defined = (uint32_t*)&this->word_defined_in_block_A_Z._flag;
+	this->active_plane.rotary_normal_axis.words_defined = (uint32_t*)&this->word_defined_in_block_A_Z._flag;
 
-	this->active_plane.inc_horizontal_axis.words_defined = &this->word_defined_in_block_A_Z._flag;
-	this->active_plane.inc_vertical_axis.words_defined = &this->word_defined_in_block_A_Z._flag;
-	this->active_plane.inc_normal_axis.words_defined = &this->word_defined_in_block_A_Z._flag;
+	this->active_plane.inc_horizontal_axis.words_defined = (uint32_t*)&this->word_defined_in_block_A_Z._flag;
+	this->active_plane.inc_vertical_axis.words_defined = (uint32_t*)&this->word_defined_in_block_A_Z._flag;
+	this->active_plane.inc_normal_axis.words_defined = (uint32_t*)&this->word_defined_in_block_A_Z._flag;
 
-	this->arc_values.horizontal_offset.words_defined = &this->word_defined_in_block_A_Z._flag;
-	this->arc_values.vertical_offset.words_defined = &this->word_defined_in_block_A_Z._flag;
-	this->arc_values.normal_offset.words_defined = &this->word_defined_in_block_A_Z._flag;
+	this->arc_values.horizontal_offset.words_defined = (uint32_t*)&this->word_defined_in_block_A_Z._flag;
+	this->arc_values.vertical_offset.words_defined = (uint32_t*)&this->word_defined_in_block_A_Z._flag;
+	this->arc_values.normal_offset.words_defined = (uint32_t*)&this->word_defined_in_block_A_Z._flag;
 
 	this->persisted_values.feed_rate_F = &this->block_word_values[F_WORD_BIT];
 	this->persisted_values.active_tool_T = &this->block_word_values[T_WORD_BIT];

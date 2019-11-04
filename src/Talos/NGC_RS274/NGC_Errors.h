@@ -144,6 +144,9 @@ namespace NGC_RS274
 			static const uint16_t ADDRESS_VALUE_NOT_NUMERIC = 300;
 			static const uint16_t WORD_VALUE_TYPE_INVALID = 301;
 			static const uint16_t LINE_CONTAINS_NO_DATA = 302;
+			static const uint16_t ADDRESS_VALUE_PARAM_INVALID = 303;
+			static const uint16_t ADDRESS_VALUE_ERROR_UNSPECIFIED = 304;
+			
 
 			static const uint16_t CUTTER_RADIUS_COMP_NOT_XY_PLANE = 350;
 			static const uint16_t CUTTER_RADIUS_COMP_ALREADY_ACTIVE = 351;

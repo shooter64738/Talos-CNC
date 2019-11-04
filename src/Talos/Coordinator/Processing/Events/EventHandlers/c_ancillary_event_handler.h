@@ -19,34 +19,29 @@
 */
 
 
-#ifndef __C_COORDINATOR_BINARY_DATA_HANDLER_H__
-#define __C_COORDINATOR_BINARY_DATA_HANDLER_H__
+#ifndef __C_COORDINATOR_ANCILLARY_EVENTS_H__
+#define __C_COORDINATOR_ANCILLARY_EVENTS_H__
 
 #include <stdint.h>
-#include "../../../../c_ring_template.h"
+#include "..\..\..\..\c_ring_template.h"
 
-typedef void (*ret_pointer)(c_ring_buffer <char> * buffer);
-
-class c_binary_data_handler
+class c_ancillary_event_handler
 {
 	//variables
 	public:
-	static void(*pntr_data_handler_release)();
-	
 	protected:
 	private:
 
 
 	//functions
 	public:
-	static ret_pointer assign_handler(c_ring_buffer <char> * buffer);
-	static void motion_control_setting_handler(c_ring_buffer <char> * buffer);
-	static void unkown_data_handler(c_ring_buffer <char> * buffer);
-	
+	static void process();
+
 	protected:
 	private:
-	static void __release();
-	
+	static void __unkown_handler(c_ring_buffer <char> * buffer);
+	static void __control_handler(c_ring_buffer <char> * buffer);
+	static void __assign_handler(c_ring_buffer<char> *buffer);
 	
 }; //c_serial_events
 #endif //__C_DATA_EVENTS_H__

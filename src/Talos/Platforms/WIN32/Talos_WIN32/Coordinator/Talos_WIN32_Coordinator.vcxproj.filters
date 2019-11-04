@@ -10,21 +10,6 @@
     <Filter Include="Coordinator\Processing\Events">
       <UniqueIdentifier>{c88e137f-ec18-4d60-9b47-51f3022816f1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Coordinator\Processing\Events\Data">
-      <UniqueIdentifier>{8029b0a1-ff9a-4b45-ba5c-f44dcc772780}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Coordinator\Processing\Events\Data\Network">
-      <UniqueIdentifier>{6788a9e8-765f-4e2b-96a6-e4cdc5a8cde0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Coordinator\Processing\Events\Data\Serial">
-      <UniqueIdentifier>{372cfbc1-211f-47d7-b6d9-e2153eb5b885}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Coordinator\Processing\Events\Data\SPI">
-      <UniqueIdentifier>{a3d031c6-b34d-458f-bd1a-55891509b527}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Coordinator\Processing\Events\System">
-      <UniqueIdentifier>{3ea72c04-2d77-4551-86aa-7845e03d1ffd}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Coordinator\Processing\GCode">
       <UniqueIdentifier>{b7659d18-1774-4b01-abf4-dd6ae20aa73b}</UniqueIdentifier>
     </Filter>
@@ -39,6 +24,30 @@
     </Filter>
     <Filter Include="Coordinator\Processing\Data">
       <UniqueIdentifier>{4a087561-1a76-437d-9cd2-8cad15f89c95}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Coordinator\Processing\Data\DataHandlers">
+      <UniqueIdentifier>{300fd152-ba19-4944-a50d-0d980aed017f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Coordinator\Processing\Events\EventHandlers">
+      <UniqueIdentifier>{61c60540-f1f2-4611-8e5a-fde3e2afa48e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Ngc_Rs274">
+      <UniqueIdentifier>{4f78c888-d9cc-4d31-829f-49da5ea8e419}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Ngc_Rs274\MachineSpecific">
+      <UniqueIdentifier>{bdc1fc72-3687-4995-b0db-3c6f9607cf96}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Ngc_Rs274\MachineSpecific\Lathe">
+      <UniqueIdentifier>{b2b32db5-d28e-4095-aa97-81ecb00f0228}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Ngc_Rs274\MachineSpecific\Mill">
+      <UniqueIdentifier>{d003fd04-39ed-4126-8152-be37c9312c60}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Coordinator\Processing\Consumers">
+      <UniqueIdentifier>{3ba14a15-e8e5-4824-8204-747d34043628}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Motion">
+      <UniqueIdentifier>{ef714a6e-cbba-466e-97d5-1a5a039f896e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -55,21 +64,6 @@
     <ClInclude Include="..\..\..\..\Coordinator\Processing\Events\c_events.h">
       <Filter>Coordinator\Processing\Events</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Coordinator\Processing\Events\System\c_system_events.h">
-      <Filter>Coordinator\Processing\Events\System</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Coordinator\Processing\Events\Data\c_data_events.h">
-      <Filter>Coordinator\Processing\Events\Data</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Coordinator\Processing\Events\Data\Serial\c_serial_data_events.h">
-      <Filter>Coordinator\Processing\Events\Data\Serial</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Coordinator\Processing\Events\Data\SPI\c_spi_data_events.h">
-      <Filter>Coordinator\Processing\Events\Data\SPI</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Coordinator\Processing\Events\Data\Network\c_network_data_events.h">
-      <Filter>Coordinator\Processing\Events\Data\Network</Filter>
-    </ClInclude>
     <ClInclude Include="Platform Specific\c_core_win.h">
       <Filter>Platform Specific</Filter>
     </ClInclude>
@@ -79,15 +73,81 @@
     <ClInclude Include="Platform Specific\c_spi_win.h">
       <Filter>Platform Specific</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Coordinator\Processing\Events\Data\extern_data_pointers.h">
-      <Filter>Coordinator\Processing\Events\Data</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\..\c_ring_template.h" />
     <ClInclude Include="..\..\..\..\Coordinator\Serial\c_Serial.h">
       <Filter>Coordinator\Serial</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Coordinator\Processing\Data\c_data_container.h">
-      <Filter>Coordinator\Processing\Data</Filter>
+    <ClInclude Include="..\..\..\..\Coordinator\Processing\Consumer\c_ngc_consumer.h">
+      <Filter>Coordinator\Processing\Consumers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Coordinator\Processing\Data\DataHandlers\c_binary_data_handler.h">
+      <Filter>Coordinator\Processing\Data\DataHandlers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Coordinator\Processing\Data\DataHandlers\c_ngc_data_handler.h">
+      <Filter>Coordinator\Processing\Data\DataHandlers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Coordinator\Processing\Events\extern_events_types.h">
+      <Filter>Coordinator\Processing\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Coordinator\Processing\Events\EventHandlers\c_data_events.h">
+      <Filter>Coordinator\Processing\Events\EventHandlers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Coordinator\Processing\Events\EventHandlers\c_network_data_events.h">
+      <Filter>Coordinator\Processing\Events\EventHandlers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Coordinator\Processing\Events\EventHandlers\c_serial_event_handler.h">
+      <Filter>Coordinator\Processing\Events\EventHandlers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Coordinator\Processing\Events\EventHandlers\c_spi_data_events.h">
+      <Filter>Coordinator\Processing\Events\EventHandlers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Coordinator\Processing\Events\EventHandlers\c_system_events.h">
+      <Filter>Coordinator\Processing\Events\EventHandlers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\NGC_RS274\NGC_Block.h">
+      <Filter>Ngc_Rs274</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\NGC_RS274\ngc_defines.h">
+      <Filter>Ngc_Rs274</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\NGC_RS274\NGC_Errors.h">
+      <Filter>Ngc_Rs274</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\NGC_RS274\NGC_G_Groups.h">
+      <Filter>Ngc_Rs274</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\NGC_RS274\NGC_Interpreter.h">
+      <Filter>Ngc_Rs274</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\NGC_RS274\NGC_M_Groups.h">
+      <Filter>Ngc_Rs274</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\NGC_RS274\NGC_Parameters.h">
+      <Filter>Ngc_Rs274</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\NGC_RS274\Machine Specific\Lathe\NGC_G_Codes.h">
+      <Filter>Ngc_Rs274\MachineSpecific\Lathe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\NGC_RS274\Machine Specific\Lathe\NGC_Lathe.h">
+      <Filter>Ngc_Rs274\MachineSpecific\Lathe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\NGC_RS274\Machine Specific\Lathe\NGC_M_Codes.h">
+      <Filter>Ngc_Rs274\MachineSpecific\Lathe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\NGC_RS274\Machine Specific\Mill\NGC_G_Codes.h">
+      <Filter>Ngc_Rs274\MachineSpecific\Mill</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\NGC_RS274\Machine Specific\Mill\NGC_M_Codes.h">
+      <Filter>Ngc_Rs274\MachineSpecific\Mill</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\NGC_RS274\Machine Specific\Mill\NGC_Mill.h">
+      <Filter>Ngc_Rs274\MachineSpecific\Mill</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Coordinator\Processing\Events\EventHandlers\c_ancillary_event_handler.h">
+      <Filter>Coordinator\Processing\Events\EventHandlers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Motion\c_gcode_buffer.h">
+      <Filter>Motion</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -99,21 +159,6 @@
     </ClCompile>
     <ClCompile Include="..\..\..\..\Coordinator\Processing\Events\c_events.cpp">
       <Filter>Coordinator\Processing\Events</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\Coordinator\Processing\Events\System\c_system_events.cpp">
-      <Filter>Coordinator\Processing\Events\System</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\Coordinator\Processing\Events\Data\c_data_events.cpp">
-      <Filter>Coordinator\Processing\Events\Data</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\Coordinator\Processing\Events\Data\Serial\c_serial_data_events.cpp">
-      <Filter>Coordinator\Processing\Events\Data\Serial</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\Coordinator\Processing\Events\Data\SPI\c_spi_data_events.cpp">
-      <Filter>Coordinator\Processing\Events\Data\SPI</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\Coordinator\Processing\Events\Data\Network\c_network_data_events.cpp">
-      <Filter>Coordinator\Processing\Events\Data\Network</Filter>
     </ClCompile>
     <ClCompile Include="Platform Specific\c_core_win.cpp">
       <Filter>Platform Specific</Filter>
@@ -127,8 +172,47 @@
     <ClCompile Include="..\..\..\..\Coordinator\Serial\c_Serial.cpp">
       <Filter>Coordinator\Serial</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\Coordinator\Processing\Data\c_data_container.cpp">
-      <Filter>Coordinator\Processing\Data</Filter>
+    <ClCompile Include="..\..\..\..\Coordinator\Processing\Consumer\c_ngc_consumer.cpp">
+      <Filter>Coordinator\Processing\Consumers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Coordinator\Processing\Data\DataHandlers\c_binary_data_handler.cpp">
+      <Filter>Coordinator\Processing\Data\DataHandlers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Coordinator\Processing\Data\DataHandlers\c_ngc_data_handler.cpp">
+      <Filter>Coordinator\Processing\Data\DataHandlers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Coordinator\Processing\Events\EventHandlers\c_data_events.cpp">
+      <Filter>Coordinator\Processing\Events\EventHandlers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Coordinator\Processing\Events\EventHandlers\c_network_data_events.cpp">
+      <Filter>Coordinator\Processing\Events\EventHandlers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Coordinator\Processing\Events\EventHandlers\c_serial_event_handler.cpp">
+      <Filter>Coordinator\Processing\Events\EventHandlers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Coordinator\Processing\Events\EventHandlers\c_spi_data_events.cpp">
+      <Filter>Coordinator\Processing\Events\EventHandlers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Coordinator\Processing\Events\EventHandlers\c_system_events.cpp">
+      <Filter>Coordinator\Processing\Events\EventHandlers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\NGC_RS274\NGC_Block.cpp">
+      <Filter>Ngc_Rs274</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\NGC_RS274\NGC_Interpreter.cpp">
+      <Filter>Ngc_Rs274</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\NGC_RS274\Machine Specific\Lathe\NGC_Lathe.cpp">
+      <Filter>Ngc_Rs274\MachineSpecific\Lathe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\NGC_RS274\Machine Specific\Mill\NGC_Mill.cpp">
+      <Filter>Ngc_Rs274\MachineSpecific\Mill</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Coordinator\Processing\Events\EventHandlers\c_ancillary_event_handler.cpp">
+      <Filter>Coordinator\Processing\Events\EventHandlers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Motion\c_gcode_buffer.cpp">
+      <Filter>Motion</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

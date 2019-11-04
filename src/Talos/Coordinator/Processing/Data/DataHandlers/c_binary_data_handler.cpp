@@ -60,8 +60,7 @@ ret_pointer c_binary_data_handler::assign_handler(c_ring_buffer <char> * buffer)
 
 void c_binary_data_handler::motion_control_setting_handler(c_ring_buffer <char> * buffer)
 {
-	//release the handler because we should be done with it now.
-	c_binary_data_handler::pntr_data_handler_release();
+	c_binary_data_handler::__release();
 	Talos::Coordinator::Main_Process::host_serial.print_string("binary\r");
 }
 
@@ -71,5 +70,14 @@ void c_binary_data_handler::unkown_data_handler(c_ring_buffer <char> * buffer)
 	char peek_newest = buffer->peek_tail();
 	Talos::Coordinator::Main_Process::host_serial.print_string("UKNOWN:");
 	Talos::Coordinator::Main_Process::host_serial.print_int32(peek_newest);
-	c_binary_data_handler::pntr_data_handler_release();
+	c_binary_data_handler::__release();
+
+}
+
+void c_binary_data_handler::__release()
+{
+		//release the handler because we should be done with it now.
+		c_binary_data_handler::pntr_data_handler_release();
+		//set the handler release to null now. we dont need it
+		c_binary_data_handler::pntr_data_handler_release = NULL;
 }

@@ -53,7 +53,7 @@ namespace NGC_RS274
 			Canned_Cycle_Active = 14
 		};
 
-		BinaryRecords::s_bit_flag_controller_16 event_manager;
+		BinaryRecords::s_bit_flag_controller<uint16_t> event_manager;
 
 		typedef struct s_persisted_values
 		{
@@ -132,11 +132,11 @@ namespace NGC_RS274
 		float block_word_values[COUNT_OF_BLOCK_WORDS_ARRAY];
 		//This is a 4 byte (32 bit) variable. If a word was defined on the line its respective bit is set.
 		//uint32_t word_defined_in_block_A_Z;
-		BinaryRecords::s_bit_flag_controller_32 word_defined_in_block_A_Z;
+		BinaryRecords::s_bit_flag_controller<uint32_t> word_defined_in_block_A_Z;
 		//This is a 2 byte (16 bit) variable. If a G command was defined for a G group we store its bits in here.
-		BinaryRecords::s_bit_flag_controller_32 g_code_defined_in_block;
+		BinaryRecords::s_bit_flag_controller<uint32_t> g_code_defined_in_block;
 		//This is a 2 byte (16 bit) variable. If a M command was defined for an M group we store its bits in here.
-		BinaryRecords::s_bit_flag_controller_32 m_code_defined_in_block;
+		BinaryRecords::s_bit_flag_controller<uint32_t> m_code_defined_in_block;
 		//These initialize with -1 values. 0 is a valid value for some blocks, so setting them to -1 indicates the value was never explicitly set.
 		uint16_t g_group[COUNT_OF_G_CODE_GROUPS_ARRAY]; //There are 14 groups of gcodes (0-13)
 		uint16_t m_group[COUNT_OF_M_CODE_GROUPS_ARRAY]; //There are 5 groups of mcodes (0-4)

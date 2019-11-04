@@ -19,14 +19,41 @@
 */
 
 #include "c_data_events.h"
-#include "../../Main/Main_Process.h"
+#include "c_serial_event_handler.h"
+#include "../extern_events_types.h"
+#include "../../../coordinator_hardware_def.h"
 
 
-// default constructor
-c_data_events::c_data_events()
+//Execute the events that have their flags set
+void c_data_events::process()
 {
+	//see if there are any data events pending
+	if (extern_data_events.event_manager._flag == 0)
+	return;
+	
+	/*
+	We could refactor serial handler to be a stream handler which is more generic.
+	Currently we can process serial, spi, network, disk or any data source all at
+	the same time. If we used an instance of the stream handler for each one we
+	should still be able to, but is there any advantage to that. 
+	*/
+	
+	//if the event is set, check it, clear it and process it.
+	if (extern_data_events.event_manager.get_clr((int)s_data_events::e_event_type::Usart0DataArrival))
+	{
+		//this is a serial 0 event, so we use the serial event handler.
+		//since it is coming from usart0, we pass that as the data buffer.
+		c_serial_event_handler::process(&Hardware_Abstraction_Layer::Serial::_usart0_buffer);
+	}
+	
 }
-// default destructor
-c_data_events::~c_data_events()
-{
-}
+
+
+//// default constructor
+//c_data_events::c_data_events()
+//{
+//}
+//// default destructor
+//c_data_events::~c_data_events()
+//{
+//}

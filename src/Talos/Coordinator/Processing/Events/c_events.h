@@ -22,6 +22,9 @@
 #define __C_COORDINATOR_EVENTS_H__
 
 #include <stdint.h>
+#include "EventHandlers/c_data_events.h"
+#include "EventHandlers/c_system_events.h"
+#include "EventHandlers/c_ancillary_event_handler.h"
 
 namespace Talos
 {
@@ -31,6 +34,9 @@ namespace Talos
 		{
 			//variables
 			public:
+				static c_system_events system_event_handler;
+				static c_data_events data_event_handler;
+				static c_ancillary_event_handler ancillary_event_handler;
 			protected:
 			private:
 
@@ -49,7 +55,7 @@ namespace Talos
 			protected:
 			private:
 			static void collect();
-			static void execute();
+			static void execute_data();
 
 			static void handle_serial_events();
 

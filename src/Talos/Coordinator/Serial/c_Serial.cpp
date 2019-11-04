@@ -44,11 +44,6 @@ bool c_Serial::HasData()
 	return Hardware_Abstraction_Layer::Serial::_usart0_buffer.has_data();
 }
 
-char c_Serial::Peek()
-{
-	
-}
-
 /*This sends the specified string. It will not return until transmission is complete*/
 void c_Serial::Write(const char *Buffer)
 {

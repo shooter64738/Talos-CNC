@@ -1,5 +1,6 @@
+
 /*
-*  c_data_events.h - NGC_RS274 controller.
+*  c_gcode_buffer.h - NGC_RS274 controller.
 *  A component of Talos
 *
 *  Copyright (c) 2016-2019 Jeff Dill
@@ -18,30 +19,31 @@
 *  along with Talos.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef __C_MOTION_NGC_BUFFER_H__
+#define __C_MOTION_NGC_BUFFER_H__
+#include "..\NGC_RS274\NGC_Block.h"
+#include "..\c_ring_template.h"
+#define NGC_BUFFER_SIZE 5 //<--must be at least 2 in order for look-ahead to work.
 
-#ifndef __C_COORDINATOR_DATA_EVENTS_H__
-#define __C_COORDINATOR_DATA_EVENTS_H__
-
-#include <stdint.h>
-
-class c_data_events
+namespace Talos
 {
-	//variables
-	public:
-	protected:
-	private:
+	namespace Motion
+	{
+		class NgcBuffer
+		{
+			//variables
+			public:
+			static c_ring_buffer<NGC_RS274::NGC_Binary_Block> gcode_buffer;
+			protected:
+			private:
 
-
-	//functions
-	public:
-		//c_data_events();
-		//~c_data_events();
-		//c_data_events(const c_data_events &c);
-		//c_data_events& operator=(const c_data_events &c);
-		
-		static void process();
-
-	protected:
-	private:
-}; //c_serial_events
-#endif //__C_DATA_EVENTS_H__
+			//functions
+			public:
+			static void initialize();
+			static NGC_RS274::NGC_Binary_Block prep_for_new();
+			protected:
+			private:
+		}; //c_buffer
+	};
+};
+#endif //__C_BUFFER_H__

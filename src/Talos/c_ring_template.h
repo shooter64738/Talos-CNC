@@ -55,11 +55,20 @@ public:
 		return true;
 	}
 
-	char peek_tail()
+	TN peek()
+	{
+		uint16_t peek_point = this->_tail + 1;
+		if (peek_point == this->_buffer_size)
+		{
+			peek_point = 0;
+		}
+		return this->_storage_pointer[this->_tail];
+	}
+	TN peek_tail()
 	{
 		return this->_storage_pointer[this->_tail];
 	}
-	char peek_newest()
+	TN peek_newest()
 	{
 		return this->_storage_pointer[this->_newest];
 	}
@@ -87,6 +96,26 @@ public:
 			this->_tail = 0;
 		}
 		return data;
+	}
+	
+	TN * writer_handle()
+	{
+		//caller should check has_data before calling this.
+
+		//if head==tail and not full, buffer is empty, no data to provide
+		//if ((this->_head == this->_tail) && !this->_full)
+		//	return 0;
+
+		//get the a handle for the object at the head position
+		TN * data = &this->_storage_pointer[this->_head];
+		
+		return data;
+	}
+	
+	void advance()
+	{
+		//caller should check has_data before calling this.
+		this->_head++;
 	}
 
 	//Add as the type, but copied from a byte stream
