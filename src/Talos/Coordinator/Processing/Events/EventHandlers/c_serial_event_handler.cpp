@@ -46,10 +46,12 @@ void c_serial_event_handler::process(c_ring_buffer<char> * buffer)
 	{
 		c_serial_event_handler::__assign_handler(buffer);
 	}
-	//Once a handler has been assigned we should be able to process
-	//the data pretty fast since there is no more switching or if
-	//statements
-	c_serial_event_handler::pntr_data_handler(buffer);
+
+	if (c_serial_event_handler::pntr_data_handler != NULL)
+	{
+		c_serial_event_handler::pntr_data_handler(buffer);
+	}
+
 	
 }
 
@@ -74,21 +76,21 @@ void c_serial_event_handler::__assign_handler(c_ring_buffer <char> * buffer)
 	else if (peek_tail >0 && peek_tail < 32) //non-printable and below 32 is a binary record
 	{
 		//Assign a specific handler for this data type
-		c_serial_event_handler::pntr_data_handler = c_binary_data_handler::assign_handler(buffer);
+		//c_serial_event_handler::pntr_data_handler = c_binary_data_handler::assign_handler(buffer);
 		//Assign a release call back function. The handler knows nothing about serial events
 		//and we want to keep it that way.
-		c_binary_data_handler::pntr_data_handler_release = c_serial_event_handler::data_handler_releaser;
+		//c_binary_data_handler::pntr_data_handler_release = c_serial_event_handler::data_handler_releaser;
 		
 	}
 	else if (peek_tail >127) //non-printable and above 127 is a control code
 	{
 		//this is control data, probably just a single byte
-		c_serial_event_handler::pntr_data_handler = c_serial_event_handler::__control_handler;
+		//c_serial_event_handler::pntr_data_handler = c_serial_event_handler::__control_handler;
 		//c_ngc_data_handler::pntr_data_handler_release = c_serial_event_handler::data_handler_releaser;
 	}
 	else //we dont know what kind of data it is
 	{
-		c_serial_event_handler::pntr_data_handler = c_serial_event_handler::__unkown_handler;
+		//c_serial_event_handler::pntr_data_handler = c_serial_event_handler::__unkown_handler;
 		//c_ngc_data_handler::pntr_data_handler_release = c_serial_event_handler::data_handler_releaser;
 	}
 }
@@ -109,9 +111,17 @@ void c_serial_event_handler::__control_handler(c_ring_buffer <char> * buffer)
 	Talos::Coordinator::Main_Process::host_serial.print_string("control\r");
 }
 
-void c_serial_event_handler::data_handler_releaser()
+
+void c_serial_event_handler::data_handler_releaser(c_ring_buffer<char> * released_buffer)
 {
 	c_serial_event_handler::pntr_data_handler = NULL;
+	//We may have read SOME data, but that doesnt mean we read all the data in the buffer
+	//if (released_buffer->has_data())
+	//{
+	//	//Still have data to read so just repoint to the data type assigner
+	//	c_serial_event_handler::pntr_data_handler = c_serial_event_handler::process;
+	//	c_serial_event_handler::pntr_data_handler(released_buffer);
+	//}
 }
 
 //// default constructor

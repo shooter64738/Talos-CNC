@@ -26,13 +26,13 @@
 #include "../../../../c_ring_template.h"
 #include "../../../../NGC_RS274/NGC_Block.h"
 
-typedef void (*ret_pointer)(c_ring_buffer <char> * buffer);
+typedef void(*ret_pointer)(c_ring_buffer <char> * buffer);
 
 class c_ngc_data_handler
 {
 	//variables
 	public:
-	static void(*pntr_data_handler_release)();
+	static void(*pntr_data_handler_release)(c_ring_buffer<char> * buffer);
 	
 	protected:
 	private:
@@ -44,10 +44,10 @@ class c_ngc_data_handler
 	static void ngc_handler(c_ring_buffer <char> * buffer);
 	//static void ngc_load_block(NGC_RS274::NGC_Binary_Block * ngc_block, c_ring_buffer <char> * string_buffer);
 	static void ngc_load_block(c_ring_buffer <char> * buffer_source
-		, c_ring_buffer <NGC_RS274::NGC_Binary_Block> * buffer_destination);
+	, c_ring_buffer <NGC_RS274::NGC_Binary_Block> * buffer_destination);
 	protected:
 	private:
-	static void __release();
-	
+	static void __release(c_ring_buffer <char> * buffer_source);
+	static void __assign_error_handler(c_ring_buffer <char> * buffer_source, uint16_t error_value);
 }; //c_serial_events
 #endif //__C_DATA_EVENTS_H__

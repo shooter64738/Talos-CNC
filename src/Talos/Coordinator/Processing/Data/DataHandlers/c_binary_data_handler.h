@@ -25,7 +25,7 @@
 #include <stdint.h>
 #include "../../../../c_ring_template.h"
 
-typedef void (*ret_pointer)(c_ring_buffer <char> * buffer);
+typedef void (*xret_pointer)(c_ring_buffer <char> * buffer);
 
 class c_binary_data_handler
 {
@@ -39,7 +39,7 @@ class c_binary_data_handler
 
 	//functions
 	public:
-	static ret_pointer assign_handler(c_ring_buffer <char> * buffer);
+	static xret_pointer assign_handler(c_ring_buffer <char> * buffer);
 	static void motion_control_setting_handler(c_ring_buffer <char> * buffer);
 	static void unkown_data_handler(c_ring_buffer <char> * buffer);
 	

@@ -9,8 +9,8 @@
 #ifndef COMMUNICATION_DEF_H_
 #define COMMUNICATION_DEF_H_
 
-#define CR 13
-#define LF 10
+#define CR '\r'
+#define LF '\l'
 
 
 

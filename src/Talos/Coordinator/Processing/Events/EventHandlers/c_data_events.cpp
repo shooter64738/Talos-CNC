@@ -29,23 +29,52 @@ void c_data_events::process()
 {
 	//see if there are any data events pending
 	if (extern_data_events.event_manager._flag == 0)
-	return;
-	
+		return;
+
 	/*
 	We could refactor serial handler to be a stream handler which is more generic.
 	Currently we can process serial, spi, network, disk or any data source all at
 	the same time. If we used an instance of the stream handler for each one we
-	should still be able to, but is there any advantage to that. 
+	should still be able to, but is there any advantage to that.
 	*/
-	
-	//if the event is set, check it, clear it and process it.
-	if (extern_data_events.event_manager.get_clr((int)s_data_events::e_event_type::Usart0DataArrival))
+
+	//if the event is set, check it and process it.
+	//We do not clear the event flag here. We let the handler clear it, so that it reads all the data
+	//in the buffer
+	if (extern_data_events.event_manager.get((int)s_data_events::e_event_type::Usart0DataArrival))
 	{
-		//this is a serial 0 event, so we use the serial event handler.
-		//since it is coming from usart0, we pass that as the data buffer.
-		c_serial_event_handler::process(&Hardware_Abstraction_Layer::Serial::_usart0_buffer);
+		//Once a handler has been assigned we should be able to process
+		//the data pretty fast since there is no more switching or if
+		//statements
+		/*
+		If this is NGC data, there could be multiple 'lines' come into the 256 byte array. We will
+		only read one 'line' at a time and then stop. We will process that gcode through the interpreter
+		and then release the handler. If the buffers 'has_data' is true we will reassign the handler
+		within the event handler so that it can again determine what type of data it is and then process
+		it further. We do this because one 256 buffer could contain ngc, binary, or control data. We
+		just dont know until we get there. 
+		*/
+
+		//See if all buffered data is processed
+		if (Hardware_Abstraction_Layer::Serial::_usart0_buffer.has_data())
+		{
+			//this is a serial 0 event, so we use the serial event handler.
+			//since it is coming from usart0, we pass that as the data buffer.
+			c_serial_event_handler::process(&Hardware_Abstraction_Layer::Serial::_usart0_buffer);
+		}
+		else
+		{
+			extern_data_events.event_manager.clear((int)s_data_events::e_event_type::Usart0DataArrival);
+		}
+
+		
+		
+
+
 	}
-	
+
+
+
 }
 
 

@@ -33,15 +33,15 @@ void c_ancillary_event_handler::process()
 	return;
 	
 	//if the event is set, check it, clear it and process it.
-	if (extern_ancillary_events.event_manager.get_clr((int)s_ancillary_events::e_event_type::NGCLineReadyUsart0))
+	if (extern_ancillary_events.event_manager.get_clr((int)s_ancillary_events::e_event_type::NGCBlockReady))
 	{
-		//NGC_RS274::NGC_Binary_Block * new_block = Talos::Motion::NgcBuffer::gcode_buffer.writer_handle();
-		
-		Talos::Coordinator::Main_Process::host_serial.print_string("NGC READY\r");
-		//There must be data ready in a buffer to load an ngc block. Because the event
-		//was set on a specific source we just pass in that buffer to read from. 
-		c_ngc_data_handler::ngc_load_block(&Hardware_Abstraction_Layer::Serial::_usart0_buffer
-			, &Talos::Motion::NgcBuffer::gcode_buffer);
+		////NGC_RS274::NGC_Binary_Block * new_block = Talos::Motion::NgcBuffer::gcode_buffer.writer_handle();
+		//
+		//Talos::Coordinator::Main_Process::host_serial.print_string("NGC READY\r");
+		////There must be data ready in a buffer to load an ngc block. Because the event
+		////was set on a specific source we just pass in that buffer to read from. 
+		//c_ngc_data_handler::ngc_load_block(&Hardware_Abstraction_Layer::Serial::_usart0_buffer
+		//	, &Talos::Motion::NgcBuffer::gcode_buffer);
 	}
 	
 }

@@ -1,17 +1,31 @@
 
 #include <stdint.h>
 #include "..\..\..\records_def.h"
+#ifndef __EXTERN_DATA_EVENTS
+#define __EXTERN_DATA_EVENTS
 
 struct s_ancillary_events
 {
 	enum class e_event_type : uint8_t
 	{
-		NGCLineReadyUsart0 = 0,
-		NGCLineErrorUsart0 = 1
+		NGCBlockReady = 0
 		
+
 	};
 	BinaryRecords::s_bit_flag_controller<uint32_t> event_manager;
 };
+
+struct s_ngc_error_events
+{
+	enum class e_event_type : uint8_t
+	{
+		BlockContiansNoData = 0
+
+
+	};
+	BinaryRecords::s_bit_flag_controller<uint32_t> event_manager;
+};
+
 
 struct s_data_events
 {
@@ -46,3 +60,4 @@ extern s_data_events extern_data_events;
 extern s_ancillary_events extern_ancillary_events;
 extern s_system_events extern_system_events;
 #endif
+#endif // !__EXTERN_DATA_EVENTS

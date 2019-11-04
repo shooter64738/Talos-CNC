@@ -24,6 +24,7 @@
 #include "..\..\..\..\NGC_RS274\NGC_Interpreter.h"
 #include "..\..\..\..\c_ring_template.h"
 #include "..\..\..\..\NGC_RS274\NGC_Errors.h"
+#include "..\..\..\..\Motion\c_gcode_buffer.h"
 
 /*
 We should NEVER include this file, this way these handlers stay totally
@@ -39,7 +40,7 @@ Cant call the event handler because from within here, we have
 no way to tell which event handler set this up. Could have
 been serial, spi, network, disk, etc..
 */
-void(*c_ngc_data_handler::pntr_data_handler_release)();
+void(*c_ngc_data_handler::pntr_data_handler_release)(c_ring_buffer<char> * buffer);
 
 ret_pointer c_ngc_data_handler::assign_handler(c_ring_buffer <char> * buffer)
 {
@@ -50,8 +51,23 @@ ret_pointer c_ngc_data_handler::assign_handler(c_ring_buffer <char> * buffer)
 
 void c_ngc_data_handler::ngc_handler(c_ring_buffer <char> * buffer)
 {
-	//wait for the CR to come in so we know there is a complete line
-	char peek_newest = buffer->peek_newest();
+	
+	bool has_eol = false;
+	if (buffer->has_data())
+	{
+		//wait for the CR to come in so we know there is a complete line
+		char peek_at = 0;
+
+		while (!has_eol)
+		{
+			peek_at = buffer->peek_step();
+			
+			if (peek_at == NULL)
+				break;
+			
+			has_eol = (peek_at == CR || peek_at == LF);
+		}
+	}
 
 	/*
 	Special case:
@@ -62,11 +78,14 @@ void c_ngc_data_handler::ngc_handler(c_ring_buffer <char> * buffer)
 	end of a line, it will cause a blank line to be interpreted by the ngc controller.
 	That can be handled internally though and the empty data discarded.
 	*/
-	if (peek_newest == CR || peek_newest == LF)
+	if (has_eol)
 	{
-		c_ngc_data_handler::__release();
+		c_ngc_data_handler::__release(buffer);
 		//set an event so the rest of the program knows we are ready with ngc data.
-		extern_ancillary_events.event_manager.set((int)s_ancillary_events::e_event_type::NGCLineReadyUsart0);
+		//extern_ancillary_events.event_manager.set((int)s_ancillary_events::e_event_type::NGCLineReadyUsart0);
+		c_ngc_data_handler::ngc_load_block(buffer
+			, &Talos::Motion::NgcBuffer::gcode_buffer);
+		
 	}
 }
 
@@ -91,14 +110,37 @@ void c_ngc_data_handler::ngc_load_block(c_ring_buffer <char> * buffer_source
 	if (return_value == NGC_RS274::Interpreter::Errors::OK)
 	{
 		buffer_destination->advance();
-		extern_ancillary_events.event_manager.set((int)s_ancillary_events::e_event_type::NGCLineReadyUsart0);
+		extern_ancillary_events.event_manager.set((int)s_ancillary_events::e_event_type::NGCBlockReady);
 	}
+	else
+	{
+		c_ngc_data_handler::__assign_error_handler(buffer_source, return_value);
+	}
+
 }
 
-void c_ngc_data_handler::__release()
+void c_ngc_data_handler::__release(c_ring_buffer <char> * buffer_source)
 {
-	//release the handler because we should be done with it now.
-	c_ngc_data_handler::pntr_data_handler_release();
+	//release the handler because we should be done with it now, but pass a flag in indicating if
+	//there is more data to read from this buffer
+	c_ngc_data_handler::pntr_data_handler_release(buffer_source);
 	//set the handler release to null now. we dont need it
 	c_ngc_data_handler::pntr_data_handler_release = NULL;
+}
+
+void c_ngc_data_handler::__assign_error_handler(c_ring_buffer <char> * buffer_source, uint16_t error_value)
+{
+	switch (error_value)
+	{
+	case NGC_RS274::Interpreter::Errors::LINE_CONTAINS_NO_DATA:
+	{
+		//These could probably be ignored.
+		extern_ancillary_events.event_manager.set((int)s_ngc_error_events::e_event_type::BlockContiansNoData);
+		break;
+	}
+	default:
+		break;
+	}
+	
+	
 }

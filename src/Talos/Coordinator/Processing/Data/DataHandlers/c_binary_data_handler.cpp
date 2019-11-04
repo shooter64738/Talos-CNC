@@ -39,7 +39,7 @@ been serial, spi, network, disk, etc..
 void(*c_binary_data_handler::pntr_data_handler_release)();
 
 //Determine which handler to use and return it to the caller.
-ret_pointer c_binary_data_handler::assign_handler(c_ring_buffer <char> * buffer)
+xret_pointer c_binary_data_handler::assign_handler(c_ring_buffer <char> * buffer)
 {
 	BinaryRecords::e_binary_record_types record_type = (BinaryRecords::e_binary_record_types)buffer->peek_tail();
 	

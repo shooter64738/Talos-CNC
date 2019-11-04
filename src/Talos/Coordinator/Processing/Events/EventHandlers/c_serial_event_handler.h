@@ -28,27 +28,30 @@
 class c_serial_event_handler
 {
 	//variables
-	public:
+public:
 	static void(*pntr_data_handler)(c_ring_buffer<char> * buffer);
-	protected:
-	private:
+
+protected:
+private:
 
 
 	//functions
-	public:
+public:
 	static void process(c_ring_buffer<char> * buffer);
-	static void data_handler_releaser();
+	//static void data_handler_releaser(bool has_data);
+	static void data_handler_releaser(c_ring_buffer<char> * has_data);
+
 	//c_serial_event_handler();
 	//~c_serial_event_handler();
-	
+
 	//c_serial_event_handler(const c_serial_event_handler &c);
 	//c_serial_event_handler& operator=(const c_serial_event_handler &c);
 
-	protected:
-	private:
+protected:
+private:
 	static void __unkown_handler(c_ring_buffer <char> * buffer);
 	static void __control_handler(c_ring_buffer <char> * buffer);
 	static void __assign_handler(c_ring_buffer<char> *buffer);
-	
+
 }; //c_serial_events
 #endif //__C_DATA_EVENTS_H__

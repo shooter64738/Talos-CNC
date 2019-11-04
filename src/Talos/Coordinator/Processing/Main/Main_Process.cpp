@@ -43,7 +43,7 @@ void Talos::Coordinator::Main_Process::initialize()
 	//Talos::Coordinator::NGC_Consumer::initialize();
 
 #ifdef MSVC
-	Hardware_Abstraction_Layer::Serial::add_to_buffer(0,"g0x1\r\ng0y#505\r\n");
+	Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "g0x1");// \r\ng0y / 505\r\n");
 #endif
 }
 

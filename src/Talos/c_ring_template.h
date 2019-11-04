@@ -64,6 +64,25 @@ public:
 		}
 		return this->_storage_pointer[this->_tail];
 	}
+
+	TN peek_step()
+	{
+		//caller should check has_data before calling this. 
+
+		//if head==tail and not full, buffer is empty, no data to provide
+		if ((this->_head == this->_peek_stepper) && !this->_full)
+			return NULL;
+		
+		//get the byte at the peek position
+		TN data = this->_storage_pointer[this->_peek_stepper++];
+		//if we are at the size of the buffer, wrap back to zero
+		if (this->_peek_stepper == this->_buffer_size)
+		{
+			this->_peek_stepper = 0;
+		}
+		return data;
+	}
+
 	TN peek_tail()
 	{
 		return this->_storage_pointer[this->_tail];
@@ -172,5 +191,6 @@ private:
 	uint16_t _head = 0;
 	uint16_t _tail = 0;
 	uint16_t _newest = 0;
+	uint16_t _peek_stepper = 0;
 };
 
