@@ -34,7 +34,7 @@
 //char NGC_RS274::Interpreter::Processor::Line[CYCLE_LINE_LENGTH];
 char * NGC_RS274::Interpreter::Processor::Line;
 int NGC_RS274::Interpreter::Processor::HasErrors = 0;
-NGC_RS274::NGC_Binary_Block NGC_RS274::Interpreter::Processor::local_block;
+NGC_RS274::NGC_Binary_Block NGC_RS274::Interpreter::Processor::worker_block;
 NGC_RS274::NGC_Binary_Block*NGC_RS274::Interpreter::Processor::stager_block;
 bool NGC_RS274::Interpreter::Processor::normalize_distance_units_to_mm = true;
 uint16_t ngc_working_group = 0;
@@ -42,28 +42,28 @@ c_Serial *NGC_RS274::Interpreter::Processor::local_serial;
 
 void NGC_RS274::Interpreter::Processor::initialize()
 {
-	NGC_RS274::Interpreter::Processor::local_block.initialize();
+	NGC_RS274::Interpreter::Processor::worker_block.initialize();
 }
 
-int NGC_RS274::Interpreter::Processor::process_line(NGC_RS274::NGC_Binary_Block*plan_block)
+int NGC_RS274::Interpreter::Processor::process_line(NGC_RS274::NGC_Binary_Block * plan_block, c_ring_buffer<char> * data_source)
 {
 	//NGC_RS274::Interpreter::Processor::local_block is the block that the intepreter uses for work. If an error is found processing the line, this block will be cleared.
 	//plan_block, is the block that the local_block will be copied to, if interpretation is successful.
 
-	//We need to know the state of the latest processed block. We will point the stager_block to the block sent in to us
+	//We need to know the state of the latest processed block.
+	//We will point the stager_block to the block sent in to us
 	NGC_RS274::Interpreter::Processor::stager_block = plan_block;
 
-	NGC_RS274::Interpreter::Processor::local_block.reset(); //<-- Clear EVERYTHING from the local block
+	NGC_RS274::Interpreter::Processor::worker_block.reset(); //<-- Clear EVERYTHING from the local block
 
-	//Synch local block, to the block that was sent in. This block should contain all the values that were set in the last interpretation. This ensures all modal values are kept.
-	//memcpy(NGC_RS274::Interpreter::Processor::local_block.unit_target_positions, plan_block->unit_target_positions, MACHINE_AXIS_COUNT * sizeof(float));
-	memcpy(NGC_RS274::Interpreter::Processor::local_block.g_group, plan_block->g_group, COUNT_OF_G_CODE_GROUPS_ARRAY * sizeof(uint16_t));
-	memcpy(NGC_RS274::Interpreter::Processor::local_block.m_group, plan_block->m_group, COUNT_OF_M_CODE_GROUPS_ARRAY * sizeof(uint16_t));
-	memcpy(&NGC_RS274::Interpreter::Processor::local_block.persisted_values, &plan_block->persisted_values, sizeof(NGC_RS274::NGC_Binary_Block::s_persisted_values));
-	memcpy(NGC_RS274::Interpreter::Processor::local_block.block_word_values, plan_block->block_word_values, COUNT_OF_BLOCK_WORDS_ARRAY * sizeof(float));
+	//Synch worker block, to the block that was sent in. This block should contain all the values that were set in the last interpretation. This ensures all modal values are kept.
+	NGC_RS274::NGC_Binary_Block::copy_persisted_data(plan_block, &worker_block);
+	//clear non modals
+	NGC_RS274::Interpreter::Processor::worker_block.g_group[NGC_RS274::Groups::G::NON_MODAL] = 0;
+
 
 	//So the N word... Need to clear it..
-	NGC_RS274::Interpreter::Processor::local_block.clear_value_defined('N');
+	NGC_RS274::Interpreter::Processor::worker_block.clear_value_defined('N');
 
 	//memcpy(&NGC_RS274::Interpreter::Processor::local_block.plane_axis, &plan_block->plane_axis, sizeof(NGC_RS274::NGC_Binary_Block::s_plane_axis));
 	//memcpy(&NGC_RS274::Interpreter::Processor::local_block.arc_values, &plan_block->arc_values, sizeof(NGC_RS274::NGC_Binary_Block::s_arc_values));
@@ -71,13 +71,11 @@ int NGC_RS274::Interpreter::Processor::process_line(NGC_RS274::NGC_Binary_Block*
 	HasErrors = 0;
 
 	//Parse gcode line data and do some rough error testing
-	int ReturnValue = parse_values();
-
-
+	int ReturnValue = parse_values(data_source);
 
 	if (ReturnValue != NGC_RS274::Interpreter::Errors::OK)
 	{
-		NGC_RS274::Interpreter::Processor::local_block.reset();
+		NGC_RS274::Interpreter::Processor::worker_block.reset();
 		HasErrors = ReturnValue;
 		return ReturnValue;
 	}
@@ -101,14 +99,14 @@ int NGC_RS274::Interpreter::Processor::process_line(NGC_RS274::NGC_Binary_Block*
 	//Really this comes down to setting the 'defined' value. If I could call the class member 'get_defined' from the internal
 	//struct then we wouldnt need to set the 'defined' value externally. HOwever if a plane changes from one block to the
 	//next we must rotate the previous blocks axis values so that arc calculation come ot right.
-	NGC_RS274::Interpreter::Processor::assign_planes(NGC_RS274::Interpreter::Processor::local_block);
+	NGC_RS274::Interpreter::Processor::assign_planes(NGC_RS274::Interpreter::Processor::worker_block);
 
 	//Perform a  detailed error check on this block. If it passes, the other libraries should have no trouble processing it.
 	ReturnValue = NGC_RS274::Interpreter::Processor::error_check_main();
 
 	if (ReturnValue != NGC_RS274::Interpreter::Errors::OK)
 	{
-		NGC_RS274::Interpreter::Processor::local_block.reset();
+		NGC_RS274::Interpreter::Processor::worker_block.reset();
 		HasErrors = ReturnValue;
 		return ReturnValue;
 	}
@@ -116,21 +114,19 @@ int NGC_RS274::Interpreter::Processor::process_line(NGC_RS274::NGC_Binary_Block*
 	//Before we move the new data in, set the events for the block.
 	//this makes it easy to track changes made and what events need to execute.
 
-	NGC_RS274::NGC_Binary_Block::set_events(&NGC_RS274::Interpreter::Processor::local_block, NGC_RS274::Interpreter::Processor::stager_block);
-	plan_block->event_manager = NGC_RS274::Interpreter::Processor::local_block.event_manager;
+	NGC_RS274::NGC_Binary_Block::set_events(&NGC_RS274::Interpreter::Processor::worker_block, NGC_RS274::Interpreter::Processor::stager_block);
+	plan_block->event_manager = NGC_RS274::Interpreter::Processor::worker_block.event_manager;
 	//This line interpreted without errors. Move the new values into 'plan_block' which will be updated for use by the calling method.
-	memcpy(plan_block->g_group, NGC_RS274::Interpreter::Processor::local_block.g_group, COUNT_OF_G_CODE_GROUPS_ARRAY * sizeof(uint16_t));
-	memcpy(&plan_block->g_code_defined_in_block, &NGC_RS274::Interpreter::Processor::local_block.g_code_defined_in_block, sizeof(uint16_t));
-	memcpy(plan_block->m_group, NGC_RS274::Interpreter::Processor::local_block.m_group, COUNT_OF_M_CODE_GROUPS_ARRAY * sizeof(uint16_t));
-	memcpy(&plan_block->m_code_defined_in_block, &NGC_RS274::Interpreter::Processor::local_block.m_code_defined_in_block, sizeof(uint16_t));
-	memcpy(&plan_block->persisted_values, &NGC_RS274::Interpreter::Processor::local_block.persisted_values, sizeof(NGC_RS274::NGC_Binary_Block::s_persisted_values));
-	memcpy(plan_block->block_word_values, NGC_RS274::Interpreter::Processor::local_block.block_word_values, COUNT_OF_BLOCK_WORDS_ARRAY * sizeof(float));
-	memcpy(&plan_block->word_defined_in_block_A_Z, &NGC_RS274::Interpreter::Processor::local_block.word_defined_in_block_A_Z, sizeof(uint32_t));
+	memcpy(plan_block->g_group, NGC_RS274::Interpreter::Processor::worker_block.g_group, COUNT_OF_G_CODE_GROUPS_ARRAY * sizeof(uint16_t));
+	memcpy(&plan_block->g_code_defined_in_block, &NGC_RS274::Interpreter::Processor::worker_block.g_code_defined_in_block, sizeof(uint16_t));
+	memcpy(plan_block->m_group, NGC_RS274::Interpreter::Processor::worker_block.m_group, COUNT_OF_M_CODE_GROUPS_ARRAY * sizeof(uint16_t));
+	memcpy(&plan_block->m_code_defined_in_block, &NGC_RS274::Interpreter::Processor::worker_block.m_code_defined_in_block, sizeof(uint16_t));
+	memcpy(&plan_block->persisted_values, &NGC_RS274::Interpreter::Processor::worker_block.persisted_values, sizeof(NGC_RS274::NGC_Binary_Block::s_persisted_values));
+	memcpy(plan_block->block_word_values, NGC_RS274::Interpreter::Processor::worker_block.block_word_values, COUNT_OF_BLOCK_WORDS_ARRAY * sizeof(float));
+	memcpy(&plan_block->word_defined_in_block_A_Z, &NGC_RS274::Interpreter::Processor::worker_block.word_defined_in_block_A_Z, sizeof(uint32_t));
 
 	plan_block->is_motion_block = NGC_RS274::Interpreter::Processor::determine_motion(plan_block);
 
-	//memcpy(&plan_block->plane_axis, &NGC_RS274::Interpreter::Processor::local_block.plane_axis, sizeof(NGC_RS274::NGC_Binary_Block::s_plane_axis));
-	//memcpy(&plan_block->arc_values, &NGC_RS274::Interpreter::Processor::local_block.arc_values, sizeof(NGC_RS274::NGC_Binary_Block::s_arc_values));
 
 	return ReturnValue;
 }
@@ -138,7 +134,7 @@ int NGC_RS274::Interpreter::Processor::process_line(NGC_RS274::NGC_Binary_Block*
 bool NGC_RS274::Interpreter::Processor::determine_motion(NGC_RS274::NGC_Binary_Block*local_block)
 {
 	if (local_block->g_group[NGC_RS274::Groups::G::Motion] != NGC_RS274::G_codes::MOTION_CANCELED
-	&& !local_block->event_manager.get((int)NGC_RS274::NGC_Binary_Block::e_block_event::Non_modal))
+		&& !local_block->event_manager.get((int)NGC_RS274::NGC_Binary_Block::e_block_event::Non_modal))
 	{
 		return true;
 	}
@@ -161,184 +157,184 @@ int NGC_RS274::Interpreter::Processor::error_check_main()
 	*/
 	for (uint8_t i = 0; i < COUNT_OF_G_CODE_GROUPS_ARRAY; i++)
 	{
-		int gCode = NGC_RS274::Interpreter::Processor::local_block.g_group[i];
+		int gCode = NGC_RS274::Interpreter::Processor::worker_block.g_group[i];
 
 		switch (i)
 		{
-			case NGC_RS274::Groups::G::COORDINATE_SYSTEM_SELECTION: //<--G54,G55,G56,G57,G58,G59,G59.1,G59.2,G59.3
-			{
-				if (!NGC_RS274::Interpreter::Processor::local_block.get_g_code_defined(NGC_RS274::Groups::G::COORDINATE_SYSTEM_SELECTION))
-				break;
+		case NGC_RS274::Groups::G::COORDINATE_SYSTEM_SELECTION: //<--G54,G55,G56,G57,G58,G59,G59.1,G59.2,G59.3
+		{
+																	if (!NGC_RS274::Interpreter::Processor::worker_block.get_g_code_defined(NGC_RS274::Groups::G::COORDINATE_SYSTEM_SELECTION))
+																		break;
 
-				//If cutter radius compensation compensation is on, selecting a new coordinate
-				//system should produce an error
-				if (NGC_RS274::Interpreter::Processor::local_block.g_group[NGC_RS274::Groups::G::Cutter_radius_compensation]
-				> NGC_RS274::G_codes::CANCEL_CUTTER_RADIUS_COMPENSATION)
-				{
-					return  NGC_RS274::Interpreter::Errors::COORDINATE_SETTING_INVALID_DURING_COMPENSATION;
-				}
-				//If G53 has been specified, clear the working offset value
-				if (NGC_RS274::Interpreter::Processor::local_block.g_group[NGC_RS274::Groups::G::COORDINATE_SYSTEM_SELECTION] == NGC_RS274::G_codes::MOTION_IN_MACHINE_COORDINATE_SYSTEM)
-				{
-					NGC_RS274::Interpreter::Processor::local_block.g_group[NGC_RS274::Groups::G::COORDINATE_SYSTEM_SELECTION] = 0;
-				}
-				else
-				{
-					//Value for 54,55,56 etc.. are checked in c_stager
-				}
+																	//If cutter radius compensation compensation is on, selecting a new coordinate
+																	//system should produce an error
+																	if (NGC_RS274::Interpreter::Processor::worker_block.g_group[NGC_RS274::Groups::G::Cutter_radius_compensation]
+	> NGC_RS274::G_codes::CANCEL_CUTTER_RADIUS_COMPENSATION)
+																	{
+																		return  NGC_RS274::Interpreter::Errors::COORDINATE_SETTING_INVALID_DURING_COMPENSATION;
+																	}
+																	//If G53 has been specified, clear the working offset value
+																	if (NGC_RS274::Interpreter::Processor::worker_block.g_group[NGC_RS274::Groups::G::COORDINATE_SYSTEM_SELECTION] == NGC_RS274::G_codes::MOTION_IN_MACHINE_COORDINATE_SYSTEM)
+																	{
+																		NGC_RS274::Interpreter::Processor::worker_block.g_group[NGC_RS274::Groups::G::COORDINATE_SYSTEM_SELECTION] = 0;
+																	}
+																	else
+																	{
+																		//Value for 54,55,56 etc.. are checked in c_stager
+																	}
 
-				break;
-			}
-			case NGC_RS274::Groups::G::Cutter_radius_compensation: //<--G40,G41,G42
-			{
-				//If cutter compensation was specified in the line, error check it.
-				if (!NGC_RS274::Interpreter::Processor::local_block.get_g_code_defined(NGC_RS274::Groups::G::Cutter_radius_compensation))
-				break;
+																	break;
+		}
+		case NGC_RS274::Groups::G::Cutter_radius_compensation: //<--G40,G41,G42
+		{
+																   //If cutter compensation was specified in the line, error check it.
+																   if (!NGC_RS274::Interpreter::Processor::worker_block.get_g_code_defined(NGC_RS274::Groups::G::Cutter_radius_compensation))
+																	   break;
 
-				ReturnValue = NGC_RS274::Interpreter::Processor::error_check_cutter_compensation();
-				if (ReturnValue != NGC_RS274::Interpreter::Errors::OK)
-				{
-					return ReturnValue;
-				}
-				break;
-			}
+																   ReturnValue = NGC_RS274::Interpreter::Processor::error_check_cutter_compensation();
+																   if (ReturnValue != NGC_RS274::Interpreter::Errors::OK)
+																   {
+																	   return ReturnValue;
+																   }
+																   break;
+		}
 
-			case NGC_RS274::Groups::G::DISTANCE_MODE: //<--G90,G91
+		case NGC_RS274::Groups::G::DISTANCE_MODE: //<--G90,G91
 			//Nothing really to check for this group. It has no parameters
 			break;
-			case NGC_RS274::Groups::G::Feed_rate_mode: //<--G93,G94,G95
+		case NGC_RS274::Groups::G::Feed_rate_mode: //<--G93,G94,G95
 			//Nothing really to check for this group. It has no parameters
 			break;
-			case NGC_RS274::Groups::G::Motion: //<--G0,G1,G02,G03,G38.2,G80,G81,G82,G83,G84,G85,G86,G87.G88.G89
-			{
-				//Was a motion command issued in the block or is the motion command block just 0 because it was never set?
-				//If it wasn't defined ever, just break out of here. We are probably in setup mode.
-				if (!NGC_RS274::Interpreter::Processor::local_block.get_g_code_defined(NGC_RS274::Groups::G::Motion))
-				//&& ! c_buffer::block_buffer[plan_block].any_axis_was_defined())
-				{
-					break; //<--No motion command defined in the block this is just a default value. Carry on.
-				}
+		case NGC_RS274::Groups::G::Motion: //<--G0,G1,G02,G03,G38.2,G80,G81,G82,G83,G84,G85,G86,G87.G88.G89
+		{
+											   //Was a motion command issued in the block or is the motion command block just 0 because it was never set?
+											   //If it wasn't defined ever, just break out of here. We are probably in setup mode.
+											   if (!NGC_RS274::Interpreter::Processor::worker_block.get_g_code_defined(NGC_RS274::Groups::G::Motion))
+												   //&& ! c_buffer::block_buffer[plan_block].any_axis_was_defined())
+											   {
+												   break; //<--No motion command defined in the block this is just a default value. Carry on.
+											   }
 
-				//If G80 is active, motion is canceled. If an axis is defined for motion, thats an error
-				if (NGC_RS274::Interpreter::Processor::local_block.g_group[NGC_RS274::Groups::G::Motion] == NGC_RS274::G_codes::MOTION_CANCELED
-				&&  NGC_RS274::Interpreter::Processor::local_block.any_axis_was_defined())
-				{
-					return  NGC_RS274::Interpreter::Errors::MOTION_CANCELED_AXIS_VALUES_INVALID;
-				}
+											   //If G80 is active, motion is canceled. If an axis is defined for motion, thats an error
+											   if (NGC_RS274::Interpreter::Processor::worker_block.g_group[NGC_RS274::Groups::G::Motion] == NGC_RS274::G_codes::MOTION_CANCELED
+												   &&  NGC_RS274::Interpreter::Processor::worker_block.any_axis_was_defined())
+											   {
+												   return  NGC_RS274::Interpreter::Errors::MOTION_CANCELED_AXIS_VALUES_INVALID;
+											   }
 
-				//Last check before we continue. If G80 is set, we just return from here. There is no motion mode
-				if (NGC_RS274::Interpreter::Processor::local_block.g_group[NGC_RS274::Groups::G::Motion] == NGC_RS274::G_codes::MOTION_CANCELED)
-				return  NGC_RS274::Interpreter::Errors::OK;
+											   //Last check before we continue. If G80 is set, we just return from here. There is no motion mode
+											   if (NGC_RS274::Interpreter::Processor::worker_block.g_group[NGC_RS274::Groups::G::Motion] == NGC_RS274::G_codes::MOTION_CANCELED)
+												   return  NGC_RS274::Interpreter::Errors::OK;
 
-				//We must have at least one axis defined for a motion command
-				//Quick test here, if NO WORD values were set in the block at all, then we know there couldn't be an axis defined
-				if (!NGC_RS274::Interpreter::Processor::local_block.any_axis_was_defined())
-				return  NGC_RS274::Interpreter::Errors::NO_AXIS_DEFINED_FOR_MOTION;
+											   //We must have at least one axis defined for a motion command
+											   //Quick test here, if NO WORD values were set in the block at all, then we know there couldn't be an axis defined
+											   if (!NGC_RS274::Interpreter::Processor::worker_block.any_axis_was_defined())
+												   return  NGC_RS274::Interpreter::Errors::NO_AXIS_DEFINED_FOR_MOTION;
 
-				ReturnValue = error_check_feed_mode(gCode);
-				if (ReturnValue != NGC_RS274::Interpreter::Errors::OK)
-				{
-					return ReturnValue;
-				}
+											   ReturnValue = error_check_feed_mode(gCode);
+											   if (ReturnValue != NGC_RS274::Interpreter::Errors::OK)
+											   {
+												   return ReturnValue;
+											   }
 
 
-				//Normalize axis values to millimeters
-				//normalize_distance_units('X');
-				//normalize_distance_units('Y');
-				//normalize_distance_units('Z');
+											   //Normalize axis values to millimeters
+											   //normalize_distance_units('X');
+											   //normalize_distance_units('Y');
+											   //normalize_distance_units('Z');
 
-				switch (gCode)
-				{
-					case NGC_RS274::G_codes::CIRCULAR_INTERPOLATION_CW:
-					case NGC_RS274::G_codes::CIRCULAR_INTERPOLATION_CCW:
-					{
-						ReturnValue = error_check_arc();
-						if (ReturnValue != NGC_RS274::Interpreter::Errors::OK)
-						{
-							return ReturnValue;
-						}
-						//normalize_distance_units('I');
-						//normalize_distance_units('J');
-						//normalize_distance_units('K');
-						//normalize_distance_units('R');
-					}
-					break;
-					case NGC_RS274::G_codes::MOTION_CANCELED:
-					NGC_RS274::Interpreter::Processor::local_block.g_group[NGC_RS274::Groups::G::Motion] = NGC_RS274::G_codes::MOTION_CANCELED;
-					break;
-					case NGC_RS274::G_codes::CANNED_CYCLE_DRILLING: //<--G81 drilling cycle
-					case NGC_RS274::G_codes::CANNED_CYCLE_DRILLING_WITH_DWELL: //<--G82
-					case NGC_RS274::G_codes::CANNED_CYCLE_PECK_DRILLING: //<--G83
-					case NGC_RS274::G_codes::CANNED_CYCLE_RIGHT_HAND_TAPPING: //<--G84
-					case NGC_RS274::G_codes::CANNED_CYCLE_BORING_NO_DWELL_FEED_OUT: //<--G85
-					case NGC_RS274::G_codes::CANNED_CYCLE_BORING_SPINDLE_STOP_RAPID_OUT: //<--G86
-					case NGC_RS274::G_codes::CANNED_CYCLE_BACK_BORING: //<--G87
-					case NGC_RS274::G_codes::CANNED_CYCLE_BORING_SPINDLE_STOP_MANUAL_OUT: //<--G88
-					case NGC_RS274::G_codes::CANNED_CYCLE_BORING_DWELL_FEED_OUT: //<--G89
-					{
-						ReturnValue = error_check_canned_cycle();
-						if (ReturnValue != NGC_RS274::Interpreter::Errors::OK)
-						{
-							return ReturnValue;
-						}
-						//normalize_distance_units('R');
-						//normalize_distance_units(plan_block,'Q');
-						//normalize_distance_units(plan_block,'L');
+											   switch (gCode)
+											   {
+											   case NGC_RS274::G_codes::CIRCULAR_INTERPOLATION_CW:
+											   case NGC_RS274::G_codes::CIRCULAR_INTERPOLATION_CCW:
+											   {
+																									  ReturnValue = error_check_arc();
+																									  if (ReturnValue != NGC_RS274::Interpreter::Errors::OK)
+																									  {
+																										  return ReturnValue;
+																									  }
+																									  //normalize_distance_units('I');
+																									  //normalize_distance_units('J');
+																									  //normalize_distance_units('K');
+																									  //normalize_distance_units('R');
+											   }
+												   break;
+											   case NGC_RS274::G_codes::MOTION_CANCELED:
+												   NGC_RS274::Interpreter::Processor::worker_block.g_group[NGC_RS274::Groups::G::Motion] = NGC_RS274::G_codes::MOTION_CANCELED;
+												   break;
+											   case NGC_RS274::G_codes::CANNED_CYCLE_DRILLING: //<--G81 drilling cycle
+											   case NGC_RS274::G_codes::CANNED_CYCLE_DRILLING_WITH_DWELL: //<--G82
+											   case NGC_RS274::G_codes::CANNED_CYCLE_PECK_DRILLING: //<--G83
+											   case NGC_RS274::G_codes::CANNED_CYCLE_RIGHT_HAND_TAPPING: //<--G84
+											   case NGC_RS274::G_codes::CANNED_CYCLE_BORING_NO_DWELL_FEED_OUT: //<--G85
+											   case NGC_RS274::G_codes::CANNED_CYCLE_BORING_SPINDLE_STOP_RAPID_OUT: //<--G86
+											   case NGC_RS274::G_codes::CANNED_CYCLE_BACK_BORING: //<--G87
+											   case NGC_RS274::G_codes::CANNED_CYCLE_BORING_SPINDLE_STOP_MANUAL_OUT: //<--G88
+											   case NGC_RS274::G_codes::CANNED_CYCLE_BORING_DWELL_FEED_OUT: //<--G89
+											   {
+																												ReturnValue = error_check_canned_cycle();
+																												if (ReturnValue != NGC_RS274::Interpreter::Errors::OK)
+																												{
+																													return ReturnValue;
+																												}
+																												//normalize_distance_units('R');
+																												//normalize_distance_units(plan_block,'Q');
+																												//normalize_distance_units(plan_block,'L');
 
-					}
-					break;
-					default:
-					break;
-				}
+											   }
+												   break;
+											   default:
+												   break;
+											   }
 
-				break;
-			}
-			case NGC_RS274::Groups::G::NON_MODAL: //<--G4,G10,G28,G28.1,G30,G30.1,G53,G92,G92.1,G92.2,G92.3
-			{
-				if (!NGC_RS274::Interpreter::Processor::local_block.get_g_code_defined(NGC_RS274::Groups::G::NON_MODAL))
-				break;
-				ReturnValue = error_check_non_modal();
-				if (ReturnValue != NGC_RS274::Interpreter::Errors::OK)
-				{
-					return ReturnValue;
-				}
+											   break;
+		}
+		case NGC_RS274::Groups::G::NON_MODAL: //<--G4,G10,G28,G28.1,G30,G30.1,G53,G92,G92.1,G92.2,G92.3
+		{
+												  if (!NGC_RS274::Interpreter::Processor::worker_block.get_g_code_defined(NGC_RS274::Groups::G::NON_MODAL))
+													  break;
+												  ReturnValue = error_check_non_modal();
+												  if (ReturnValue != NGC_RS274::Interpreter::Errors::OK)
+												  {
+													  return ReturnValue;
+												  }
 
-				break;
-			}
+												  break;
+		}
 
-			case NGC_RS274::Groups::G::PATH_CONTROL_MODE: //<--G61,G61.1,G64
+		case NGC_RS274::Groups::G::PATH_CONTROL_MODE: //<--G61,G61.1,G64
 			//Nothing really to check for this group. It has no parameters
 			break;
-			case NGC_RS274::Groups::G::PLANE_SELECTION: //<--G17,G18,G19
-			{
-				if (!NGC_RS274::Interpreter::Processor::local_block.get_g_code_defined(NGC_RS274::Groups::G::PLANE_SELECTION))
-				break;
+		case NGC_RS274::Groups::G::PLANE_SELECTION: //<--G17,G18,G19
+		{
+														if (!NGC_RS274::Interpreter::Processor::worker_block.get_g_code_defined(NGC_RS274::Groups::G::PLANE_SELECTION))
+															break;
 
-				NGC_RS274::Interpreter::Processor::error_check_plane_select(NGC_RS274::Interpreter::Processor::local_block);
+														NGC_RS274::Interpreter::Processor::error_check_plane_select(NGC_RS274::Interpreter::Processor::worker_block);
 
-				//Nothing really to check for this group. It has no parameters
-				break;
-			}
-			case NGC_RS274::Groups::G::RETURN_MODE_CANNED_CYCLE: //<--G98,G99
+														//Nothing really to check for this group. It has no parameters
+														break;
+		}
+		case NGC_RS274::Groups::G::RETURN_MODE_CANNED_CYCLE: //<--G98,G99
 			//Nothing really to check for this group. It has no parameters
 			break;
-			case NGC_RS274::Groups::G::Tool_length_offset: //<--G43,G44,G49
-			{
-				if (!NGC_RS274::Interpreter::Processor::local_block.get_g_code_defined(NGC_RS274::Groups::G::Tool_length_offset))
-				break;
+		case NGC_RS274::Groups::G::Tool_length_offset: //<--G43,G44,G49
+		{
+														   if (!NGC_RS274::Interpreter::Processor::worker_block.get_g_code_defined(NGC_RS274::Groups::G::Tool_length_offset))
+															   break;
 
-				ReturnValue = error_check_tool_length_offset();
-				if (ReturnValue != NGC_RS274::Interpreter::Errors::OK)
-				{
-					return ReturnValue;
-				}
-				break;
-			}
-			case NGC_RS274::Groups::G::Units: //<--G20,G21
+														   ReturnValue = error_check_tool_length_offset();
+														   if (ReturnValue != NGC_RS274::Interpreter::Errors::OK)
+														   {
+															   return ReturnValue;
+														   }
+														   break;
+		}
+		case NGC_RS274::Groups::G::Units: //<--G20,G21
 			//Nothing really to check for this group. It has no parameters
 			break;
 
-			default:
+		default:
 			break;
 		}
 	}
@@ -350,44 +346,44 @@ int NGC_RS274::Interpreter::Processor::error_check_plane_select(NGC_RS274::NGC_B
 	//Use the switch case to assign the named values.
 	switch (plane_block.g_group[NGC_RS274::Groups::G::PLANE_SELECTION])
 	{
-		case NGC_RS274::G_codes::XY_PLANE_SELECTION:
-		{
-			plane_block.active_plane.horizontal_axis.name = 'X';
-			plane_block.active_plane.vertical_axis.name = 'Y';
-			plane_block.active_plane.normal_axis.name = 'Z';
-			plane_block.active_plane.plane_error = NGC_RS274::Interpreter::Errors::MISSING_CIRCLE_AXIS_XY;
+	case NGC_RS274::G_codes::XY_PLANE_SELECTION:
+	{
+												   plane_block.active_plane.horizontal_axis.name = 'X';
+												   plane_block.active_plane.vertical_axis.name = 'Y';
+												   plane_block.active_plane.normal_axis.name = 'Z';
+												   plane_block.active_plane.plane_error = NGC_RS274::Interpreter::Errors::MISSING_CIRCLE_AXIS_XY;
 
-			plane_block.arc_values.horizontal_offset.name = 'I';
-			plane_block.arc_values.vertical_offset.name = 'J';
-			plane_block.arc_values.normal_offset.name = 'K';
-			plane_block.arc_values.plane_error = NGC_RS274::Interpreter::Errors::MISSING_CIRCLE_OFFSET_IJ;
-		}
+												   plane_block.arc_values.horizontal_offset.name = 'I';
+												   plane_block.arc_values.vertical_offset.name = 'J';
+												   plane_block.arc_values.normal_offset.name = 'K';
+												   plane_block.arc_values.plane_error = NGC_RS274::Interpreter::Errors::MISSING_CIRCLE_OFFSET_IJ;
+	}
 		break;
-		case NGC_RS274::G_codes::XZ_PLANE_SELECTION:
-		{
-			plane_block.active_plane.horizontal_axis.name = 'X';
-			plane_block.active_plane.vertical_axis.name = 'Z';
-			plane_block.active_plane.normal_axis.name = 'Y';
-			plane_block.active_plane.plane_error = NGC_RS274::Interpreter::Errors::MISSING_CIRCLE_AXIS_XZ;
+	case NGC_RS274::G_codes::XZ_PLANE_SELECTION:
+	{
+												   plane_block.active_plane.horizontal_axis.name = 'X';
+												   plane_block.active_plane.vertical_axis.name = 'Z';
+												   plane_block.active_plane.normal_axis.name = 'Y';
+												   plane_block.active_plane.plane_error = NGC_RS274::Interpreter::Errors::MISSING_CIRCLE_AXIS_XZ;
 
-			plane_block.arc_values.horizontal_offset.name = 'I';
-			plane_block.arc_values.vertical_offset.name = 'K';
-			plane_block.arc_values.normal_offset.name = 'J';
-			plane_block.arc_values.plane_error = NGC_RS274::Interpreter::Errors::MISSING_CIRCLE_OFFSET_IK;
-		}
+												   plane_block.arc_values.horizontal_offset.name = 'I';
+												   plane_block.arc_values.vertical_offset.name = 'K';
+												   plane_block.arc_values.normal_offset.name = 'J';
+												   plane_block.arc_values.plane_error = NGC_RS274::Interpreter::Errors::MISSING_CIRCLE_OFFSET_IK;
+	}
 		break;
-		case NGC_RS274::G_codes::YZ_PLANE_SELECTION:
-		{
-			plane_block.active_plane.horizontal_axis.name = 'Y';
-			plane_block.active_plane.vertical_axis.name = 'Z';
-			plane_block.active_plane.normal_axis.name = 'X';
-			plane_block.active_plane.plane_error = NGC_RS274::Interpreter::Errors::MISSING_CIRCLE_AXIS_YZ;
+	case NGC_RS274::G_codes::YZ_PLANE_SELECTION:
+	{
+												   plane_block.active_plane.horizontal_axis.name = 'Y';
+												   plane_block.active_plane.vertical_axis.name = 'Z';
+												   plane_block.active_plane.normal_axis.name = 'X';
+												   plane_block.active_plane.plane_error = NGC_RS274::Interpreter::Errors::MISSING_CIRCLE_AXIS_YZ;
 
-			plane_block.arc_values.horizontal_offset.name = 'J';
-			plane_block.arc_values.vertical_offset.name = 'K';
-			plane_block.arc_values.normal_offset.name = 'I';
-			plane_block.arc_values.plane_error = NGC_RS274::Interpreter::Errors::MISSING_CIRCLE_OFFSET_JK;
-		}
+												   plane_block.arc_values.horizontal_offset.name = 'J';
+												   plane_block.arc_values.vertical_offset.name = 'K';
+												   plane_block.arc_values.normal_offset.name = 'I';
+												   plane_block.arc_values.plane_error = NGC_RS274::Interpreter::Errors::MISSING_CIRCLE_OFFSET_JK;
+	}
 		break;
 	}
 	//After value names are assigned, the plane and arc data can be set automatically
@@ -404,11 +400,11 @@ void NGC_RS274::Interpreter::Processor::assign_planes(NGC_RS274::NGC_Binary_Bloc
 	we use those previous values in some places, such as arc center calculations.
 	*/
 	if (stager_block->get_g_code_value_x(NGC_RS274::Groups::G::PLANE_SELECTION)
-	!= plane_block.get_g_code_value_x(NGC_RS274::Groups::G::PLANE_SELECTION))
+		!= plane_block.get_g_code_value_x(NGC_RS274::Groups::G::PLANE_SELECTION))
 	{
 		//Set the planes to match
 		stager_block->set_group_value(NGC_RS274::Groups::G::PLANE_SELECTION,
-		local_block.get_g_code_value_x(NGC_RS274::Groups::G::PLANE_SELECTION));
+			worker_block.get_g_code_value_x(NGC_RS274::Groups::G::PLANE_SELECTION));
 
 		//We know that the planes have changed from the previous block. Rotate the previous block axis values.
 		//This will chain back into this function and also re-assign the pointers to the previous block arc
@@ -417,22 +413,23 @@ void NGC_RS274::Interpreter::Processor::assign_planes(NGC_RS274::NGC_Binary_Bloc
 	}
 
 	//To simplify planes, set defined, and assign to the pointed value for this plane
-	plane_block.active_plane.horizontal_axis.value = &plane_block.block_word_values[local_block.active_plane.horizontal_axis.name - 65];
-	plane_block.active_plane.vertical_axis.value = &plane_block.block_word_values[local_block.active_plane.vertical_axis.name - 65];
-	plane_block.active_plane.normal_axis.value = &plane_block.block_word_values[local_block.active_plane.normal_axis.name - 65];
+	plane_block.active_plane.horizontal_axis.value = &plane_block.block_word_values[worker_block.active_plane.horizontal_axis.name - 65];
+	plane_block.active_plane.vertical_axis.value = &plane_block.block_word_values[worker_block.active_plane.vertical_axis.name - 65];
+	plane_block.active_plane.normal_axis.value = &plane_block.block_word_values[worker_block.active_plane.normal_axis.name - 65];
 
-	plane_block.active_plane.rotary_horizontal_axis.value = &plane_block.block_word_values[local_block.active_plane.rotary_horizontal_axis.name - 65];
-	plane_block.active_plane.rotary_vertical_axis.value = &plane_block.block_word_values[local_block.active_plane.rotary_vertical_axis.name - 65];
-	plane_block.active_plane.rotary_normal_axis.value = &plane_block.block_word_values[local_block.active_plane.rotary_normal_axis.name - 65];
+	plane_block.active_plane.rotary_horizontal_axis.value = &plane_block.block_word_values[worker_block.active_plane.rotary_horizontal_axis.name - 65];
+	plane_block.active_plane.rotary_vertical_axis.value = &plane_block.block_word_values[worker_block.active_plane.rotary_vertical_axis.name - 65];
+	plane_block.active_plane.rotary_normal_axis.value = &plane_block.block_word_values[worker_block.active_plane.rotary_normal_axis.name - 65];
 
-	plane_block.active_plane.inc_horizontal_axis.value = &plane_block.block_word_values[local_block.active_plane.inc_horizontal_axis.name - 65];
-	plane_block.active_plane.inc_vertical_axis.value = &plane_block.block_word_values[local_block.active_plane.inc_vertical_axis.name - 65];
-	plane_block.active_plane.inc_normal_axis.value = &plane_block.block_word_values[local_block.active_plane.inc_normal_axis.name - 65];
-	
+	plane_block.active_plane.inc_horizontal_axis.value = &plane_block.block_word_values[worker_block.active_plane.inc_horizontal_axis.name - 65];
+	plane_block.active_plane.inc_vertical_axis.value = &plane_block.block_word_values[worker_block.active_plane.inc_vertical_axis.name - 65];
+	plane_block.active_plane.inc_normal_axis.value = &plane_block.block_word_values[worker_block.active_plane.inc_normal_axis.name - 65];
+
 	//To simplify arc, set defined, and assign to the pointed value for the arc
-	plane_block.arc_values.horizontal_offset.value = &plane_block.block_word_values[local_block.arc_values.horizontal_offset.name - 65];
-	plane_block.arc_values.vertical_offset.value = &plane_block.block_word_values[local_block.arc_values.vertical_offset.name - 65];
-plane_block.arc_values.normal_offset.value = &plane_block.block_word_values[local_block.arc_values.normal_offset.name - 65];}
+	plane_block.arc_values.horizontal_offset.value = &plane_block.block_word_values[worker_block.arc_values.horizontal_offset.name - 65];
+	plane_block.arc_values.vertical_offset.value = &plane_block.block_word_values[worker_block.arc_values.vertical_offset.name - 65];
+	plane_block.arc_values.normal_offset.value = &plane_block.block_word_values[worker_block.arc_values.normal_offset.name - 65];
+}
 
 /*
 If an arc (g02/g03) command was specified, perform detailed parameter check that applies only to arcs.
@@ -457,15 +454,15 @@ int NGC_RS274::Interpreter::Processor::error_check_arc()
 	*/
 
 	//Must have horizontal or vertical but we don't have to have both
-	if (!NGC_RS274::Interpreter::Processor::local_block.active_plane.horizontal_axis.is_defined() && !NGC_RS274::Interpreter::Processor::local_block.active_plane.vertical_axis.is_defined())
-	return NGC_RS274::Interpreter::Processor::local_block.active_plane.plane_error;
+	if (!NGC_RS274::Interpreter::Processor::worker_block.active_plane.horizontal_axis.is_defined() && !NGC_RS274::Interpreter::Processor::worker_block.active_plane.vertical_axis.is_defined())
+		return NGC_RS274::Interpreter::Processor::worker_block.active_plane.plane_error;
 
 	//Was radius specified?
-	if (!NGC_RS274::Interpreter::Processor::local_block.get_defined('R'))
+	if (!NGC_RS274::Interpreter::Processor::worker_block.get_defined('R'))
 	{
 		//Must have H or V, but we don't have to have both
-		if (!NGC_RS274::Interpreter::Processor::local_block.arc_values.horizontal_offset.is_defined() && !NGC_RS274::Interpreter::Processor::local_block.arc_values.vertical_offset.is_defined())
-		return NGC_RS274::Interpreter::Processor::local_block.arc_values.plane_error;
+		if (!NGC_RS274::Interpreter::Processor::worker_block.arc_values.horizontal_offset.is_defined() && !NGC_RS274::Interpreter::Processor::worker_block.arc_values.vertical_offset.is_defined())
+			return NGC_RS274::Interpreter::Processor::worker_block.arc_values.plane_error;
 
 		return error_check_center_format_arc();
 	}
@@ -479,26 +476,26 @@ int NGC_RS274::Interpreter::Processor::error_check_center_format_arc()
 {
 	// Arc radius from center to target
 	float target_r = hypot_f
-	(-*NGC_RS274::Interpreter::Processor::local_block.active_plane.horizontal_axis.value,
-	-*NGC_RS274::Interpreter::Processor::local_block.active_plane.vertical_axis.value);
+		(-*NGC_RS274::Interpreter::Processor::worker_block.active_plane.horizontal_axis.value,
+		-*NGC_RS274::Interpreter::Processor::worker_block.active_plane.vertical_axis.value);
 
 	// Compute arc radius for mc_arc. Defined from current location to center.
-	*NGC_RS274::Interpreter::Processor::local_block.arc_values.Radius =
-	hypot_f(*NGC_RS274::Interpreter::Processor::local_block.active_plane.horizontal_axis.value
-	, *NGC_RS274::Interpreter::Processor::local_block.active_plane.vertical_axis.value);
+	*NGC_RS274::Interpreter::Processor::worker_block.arc_values.Radius =
+		hypot_f(*NGC_RS274::Interpreter::Processor::worker_block.active_plane.horizontal_axis.value
+		, *NGC_RS274::Interpreter::Processor::worker_block.active_plane.vertical_axis.value);
 
 	// Compute difference between current location and target radii for final error-checks.
-	float delta_r = fabs(target_r - *NGC_RS274::Interpreter::Processor::local_block.arc_values.Radius);
+	float delta_r = fabs(target_r - *NGC_RS274::Interpreter::Processor::worker_block.arc_values.Radius);
 	//If the radius difference is greater than .005 mm we MAY, throw an error, or we MAY not
 	if (delta_r > 0.005)
 	{
 		//If the radius difference is more than .5mm we error
 		if (delta_r > 0.5)
-		return  NGC_RS274::Interpreter::Errors::CENTER_FORMAT_ARC_RADIUS_ERROR_EXCEEDS_005; // [Arc definition error] > 0.5mm
+			return  NGC_RS274::Interpreter::Errors::CENTER_FORMAT_ARC_RADIUS_ERROR_EXCEEDS_005; // [Arc definition error] > 0.5mm
 
 		//If the radius difference is more than .001mm AND its a small arc, we error
-		if (delta_r > (0.001 * *NGC_RS274::Interpreter::Processor::local_block.arc_values.Radius))
-		return  NGC_RS274::Interpreter::Errors::CENTER_FORMAT_ARC_RADIUS_ERROR_EXCEEDS_PERCENTAGE; // [Arc definition error] > 0.005mm AND 0.1% radius
+		if (delta_r > (0.001 * *NGC_RS274::Interpreter::Processor::worker_block.arc_values.Radius))
+			return  NGC_RS274::Interpreter::Errors::CENTER_FORMAT_ARC_RADIUS_ERROR_EXCEEDS_PERCENTAGE; // [Arc definition error] > 0.005mm AND 0.1% radius
 	}
 
 	return  NGC_RS274::Interpreter::Errors::OK;
@@ -511,23 +508,23 @@ but this is a near verbatim copy of it from the Grbl control 'gcode.c' file
 int NGC_RS274::Interpreter::Processor::error_check_radius_format_arc()
 {
 	// Calculate the change in position along each selected axis
-	float horizontal_delta = *NGC_RS274::Interpreter::Processor::local_block.active_plane.horizontal_axis.value - *NGC_RS274::Interpreter::Processor::stager_block->active_plane.horizontal_axis.value;
-	float vertical_delta = *NGC_RS274::Interpreter::Processor::local_block.active_plane.vertical_axis.value - *NGC_RS274::Interpreter::Processor::stager_block->active_plane.vertical_axis.value;
+	float horizontal_delta = *NGC_RS274::Interpreter::Processor::worker_block.active_plane.horizontal_axis.value - *NGC_RS274::Interpreter::Processor::stager_block->active_plane.horizontal_axis.value;
+	float vertical_delta = *NGC_RS274::Interpreter::Processor::worker_block.active_plane.vertical_axis.value - *NGC_RS274::Interpreter::Processor::stager_block->active_plane.vertical_axis.value;
 
 	// First, use h_x2_div_d to compute 4*h^2 to check if it is negative or r is smaller
 	// than d. If so, the sqrt of a negative number is complex and error out.
-	float h_x2_div_d = 4.0 * NGC_RS274::Interpreter::Processor::square(*NGC_RS274::Interpreter::Processor::local_block.arc_values.Radius)
-	- NGC_RS274::Interpreter::Processor::square(horizontal_delta)
-	- NGC_RS274::Interpreter::Processor::square(vertical_delta);
+	float h_x2_div_d = 4.0 * NGC_RS274::Interpreter::Processor::square(*NGC_RS274::Interpreter::Processor::worker_block.arc_values.Radius)
+		- NGC_RS274::Interpreter::Processor::square(horizontal_delta)
+		- NGC_RS274::Interpreter::Processor::square(vertical_delta);
 
 	if (h_x2_div_d < 0)
-	return  NGC_RS274::Interpreter::Errors::RADIUS_FORMAT_ARC_RADIUS_LESS_THAN_ZERO; // [Arc radius error]
+		return  NGC_RS274::Interpreter::Errors::RADIUS_FORMAT_ARC_RADIUS_LESS_THAN_ZERO; // [Arc radius error]
 
 	// Finish computing h_x2_div_d.
 	h_x2_div_d = -sqrt(h_x2_div_d) / hypot_f(horizontal_delta, vertical_delta); // == -(h * 2 / d)
 	// Invert the sign of h_x2_div_d if the circle is counter clockwise (see sketch below)
-	if (NGC_RS274::Interpreter::Processor::local_block.get_g_code_value_x(NGC_RS274::Groups::G::Motion) == NGC_RS274::G_codes::CIRCULAR_INTERPOLATION_CCW)
-	h_x2_div_d = -h_x2_div_d;
+	if (NGC_RS274::Interpreter::Processor::worker_block.get_g_code_value_x(NGC_RS274::Groups::G::Motion) == NGC_RS274::G_codes::CIRCULAR_INTERPOLATION_CCW)
+		h_x2_div_d = -h_x2_div_d;
 
 
 	// Negative R is g-code-alese for "I want a circle with more than 180 degrees of travel" (go figure!),
@@ -535,15 +532,15 @@ int NGC_RS274::Interpreter::Processor::error_check_radius_format_arc()
 	// inverting the sign of h_x2_div_d the center of the circles is placed on the opposite side of the line of
 	// travel and thus we get the inadvisable long arcs as prescribed.
 
-	if (*NGC_RS274::Interpreter::Processor::local_block.arc_values.Radius < 0)
+	if (*NGC_RS274::Interpreter::Processor::worker_block.arc_values.Radius < 0)
 	{
 		h_x2_div_d = -h_x2_div_d;
-		*NGC_RS274::Interpreter::Processor::local_block.arc_values.Radius
-		= -*NGC_RS274::Interpreter::Processor::local_block.arc_values.Radius; // Finished with r. Set to positive for mc_arc
+		*NGC_RS274::Interpreter::Processor::worker_block.arc_values.Radius
+			= -*NGC_RS274::Interpreter::Processor::worker_block.arc_values.Radius; // Finished with r. Set to positive for mc_arc
 	}
 	// Complete the operation by calculating the actual center of the arc
-	*NGC_RS274::Interpreter::Processor::local_block.arc_values.horizontal_offset.value = (0.5 * (horizontal_delta - (vertical_delta * h_x2_div_d)));
-	*NGC_RS274::Interpreter::Processor::local_block.arc_values.vertical_offset.value = (0.5 * (vertical_delta + (horizontal_delta * h_x2_div_d)));
+	*NGC_RS274::Interpreter::Processor::worker_block.arc_values.horizontal_offset.value = (0.5 * (horizontal_delta - (vertical_delta * h_x2_div_d)));
+	*NGC_RS274::Interpreter::Processor::worker_block.arc_values.vertical_offset.value = (0.5 * (vertical_delta + (horizontal_delta * h_x2_div_d)));
 
 	//*NGC_RS274::Interpreter::Processor::local_block.arc_values.horizontal_center.value =
 	//*NGC_RS274::Interpreter::Processor::stager_block->active_plane.horizontal_axis.value
@@ -561,78 +558,78 @@ int NGC_RS274::Interpreter::Processor::error_check_non_modal()
 
 	float iAddress = 0;
 	//Check individual gcodes for their specific values
-	switch (NGC_RS274::Interpreter::Processor::local_block.g_group[NGC_RS274::Groups::G::NON_MODAL])
+	switch (NGC_RS274::Interpreter::Processor::worker_block.g_group[NGC_RS274::Groups::G::NON_MODAL])
 	{
-		case NGC_RS274::G_codes::G10_PARAM_WRITE: //<-G10
-		{
-			//It is illegal to specify G10 with a motion command
-			if (NGC_RS274::Interpreter::Processor::local_block.g_group[NGC_RS274::Groups::G::NON_MODAL]
-			&& NGC_RS274::Interpreter::Processor::local_block.g_group[NGC_RS274::Groups::G::Motion]
-			&& NGC_RS274::Interpreter::Processor::local_block.any_axis_was_defined())
-			{
-				return  NGC_RS274::Interpreter::Errors::G_CODE_GROUP_NON_MODAL_AXIS_CANNOT_BE_SPECIFIED;
-			}
-			/*
-			L1 - Tool offset,radius,orientation settings - requires P,Q,R,X,W,Z
-			L10 - Tool offset,radius,orientation settings calculated - requires P,Q,R,X,W,Z
-			L2 - Coordinate system origin setting - requires P,R,any axis
-			L20 - Coordinate system origin setting calculated - requires P,R,any axis
-			*/
-			//G10 requires an L, P and at least one axis word value
+	case NGC_RS274::G_codes::G10_PARAM_WRITE: //<-G10
+	{
+												  //It is illegal to specify G10 with a motion command
+												  if (NGC_RS274::Interpreter::Processor::worker_block.g_group[NGC_RS274::Groups::G::NON_MODAL]
+													  && NGC_RS274::Interpreter::Processor::worker_block.g_group[NGC_RS274::Groups::G::Motion]
+													  && NGC_RS274::Interpreter::Processor::worker_block.any_axis_was_defined())
+												  {
+													  return  NGC_RS274::Interpreter::Errors::G_CODE_GROUP_NON_MODAL_AXIS_CANNOT_BE_SPECIFIED;
+												  }
+												  /*
+												  L1 - Tool offset,radius,orientation settings - requires P,Q,R,X,W,Z
+												  L10 - Tool offset,radius,orientation settings calculated - requires P,Q,R,X,W,Z
+												  L2 - Coordinate system origin setting - requires P,R,any axis
+												  L20 - Coordinate system origin setting calculated - requires P,R,any axis
+												  */
+												  //G10 requires an L, P and at least one axis word value
 
-			if (!NGC_RS274::Interpreter::Processor::local_block.get_value_defined('L', iAddress))
-			{
-				return  NGC_RS274::Interpreter::Errors::COORDINATE_SETTING_MISSING_L_VALUE;
-			}
-			switch ((uint8_t)iAddress)
-			{
-				//If L was 1 or 10 then we require an axis word for tool table update
-				case 1:
-				case 10:
-				{
-					//The P value should be defined AND be an integer between 0 and 255
-					if (!NGC_RS274::Interpreter::Processor::local_block.get_value_defined('P', iAddress))
-					{
-						return  NGC_RS274::Interpreter::Errors::TOOL_OFFSET_SETTING_MISSING_P_VALUE;
-					}
-					if (iAddress < 0 || iAddress>255)
-					{
-						return  NGC_RS274::Interpreter::Errors::TOOL_OFFSET_SETTING_P_VALUE_OUT_OF_RANGE;
-					}
-					if (!NGC_RS274::Interpreter::Processor::local_block.any_axis_was_defined())
-					{
-						return  NGC_RS274::Interpreter::Errors::COORDINATE_SETTING_MISSING_AXIS_VALUE;
-					}
-					break;
-				}
-				//If L was 2 or 20 then we require an axis word and a P word for coordinate system settings
-				case 2:
-				case 20:
-				{
-					//The P value should be defined AND be an integer between 1 and 9
-					if (!NGC_RS274::Interpreter::Processor::local_block.get_value_defined('P', iAddress))
-					{
-						return  NGC_RS274::Interpreter::Errors::COORDINATE_SETTING_MISSING_P_VALUE;
-					}
-					if (iAddress < 0 || iAddress>9)
-					{
-						return  NGC_RS274::Interpreter::Errors::COORDINATE_SETTING_P_VALUE_OUT_OF_RANGE;
-					}
-					if (!NGC_RS274::Interpreter::Processor::local_block.any_axis_was_defined())
-					{
-						return  NGC_RS274::Interpreter::Errors::COORDINATE_SETTING_MISSING_AXIS_VALUE;
-					}
-					break;
-				}
-				default:
-				{
-					return  NGC_RS274::Interpreter::Errors::COORDINATE_SETTING_L_VALUE_OUT_OF_RANGE;
-					break;
-				}
-			}
+												  if (!NGC_RS274::Interpreter::Processor::worker_block.get_value_defined('L', iAddress))
+												  {
+													  return  NGC_RS274::Interpreter::Errors::COORDINATE_SETTING_MISSING_L_VALUE;
+												  }
+												  switch ((uint8_t)iAddress)
+												  {
+													  //If L was 1 or 10 then we require an axis word for tool table update
+												  case 1:
+												  case 10:
+												  {
+															 //The P value should be defined AND be an integer between 0 and 255
+															 if (!NGC_RS274::Interpreter::Processor::worker_block.get_value_defined('P', iAddress))
+															 {
+																 return  NGC_RS274::Interpreter::Errors::TOOL_OFFSET_SETTING_MISSING_P_VALUE;
+															 }
+															 if (iAddress < 0 || iAddress>255)
+															 {
+																 return  NGC_RS274::Interpreter::Errors::TOOL_OFFSET_SETTING_P_VALUE_OUT_OF_RANGE;
+															 }
+															 if (!NGC_RS274::Interpreter::Processor::worker_block.any_axis_was_defined())
+															 {
+																 return  NGC_RS274::Interpreter::Errors::COORDINATE_SETTING_MISSING_AXIS_VALUE;
+															 }
+															 break;
+												  }
+													  //If L was 2 or 20 then we require an axis word and a P word for coordinate system settings
+												  case 2:
+												  case 20:
+												  {
+															 //The P value should be defined AND be an integer between 1 and 9
+															 if (!NGC_RS274::Interpreter::Processor::worker_block.get_value_defined('P', iAddress))
+															 {
+																 return  NGC_RS274::Interpreter::Errors::COORDINATE_SETTING_MISSING_P_VALUE;
+															 }
+															 if (iAddress < 0 || iAddress>9)
+															 {
+																 return  NGC_RS274::Interpreter::Errors::COORDINATE_SETTING_P_VALUE_OUT_OF_RANGE;
+															 }
+															 if (!NGC_RS274::Interpreter::Processor::worker_block.any_axis_was_defined())
+															 {
+																 return  NGC_RS274::Interpreter::Errors::COORDINATE_SETTING_MISSING_AXIS_VALUE;
+															 }
+															 break;
+												  }
+												  default:
+												  {
+															 return  NGC_RS274::Interpreter::Errors::COORDINATE_SETTING_L_VALUE_OUT_OF_RANGE;
+															 break;
+												  }
+												  }
 
-			break;
-		}
+												  break;
+	}
 	}
 
 	return  NGC_RS274::Interpreter::Errors::OK;
@@ -647,7 +644,7 @@ int NGC_RS274::Interpreter::Processor::error_check_tool_length_offset()
 	//See if P was defined. Can we allow P value for tool length?
 	//if (!NGC_RS274::Interpreter::Processor::local_block.get_value_defined('P'))
 	{
-		if (!NGC_RS274::Interpreter::Processor::local_block.get_value_defined('H', iAddress))
+		if (!NGC_RS274::Interpreter::Processor::worker_block.get_value_defined('H', iAddress))
 		{
 			//TODO:See if this is a strict error. IF H is missing can we assume zero?
 			return  NGC_RS274::Interpreter::Errors::TOOL_OFFSET_MISSING_H_VALUE;
@@ -682,32 +679,32 @@ int NGC_RS274::Interpreter::Processor::error_check_cutter_compensation()
 	but it will calculate offset based on the related planes.
 
 	*/
-	if (NGC_RS274::Interpreter::Processor::local_block.g_group[NGC_RS274::Groups::G::PLANE_SELECTION] != NGC_RS274::G_codes::XY_PLANE_SELECTION)
-	return  NGC_RS274::Interpreter::Errors::CUTTER_RADIUS_COMP_NOT_XY_PLANE;
+	if (NGC_RS274::Interpreter::Processor::worker_block.g_group[NGC_RS274::Groups::G::PLANE_SELECTION] != NGC_RS274::G_codes::XY_PLANE_SELECTION)
+		return  NGC_RS274::Interpreter::Errors::CUTTER_RADIUS_COMP_NOT_XY_PLANE;
 
-	if (NGC_RS274::Interpreter::Processor::local_block.g_group[NGC_RS274::Groups::G::Motion] == NGC_RS274::G_codes::MOTION_CANCELED)
-	return  NGC_RS274::Interpreter::Errors::CUTTER_RADIUS_COMP_WHEN_MOTION_CANCELED;
+	if (NGC_RS274::Interpreter::Processor::worker_block.g_group[NGC_RS274::Groups::G::Motion] == NGC_RS274::G_codes::MOTION_CANCELED)
+		return  NGC_RS274::Interpreter::Errors::CUTTER_RADIUS_COMP_WHEN_MOTION_CANCELED;
 
 	//If cutter radius compensation was already active, it cannot be set active again, or change sides
 	//It must be turned off, and back on again
-	if (NGC_RS274::Interpreter::Processor::local_block.get_g_code_defined(NGC_RS274::Groups::G::Cutter_radius_compensation))
+	if (NGC_RS274::Interpreter::Processor::worker_block.get_g_code_defined(NGC_RS274::Groups::G::Cutter_radius_compensation))
 	{
 		//Since cutter comp was defined in the block, we must determine if it was already on
 		//by looking in the stagers g code group states.
 		if (stager_block->g_group[NGC_RS274::Groups::G::Cutter_radius_compensation] > NGC_RS274::G_codes::CANCEL_CUTTER_RADIUS_COMPENSATION
-		&& NGC_RS274::Interpreter::Processor::local_block.g_group[NGC_RS274::Groups::G::Cutter_radius_compensation] > NGC_RS274::G_codes::CANCEL_CUTTER_RADIUS_COMPENSATION)
-		return  NGC_RS274::Interpreter::Errors::CUTTER_RADIUS_COMP_ALREADY_ACTIVE;
+			&& NGC_RS274::Interpreter::Processor::worker_block.g_group[NGC_RS274::Groups::G::Cutter_radius_compensation] > NGC_RS274::G_codes::CANCEL_CUTTER_RADIUS_COMPENSATION)
+			return  NGC_RS274::Interpreter::Errors::CUTTER_RADIUS_COMP_ALREADY_ACTIVE;
 	}
 
 	//Compensation was off and we are turning it on.
-	if ((local_block.g_group[NGC_RS274::Groups::G::Cutter_radius_compensation] > NGC_RS274::G_codes::CANCEL_CUTTER_RADIUS_COMPENSATION))
+	if ((worker_block.g_group[NGC_RS274::Groups::G::Cutter_radius_compensation] > NGC_RS274::G_codes::CANCEL_CUTTER_RADIUS_COMPENSATION))
 	{
 
 		//See if P was defined.
-		if (!NGC_RS274::Interpreter::Processor::local_block.get_value_defined('P', iAddress))
+		if (!NGC_RS274::Interpreter::Processor::worker_block.get_value_defined('P', iAddress))
 		{
 			//P was not defined, see if D was
-			if (!NGC_RS274::Interpreter::Processor::local_block.get_value_defined('D', iAddress))
+			if (!NGC_RS274::Interpreter::Processor::worker_block.get_value_defined('D', iAddress))
 			{
 				//P and D were both left out. naughty naughty
 				return  NGC_RS274::Interpreter::Errors::CUTTER_RADIUS_COMP_MISSING_D_P_VALUE;
@@ -722,7 +719,7 @@ int NGC_RS274::Interpreter::Processor::error_check_cutter_compensation()
 		else
 		{
 			//See if D word defined, since we know P already was
-			if (NGC_RS274::Interpreter::Processor::local_block.get_defined('D'))
+			if (NGC_RS274::Interpreter::Processor::worker_block.get_defined('D'))
 			{
 				return  NGC_RS274::Interpreter::Errors::CUTTER_RADIUS_COMP_D_P_BOTH_ASSIGNED;
 			}
@@ -732,39 +729,160 @@ int NGC_RS274::Interpreter::Processor::error_check_cutter_compensation()
 	return  NGC_RS274::Interpreter::Errors::OK;
 }
 
-/*
-Loops through the array data handed to the ProcessLine() method and splits it into g code chunks
-*/
-int NGC_RS274::Interpreter::Processor::parse_values()
+int16_t NGC_RS274::Interpreter::Processor::get_word(char byte)
+{
+	//a word must be a letter between A and Z
+	if (byte >= 'A' && byte <= 'Z')
+		return byte;//<--return valid word
+	else
+		return byte * -1;//<--return same byte but signed negative
+}
+
+int16_t NGC_RS274::Interpreter::Processor::get_value(char byte, e_value_types value_type)
+{
+	//a value must be a number between 0 and 9.
+	//it may also contain some symbols -,.,+,#
+	if (value_type == e_value_types::Numeric)
+	{
+		if ((byte >= '0' && byte <= '9') || (byte == '-' || byte == '+' || byte == '.'))
+		{
+			return byte;//<--return valid value
+		}
+		else
+		{
+			return byte *-1;//<--return invalid value
+		}
+	}
+	else if (value_type == e_value_types::Parameter)
+	{
+		//can have a #, or a digit from 0 to 9. cannot be negative and cannot have decimals
+		if ((byte == '#') || (byte >= '0' && byte <= '9'))
+		{
+			return byte;//<--return valid value
+		}
+		else
+		{
+			return byte *-1;//<--return invalid value
+		}
+	}
+	else
+	{
+		return byte * -1;//<--return same byte but signed negative
+	}
+}
+
+NGC_RS274::Interpreter::Processor::e_value_types NGC_RS274::Interpreter::Processor::get_value_type(char byte)
+{
+	//a value must be a number between 0 and 9.
+	//it may also contain some symbols -,.,+,#
+	if ((byte >= '0' && byte <= '9') || (byte == '-' || byte == '+' || byte == '.'))
+	{
+		return NGC_RS274::Interpreter::Processor::e_value_types::Numeric;
+	}
+	else if (byte == '#')
+	{
+		return NGC_RS274::Interpreter::Processor::e_value_types::Parameter;
+	}
+	else
+	{
+		return NGC_RS274::Interpreter::Processor::e_value_types::UnKnown;
+	}
+}
+
+
+int NGC_RS274::Interpreter::Processor::parse_values(c_ring_buffer<char> * buffer)
 {
 
 	/*Line must be primed before we get to here. It has to be pointing to a valid char array
 	*/
 	int ReturnValue = NGC_RS274::Interpreter::Errors::OK;
-	//memset(Line, 0, 256);//<--Clear the line array
-	//char *line_pointer = Line;//<--creating a pointer to an array
-	//to simplify building the array data in the loops
-	*NGC_RS274::Interpreter::Processor::Line = toupper(*NGC_RS274::Interpreter::Processor::Line);
+	char buffer_byte = 0;
+	//buffer_byte = toupper(buffer->get());
+
+	int16_t _word = 0;
+	int16_t _value = 0;
+	uint8_t _word_count = 0;
+	NGC_RS274::Interpreter::Processor::e_value_types _value_type = e_value_types::UnKnown;
+	while (1)
+	{
+		_word = get_word(toupper(buffer->get()));
+		if (_word < 0) //<--invalid word
+		{
+			ReturnValue = NGC_RS274::Interpreter::Errors::OK;
+			//switch the sign back to positive
+			_word *= -1;
+			//cant depend on data always ending a aprticular way. check for CR,LF,CR/LF and any combo therof.
+			if (_word == CR || _word == LF)
+			{
+				while (buffer->peek() == LF || buffer->peek() == CR)
+				{
+					buffer->get();
+				}
+
+				//We are at the end of the line. if word_count is zero then we processed no data.
+				if (_word_count == 0)
+				{
+					ReturnValue = NGC_RS274::Interpreter::Errors::LINE_CONTAINS_NO_DATA;
+				}
+			}
+			else
+			{
+				ReturnValue = NGC_RS274::Interpreter::Errors::WORD_VALUE_TYPE_INVALID;
+			}
+			return ReturnValue;
+		}
+		_word_count++;
+		_value_type = get_value_type(toupper(buffer->peek()));
+
+		//Make a storage point for the loaded bytes. They will need to be cast to a float
+		char _char_address[128];
+		memset(_char_address, 0, 128);
+		uint8_t _pos = 0;
+		//We are now loading a value, but we must stop processing when we encounter a byte
+		//that does not match this value type. Most commonly this will be a new word value
+		while (get_value(toupper(buffer->peek()), _value_type) > 0)
+		{
+
+			int16_t _value = get_value(toupper(buffer->get()), _value_type);
+			if (_value < 0) //<--invalid value
+			{
+				if (_value_type == e_value_types::Numeric)
+					return  NGC_RS274::Interpreter::Errors::ADDRESS_VALUE_NOT_NUMERIC;
+				else if (_value_type == e_value_types::Parameter)
+					return  NGC_RS274::Interpreter::Errors::ADDRESS_VALUE_PARAM_INVALID;
+				else
+					return  NGC_RS274::Interpreter::Errors::ADDRESS_VALUE_ERROR_UNSPECIFIED;
+			}
+			_char_address[_pos++] = _value;
+		}
+		ReturnValue = group_word(_word, evaluate_address(_char_address));
+		//If there was an error during line processing don't bother finishing the line, just bale.
+		if (ReturnValue != NGC_RS274::Interpreter::Errors::OK)
+			return ReturnValue;
+	}
 
 
-	if (*NGC_RS274::Interpreter::Processor::Line == 0)
-	return  NGC_RS274::Interpreter::Errors::LINE_CONTAINS_NO_DATA;
-	else if (*NGC_RS274::Interpreter::Processor::Line <'A' || *NGC_RS274::Interpreter::Processor::Line >'Z')
+
+
+
+
+	if (buffer_byte == 0)
+		return  NGC_RS274::Interpreter::Errors::LINE_CONTAINS_NO_DATA;
+	else if (buffer_byte <'A' || buffer_byte >'Z')
 	{
 		//Skip any erroneous CR or LF.
-		while (*NGC_RS274::Interpreter::Processor::Line == LF || *NGC_RS274::Interpreter::Processor::Line == CR)
+		while (buffer_byte == LF || buffer_byte == CR)
 		{
-			NGC_RS274::Interpreter::Processor::Line++;
-			*NGC_RS274::Interpreter::Processor::Line = toupper(*NGC_RS274::Interpreter::Processor::Line);
+			buffer_byte = toupper(buffer->get());
 		}
-		
-		if (*NGC_RS274::Interpreter::Processor::Line <'A' || *NGC_RS274::Interpreter::Processor::Line >'Z')
+
+		if (buffer_byte <'A' || buffer_byte >'Z')
 		{
 			//Check to see if this is a block skip, comment, etc.
-			if (*NGC_RS274::Interpreter::Processor::Line != '/' && *NGC_RS274::Interpreter::Processor::Line != '(')
+			if (buffer_byte != '/' && buffer_byte != '(')
 			{
 				local_serial->print_string("bad char:");
-				local_serial->print_int32(*NGC_RS274::Interpreter::Processor::Line);
+				local_serial->print_int32(buffer_byte);
 
 				return  NGC_RS274::Interpreter::Errors::WORD_VALUE_TYPE_INVALID;
 			}
@@ -775,70 +893,67 @@ int NGC_RS274::Interpreter::Processor::parse_values()
 	while (1)
 	{
 		//Is this a letter between A and Z
-		if (*NGC_RS274::Interpreter::Processor::Line >= 'A' && *NGC_RS274::Interpreter::Processor::Line <= 'Z')
+		if (buffer_byte >= 'A' && buffer_byte <= 'Z')
 		{
-			char Word = *NGC_RS274::Interpreter::Processor::Line;
-			NGC_RS274::Interpreter::Processor::Line++;
-			*NGC_RS274::Interpreter::Processor::Line = toupper(*NGC_RS274::Interpreter::Processor::Line);
+			char Word = buffer_byte;
+			buffer_byte = toupper(buffer->get());
+
 			char _address[10];
 			memset(_address, 0, 10);
 			uint8_t i = 0;
 			//move to first byte of address value
 			while (1)
 			{
-				if (*NGC_RS274::Interpreter::Processor::Line == 32)
+				if (buffer_byte == 32)
 				{
-					NGC_RS274::Interpreter::Processor::Line++;
-					*NGC_RS274::Interpreter::Processor::Line = toupper(*NGC_RS274::Interpreter::Processor::Line);
+					buffer_byte = toupper(buffer->get());
 					continue;
 				}
 
-				if (*NGC_RS274::Interpreter::Processor::Line == '(')
+				if (buffer_byte == '(')
 				{
 					while (*NGC_RS274::Interpreter::Processor::Line != ')')
 					{
-						NGC_RS274::Interpreter::Processor::Line++;
-						*NGC_RS274::Interpreter::Processor::Line = toupper(*NGC_RS274::Interpreter::Processor::Line);
+						buffer_byte = toupper(buffer->get());
 					}
-					NGC_RS274::Interpreter::Processor::Line++;
+					buffer_byte = toupper(buffer->get());
 				}
-				
+
 				//If this is a letter, or a CR, break out of this inner while
-				if ((*NGC_RS274::Interpreter::Processor::Line >= 'A'
-				&& *NGC_RS274::Interpreter::Processor::Line <= 'Z')
-				|| *NGC_RS274::Interpreter::Processor::Line == 13
-				|| *NGC_RS274::Interpreter::Processor::Line == 0)
-				break;
-				if ((*NGC_RS274::Interpreter::Processor::Line < '0'
-				|| *NGC_RS274::Interpreter::Processor::Line>'9')
-				&& (*NGC_RS274::Interpreter::Processor::Line != '.'
-				&& *NGC_RS274::Interpreter::Processor::Line != '-'))
+				if ((buffer_byte >= 'A'
+					&& buffer_byte <= 'Z')
+					|| buffer_byte == 13
+					|| buffer_byte == 0)
+					break;
+				if ((buffer_byte < '0'
+					|| buffer_byte>'9')
+					&& (buffer_byte != '.'
+					&& buffer_byte != '-'))
 				{
-					while (*NGC_RS274::Interpreter::Processor::Line != 13
-					&& *NGC_RS274::Interpreter::Processor::Line != 0)
+					while (buffer_byte != 13
+						&& buffer_byte != 0)
 					{
-						*NGC_RS274::Interpreter::Processor::Line++;
+						buffer_byte = toupper(buffer->get());
 					}
 
 					return  NGC_RS274::Interpreter::Errors::ADDRESS_VALUE_NOT_NUMERIC;
 				}
-				_address[i] = *NGC_RS274::Interpreter::Processor::Line; i++;
+				_address[i] = buffer_byte; i++;
 
 
-				NGC_RS274::Interpreter::Processor::Line++;
-				*NGC_RS274::Interpreter::Processor::Line = toupper(*NGC_RS274::Interpreter::Processor::Line);
+				buffer_byte = toupper(buffer->get());
 			}
 
 			ReturnValue = group_word(Word, evaluate_address(_address));
 			//If there was an error during line processing don't bother finishing the line, just bale.
 			if (ReturnValue != NGC_RS274::Interpreter::Errors::OK)
-			return ReturnValue;
+				return ReturnValue;
 		}
 		//If this is a CR break out of the outer while
-		if (*NGC_RS274::Interpreter::Processor::Line == 13
-		|| *NGC_RS274::Interpreter::Processor::Line == 10
-		|| *NGC_RS274::Interpreter::Processor::Line == 0)
-		break;
+		if (buffer_byte == 13
+			|| buffer_byte == 10
+			|| buffer_byte == 0)
+			break;
 	}
 	return ReturnValue;
 }
@@ -864,16 +979,16 @@ Add the word value to the block. G/M words are added to separated block arrays r
 */
 int NGC_RS274::Interpreter::Processor::group_word(char Word, float Address)
 {
-	
+
 	switch (Word)
 	{
-		case 'G': //<--Process words for G (G10,G20,G91, etc..)
+	case 'G': //<--Process words for G (G10,G20,G91, etc..)
 		return _gWord(Address);
 		break;
-		case 'M': //<--Process words for M (M3,M90,M5, etc..)
+	case 'M': //<--Process words for M (M3,M90,M5, etc..)
 		return _mWord(Address);
 		break;
-		default:
+	default:
 		return _pWord(Word, Address); //<--Process words for Everything else (X__,Y__,Z__,I__,D__, etc..)
 		break;
 	}
@@ -913,128 +1028,128 @@ int NGC_RS274::Interpreter::Processor::_gWord(float Address)
 
 	switch (iAddress)
 	{
-		case NGC_RS274::G_codes::RAPID_POSITIONING: //<-G00
-		case NGC_RS274::G_codes::LINEAR_INTERPOLATION: //<-G01
-		case NGC_RS274::G_codes::CIRCULAR_INTERPOLATION_CCW: //<-G02
-		case NGC_RS274::G_codes::CIRCULAR_INTERPOLATION_CW: //<-G03
+	case NGC_RS274::G_codes::RAPID_POSITIONING: //<-G00
+	case NGC_RS274::G_codes::LINEAR_INTERPOLATION: //<-G01
+	case NGC_RS274::G_codes::CIRCULAR_INTERPOLATION_CCW: //<-G02
+	case NGC_RS274::G_codes::CIRCULAR_INTERPOLATION_CW: //<-G03
 		ngc_working_group = NGC_RS274::Groups::G::Motion;
-		NGC_RS274::Interpreter::Processor::local_block.g_group[NGC_RS274::Groups::G::Motion] = (iAddress);
+		NGC_RS274::Interpreter::Processor::worker_block.g_group[NGC_RS274::Groups::G::Motion] = (iAddress);
 		break;
 
-		case NGC_RS274::G_codes::G10_PARAM_WRITE: //<-G10
+	case NGC_RS274::G_codes::G10_PARAM_WRITE: //<-G10
 		ngc_working_group = NGC_RS274::Groups::G::NON_MODAL;//<-G4,G10,G28,G30,G53,G92,92.2,G92.3
-		NGC_RS274::Interpreter::Processor::local_block.g_group[NGC_RS274::Groups::G::NON_MODAL] = (iAddress);
+		NGC_RS274::Interpreter::Processor::worker_block.g_group[NGC_RS274::Groups::G::NON_MODAL] = (iAddress);
 		break;
 
-		case NGC_RS274::G_codes::RECTANGULAR_COORDINATE_SYSTEM: //<-G15
-		case NGC_RS274::G_codes::POLAR_COORDINATE_SYSTEM: //<-G16
+	case NGC_RS274::G_codes::RECTANGULAR_COORDINATE_SYSTEM: //<-G15
+	case NGC_RS274::G_codes::POLAR_COORDINATE_SYSTEM: //<-G16
 		ngc_working_group = NGC_RS274::Groups::G::RECTANGLAR_POLAR_COORDS_SELECTION;
-		NGC_RS274::Interpreter::Processor::local_block.g_group[NGC_RS274::Groups::G::RECTANGLAR_POLAR_COORDS_SELECTION] = (iAddress);
+		NGC_RS274::Interpreter::Processor::worker_block.g_group[NGC_RS274::Groups::G::RECTANGLAR_POLAR_COORDS_SELECTION] = (iAddress);
 		break;
 
-		case NGC_RS274::G_codes::XY_PLANE_SELECTION: //<-G17
-		case NGC_RS274::G_codes::XZ_PLANE_SELECTION: //<-G18
-		case NGC_RS274::G_codes::YZ_PLANE_SELECTION: //<-G19
+	case NGC_RS274::G_codes::XY_PLANE_SELECTION: //<-G17
+	case NGC_RS274::G_codes::XZ_PLANE_SELECTION: //<-G18
+	case NGC_RS274::G_codes::YZ_PLANE_SELECTION: //<-G19
 
 		ngc_working_group = NGC_RS274::Groups::G::PLANE_SELECTION;
-		NGC_RS274::Interpreter::Processor::local_block.g_group[NGC_RS274::Groups::G::PLANE_SELECTION] = (iAddress);
-		NGC_RS274::Interpreter::Processor::error_check_plane_select(NGC_RS274::Interpreter::Processor::local_block);
+		NGC_RS274::Interpreter::Processor::worker_block.g_group[NGC_RS274::Groups::G::PLANE_SELECTION] = (iAddress);
+		NGC_RS274::Interpreter::Processor::error_check_plane_select(NGC_RS274::Interpreter::Processor::worker_block);
 		break;
 
-		case NGC_RS274::G_codes::INCH_SYSTEM_SELECTION: //<-G20
-		case NGC_RS274::G_codes::MILLIMETER_SYSTEM_SELECTION: //<-G21
+	case NGC_RS274::G_codes::INCH_SYSTEM_SELECTION: //<-G20
+	case NGC_RS274::G_codes::MILLIMETER_SYSTEM_SELECTION: //<-G21
 		ngc_working_group = NGC_RS274::Groups::G::Units;
 		//If units are changing, update the feed rate in the interpreter
-		if (NGC_RS274::Interpreter::Processor::local_block.g_group[NGC_RS274::Groups::G::Units] != (iAddress))
+		if (NGC_RS274::Interpreter::Processor::worker_block.g_group[NGC_RS274::Groups::G::Units] != (iAddress))
 		{
 			//currently we are in inches and going to mm
-			if (NGC_RS274::Interpreter::Processor::local_block.g_group[NGC_RS274::Groups::G::Units]
-			== NGC_RS274::G_codes::INCH_SYSTEM_SELECTION)
+			if (NGC_RS274::Interpreter::Processor::worker_block.g_group[NGC_RS274::Groups::G::Units]
+				== NGC_RS274::G_codes::INCH_SYSTEM_SELECTION)
 			{
-				NGC_RS274::Interpreter::Processor::local_block.set_value
-				('F', NGC_RS274::Interpreter::Processor::local_block.get_value('F')*25.4);
+				NGC_RS274::Interpreter::Processor::worker_block.set_value
+					('F', NGC_RS274::Interpreter::Processor::worker_block.get_value('F')*25.4);
 			}
 			//currently we are in mm and going to inches
-			if (NGC_RS274::Interpreter::Processor::local_block.g_group[NGC_RS274::Groups::G::Units]
-			== NGC_RS274::G_codes::MILLIMETER_SYSTEM_SELECTION)
+			if (NGC_RS274::Interpreter::Processor::worker_block.g_group[NGC_RS274::Groups::G::Units]
+				== NGC_RS274::G_codes::MILLIMETER_SYSTEM_SELECTION)
 			{
-				NGC_RS274::Interpreter::Processor::local_block.set_value
-				('F', NGC_RS274::Interpreter::Processor::local_block.get_value('F') / 25.4);
+				NGC_RS274::Interpreter::Processor::worker_block.set_value
+					('F', NGC_RS274::Interpreter::Processor::worker_block.get_value('F') / 25.4);
 			}
 		}
-		NGC_RS274::Interpreter::Processor::local_block.g_group[NGC_RS274::Groups::G::Units] = (iAddress);
+		NGC_RS274::Interpreter::Processor::worker_block.g_group[NGC_RS274::Groups::G::Units] = (iAddress);
 		break;
 
-		case NGC_RS274::G_codes::CANCEL_CUTTER_RADIUS_COMPENSATION: //<-G40
-		case NGC_RS274::G_codes::START_CUTTER_RADIUS_COMPENSATION_LEFT: //<-G41
-		case NGC_RS274::G_codes::START_CUTTER_RADIUS_COMPENSATION_RIGHT: //<-G42
+	case NGC_RS274::G_codes::CANCEL_CUTTER_RADIUS_COMPENSATION: //<-G40
+	case NGC_RS274::G_codes::START_CUTTER_RADIUS_COMPENSATION_LEFT: //<-G41
+	case NGC_RS274::G_codes::START_CUTTER_RADIUS_COMPENSATION_RIGHT: //<-G42
 		ngc_working_group = NGC_RS274::Groups::G::Cutter_radius_compensation;
-		NGC_RS274::Interpreter::Processor::local_block.g_group[NGC_RS274::Groups::G::Cutter_radius_compensation] = (iAddress);
+		NGC_RS274::Interpreter::Processor::worker_block.g_group[NGC_RS274::Groups::G::Cutter_radius_compensation] = (iAddress);
 		break;
 
 
-		case NGC_RS274::G_codes::MOTION_IN_MACHINE_COORDINATE_SYSTEM: //<-G53
+	case NGC_RS274::G_codes::MOTION_IN_MACHINE_COORDINATE_SYSTEM: //<-G53
 		ngc_working_group = NGC_RS274::Groups::G::COORDINATE_SYSTEM_SELECTION;
-		NGC_RS274::Interpreter::Processor::local_block.g_group[NGC_RS274::Groups::G::COORDINATE_SYSTEM_SELECTION] = (iAddress);
+		NGC_RS274::Interpreter::Processor::worker_block.g_group[NGC_RS274::Groups::G::COORDINATE_SYSTEM_SELECTION] = (iAddress);
 		break;
 
-		case NGC_RS274::G_codes::WORK_OFFSET_POSITION_1_G54: //<-G54, G55, G56, G57, G58, G59, G59.1, G59.2, G59.3
-		case NGC_RS274::G_codes::WORK_OFFSET_POSITION_2_G55:
-		case NGC_RS274::G_codes::WORK_OFFSET_POSITION_3_G56:
-		case NGC_RS274::G_codes::WORK_OFFSET_POSITION_4_G57:
-		case NGC_RS274::G_codes::WORK_OFFSET_POSITION_5_G58:
-		case NGC_RS274::G_codes::WORK_OFFSET_POSITION_6_G59:
-		case NGC_RS274::G_codes::WORK_OFFSET_POSITION_6_G59_1:
-		case NGC_RS274::G_codes::WORK_OFFSET_POSITION_6_G59_2:
-		case NGC_RS274::G_codes::WORK_OFFSET_POSITION_6_G59_3:
+	case NGC_RS274::G_codes::WORK_OFFSET_POSITION_1_G54: //<-G54, G55, G56, G57, G58, G59, G59.1, G59.2, G59.3
+	case NGC_RS274::G_codes::WORK_OFFSET_POSITION_2_G55:
+	case NGC_RS274::G_codes::WORK_OFFSET_POSITION_3_G56:
+	case NGC_RS274::G_codes::WORK_OFFSET_POSITION_4_G57:
+	case NGC_RS274::G_codes::WORK_OFFSET_POSITION_5_G58:
+	case NGC_RS274::G_codes::WORK_OFFSET_POSITION_6_G59:
+	case NGC_RS274::G_codes::WORK_OFFSET_POSITION_6_G59_1:
+	case NGC_RS274::G_codes::WORK_OFFSET_POSITION_6_G59_2:
+	case NGC_RS274::G_codes::WORK_OFFSET_POSITION_6_G59_3:
 		//this->WorkOffsetValue = iAddress;
 		ngc_working_group = NGC_RS274::Groups::G::COORDINATE_SYSTEM_SELECTION;
-		NGC_RS274::Interpreter::Processor::local_block.g_group[NGC_RS274::Groups::G::COORDINATE_SYSTEM_SELECTION] = (iAddress);
+		NGC_RS274::Interpreter::Processor::worker_block.g_group[NGC_RS274::Groups::G::COORDINATE_SYSTEM_SELECTION] = (iAddress);
 		break;
 
-		case NGC_RS274::G_codes::MOTION_CANCELED: //<-G80
-		case NGC_RS274::G_codes::CANNED_CYCLE_BACK_BORING: //<-G87
-		case NGC_RS274::G_codes::CANNED_CYCLE_BORING_DWELL_FEED_OUT: //<-G89
-		case NGC_RS274::G_codes::CANNED_CYCLE_BORING_NO_DWELL_FEED_OUT: //<-G85
-		case NGC_RS274::G_codes::CANNED_CYCLE_BORING_SPINDLE_STOP_MANUAL_OUT: //<-G88
-		case NGC_RS274::G_codes::CANNED_CYCLE_BORING_SPINDLE_STOP_RAPID_OUT: //<-G86
-		case NGC_RS274::G_codes::CANNED_CYCLE_DRILLING: //<-G81
-		case NGC_RS274::G_codes::CANNED_CYCLE_DRILLING_WITH_DWELL: //<-G82
-		case NGC_RS274::G_codes::CANNED_CYCLE_PECK_DRILLING: //<-G83
-		case NGC_RS274::G_codes::CANNED_CYCLE_RIGHT_HAND_TAPPING: //<-G84
+	case NGC_RS274::G_codes::MOTION_CANCELED: //<-G80
+	case NGC_RS274::G_codes::CANNED_CYCLE_BACK_BORING: //<-G87
+	case NGC_RS274::G_codes::CANNED_CYCLE_BORING_DWELL_FEED_OUT: //<-G89
+	case NGC_RS274::G_codes::CANNED_CYCLE_BORING_NO_DWELL_FEED_OUT: //<-G85
+	case NGC_RS274::G_codes::CANNED_CYCLE_BORING_SPINDLE_STOP_MANUAL_OUT: //<-G88
+	case NGC_RS274::G_codes::CANNED_CYCLE_BORING_SPINDLE_STOP_RAPID_OUT: //<-G86
+	case NGC_RS274::G_codes::CANNED_CYCLE_DRILLING: //<-G81
+	case NGC_RS274::G_codes::CANNED_CYCLE_DRILLING_WITH_DWELL: //<-G82
+	case NGC_RS274::G_codes::CANNED_CYCLE_PECK_DRILLING: //<-G83
+	case NGC_RS274::G_codes::CANNED_CYCLE_RIGHT_HAND_TAPPING: //<-G84
 		ngc_working_group = NGC_RS274::Groups::G::Motion;
-		NGC_RS274::Interpreter::Processor::local_block.g_group[NGC_RS274::Groups::G::Motion] = (iAddress);
+		NGC_RS274::Interpreter::Processor::worker_block.g_group[NGC_RS274::Groups::G::Motion] = (iAddress);
 		break;
 
-		case NGC_RS274::G_codes::ABSOLUTE_DISANCE_MODE: //<-G90
-		case NGC_RS274::G_codes::INCREMENTAL_DISTANCE_MODE: //<-G91
+	case NGC_RS274::G_codes::ABSOLUTE_DISANCE_MODE: //<-G90
+	case NGC_RS274::G_codes::INCREMENTAL_DISTANCE_MODE: //<-G91
 		ngc_working_group = NGC_RS274::Groups::G::DISTANCE_MODE;
-		NGC_RS274::Interpreter::Processor::local_block.g_group[NGC_RS274::Groups::G::DISTANCE_MODE] = (iAddress);
+		NGC_RS274::Interpreter::Processor::worker_block.g_group[NGC_RS274::Groups::G::DISTANCE_MODE] = (iAddress);
 		break;
 
-		case NGC_RS274::G_codes::FEED_RATE_MINUTES_PER_UNIT_MODE: //<-G93
-		case NGC_RS274::G_codes::FEED_RATE_UNITS_PER_MINUTE_MODE: //<-G94
-		case NGC_RS274::G_codes::FEED_RATE_UNITS_PER_ROTATION: //<-G95
+	case NGC_RS274::G_codes::FEED_RATE_MINUTES_PER_UNIT_MODE: //<-G93
+	case NGC_RS274::G_codes::FEED_RATE_UNITS_PER_MINUTE_MODE: //<-G94
+	case NGC_RS274::G_codes::FEED_RATE_UNITS_PER_ROTATION: //<-G95
 		ngc_working_group = NGC_RS274::Groups::G::Feed_rate_mode;
-		NGC_RS274::Interpreter::Processor::local_block.g_group[NGC_RS274::Groups::G::Feed_rate_mode] = (iAddress);
+		NGC_RS274::Interpreter::Processor::worker_block.g_group[NGC_RS274::Groups::G::Feed_rate_mode] = (iAddress);
 		break;
 
-		case NGC_RS274::G_codes::CANNED_CYCLE_RETURN_TO_R: //<-G99
-		case NGC_RS274::G_codes::CANNED_CYCLE_RETURN_TO_Z: //<-G98
+	case NGC_RS274::G_codes::CANNED_CYCLE_RETURN_TO_R: //<-G99
+	case NGC_RS274::G_codes::CANNED_CYCLE_RETURN_TO_Z: //<-G98
 		ngc_working_group = NGC_RS274::Groups::G::RETURN_MODE_CANNED_CYCLE;
-		NGC_RS274::Interpreter::Processor::local_block.g_group[NGC_RS274::Groups::G::RETURN_MODE_CANNED_CYCLE] = (iAddress);
+		NGC_RS274::Interpreter::Processor::worker_block.g_group[NGC_RS274::Groups::G::RETURN_MODE_CANNED_CYCLE] = (iAddress);
 		break;
 
-		case NGC_RS274::G_codes::CANCEL_TOOL_LENGTH_OFFSET: //<-G49
-		case NGC_RS274::G_codes::POSITIVE_TOOL_LENGTH_OFFSET: //<-G43
-		case NGC_RS274::G_codes::USE_TOOL_LENGTH_OFFSET_FOR_TRANSIENT_TOOL: //<-G43.1
-		case NGC_RS274::G_codes::NEGATIVE_TOOL_LENGTH_OFFSET: //<-G44
+	case NGC_RS274::G_codes::CANCEL_TOOL_LENGTH_OFFSET: //<-G49
+	case NGC_RS274::G_codes::POSITIVE_TOOL_LENGTH_OFFSET: //<-G43
+	case NGC_RS274::G_codes::USE_TOOL_LENGTH_OFFSET_FOR_TRANSIENT_TOOL: //<-G43.1
+	case NGC_RS274::G_codes::NEGATIVE_TOOL_LENGTH_OFFSET: //<-G44
 
 		ngc_working_group = NGC_RS274::Groups::G::Tool_length_offset;
-		NGC_RS274::Interpreter::Processor::local_block.g_group[NGC_RS274::Groups::G::Tool_length_offset] = (iAddress);
+		NGC_RS274::Interpreter::Processor::worker_block.g_group[NGC_RS274::Groups::G::Tool_length_offset] = (iAddress);
 		break;
 
-		default:
+	default:
 		return  NGC_RS274::Interpreter::Errors::INTERPRETER_DOES_NOT_UNDERSTAND_G_WORD_VALUE; //<-- -1
 		break;
 	}
@@ -1044,20 +1159,20 @@ int NGC_RS274::Interpreter::Processor::_gWord(float Address)
 	We can make the error more meaningful if we tell it WHICH group
 	was specified more than once.
 	*/
-	if (NGC_RS274::Interpreter::Processor::local_block.get_g_code_defined(ngc_working_group))
-	/*
-	Since _working_g_group is the 'group' number we can add it to the base error
-	value and give the user a more specific error so they know what needs
-	to be corrected
-	*/
-	return  NGC_RS274::Interpreter::Errors::G_CODE_GROUP_NON_MODAL_ALREADY_SPECIFIED + ngc_working_group; //<--Start with group 0 and add the Group to it. Never mind, _working_g_group IS the group number
+	if (NGC_RS274::Interpreter::Processor::worker_block.get_g_code_defined(ngc_working_group))
+		/*
+		Since _working_g_group is the 'group' number we can add it to the base error
+		value and give the user a more specific error so they know what needs
+		to be corrected
+		*/
+		return  NGC_RS274::Interpreter::Errors::G_CODE_GROUP_NON_MODAL_ALREADY_SPECIFIED + ngc_working_group; //<--Start with group 0 and add the Group to it. Never mind, _working_g_group IS the group number
 
 	/*
 	If we havent already returned from a duplicate group being specified, set the bit flag for this
 	gcode group. This will get checked if this method is called again but if a gcode for the same
 	group is on the line again, the logic above will catch it and return an error
 	*/
-	NGC_RS274::Interpreter::Processor::local_block.g_code_defined_in_block.set(ngc_working_group);
+	NGC_RS274::Interpreter::Processor::worker_block.g_code_defined_in_block.set(ngc_working_group);
 	return  NGC_RS274::Interpreter::Errors::OK;
 }
 
@@ -1082,55 +1197,55 @@ int NGC_RS274::Interpreter::Processor::_mWord(float Address)
 
 	switch (iAddress)
 	{
-		case NGC_RS274::M_codes::SPINDLE_ON_CW: //<-M03
-		case NGC_RS274::M_codes::SPINDLE_ON_CCW: //<-M04
-		case NGC_RS274::M_codes::SPINDLE_STOP: //<-M05
-		{
-			ngc_working_group = NGC_RS274::Groups::M::SPINDLE;
-			NGC_RS274::Interpreter::Processor::local_block.m_group[NGC_RS274::Groups::M::SPINDLE] = (iAddress);
-			break;
-		}
+	case NGC_RS274::M_codes::SPINDLE_ON_CW: //<-M03
+	case NGC_RS274::M_codes::SPINDLE_ON_CCW: //<-M04
+	case NGC_RS274::M_codes::SPINDLE_STOP: //<-M05
+	{
+											   ngc_working_group = NGC_RS274::Groups::M::SPINDLE;
+											   NGC_RS274::Interpreter::Processor::worker_block.m_group[NGC_RS274::Groups::M::SPINDLE] = (iAddress);
+											   break;
+	}
 
-		case NGC_RS274::M_codes::PROGRAM_PAUSE: //<-M00
-		case NGC_RS274::M_codes::PROGRAM_PAUSE_OPTIONAL: //<-M01
-		case NGC_RS274::M_codes::TOOL_CHANGE_PAUSE: //<-M06
-		{
-			ngc_working_group = NGC_RS274::Groups::M::TOOL_CHANGE;
-			NGC_RS274::Interpreter::Processor::local_block.m_group[NGC_RS274::Groups::M::TOOL_CHANGE] = (iAddress);
-			break;
-		}
-		case NGC_RS274::M_codes::PALLET_CHANGE_PAUSE: //<-M60
-		{
-			ngc_working_group = NGC_RS274::Groups::M::STOPPING;
-			NGC_RS274::Interpreter::Processor::local_block.m_group[NGC_RS274::Groups::M::STOPPING] = (iAddress);
-			break;
-		}
+	case NGC_RS274::M_codes::PROGRAM_PAUSE: //<-M00
+	case NGC_RS274::M_codes::PROGRAM_PAUSE_OPTIONAL: //<-M01
+	case NGC_RS274::M_codes::TOOL_CHANGE_PAUSE: //<-M06
+	{
+													ngc_working_group = NGC_RS274::Groups::M::TOOL_CHANGE;
+													NGC_RS274::Interpreter::Processor::worker_block.m_group[NGC_RS274::Groups::M::TOOL_CHANGE] = (iAddress);
+													break;
+	}
+	case NGC_RS274::M_codes::PALLET_CHANGE_PAUSE: //<-M60
+	{
+													  ngc_working_group = NGC_RS274::Groups::M::STOPPING;
+													  NGC_RS274::Interpreter::Processor::worker_block.m_group[NGC_RS274::Groups::M::STOPPING] = (iAddress);
+													  break;
+	}
 
-		case NGC_RS274::M_codes::COLLANT_MIST: //<-M07
-		case NGC_RS274::M_codes::COOLANT_FLOOD: //<-M08
-		case NGC_RS274::M_codes::COOLANT_OFF: //<-M09
-		{
-			ngc_working_group = NGC_RS274::Groups::M::COOLANT;
-			NGC_RS274::Interpreter::Processor::local_block.m_group[NGC_RS274::Groups::M::COOLANT] = (iAddress);
-			//Since we DO allow multiple coolant modes at the same time, we are just going to return here
-			//No need to check if this modal group was already set on the line.
-			return  NGC_RS274::Interpreter::Errors::OK;
-			break;
-		}
+	case NGC_RS274::M_codes::COLLANT_MIST: //<-M07
+	case NGC_RS274::M_codes::COOLANT_FLOOD: //<-M08
+	case NGC_RS274::M_codes::COOLANT_OFF: //<-M09
+	{
+											  ngc_working_group = NGC_RS274::Groups::M::COOLANT;
+											  NGC_RS274::Interpreter::Processor::worker_block.m_group[NGC_RS274::Groups::M::COOLANT] = (iAddress);
+											  //Since we DO allow multiple coolant modes at the same time, we are just going to return here
+											  //No need to check if this modal group was already set on the line.
+											  return  NGC_RS274::Interpreter::Errors::OK;
+											  break;
+	}
 
-		case NGC_RS274::M_codes::ENABLE_FEED_SPEED_OVERRIDE: //<-M48
-		case NGC_RS274::M_codes::DISABLE_FEED_SPEED_OVERRIDE: //<-M49
-		{
-			ngc_working_group = NGC_RS274::Groups::M::OVERRIDE;
-			NGC_RS274::Interpreter::Processor::local_block.m_group[NGC_RS274::Groups::M::OVERRIDE] = (iAddress);
-			break;
-		}
+	case NGC_RS274::M_codes::ENABLE_FEED_SPEED_OVERRIDE: //<-M48
+	case NGC_RS274::M_codes::DISABLE_FEED_SPEED_OVERRIDE: //<-M49
+	{
+															  ngc_working_group = NGC_RS274::Groups::M::OVERRIDE;
+															  NGC_RS274::Interpreter::Processor::worker_block.m_group[NGC_RS274::Groups::M::OVERRIDE] = (iAddress);
+															  break;
+	}
 
-		default:
+	default:
 		if (iAddress >= 100 && iAddress <= 199)
 		{
 			ngc_working_group = NGC_RS274::Groups::M::USER_DEFINED;
-			NGC_RS274::Interpreter::Processor::local_block.m_group[NGC_RS274::Groups::M::USER_DEFINED] = (iAddress);
+			NGC_RS274::Interpreter::Processor::worker_block.m_group[NGC_RS274::Groups::M::USER_DEFINED] = (iAddress);
 		}
 		else
 		{
@@ -1145,15 +1260,15 @@ int NGC_RS274::Interpreter::Processor::_mWord(float Address)
 	We can make the error more meaningful if we tell it WHICH group
 	was specified more than once.
 	*/
-	if (NGC_RS274::Interpreter::Processor::local_block.get_m_code_defined(ngc_working_group))
-	return  NGC_RS274::Interpreter::Errors::M_CODE_GROUP_STOPPING_ALREADY_SPECIFIED + ngc_working_group;
+	if (NGC_RS274::Interpreter::Processor::worker_block.get_m_code_defined(ngc_working_group))
+		return  NGC_RS274::Interpreter::Errors::M_CODE_GROUP_STOPPING_ALREADY_SPECIFIED + ngc_working_group;
 
 	/*
 	If we havent already returned from a duplicate group being specified, set the bit flag for this
 	mcode group. This will get checked if this method is called again but if a mcode for the same
 	group is on the line again, the logic above will catch it and return an error
 	*/
-	NGC_RS274::Interpreter::Processor::local_block.m_code_defined_in_block.set(ngc_working_group);
+	NGC_RS274::Interpreter::Processor::worker_block.m_code_defined_in_block.set(ngc_working_group);
 	return  NGC_RS274::Interpreter::Errors::OK;
 
 }
@@ -1225,16 +1340,16 @@ int NGC_RS274::Interpreter::Processor::process_word_values(char Word, float iAdd
 	the first 'Word'
 	*/
 	uint8_t WordNumber = (Word - 'A');
-	if (NGC_RS274::Interpreter::Processor::local_block.word_defined_in_block_A_Z.get(WordNumber))
-	//Return the equivalent NGC_Interpreter_Errors number
-	return (G_CODE_MULTIPLIER + WordNumber);
+	if (NGC_RS274::Interpreter::Processor::worker_block.word_defined_in_block_A_Z.get(WordNumber))
+		//Return the equivalent NGC_Interpreter_Errors number
+		return (G_CODE_MULTIPLIER + WordNumber);
 	/*
 	Since this bit was not already set, we can go ahead and set it now
 	If this same word value was specified twice in the same block, we will
 	catch it when it comes in again with the code above.
 	*/
 
-	NGC_RS274::Interpreter::Processor::local_block.word_defined_in_block_A_Z.set(WordNumber);
+	NGC_RS274::Interpreter::Processor::worker_block.word_defined_in_block_A_Z.set(WordNumber);
 
 	/*
 	Almost all letters of the alphabet are used as words. The easiest and simplest way
@@ -1243,7 +1358,7 @@ int NGC_RS274::Interpreter::Processor::process_word_values(char Word, float iAdd
 	value is already stored in the BitNumber we used above.
 	*/
 
-	NGC_RS274::Interpreter::Processor::local_block.block_word_values[WordNumber] = iAddress;
+	NGC_RS274::Interpreter::Processor::worker_block.block_word_values[WordNumber] = iAddress;
 
 	/*
 	I am leaving the switch case but commented out, so we can add 'per word'
@@ -1351,13 +1466,13 @@ int NGC_RS274::Interpreter::Processor::convert_to_line(NGC_RS274::NGC_Binary_Blo
 int NGC_RS274::Interpreter::Processor::normalize_distance_units()
 {
 	//If already in MM mode return;
-	if (NGC_RS274::Interpreter::Processor::local_block.get_g_code_value_x(NGC_RS274::Groups::G::Units) == NGC_RS274::G_codes::MILLIMETER_SYSTEM_SELECTION)
+	if (NGC_RS274::Interpreter::Processor::worker_block.get_g_code_value_x(NGC_RS274::Groups::G::Units) == NGC_RS274::G_codes::MILLIMETER_SYSTEM_SELECTION)
 	{
 		return  NGC_RS274::Interpreter::Errors::OK;
 	}
 	//If we are using the integrated controller (ARM platform), all dimensions are in MM regardless of gcode setting
 	if (!NGC_RS274::Interpreter::Processor::normalize_distance_units_to_mm)
-	return  NGC_RS274::Interpreter::Errors::OK;
+		return  NGC_RS274::Interpreter::Errors::OK;
 
 	/*
 	We are using some 3rd party controller like grbl, tinyg, smoothies, etc. Those controlelr can convert g20/g21 on their own

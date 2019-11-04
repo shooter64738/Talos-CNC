@@ -40,25 +40,35 @@ static float square(float X)
 #ifdef MACHINE_TYPE_LATHE
 #include "Machine Specific\Lathe\NGC_Lathe.h"
 #endif
+#include "..\c_ring_template.h"
 
 namespace NGC_RS274
 {
 	namespace Interpreter
 	{
+		
 		class Processor : public NGC_RS274::Interpreter::NGC_Machine_Specific
 		{
+			
 			//variables
 			public:
+			enum class e_value_types : uint8_t
+			{
+				UnKnown = 0,
+				Numeric = 1,
+				Parameter = 2
+			};
+			
 			static c_Serial *local_serial;
 			//static char Line[CYCLE_LINE_LENGTH];
 			static char * Line;
 			static int HasErrors;
-			static NGC_RS274::NGC_Binary_Block local_block;
+			static NGC_RS274::NGC_Binary_Block worker_block;
 			static NGC_RS274::NGC_Binary_Block *stager_block;
 			static bool normalize_distance_units_to_mm;
 
 			static void initialize();
-			static int process_line(NGC_RS274::NGC_Binary_Block*plan_block);
+			static int process_line(NGC_RS274::NGC_Binary_Block*plan_block, c_ring_buffer<char> * data_source);
 			static float evaluate_address(char* Data);
 			//Move G and M codes to the respective groups
 			static int group_word(char Word, float Address);
@@ -73,7 +83,7 @@ namespace NGC_RS274
 			static int convert_to_line(NGC_RS274::NGC_Binary_Block*local_block);
 
 			private:
-			static int parse_values();
+			static int parse_values(c_ring_buffer<char> * data_source);
 			static void assign_planes(NGC_RS274::NGC_Binary_Block &plane_block);
 			
 			//These error checking methods will need to be moved to their machine specific types.
@@ -91,6 +101,9 @@ namespace NGC_RS274
 			static float hypot_f(float x, float y);
 			static float square(float x);
 			static bool determine_motion(NGC_RS274::NGC_Binary_Block*local_block);
+			static int16_t get_word(char byte);
+			static int16_t get_value(char byte, e_value_types value_type);
+			static e_value_types get_value_type(char byte);
 			//c_interpreter(const c_interpreter &c);
 			//c_interpreter& operator=(const c_interpreter &c);
 			//c_interpreter();
