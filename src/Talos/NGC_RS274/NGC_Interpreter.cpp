@@ -30,6 +30,7 @@
 #include <stdlib.h>
 
 #include <stdlib.h>
+#include "NGC_Line_segment.h"
 
 //char NGC_RS274::Interpreter::Processor::Line[CYCLE_LINE_LENGTH];
 char * NGC_RS274::Interpreter::Processor::Line;
@@ -833,83 +834,26 @@ void NGC_RS274::Interpreter::Processor::read_to_end_of_line(c_ring_buffer<char> 
 
 int NGC_RS274::Interpreter::Processor::parse_values(c_ring_buffer<char> * buffer)
 {
-
-	/*Line must be primed before we get to here. It has to be pointing to a valid char array
-	*/
-	int ReturnValue = NGC_RS274::Interpreter::Errors::OK;
-	char buffer_byte = 0;
-	//buffer_byte = toupper(buffer->get());
-
-	int16_t _word = 0;
-	int16_t _value = 0;
-	uint8_t _word_count = 0;
-	NGC_RS274::Interpreter::Processor::e_value_types _value_type = e_value_types::UnKnown;
-	while (1)
-	{
-		skip_ignoreables(buffer);
-		_word = get_word(toupper(buffer->get()), buffer);
-
-		if (_word < 0) //<--invalid word?
-		{
-			//switch the sign back to positive
-			_word *= -1;
-			if (is_line_terminator(_word, buffer))
-			{			
-				if (_word_count == 0)
-				{
-					ReturnValue = NGC_RS274::Interpreter::Errors::LINE_CONTAINS_NO_DATA;
-				}
-			}
-			else
-			{
-				ReturnValue = NGC_RS274::Interpreter::Errors::WORD_VALUE_TYPE_INVALID;
-			}
-			break; //<--exit while loop
-		}
-
-
-		char c__word = _word;
-		_word_count++;
-		skip_ignoreables(buffer);
-		_value_type = get_value_type(toupper(buffer->peek()), buffer);
-		if (_value_type == e_value_types::UnKnown)
-		{
-			ReturnValue = NGC_RS274::Interpreter::Errors::ADDRESS_VALUE_ERROR_UNSPECIFIED;
-			break;
-		}
-		//Make a storage point for the loaded bytes. They will need to be cast or converted
-		char _char_address[128];
-		memset(_char_address, 0, 128);
-		uint8_t _pos = 0;
-		//We are now loading a value, but we must stop processing when we encounter a byte
-		//that does not match this value type. Most commonly this will be a new word value
-		//while (get_value(toupper(buffer->peek()), _value_type, buffer) > 0)
-			while (1)
-		{
-			
-			skip_ignoreables(buffer);
-			int16_t _value = get_value(toupper(buffer->get()), _value_type, buffer);
-			if (_value < 0) //<--invalid value
-			{
-				if (_value_type == e_value_types::Numeric)
-					ReturnValue = NGC_RS274::Interpreter::Errors::ADDRESS_VALUE_NOT_NUMERIC;
-				else if (_value_type == e_value_types::Parameter)
-					ReturnValue = NGC_RS274::Interpreter::Errors::ADDRESS_VALUE_PARAM_INVALID;
-				else
-					ReturnValue = NGC_RS274::Interpreter::Errors::ADDRESS_VALUE_ERROR_UNSPECIFIED;
-				break;
-			}
-			_char_address[_pos++] = _value;
-		}
-		ReturnValue = group_word(c__word, evaluate_address(_char_address));
-		//If there was an error during line processing don't bother finishing the line, just bale.
-		if (ReturnValue != NGC_RS274::Interpreter::Errors::OK)
-			break;
-	}
-
-	read_to_end_of_line(buffer);
-
-	return ReturnValue;
+	//int ReturnValue = NGC_RS274::Interpreter::Errors::OK;;
+	//NGC_RS274::NGC_Line_Segment new_segment = NGC_RS274::NGC_Line_Segment();
+	//while (1)
+	//{
+	//	NGC_RS274::NGC_Line_Segment::s_line_segment seg = new_segment.process(buffer);
+	//	if (seg.end_type == NGC_RS274::NGC_Line_Segment::e_ending_types::OnInvalidData)
+	//	{
+	//		ReturnValue = NGC_RS274::Interpreter::Errors::WORD_VALUE_TYPE_INVALID;
+	//		break;
+	//	}
+	//	char _char_address[128];
+	//	memset(_char_address, 0, 128);
+	//	memcpy(_char_address, seg.value, seg.size);
+	//	ReturnValue = group_word(seg.word, evaluate_address(_char_address));
+	//	
+	//	if (ReturnValue != NGC_RS274::Interpreter::Errors::OK)
+	//		break;
+	//}
+	//return ReturnValue;
+	return 0;
 }
 
 /*

@@ -149,6 +149,9 @@
     <ClInclude Include="..\..\..\..\Motion\c_gcode_buffer.h">
       <Filter>Motion</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\..\NGC_RS274\NGC_Line_Processor.h">
+      <Filter>Ngc_Rs274</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\..\Coordinator\coordinator_main.cpp">
@@ -213,6 +216,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\..\Motion\c_gcode_buffer.cpp">
       <Filter>Motion</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\NGC_RS274\NGC_Line_Processor.cpp">
+      <Filter>Ngc_Rs274</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

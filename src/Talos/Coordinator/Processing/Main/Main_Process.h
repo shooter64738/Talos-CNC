@@ -12,6 +12,10 @@
 #include "../../coordinator_hardware_def.h"
 #include "../../Serial/c_Serial.h"
 
+
+//remove after testing
+#include "..\..\..\NGC_RS274\NGC_Line_segment.h"
+
 namespace Talos
 {
 	namespace Coordinator
@@ -19,21 +23,21 @@ namespace Talos
 		class Main_Process
 		{
 			//variables
-			public:
+		public:
 			static c_Serial host_serial;
-			protected:
-			private:
+		protected:
+		private:
 
 			//functions
-			public:
+		public:
 			static void initialize();
 			static void run();
 
-			
+
 			//Main_Process();
 			//~Main_Process();
-			protected:
-			private:
+		protected:
+		private:
 			//Main_Process( const Main_Process &c );
 			//Main_Process& operator=( const Main_Process &c );
 
@@ -43,7 +47,3 @@ namespace Talos
 #endif //__MAIN_PROCESS_H__
 
 
-int8_t findword(char * _word, c_ring_buffer<char> * buffer);
-int8_t findvaluetype(c_ring_buffer<char> * buffer);
-int8_t findvalue(char _word_value[], int8_t * value_type, c_ring_buffer<char> * buffer);
-void findeol(c_ring_buffer<char> * buffer);

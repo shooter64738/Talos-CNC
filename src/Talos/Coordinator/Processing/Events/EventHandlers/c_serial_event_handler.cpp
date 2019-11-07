@@ -59,7 +59,7 @@ void c_serial_event_handler::__assign_handler(c_ring_buffer <char> * buffer)
 {
 	//Tail is always assumed to be at the 'start' of data
 	
-	char peek_tail = buffer->peek_tail();
+	char peek_tail = buffer->peek(buffer->_tail);
 	
 	//Printable data is ngc line data. We need to check cr or lf because those are
 	//special line ending characters for ngc data. We will NEVER use 10 or 13 as a
@@ -98,7 +98,7 @@ void c_serial_event_handler::__assign_handler(c_ring_buffer <char> * buffer)
 void c_serial_event_handler::__unkown_handler(c_ring_buffer <char> * buffer)
 {
 	//this was some unknown type of data.
-	char peek_newest = buffer->peek_newest();
+	char peek_newest = buffer->peek(buffer->_newest);
 	Talos::Coordinator::Main_Process::host_serial.print_string("UKNOWN:");
 	Talos::Coordinator::Main_Process::host_serial.print_int32(peek_newest);
 	c_serial_event_handler::pntr_data_handler = NULL;

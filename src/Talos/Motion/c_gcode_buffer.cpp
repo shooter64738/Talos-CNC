@@ -88,7 +88,7 @@ void Talos::Motion::NgcBuffer::initialize()
 
 NGC_RS274::NGC_Binary_Block Talos::Motion::NgcBuffer::prep_for_new()
 {
-	NGC_RS274::NGC_Binary_Block local_block = Talos::Motion::NgcBuffer::gcode_buffer.peek_newest();
+	NGC_RS274::NGC_Binary_Block local_block = Talos::Motion::NgcBuffer::gcode_buffer.peek(Talos::Motion::NgcBuffer::gcode_buffer._newest);
 
 	/*
 	Copy forward the states into the next block from the last modal states, and persisted values

@@ -344,6 +344,22 @@
       <SubType>compile</SubType>
       <Link>Ngc_Rs274\NGC_Interpreter.h</Link>
     </Compile>
+    <Compile Include="..\..\..\NGC_RS274\NGC_Line_Processor.cpp">
+      <SubType>compile</SubType>
+      <Link>Ngc_Rs274\NGC_Line_Processor.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\NGC_RS274\NGC_Line_Processor.h">
+      <SubType>compile</SubType>
+      <Link>Ngc_Rs274\NGC_Line_Processor.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\NGC_RS274\NGC_Line_segment.cpp">
+      <SubType>compile</SubType>
+      <Link>Ngc_Rs274\NGC_Line_segment.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\NGC_RS274\NGC_Line_segment.h">
+      <SubType>compile</SubType>
+      <Link>Ngc_Rs274\NGC_Line_segment.h</Link>
+    </Compile>
     <Compile Include="..\..\..\NGC_RS274\NGC_M_Groups.h">
       <SubType>compile</SubType>
       <Link>Ngc_Rs274\NGC_M_Groups.h</Link>

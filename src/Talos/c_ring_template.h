@@ -22,7 +22,7 @@ public:
 		this->_storage_pointer = pointer;
 		this->_buffer_size = buf_size;
 		this->_full = false;
-		this->_head = 0;
+		this->_head = buf_size - 1;
 		this->_tail = 0;
 		this->_newest = 0;
 	}
@@ -62,7 +62,7 @@ public:
 		{
 			peek_point = 0;
 		}
-		return this->_storage_pointer[this->_tail];
+		return this->_storage_pointer[peek_point];
 	}
 
 	TN peek_step()
@@ -83,13 +83,15 @@ public:
 		return data;
 	}
 
-	TN peek_tail()
+	TN peek(uint16_t position)
 	{
 		return this->_storage_pointer[this->_tail];
 	}
-	TN peek_newest()
+	
+
+	void shift(int16_t shift_size)
 	{
-		return this->_storage_pointer[this->_newest];
+		this->_tail +=shift_size;
 	}
 
 	//Return the specified type
@@ -183,7 +185,7 @@ public:
 		return 1;
 	}
 
-private:
+public:
 
 	TN * _storage_pointer = NULL;
 	bool _full = false;
