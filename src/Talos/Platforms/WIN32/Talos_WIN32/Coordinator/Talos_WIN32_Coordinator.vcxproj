@@ -69,6 +69,7 @@
     <ClCompile Include="..\..\..\..\NGC_RS274\NGC_Block.cpp" />
     <ClCompile Include="..\..\..\..\NGC_RS274\NGC_Interpreter.cpp" />
     <ClCompile Include="..\..\..\..\NGC_RS274\NGC_Line_Processor.cpp" />
+    <ClCompile Include="..\..\..\..\NGC_RS274\NGC_Parameters.cpp" />
     <ClCompile Include="Platform Specific\c_core_win.cpp" />
     <ClCompile Include="Platform Specific\c_serial_win.cpp" />
     <ClCompile Include="Platform Specific\c_spi_win.cpp" />

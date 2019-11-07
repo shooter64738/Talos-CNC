@@ -18,19 +18,17 @@
 *  along with Talos.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
-#include "NGC_Interpreter.h"
-#include "NGC_Errors.h"
-#include "NGC_M_Groups.h"
-#include "ngc_defines.h"
+#include <stdlib.h>
 #include <math.h>
 #include <string.h>
 #include <ctype.h>
 #include "..\communication_def.h"
-#include <stdlib.h>
-
-#include <stdlib.h>
-#include "NGC_Line_segment.h"
+#include "NGC_Interpreter.h"
+#include "NGC_Errors.h"
+#include "NGC_M_Groups.h"
+#include "ngc_defines.h"
+#include "NGC_Line_Processor.h"
+#include "NGC_Parameters.h"
 
 //char NGC_RS274::Interpreter::Processor::Line[CYCLE_LINE_LENGTH];
 char * NGC_RS274::Interpreter::Processor::Line;
@@ -44,6 +42,19 @@ c_Serial *NGC_RS274::Interpreter::Processor::local_serial;
 void NGC_RS274::Interpreter::Processor::initialize()
 {
 	NGC_RS274::Interpreter::Processor::worker_block.initialize();
+
+	//Assign function pointers to load and read parameters. The line processor will need these
+	//if a parameter is entered on the line
+	c_line::parameter_function_pointers.pntr_get_global_named_parameter = NGC_RS274::Parmeters::__get_named_gobal_parameter;
+	c_line::parameter_function_pointers.pntr_get_local_named_parameter = NGC_RS274::Parmeters::__get_named_local_parameter;
+	c_line::parameter_function_pointers.pntr_get_numeric_parameter = NGC_RS274::Parmeters::__get_numeric_parameter;
+	c_line::parameter_function_pointers.pntr_get_numeric_parameter_max = NGC_RS274::Parmeters::__get_numeric_parameter_max;
+
+	c_line::parameter_function_pointers.pntr_set_global_named_parameter = NGC_RS274::Parmeters::__set_named_gobal_parameter;
+	c_line::parameter_function_pointers.pntr_set_local_named_parameter = NGC_RS274::Parmeters::__set_named_local_parameter;
+	c_line::parameter_function_pointers.pntr_set_numeric_parameter = NGC_RS274::Parmeters::__set_numeric_parameter;
+	
+	
 }
 
 int NGC_RS274::Interpreter::Processor::process_line(NGC_RS274::NGC_Binary_Block * plan_block, c_ring_buffer<char> * data_source)

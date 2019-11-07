@@ -62,7 +62,7 @@ void c_ngc_data_handler::ngc_handler(c_ring_buffer <char> * buffer)
 		{
 			peek_at = buffer->peek_step();
 			
-			if (peek_at == NULL)
+			if (peek_at == 0)
 				break;
 			
 			has_eol = (peek_at == CR || peek_at == LF);

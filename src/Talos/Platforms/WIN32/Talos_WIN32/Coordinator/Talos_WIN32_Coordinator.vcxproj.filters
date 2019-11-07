@@ -220,5 +220,8 @@
     <ClCompile Include="..\..\..\..\NGC_RS274\NGC_Line_Processor.cpp">
       <Filter>Ngc_Rs274</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\..\NGC_RS274\NGC_Parameters.cpp">
+      <Filter>Ngc_Rs274</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

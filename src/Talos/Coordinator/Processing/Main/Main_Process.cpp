@@ -15,24 +15,10 @@ then move to their respective modules.
 #include "../../../c_ring_template.h"
 #include "..\Events\extern_events_types.h"
 #include "..\..\..\Motion\c_gcode_buffer.h"
-//#include "..\..\..\NGC_RS274\NGC_Line_segment.h"
 #include "..\..\..\NGC_RS274\NGC_Line_Processor.h"
-
-
-//struct s_tester
-//{
-	//uint8_t value1;
-	//uint8_t value2;
-//};
+#include "..\..\..\NGC_RS274\NGC_Interpreter.h"
 
 c_Serial Talos::Coordinator::Main_Process::host_serial;
-
-//static s_tester tester_buffer[3];
-//static char char_buffer[3];
-//static c_ring_buffer<char> serial_ring;
-//static c_ring_buffer<s_tester> class_ring;
-//static c_ring_buffer<s_tester> another_class_ring;
-
 
 void Talos::Coordinator::Main_Process::initialize()
 {
@@ -43,17 +29,19 @@ void Talos::Coordinator::Main_Process::initialize()
 
 	Talos::Coordinator::Events::initialize();//<--init events
 	Talos::Motion::NgcBuffer::initialize();
+	NGC_RS274::Interpreter::Processor::initialize();
 	//Talos::Coordinator::NGC_Consumer::initialize();
 
 #ifdef MSVC
 	//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "g0y#525r#<test>[1.0-[5.0+10]]\rg1x3\r");
-	Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "g99 y [ #777 - [ 5 . 0 + 1 0 +sqrt[2]] ] \rg1x3\r");
+	Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "g99 y [ #777 - [#<test> + #<_glob> +-sqrt[2]] ] \r\r\r\r");// \n\ng1x3\r");
 #endif
 
 	c_ring_buffer<char> *buffer = &Hardware_Abstraction_Layer::Serial::_usart0_buffer;
 	//c_seg_proc::process(buffer);
-	c_line::start(buffer->_storage_pointer);
-	
+	char * my_buffer = buffer->_storage_pointer;
+	c_line::e_parser_codes ret_code = c_line::start(my_buffer);
+
 }
 
 

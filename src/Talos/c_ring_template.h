@@ -71,7 +71,7 @@ public:
 
 		//if head==tail and not full, buffer is empty, no data to provide
 		if ((this->_head == this->_peek_stepper) && !this->_full)
-			return NULL;
+			return 0;
 		
 		//get the byte at the peek position
 		TN data = this->_storage_pointer[this->_peek_stepper++];

@@ -24,42 +24,83 @@
 #include <stdlib.h>
 #include <math.h>
 
+c_line::s_param_functions c_line::parameter_function_pointers;
+int c_line::last_read_position = 0;
+static int max_numeric_parameter_count = 0;
 
-void c_line::start(char * buffer)
+c_line::e_parser_codes c_line::start(char * buffer)
 {
+	e_parser_codes ret_code = e_parser_codes::Ok;
+
 	//set line data to all lower case
-	if (!_set_buffer_to_lower(buffer))
+	if (!_set_buffer_to_upper(buffer))
 	{/*return bad data in the buffer*/
+		return e_parser_codes::BadDataInBuffer;
 	}
 
-	_process_buffer(buffer);
+	//If there are any line terminators, split this line so they are not parsed.
+	int startlen = strlen(buffer);
+	char * buffer_no_eol = strtok(buffer, "\r");
+	int endlen = strlen(buffer_no_eol);
+
+	ret_code = _process_buffer(buffer);
+
+	/*
+	You can send a string of gcode that is actually multiple 'lines' containing multip \r characters
+	so as a convenience to the caller I process only the first 'line' then once finished, we set the
+	start pointer to the end+1 of the previous 'line' so that the buffer is ready the next time we
+	get called. If there was actually no more data a NULL character will be pointed too and the caller
+	can check for a NULL before calling this again.
+
+	If ret_code was success, we can skip forwad in the buffer, but if it was not a success we will NOT
+	set the buffer pointer ahead.
+	*/
+
+	if (startlen != endlen && ret_code == e_parser_codes::Ok)
+		//advance buffer to next 'line' (if NUll no data available)
+		buffer = buffer + (endlen + 1);
+
+	return ret_code;
 
 }
 
-uint8_t c_line::_set_buffer_to_lower(char * buffer)
+uint8_t c_line::_set_buffer_to_upper(char * buffer)
 {
 	int count = 0;
 	for (int i = 0; buffer[i]; i++)
 	{
-		//jsut for funsies. make sure there are no illegal characters in the buffer
-		if (buffer[i] < 32 || buffer[i] > 127)
-			return 0;
-
-		if (buffer[i] != ' ' && buffer[i] != '\t')
+		//remove all spaces, tabs, and line feeds
+		if (buffer[i] != ' ' && buffer[i] != '\t' && buffer[i] != '\n')
 		{
-			buffer[count++] = tolower(buffer[i]);
+			//clean up any multiple carriage return sequences
+			while (buffer[i + 1] == '\r') { i++; }
+
+			buffer[count++] = toupper(buffer[i]);
 		}
+
 	}
 	buffer[count] = '\0';
-	return 0;
+	return 1;
 }
 
-void c_line::_process_buffer(char * buffer)
+c_line::e_parser_codes c_line::_process_buffer(char * buffer)
 {
 	int read_pos, buff_len = 0;
 
 	buff_len = strlen(buffer);
 	read_pos = 0;
+
+	/*
+	Need to check parameters settings.
+	Because this code system (as in all of talos) is expected to run on a lightweight
+	mCU with much less ram than a pc, but we want the functionality that the pc version
+	of a cnc control gives us, we need to do some special things. One in particular is
+	how we handle parameter values. We cannot create an enormous array to hold thousands
+	of parameters in. So I have left 3 function pointers that should be assigned to
+	special functions to handle parameter calls for named local/global, and numeric
+	parameters. Handle them how you wish, or ignore it entirely. If these functions
+	are not set, parameters will not be available.
+	*/
 
 	//If the block skipper is the first character, ignore it. 
 	//We process this line regardless and give it to the motion
@@ -73,8 +114,8 @@ void c_line::_process_buffer(char * buffer)
 	//O words are a little special. cant process those yet, but 
 	//I am working on it. I think they can be called re-entrant
 	//which is similar to how how linux cnc handles O words
-	if (buffer[read_pos] == 'o')
-		return;
+	if (buffer[read_pos] == 'O')
+		return e_parser_codes::OCodesNotImplimented;
 
 	float word_value = 0.0;
 	//get current word, and advance reader
@@ -83,11 +124,20 @@ void c_line::_process_buffer(char * buffer)
 	//And now without further delay... lets process this line!
 	while (read_pos < buff_len)
 	{
+		e_parser_codes ret_code = e_parser_codes::Ok;
+
 		word_value = 0.0;
 		//get current word, and advance reader
 		current_word = buffer[read_pos++];
-		_read(buffer, &read_pos, &word_value);
+		ret_code = _read_as_class_type(buffer, &read_pos, &word_value);
+		//This will be useful to the end user to determine where the gcode data had an error
+		c_line::last_read_position = read_pos;
 
+		if (ret_code != e_parser_codes::Ok)
+		{
+			//Return the error to the caller
+			return ret_code;
+		}
 		//Right here is where we have the word, and its address value.
 		//If you want to update some type of block object with the word
 		//data, do it right here. If there was an expression it would
@@ -95,45 +145,73 @@ void c_line::_process_buffer(char * buffer)
 		//have already been read. However O words are not currently
 		//handled. I plan to expand that some time but not right now.
 		//block_object_word_array[current_word] = word_value
+
+		return ret_code;
 	}
 
 }
 
-void c_line::_read(char * buffer, int * read_pos, float * word_value)
+c_line::e_parser_codes c_line::_read_as_class_type(char * buffer, int * read_pos, float * word_value)
 {
-	e_value_class_types current_class = __get_value_class(buffer, read_pos, word_value);
+	e_parser_codes ret_code = e_parser_codes::Ok;
+
+	e_value_class_types current_class = c_line::__get_value_class(buffer, read_pos, word_value);
 
 	switch (current_class)
 	{
-	case c_line::e_value_class_types::UnSpecified:
+	case c_line::e_value_class_types::NumericParametersNotAvailable:
+	{
+		ret_code = e_parser_codes::NumericParametersNotAvailable;
 		break;
+	}
+	case c_line::e_value_class_types::NamedParametersNotAvailable:
+	{
+		ret_code = e_parser_codes::NoNamedParametersAvailable;
+		break;
+	}
+	case c_line::e_value_class_types::UnSpecified:
+	{
+		ret_code = e_parser_codes::UnHandledValueClass;
+		break;
+	}
 	case c_line::e_value_class_types::Expression:
 	{
-		c_line::_read_class_expression(buffer, read_pos, word_value);
+		ret_code = c_line::__read_class_expression(buffer, read_pos, word_value);
 		break;
 	}
 	case c_line::e_value_class_types::Parameter:
-		c_line::_read_class_parameter(buffer, read_pos, word_value);
+	{
+		ret_code = c_line::__read_class_parameter(buffer, read_pos, word_value);
 		break;
-		//case c_line::e_value_class_types::PositiveValue:
-		//	break;
-		//case c_line::e_value_class_types::NegativeValue:
-		//	break;
+	}
 	case c_line::e_value_class_types::Unary:
-		_read_class_unary(buffer, read_pos, word_value);
+	{
+		ret_code = c_line::__read_class_unary(buffer, read_pos, word_value);
 		break;
+	}
 	case c_line::e_value_class_types::Numeric:
 	{
-		c_line::_read_class_numeric(buffer, read_pos, word_value);
+		ret_code = c_line::__read_class_numeric(buffer, read_pos, word_value);
+		break;
+	}
+	case c_line::e_value_class_types::ClosingBracket:
+	{
+		//closing bracket from a unary or expression. we should be okay with this. 
+		ret_code = e_parser_codes::Ok;
 		break;
 	}
 	default:
+		ret_code = e_parser_codes::UnHandledValueClass;
 		break;
 	}
+
+	return ret_code;
 }
 
 c_line::e_value_class_types c_line::__get_value_class(char * buffer, int * read_pos, float * word_value)
 {
+	e_parser_codes ret_code = e_parser_codes::Ok;
+
 	char current_byte, next_byte;
 
 	current_byte = buffer[*read_pos];
@@ -147,81 +225,121 @@ c_line::e_value_class_types c_line::__get_value_class(char * buffer, int * read_
 	{
 		return e_value_class_types::Expression;
 	}
+	else if (current_byte == ']')
+	{
+		return e_value_class_types::ClosingBracket;
+	}
 	else if (current_byte == '#')
 	{
-		//re-read calssifier?
-		return e_value_class_types::Parameter;
+		if (c_line::parameter_function_pointers.pntr_get_global_named_parameter != NULL
+			|| c_line::parameter_function_pointers.pntr_get_local_named_parameter != NULL
+			|| (c_line::parameter_function_pointers.pntr_get_numeric_parameter != NULL
+				&&c_line::parameter_function_pointers.pntr_get_numeric_parameter_max != NULL))
+			return e_value_class_types::Parameter;
+		else
+		{
+			if (c_line::parameter_function_pointers.pntr_get_global_named_parameter == NULL
+				|| c_line::parameter_function_pointers.pntr_get_local_named_parameter == NULL)
+			{
+				return e_value_class_types::NamedParametersNotAvailable;
+			}
+			else if (c_line::parameter_function_pointers.pntr_get_numeric_parameter == NULL
+				|| c_line::parameter_function_pointers.pntr_get_numeric_parameter_max == NULL)
+			{
+				return e_value_class_types::NumericParametersNotAvailable;
+			}
+		}
 	}
 	else if (current_byte == '+' && next_byte && !isdigit(next_byte) && next_byte != '.')
 	{
-		//re-read calssifier?
-		//(*read_pos)++;
-		//return e_class_types::PositiveValue;
-		c_line::_read(buffer, read_pos, word_value);
+		//this is most likely a unary that was signed positive	
+		(*read_pos)++;
+		ret_code = c_line::_read_as_class_type(buffer, read_pos, word_value);
+		if (ret_code != e_parser_codes::Ok)
+			return e_value_class_types::UnSpecified;
+		*word_value = +*word_value;
+		return c_line::__get_value_class(buffer, read_pos, word_value);
+		//return e_value_class_types::ClosingBracket;
 	}
 	else if (current_byte == '-' && next_byte && !isdigit(next_byte) && next_byte != '.')
 	{
-		//(*read_pos)++;
-		//return e_class_types::NegativeValue;
-		//*double_ptr = -*double_ptr;
-		c_line::_read(buffer, read_pos, word_value);
+		//this is most likely a unary that was signed negative
+		(*read_pos)++;
+		ret_code = c_line::_read_as_class_type(buffer, read_pos, word_value);
+		if (ret_code != e_parser_codes::Ok)
+			return e_value_class_types::UnSpecified;
+		*word_value = -*word_value;
+		return c_line::__get_value_class(buffer, read_pos, word_value);
+		//return e_value_class_types::ClosingBracket;
 	}
-	else if ((current_byte >= 'a') && (current_byte <= 'z'))
+	else if ((current_byte >= 'A') && (current_byte <= 'Z'))
 		return e_value_class_types::Unary;
 	else
 	{
 		return e_value_class_types::Numeric;
 	}
+
 }
 
-c_line::e_parser_codes c_line::_read_class_unary(char * buffer, int * read_pos, float * read_value)
+c_line::e_parser_codes c_line::__read_class_unary(char * buffer, int * read_pos, float * read_value)
 {
 	e_parser_codes ret_code = e_parser_codes::Ok;
+
 	e_unary_operator_class_types operation = e_unary_operator_class_types::NoOperation;
 
-	__get_unary_operator_class(buffer, read_pos, &operation);
+	ret_code = c_line::__get_unary_operator_class(buffer, read_pos, &operation);
+	if (ret_code != e_parser_codes::Ok)
+		return ret_code;
+
 	if (buffer[*read_pos] != '[')
 	{
 		ret_code = e_parser_codes::UnaryMissingOpen;
+		return ret_code;
 	}
-	_read_class_expression(buffer, read_pos, read_value);
+	c_line::__read_class_expression(buffer, read_pos, read_value);
 
 	if (operation == e_unary_operator_class_types::Atan)
-		ret_code = __read_atan(buffer, read_pos, read_value);
+		ret_code = c_line::___execute_atan(buffer, read_pos, read_value);
 	else
-		ret_code = __execute_unary(read_value, operation);
+		ret_code = c_line::___execute_unary(read_value, operation);
 	return ret_code;
 }
 
-c_line::e_parser_codes c_line::_read_class_numeric(char * buffer, int * read_pos, float * read_value)
+c_line::e_parser_codes c_line::__read_class_numeric(char * buffer, int * read_pos, float * read_value)
 {
-	char *start, *end, save;
-	size_t after;
+	char *end, restore_byte;
+	size_t _size;
 
-	start = buffer + *read_pos;
+	//Found this in linux cnc. Pretty neat way to get a number without making a buffer to copy too
 
-	after = strspn(start, "0123456789+-.");
-	save = start[after];
-	start[after] = 0;
-
-	*read_value = strtod(start, &end);
-	start[after] = save;
-
-	if (end == start)
+	//Count how many bytes match at the begining of the string
+	_size = strspn((buffer + (*read_pos)), "0123456789+-.");
+	//Copy the byte where the numbers end and hold it temporarily
+	restore_byte = (buffer + (*read_pos))[_size];
+	//replace the byte where the numbers end with a null
+	(buffer + (*read_pos))[_size] = 0;
+	//convert the string portion to a number, &end gets updated to the byte count converted
+	*read_value = strtod((buffer + (*read_pos)), &end);
+	//put the saved byte back so the null isnt there anymore
+	(buffer + (*read_pos))[_size] = restore_byte;
+	//see if end is equal to the string start point. If it is, we read nothing there
+	if (end == (buffer + (*read_pos)))
 	{
 		return e_parser_codes::NumericValueMissing;
 	}
-
+	//update the pointer for the reader position
 	*read_pos = end - buffer;
 	return e_parser_codes::Ok;
 }
 
-c_line::e_parser_codes c_line::_read_class_expression(char * buffer, int * read_pos, float * read_value)
+c_line::e_parser_codes c_line::__read_class_expression(char * buffer, int * read_pos, float * read_value)
 {
 	e_parser_codes ret_code = e_parser_codes::Ok;
 
 	float values[MAX_EXPRESSION_OPS];
+	memset(values, 0, sizeof(float) * MAX_EXPRESSION_OPS);
 	e_expression_operator_class_types operators[MAX_EXPRESSION_OPS];
+	memset(operators, 0, sizeof(e_expression_operator_class_types) * MAX_EXPRESSION_OPS);
 	int stack_index;
 
 	if (buffer[*read_pos] != '[')
@@ -232,45 +350,55 @@ c_line::e_parser_codes c_line::_read_class_expression(char * buffer, int * read_
 
 	*read_pos = (*read_pos + 1);
 	//read_real_value(line, counter, values, parameters);
-	c_line::_read(buffer, read_pos, values);
+	ret_code = c_line::_read_as_class_type(buffer, read_pos, values);
+	if (ret_code != e_parser_codes::Ok)
+	{
+		*read_value = values[0];
+		return ret_code;
+	}
 
-	//read_operation(buffer, read_pos, operators);
-	__get_expression_operator_class(buffer, read_pos, operators);
+	c_line::__get_expression_operator_class(buffer, read_pos, operators);
 
 	stack_index = 1;
-	for (; operators[0] != e_expression_operator_class_types::ClosingBracket;)
+
+	while (operators[0] != e_expression_operator_class_types::ClosingBracket)
 	{
-		//read_real_value(buffer, read_pos, values + stack_index, parameters);
-		c_line::_read(buffer, read_pos, values + stack_index);
+		ret_code = c_line::_read_as_class_type(buffer, read_pos, values + stack_index);
+		//If we dont get an ok response processing, we should be at the end of the expression
+		//Otherwise its a problem. 
+		if (ret_code == e_parser_codes::Ok)
+		{
+			c_line::__get_expression_operator_class(buffer, read_pos, operators + stack_index);
 
-		//read_operation(buffer, read_pos, operators + stack_index);
-		__get_expression_operator_class(buffer, read_pos, operators + stack_index);
-
-		if (__get_operator_precedence(operators[stack_index]) > __get_operator_precedence(operators[stack_index - 1]))
-			stack_index++;
-		else
-		{                      /* precedence of latest operator is <= previous precedence */
-
-			for (; __get_operator_precedence(operators[stack_index]) <= __get_operator_precedence(operators[stack_index - 1]);)
+			if (c_line::__get_operator_precedence(operators[stack_index]) > c_line::__get_operator_precedence(operators[stack_index - 1]))
+				stack_index++;
+			else
 			{
-				__binary_operation((values + stack_index - 1), operators[stack_index - 1], (values + stack_index));
-				operators[stack_index - 1] = operators[stack_index];
-				if ((stack_index > 1) && (__get_operator_precedence(operators[stack_index - 1]) <= __get_operator_precedence(operators[stack_index - 2])))
+				while (c_line::__get_operator_precedence(operators[stack_index]) <= c_line::__get_operator_precedence(operators[stack_index - 1]))
 				{
-					stack_index--;
-				}
-				else
-				{
-					break;
+					c_line::___execute_binary((values + stack_index - 1), operators[stack_index - 1], (values + stack_index));
+					operators[stack_index - 1] = operators[stack_index];
+					if ((stack_index > 1) && (c_line::__get_operator_precedence(operators[stack_index - 1]) <= c_line::__get_operator_precedence(operators[stack_index - 2])))
+					{
+						stack_index--;
+					}
+					else
+					{
+						break;
+					}
 				}
 			}
+		}
+		else
+		{
+			break;
 		}
 	}
 	*read_value = values[0];
 	return ret_code;
 }
 
-c_line::e_parser_codes c_line::_read_class_parameter(char * buffer, int * read_pos, float * read_value)
+c_line::e_parser_codes c_line::__read_class_parameter(char * buffer, int * read_pos, float * read_value)
 {
 	e_parser_codes ret_code = e_parser_codes::Ok;
 
@@ -287,34 +415,61 @@ c_line::e_parser_codes c_line::_read_class_parameter(char * buffer, int * read_p
 	// named parameters look like '<letter...>' or '<_.....>'
 	if (buffer[*read_pos] == '<')
 	{
+		if (c_line::parameter_function_pointers.pntr_get_global_named_parameter == NULL
+			&& c_line::parameter_function_pointers.pntr_get_local_named_parameter == NULL)
+		{
+			ret_code = e_parser_codes::NoNamedParametersAvailable;
+			return ret_code;
+		}
+
 		//this will be a named parameter of local or global scope
-		ret_code = __read_class_named_parameter(buffer, read_pos, read_value);
+		ret_code = c_line::___read_class_named_parameter(buffer, read_pos, read_value);
+		if (ret_code != e_parser_codes::Ok)
+			return ret_code;
 	}
 	else
 	{
-		__read_integer_value(buffer, read_pos, &index);
-		if (index < 1 || index >= RS274NGC_MAX_PARAMETERS)
+		if (c_line::parameter_function_pointers.pntr_get_numeric_parameter_max == NULL)
 		{
-			ret_code = e_parser_codes::ParamaterValueOutOfRange;
+			ret_code = e_parser_codes::NumericParametersMaxNotAvailable;
 		}
 		else
 		{
-			*read_value = FAKE_NUMERIC_PARAM_VALUE;
-			//*read_value = parameters[index];
+			if (!max_numeric_parameter_count)//<--if we dont have max_numeric params count, get it
+				max_numeric_parameter_count = c_line::parameter_function_pointers.pntr_get_numeric_parameter_max();
+
+			c_line::___read_integer_value(buffer, read_pos, &index);
+			if (index < 1 || index >= max_numeric_parameter_count)
+			{
+				ret_code = e_parser_codes::ParamaterValueOutOfRange;
+				*read_value = index;
+			}
+			else
+			{
+				if (c_line::parameter_function_pointers.pntr_get_numeric_parameter != NULL)
+					*read_value = c_line::parameter_function_pointers.pntr_get_numeric_parameter(index);// FAKE_NUMERIC_PARAM_VALUE;
+				else
+					ret_code = e_parser_codes::NumericParametersNotAvailable;
+				//*read_value = FAKE_NUMERIC_PARAM_VALUE;
+			}
 		}
 	}
-	return e_parser_codes::Ok;
+	return ret_code;
 }
 
-c_line::e_parser_codes c_line::__read_integer_value(char *buffer, int *read_pos, int *integer_value)       //!< array of system parameters                    
+c_line::e_parser_codes c_line::___read_integer_value(char *buffer, int *read_pos, int *integer_value)
 {
 	e_parser_codes ret_code = e_parser_codes::Ok;
 
-	float float_value;
+	float float_value = 0;
 
-	_read(buffer, read_pos, &float_value);
+	ret_code = c_line::_read_as_class_type(buffer, read_pos, &float_value);
+	if (ret_code != e_parser_codes::Ok)
+		return ret_code;
+
 	*integer_value = (int)floor(float_value);
-	if ((float_value - *integer_value) > 0.9999) {
+	if ((float_value - *integer_value) > NEAR_ONE)
+	{
 		*integer_value = (int)ceil(float_value);
 	}
 	else if ((float_value - *integer_value) > NEAR_ZERO)
@@ -322,7 +477,7 @@ c_line::e_parser_codes c_line::__read_integer_value(char *buffer, int *read_pos,
 	return ret_code;
 }
 
-c_line::e_parser_codes c_line::__read_class_named_parameter(char * buffer, int * read_pos, float * read_value)
+c_line::e_parser_codes c_line::___read_class_named_parameter(char * buffer, int * read_pos, float * read_value)
 {
 	e_parser_codes ret_code = e_parser_codes::Ok;
 
@@ -333,19 +488,33 @@ c_line::e_parser_codes c_line::__read_class_named_parameter(char * buffer, int *
 	}
 
 	//find the name of the parameter, lookit up and return its value in the read_value pointer
-	char parameter_name[LINELEN + 1];
-	__get_named_parameter_name(buffer, read_pos, parameter_name);
+	char parameter_name[MAX_NAMED_PARAM_LENGTH + 1];
+	memset(parameter_name, 0, MAX_NAMED_PARAM_LENGTH);
+
+	c_line::____get_named_parameter_name(buffer, read_pos, parameter_name);
 
 	//Look in the name we got back from the read. If it starts with _ its a 'global'
-	if (parameter_name[0] != '_') //<--not global, so its local scope
+	if (parameter_name[0] == '_')//<--global scope
 	{
-		*read_value = FAKE_LOCAL_NAMED_PARAM_VALUE;
+		if (c_line::parameter_function_pointers.pntr_get_global_named_parameter != NULL)
+			*read_value = c_line::parameter_function_pointers.pntr_get_global_named_parameter(parameter_name);
+		else
+			ret_code = e_parser_codes::GlobalNamedParametersNotAvailable;
+		//*read_value = FAKE_GLOBAL_NAMED_PARAM_VALUE;
 	}
-	else//<--must be global scope
+	else//<--not global, so its local scope
 	{
-		*read_value = FAKE_GLOBAL_NAMED_PARAM_VALUE;
+		if (c_line::parameter_function_pointers.pntr_get_local_named_parameter != NULL)
+			*read_value = c_line::parameter_function_pointers.pntr_get_local_named_parameter(parameter_name);
+		else
+			ret_code = e_parser_codes::LocalNamedParametersNotAvailable;
+		//*read_value = FAKE_LOCAL_NAMED_PARAM_VALUE;
 	}
-	return e_parser_codes::Ok;
+	return ret_code;
+
+	//Remaining code here we cannot use. The entire parameter table will not fit on an mCU which
+	//is what I am targeting with this code. However I know of a way to fit a nearly infinite number
+	//of parameters into this code.. 
 
 	//char paramNameBuf[LINELEN + 1];
 	//int level;
@@ -386,7 +555,7 @@ c_line::e_parser_codes c_line::__read_class_named_parameter(char * buffer, int *
 	//ERS(EMC_I18N("Named parameter #<%s> not defined"), paramNameBuf);
 }
 
-c_line::e_parser_codes c_line::__read_atan(char *buffer, int *read_pos, float *read_value)
+c_line::e_parser_codes c_line::___execute_atan(char *buffer, int *read_pos, float *read_value)
 {
 	e_parser_codes ret_code = e_parser_codes::Ok;
 	float argument2 = 0;
@@ -401,15 +570,15 @@ c_line::e_parser_codes c_line::__read_atan(char *buffer, int *read_pos, float *r
 	{
 		ret_code = e_parser_codes::MissingBracketAfterSlash;
 	}
-	_read_class_expression(buffer, read_pos, &argument2);
+	c_line::__read_class_expression(buffer, read_pos, &argument2);
 	*read_value = atan2(*read_value, argument2);  /* value in radians */
 	*read_value = ((*read_value * 180.0) / M_PI);   /* convert to degrees */
 	return ret_code;
 }
 
-c_line::e_parser_codes c_line::__get_named_parameter_name(char * buffer, int * read_pos, char * parameter_name)
+c_line::e_parser_codes c_line::____get_named_parameter_name(char * buffer, int * read_pos, char * parameter_name)
 {
-	int done = 0, i = 0;
+	bool done = false;
 	e_parser_codes ret_code = e_parser_codes::Ok;
 
 	if (buffer[*read_pos] != '<' && !isalpha(buffer[*(read_pos)]))
@@ -421,9 +590,9 @@ c_line::e_parser_codes c_line::__get_named_parameter_name(char * buffer, int * r
 	// skip over the '<'
 	*read_pos = (*read_pos + 1);
 
-	for (i = 0; (i < LINELEN) && (buffer[*read_pos]); i++)
+	for (int i = 0; (i < MAX_NAMED_PARAM_LENGTH) && (buffer[*read_pos]); i++)
 	{
-		if (read_pos[*read_pos] == '>')
+		if (buffer[*read_pos] == '>')
 		{
 			parameter_name[i] = 0; // terminate the name
 			*read_pos = (*read_pos + 1);
@@ -448,84 +617,84 @@ c_line::e_parser_codes c_line::__get_unary_operator_class(char * buffer, int * r
 	char c = buffer[*read_pos];
 	*read_pos = (*read_pos + 1);
 	switch (c) {
-	case 'a':
-		if ((buffer[*read_pos] == 'b') && (buffer[(*read_pos) + 1] == 's')) {
+	case 'A':
+		if ((buffer[*read_pos] == 'B') && (buffer[(*read_pos) + 1] == 'S')) {
 			*operator_class = e_unary_operator_class_types::Abs;
 			*read_pos = (*read_pos + 2);
 		}
-		else if (strncmp((buffer + *read_pos), "cos", 3) == 0) {
+		else if (strncmp((buffer + *read_pos), "COS", 3) == 0) {
 			*operator_class = e_unary_operator_class_types::Acos;
 			*read_pos = (*read_pos + 3);
 		}
-		else if (strncmp((buffer + *read_pos), "sin", 3) == 0) {
+		else if (strncmp((buffer + *read_pos), "SIN", 3) == 0) {
 			*operator_class = e_unary_operator_class_types::Asin;
 			*read_pos = (*read_pos + 3);
 		}
-		else if (strncmp((buffer + *read_pos), "tan", 3) == 0) {
+		else if (strncmp((buffer + *read_pos), "TAN", 3) == 0) {
 			*operator_class = e_unary_operator_class_types::Atan;
 			*read_pos = (*read_pos + 3);
 		}
 		else
 			ret_code = e_parser_codes::Unknown_Op_Name_A;
 		break;
-	case 'c':
-		if ((buffer[*read_pos] == 'o') && (buffer[(*read_pos) + 1] == 's')) {
+	case 'C':
+		if ((buffer[*read_pos] == 'O') && (buffer[(*read_pos) + 1] == 'C')) {
 			*operator_class = e_unary_operator_class_types::Cos;
 			*read_pos = (*read_pos + 2);
 		}
 		else
 			ret_code = e_parser_codes::Unknown_Op_Name_C;
 		break;
-	case 'e':
-		if ((buffer[*read_pos] == 'x') && (buffer[(*read_pos) + 1] == 'p')) {
+	case 'E':
+		if ((buffer[*read_pos] == 'X') && (buffer[(*read_pos) + 1] == 'P')) {
 			*operator_class = e_unary_operator_class_types::Exp;
 			*read_pos = (*read_pos + 2);
 		}
 		else
 			ret_code = e_parser_codes::Unknown_Op_Name_E;
 		break;
-	case 'f':
-		if ((buffer[*read_pos] == 'i') && (buffer[(*read_pos) + 1] == 'x')) {
+	case 'F':
+		if ((buffer[*read_pos] == 'I') && (buffer[(*read_pos) + 1] == 'X')) {
 			*operator_class = e_unary_operator_class_types::Fix;
 			*read_pos = (*read_pos + 2);
 		}
-		else if ((buffer[*read_pos] == 'u') && (buffer[(*read_pos) + 1] == 'p')) {
+		else if ((buffer[*read_pos] == 'U') && (buffer[(*read_pos) + 1] == 'P')) {
 			*operator_class = e_unary_operator_class_types::Fup;
 			*read_pos = (*read_pos + 2);
 		}
 		else
 			ret_code = e_parser_codes::Unknown_Op_Name_F;
 		break;
-	case 'l':
-		if (buffer[*read_pos] == 'n') {
+	case 'L':
+		if (buffer[*read_pos] == 'L') {
 			*operator_class = e_unary_operator_class_types::Ln;
 			*read_pos = (*read_pos + 1);
 		}
 		else
 			ret_code = e_parser_codes::Unknown_Op_Name_L;
 		break;
-	case 'r':
-		if (strncmp((buffer + *read_pos), "ound", 4) == 0) {
+	case 'R':
+		if (strncmp((buffer + *read_pos), "OUND", 4) == 0) {
 			*operator_class = e_unary_operator_class_types::Round;
 			*read_pos = (*read_pos + 4);
 		}
 		else
 			ret_code = e_parser_codes::Unknown_Op_Name_R;
 		break;
-	case 's':
-		if ((buffer[*read_pos] == 'i') && (buffer[(*read_pos) + 1] == 'n')) {
+	case 'S':
+		if ((buffer[*read_pos] == 'I') && (buffer[(*read_pos) + 1] == 'N')) {
 			*operator_class = e_unary_operator_class_types::Sin;
 			*read_pos = (*read_pos + 2);
 		}
-		else if (strncmp((buffer + *read_pos), "qrt", 3) == 0) {
+		else if (strncmp((buffer + *read_pos), "QRT", 3) == 0) {
 			*operator_class = e_unary_operator_class_types::Sqrt;
 			*read_pos = (*read_pos + 3);
 		}
 		else
 			ret_code = e_parser_codes::Unknown_Op_Name_S;
 		break;
-	case 't':
-		if ((buffer[*read_pos] == 'a') && (buffer[(*read_pos) + 1] == 'n')) {
+	case 'T':
+		if ((buffer[*read_pos] == 'A') && (buffer[(*read_pos) + 1] == 'N')) {
 			*operator_class = e_unary_operator_class_types::Tan;
 			*read_pos = (*read_pos + 2);
 		}
@@ -540,7 +709,7 @@ c_line::e_parser_codes c_line::__get_unary_operator_class(char * buffer, int * r
 
 c_line::e_parser_codes c_line::__get_expression_operator_class(char * buffer, int * read_pos, e_expression_operator_class_types * operator_class)
 {
-	char c;
+	char c = 0;
 
 	c = buffer[*read_pos];
 	*read_pos = (*read_pos + 1);
@@ -565,32 +734,32 @@ c_line::e_parser_codes c_line::__get_expression_operator_class(char * buffer, in
 	case ']':
 		*operator_class = e_expression_operator_class_types::ClosingBracket;
 		break;
-	case 'a':
-		if ((buffer[*read_pos] == 'n') && (buffer[(*read_pos) + 1] == 'd')) {
-			*operator_class = e_expression_operator_class_types::Or;
+	case 'A':
+		if ((buffer[*read_pos] == 'N') && (buffer[(*read_pos) + 1] == 'D')) {
+			*operator_class = e_expression_operator_class_types::And;
 			*read_pos = (*read_pos + 2);
 		}
 		else
 			return e_parser_codes::Unknown_Op_Name_A;
 		break;
-	case 'm':
-		if ((buffer[*read_pos] == 'o') && (buffer[(*read_pos) + 1] == 'd')) {
+	case 'M':
+		if ((buffer[*read_pos] == 'O') && (buffer[(*read_pos) + 1] == 'D')) {
 			*operator_class = e_expression_operator_class_types::Modulus;
 			*read_pos = (*read_pos + 2);
 		}
 		else
 			e_parser_codes::Unknown_Op_Name_M;
 		break;
-	case 'o':
-		if (buffer[*read_pos] == 'r') {
-			*operator_class = e_expression_operator_class_types::Non_Ex_Or;
+	case 'O':
+		if (buffer[*read_pos] == 'R') {
+			*operator_class = e_expression_operator_class_types::Or;
 			*read_pos = (*read_pos + 1);
 		}
 		else
 			e_parser_codes::Unknown_Op_Name_O;
 		break;
-	case 'x':
-		if ((buffer[*read_pos] == 'o') && (buffer[(*read_pos) + 1] == 'r')) {
+	case 'X':
+		if ((buffer[*read_pos] == 'O') && (buffer[(*read_pos) + 1] == 'R')) {
 			*operator_class = e_expression_operator_class_types::Ex_Or;
 			*read_pos = (*read_pos + 2);
 		}
@@ -599,8 +768,8 @@ c_line::e_parser_codes c_line::__get_expression_operator_class(char * buffer, in
 		break;
 
 		/* relational operators */
-	case 'e':
-		if (buffer[*read_pos] == 'q')
+	case 'E':
+		if (buffer[*read_pos] == 'Q')
 		{
 			*operator_class = e_expression_operator_class_types::_eq;
 			*read_pos = (*read_pos + 1);
@@ -608,8 +777,8 @@ c_line::e_parser_codes c_line::__get_expression_operator_class(char * buffer, in
 		else
 			e_parser_codes::Unknown_Op_Name_E;
 		break;
-	case 'n':
-		if (buffer[*read_pos] == 'e')
+	case 'N':
+		if (buffer[*read_pos] == 'E')
 		{
 			*operator_class = e_expression_operator_class_types::_ne;
 			*read_pos = (*read_pos + 1);
@@ -617,13 +786,13 @@ c_line::e_parser_codes c_line::__get_expression_operator_class(char * buffer, in
 		else
 			e_parser_codes::Unknown_Op_Name_N;
 		break;
-	case 'g':
-		if (buffer[*read_pos] == 'e')
+	case 'G':
+		if (buffer[*read_pos] == 'E')
 		{
 			*operator_class = e_expression_operator_class_types::_ge;
 			*read_pos = (*read_pos + 1);
 		}
-		else if (buffer[*read_pos] == 't')
+		else if (buffer[*read_pos] == 'T')
 		{
 			*operator_class = e_expression_operator_class_types::_gt;
 			*read_pos = (*read_pos + 1);
@@ -631,13 +800,13 @@ c_line::e_parser_codes c_line::__get_expression_operator_class(char * buffer, in
 		else
 			e_parser_codes::Unknown_Op_Name_G;
 		break;
-	case 'l':
-		if (buffer[*read_pos] == 'e')
+	case 'L':
+		if (buffer[*read_pos] == 'E')
 		{
 			*operator_class = e_expression_operator_class_types::_le;
 			*read_pos = (*read_pos + 1);
 		}
-		else if (buffer[*read_pos] == 't')
+		else if (buffer[*read_pos] == 'T')
 		{
 			*operator_class = e_expression_operator_class_types::_lt;
 			*read_pos = (*read_pos + 1);
@@ -691,24 +860,19 @@ int c_line::__get_operator_precedence(e_expression_operator_class_types operator
 	return 0;
 }
 
-c_line::e_parser_codes c_line::__binary_operation(float *left, e_expression_operator_class_types operator_class, float *right)
+c_line::e_parser_codes c_line::___execute_unary(float *read_value, e_unary_operator_class_types operator_class)
 {
-	e_parser_codes ret_code;
-	//if (operator_class < e_op_class_types::Or)
-	ret_code = __execute_binary1(left, operator_class, right);
-	//else
-	//	ret_code = __execute_binary2(left, operator_class, right);
-	return ret_code;
-}
+	e_parser_codes ret_code = e_parser_codes::Ok;
 
-c_line::e_parser_codes c_line::__execute_unary(float *read_value, e_unary_operator_class_types operator_class)
-{
 	switch (operator_class) {
 	case e_unary_operator_class_types::Abs:
+	{
 		if (*read_value < 0.0)
 			*read_value = (-1.0 * *read_value);
 		break;
+	}
 	case e_unary_operator_class_types::Acos:
+	{
 		if (*read_value < -1.0 || *read_value > 1.0)
 		{
 			return e_parser_codes::ArcCosValueOutOfRange;
@@ -716,51 +880,81 @@ c_line::e_parser_codes c_line::__execute_unary(float *read_value, e_unary_operat
 		*read_value = acos(*read_value);
 		*read_value = ((*read_value * 180.0) / M_PI);
 		break;
+	}
 	case e_unary_operator_class_types::Asin:
+	{
 		if (*read_value < -1.0 || *read_value > 1.0)
-			e_parser_codes::ArcSinValueOutOfRange;
+		{
+			ret_code = e_parser_codes::ArcSinValueOutOfRange;
+			break;
+		}
 		*read_value = asin(*read_value);
 		*read_value = ((*read_value * 180.0) / M_PI);
 		break;
+	}
 	case e_unary_operator_class_types::Cos:
+	{
 		*read_value = cos((*read_value * M_PI) / 180.0);
 		break;
+	}
 	case e_unary_operator_class_types::Exp:
+	{
 		*read_value = exp(*read_value);
 		break;
+	}
 	case e_unary_operator_class_types::Fix:
+	{
 		*read_value = floor(*read_value);
 		break;
+	}
 	case e_unary_operator_class_types::Fup:
+	{
 		*read_value = ceil(*read_value);
 		break;
+	}
 	case e_unary_operator_class_types::Ln:
+	{
 		if (*read_value <= 0.0)
-			return e_parser_codes::LogValueNegative;
+		{
+			ret_code = e_parser_codes::LogValueNegative;
+			break;
+		}
 		*read_value = log(*read_value);
 		break;
+	}
 	case e_unary_operator_class_types::Round:
-		*read_value = (double)
+	{
+		*read_value = (float)
 			((int)(*read_value + ((*read_value < 0.0) ? -0.5 : 0.5)));
 		break;
+	}
 	case e_unary_operator_class_types::Sin:
+	{
 		*read_value = sin((*read_value * M_PI) / 180.0);
 		break;
+	}
 	case e_unary_operator_class_types::Sqrt:
+	{
 		if (*read_value < 0.0)
-			return e_parser_codes::SqrtValueNegative;
+		{
+			ret_code = e_parser_codes::SqrtValueNegative;
+			return ret_code;
+		}
 		*read_value = sqrt(*read_value);
 		break;
+	}
 	case e_unary_operator_class_types::Tan:
+	{
 		*read_value = tan((*read_value * M_PI) / 180.0);
 		break;
+	}
 	default:
 		e_unary_operator_class_types::NoOperation;
 	}
-	return e_parser_codes::Ok;
+	return ret_code;
 }
 
-c_line::e_parser_codes c_line::__execute_binary1(float *left, e_expression_operator_class_types operator_class, float *right)
+c_line::e_parser_codes c_line::___execute_binary(float *left, e_expression_operator_class_types operator_class, float *right)
 {
 	e_parser_codes ret_code = e_parser_codes::Ok;
 	float diff = 0;
@@ -769,7 +963,7 @@ c_line::e_parser_codes c_line::__execute_binary1(float *left, e_expression_opera
 	case e_expression_operator_class_types::Division:
 		if (*right == 0.0)
 		{
-			return ret_code = e_parser_codes::DivideByZero;
+			ret_code = e_parser_codes::DivideByZero;
 			break;
 		}
 		*left = (*left / *right);
@@ -831,60 +1025,8 @@ c_line::e_parser_codes c_line::__execute_binary1(float *left, e_expression_opera
 		*left = (*left > *right) ? 1.0 : 0.0;
 		break;
 	default:
-		e_parser_codes::UnknownOperationClass;
-	}
-	return ret_code;
-}
-
-c_line::e_parser_codes c_line::__execute_binary2(float *left, e_expression_operator_class_types operator_class, float *right)
-{
-	e_parser_codes ret_code = e_parser_codes::Ok;
-
-	float diff;
-	switch (operator_class) {
-	case e_expression_operator_class_types::Or:
-		*left = ((*left == 0.0) || (*right == 0.0)) ? 0.0 : 1.0;
-		break;
-	case e_expression_operator_class_types::Ex_Or:
-		*left = (((*left == 0.0) && (*right != 0.0))
-			|| ((*left != 0.0) && (*right == 0.0))) ? 1.0 : 0.0;
-		break;
-	case e_expression_operator_class_types::Subtract:
-		*left = (*left - *right);
-		break;
-	case e_expression_operator_class_types::Non_Ex_Or:
-		*left = ((*left != 0.0) || (*right != 0.0)) ? 1.0 : 0.0;
-		break;
-	case e_expression_operator_class_types::Addition:
-		*left = (*left + *right);
-		break;
-
-	case e_expression_operator_class_types::_lt:
-		*left = (*left < *right) ? 1.0 : 0.0;
-		break;
-	case e_expression_operator_class_types::_eq:
-		diff = *left - *right;
-		diff = (diff < 0) ? -diff : diff;
-		*left = (diff < NEAR_ZERO) ? 1.0 : 0.0;
-		break;
-	case e_expression_operator_class_types::_ne:
-		diff = *left - *right;
-		diff = (diff < 0) ? -diff : diff;
-		*left = (diff >= NEAR_ZERO) ? 1.0 : 0.0;
-		break;
-	case e_expression_operator_class_types::_le:
-		*left = (*left <= *right) ? 1.0 : 0.0;
-		break;
-	case e_expression_operator_class_types::_ge:
-		*left = (*left >= *right) ? 1.0 : 0.0;
-		break;
-	case e_expression_operator_class_types::_gt:
-		*left = (*left > *right) ? 1.0 : 0.0;
-		break;
-
-	default:
 		ret_code = e_parser_codes::UnknownOperationClass;
-
 	}
 	return ret_code;
 }
+

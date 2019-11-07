@@ -14,7 +14,6 @@
 
 
 //remove after testing
-#include "..\..\..\NGC_RS274\NGC_Line_segment.h"
 
 namespace Talos
 {
