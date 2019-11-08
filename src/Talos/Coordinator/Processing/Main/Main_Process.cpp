@@ -35,12 +35,13 @@ void Talos::Coordinator::Main_Process::initialize()
 #ifdef MSVC
 	//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "g0y#525r#<test>[1.0-[5.0+10]]\rg1x3\r");
 	Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "g99 y [ #777 - [#<test> + #<_glob> +-sqrt[2]] ] \r\r\r\r");// \n\ng1x3\r");
+	//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "#<tool>=10\r");
 #endif
 
-	c_ring_buffer<char> *buffer = &Hardware_Abstraction_Layer::Serial::_usart0_buffer;
-	//c_seg_proc::process(buffer);
-	char * my_buffer = buffer->_storage_pointer;
-	c_line::e_parser_codes ret_code = c_line::start(my_buffer);
+	//c_ring_buffer<char> *buffer = &Hardware_Abstraction_Layer::Serial::_usart0_buffer;
+	////c_seg_proc::process(buffer);
+	//char * my_buffer = buffer->_storage_pointer;
+	//c_line::e_parser_codes ret_code = c_line::start(my_buffer);
 
 }
 

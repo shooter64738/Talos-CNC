@@ -23,8 +23,11 @@
 #define NGC_LINE_PROCESSOR_H
 
 #include <stdint.h>
-#include "..\records_def.h"
 #include <ctype.h>
+
+#include "..\records_def.h"
+#include "NGC_Block.h"
+
 
 #define MAX_EXPRESSION_OPS 7
 #define NEAR_ONE 0.9999
@@ -99,10 +102,13 @@ public:
 		NumericParametersNotAvailable = 34,
 		NumericParametersMaxNotAvailable = 35,
 		BadDataInBuffer = 36,
-		OCodesNotImplimented = 37
-
+		OCodesNotImplimented = 37,
+		NumericParamaterUpdateFailure = 38,
+		NumericParamaterUpdateUnavailable = 39,
+		NamedParamaterUpdateFailure = 40,
+		NamedParamaterUpdateUnavailable = 41
 	};
-	static e_parser_codes start(char * line);
+	static e_parser_codes start(char * line, NGC_RS274::NGC_Binary_Block * block);
 
 private:
 
@@ -115,7 +121,9 @@ private:
 		Numeric = 6,
 		NumericParametersNotAvailable = 7,
 		NamedParametersNotAvailable = 8,
-		ClosingBracket = 9
+		ClosingBracket = 9,
+		NumericParameterAssign = 10,
+		NamedParameterAssign = 11
 	};
 	enum class e_expression_operator_class_types
 	{
@@ -157,8 +165,9 @@ private:
 	};
 
 	static uint8_t _set_buffer_to_upper(char * buffer);
-	static e_parser_codes _process_buffer(char * buffer);
+	static e_parser_codes _process_buffer(char * buffer, NGC_RS274::NGC_Binary_Block * block);
 
+	static e_parser_codes _read_as_word(char * buffer, int * read_pos, char word, float * word_value, NGC_RS274::NGC_Binary_Block * block);
 	static e_parser_codes _read_as_class_type(char * buffer, int * read_pos, float * word_value);
 	static e_parser_codes __read_class_numeric(char * buffer, int * read_pos, float * read_value);
 	static e_parser_codes __read_class_expression(char * buffer, int * read_pos, float * read_value);

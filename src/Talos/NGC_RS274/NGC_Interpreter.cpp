@@ -83,13 +83,13 @@ int NGC_RS274::Interpreter::Processor::process_line(NGC_RS274::NGC_Binary_Block 
 	HasErrors = 0;
 
 	//Parse gcode line data and do some rough error testing
-	int ReturnValue = parse_values(data_source);
+	int ReturnValue = (int) c_line::start(data_source->_storage_pointer, &NGC_RS274::Interpreter::Processor::worker_block);
 
 	if (ReturnValue != NGC_RS274::Interpreter::Errors::OK)
 	{
 		NGC_RS274::Interpreter::Processor::worker_block.reset();
-		HasErrors = ReturnValue;
-		return ReturnValue;
+		//HasErrors = ReturnValue;
+		return HasErrors;
 	}
 
 	/*
@@ -845,6 +845,7 @@ void NGC_RS274::Interpreter::Processor::read_to_end_of_line(c_ring_buffer<char> 
 
 int NGC_RS274::Interpreter::Processor::parse_values(c_ring_buffer<char> * buffer)
 {
+	
 	//int ReturnValue = NGC_RS274::Interpreter::Errors::OK;;
 	//NGC_RS274::NGC_Line_Segment new_segment = NGC_RS274::NGC_Line_Segment();
 	//while (1)
