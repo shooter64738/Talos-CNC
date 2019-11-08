@@ -36,7 +36,7 @@
 namespace NGC_RS274
 {
 
-	class Parmeters
+	class Parameters
 	{
 	public:
 
@@ -66,6 +66,24 @@ namespace NGC_RS274
 	};
 };
 #endif
+/*
+read only parameter numbers
+#5400 tool number
+#5401 tool x offset
+#5402 tool y offset
+#5403 tool z offset
+#5404 tool a offset
+#5405 tool b offset
+#5406 tool c offset
+#5407 tool u offset
+#5408 tool v offset
+#5409 tool w offset
+#5410 tool diameter
+#5411 tool frontangle
+#5412 tool backangle
+#5413 tool orientation
+*/
+
 //class Parameters
 //{
 //	struct s_coordinate_values //These are stored as ints to save space.

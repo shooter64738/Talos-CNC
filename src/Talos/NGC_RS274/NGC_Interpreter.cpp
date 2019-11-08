@@ -45,14 +45,14 @@ void NGC_RS274::Interpreter::Processor::initialize()
 
 	//Assign function pointers to load and read parameters. The line processor will need these
 	//if a parameter is entered on the line
-	c_line::parameter_function_pointers.pntr_get_global_named_parameter = NGC_RS274::Parmeters::__get_named_gobal_parameter;
-	c_line::parameter_function_pointers.pntr_get_local_named_parameter = NGC_RS274::Parmeters::__get_named_local_parameter;
-	c_line::parameter_function_pointers.pntr_get_numeric_parameter = NGC_RS274::Parmeters::__get_numeric_parameter;
-	c_line::parameter_function_pointers.pntr_get_numeric_parameter_max = NGC_RS274::Parmeters::__get_numeric_parameter_max;
+	c_line::parameter_function_pointers.pntr_get_global_named_parameter = NGC_RS274::Parameters::__get_named_gobal_parameter;
+	c_line::parameter_function_pointers.pntr_get_local_named_parameter = NGC_RS274::Parameters::__get_named_local_parameter;
+	c_line::parameter_function_pointers.pntr_get_numeric_parameter = NGC_RS274::Parameters::__get_numeric_parameter;
+	c_line::parameter_function_pointers.pntr_get_numeric_parameter_max = NGC_RS274::Parameters::__get_numeric_parameter_max;
 
-	c_line::parameter_function_pointers.pntr_set_global_named_parameter = NGC_RS274::Parmeters::__set_named_gobal_parameter;
-	c_line::parameter_function_pointers.pntr_set_local_named_parameter = NGC_RS274::Parmeters::__set_named_local_parameter;
-	c_line::parameter_function_pointers.pntr_set_numeric_parameter = NGC_RS274::Parmeters::__set_numeric_parameter;
+	c_line::parameter_function_pointers.pntr_set_global_named_parameter = NGC_RS274::Parameters::__set_named_gobal_parameter;
+	c_line::parameter_function_pointers.pntr_set_local_named_parameter = NGC_RS274::Parameters::__set_named_local_parameter;
+	c_line::parameter_function_pointers.pntr_set_numeric_parameter = NGC_RS274::Parameters::__set_numeric_parameter;
 	
 	
 }

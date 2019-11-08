@@ -20,37 +20,37 @@
 
 #include "NGC_Parameters.h"
 
-float NGC_RS274::Parmeters::__get_named_gobal_parameter(char * parameter_name)
+float NGC_RS274::Parameters::__get_named_gobal_parameter(char * parameter_name)
 {
 	return 1;
 }
 
-float NGC_RS274::Parmeters::__get_named_local_parameter(char * parameter_name)
+float NGC_RS274::Parameters::__get_named_local_parameter(char * parameter_name)
 {
 	return 1;
 }
 
-float NGC_RS274::Parmeters::__get_numeric_parameter(int parameter_number)
+float NGC_RS274::Parameters::__get_numeric_parameter(int parameter_number)
 {
 	return 1;
 }
 
-int NGC_RS274::Parmeters::__get_numeric_parameter_max()
+int NGC_RS274::Parameters::__get_numeric_parameter_max()
 {
 	return 6000;
 }
 
-int NGC_RS274::Parmeters::__set_named_gobal_parameter(char * parameter_name, float value)
+int NGC_RS274::Parameters::__set_named_gobal_parameter(char * parameter_name, float value)
 {
 	return 1;
 }
 
-int NGC_RS274::Parmeters::__set_named_local_parameter(char * parameter_name, float value)
+int NGC_RS274::Parameters::__set_named_local_parameter(char * parameter_name, float value)
 {
 	return 1;
 }
 
-int NGC_RS274::Parmeters::__set_numeric_parameter(int parameter_number, float value)
+int NGC_RS274::Parameters::__set_numeric_parameter(int parameter_number, float value)
 {
 	return 1;
 }
