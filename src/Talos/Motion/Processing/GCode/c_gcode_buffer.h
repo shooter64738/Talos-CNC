@@ -21,8 +21,9 @@
 
 #ifndef __C_MOTION_NGC_BUFFER_H__
 #define __C_MOTION_NGC_BUFFER_H__
-#include "..\NGC_RS274\NGC_Block.h"
-#include "..\c_ring_template.h"
+
+#include "../../../c_ring_template.h"
+#include "../../../NGC_RS274/NGC_Block.h"
 #define NGC_BUFFER_SIZE 5 //<--must be at least 2 in order for look-ahead to work.
 
 namespace Talos

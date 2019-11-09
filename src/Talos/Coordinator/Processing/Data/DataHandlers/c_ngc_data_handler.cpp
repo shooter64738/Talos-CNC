@@ -24,7 +24,8 @@
 #include "..\..\..\..\NGC_RS274\NGC_Interpreter.h"
 #include "..\..\..\..\c_ring_template.h"
 #include "..\..\..\..\NGC_RS274\NGC_Errors.h"
-#include "..\..\..\..\Motion\c_gcode_buffer.h"
+#include "..\..\..\..\Motion\Processing\GCode\c_gcode_buffer.h"
+
 
 /*
 We should NEVER include this file, this way these handlers stay totally

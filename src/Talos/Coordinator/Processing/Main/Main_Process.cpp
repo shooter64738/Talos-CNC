@@ -11,12 +11,12 @@ then move to their respective modules.
 
 
 #include "Main_Process.h"
-#include "..\Events\c_events.h"
+#include "../Events/c_events.h"
 #include "../../../c_ring_template.h"
-#include "..\Events\extern_events_types.h"
-#include "..\..\..\Motion\c_gcode_buffer.h"
-#include "..\..\..\NGC_RS274\NGC_Line_Processor.h"
-#include "..\..\..\NGC_RS274\NGC_Interpreter.h"
+#include "../Events/extern_events_types.h"
+#include "../../../Motion/Processing/GCode/c_gcode_buffer.h"
+#include "../../../NGC_RS274/NGC_Line_Processor.h"
+#include "../../../NGC_RS274/NGC_Interpreter.h"
 
 c_Serial Talos::Coordinator::Main_Process::host_serial;
 
