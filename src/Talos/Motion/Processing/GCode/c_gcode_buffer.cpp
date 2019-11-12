@@ -20,9 +20,9 @@
 
 #include "c_gcode_buffer.h"
 #include <string.h>
-#include "..\NGC_RS274\NGC_Interpreter.h"
-#include "..\NGC_RS274\NGC_G_Groups.h"
-#include "..\NGC_RS274\NGC_M_Groups.h"
+#include "../../../NGC_RS274/NGC_Interpreter.h"
+#include "../../../NGC_RS274/NGC_G_Groups.h"
+#include "../../../NGC_RS274/NGC_M_Groups.h"
 
 
 static NGC_RS274::NGC_Binary_Block gcode_data[NGC_BUFFER_SIZE];

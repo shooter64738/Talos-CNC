@@ -1,0 +1,230 @@
+/*
+* c_motion_core_arm_3x8e_spindle.cpp
+*
+* Created: 3/7/2019 10:22:11 AM
+* Author: jeff_d
+*/
+
+//#include "..\..\..\..\physical_machine_parameters.h"
+//#include "..\..\..\..\Motion_Core\c_interpollation_hardware.h"
+#include "c_core_arm_3x8e.h"
+#include "c_motion_core_arm_3x8e_spindle.h"
+
+#include "..\..\..\..\records_def.h"
+#include "..\..\..\..\Motion_Core\c_interpollation_hardware.h"
+#include "..\..\..\..\Motion\motion_hardware_def.h"
+
+#define TIME_OUT_TIMER_CLOCK TC_CMR_TCCLKS_TIMER_CLOCK4
+#define UPDATE_INTERVAL_TIMER_CLOCK TC_CMR_TCCLKS_TIMER_CLOCK1
+#define STEP_CLOCK_DIVIDER 1
+#define SYS_TICKS (84)
+volatile uint32_t time_out_ticks = 0;
+
+BinaryRecords::s_encoders * Hardware_Abstraction_Layer::MotionCore::Spindle::spindle_encoder;
+
+/***************************************************************************************************/
+/*                          QDEC Speed mode by polling in loop()                                   */
+/***************************************************************************************************/
+
+/*
+In speed mode, the results are accumulated within the time base (100 ms in this example).
+Every 100 ms, we get an edge that is connected internally thru TIOA8 to TC6. Depending on the user
+application and the requirement, the user must modify the time base with respect to their speed range.
+For example, if the application requires low speed measurement, the time base can be increased to get
+the fine results. For higher speed measurement, the user must choose the lesser time base so that the
+number of pulses counted does not overflow beyond the channel 0 counter (32-bit). If this is not taken
+care, the results may be inaccurate.
+*/
+//const uint32_t ENCODER_CPR = 150;                            // Cycles per revolution; this depends on your encoder
+//const uint32_t ENCODER_EDGES_PER_ROTATION = ENCODER_CPR * 4; // PPR = CPR * 4
+//const uint32_t ENCODER_SAMPLES_PER_SECOND = 10;              // this will need to be tuned depending on your use case...
+#define qdec TC0
+
+void Hardware_Abstraction_Layer::MotionCore::Spindle::initialize(BinaryRecords::s_encoders * encoder_data)
+{
+	Hardware_Abstraction_Layer::MotionCore::Spindle::spindle_encoder = encoder_data;
+	
+	Hardware_Abstraction_Layer::MotionCore::Spindle::qdec_speed_config();
+	
+	Hardware_Abstraction_Layer::MotionCore::Spindle::pwm_drive_configure();
+}
+
+void Hardware_Abstraction_Layer::MotionCore::Spindle::qdec_speed_config()
+{
+	//qdec0.set_sample_rate(encoder_data.samples_per_second);
+	
+	PMC->PMC_PCER0 |= PMC_PCER0_PID27 // TC0 power ON ; Timer counter 0 channel 0 is TC0
+	| PMC_PCER0_PID28                // TC1 power ON ; Timer counter 0 channel 1 is TC1
+	| PMC_PCER0_PID29;               // TC2 power ON ; Timer counter 2 channel 2 is TC2
+	
+	//PMC->PMC_PCER1 = PMC_PCER1_PID33 // TC6 power ON ; Timer counter 2 channel 0 is TC6
+	//| PMC_PCER1_PID34                // TC7 power ON ; Timer counter 2 channel 1 is TC7
+	//| PMC_PCER1_PID35;               // TC8 power ON ; Timer counter 2 channel 2 is TC8
+
+	// TC8 in waveform mode
+	qdec->TC_CHANNEL[2].TC_CMR = TC_CMR_TCCLKS_TIMER_CLOCK1  // Select Mck/2
+	| TC_CMR_WAVE               // Waveform mode
+	| TC_CMR_ACPC_TOGGLE        // Toggle TIOA of TC2 (TIOA8) on RC compare match
+	| TC_CMR_WAVSEL_UP_RC;      // UP mode with automatic trigger on RC Compare match
+
+	qdec->TC_CHANNEL[2].TC_RC = F_CPU_2 / Hardware_Abstraction_Layer::MotionCore::Spindle::spindle_encoder->samples_per_second;  // F_CPU = 84 MHz
+	// Final TC frequency is 84 MHz/2/TC_RC
+
+	// TC6 in capture mode
+	// Timer Counter 2 channel 0 is internally clocked by TIOA8
+	qdec->TC_CHANNEL[0].TC_CMR = TC_CMR_ABETRG               // TIOA8 is used as an external trigger.
+	| TC_CMR_TCCLKS_XC0         // External clock selected
+	| TC_CMR_LDRA_EDGE          // RA loading on each edge of TIOA6
+	| TC_CMR_ETRGEDG_RISING     // External TC trigger by edge selection of TIOA8
+	| TC_CMR_CPCTRG;            // RC Compare match resets the counter and starts the counter clock
+
+	qdec->TC_BMR = TC_BMR_QDEN                               // Enable QDEC (filter, edge detection and quadrature decoding)
+	| TC_BMR_SPEEDEN                          // Enable the speed measure on channel 0, the time base being provided by channel 2.
+	| TC_BMR_EDGPHA                           // Edges are detected on both PHA and PHB
+	| TC_BMR_SWAP                             // Swap PHA and PHB if necessary
+	| TC_BMR_MAXFILT(1);                      // Pulses with a period shorter than MAXFILT+1 peripheral clock cycles are discarded
+
+	qdec->TC_CHANNEL[0].TC_CCR = TC_CCR_CLKEN | TC_CCR_SWTRG;
+	qdec->TC_CHANNEL[1].TC_CCR = TC_CCR_CLKEN | TC_CCR_SWTRG;
+	qdec->TC_CHANNEL[2].TC_CCR = TC_CCR_CLKEN | TC_CCR_SWTRG;
+}
+
+void Hardware_Abstraction_Layer::MotionCore::Spindle::pwm_drive_configure()
+{
+	PMC->PMC_PCER1 |= PMC_PCER1_PID36; //REG_PMC_PCER1 |= PMC_PCER1_PID36;                     // Enable PWM
+	PIOB->PIO_ABSR |= PIO_ABSR_P16;//REG_PIOB_ABSR |= PIO_ABSR_P16;                        // Set PWM pin perhipheral type A or B, in this case B
+	PIOB->PIO_PDR |= PIO_PDR_P16;//REG_PIOB_PDR |= PIO_PDR_P16;                          // Set PWM pin to an output
+	PIOB->PIO_PUER |= PIO_PDR_P16;
+	PWM->PWM_CLK = PWM_CLK_PREA(0) | PWM_CLK_DIVA(1);//REG_PWM_CLK = PWM_CLK_PREA(0) | PWM_CLK_DIVA(1);      // Set the PWM clock rate to 84MHz (84MHz/1)
+	PWM->PWM_CH_NUM[0].PWM_CMR |= PWM_CMR_CPRE_CLKA;//REG_PWM_CMR0 = PWM_CMR_CPRE_CLKA;                     // Enable single slope PWM and set the clock source as CLKA
+	PWM->PWM_CH_NUM[0].PWM_CPRD = 840;//2840;//REG_PWM_CPRD0 = 2100;                                  // Set the PWM frequency 84MHz/40kHz = 2100
+	//PWM->PWM_CH_NUM[0].PWM_CDTY = 420;//REG_PWM_CDTY0 = 1050;  
+	//PWM->PWM_CH_NUM[0].PWM_CDTYUPD = 420;//REG_PWM_CDTY0 = 1050;  
+	                                // Set the PWM duty cycle 50% (2100/2=1050)
+	//PWM->PWM_CH_NUM[0].PWM_DT = 200;
+	PWM->PWM_ENA |= PWM_ENA_CHID0;//REG_PWM_ENA = PWM_ENA_CHID0;                          // Enable the PWM channel
+}
+
+void Hardware_Abstraction_Layer::MotionCore::Spindle::set_speed(int32_t new_speed)
+{
+	PWM->PWM_CH_NUM[0].PWM_CDTYUPD = new_speed;//REG_PWM_CDTY0 = 1050;  
+}
+
+void Hardware_Abstraction_Layer::MotionCore::Spindle::configure_timer_for_at_speed_delay()
+{
+	
+	//Setup a timer. This timer will determine when we have timed out for spindle_at_speed
+	PMC->PMC_PCER0 |= 1 << ID_TC4;
+	//TIME_OUT_TIMER_CLOCK value is 84,000,000 (cpu speed) / 128. /1000 is 656.250 for 1 milli second
+	//we will track how man times the timer fires and when we reach the specified timeout period we
+	//will raise the timeout error.
+	TC1->TC_CHANNEL[1].TC_CMR =  TIME_OUT_TIMER_CLOCK | TC_CMR_WAVSEL_UP_RC;// | TC_CMR_ACPA_TOGGLE;
+	//TC1->TC_CHANNEL[1].TC_RA = 240; //<--stepper pulse on time
+	TC1->TC_CHANNEL[1].TC_RC = 656250;//<--total time between steps
+	TC1->TC_CHANNEL[1].TC_IER = TC_IER_CPCS | TC_IER_CPAS;
+	TC1->TC_CHANNEL[1].TC_CCR = TC_CCR_CLKDIS;
+	NVIC_SetPriority(TC4_IRQn, 3);
+	NVIC_EnableIRQ (TC4_IRQn);
+	
+	if (Hardware_Abstraction_Layer::MotionCore::Spindle::spindle_encoder->spindle_synch_wait_time_ms)
+	{
+		TC1->TC_CHANNEL[1].TC_CCR = TC_CCR_CLKEN | TC_CCR_SWTRG;
+	}
+}
+
+void Hardware_Abstraction_Layer::MotionCore::Spindle::stop_at_speed_timer()
+{
+	TC1->TC_CHANNEL[1].TC_CCR = TC_CCR_CLKDIS;
+	time_out_ticks = 0;
+}
+
+void Hardware_Abstraction_Layer::MotionCore::Spindle::configure_timer_for_rpm_update(uint32_t interval)
+{
+	//Setup a timer. This timer will determine when we have timed out for spindle_at_speed
+	PMC->PMC_PCER0 |= 1 << ID_TC4;
+	TC1->TC_CHANNEL[1].TC_CMR = UPDATE_INTERVAL_TIMER_CLOCK | TC_CMR_WAVSEL_UP_RC;// | TC_CMR_ACPA_TOGGLE;
+	TC1->TC_CHANNEL[1].TC_RA = 240; //<--stepper pulse on time
+	TC1->TC_CHANNEL[1].TC_RC = 2048;//<--total time between steps
+	TC1->TC_CHANNEL[1].TC_IER = TC_IER_CPCS | TC_IER_CPAS;
+	TC1->TC_CHANNEL[1].TC_CCR = TC_CCR_CLKDIS;
+	NVIC_SetPriority(TC4_IRQn, 3);
+	NVIC_EnableIRQ (TC4_IRQn);
+	
+	//default the function pointer to the update speed method
+	//Hardware_Abstraction_Layer::MotionCore::Spindle::Pntr_timer_function =
+	//&Motion_Core::Hardware::Interpolation::spindle_calculate_interp_delay;
+}
+
+//void Hardware_Abstraction_Layer::MotionCore::Spindle::OCR1A_set(uint32_t delay)
+//{
+	////just in case the user tries to go faster than their hardware allows we hold them
+	////at max here.
+	//if (delay <Motion_Core::Hardware::Interpolation::Step_Pulse_Length)
+	//{
+		//delay = Motion_Core::Hardware::Interpolation::Step_Pulse_Length+1;
+	//}
+	//TC1->TC_CHANNEL[1].TC_RC = delay;
+//}
+
+int32_t Hardware_Abstraction_Layer::MotionCore::Spindle::get_rpm_qdec()
+{
+	
+	BinaryRecords::s_encoders * encode = Hardware_Abstraction_Layer::MotionCore::Spindle::spindle_encoder;
+	uint32_t prior_delay = encode->feedrate_delay;
+	
+	encode->meta_data.reg_tc0_ra0 = qdec->TC_CHANNEL[0].TC_RA;
+
+	encode->meta_data.speed_rps =
+	((encode->meta_data.reg_tc0_ra0 /
+	(Hardware_Abstraction_Layer::MotionCore::Spindle::spindle_encoder->ticks_per_revolution * 1.0))
+	* Hardware_Abstraction_Layer::MotionCore::Spindle::spindle_encoder->samples_per_second);
+	encode->meta_data.speed_rpm =  encode->meta_data.speed_rps * 60;
+	Hardware_Abstraction_Layer::MotionCore::Spindle::spindle_encoder->current_rpm = encode->meta_data.speed_rpm;
+	//mm_m = 5*rpm = mm per minute based on rotation
+	//step_rate_for_speed = 160*mm/m = 160steps per mm, per minute
+	//steps_per_second = step_rate_for_speed/60
+	
+	if (encode->meta_data.speed_rpm<0)
+	encode->meta_data.speed_rpm *=-1;
+	
+	float mm_m = 5 * encode->meta_data.speed_rpm;
+	float step_rate_for_speed = 160 * mm_m;
+	float steps_per_second = step_rate_for_speed/60;
+	float temp_delay = 48000000.0/steps_per_second;
+
+	if (temp_delay < 1.0 )
+	encode->feedrate_delay = prior_delay;
+	else
+	encode->feedrate_delay = temp_delay;
+	
+	return Hardware_Abstraction_Layer::MotionCore::Spindle::spindle_encoder->current_rpm;
+}
+
+
+
+void Timer1_Chan0_Handler_irq4(void)
+{
+	
+	uint32_t status_reg = TC1->TC_CHANNEL[1].TC_SR;
+	
+	//TC1->TC_CHANNEL[0].TC_CCR = TC_CCR_CLKDIS;
+	//Check to see if this is the A interrupt flag. If it is this is the 'on time' pulse start
+	if (status_reg & TC_IER_CPAS)
+	{
+		UART->UART_THR = 'A';
+	}
+	//Check to see if this is the C interrupt flag. If it is this is the 'total time' pulse end
+	if (status_reg & TC_IER_CPCS)
+	{
+		UART->UART_THR = 'B';
+		time_out_ticks++;
+		if (time_out_ticks == Hardware_Abstraction_Layer::MotionCore::Spindle::spindle_encoder->spindle_synch_wait_time_ms)
+		{
+			TC1->TC_CHANNEL[1].TC_CCR = TC_CCR_CLKDIS;
+			time_out_ticks = 0;
+			Motion_Core::Hardware::Interpolation::spindle_at_speed_timeout(0);
+		}
+	}
+}
+
+

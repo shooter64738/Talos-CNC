@@ -3,7 +3,7 @@
 #include <stdint.h>
 #include <stddef.h>
 #include "..\records_def.h"
-#include "..\hardware_def.h"
+//#include "..\hardware_def.h"
 #include "..\bit_manipulation.h"
 
 

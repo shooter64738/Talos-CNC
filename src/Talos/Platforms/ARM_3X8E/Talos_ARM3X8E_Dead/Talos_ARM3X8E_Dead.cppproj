@@ -13,7 +13,7 @@
     <OutputFileExtension>.elf</OutputFileExtension>
     <OutputDirectory>$(MSBuildProjectDirectory)\$(Configuration)</OutputDirectory>
     <AssemblyName>Talos_ARM3X8E</AssemblyName>
-    <Name>Talos_ARM3X8E</Name>
+    <Name>Talos_ARM3X8E_Dead</Name>
     <RootNamespace>Talos_ARM3X8E</RootNamespace>
     <ToolchainFlavour>Native</ToolchainFlavour>
     <KeepTimersRunning>true</KeepTimersRunning>
@@ -531,6 +531,12 @@
     <Compile Include="Platform Specific\c_core_arm_3x8e.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="Platform Specific\c_disk_arm_3x8e.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="Platform Specific\c_disk_arm_3x8e.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="Platform Specific\c_motion_core_arm_3x8e_inputs.cpp">
       <SubType>compile</SubType>
     </Compile>
@@ -584,6 +590,7 @@
     <Folder Include="Common\Serial" />
     <Folder Include="Device_Startup\" />
     <Folder Include="Common" />
+    <Folder Include="Motion" />
     <Folder Include="Spindle" />
     <Folder Include="NGC_RS274\Machine Specific" />
     <Folder Include="NGC_RS274\Machine Specific\Lathe\" />
