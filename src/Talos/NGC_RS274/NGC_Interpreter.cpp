@@ -39,7 +39,7 @@ bool NGC_RS274::Interpreter::Processor::normalize_distance_units_to_mm = true;
 uint16_t ngc_working_group = 0;
 c_Serial *NGC_RS274::Interpreter::Processor::local_serial;
 
-void NGC_RS274::Interpreter::Processor::initialize()
+uint8_t NGC_RS274::Interpreter::Processor::initialize()
 {
 	NGC_RS274::Interpreter::Processor::worker_block.initialize();
 
@@ -53,8 +53,17 @@ void NGC_RS274::Interpreter::Processor::initialize()
 	c_line::parameter_function_pointers.pntr_set_global_named_parameter = NGC_RS274::Parameters::__set_named_gobal_parameter;
 	c_line::parameter_function_pointers.pntr_set_local_named_parameter = NGC_RS274::Parameters::__set_named_local_parameter;
 	c_line::parameter_function_pointers.pntr_set_numeric_parameter = NGC_RS274::Parameters::__set_numeric_parameter;
+
+	if (c_line::parameter_function_pointers.pntr_get_global_named_parameter == NULL
+	|| c_line::parameter_function_pointers.pntr_get_local_named_parameter  == NULL
+	|| c_line::parameter_function_pointers.pntr_get_numeric_parameter  == NULL
+	|| c_line::parameter_function_pointers.pntr_get_numeric_parameter_max  == NULL
+	|| c_line::parameter_function_pointers.pntr_set_global_named_parameter  == NULL
+	|| c_line::parameter_function_pointers.pntr_set_local_named_parameter  == NULL
+	|| c_line::parameter_function_pointers.pntr_set_numeric_parameter  == NULL)
+	return 1; //<--this shoudl never happen for real. This is only for debugging
 	
-	
+	return 0;
 }
 
 int NGC_RS274::Interpreter::Processor::process_line(NGC_RS274::NGC_Binary_Block * plan_block, c_ring_buffer<char> * data_source)

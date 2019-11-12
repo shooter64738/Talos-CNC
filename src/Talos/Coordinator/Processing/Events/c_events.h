@@ -48,7 +48,7 @@ namespace Talos
 				Events(const Events &c);
 				Events& operator=(const Events &c);*/
 
-			static void initialize();
+			static uint8_t initialize();
 			static void process();
 			
 

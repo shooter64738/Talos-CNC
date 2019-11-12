@@ -40,7 +40,7 @@ namespace Talos
 
 			//functions
 			public:
-			static void initialize();
+			static uint8_t initialize();
 			static NGC_RS274::NGC_Binary_Block prep_for_new();
 			protected:
 			private:

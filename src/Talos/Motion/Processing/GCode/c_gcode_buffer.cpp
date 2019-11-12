@@ -28,7 +28,7 @@
 static NGC_RS274::NGC_Binary_Block gcode_data[NGC_BUFFER_SIZE];
 c_ring_buffer<NGC_RS274::NGC_Binary_Block> Talos::Motion::NgcBuffer::gcode_buffer;
 
-void Talos::Motion::NgcBuffer::initialize()
+uint8_t Talos::Motion::NgcBuffer::initialize()
 {
 	gcode_buffer.initialize(gcode_data,NGC_BUFFER_SIZE);
 	NGC_RS274::Interpreter::Processor::initialize();
@@ -83,6 +83,7 @@ void Talos::Motion::NgcBuffer::initialize()
 	first_block->g_group[NGC_RS274::Groups::M::SPINDLE] = NGC_RS274::M_codes::SPINDLE_STOP;
 	//default coolant mode
 	first_block->g_group[NGC_RS274::Groups::M::COOLANT] = NGC_RS274::M_codes::COOLANT_OFF;
+	return 0;
 
 }
 

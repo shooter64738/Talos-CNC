@@ -67,7 +67,7 @@ namespace NGC_RS274
 			static NGC_RS274::NGC_Binary_Block *stager_block;
 			static bool normalize_distance_units_to_mm;
 
-			static void initialize();
+			static uint8_t initialize();
 			static int process_line(NGC_RS274::NGC_Binary_Block*plan_block, c_ring_buffer<char> * data_source);
 			static float evaluate_address(char* Data);
 			//Move G and M codes to the respective groups

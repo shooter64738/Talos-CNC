@@ -49,6 +49,12 @@
     <Filter Include="Motion">
       <UniqueIdentifier>{ef714a6e-cbba-466e-97d5-1a5a039f896e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Motion\Processing">
+      <UniqueIdentifier>{8ef15568-a3cc-465b-a357-8d8a292d8a36}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Motion\Processing\GCode">
+      <UniqueIdentifier>{8cdf4da6-238b-4793-a420-f027b74bc8d8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\bit_manipulation.h" />
@@ -146,11 +152,14 @@
     <ClInclude Include="..\..\..\..\Coordinator\Processing\Events\EventHandlers\c_ancillary_event_handler.h">
       <Filter>Coordinator\Processing\Events\EventHandlers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Motion\c_gcode_buffer.h">
-      <Filter>Motion</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\..\NGC_RS274\NGC_Line_Processor.h">
       <Filter>Ngc_Rs274</Filter>
+    </ClInclude>
+    <ClInclude Include="Platform Specific\c_disk_win.h">
+      <Filter>Platform Specific</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Motion\Processing\GCode\c_gcode_buffer.h">
+      <Filter>Motion\Processing\GCode</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -214,14 +223,20 @@
     <ClCompile Include="..\..\..\..\Coordinator\Processing\Events\EventHandlers\c_ancillary_event_handler.cpp">
       <Filter>Coordinator\Processing\Events\EventHandlers</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\Motion\c_gcode_buffer.cpp">
-      <Filter>Motion</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\..\NGC_RS274\NGC_Line_Processor.cpp">
       <Filter>Ngc_Rs274</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\..\NGC_RS274\NGC_Parameters.cpp">
       <Filter>Ngc_Rs274</Filter>
     </ClCompile>
+    <ClCompile Include="Platform Specific\c_disk_win.cpp">
+      <Filter>Platform Specific</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Motion\Processing\GCode\c_gcode_buffer.cpp">
+      <Filter>Motion\Processing\GCode</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Process.txt" />
   </ItemGroup>
 </Project>

@@ -37,9 +37,9 @@ namespace Hardware_Abstraction_Layer
 
 		//functions
 		public:
-		static void initialize();
+		static uint8_t initialize();
 		static void critical_shutdown();
-		static void start_interrupts();
+		static uint8_t start_interrupts();
 		static void stop_interrupts();
 		static void capture_status_register_SREG();
 		static void restore_status_register_SREG();

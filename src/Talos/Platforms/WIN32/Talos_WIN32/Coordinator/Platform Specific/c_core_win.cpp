@@ -26,13 +26,14 @@ void Hardware_Abstraction_Layer::Core::critical_shutdown()
 	//This is the win core. 
 }
 
-void Hardware_Abstraction_Layer::Core::initialize()
+uint8_t Hardware_Abstraction_Layer::Core::initialize()
 {
 	//This is the win core. 
+	return 0;
 }
-void Hardware_Abstraction_Layer::Core::start_interrupts()
+uint8_t Hardware_Abstraction_Layer::Core::start_interrupts()
 {
-	
+	return 0;
 }
 void Hardware_Abstraction_Layer::Core::stop_interrupts()
 {

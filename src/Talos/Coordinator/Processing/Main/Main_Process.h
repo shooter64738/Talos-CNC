@@ -22,21 +22,25 @@ namespace Talos
 		class Main_Process
 		{
 			//variables
-		public:
+			public:
 			static c_Serial host_serial;
-		protected:
-		private:
+			protected:
+			private:
 
 			//functions
-		public:
+			public:
 			static void initialize();
+			
 			static void run();
 
 
 			//Main_Process();
 			//~Main_Process();
-		protected:
-		private:
+			protected:
+			private:
+			typedef uint8_t (*init_function)(void); // type for conciseness
+			static void __initialization_start(const char * message, init_function initialization_pointer);
+			static void __initialization_response(uint8_t response_code);
 			//Main_Process( const Main_Process &c );
 			//Main_Process& operator=( const Main_Process &c );
 

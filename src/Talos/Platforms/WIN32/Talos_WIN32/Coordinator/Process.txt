@@ -1,0 +1,22 @@
+Coordinator - Process Flow
+1. At power up the coordinator must power up and configure several things
+	a. Serial interface and hardware. This is so the user con communicate with the coordinator via serial terminal
+	b. Spi or serial peripheral interface. Communication between processor packages is handled via Spi int he typical
+		master/slave relationship. Spi is used to xfer data from teh coordinator to the motion and spindle controls
+		as well as sending motion blocks to motion and spindle controls. 
+	c. Disk drivers. For WIN32 the disk driver is jsut a disk drive which allows storage of parameter data and settings.
+		On chip storage can be handled via internal eeprom or external eeprom
+2. An NGC block comes in on a source (netork, file, serial) and is processed via the interpreter.
+	a. Processed data is converted to a binary format and held in a buffer until it is ready to execute by the motion controller or
+		spindle controller. 
+	b. Any file that is processed will be processed completley. All data will be read and converted to binary format before any
+		of the bianry data is allowed to execute by the controller. This ensures that the entire gcode file sent to the coordinator
+		is ready to process and will not (or should not) produce any errors on the motion controller.
+	c. When motion starts the motion controller will be sent a binary motion block. This block will contain all data needed to
+		execute that block. In the case of subroutines, a request can be made to the coordinator for the subroutines motion blocks. 
+			i. When executing a subroutine the coordinator will not send the next gcode line from the main program. It will send the
+				next line that the subroutine should execute.
+			ii. After all subroutine lines are sent the coordinator will return back to its main program and execute the next line. 
+				In some cases the subroutine may not return to where the main program left from, in which case the main programs
+				next executing line will be dictated by the subroutines return location. 
+				

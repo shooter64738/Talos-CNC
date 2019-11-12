@@ -27,9 +27,10 @@ c_data_events Talos::Coordinator::Events::data_event_handler;
 c_system_events Talos::Coordinator::Events::system_event_handler;
 c_ancillary_event_handler Talos::Coordinator::Events::ancillary_event_handler;
 
-void Talos::Coordinator::Events::initialize()
+uint8_t Talos::Coordinator::Events::initialize()
 {
 	extern_system_events.event_manager.set((int)s_system_events::e_event_type::SystemAllOk);
+	return 0;
 }
 
 //This is the main entry point that checks to see if an event needs to

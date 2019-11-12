@@ -28,7 +28,7 @@
     <ClInclude Include="..\..\..\..\Coordinator\Processing\Main\Main_Process.h" />
     <ClInclude Include="..\..\..\..\Coordinator\Serial\c_Serial.h" />
     <ClInclude Include="..\..\..\..\c_ring_template.h" />
-    <ClInclude Include="..\..\..\..\Motion\c_gcode_buffer.h" />
+    <ClInclude Include="..\..\..\..\Motion\Processing\GCode\c_gcode_buffer.h" />
     <ClInclude Include="..\..\..\..\NGC_RS274\Machine Specific\Lathe\NGC_G_Codes.h" />
     <ClInclude Include="..\..\..\..\NGC_RS274\Machine Specific\Lathe\NGC_Lathe.h" />
     <ClInclude Include="..\..\..\..\NGC_RS274\Machine Specific\Lathe\NGC_M_Codes.h" />
@@ -46,6 +46,7 @@
     <ClInclude Include="..\..\..\..\physical_machine_parameters.h" />
     <ClInclude Include="..\..\..\..\records_def.h" />
     <ClInclude Include="Platform Specific\c_core_win.h" />
+    <ClInclude Include="Platform Specific\c_disk_win.h" />
     <ClInclude Include="Platform Specific\c_serial_win.h" />
     <ClInclude Include="Platform Specific\c_spi_win.h" />
   </ItemGroup>
@@ -63,7 +64,7 @@
     <ClCompile Include="..\..\..\..\Coordinator\Processing\Events\EventHandlers\c_system_events.cpp" />
     <ClCompile Include="..\..\..\..\Coordinator\Processing\Main\Main_Process.cpp" />
     <ClCompile Include="..\..\..\..\Coordinator\Serial\c_Serial.cpp" />
-    <ClCompile Include="..\..\..\..\Motion\c_gcode_buffer.cpp" />
+    <ClCompile Include="..\..\..\..\Motion\Processing\GCode\c_gcode_buffer.cpp" />
     <ClCompile Include="..\..\..\..\NGC_RS274\Machine Specific\Lathe\NGC_Lathe.cpp" />
     <ClCompile Include="..\..\..\..\NGC_RS274\Machine Specific\Mill\NGC_Mill.cpp" />
     <ClCompile Include="..\..\..\..\NGC_RS274\NGC_Block.cpp" />
@@ -71,8 +72,12 @@
     <ClCompile Include="..\..\..\..\NGC_RS274\NGC_Line_Processor.cpp" />
     <ClCompile Include="..\..\..\..\NGC_RS274\NGC_Parameters.cpp" />
     <ClCompile Include="Platform Specific\c_core_win.cpp" />
+    <ClCompile Include="Platform Specific\c_disk_win.cpp" />
     <ClCompile Include="Platform Specific\c_serial_win.cpp" />
     <ClCompile Include="Platform Specific\c_spi_win.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Process.txt" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{842D3902-7944-4D31-868D-EDAD55DD8A7E}</ProjectGuid>
