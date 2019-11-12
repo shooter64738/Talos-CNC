@@ -5,8 +5,14 @@
 * Author: jeff_d
 */
 
-#include "..\..\..\..\physical_machine_parameters.h"
+//#include "..\..\..\..\physical_machine_parameters.h"
+//#include "..\..\..\..\Motion_Core\c_interpollation_hardware.h"
+#include "c_core_arm_3x8e.h"
+#include "c_motion_core_arm_3x8e_spindle.h"
+
+#include "..\..\..\..\records_def.h"
 #include "..\..\..\..\Motion_Core\c_interpollation_hardware.h"
+#include "..\..\..\..\Motion\motion_hardware_def.h"
 
 #define TIME_OUT_TIMER_CLOCK TC_CMR_TCCLKS_TIMER_CLOCK4
 #define UPDATE_INTERVAL_TIMER_CLOCK TC_CMR_TCCLKS_TIMER_CLOCK1

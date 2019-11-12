@@ -29,12 +29,13 @@
 #define F_CPU_2 F_CPU/2
 #define _TICKS_PER_MICROSECOND (F_CPU_2/1000000)
 
-//#include "../Platforms\ARM_3X8E\Talos_ARM3X8E\Platform Specific\c_motion_core_arm_3x8e_stepper.h"
+//#include "../Platforms/ARM_3X8E/Talos_ARM3X8E_Motion/PlatformSpecific/c_motion_core_arm_3x8e_stepper.h"
 //#include "../Platforms\ARM_3X8E\Talos_ARM3X8E\Platform Specific\c_motion_core_arm_3x8e_inputs.h"
-//#include "../Platforms\ARM_3X8E\Talos_ARM3X8E\Platform Specific\c_motion_core_arm_3x8e_spindle.h"
+//#include "../Platforms/ARM_3X8E/Talos_ARM3X8E_Motion/PlatformSpecific/c_motion_core_arm_3x8e_spindle.h"
 #include "../Platforms/ARM_3X8E/Talos_ARM3X8E_Motion/PlatformSpecific/c_disk_arm_3x8e.h"
 #include "../Platforms/ARM_3X8E/Talos_ARM3X8E_Motion/PlatformSpecific/c_core_arm_3x8e.h"
 #include "../Platforms/ARM_3X8E/Talos_ARM3X8E_Motion/PlatformSpecific/c_serial_arm_3x8e.h"
+#include "../Platforms/ARM_3X8E/Talos_ARM3X8E_Motion/PlatformSpecific/c_spi_arm_3x8e.h"
 #endif
 
 #ifdef MSVC

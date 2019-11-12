@@ -5,15 +5,10 @@
 * Author: jeff_d
 */
 #include <stdint.h>
-
-
-#ifdef __SAM3X8E__
-#include "sam.h"
-#include <stdint.h>
 #include "..\..\..\..\records_def.h"
+
 #ifndef __C_MOTIONCORE_ARM_3X8E_SPINDLE_H__
 #define __C_MOTIONCORE_ARM_3X8E_SPINDLE_H__
-
 #define Timer1_Chan0_Handler_irq4 TC4_Handler //<--This naming is less confusing to me. If you dont like it change it.
 
 
@@ -56,5 +51,4 @@ namespace Hardware_Abstraction_Layer
 		};
 	};
 };
-#endif
 #endif

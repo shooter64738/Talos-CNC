@@ -243,6 +243,27 @@
     <Compile Include="PlatformSpecific\c_serial_arm_3x8e.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="PlatformSpecific\c_spi_arm_3x8e.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="PlatformSpecific\c_spi_arm_3x8e.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="PlatformSpecific\disk\diskio.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="PlatformSpecific\disk\diskio.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="PlatformSpecific\disk\ff.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="PlatformSpecific\disk\ff.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="PlatformSpecific\disk\ffconf.h">
+      <SubType>compile</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Device_Startup\" />
@@ -252,6 +273,8 @@
     <Folder Include="Motion\Processing" />
     <Folder Include="PlatformSpecific" />
     <Folder Include="Ngc_Rs274" />
+    <Folder Include="PlatformSpecific\disk\" />
+    <Folder Include="PlatformSpecific\disk\disk support\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Device_Startup\sam3x8e_flash.ld">

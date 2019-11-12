@@ -5,6 +5,7 @@
 * Author: jeff_d
 */
 
+#include "c_core_arm_3x8e.h"
 #include "c_motion_core_arm_3x8e_stepper.h"
 #include "..\..\..\..\physical_machine_parameters.h"
 #include "..\..\..\..\Motion_Core\c_interpollation_hardware.h"

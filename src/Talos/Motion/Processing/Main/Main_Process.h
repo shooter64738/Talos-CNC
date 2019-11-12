@@ -9,6 +9,7 @@
 #ifndef __MAIN_PROCESS_H__
 #define __MAIN_PROCESS_H__
 
+#include "../../motion_hardware_def.h"
 #include "../../Serial/c_Serial.h"
 
 namespace Talos
@@ -27,6 +28,7 @@ namespace Talos
 			public:
 			static void initialize();
 			static void run();
+			static void report(uint16_t ret_code);
 			//Main_Process();
 			//~Main_Process();
 			protected:
@@ -35,6 +37,7 @@ namespace Talos
 			//Main_Process& operator=( const Main_Process &c );
 
 		}; //Main_Process
+	
 	};
 };
 #endif //__MAIN_PROCESS_H__

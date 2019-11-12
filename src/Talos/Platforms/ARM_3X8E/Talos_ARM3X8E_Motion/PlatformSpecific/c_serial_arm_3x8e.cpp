@@ -14,7 +14,7 @@
 #include "component\uart.h"
 
 c_ring_buffer<char> Hardware_Abstraction_Layer::Serial::_usart0_buffer;
-static char _usart0_data[256];
+static char _usart0_data[USART0_BUFFER_SIZE];
 
 void Hardware_Abstraction_Layer::Serial::USART_Configure(Usart *usart, uint32_t mode, uint32_t baudrate, uint32_t masterClock)
 {
@@ -59,6 +59,7 @@ void Hardware_Abstraction_Layer::Serial::initialize(uint8_t Port, uint32_t BaudR
 	{
 		case 0:
 		{
+			_usart0_buffer.initialize(_usart0_data,USART0_BUFFER_SIZE);
 			// ==> Pin configuration
 			// Disable interrupts on Rx and Tx
 			PIOA->PIO_IDR = PIO_PA8A_URXD | PIO_PA9A_UTXD;

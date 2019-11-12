@@ -23,7 +23,7 @@
 #include "../../communication_def.h"
 #include "../../c_ring_template.h"
 
-static c_ring_buffer<char> rxBuffer[2];
+//static c_ring_buffer<char> rxBuffer[2];
 //s_Buffer c_Serial::rxBuffer;
 // default constructor
 c_Serial::c_Serial()

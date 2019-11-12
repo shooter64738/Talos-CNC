@@ -28,12 +28,21 @@
 #include "usart\c_usart.h"
 #include "uart\c_uart.h"
 
+#define SYS_TICKS		(84)
+
 void Hardware_Abstraction_Layer::Core::initialize()
 {
 	/* Initialize the SAM system */
 	SystemInit();
 	//Initialize main processing loop
 	WDT->WDT_MR = WDT_MR_WDDIS; // Disable the WDT
+	
+	SysTick->LOAD  = (SYS_TICKS & SysTick_LOAD_RELOAD_Msk) - 1;
+	NVIC_SetPriority (SysTick_IRQn, 3);
+	SysTick->VAL   = 0;
+	SysTick->CTRL  = SysTick_CTRL_CLKSOURCE_Msk |
+	SysTick_CTRL_TICKINT_Msk   |
+	SysTick_CTRL_ENABLE_Msk;
 }
 void Hardware_Abstraction_Layer::Core::start_interrupts()
 {
