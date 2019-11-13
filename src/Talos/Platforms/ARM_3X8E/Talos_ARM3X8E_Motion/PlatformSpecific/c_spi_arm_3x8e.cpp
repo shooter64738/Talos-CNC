@@ -37,15 +37,23 @@ void Hardware_Abstraction_Layer::SPI::initialize_general()
 	
 	// Program the PIO controllers to assign
 	// the SPI output pins to their peripheral functions (page 679)
-	PIOA->PIO_PDR = PIO_PDR_P25
-	| PIO_PDR_P26
-	| PIO_PDR_P27
-	| PIO_PDR_P28;
-
-	PIOA->PIO_ABSR &= ~(PIO_PA25A_SPI0_MISO
-	| PIO_PA26A_SPI0_MOSI
-	| PIO_PA27A_SPI0_SPCK
-	| PIO_PA28A_SPI0_NPCS0);
+	PMC->PMC_PCER0 |= (1<<ID_PIOA);	//Enable Clock PortA
+	
+	//configure for input			//MISO
+	PIOA->PIO_PDR |= PIO_PA25;
+	PIOA->PIO_ODR |= PIO_PA25;		//Input
+	
+	PIOA->PIO_PDR |= PIO_PA26;		//MOSI
+	PIOA->PIO_OER |= PIO_PA26;		//MOSI	Output
+	PIOA->PIO_ABSR &= ~PIO_PA26;	//Peripheral A
+	
+	PIOA->PIO_PDR |= PIO_PA27;		//SPCK
+	PIOA->PIO_OER |= PIO_PA27;		//SPCK	Output
+	PIOA->PIO_ABSR &= ~PIO_PA27;	//Peripheral A
+	
+	PIOA->PIO_OER |= PIO_PA28;		//NPCS0	Output
+/*	PIOA->PIO_ABSR &= ~PIO_PA28;	//Peripheral A
+	PIOA->PIO_PUER |= PIO_PA28;		//pull-up*/
 
 	// SPI Disable
 	SPI0->SPI_CR = SPI_CR_SPIDIS;// SPI is in slave mode after software reset !!
@@ -54,55 +62,41 @@ void Hardware_Abstraction_Layer::SPI::initialize_general()
 	SPI0->SPI_CR = SPI_CR_SWRST;
 	
 	
-	SPI0->SPI_MR =0;
-	// SPI0 operates in Master mode, local loopback
-	SPI0->SPI_MR = SPI_MR_MSTR
-	| SPI_MR_MODFDIS             // Disable Mode Fault detection
-	| SPI_MR_WDRBT               // Wait data read before Transfer
-	//| SPI_MR_LLB                 // Local loopback (MISO -->MOSI)
-	//| SPI_MR_PCS(0b1110)
-	| SPI_MR_DLYBCS(0b01111111); // Maximum delay between Chip Selects
-	//| SPI_MR_PS
-	SPI0->SPI_MR &=~(SPI_MR_PS);//Fixed peripheral select
-	SPI0->SPI_MR &=~(SPI_MR_PCSDEC);//Chip connected directly.
-	SPI0->SPI_MR |=SPI_MR_PCS(0b0000);//CS 0
-
-
-	// Data transfer parameters
-	SPI0->SPI_CSR[0] |= SPI_CSR_CPOL          // Inactive state value of SPCK is logic level one
-	| SPI_CSR_NCPHA       // Data is captured on the leading edge of SPCK and changed on the following edge
-	| SPI_CSR_CSNAAT      // Chip select active after transfer
-	| SPI_CSR_BITS_8_BIT // Bits per transfer
-	| SPI_CSR_SCBR(100)   // slowest bit rate
-	| SPI_CSR_DLYBS(100); // Maximum delay from NPCS falling edge (activation)
-	// to the first valid SPCK transition
+	//SPI0->SPI_MR =0;
+	//// SPI0 operates in Master mode, local loopback
+	//SPI0->SPI_MR = SPI_MR_MSTR
+	//| SPI_MR_MODFDIS             // Disable Mode Fault detection
+	//| SPI_MR_WDRBT               // Wait data read before Transfer
+	////| SPI_MR_LLB                 // Local loopback (MISO -->MOSI)
+	////| SPI_MR_PCS(0b1110)
+	//| SPI_MR_DLYBCS(0b01111111); // Maximum delay between Chip Selects
+	////| SPI_MR_PS
+	//SPI0->SPI_MR &=~(SPI_MR_PS);//Fixed peripheral select
+	//SPI0->SPI_MR &=~(SPI_MR_PCSDEC);//Chip connected directly.
+	//SPI0->SPI_MR |=SPI_MR_PCS(0b0000);//CS 0
+//
+//
+	//// Data transfer parameters
+	//SPI0->SPI_CSR[0] |= SPI_CSR_CPOL          // Inactive state value of SPCK is logic level one
+	//| SPI_CSR_NCPHA       // Data is captured on the leading edge of SPCK and changed on the following edge
+	//| SPI_CSR_CSNAAT      // Chip select active after transfer
+	//| SPI_CSR_BITS_8_BIT // Bits per transfer
+	//| SPI_CSR_SCBR(100)   // slowest bit rate
+	//| SPI_CSR_DLYBS(100); // Maximum delay from NPCS falling edge (activation)
+	//// to the first valid SPCK transition
 	
 	// Data transfer parameters
-	SPI0->SPI_CSR[1] |= SPI_CSR_CPOL          // Inactive state value of SPCK is logic level one
-	| SPI_CSR_NCPHA       // Data is captured on the leading edge of SPCK and changed on the following edge
-	| SPI_CSR_CSNAAT      // Chip select active after transfer
-	| SPI_CSR_BITS_8_BIT // Bits per transfer
-	| SPI_CSR_SCBR(100)   // slowest bit rate
-	| SPI_CSR_DLYBS(100); // Maximum delay from NPCS falling edge (activation)
-	// to the first valid SPCK transition
+	// Save the divisor
+	uint32_t scbr = SPI0->SPI_CSR[0] & 0XFF00;
+	// Disable SPI
+	SPI0->SPI_CR = SPI_CR_SPIDIS;
+	// reset SPI
+	SPI0->SPI_CR = SPI_CR_SWRST;
+	// no mode fault detection, set master mode
+	SPI0->SPI_MR = SPI_MR_PCS(0) | SPI_MR_MODFDIS | SPI_MR_MSTR;
+	// mode 0, 8-bit,
+	SPI0->SPI_CSR[0] = 200 | SPI_CSR_CSAAT | SPI_CSR_NCPHA;
 	
-	// Data transfer parameters
-	SPI0->SPI_CSR[2] |= SPI_CSR_CPOL          // Inactive state value of SPCK is logic level one
-	| SPI_CSR_NCPHA       // Data is captured on the leading edge of SPCK and changed on the following edge
-	| SPI_CSR_CSNAAT      // Chip select active after transfer
-	| SPI_CSR_BITS_8_BIT // Bits per transfer
-	| SPI_CSR_SCBR(100)   // slowest bit rate
-	| SPI_CSR_DLYBS(100); // Maximum delay from NPCS falling edge (activation)
-	// to the first valid SPCK transition
-	
-	// Data transfer parameters
-	SPI0->SPI_CSR[3] |= SPI_CSR_CPOL          // Inactive state value of SPCK is logic level one
-	| SPI_CSR_NCPHA       // Data is captured on the leading edge of SPCK and changed on the following edge
-	| SPI_CSR_CSNAAT      // Chip select active after transfer
-	| SPI_CSR_BITS_8_BIT // Bits per transfer
-	| SPI_CSR_SCBR(100)   // slowest bit rate
-	| SPI_CSR_DLYBS(100); // Maximum delay from NPCS falling edge (activation)
-	// to the first valid SPCK transition
 
 	// Receive Data Register Full Interrupt and
 	// Transmit Data Register Empty Interrupt Enable

@@ -29,7 +29,7 @@ namespace Hardware_Abstraction_Layer
 
 		//functions
 		public:
-		static void initialize();
+		static uint8_t initialize();
 		static void write(const char * filename, char * buffer, e_file_modes mode);
 		protected:
 		private:

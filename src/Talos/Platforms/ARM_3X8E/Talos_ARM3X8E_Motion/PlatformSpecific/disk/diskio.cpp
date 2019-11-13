@@ -64,6 +64,12 @@ DSTATUS disk_initialize (
 BYTE pdrv				/* Physical drive nmuber to identify the drive */
 )
 {
+	
+	//OCR0A = F_CPU / 1024 / 100 - 1;
+	//TCCR0A = (1<<WGM01);
+	//TCCR0B = 0b101;
+	//TIMSK0 = (1<<OCIE0A);
+	//
 	DSTATUS stat;
 	int result;
 

@@ -30,7 +30,7 @@ void Talos::Coordinator::Main_Process::initialize()
 	__initialization_start("Events", Talos::Coordinator::Events::initialize);//<--init events
 	__initialization_start("Ngc Buffer", Talos::Motion::NgcBuffer::initialize);//<--g code buffer
 	__initialization_start("Ngc Interpreter", NGC_RS274::Interpreter::Processor::initialize);//<--g code interpreter
-	__initialization_start("Disk", NULL);//<--drive/eprom storage
+	__initialization_start("Disk", Hardware_Abstraction_Layer::Disk::initialize);//<--drive/eprom storage
 	__initialization_start("Motion Control Comms", NULL);//<--motion controller card
 	__initialization_start("Spindle Control Comms", NULL);//<--spindle controller card
 
@@ -65,10 +65,10 @@ void Talos::Coordinator::Main_Process::__initialization_response(uint8_t respons
 	//response codes that are not 0, are fatal at start up
 	if (response_code)
 	{
-		Talos::Coordinator::Main_Process::host_serial.print_string("Err Cd:");
+		Talos::Coordinator::Main_Process::host_serial.print_string("FAILED! Err Cd:");
 		Talos::Coordinator::Main_Process::host_serial.print_int32(response_code);
 		Talos::Coordinator::Main_Process::host_serial.print_string("\r\n");
-		Talos::Coordinator::Main_Process::host_serial.print_string("System halted.");
+		Talos::Coordinator::Main_Process::host_serial.print_string("** System halted **");
 		while (1) {}
 	}
 	else

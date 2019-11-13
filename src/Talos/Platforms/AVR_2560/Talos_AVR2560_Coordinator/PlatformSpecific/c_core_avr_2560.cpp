@@ -14,11 +14,12 @@ uint8_t Hardware_Abstraction_Layer::Core::register_at_int_stop =0;
 
 uint8_t  Hardware_Abstraction_Layer::Core::initialize()
 {
-
+return 0;
 }
 uint8_t Hardware_Abstraction_Layer::Core::start_interrupts()
 {
 	sei();
+	return 0;
 }
 void Hardware_Abstraction_Layer::Core::stop_interrupts()
 {
