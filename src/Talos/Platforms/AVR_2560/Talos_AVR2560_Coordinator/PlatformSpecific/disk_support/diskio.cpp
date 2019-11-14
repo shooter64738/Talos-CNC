@@ -161,11 +161,10 @@ void disk_timerproc (void)
 #endif
 }
 
-ISR(TIMER0_COMPA_vect)
-{
+//ISR(TIMER0_COMPA_vect)/
+//{
 	//Timer++;			/* Performance counter for this module */
-	disk_timerproc();	/* Drive timer procedure of low level disk I/O module */
-}
-
+//	disk_timerproc();	/* Drive timer procedure of low level disk I/O module */
+//}
 
 

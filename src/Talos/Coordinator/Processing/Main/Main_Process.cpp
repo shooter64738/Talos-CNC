@@ -22,14 +22,14 @@ c_Serial Talos::Coordinator::Main_Process::host_serial;
 
 void Talos::Coordinator::Main_Process::initialize()
 {
-	Talos::Coordinator::Main_Process::host_serial = c_Serial(0, 115200); //<--Connect to host
+	Talos::Coordinator::Main_Process::host_serial = c_Serial(0, 250000); //<--Connect to host
 	Talos::Coordinator::Main_Process::host_serial.print_string("Coordinator initializing\r\n");
 
 	__initialization_start("Core", Hardware_Abstraction_Layer::Core::initialize);//<--core start up
 	__initialization_start("Interrupts", Hardware_Abstraction_Layer::Core::start_interrupts);//<--start interrupts on hardware
-	__initialization_start("Events", Talos::Coordinator::Events::initialize);//<--init events
-	__initialization_start("Ngc Buffer", Talos::Motion::NgcBuffer::initialize);//<--g code buffer
-	__initialization_start("Ngc Interpreter", NGC_RS274::Interpreter::Processor::initialize);//<--g code interpreter
+	//__initialization_start("Events", Talos::Coordinator::Events::initialize);//<--init events
+	//__initialization_start("Ngc Buffer", Talos::Motion::NgcBuffer::initialize);//<--g code buffer
+	//__initialization_start("Ngc Interpreter", NGC_RS274::Interpreter::Processor::initialize);//<--g code interpreter
 	__initialization_start("Disk", Hardware_Abstraction_Layer::Disk::initialize);//<--drive/eprom storage
 	__initialization_start("Motion Control Comms", NULL);//<--motion controller card
 	__initialization_start("Spindle Control Comms", NULL);//<--spindle controller card

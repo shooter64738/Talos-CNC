@@ -16,23 +16,33 @@
 #include "mmc_avr.h"
 #include "../../../../../Coordinator/Processing/Main/Main_Process.h"
 
-/* Peripheral controls (Platform dependent) */
-#define CS_LOW()		PORTB &= ~(1<<DD_CS)	/* Set MMC_CS = low */
-#define	CS_HIGH()		PORTB |= (1<<DD_CS)	/* Set MMC_CS = high */
-//#define MMC_CD			To be filled	/* Test if card detected.   yes:true, no:false, default:true */
-//#define MMC_WP			To be filled	/* Test if write protected. yes:true, no:false, default:false */
-#define	FCLK_SLOW()		SPCR = (1<<SPE)|(1<<MSTR)|(0<<SPR1)|(0<<SPR0)	/* Set SPI clock for initialization (100-400kHz) */
-#define	FCLK_FAST()		SPCR = (1<<SPE)|(1<<MSTR)|(0<<SPR1)|(0<<SPR0)	/* Set SPI clock for initialization (100-400kHz) */
-//#define	FCLK_FAST()		SPCR = (1<<SPE)|(1<<MSTR)|(1<<SPR0);	/* Set SPI clock for read/write (20MHz max) */
-
-
 /*
 added defines
 */
-#define DD_MISO PB3
-#define DD_MOSI	PB2
-#define DD_SCK	PB1
-#define DD_CS	PB0
+//#define DD_MISO PB3
+//#define DD_MOSI	PB2
+//#define DD_SCK	PB1
+//#define DD_CS	PB0
+#define CS (1<<PB0)
+#define MOSI (1<<PB2)
+#define MISO (1<<PB3)
+#define SCK (1<<PB1)
+#define CS_DDR DDRB
+#define CS_ENABLE() (PORTB &= ~CS)
+#define CS_HIGH() (PORTB |= CS)
+
+/* Peripheral controls (Platform dependent) */
+//#define CS_LOW()		PORTB &= ~(1<<DD_CS)	/* Set MMC_CS = low */
+//#define	CS_HIGH()		PORTB |= (1<<DD_CS)	/* Set MMC_CS = high */
+//#define MMC_CD			To be filled	/* Test if card detected.   yes:true, no:false, default:true */
+//#define MMC_WP			To be filled	/* Test if write protected. yes:true, no:false, default:false */
+//#define	FCLK_SLOW()		SPCR = (1<<SPE)|(1<<MSTR)|(1<<SPR1)|(1<<SPR0)	/* Set SPI clock for initialization (100-400kHz) */
+//#define	FCLK_FAST()		SPCR = (1<<SPE)|(1<<MSTR)|(1<<SPR1)|(1<<SPR0)	/* Set SPI clock for initialization (100-400kHz) */
+//#define	FCLK_FAST()		SPCR = (1<<SPE)|(1<<MSTR)|(1<<SPR0);	/* Set SPI clock for read/write (20MHz max) */
+#define	FCLK_SLOW()
+#define	FCLK_FAST()
+
+
 /*--------------------------------------------------------------------------
 
 Module Private Functions
@@ -80,21 +90,74 @@ static BYTE CardType;			/* Card type flags (b0:MMC, b1:SDv1, b2:SDv2, b3:Block a
 /* When the target system does not support socket power control, there   */
 /* is nothing to do in these functions and chk_power always returns 1.   */
 
-static
-void power_on (void)
+static bool active = false;
+
+static void power_on (void)
 {
+	if (active)
+	return ;
+	active = true;
+	//set slave to output
+	DDRB |= CS;
+	//make slave pin high
+	PORTB |=CS;
+	//set spi to master
+	//SPCR |=(1<<MSTR);
+	//enable spi
+	//SPCR |= (1<<SPE);
+	
+	#define SPI_MODE0 0x00
+	#define SPI_MODE1 0x04
+	#define SPI_MODE2 0x08
+	#define SPI_MODE3 0x0C
+	
+	#define SPI_MODE_MASK 0x0C  // CPOL = bit 3, CPHA = bit 2 on SPCR
+	#define SPI_CLOCK_MASK 0x03  // SPR1 = bit 1, SPR0 = bit 0 on SPCR
+	#define SPI_2XCLOCK_MASK 0x01  // SPI2X = bit 0 on SPSR
+	uint8_t clockDiv = 7;
+	uint8_t dataMode = 0;
+	#define LSBFIRST 0
+	#define MSBFIRST 1
+	uint8_t bitOrder =MSBFIRST;
+	// Invert the SPI2X bit
+	clockDiv ^= 0x1;
+	//settings = SPISettings(250000, MSBFIRST, SPI_MODE0);
+	SPCR = (1<<SPE) | (1<<MSTR) | ((bitOrder == LSBFIRST) ? (1<<DORD) : 0) | (dataMode & SPI_MODE_MASK) | ((clockDiv >> 1) & SPI_CLOCK_MASK);
+	SPSR = clockDiv & SPI_2XCLOCK_MASK;
+	
+	//set mosi, sck pins to output (AFTER spi enabled)
+	DDRB |= MOSI | SCK;
+	
+	return;
+	//DDRB &= ~(1<<MISO);//MISO input
+	//CS_DDR |= CS | MOSI | SCK; // SD card circuit select as output
+	////PORTB |= (1<< MOSI)|(1<<SCK)|(1<<CS);
+	////DDRB |= MOSI + SCK; // MOSI and SCK as outputs
+	//PORTB |= MISO; // pullup in MISO, might not be needed
+	////DDRB &= ~(1<<MISO);//MISO input
+
+	// Enable SPI, master, set clock rate fck/128
+	SPCR = (1<<SPE) | (1<<MSTR) | (0<<SPR0) | (0<<SPR1);
+	SPSR &= ~(1<<SPI2X);
+	Talos::Coordinator::Main_Process::host_serial.print_string("pow on\r\n");
+	return;
+
+
 	/* Turn socket power on and wait for 10ms+ (nothing to do if no power controls) */
 	//To be filled
-	PORTB = (1<< DD_MOSI)|(1<<DD_SCK)|(1<<DD_CS);
-	DDRB = ((1<<DD_MOSI)|(1<<DD_SCK)|(1<<DD_CS)); //MOSI, SCK, SS outputs
+	PORTB = (1<< MOSI)|(1<<SCK)|(1<<CS);
+	DDRB = ((1<<MOSI)|(1<<SCK)|(1<<CS)); //MOSI, SCK, SS outputs
 	
+	DDRB &= ~(1<<MISO);//MISO input
+	PORTB &= ~(1<<MISO);
 
 
 	/* Enable SPI module in SPI mode 0 */
-	//SPCR = (1<<SPE)|(1<<MSTR)|(1<<SPR1)|(1<<SPR0);
-	SPCR = ((1<<SPE)|(1<<MSTR)|(1<<SPR0)|(1<<CPOL)|(1<<CPHA));  // SPI enable, Master, f/16
+	SPCR = (1<<SPE)|(1<<MSTR)|(1<<SPR1)|(1<<SPR0);
+	//SPCR = ((1<<SPE)|(1<<MSTR)|(1<<SPR0)|(1<<CPOL)|(1<<CPHA));  // SPI enable, Master, f/16
 	SPSR &= ~(1<<SPI2X);
-	Talos::Coordinator::Main_Process::host_serial.print_string("pow on\r\n");
+	CS_ENABLE();
+	Talos::Coordinator::Main_Process::host_serial.print_string("spi start\r\n");
 	
 }
 
@@ -103,12 +166,12 @@ static
 void power_off (void)
 {
 	/* Disable SPI function */
-	SPCR = 0;
+	//SPCR = 0;
 
-
+	return;
 	/* De-configure MOSI/MISO/SCLK/CS pins (set hi-z) */
-	DDRB &= ~(1<<DD_MOSI)|(1<<DD_SCK);//|(1<<DD_CS);
-	PORTB &= ~(1<<DD_MOSI)|(1<<DD_SCK);//|(1<<DD_CS);
+	//DDRB &= ~(1<<DD_MOSI)|(1<<DD_SCK);//|(1<<DD_CS);
+	//PORTB &= ~(1<<DD_MOSI)|(1<<DD_SCK);//|(1<<DD_CS);
 	//CS_HIGH();
 
 	/* Trun socket power off (nothing to do if no power controls) */
@@ -127,6 +190,7 @@ BYTE dat		/* Data to be sent */
 )
 {
 	SPDR = dat;
+	asm volatile("nop");
 	while (!(SPSR & (1<<SPIF)));
 	return SPDR;
 }
@@ -200,7 +264,7 @@ UINT wt			/* Timeout [ms] */
 static
 void deselect (void)
 {
-	CS_HIGH();		/* Set CS# high */
+	CS_ENABLE();		/* Set CS# high */
 	xchg_spi(0xFF);	/* Dummy clock (force DO hi-z for multiple slave SPI) */
 }
 
@@ -213,7 +277,7 @@ void deselect (void)
 static
 int select (void)	/* 1:Successful, 0:Timeout */
 {
-	CS_LOW();		/* Set CS# low */
+	CS_HIGH();		/* Set CS# low */
 	xchg_spi(0xFF);	/* Dummy clock (force DO enabled) */
 
 	if (wait_ready(500)) return 1;	/* Leading busy check: Wait for card ready */
@@ -353,7 +417,7 @@ DSTATUS mmc_disk_initialize (void)
 	
 	power_on();							/* Turn on the socket power */
 	FCLK_SLOW();
-	SPCR &= ~(1<<SPI2X);
+	//SPCR &= ~(1<<SPI2X);
 	for (n = 10; n; n--) xchg_spi(0xFF);	/* 80 dummy clocks */
 
 	ty = 0;

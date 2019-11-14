@@ -12,66 +12,55 @@ c_Serial Talos::Motion::Main_Process::host_serial;
 
 void Talos::Motion::Main_Process::initialize()
 {
-	uint16_t ret_code = 0;
-	
-	Hardware_Abstraction_Layer::Core::initialize();//<--start interrupts on hardware
+
 	Talos::Motion::Main_Process::host_serial = c_Serial(0, 115200); //<--Connect to host
-	host_serial.print_string("Motion Core Boot...\r\n");
-	
-	//host_serial.print_string("SPI init...");
-	//Talos::Motion::Main_Process::report(ret_code =Hardware_Abstraction_Layer::SPI::initialize());
-	
-	
-	host_serial.print_string("Disk init...");
-	Talos::Motion::Main_Process::report(ret_code = Hardware_Abstraction_Layer::Disk::initialize());
-		
-	uint8_t spi_data;
-	uint8_t new_data = 0;
-	spi_data = 'a';
-	host_serial.print_string("sending\r\n");
-	new_data = Hardware_Abstraction_Layer::SPI::send_byte(&spi_data);
-	
-	host_serial.print_string("spi_read");
-	host_serial.print_int32(new_data);
-	host_serial.print_string("\r\nchar:");
-	host_serial.Write(new_data);
-	host_serial.print_string("\r\n");
-	while(1)
+	Talos::Motion::Main_Process::host_serial.print_string("Motion Core initializing\r\n");
+
+	__initialization_start("Core", Hardware_Abstraction_Layer::Core::initialize);//<--core start up
+	__initialization_start("Interrupts", Hardware_Abstraction_Layer::Core::start_interrupts);//<--start interrupts on hardware
+	//__initialization_start("Events", Talos::Motion::Events::initialize);//<--init events
+	//__initialization_start("Ngc Buffer", Talos::Motion::NgcBuffer::initialize);//<--g code buffer
+	//__initialization_start("Ngc Interpreter", NGC_RS274::Interpreter::Processor::initialize);//<--g code interpreter
+	__initialization_start("Disk", NULL);//<--drive/eprom storage
+	__initialization_start("Coordinator Comms", NULL);//<--motion controller card
+	__initialization_start("Spindle Control Comms", NULL);//<--spindle controller card
+
+}
+
+void Talos::Motion::Main_Process::__initialization_start(const char * message, init_function initialization_pointer)
+{
+	Talos::Motion::Main_Process::host_serial.print_string(message);
+	Talos::Motion::Main_Process::host_serial.print_string("...");
+	if (initialization_pointer)
 	{
-		if (Hardware_Abstraction_Layer::SPI::spi_buffer.has_data())
-		{
-			host_serial.print_string("have data!!\r\n");
-			host_serial.print_string("\r\nbuffer char:");
-			host_serial.Write(Hardware_Abstraction_Layer::SPI::spi_buffer.get());
-			host_serial.print_string("\r\n");
-		}
+		__initialization_response(initialization_pointer());
+	}
+	else
+	{
+		Talos::Motion::Main_Process::host_serial.print_string("Not Available\r\n");
+	}
+
+}
+
+void Talos::Motion::Main_Process::__initialization_response(uint8_t response_code)
+{
+	//response codes that are not 0, are fatal at start up
+	if (response_code)
+	{
+		Talos::Motion::Main_Process::host_serial.print_string("Err Cd:");
+		Talos::Motion::Main_Process::host_serial.print_int32(response_code);
+		Talos::Motion::Main_Process::host_serial.print_string("\r\n");
+		Talos::Coordinator::Main_Process::host_serial.print_string("** System halted **");
+		while (1) {}
+	}
+	else
+	{
+		Talos::Motion::Main_Process::host_serial.print_string("OK.\r\n");
 	}
 }
+
 
 void Talos::Motion::Main_Process::run()
 {
 	
-}
-
-void Talos::Motion::Main_Process::report(uint16_t ret_code)
-{
-	if (ret_code)
-	{
-		host_serial.print_string("Error code: ");
-		host_serial.print_int32(ret_code);
-		host_serial.print_string("\r\n");
-		host_serial.print_string("System halted");
-		while(1)
-		{
-			if (Hardware_Abstraction_Layer::Disk::time_out_ticks > 0)
-			{
-				host_serial.print_int32(Hardware_Abstraction_Layer::Disk::time_out_ticks);
-				Hardware_Abstraction_Layer::Disk::time_out_ticks = 0;
-			}
-		}
-	}
-	else
-	{
-		host_serial.print_string("Ok\r\n");
-	}
 }

@@ -238,5 +238,6 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="Process.txt" />
+    <Text Include="config.txt" />
   </ItemGroup>
 </Project>
