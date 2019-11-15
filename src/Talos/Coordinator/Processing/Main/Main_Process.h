@@ -39,8 +39,8 @@ namespace Talos
 			protected:
 			private:
 			typedef uint8_t (*init_function)(void); // type for conciseness
-			static void __initialization_start(const char * message, init_function initialization_pointer);
-			static void __initialization_response(uint8_t response_code);
+			static void __critical_initialization(const char * message, init_function initialization_pointer, uint8_t critical);
+			static void __initialization_response(uint8_t response_code, uint8_t critical);
 			//Main_Process( const Main_Process &c );
 			//Main_Process& operator=( const Main_Process &c );
 

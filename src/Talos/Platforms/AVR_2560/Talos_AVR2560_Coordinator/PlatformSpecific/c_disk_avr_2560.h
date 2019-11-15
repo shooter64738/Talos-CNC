@@ -288,6 +288,7 @@ namespace Hardware_Abstraction_Layer
 		//functions
 		public:
 		static uint8_t initialize();
+		static uint8_t load_configuration();
 		static void write(const char * filename, char * buffer, e_file_modes mode);
 		protected:
 		private:
