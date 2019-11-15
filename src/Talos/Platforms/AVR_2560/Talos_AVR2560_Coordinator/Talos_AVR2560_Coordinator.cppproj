@@ -88,6 +88,11 @@
       <Value>libm</Value>
     </ListValues>
   </avrgcccpp.linker.libraries.Libraries>
+  <avrgcccpp.linker.libraries.LibrarySearchPaths>
+    <ListValues>
+      <Value>C:\GitHub\CardInfo\Atmel\ArduinoSketch1\ArduinoCore\Debug</Value>
+    </ListValues>
+  </avrgcccpp.linker.libraries.LibrarySearchPaths>
   <avrgcccpp.assembler.general.IncludePaths>
     <ListValues>
       <Value>%24(PackRepoDir)\atmel\ATmega_DFP\1.2.209\include</Value>
@@ -146,6 +151,11 @@
       <Value>libm</Value>
     </ListValues>
   </avrgcccpp.linker.libraries.Libraries>
+  <avrgcccpp.linker.libraries.LibrarySearchPaths>
+    <ListValues>
+      <Value>C:\GitHub\CardInfo\Atmel\ArduinoSketch1\ArduinoCore\Debug</Value>
+    </ListValues>
+  </avrgcccpp.linker.libraries.LibrarySearchPaths>
   <avrgcccpp.assembler.general.IncludePaths>
     <ListValues>
       <Value>%24(PackRepoDir)\atmel\ATmega_DFP\1.2.209\include</Value>
@@ -396,31 +406,25 @@
     <Compile Include="PlatformSpecific\c_spi_avr_2560.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="PlatformSpecific\disk_support\diskio.cpp">
+    <Compile Include="PlatformSpecific\disk_support\c_sdcard.cpp">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="PlatformSpecific\disk_support\diskio.h">
+    <Compile Include="PlatformSpecific\disk_support\c_sdcard.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="PlatformSpecific\disk_support\ff.cpp">
+    <Compile Include="PlatformSpecific\disk_support\c_sdfile.cpp">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="PlatformSpecific\disk_support\ff.h">
+    <Compile Include="PlatformSpecific\disk_support\c_sdfile.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="PlatformSpecific\disk_support\ffconf.h">
+    <Compile Include="PlatformSpecific\disk_support\c_sdvolume.cpp">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="PlatformSpecific\disk_support\ffunicode_avr.c">
+    <Compile Include="PlatformSpecific\disk_support\c_sdvolume.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="PlatformSpecific\disk_support\mmc_avr.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="PlatformSpecific\disk_support\mmc_avr_spi.cpp">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="PlatformSpecific\disk_support\rtc.h">
+    <Compile Include="PlatformSpecific\disk_support\FatStructs.h">
       <SubType>compile</SubType>
     </Compile>
   </ItemGroup>

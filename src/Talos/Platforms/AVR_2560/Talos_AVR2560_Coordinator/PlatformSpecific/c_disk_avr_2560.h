@@ -45,59 +45,15 @@ uint16_t const SD_READ_TIMEOUT = 300;
 /** write time out ms */
 uint16_t const SD_WRITE_TIMEOUT = 600;
 //------------------------------------------------------------------------------
-// SD card errors
-/** timeout error for command CMD0 */
-uint8_t const SD_CARD_ERROR_CMD0 = 0X1;
-/** CMD8 was not accepted - not a valid SD card*/
-uint8_t const SD_CARD_ERROR_CMD8 = 0X2;
-/** card returned an error response for CMD17 (read block) */
-uint8_t const SD_CARD_ERROR_CMD17 = 0X3;
-/** card returned an error response for CMD24 (write block) */
-uint8_t const SD_CARD_ERROR_CMD24 = 0X4;
-/**  WRITE_MULTIPLE_BLOCKS command failed */
-uint8_t const SD_CARD_ERROR_CMD25 = 0X05;
-/** card returned an error response for CMD58 (read OCR) */
-uint8_t const SD_CARD_ERROR_CMD58 = 0X06;
-/** SET_WR_BLK_ERASE_COUNT failed */
-uint8_t const SD_CARD_ERROR_ACMD23 = 0X07;
-/** card's ACMD41 initialization process timeout */
-uint8_t const SD_CARD_ERROR_ACMD41 = 0X08;
-/** card returned a bad CSR version field */
-uint8_t const SD_CARD_ERROR_BAD_CSD = 0X09;
-/** erase block group command failed */
-uint8_t const SD_CARD_ERROR_ERASE = 0X0A;
-/** card not capable of single block erase */
-uint8_t const SD_CARD_ERROR_ERASE_SINGLE_BLOCK = 0X0B;
-/** Erase sequence timed out */
-uint8_t const SD_CARD_ERROR_ERASE_TIMEOUT = 0X0C;
-/** card returned an error token instead of read data */
-uint8_t const SD_CARD_ERROR_READ = 0X0D;
-/** read CID or CSD failed */
-uint8_t const SD_CARD_ERROR_READ_REG = 0X0E;
-/** timeout while waiting for start of read data */
-uint8_t const SD_CARD_ERROR_READ_TIMEOUT = 0X0F;
-/** card did not accept STOP_TRAN_TOKEN */
-uint8_t const SD_CARD_ERROR_STOP_TRAN = 0X10;
-/** card returned an error token as a response to a write operation */
-uint8_t const SD_CARD_ERROR_WRITE = 0X11;
-/** attempt to write protected block zero */
-uint8_t const SD_CARD_ERROR_WRITE_BLOCK_ZERO = 0X12;
-/** card did not go ready for a multiple block write */
-uint8_t const SD_CARD_ERROR_WRITE_MULTIPLE = 0X13;
-/** card returned an error to a CMD13 status check after a write */
-uint8_t const SD_CARD_ERROR_WRITE_PROGRAMMING = 0X14;
-/** timeout occurred during write programming */
-uint8_t const SD_CARD_ERROR_WRITE_TIMEOUT = 0X15;
-/** incorrect rate selected */
-uint8_t const SD_CARD_ERROR_SCK_RATE = 0X16;
+
 //------------------------------------------------------------------------------
 // card types
 /** Standard capacity V1 SD card */
-uint8_t const SD_CARD_TYPE_SD1 = 1;
+//uint8_t const SD_CARD_TYPE_SD1 = 1;
 /** Standard capacity V2 SD card */
-uint8_t const SD_CARD_TYPE_SD2 = 2;
+//uint8_t const SD_CARD_TYPE_SD2 = 2;
 /** High Capacity SD card */
-uint8_t const SD_CARD_TYPE_SDHC = 3;
+//uint8_t const SD_CARD_TYPE_SDHC = 3;
 //------------------------------------------------------------------------------
 // Based on the document:
 //
@@ -350,3 +306,7 @@ uint8_t _____spi_transfer__(uint8_t data);
 uint8_t cardAcmd(uint8_t cmd, uint32_t arg);
 uint8_t __cardCommand__(uint8_t cmd, uint32_t arg);
 uint8_t __busy_wait__(uint16_t timeout_millis);
+uint8_t __readData__(uint32_t block, uint16_t offset, uint16_t count, uint8_t* dst);
+uint8_t __waitStartBlock__(void);
+uint8_t __writeData__(const uint8_t* src);
+uint8_t __writeData__(uint8_t token, const uint8_t* src);
