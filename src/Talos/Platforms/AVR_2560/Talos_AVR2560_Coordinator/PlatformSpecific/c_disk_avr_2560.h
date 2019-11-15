@@ -35,15 +35,15 @@
 
 //------------------------------------------------------------------------------
 /** Protect block zero from write if nonzero */
-#define SD_PROTECT_BLOCK_ZERO 1
+//#define SD_PROTECT_BLOCK_ZERO 1
 /** init timeout ms */
-uint16_t const SD_INIT_TIMEOUT = 2000;
+//uint16_t const SD_INIT_TIMEOUT = 2000;
 /** erase timeout ms */
-uint16_t const SD_ERASE_TIMEOUT = 10000;
+//uint16_t const SD_ERASE_TIMEOUT = 10000;
 /** read timeout ms */
-uint16_t const SD_READ_TIMEOUT = 300;
+//uint16_t const SD_READ_TIMEOUT = 300;
 /** write time out ms */
-uint16_t const SD_WRITE_TIMEOUT = 600;
+//uint16_t const SD_WRITE_TIMEOUT = 600;
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
@@ -297,16 +297,16 @@ namespace Hardware_Abstraction_Layer
 };
 #endif
 
-uint8_t __spi_begin__();
-uint8_t __spi_init__();
-uint8_t __card_init__();
-uint8_t __spi_rec__();
-uint8_t __spi_snd__(uint8_t data);
-uint8_t _____spi_transfer__(uint8_t data);
-uint8_t cardAcmd(uint8_t cmd, uint32_t arg);
-uint8_t __cardCommand__(uint8_t cmd, uint32_t arg);
-uint8_t __busy_wait__(uint16_t timeout_millis);
-uint8_t __readData__(uint32_t block, uint16_t offset, uint16_t count, uint8_t* dst);
-uint8_t __waitStartBlock__(void);
-uint8_t __writeData__(const uint8_t* src);
-uint8_t __writeData__(uint8_t token, const uint8_t* src);
+//uint8_t __spi_begin__();
+//uint8_t __spi_init__();
+//uint8_t __card_init__();
+//uint8_t __spi_rec__();
+//uint8_t __spi_snd__(uint8_t data);
+//uint8_t _____spi_transfer__(uint8_t data);
+//uint8_t cardAcmd(uint8_t cmd, uint32_t arg);
+//uint8_t __cardCommand__(uint8_t cmd, uint32_t arg);
+//uint8_t __busy_wait__(uint16_t timeout_millis);
+//uint8_t __readData__(uint32_t block, uint16_t offset, uint16_t count, uint8_t* dst);
+//uint8_t __waitStartBlock__(void);
+//uint8_t __writeData__(const uint8_t* src);
+//uint8_t __writeData__(uint8_t token, const uint8_t* src);

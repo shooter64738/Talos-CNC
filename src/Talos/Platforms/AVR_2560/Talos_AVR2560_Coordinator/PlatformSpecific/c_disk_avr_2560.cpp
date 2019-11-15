@@ -11,30 +11,45 @@
 #include <avr/interrupt.h>
 #include "../../../../Coordinator/coordinator_hardware_def.h"
 #include "../../../../Coordinator/Processing/Main/Main_Process.h"
-#include "disk_support/c_sdcard.h"
-#include "disk_support/c_sdvolume.h"
-#include "disk_support/c_sdfile.h"
+#include "disk_support/ff.h"
 
-static c_sdcard::s_card_info card_info;
 
-//FRESULT fr = FR_OK;
 uint8_t Hardware_Abstraction_Layer::Disk::initialize()
 {
 
-	OCR0A = F_CPU / 1024 / 1000 - 1;
-	TCCR0A = (1<<WGM01);
-	TCCR0B = 0b101;
-	TIMSK0 = (1<<OCIE0A);
-	card_info = c_sdcard::initialize();
-	c_sdvolume volume = c_sdvolume();
-	volume.initialize(1);
+	//OCR0A = F_CPU / 1024 / 1000 - 1;
+	//TCCR0A = (1<<WGM01);
+	//TCCR0B = 0b101;
+	//TIMSK0 = (1<<OCIE0A);
 	
-	c_sdfile files = c_sdfile();
-	uint8_t ret_code = files.openRoot(&volume);
-	Talos::Coordinator::Main_Process::host_serial.print_string("root open =  ");
-	Talos::Coordinator::Main_Process::host_serial.print_int32(ret_code);
+	FATFS fs;
+	FRESULT res;
+	DIR dir;
+	FIL file;
+	UINT bw = 0;
+	
+	res = f_mount(&fs,"",1);
+	Talos::Coordinator::Main_Process::host_serial.print_string("f_mount =  ");
+	Talos::Coordinator::Main_Process::host_serial.print_int32(res);
 	Talos::Coordinator::Main_Process::host_serial.print_string("\r\n");
-	
+	res = f_opendir(&dir, "");                       /* Open the directory */
+	Talos::Coordinator::Main_Process::host_serial.print_string("f_opendir =  ");
+	Talos::Coordinator::Main_Process::host_serial.print_int32(res);
+	Talos::Coordinator::Main_Process::host_serial.print_string("\r\n");
+	res = f_open(&file, "omg2.txt", FA_WRITE | FA_CREATE_ALWAYS);
+	Talos::Coordinator::Main_Process::host_serial.print_string("f_open =  ");
+	Talos::Coordinator::Main_Process::host_serial.print_int32(res);
+	Talos::Coordinator::Main_Process::host_serial.print_string("\r\n");
+	res = f_write(&file,"omg test!",9,&bw);
+	Talos::Coordinator::Main_Process::host_serial.print_string("f_write =  ");
+	Talos::Coordinator::Main_Process::host_serial.print_int32(res);
+	Talos::Coordinator::Main_Process::host_serial.print_string("\r\n");
+	res = f_close(&file);
+	Talos::Coordinator::Main_Process::host_serial.print_string("f_close =  ");
+	Talos::Coordinator::Main_Process::host_serial.print_int32(res);
+	Talos::Coordinator::Main_Process::host_serial.print_string("\r\n");
+
+
 	
 
 //
