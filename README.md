@@ -1,12 +1,14 @@
 # Talos-CNC
 Complete CNC Control (Thats the goal)
+I have created a facebook group to work on collaboration efforts. You can can find it here:
+https://www.facebook.com/groups/1927926270686125/
 
 Somehow the repository got corrupted and would not upload my changes so I had to delete and re-upload the repo. 
 
 # Refactoring is mostly complete.
 # There are quite a few that have cloned the repo. If you would care to help with some portions of it, I would greatly appreciate it. 
 
-This has been a 2 year project. This is only one third of the entire project. This code is written in C++11 using Atmel Studio version 7.
+This has been a 4 year project. This is only one third of the entire project. This code is written in C++11 using Atmel Studio version 7.
 
 The purpose of this project is to make an industrial type control for the open build community. Similar to grbl, but with full support 
 of all turning,milling,plasma gcode support. Think LinuxCNC in an embedded system. 
