@@ -8,7 +8,7 @@ Somehow the repository got corrupted and would not upload my changes so I had to
 # Refactoring is mostly complete.
 # There are quite a few that have cloned the repo. If you would care to help with some portions of it, I would greatly appreciate it. 
 
-This has been a 2 year project. This is only one third of the entire project. This code is written in C++11 using Atmel Studio version 7.
+This has been a 4 year project. This is only one third of the entire project. This code is written in C++11 using Atmel Studio version 7.
 
 The purpose of this project is to make an industrial type control for the open build community. Similar to grbl, but with full support 
 of all turning,milling,plasma gcode support. Think LinuxCNC in an embedded system. 
