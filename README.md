@@ -1,5 +1,7 @@
 # Talos-CNC
 Complete CNC Control (Thats the goal)
+I have created a facebook group to work on collaboration efforts. You can can find it here:
+https://www.facebook.com/groups/1927926270686125/
 
 Somehow the repository got corrupted and would not upload my changes so I had to delete and re-upload the repo. 
 
