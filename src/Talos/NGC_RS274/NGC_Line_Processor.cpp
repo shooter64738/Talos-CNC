@@ -72,17 +72,17 @@ uint8_t c_line::_set_buffer_to_upper(char * buffer)
 	for (int i = 0; buffer[i]; i++)
 	{
 		//remove all spaces, tabs, and line feeds
-		if (buffer[i] != ' ' && buffer[i] != '/t' && buffer[i] != '/n')
+		if (buffer[i] != ' ' && buffer[i] != '\t' && buffer[i] != '\n')
 		{
 			//clean up any multiple carriage return sequences
-			if (buffer[i] == '\r\n')
-				while (buffer[i + 1] == '\r\n') { i++; }
+			if (buffer[i] == '\r')
+				while (buffer[i + 1] == '\r') { i++; }
 
 			buffer[count++] = toupper(buffer[i]);
 		}
 
 	}
-	buffer[count] = '/0';
+	buffer[count] = '\0';
 	return 1;
 }
 

@@ -830,7 +830,7 @@ void NGC_RS274::Interpreter::Processor::skip_ignoreables(c_ring_buffer<char> * b
 {
 	//make sure we skip spaces
 	while (toupper(buffer->peek()) == ' ') { buffer->get(); }
-	while (toupper(buffer->peek()) == '/t') { buffer->get(); }
+	while (toupper(buffer->peek()) == '\t') { buffer->get(); }
 }
 
 void NGC_RS274::Interpreter::Processor::read_to_end_of_line(c_ring_buffer<char> * buffer)
