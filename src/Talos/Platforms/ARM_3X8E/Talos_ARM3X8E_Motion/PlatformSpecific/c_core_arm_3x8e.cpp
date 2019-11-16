@@ -27,7 +27,7 @@
 #include "clock\c_clock.h"
 #include "usart\c_usart.h"
 #include "uart\c_uart.h"
-#include "..\..\..\..\Motion\Processing\Main\Main_Process.h"
+#include "../../../../Motion\Processing\Main\Main_Process.h"
 #define __EXTERN_COUNTERS__
 #include "extern_timer_values.h"
 

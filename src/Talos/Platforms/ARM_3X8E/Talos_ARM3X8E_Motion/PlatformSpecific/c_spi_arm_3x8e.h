@@ -13,7 +13,7 @@
 #include <stddef.h>
 
 #include "c_core_arm_3x8e.h"
-#include "..\..\..\..\c_ring_template.h"
+#include "../../../../c_ring_template.h"
 #define SPI_BUFFER_SIZE 256
 namespace Hardware_Abstraction_Layer
 {

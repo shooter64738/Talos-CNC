@@ -7,7 +7,7 @@
 
 
 #include "c_disk_arm_3x8e.h"
-#include "..\..\..\..\Motion\Processing\Main\Main_Process.h"
+#include "../../../../Motion\Processing\Main\Main_Process.h"
 #include "disk_support\ff.h"
 
 Hardware_Abstraction_Layer::Disk::s_file_info Hardware_Abstraction_Layer::Disk::machine_param_file;

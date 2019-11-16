@@ -11,7 +11,7 @@
 #include <stdint.h>
 
 #include "c_core_arm_3x8e.h"
-#include "..\..\..\..\c_ring_template.h"
+#include "../../../../c_ring_template.h"
 #define clockDivisor(baud) F_CPU/(16*baud)
 
 #define USART0_BUFFER_SIZE 256
