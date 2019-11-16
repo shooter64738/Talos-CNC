@@ -22,7 +22,7 @@
 #include <math.h>
 #include <string.h>
 #include <ctype.h>
-#include "..\communication_def.h"
+#include "../communication_def.h"
 #include "NGC_Interpreter.h"
 #include "NGC_Errors.h"
 #include "NGC_M_Groups.h"
@@ -830,7 +830,7 @@ void NGC_RS274::Interpreter::Processor::skip_ignoreables(c_ring_buffer<char> * b
 {
 	//make sure we skip spaces
 	while (toupper(buffer->peek()) == ' ') { buffer->get(); }
-	while (toupper(buffer->peek()) == '\t') { buffer->get(); }
+	while (toupper(buffer->peek()) == '/t') { buffer->get(); }
 }
 
 void NGC_RS274::Interpreter::Processor::read_to_end_of_line(c_ring_buffer<char> * buffer)
@@ -1354,7 +1354,7 @@ int NGC_RS274::Interpreter::Processor::convert_to_line(NGC_RS274::NGC_Binary_Blo
 	////_serial.Write("line ");_serial.Write(Line); _serial.Write(CR);
 	//}
 	//}
-	//char word[2] = { '\0', '\0' };
+	//char word[2] = { '/0', '/0' };
 	//
 	//
 	//for (int i = 0; i < COUNT_OF_BLOCK_WORDS_ARRAY; i++)

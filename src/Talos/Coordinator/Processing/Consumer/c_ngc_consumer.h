@@ -22,7 +22,7 @@
 #define __C_NGC_CONSUMER_H__
 
 #include <stdint.h>
-#include "..\..\..\c_ring_template.h"
+#include "../../../c_ring_template.h"
 namespace Talos
 {
 	namespace Coordinator

@@ -23,7 +23,7 @@
 #define __C_COORDINATOR_ANCILLARY_EVENTS_H__
 
 #include <stdint.h>
-#include "..\..\..\..\c_ring_template.h"
+#include "../../../../c_ring_template.h"
 
 class c_ancillary_event_handler
 {

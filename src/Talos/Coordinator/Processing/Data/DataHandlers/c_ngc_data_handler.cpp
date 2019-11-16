@@ -18,20 +18,20 @@
 *  along with Talos.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "c_ngc_data_handler.h"
-#include "..\..\Events\extern_events_types.h"
-#include "..\..\..\..\communication_def.h"
-#include "..\..\Main\Main_Process.h"
-#include "..\..\..\..\NGC_RS274\NGC_Interpreter.h"
-#include "..\..\..\..\c_ring_template.h"
-#include "..\..\..\..\NGC_RS274\NGC_Errors.h"
-#include "..\..\..\..\Motion\Processing\GCode\c_gcode_buffer.h"
+#include "../../Events/extern_events_types.h"
+#include "../../../../communication_def.h"
+#include "../../Main/Main_Process.h"
+#include "../../../../NGC_RS274/NGC_Interpreter.h"
+#include "../../../../c_ring_template.h"
+#include "../../../../NGC_RS274/NGC_Errors.h"
+#include "../../../../Motion/Processing/GCode/c_gcode_buffer.h"
 
 
 /*
 We should NEVER include this file, this way these handlers stay totally
 encapsulated and walled off from the rest of the world. They are ONLY
 accessed via function pointers
-#include "..\..\Events\EventHandlers\c_serial_event_handler.h"
+#include "../../Events/EventHandlers/c_serial_event_handler.h"
 */
 
 /*
@@ -94,7 +94,7 @@ void c_ngc_data_handler::ngc_load_block(c_ring_buffer <char> * buffer_source
 	, c_ring_buffer <NGC_RS274::NGC_Binary_Block> * buffer_destination)
 {
 
-	//Talos::Coordinator::Main_Process::host_serial.print_string("NGC READY\r");
+	//Talos::Coordinator::Main_Process::host_serial.print_string("NGC READY%r%n");
 
 	//Get a pointer to the current ngc buffer head position. We need this block
 	//because it has the persisted values that were set the last time a block was

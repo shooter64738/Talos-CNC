@@ -25,7 +25,7 @@
 #include <stdint.h>
 #include <ctype.h>
 
-#include "..\records_def.h"
+#include "../records_def.h"
 #include "NGC_Block.h"
 
 

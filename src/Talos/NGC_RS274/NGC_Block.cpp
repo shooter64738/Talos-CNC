@@ -21,7 +21,7 @@
 
 #include "NGC_Block.h"
 #include <string.h>
-#include "..\bit_manipulation.h"
+#include "../bit_manipulation.h"
 #include "NGC_G_Groups.h"
 #include "NGC_M_Groups.h"
 

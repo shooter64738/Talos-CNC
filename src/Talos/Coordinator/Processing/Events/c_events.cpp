@@ -19,7 +19,7 @@
 */
 
 #include "c_events.h"
-#include "..\Main\Main_Process.h"
+#include "../Main/Main_Process.h"
 #define __EXTERN_EVENTS__
 #include "extern_events_types.h"
 

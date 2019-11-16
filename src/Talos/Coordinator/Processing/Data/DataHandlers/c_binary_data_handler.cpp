@@ -19,13 +19,13 @@
 */
 
 #include "c_binary_data_handler.h"
-#include "..\..\Main\Main_Process.h"
-#include "..\..\..\..\records_def.h"
+#include "../../Main/Main_Process.h"
+#include "../../../../records_def.h"
 /*
 We should NEVER include this file, this way these handlers stay totaly
 encapsulated and walled off from the rest of the world. They are ONLY
 accessed vis funciton pointers
-#include "..\..\Events\EventHandlers\c_serial_event_handler.h"
+#include "../../Events/EventHandlers/c_serial_event_handler.h"
 */
 
 
@@ -61,7 +61,7 @@ xret_pointer c_binary_data_handler::assign_handler(c_ring_buffer <char> * buffer
 void c_binary_data_handler::motion_control_setting_handler(c_ring_buffer <char> * buffer)
 {
 	c_binary_data_handler::__release();
-	Talos::Coordinator::Main_Process::host_serial.print_string("binary\r");
+	Talos::Coordinator::Main_Process::host_serial.print_string("binary%r%n");
 }
 
 void c_binary_data_handler::unkown_data_handler(c_ring_buffer <char> * buffer)

@@ -18,13 +18,13 @@
 *  along with Talos.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "..\..\..\physical_machine_parameters.h"
+#include "../../../physical_machine_parameters.h"
 #ifdef MACHINE_TYPE_MILL
 #ifndef NGC_MILL_H
 #define NGC_MILL_H
 
 #include <stdint.h>
-#include "..\..\NGC_Block.h"
+#include "../../NGC_Block.h"
 namespace NGC_RS274
 {
 	namespace Interpreter

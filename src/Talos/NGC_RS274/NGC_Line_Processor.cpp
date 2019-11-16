@@ -42,13 +42,13 @@ c_line::e_parser_codes c_line::start(char * buffer, NGC_RS274::NGC_Binary_Block 
 
 	//If there are any line terminators, split this line so they are not parsed.
 	int startlen = strlen(buffer);
-	char * buffer_no_eol = strtok(buffer, "\r");
+	char * buffer_no_eol = strtok(buffer, "%r%n");
 	int endlen = strlen(buffer_no_eol);
 
 	ret_code = _process_buffer(buffer, block);
 
 	/*
-	You can send a string of gcode that is actually multiple 'lines' containing multip \r characters
+	You can send a string of gcode that is actually multiple 'lines' containing multip %r%n characters
 	so as a convenience to the caller I process only the first 'line' then once finished, we set the
 	start pointer to the end+1 of the previous 'line' so that the buffer is ready the next time we
 	get called. If there was actually no more data a NULL character will be pointed too and the caller
@@ -72,17 +72,17 @@ uint8_t c_line::_set_buffer_to_upper(char * buffer)
 	for (int i = 0; buffer[i]; i++)
 	{
 		//remove all spaces, tabs, and line feeds
-		if (buffer[i] != ' ' && buffer[i] != '\t' && buffer[i] != '\n')
+		if (buffer[i] != ' ' && buffer[i] != '/t' && buffer[i] != '/n')
 		{
 			//clean up any multiple carriage return sequences
-			if (buffer[i] == '\r')
-				while (buffer[i + 1] == '\r') { i++; }
+			if (buffer[i] == '%r%n')
+				while (buffer[i + 1] == '%r%n') { i++; }
 
 			buffer[count++] = toupper(buffer[i]);
 		}
 
 	}
-	buffer[count] = '\0';
+	buffer[count] = '/0';
 	return 1;
 }
 

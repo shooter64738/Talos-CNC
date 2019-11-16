@@ -21,10 +21,10 @@
 #ifdef MACHINE_TYPE_LATHE
 
 #include <string.h>
-#include "..\..\NGC_Interpreter.h"
-#include "..\..\NGC_G_Groups.h"
+#include "../../NGC_Interpreter.h"
+#include "../../NGC_G_Groups.h"
 #include "NGC_G_Codes.h"
-#include "..\..\NGC_Errors.h"
+#include "../../NGC_Errors.h"
 
 /*
 If a canned cycle (g81-g89) command was specified, perform detailed parameter check that applies

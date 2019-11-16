@@ -23,7 +23,7 @@
 #define NGC_BINARY_BLOCK_H
 
 #include <stdint.h>
-#include "..\records_def.h"
+#include "../records_def.h"
 
 namespace NGC_RS274
 {

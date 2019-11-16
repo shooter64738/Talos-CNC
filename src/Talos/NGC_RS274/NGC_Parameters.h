@@ -23,13 +23,13 @@
 
 #include <stdint.h>
 #include "ngc_defines.h"
-#include "..\physical_machine_parameters.h"
+#include "../physical_machine_parameters.h"
 
 #ifdef MACHINE_TYPE_MILL
-#include "Machine Specific\Mill\NGC_Mill.h"
+#include "Machine Specific/Mill/NGC_Mill.h"
 #endif
 #ifdef MACHINE_TYPE_LATHE
-#include "Machine Specific\Lathe\NGC_Lathe.h"
+#include "Machine Specific/Lathe/NGC_Lathe.h"
 #endif
 
 //This information was pulled from emc/linux cnc
