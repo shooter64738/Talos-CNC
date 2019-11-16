@@ -27,10 +27,13 @@
 #include "clock\c_clock.h"
 #include "usart\c_usart.h"
 #include "uart\c_uart.h"
+#include "..\..\..\..\Motion\Processing\Main\Main_Process.h"
+#define __EXTERN_COUNTERS__
+#include "extern_timer_values.h"
 
 #define SYS_TICKS		(84)
 
-void Hardware_Abstraction_Layer::Core::initialize()
+uint8_t Hardware_Abstraction_Layer::Core::initialize()
 {
 	/* Initialize the SAM system */
 	SystemInit();
@@ -38,13 +41,30 @@ void Hardware_Abstraction_Layer::Core::initialize()
 	WDT->WDT_MR = WDT_MR_WDDIS; // Disable the WDT
 	
 	SysTick->LOAD  = (SYS_TICKS & SysTick_LOAD_RELOAD_Msk) - 1;
-	NVIC_SetPriority (SysTick_IRQn, 3);
 	SysTick->VAL   = 0;
-	SysTick->CTRL  = SysTick_CTRL_CLKSOURCE_Msk |
-	SysTick_CTRL_TICKINT_Msk   |
-	SysTick_CTRL_ENABLE_Msk;
+	SysTick->CTRL  = SysTick_CTRL_CLKSOURCE_Msk | SysTick_CTRL_TICKINT_Msk | SysTick_CTRL_ENABLE_Msk;
+	NVIC_EnableIRQ(SysTick_IRQn);
+	NVIC_SetPriority (SysTick_IRQn, 3);
 }
-void Hardware_Abstraction_Layer::Core::start_interrupts()
+
+void SysTick_Handler(void)
+{
+	extern_system_counters.system_clock_ticks++;
+	
+	if (extern_system_counters.system_clock_ticks == 840)
+	{
+		extern_system_counters.system_clock_ticks = 0;
+		extern_system_counters.milliseconds++;
+		
+		if (extern_system_counters.ms_cnt_dn_timer)
+		{
+			extern_system_counters.ms_cnt_dn_timer--;
+		}
+	}
+	
+}
+
+uint8_t Hardware_Abstraction_Layer::Core::start_interrupts()
 {
 }
 void Hardware_Abstraction_Layer::Core::stop_interrupts()
@@ -59,7 +79,7 @@ void Hardware_Abstraction_Layer::Core::critical_shutdown()
 {
 	//Stop everything that the processor is doing. Something very bad has happened
 	//and the system has determined that the best thing to do is stop everything
-	//except communications. 
+	//except communications.
 	
 	//Shut down timer peripherals.
 	PMC->PMC_PCER0 = 0;

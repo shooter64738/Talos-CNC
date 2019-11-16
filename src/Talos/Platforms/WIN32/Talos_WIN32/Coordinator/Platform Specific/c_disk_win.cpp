@@ -8,8 +8,15 @@
 
 #include "c_disk_win.h"
 
-void Hardware_Abstraction_Layer::Disk::initialize()
+uint8_t Hardware_Abstraction_Layer::Disk::initialize()
 {
+	return 0;
+}
+
+uint8_t Hardware_Abstraction_Layer::Disk::load_configuration()
+{
+	return 1;
+
 }
 
 void Hardware_Abstraction_Layer::Disk::write(const char * filename, char * buffer, e_file_modes mode)

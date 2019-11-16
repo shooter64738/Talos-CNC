@@ -10,6 +10,10 @@
 #define MSVC
 #endif
 
+#define STARTUP_CLASS_WARNING 0
+#define STARTUP_CLASS_CRITICAL 1
+#define STARTUP_CLASS_OPTIONAL 2
+
 #ifndef COORDINATOR_HARDWARE_DEF_H_
 #define COORDINATOR_HARDWARE_DEF_H_
 
@@ -19,7 +23,6 @@
 #include "../Platforms/AVR_2560/Talos_AVR2560_Coordinator/PlatformSpecific/c_core_avr_2560.h"
 #include "../Platforms/AVR_2560/Talos_AVR2560_Coordinator/PlatformSpecific/c_spi_avr_2560.h"
 #include "../Platforms/AVR_2560/Talos_AVR2560_Coordinator/PlatformSpecific/c_disk_avr_2560.h"
-//#include "../Platforms/AVR_2560/Talos_AVR2560_Coordinator/PlatformSpecific/c_Serial.h"
 #endif
 
 #ifdef MSVC
@@ -27,7 +30,7 @@
 #include "../Platforms/WIN32/Talos_WIN32/Coordinator/Platform Specific/c_serial_win.h"
 #include "../Platforms/WIN32/Talos_WIN32/Coordinator/Platform Specific/c_core_win.h"
 #include "../Platforms/WIN32/Talos_WIN32/Coordinator/Platform Specific/c_spi_win.h"
-//#include "../Platforms/WIN32/Talos_WIN32/Coordinator/Platform Specific/c_Serial.h"
+#include "../Platforms/WIN32/Talos_WIN32/Coordinator/Platform Specific/c_disk_win.h"
 #endif
 
 

@@ -10,10 +10,12 @@
 #define MSVC
 #endif
 
+#define STARTUP_CLASS_WARNING 0
+#define STARTUP_CLASS_CRITICAL 1
+#define STARTUP_CLASS_OPTIONAL 2
+
 #ifndef HARDWARE_DEF_H_
 #define HARDWARE_DEF_H_
-
-
 
 #ifdef __SAM3X8E__
 #define F_CPU 84000000UL

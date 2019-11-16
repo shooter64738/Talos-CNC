@@ -1,5 +1,5 @@
 
-(SPINDLE)
+#SPINDLE
 (feedrate_delay uint32_t)
 feedrate_delay = 0
 (samples_per_second uint16_t)
@@ -15,8 +15,8 @@ lock_to_axis = 0(if spindle lock_to_axis is set ('X','Y','Z','A','B','C','U','V'
 (spindle_synch_wait_time_ms int32_t)
 spindle_synch_wait_time_ms = 5000 (when we are waiting for spindle at speed, how many milliseconds do we wait for synch to occur.)
 
-(MACHINE)
-MACHINE_AXIS_COUNT = 6(number of axis' on machine (max 16))
+#MACHINE
+MACHINE_AXIS_COUNT = 6(number of axis' on machine (max 6))
 
 (back_lash_comp_distance float 1-n)
 back_lash_comp_distance,1 = 0.00(backlash comp amount for axis 1/x)
@@ -68,15 +68,10 @@ steps_per_mm,6 = 800 (accounting for micro stepping, how many steps are required
 
 (pulse_length uint16_t)
 pulse_length = 10 (minimum length of time in micro-seconds the pulse value must remain high)		
-
-	struct s_motion_control_settings
-	{
-		
-		float junction_deviation = 0;//43
-		float arc_tolerance = 0;//47
-		uint16_t arc_angular_correction = 12;//59
-		uint8_t invert_mpg_directions = 0;//60
-		BinaryRecords::e_unit_types machine_units = BinaryRecords::e_unit_types::MM;//61
-		s_hardware Hardware_Settings;
-		uint32_t _check_sum = 0;//65	
-	};
+float junction_deviation = 0;//43
+float arc_tolerance = 0;//47
+uint16_t arc_angular_correction = 12;//59
+uint8_t invert_mpg_directions = 0;//60
+BinaryRecords::e_unit_types machine_units = BinaryRecords::e_unit_types::MM;//61
+s_hardware Hardware_Settings;
+uint32_t _check_sum = 0;//65	

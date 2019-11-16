@@ -63,8 +63,8 @@ namespace Hardware_Abstraction_Layer
 		public:
 
 		public:
-		static void initialize();
-		static void start_interrupts();
+		static uint8_t initialize();
+		static uint8_t start_interrupts();
 		static void stop_interrupts();
 		static uint32_t get_cpu_clock_rate();
 		static void critical_shutdown();

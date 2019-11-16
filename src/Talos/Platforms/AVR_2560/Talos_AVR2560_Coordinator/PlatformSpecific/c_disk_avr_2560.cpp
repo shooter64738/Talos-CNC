@@ -13,11 +13,9 @@
 #include "../../../../Coordinator/Processing/Main/Main_Process.h"
 #include "disk_support/ff.h"
 
-FATFS FatFs;
-FRESULT FatResult;
-DIR dir;
-FIL file;
-UINT bw = 0;
+static FATFS FatFs;
+static FRESULT FatResult;
+
 
 uint8_t Hardware_Abstraction_Layer::Disk::initialize()
 {
@@ -40,10 +38,25 @@ uint8_t Hardware_Abstraction_Layer::Disk::initialize()
 uint8_t Hardware_Abstraction_Layer::Disk::load_configuration()
 {
 	FILINFO f_info;
-
-	FatResult = f_stat ("m_setup.txt", &f_info);
+	DIR dir;
+	FIL file;
+	UINT bw = 0;
+	
+	FatResult = f_stat ("m_setup.cfg", &f_info);
 	if (FatResult == FR_NO_FILE)
 	{
+		FatResult = f_open(&file,"m_setup.cfg", FA_WRITE|FA_CREATE_ALWAYS);
+		Talos::Coordinator::Main_Process::host_serial.print_string("f_open =  ");
+		Talos::Coordinator::Main_Process::host_serial.print_int32(FatResult);
+		Talos::Coordinator::Main_Process::host_serial.print_string("\r\n");
+		FatResult = f_write(&file,"(machine)",9,&bw);
+		Talos::Coordinator::Main_Process::host_serial.print_string("f_write =  ");
+		Talos::Coordinator::Main_Process::host_serial.print_int32(FatResult);
+		Talos::Coordinator::Main_Process::host_serial.print_string("\r\n");
+		FatResult = f_close(&file);
+		Talos::Coordinator::Main_Process::host_serial.print_string("f_close =  ");
+		Talos::Coordinator::Main_Process::host_serial.print_int32(FatResult);
+		Talos::Coordinator::Main_Process::host_serial.print_string("\r\n");
 		return 1;
 	}
 	

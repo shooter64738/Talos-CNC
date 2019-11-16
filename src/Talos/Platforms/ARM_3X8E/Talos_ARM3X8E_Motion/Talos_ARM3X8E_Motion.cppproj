@@ -36,7 +36,7 @@
   <documentation help="" />
   <offline-documentation help="" />
   <dependencies>
-    <content-extension eid="atmel.asf" uuidref="Atmel.ASF" version="3.37" />
+    <content-extension eid="atmel.asf" uuidref="Atmel.ASF" version="3.26.0" />
   </dependencies>
 </framework-data>
     </AsfFrameworkConfig>
@@ -57,7 +57,7 @@
   <armgcc.compiler.directories.IncludePaths>
     <ListValues>
       <Value>%24(PackRepoDir)\ARM\CMSIS\5.4.0\CMSIS\Core\Include\</Value>
-      <Value>%24(PackRepoDir)\atmel\SAM3X_DFP\1.0.50\include</Value>
+      <Value>%24(PackRepoDir)\atmel\SAM3X_DFP\1.0.51\include</Value>
     </ListValues>
   </armgcc.compiler.directories.IncludePaths>
   <armgcc.compiler.optimization.level>Optimize for size (-Os)</armgcc.compiler.optimization.level>
@@ -71,7 +71,7 @@
   <armgcccpp.compiler.directories.IncludePaths>
     <ListValues>
       <Value>%24(PackRepoDir)\ARM\CMSIS\5.4.0\CMSIS\Core\Include\</Value>
-      <Value>%24(PackRepoDir)\atmel\SAM3X_DFP\1.0.50\include</Value>
+      <Value>%24(PackRepoDir)\atmel\SAM3X_DFP\1.0.51\include</Value>
     </ListValues>
   </armgcccpp.compiler.directories.IncludePaths>
   <armgcccpp.compiler.optimization.level>Optimize for size (-Os)</armgcccpp.compiler.optimization.level>
@@ -92,13 +92,13 @@
   <armgcccpp.assembler.general.IncludePaths>
     <ListValues>
       <Value>%24(PackRepoDir)\ARM\CMSIS\5.4.0\CMSIS\Core\Include\</Value>
-      <Value>%24(PackRepoDir)\atmel\SAM3X_DFP\1.0.50\include</Value>
+      <Value>%24(PackRepoDir)\atmel\SAM3X_DFP\1.0.51\include</Value>
     </ListValues>
   </armgcccpp.assembler.general.IncludePaths>
   <armgcccpp.preprocessingassembler.general.IncludePaths>
     <ListValues>
       <Value>%24(PackRepoDir)\ARM\CMSIS\5.4.0\CMSIS\Core\Include\</Value>
-      <Value>%24(PackRepoDir)\atmel\SAM3X_DFP\1.0.50\include</Value>
+      <Value>%24(PackRepoDir)\atmel\SAM3X_DFP\1.0.51\include</Value>
     </ListValues>
   </armgcccpp.preprocessingassembler.general.IncludePaths>
 </ArmGccCpp>
@@ -120,7 +120,7 @@
   <armgcc.compiler.directories.IncludePaths>
     <ListValues>
       <Value>%24(PackRepoDir)\ARM\CMSIS\5.4.0\CMSIS\Core\Include\</Value>
-      <Value>%24(PackRepoDir)\atmel\SAM3X_DFP\1.0.50\include</Value>
+      <Value>%24(PackRepoDir)\atmel\SAM3X_DFP\1.0.51\include</Value>
     </ListValues>
   </armgcc.compiler.directories.IncludePaths>
   <armgcc.compiler.optimization.level>Optimize (-O1)</armgcc.compiler.optimization.level>
@@ -135,7 +135,7 @@
   <armgcccpp.compiler.directories.IncludePaths>
     <ListValues>
       <Value>%24(PackRepoDir)\ARM\CMSIS\5.4.0\CMSIS\Core\Include\</Value>
-      <Value>%24(PackRepoDir)\atmel\SAM3X_DFP\1.0.50\include</Value>
+      <Value>%24(PackRepoDir)\atmel\SAM3X_DFP\1.0.51\include</Value>
     </ListValues>
   </armgcccpp.compiler.directories.IncludePaths>
   <armgcccpp.compiler.optimization.level>Optimize (-O1)</armgcccpp.compiler.optimization.level>
@@ -157,14 +157,14 @@
   <armgcccpp.assembler.general.IncludePaths>
     <ListValues>
       <Value>%24(PackRepoDir)\ARM\CMSIS\5.4.0\CMSIS\Core\Include\</Value>
-      <Value>%24(PackRepoDir)\atmel\SAM3X_DFP\1.0.50\include</Value>
+      <Value>%24(PackRepoDir)\atmel\SAM3X_DFP\1.0.51\include</Value>
     </ListValues>
   </armgcccpp.assembler.general.IncludePaths>
   <armgcccpp.assembler.debugging.DebugLevel>Default (-g)</armgcccpp.assembler.debugging.DebugLevel>
   <armgcccpp.preprocessingassembler.general.IncludePaths>
     <ListValues>
       <Value>%24(PackRepoDir)\ARM\CMSIS\5.4.0\CMSIS\Core\Include\</Value>
-      <Value>%24(PackRepoDir)\atmel\SAM3X_DFP\1.0.50\include</Value>
+      <Value>%24(PackRepoDir)\atmel\SAM3X_DFP\1.0.51\include</Value>
     </ListValues>
   </armgcccpp.preprocessingassembler.general.IncludePaths>
   <armgcccpp.preprocessingassembler.debugging.DebugLevel>Default (-Wa,-g)</armgcccpp.preprocessingassembler.debugging.DebugLevel>
@@ -249,19 +249,25 @@
     <Compile Include="PlatformSpecific\c_spi_arm_3x8e.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="PlatformSpecific\disk\diskio.cpp">
+    <Compile Include="PlatformSpecific\disk_support\diskio.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="PlatformSpecific\disk\diskio.h">
+    <Compile Include="PlatformSpecific\disk_support\ff.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="PlatformSpecific\disk\ff.c">
+    <Compile Include="PlatformSpecific\disk_support\ff.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="PlatformSpecific\disk\ff.h">
+    <Compile Include="PlatformSpecific\disk_support\ffconf.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="PlatformSpecific\disk\ffconf.h">
+    <Compile Include="PlatformSpecific\disk_support\integer.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="PlatformSpecific\disk_support\mmc_sam.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="PlatformSpecific\extern_timer_values.h">
       <SubType>compile</SubType>
     </Compile>
   </ItemGroup>
@@ -273,8 +279,7 @@
     <Folder Include="Motion\Processing" />
     <Folder Include="PlatformSpecific" />
     <Folder Include="Ngc_Rs274" />
-    <Folder Include="PlatformSpecific\disk\" />
-    <Folder Include="PlatformSpecific\disk\disk support\" />
+    <Folder Include="PlatformSpecific\disk_support\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Device_Startup\sam3x8e_flash.ld">
