@@ -61,7 +61,7 @@ xret_pointer c_binary_data_handler::assign_handler(c_ring_buffer <char> * buffer
 void c_binary_data_handler::motion_control_setting_handler(c_ring_buffer <char> * buffer)
 {
 	c_binary_data_handler::__release();
-	Talos::Coordinator::Main_Process::host_serial.print_string("binary%r%n");
+	Talos::Coordinator::Main_Process::host_serial.print_string("binary\r\n");
 }
 
 void c_binary_data_handler::unkown_data_handler(c_ring_buffer <char> * buffer)

@@ -94,7 +94,7 @@ void c_ngc_data_handler::ngc_load_block(c_ring_buffer <char> * buffer_source
 	, c_ring_buffer <NGC_RS274::NGC_Binary_Block> * buffer_destination)
 {
 
-	//Talos::Coordinator::Main_Process::host_serial.print_string("NGC READY%r%n");
+	//Talos::Coordinator::Main_Process::host_serial.print_string("NGC READY\r\n");
 
 	//Get a pointer to the current ngc buffer head position. We need this block
 	//because it has the persisted values that were set the last time a block was

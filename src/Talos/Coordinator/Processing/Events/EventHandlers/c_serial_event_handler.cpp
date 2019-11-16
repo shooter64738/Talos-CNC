@@ -108,7 +108,7 @@ void c_serial_event_handler::__control_handler(c_ring_buffer <char> * buffer)
 {
 	//release the handler because we should be done with it now.
 	c_serial_event_handler::pntr_data_handler = NULL;
-	Talos::Coordinator::Main_Process::host_serial.print_string("control%r%n");
+	Talos::Coordinator::Main_Process::host_serial.print_string("control\r\n");
 }
 
 
