@@ -27,11 +27,11 @@ void Talos::Coordinator::Main_Process::initialize()
 
 	__critical_initialization("Core", Hardware_Abstraction_Layer::Core::initialize,STARTUP_CLASS_CRITICAL);//<--core start up
 	__critical_initialization("Interrupts", Hardware_Abstraction_Layer::Core::start_interrupts,STARTUP_CLASS_CRITICAL);//<--start interrupts on hardware
+	__critical_initialization("Disk", Hardware_Abstraction_Layer::Disk::initialize, STARTUP_CLASS_CRITICAL);//<--drive/eprom storage
+	__critical_initialization("\tSettings", Hardware_Abstraction_Layer::Disk::load_configuration, STARTUP_CLASS_WARNING);//<--drive/eprom storage
 	__critical_initialization("Events", Talos::Coordinator::Events::initialize,STARTUP_CLASS_CRITICAL);//<--init events
 	__critical_initialization("Ngc Buffer", Talos::Motion::NgcBuffer::initialize,STARTUP_CLASS_CRITICAL);//<--g code buffer
-	__critical_initialization("Ngc Interpreter", NGC_RS274::Interpreter::Processor::initialize,STARTUP_CLASS_CRITICAL);//<--g code interpreter
-	__critical_initialization("Disk", Hardware_Abstraction_Layer::Disk::initialize,STARTUP_CLASS_CRITICAL);//<--drive/eprom storage
-	__critical_initialization("\tSettings", Hardware_Abstraction_Layer::Disk::load_configuration,STARTUP_CLASS_WARNING);//<--drive/eprom storage
+	__critical_initialization("Ngc Line", NGC_RS274::LineProcessor::initialize,STARTUP_CLASS_CRITICAL);//<--g code interpreter
 	__critical_initialization("Motion Control Comms", NULL,STARTUP_CLASS_WARNING);//<--motion controller card
 	__critical_initialization("Spindle Control Comms", NULL,STARTUP_CLASS_WARNING);//<--spindle controller card
 

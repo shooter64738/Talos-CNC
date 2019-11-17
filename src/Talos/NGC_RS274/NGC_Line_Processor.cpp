@@ -19,16 +19,42 @@
 */
 
 
-#include "NGC_Line_Processor.h"
 #include <string.h>
 #include <stdlib.h>
 #include <math.h>
+#include "NGC_Line_Processor.h"
 #include "NGC_Interpreter.h"
+#include "NGC_Parameters.h"
 
 
 NGC_RS274::LineProcessor::s_param_functions NGC_RS274::LineProcessor::parameter_function_pointers;
 int NGC_RS274::LineProcessor::last_read_position = 0;
 static int max_numeric_parameter_count = 0;
+
+uint8_t NGC_RS274::LineProcessor::initialize()
+{
+	//On second thought, perhaps function pointers for this reason are not needed. 
+	//Just call the required function directly. 
+	NGC_RS274::LineProcessor::parameter_function_pointers.pntr_get_global_named_parameter = NGC_RS274::Parameters::__get_named_gobal_parameter;
+	NGC_RS274::LineProcessor::parameter_function_pointers.pntr_get_local_named_parameter = NGC_RS274::Parameters::__get_named_local_parameter;
+	NGC_RS274::LineProcessor::parameter_function_pointers.pntr_get_numeric_parameter = NGC_RS274::Parameters::__get_numeric_parameter;
+	NGC_RS274::LineProcessor::parameter_function_pointers.pntr_get_numeric_parameter_max = NGC_RS274::Parameters::__get_numeric_parameter_max;
+
+	NGC_RS274::LineProcessor::parameter_function_pointers.pntr_set_global_named_parameter = NGC_RS274::Parameters::__set_named_gobal_parameter;
+	NGC_RS274::LineProcessor::parameter_function_pointers.pntr_set_local_named_parameter = NGC_RS274::Parameters::__set_named_local_parameter;
+	NGC_RS274::LineProcessor::parameter_function_pointers.pntr_set_numeric_parameter = NGC_RS274::Parameters::__set_numeric_parameter;
+
+	if (NGC_RS274::LineProcessor::parameter_function_pointers.pntr_get_global_named_parameter == NULL
+	|| NGC_RS274::LineProcessor::parameter_function_pointers.pntr_get_local_named_parameter == NULL
+	|| NGC_RS274::LineProcessor::parameter_function_pointers.pntr_get_numeric_parameter == NULL
+	|| NGC_RS274::LineProcessor::parameter_function_pointers.pntr_get_numeric_parameter_max == NULL
+	|| NGC_RS274::LineProcessor::parameter_function_pointers.pntr_set_global_named_parameter == NULL
+	|| NGC_RS274::LineProcessor::parameter_function_pointers.pntr_set_local_named_parameter == NULL
+	|| NGC_RS274::LineProcessor::parameter_function_pointers.pntr_set_numeric_parameter == NULL)
+	return 1; //<--this shoudl never happen for real. This is only for debugging
+
+	return 0;
+}
 
 e_parsing_errors NGC_RS274::LineProcessor::start(char * buffer, c_ring_buffer <NGC_RS274::NGC_Binary_Block> * buffer_destinationk)
 {

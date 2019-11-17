@@ -66,52 +66,7 @@ namespace NGC_RS274
 
 		static s_param_functions parameter_function_pointers;
 		static int last_read_position;
-
-		/*enum class e_parser_codes
-		{
-		Ok = 0,
-		NumericValueMissing = 1,
-		DivideByZero = 2,
-		ExponentOnNegativeNonInteger = 3,
-		Unknown_Op_Name_A = 4,
-		Unknown_Op_Name_C = 5,
-		Unknown_Op_Name_M = 6,
-		Unknown_Op_Name_O = 7,
-		Unknown_Op_Name_X = 8,
-		Unknown_Op_Name_E = 9,
-		Unknown_Op_Name_F = 10,
-		Unknown_Op_Name_N = 11,
-		Unknown_Op_Name_G = 12,
-		Unknown_Op_Name_L = 13,
-		Unknown_Op_Name_R = 14,
-		Unknown_Op_Name_S = 15,
-		Unknown_Op_Name_T = 16,
-		ExpressionNotClosed = 17,
-		UnknownOperationClass = 18,
-		IllegalCaller = 19,
-		ParameterNameNotClosed = 20,
-		IntExpectedAtValue = 21,
-		ParamaterValueOutOfRange = 22,
-		UnaryMissingOpen = 23,
-		MissingSlashIn_ATAN = 24,
-		MissingBracketAfterSlash = 25,
-		ArcCosValueOutOfRange = 26,
-		ArcSinValueOutOfRange = 27,
-		LogValueNegative = 28,
-		SqrtValueNegative = 29,
-		UnHandledValueClass = 30,
-		NoNamedParametersAvailable = 31,
-		LocalNamedParametersNotAvailable = 32,
-		GlobalNamedParametersNotAvailable = 33,
-		NumericParametersNotAvailable = 34,
-		NumericParametersMaxNotAvailable = 35,
-		BadDataInBuffer = 36,
-		OCodesNotImplimented = 37,
-		NumericParamaterUpdateFailure = 38,
-		NumericParamaterUpdateUnavailable = 39,
-		NamedParamaterUpdateFailure = 40,
-		NamedParamaterUpdateUnavailable = 41
-		};*/
+		static uint8_t initialize();
 		static e_parsing_errors start(char * line, c_ring_buffer <NGC_RS274::NGC_Binary_Block> * buffer_destination);
 
 		private:
@@ -189,8 +144,6 @@ namespace NGC_RS274
 		static e_parsing_errors  ___execute_binary(float *left, e_expression_operator_class_types operator_class, float *right);
 		static e_parsing_errors  ___execute_atan(char * line, int * counter, float * double_ptr);
 		static e_parsing_errors  ___execute_unary(float * double_ptr, e_unary_operator_class_types operation);
-
-
 	};
 };
 #endif
