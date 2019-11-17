@@ -25,6 +25,7 @@
 
 #include <stdint.h>
 #include "../../NGC_Block.h"
+#include "../../ngc_errors_interpreter.h"
 namespace NGC_RS274
 {
 	namespace Interpreter
@@ -32,8 +33,8 @@ namespace NGC_RS274
 		class NGC_Machine_Specific
 		{
 			public:
-			static int error_check_canned_cycle();
-			static int error_check_feed_mode(int gCode);
+				static e_parsing_errors error_check_canned_cycle(NGC_RS274::NGC_Binary_Block *new_block, NGC_RS274::NGC_Binary_Block *previous_block);
+				static e_parsing_errors error_check_feed_mode(int gCode, NGC_RS274::NGC_Binary_Block *new_block, NGC_RS274::NGC_Binary_Block *previous_block);
 		};
 	};
 };

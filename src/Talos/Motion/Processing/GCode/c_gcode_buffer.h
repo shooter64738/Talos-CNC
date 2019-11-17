@@ -24,7 +24,7 @@
 
 #include "../../../c_ring_template.h"
 #include "../../../NGC_RS274/NGC_Block.h"
-#define NGC_BUFFER_SIZE 5 //<--must be at least 2 in order for look-ahead to work.
+#define NGC_BUFFER_SIZE 2
 
 namespace Talos
 {

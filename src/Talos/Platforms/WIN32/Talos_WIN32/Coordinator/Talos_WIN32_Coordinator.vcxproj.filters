@@ -161,6 +161,9 @@
     <ClInclude Include="..\..\..\..\Motion\Processing\GCode\c_gcode_buffer.h">
       <Filter>Motion\Processing\GCode</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\..\NGC_RS274\ngc_errors_interpreter.h">
+      <Filter>Ngc_Rs274</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\..\Coordinator\coordinator_main.cpp">

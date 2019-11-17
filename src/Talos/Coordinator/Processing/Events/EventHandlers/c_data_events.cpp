@@ -43,10 +43,11 @@ void c_data_events::process()
 	//in the buffer
 	if (extern_data_events.event_manager.get((int)s_data_events::e_event_type::Usart0DataArrival))
 	{
-		//Once a handler has been assigned we should be able to process
-		//the data pretty fast since there is no more switching or if
-		//statements
 		/*
+		Once a handler has been assigned we should be able to process
+		the data pretty fast since there is no more switching or if
+		statements
+		
 		If this is NGC data, there could be multiple 'lines' come into the 256 byte array. We will
 		only read one 'line' at a time and then stop. We will process that gcode through the interpreter
 		and then release the handler. If the buffers 'has_data' is true we will reassign the handler
@@ -66,15 +67,7 @@ void c_data_events::process()
 		{
 			extern_data_events.event_manager.clear((int)s_data_events::e_event_type::Usart0DataArrival);
 		}
-
-		
-		
-
-
 	}
-
-
-
 }
 
 

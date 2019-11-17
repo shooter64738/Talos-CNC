@@ -24,6 +24,7 @@
 
 #include <stdint.h>
 #include "../records_def.h"
+#include "ngc_errors_interpreter.h"
 
 namespace NGC_RS274
 {
@@ -108,7 +109,7 @@ namespace NGC_RS274
 			s_axis_property horizontal_offset;
 			s_axis_property vertical_offset;
 			s_axis_property normal_offset;
-			uint16_t plane_error;
+			e_parsing_errors plane_error;
 			//float *I;
 			//float *J;
 			//float *K;
@@ -157,7 +158,7 @@ namespace NGC_RS274
 			s_axis_property normal_axis;
 			s_axis_property rotary_normal_axis;
 			s_axis_property inc_normal_axis;
-			uint16_t plane_error;
+			e_parsing_errors plane_error;
 		}s_plane_axis;
 		s_plane_axis active_plane;
 

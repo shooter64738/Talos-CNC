@@ -26,7 +26,10 @@
 #include <ctype.h>
 
 #include "../records_def.h"
+#include "../c_ring_template.h"
 #include "NGC_Block.h"
+#include "NGC_Errors.h"
+#include "ngc_errors_interpreter.h"
 
 
 #define MAX_EXPRESSION_OPS 7
@@ -41,30 +44,31 @@
 #define FAKE_LOCAL_NAMED_PARAM_VALUE 200
 #define FAKE_GLOBAL_NAMED_PARAM_VALUE 300
 
-
-class c_line
+namespace NGC_RS274
 {
-
-public:
-
-	struct s_param_functions
+	class LineProcessor
 	{
-		float(*pntr_get_global_named_parameter)(char * param_name);
-		float(*pntr_get_local_named_parameter)(char * param_name);
-		float(*pntr_get_numeric_parameter)(int param_number);
-		int(*pntr_get_numeric_parameter_max)();
 
-		int(*pntr_set_global_named_parameter)(char * param_name, float value);
-		int(*pntr_set_local_named_parameter)(char * param_name, float value);
-		int(*pntr_set_numeric_parameter)(int param_number, float value);
+		public:
 		
-	};
+		struct s_param_functions
+		{
+			float(*pntr_get_global_named_parameter)(char * param_name);
+			float(*pntr_get_local_named_parameter)(char * param_name);
+			float(*pntr_get_numeric_parameter)(int param_number);
+			int(*pntr_get_numeric_parameter_max)();
 
-	static s_param_functions parameter_function_pointers;
-	static int last_read_position;
+			int(*pntr_set_global_named_parameter)(char * param_name, float value);
+			int(*pntr_set_local_named_parameter)(char * param_name, float value);
+			int(*pntr_set_numeric_parameter)(int param_number, float value);
+			
+		};
 
-	enum class e_parser_codes
-	{
+		static s_param_functions parameter_function_pointers;
+		static int last_read_position;
+
+		/*enum class e_parser_codes
+		{
 		Ok = 0,
 		NumericValueMissing = 1,
 		DivideByZero = 2,
@@ -107,84 +111,86 @@ public:
 		NumericParamaterUpdateUnavailable = 39,
 		NamedParamaterUpdateFailure = 40,
 		NamedParamaterUpdateUnavailable = 41
+		};*/
+		static e_parsing_errors start(char * line, c_ring_buffer <NGC_RS274::NGC_Binary_Block> * buffer_destination);
+
+		private:
+
+		enum class e_value_class_types
+		{
+			UnSpecified = 0,
+			Expression = 1,
+			Parameter = 2,
+			Unary = 5,
+			Numeric = 6,
+			NumericParametersNotAvailable = 7,
+			NamedParametersNotAvailable = 8,
+			ClosingBracket = 9,
+			NumericParameterAssign = 10,
+			NamedParameterAssign = 11
+		};
+		enum class e_expression_operator_class_types
+		{
+			NoOperation = 0,
+			Division = 1,
+			Modulus = 2,
+			Exponent = 3,
+			Multiplication = 4,
+			And = 5,
+			Or = 6,
+			Ex_Or = 7,
+			Subtract = 8,
+			Non_Ex_Or = 9,
+			Addition = 10,
+			ClosingBracket = 11,
+			_lt = 12,
+			_eq = 13,
+			_ne = 14,
+			_le = 15,
+			_ge = 16,
+			_gt = 17
+		};
+		enum class e_unary_operator_class_types
+		{
+			NoOperation = 0,
+			Abs = 1,
+			Acos = 2,
+			Asin = 3,
+			Atan = 4,
+			Cos = 5,
+			Exp = 6,
+			Fix = 7,
+			Fup = 8,
+			Ln = 9,
+			Round = 10,
+			Sin = 11,
+			Sqrt = 12,
+			Tan = 13
+		};
+
+		static uint8_t _set_buffer_to_upper(char * buffer);
+		static e_parsing_errors  _process_buffer(char * buffer, c_ring_buffer <NGC_RS274::NGC_Binary_Block> * buffer_destination);
+
+		static e_parsing_errors  _read_as_word(char * buffer, int * read_pos, char word, float * word_value);
+		static e_parsing_errors  _read_as_class_type(char * buffer, int * read_pos, float * word_value);
+		static e_parsing_errors  __read_class_numeric(char * buffer, int * read_pos, float * read_value);
+		static e_parsing_errors  __read_class_expression(char * buffer, int * read_pos, float * read_value);
+		static e_parsing_errors  __read_class_parameter(char * buffer, int * read_pos, float * read_value);
+		static e_parsing_errors  ___read_integer_value(char * line, int * counter, int * integer_value);
+		static e_parsing_errors  ___read_class_named_parameter(char * buffer, int * read_pos, float * read_value);
+		static e_value_class_types __get_value_class(char * buffer, int * read_pos, float * word_value);
+		static e_parsing_errors  __read_class_unary(char * buffer, int * read_pos, float * read_value);
+		static e_parsing_errors  ____get_named_parameter_name(char * buffer, int * read_pos, char * parameter_name);
+		static e_parsing_errors  __get_unary_operator_class
+		(char * buffer, int * read_pos, e_unary_operator_class_types * operator_class);
+		static e_parsing_errors  __get_expression_operator_class
+		(char * buffer, int * read_pos, e_expression_operator_class_types * operator_class);
+		static int __get_operator_precedence(e_expression_operator_class_types operator_class);
+		static e_parsing_errors  ___execute_binary(float *left, e_expression_operator_class_types operator_class, float *right);
+		static e_parsing_errors  ___execute_atan(char * line, int * counter, float * double_ptr);
+		static e_parsing_errors  ___execute_unary(float * double_ptr, e_unary_operator_class_types operation);
+
+
 	};
-	static e_parser_codes start(char * line, NGC_RS274::NGC_Binary_Block * block);
-
-private:
-
-	enum class e_value_class_types
-	{
-		UnSpecified = 0,
-		Expression = 1,
-		Parameter = 2,
-		Unary = 5,
-		Numeric = 6,
-		NumericParametersNotAvailable = 7,
-		NamedParametersNotAvailable = 8,
-		ClosingBracket = 9,
-		NumericParameterAssign = 10,
-		NamedParameterAssign = 11
-	};
-	enum class e_expression_operator_class_types
-	{
-		NoOperation = 0,
-		Division = 1,
-		Modulus = 2,
-		Exponent = 3,
-		Multiplication = 4,
-		And = 5,
-		Or = 6,
-		Ex_Or = 7,
-		Subtract = 8,
-		Non_Ex_Or = 9,
-		Addition = 10,
-		ClosingBracket = 11,
-		_lt = 12,
-		_eq = 13,
-		_ne = 14,
-		_le = 15,
-		_ge = 16,
-		_gt = 17
-	};
-	enum class e_unary_operator_class_types
-	{
-		NoOperation = 0,
-		Abs = 1,
-		Acos = 2,
-		Asin = 3,
-		Atan = 4,
-		Cos = 5,
-		Exp = 6,
-		Fix = 7,
-		Fup = 8,
-		Ln = 9,
-		Round = 10,
-		Sin = 11,
-		Sqrt = 12,
-		Tan = 13
-	};
-
-	static uint8_t _set_buffer_to_upper(char * buffer);
-	static e_parser_codes _process_buffer(char * buffer, NGC_RS274::NGC_Binary_Block * block);
-
-	static e_parser_codes _read_as_word(char * buffer, int * read_pos, char word, float * word_value, NGC_RS274::NGC_Binary_Block * block);
-	static e_parser_codes _read_as_class_type(char * buffer, int * read_pos, float * word_value);
-	static e_parser_codes __read_class_numeric(char * buffer, int * read_pos, float * read_value);
-	static e_parser_codes __read_class_expression(char * buffer, int * read_pos, float * read_value);
-	static e_parser_codes __read_class_parameter(char * buffer, int * read_pos, float * read_value);
-	static e_parser_codes ___read_integer_value(char * line, int * counter, int * integer_value);
-	static e_parser_codes ___read_class_named_parameter(char * buffer, int * read_pos, float * read_value);
-	static e_value_class_types __get_value_class(char * buffer, int * read_pos, float * word_value);
-	static e_parser_codes __read_class_unary(char * buffer, int * read_pos, float * read_value);
-	static e_parser_codes ____get_named_parameter_name(char * buffer, int * read_pos, char * parameter_name);
-	static e_parser_codes __get_unary_operator_class(char * buffer, int * read_pos, e_unary_operator_class_types * operator_class);
-	static e_parser_codes __get_expression_operator_class(char * buffer, int * read_pos, e_expression_operator_class_types * operator_class);
-	static int __get_operator_precedence(e_expression_operator_class_types operator_class);
-	static e_parser_codes ___execute_binary(float *left, e_expression_operator_class_types operator_class, float *right);
-	static e_parser_codes ___execute_atan(char * line, int * counter, float * double_ptr);
-	static e_parser_codes ___execute_unary(float * double_ptr, e_unary_operator_class_types operation);
-
-
 };
-
 #endif

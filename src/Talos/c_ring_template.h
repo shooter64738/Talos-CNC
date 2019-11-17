@@ -119,7 +119,7 @@ public:
 		return data;
 	}
 	
-	TN * writer_handle()
+	TN * writer_for_insert()
 	{
 		//caller should check has_data before calling this.
 
@@ -129,6 +129,20 @@ public:
 
 		//get the a handle for the object at the head position
 		TN * data = &this->_storage_pointer[this->_head];
+		
+		return data;
+	}
+	
+	TN * writer_for_last_added()
+	{
+		//caller should check has_data before calling this.
+
+		//if head==tail and not full, buffer is empty, no data to provide
+		//if ((this->_head == this->_tail) && !this->_full)
+		//	return 0;
+
+		//get the a handle for the object at the head position
+		TN * data = &this->_storage_pointer[this->_newest];
 		
 		return data;
 	}

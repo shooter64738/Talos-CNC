@@ -26,18 +26,18 @@
 #include "NGC_Interpreter.h"
 
 
-c_line::s_param_functions c_line::parameter_function_pointers;
-int c_line::last_read_position = 0;
+NGC_RS274::LineProcessor::s_param_functions NGC_RS274::LineProcessor::parameter_function_pointers;
+int NGC_RS274::LineProcessor::last_read_position = 0;
 static int max_numeric_parameter_count = 0;
 
-c_line::e_parser_codes c_line::start(char * buffer, NGC_RS274::NGC_Binary_Block * block)
+e_parsing_errors NGC_RS274::LineProcessor::start(char * buffer, c_ring_buffer <NGC_RS274::NGC_Binary_Block> * buffer_destinationk)
 {
-	e_parser_codes ret_code = e_parser_codes::Ok;
+	e_parsing_errors ret_code = e_parsing_errors::OK;
 
-	//set line data to all lower case
+	//set line data to all upper case
 	if (!_set_buffer_to_upper(buffer))
 	{/*return bad data in the buffer*/
-		return e_parser_codes::BadDataInBuffer;
+		return e_parsing_errors::BadDataInBuffer;
 	}
 
 	//If there are any line terminators, split this line so they are not parsed.
@@ -45,7 +45,7 @@ c_line::e_parser_codes c_line::start(char * buffer, NGC_RS274::NGC_Binary_Block 
 	char * buffer_no_eol = strtok(buffer, "\r\n");
 	int endlen = strlen(buffer_no_eol);
 
-	ret_code = _process_buffer(buffer, block);
+	ret_code = _process_buffer(buffer, buffer_destinationk);
 
 	/*
 	You can send a string of gcode that is actually multiple 'lines' containing multip \r\n characters
@@ -58,15 +58,15 @@ c_line::e_parser_codes c_line::start(char * buffer, NGC_RS274::NGC_Binary_Block 
 	set the buffer pointer ahead.
 	*/
 
-	if (startlen != endlen && ret_code == e_parser_codes::Ok)
-		//advance buffer to next 'line' (if NUll no data available)
-		buffer = buffer + (endlen + 1);
+	if (startlen != endlen && ret_code == e_parsing_errors::OK)
+	//advance buffer to next 'line' (if NUll no data available)
+	buffer = buffer + (endlen + 1);
 
 	return ret_code;
 
 }
 
-uint8_t c_line::_set_buffer_to_upper(char * buffer)
+uint8_t NGC_RS274::LineProcessor::_set_buffer_to_upper(char * buffer)
 {
 	int count = 0;
 	for (int i = 0; buffer[i]; i++)
@@ -76,7 +76,7 @@ uint8_t c_line::_set_buffer_to_upper(char * buffer)
 		{
 			//clean up any multiple carriage return sequences
 			if (buffer[i] == '\r')
-				while (buffer[i + 1] == '\r') { i++; }
+			while (buffer[i + 1] == '\r') { i++; }
 
 			buffer[count++] = toupper(buffer[i]);
 		}
@@ -86,7 +86,8 @@ uint8_t c_line::_set_buffer_to_upper(char * buffer)
 	return 1;
 }
 
-c_line::e_parser_codes c_line::_process_buffer(char * buffer, NGC_RS274::NGC_Binary_Block * block)
+e_parsing_errors NGC_RS274::LineProcessor::_process_buffer
+(char * buffer, c_ring_buffer <NGC_RS274::NGC_Binary_Block> * buffer_destination)
 {
 	int read_pos, buff_len = 0;
 
@@ -105,44 +106,64 @@ c_line::e_parser_codes c_line::_process_buffer(char * buffer, NGC_RS274::NGC_Bin
 	are not set, parameters will not be available.
 	*/
 
-	//If the block skipper is the first character, ignore it. 
+	//If the block skipper is the first character, ignore it.
 	//We process this line regardless and give it to the motion
 	//controller which will determine if it should process it
 	//depending on the block skip hardware switch
 	read_pos = buffer[read_pos] == '/' ? read_pos++ : read_pos;
 
-	//We could read the N word here. For nwo I am handling it as 
+	//We could read the N word here. For nwo I am handling it as
 	//I do any other word.
 
-	//O words are a little special. cant process those yet, but 
+	//O words are a little special. cant process those yet, but
 	//I am working on it. I think they can be called re-entrant
 	//which is similar to how how linux cnc handles O words
 	if (buffer[read_pos] == 'O')
-		return e_parser_codes::OCodesNotImplimented;
+	return e_parsing_errors::OCodesNotImplimented;
 
 	float word_value = 0.0;
 	//get current word, and advance reader
 	char current_word = 0;
-	e_parser_codes ret_code = e_parser_codes::Ok;
+	e_parsing_errors ret_code = e_parsing_errors::OK;
+
+	//grab a block from the ring buffer to work on
+	NGC_RS274::NGC_Binary_Block *previous_block = buffer_destination->writer_for_last_added();
+	NGC_RS274::NGC_Binary_Block *new_block = buffer_destination->writer_for_insert();
+
 	//And now without further delay... lets process this line!
 	while (read_pos < buff_len)
 	{
+		//forward copy data from the last block to the new block
+		//this keeps our modal data, well, modal!
+		NGC_Binary_Block::copy_persisted_data(previous_block, new_block);
+
 		word_value = 0.0;
 		//get current word, and advance reader
 		current_word = buffer[read_pos];
-		
-		ret_code = _read_as_word(buffer, &read_pos, current_word, &word_value, block);
-
-		
+		//process this data but do it on the new block
+		ret_code = _read_as_word(buffer, &read_pos, current_word, &word_value);
 
 		//This will be useful to the end user to determine where the gcode data had an error
-		c_line::last_read_position = read_pos;
-
-		if (ret_code != e_parser_codes::Ok)
+		NGC_RS274::LineProcessor::last_read_position = read_pos;
+		if (ret_code != e_parsing_errors::OK)
 		{
 			//Return the error to the caller
 			return ret_code;
 		}
+
+		//This will assign the value to the appropriate place in the block.
+		//If an error occurs because there have been multiple definitions of
+		//The same word in this block, it will be returned here.
+		ret_code = NGC_RS274::Interpreter::Processor::group_word(current_word, word_value, new_block, previous_block);
+		if (ret_code != e_parsing_errors::OK)
+		{
+			//Return the error to the caller
+			return ret_code;
+		}
+		//now run some error checks on the new block
+
+
+
 		//Right here is where we have the word, and its address value.
 		//If you want to update some type of block object with the word
 		//data, do it right here. If there was an expression it would
@@ -151,26 +172,30 @@ c_line::e_parser_codes c_line::_process_buffer(char * buffer, NGC_RS274::NGC_Bin
 		//handled. I plan to expand that some time but not right now.
 		//block_object_word_array[current_word] = word_value
 
-		
+
 	}
 	return ret_code;
 }
 
-c_line::e_parser_codes c_line::_read_as_word(char * buffer, int * read_pos, char word, float * word_value, NGC_RS274::NGC_Binary_Block * block)
+e_parsing_errors NGC_RS274::LineProcessor::_read_as_word
+(char * buffer, int * read_pos, char word, float * word_value)
 {
-	e_parser_codes ret_code = e_parser_codes::Ok;
+	//linux cnc/emc used a function pointer to read each 'word'. We dont have the space for a 256 element
+	//array here, so instead I process any letters, and then check individual characters as needed if they
+	//were not one of the letter words.
+	e_parsing_errors ret_code = e_parsing_errors::OK;
 
-	if (word >= 'A' & word <= 'Z')
+	if (word >= 'A' & word <= 'Z') //letter A-Z
 	{
 		*read_pos += 1;
 		ret_code = _read_as_class_type(buffer, read_pos, word_value);
-		NGC_RS274::Interpreter::Processor::HasErrors = NGC_RS274::Interpreter::Processor::group_word(word, *word_value);
+
 	}
-	else if (word == '#')
+	else if (word == '#') //parameter flag #
 	{
-		ret_code = c_line::__read_class_parameter(buffer, read_pos, word_value);
+		ret_code = NGC_RS274::LineProcessor::__read_class_parameter(buffer, read_pos, word_value);
 	}
-	else
+	else //anything else not covered above
 	{
 		ret_code = _read_as_class_type(buffer, read_pos, word_value);
 	}
@@ -178,83 +203,83 @@ c_line::e_parser_codes c_line::_read_as_word(char * buffer, int * read_pos, char
 	return ret_code;
 }
 
-c_line::e_parser_codes c_line::_read_as_class_type(char * buffer, int * read_pos, float * word_value)
+e_parsing_errors NGC_RS274::LineProcessor::_read_as_class_type(char * buffer, int * read_pos, float * word_value)
 {
-	e_parser_codes ret_code = e_parser_codes::Ok;
+	e_parsing_errors ret_code = e_parsing_errors::OK;
 
-	e_value_class_types current_class = c_line::__get_value_class(buffer, read_pos, word_value);
+	e_value_class_types current_class = NGC_RS274::LineProcessor::__get_value_class(buffer, read_pos, word_value);
 
 	switch (current_class)
 	{
-	case c_line::e_value_class_types::NumericParametersNotAvailable:
-	{
-		ret_code = e_parser_codes::NumericParametersNotAvailable;
-		break;
-	}
-	case c_line::e_value_class_types::NamedParametersNotAvailable:
-	{
-		ret_code = e_parser_codes::NoNamedParametersAvailable;
-		break;
-	}
-	case c_line::e_value_class_types::UnSpecified:
-	{
-		ret_code = e_parser_codes::UnHandledValueClass;
-		break;
-	}
-	case c_line::e_value_class_types::Expression:
-	{
-		ret_code = c_line::__read_class_expression(buffer, read_pos, word_value);
-		break;
-	}
-	case c_line::e_value_class_types::Parameter:
-	{
-		ret_code = c_line::__read_class_parameter(buffer, read_pos, word_value);
-		break;
-	}
-	case c_line::e_value_class_types::NamedParameterAssign:
-	{
-		ret_code = c_line::__read_class_parameter(buffer, read_pos, word_value);
-		break;
-	}
-	case c_line::e_value_class_types::NumericParameterAssign:
-	{
-		ret_code = c_line::__read_class_parameter(buffer, read_pos, word_value);
-		break;
-	}
-	case c_line::e_value_class_types::Unary:
-	{
-		ret_code = c_line::__read_class_unary(buffer, read_pos, word_value);
-		break;
-	}
-	case c_line::e_value_class_types::Numeric:
-	{
-		ret_code = c_line::__read_class_numeric(buffer, read_pos, word_value);
-		break;
-	}
-	case c_line::e_value_class_types::ClosingBracket:
-	{
-		//closing bracket from a unary or expression. we should be okay with this. 
-		ret_code = e_parser_codes::Ok;
-		break;
-	}
-	default:
-		ret_code = e_parser_codes::UnHandledValueClass;
+		case NGC_RS274::LineProcessor::e_value_class_types::NumericParametersNotAvailable:
+		{
+			ret_code = e_parsing_errors::NumericParametersNotAvailable;
+			break;
+		}
+		case NGC_RS274::LineProcessor::e_value_class_types::NamedParametersNotAvailable:
+		{
+			ret_code = e_parsing_errors::NoNamedParametersAvailable;
+			break;
+		}
+		case NGC_RS274::LineProcessor::e_value_class_types::UnSpecified:
+		{
+			ret_code = e_parsing_errors::UnHandledValueClass;
+			break;
+		}
+		case NGC_RS274::LineProcessor::e_value_class_types::Expression:
+		{
+			ret_code = NGC_RS274::LineProcessor::__read_class_expression(buffer, read_pos, word_value);
+			break;
+		}
+		case NGC_RS274::LineProcessor::e_value_class_types::Parameter:
+		{
+			ret_code = NGC_RS274::LineProcessor::__read_class_parameter(buffer, read_pos, word_value);
+			break;
+		}
+		case NGC_RS274::LineProcessor::e_value_class_types::NamedParameterAssign:
+		{
+			ret_code = NGC_RS274::LineProcessor::__read_class_parameter(buffer, read_pos, word_value);
+			break;
+		}
+		case NGC_RS274::LineProcessor::e_value_class_types::NumericParameterAssign:
+		{
+			ret_code = NGC_RS274::LineProcessor::__read_class_parameter(buffer, read_pos, word_value);
+			break;
+		}
+		case NGC_RS274::LineProcessor::e_value_class_types::Unary:
+		{
+			ret_code = NGC_RS274::LineProcessor::__read_class_unary(buffer, read_pos, word_value);
+			break;
+		}
+		case NGC_RS274::LineProcessor::e_value_class_types::Numeric:
+		{
+			ret_code = NGC_RS274::LineProcessor::__read_class_numeric(buffer, read_pos, word_value);
+			break;
+		}
+		case NGC_RS274::LineProcessor::e_value_class_types::ClosingBracket:
+		{
+			//closing bracket from a unary or expression. we should be okay with this.
+			ret_code = e_parsing_errors::OK;
+			break;
+		}
+		default:
+		ret_code = e_parsing_errors::UnHandledValueClass;
 		break;
 	}
 
 	return ret_code;
 }
 
-c_line::e_value_class_types c_line::__get_value_class(char * buffer, int * read_pos, float * word_value)
+NGC_RS274::LineProcessor::e_value_class_types NGC_RS274::LineProcessor::__get_value_class(char * buffer, int * read_pos, float * word_value)
 {
-	e_parser_codes ret_code = e_parser_codes::Ok;
+	e_parsing_errors ret_code = e_parsing_errors::OK;
 
 	char current_byte = 0, next_byte = 0, previous_byte = 0;
 
 	current_byte = buffer[*read_pos];
 
 	if (current_byte == 0)
-		return e_value_class_types::UnSpecified;
+	return e_value_class_types::UnSpecified;
 
 	next_byte = buffer[*read_pos + 1];
 
@@ -271,20 +296,20 @@ c_line::e_value_class_types c_line::__get_value_class(char * buffer, int * read_
 
 	else if (current_byte == '#')
 	{
-		if (c_line::parameter_function_pointers.pntr_get_global_named_parameter != NULL
-			|| c_line::parameter_function_pointers.pntr_get_local_named_parameter != NULL
-			|| (c_line::parameter_function_pointers.pntr_get_numeric_parameter != NULL
-				&&c_line::parameter_function_pointers.pntr_get_numeric_parameter_max != NULL))
-			return e_value_class_types::Parameter;
+		if (NGC_RS274::LineProcessor::parameter_function_pointers.pntr_get_global_named_parameter != NULL
+		|| NGC_RS274::LineProcessor::parameter_function_pointers.pntr_get_local_named_parameter != NULL
+		|| (NGC_RS274::LineProcessor::parameter_function_pointers.pntr_get_numeric_parameter != NULL
+		&&NGC_RS274::LineProcessor::parameter_function_pointers.pntr_get_numeric_parameter_max != NULL))
+		return e_value_class_types::Parameter;
 		else
 		{
-			if (c_line::parameter_function_pointers.pntr_get_global_named_parameter == NULL
-				|| c_line::parameter_function_pointers.pntr_get_local_named_parameter == NULL)
+			if (NGC_RS274::LineProcessor::parameter_function_pointers.pntr_get_global_named_parameter == NULL
+			|| NGC_RS274::LineProcessor::parameter_function_pointers.pntr_get_local_named_parameter == NULL)
 			{
 				return e_value_class_types::NamedParametersNotAvailable;
 			}
-			else if (c_line::parameter_function_pointers.pntr_get_numeric_parameter == NULL
-				|| c_line::parameter_function_pointers.pntr_get_numeric_parameter_max == NULL)
+			else if (NGC_RS274::LineProcessor::parameter_function_pointers.pntr_get_numeric_parameter == NULL
+			|| NGC_RS274::LineProcessor::parameter_function_pointers.pntr_get_numeric_parameter_max == NULL)
 			{
 				return e_value_class_types::NumericParametersNotAvailable;
 			}
@@ -292,28 +317,28 @@ c_line::e_value_class_types c_line::__get_value_class(char * buffer, int * read_
 	}
 	else if (current_byte == '+' && next_byte && !isdigit(next_byte) && next_byte != '.')
 	{
-		//this is most likely a unary that was signed positive	
+		//this is most likely a unary that was signed positive
 		(*read_pos)++;
-		ret_code = c_line::_read_as_class_type(buffer, read_pos, word_value);
-		if (ret_code != e_parser_codes::Ok)
-			return e_value_class_types::UnSpecified;
+		ret_code = NGC_RS274::LineProcessor::_read_as_class_type(buffer, read_pos, word_value);
+		if (ret_code != e_parsing_errors::OK)
+		return e_value_class_types::UnSpecified;
 		*word_value = +*word_value;
-		return c_line::__get_value_class(buffer, read_pos, word_value);
+		return NGC_RS274::LineProcessor::__get_value_class(buffer, read_pos, word_value);
 		//return e_value_class_types::ClosingBracket;
 	}
 	else if (current_byte == '-' && next_byte && !isdigit(next_byte) && next_byte != '.')
 	{
 		//this is most likely a unary that was signed negative
 		(*read_pos)++;
-		ret_code = c_line::_read_as_class_type(buffer, read_pos, word_value);
-		if (ret_code != e_parser_codes::Ok)
-			return e_value_class_types::UnSpecified;
+		ret_code = NGC_RS274::LineProcessor::_read_as_class_type(buffer, read_pos, word_value);
+		if (ret_code != e_parsing_errors::OK)
+		return e_value_class_types::UnSpecified;
 		*word_value = -*word_value;
-		return c_line::__get_value_class(buffer, read_pos, word_value);
+		return NGC_RS274::LineProcessor::__get_value_class(buffer, read_pos, word_value);
 		//return e_value_class_types::ClosingBracket;
 	}
 	else if ((current_byte >= 'A') && (current_byte <= 'Z'))
-		return e_value_class_types::Unary;
+	return e_value_class_types::Unary;
 	else
 	{
 		return e_value_class_types::Numeric;
@@ -321,31 +346,32 @@ c_line::e_value_class_types c_line::__get_value_class(char * buffer, int * read_
 
 }
 
-c_line::e_parser_codes c_line::__read_class_unary(char * buffer, int * read_pos, float * read_value)
+e_parsing_errors NGC_RS274::LineProcessor::__read_class_unary(char * buffer, int * read_pos, float * read_value)
 {
-	e_parser_codes ret_code = e_parser_codes::Ok;
+	
+	e_parsing_errors ret_code = e_parsing_errors::OK;
 
 	e_unary_operator_class_types operation = e_unary_operator_class_types::NoOperation;
 
-	ret_code = c_line::__get_unary_operator_class(buffer, read_pos, &operation);
-	if (ret_code != e_parser_codes::Ok)
-		return ret_code;
+	ret_code = NGC_RS274::LineProcessor::__get_unary_operator_class(buffer, read_pos, &operation);
+	if (ret_code != e_parsing_errors::OK)
+	return ret_code;
 
 	if (buffer[*read_pos] != '[')
 	{
-		ret_code = e_parser_codes::UnaryMissingOpen;
+		ret_code = e_parsing_errors::UnaryMissingOpen;
 		return ret_code;
 	}
-	c_line::__read_class_expression(buffer, read_pos, read_value);
+	NGC_RS274::LineProcessor::__read_class_expression(buffer, read_pos, read_value);
 
 	if (operation == e_unary_operator_class_types::Atan)
-		ret_code = c_line::___execute_atan(buffer, read_pos, read_value);
+	ret_code = NGC_RS274::LineProcessor::___execute_atan(buffer, read_pos, read_value);
 	else
-		ret_code = c_line::___execute_unary(read_value, operation);
+	ret_code = NGC_RS274::LineProcessor::___execute_unary(read_value, operation);
 	return ret_code;
 }
 
-c_line::e_parser_codes c_line::__read_class_numeric(char * buffer, int * read_pos, float * read_value)
+e_parsing_errors NGC_RS274::LineProcessor::__read_class_numeric(char * buffer, int * read_pos, float * read_value)
 {
 	char *end, restore_byte;
 	size_t _size;
@@ -365,60 +391,60 @@ c_line::e_parser_codes c_line::__read_class_numeric(char * buffer, int * read_po
 	//see if end is equal to the string start point. If it is, we read nothing there
 	if (end == (buffer + (*read_pos)))
 	{
-		return e_parser_codes::NumericValueMissing;
+		return e_parsing_errors::NumericValueMissing;
 	}
 	//update the pointer for the reader position
 	*read_pos = end - buffer;
-	return e_parser_codes::Ok;
+	return e_parsing_errors::OK;
 }
 
-c_line::e_parser_codes c_line::__read_class_expression(char * buffer, int * read_pos, float * read_value)
+e_parsing_errors NGC_RS274::LineProcessor::__read_class_expression(char * buffer, int * read_pos, float * read_value)
 {
-	e_parser_codes ret_code = e_parser_codes::Ok;
+	e_parsing_errors ret_code = e_parsing_errors::OK;
 
 	float values[MAX_EXPRESSION_OPS];
-	memset(values, 0, sizeof(float) * MAX_EXPRESSION_OPS);
+	memset(values, 0, sizeof(float)* MAX_EXPRESSION_OPS);
 	e_expression_operator_class_types operators[MAX_EXPRESSION_OPS];
-	memset(operators, 0, sizeof(e_expression_operator_class_types) * MAX_EXPRESSION_OPS);
+	memset(operators, 0, sizeof(e_expression_operator_class_types)* MAX_EXPRESSION_OPS);
 	int stack_index;
 
 	if (buffer[*read_pos] != '[')
 	{
-		ret_code = e_parser_codes::IllegalCaller;
+		ret_code = e_parsing_errors::IllegalCaller;
 		return ret_code;
 	}
 
 	*read_pos += 1;//(*read_pos + 1);
 	//read_real_value(line, counter, values, parameters);
-	ret_code = c_line::_read_as_class_type(buffer, read_pos, values);
-	if (ret_code != e_parser_codes::Ok)
+	ret_code = NGC_RS274::LineProcessor::_read_as_class_type(buffer, read_pos, values);
+	if (ret_code != e_parsing_errors::OK)
 	{
 		*read_value = values[0];
 		return ret_code;
 	}
 
-	c_line::__get_expression_operator_class(buffer, read_pos, operators);
+	NGC_RS274::LineProcessor::__get_expression_operator_class(buffer, read_pos, operators);
 
 	stack_index = 1;
 
 	while (operators[0] != e_expression_operator_class_types::ClosingBracket)
 	{
-		ret_code = c_line::_read_as_class_type(buffer, read_pos, values + stack_index);
+		ret_code = NGC_RS274::LineProcessor::_read_as_class_type(buffer, read_pos, values + stack_index);
 		//If we dont get an ok response processing, we should be at the end of the expression
-		//Otherwise its a problem. 
-		if (ret_code == e_parser_codes::Ok)
+		//Otherwise its a problem.
+		if (ret_code == e_parsing_errors::OK)
 		{
-			c_line::__get_expression_operator_class(buffer, read_pos, operators + stack_index);
+			NGC_RS274::LineProcessor::__get_expression_operator_class(buffer, read_pos, operators + stack_index);
 
-			if (c_line::__get_operator_precedence(operators[stack_index]) > c_line::__get_operator_precedence(operators[stack_index - 1]))
-				stack_index++;
+			if (NGC_RS274::LineProcessor::__get_operator_precedence(operators[stack_index]) > NGC_RS274::LineProcessor::__get_operator_precedence(operators[stack_index - 1]))
+			stack_index++;
 			else
 			{
-				while (c_line::__get_operator_precedence(operators[stack_index]) <= c_line::__get_operator_precedence(operators[stack_index - 1]))
+				while (NGC_RS274::LineProcessor::__get_operator_precedence(operators[stack_index]) <= NGC_RS274::LineProcessor::__get_operator_precedence(operators[stack_index - 1]))
 				{
-					c_line::___execute_binary((values + stack_index - 1), operators[stack_index - 1], (values + stack_index));
+					NGC_RS274::LineProcessor::___execute_binary((values + stack_index - 1), operators[stack_index - 1], (values + stack_index));
 					operators[stack_index - 1] = operators[stack_index];
-					if ((stack_index > 1) && (c_line::__get_operator_precedence(operators[stack_index - 1]) <= c_line::__get_operator_precedence(operators[stack_index - 2])))
+					if ((stack_index > 1) && (NGC_RS274::LineProcessor::__get_operator_precedence(operators[stack_index - 1]) <= NGC_RS274::LineProcessor::__get_operator_precedence(operators[stack_index - 2])))
 					{
 						stack_index--;
 					}
@@ -438,15 +464,15 @@ c_line::e_parser_codes c_line::__read_class_expression(char * buffer, int * read
 	return ret_code;
 }
 
-c_line::e_parser_codes c_line::__read_class_parameter(char * buffer, int * read_pos, float * read_value)
+e_parsing_errors NGC_RS274::LineProcessor::__read_class_parameter(char * buffer, int * read_pos, float * read_value)
 {
-	e_parser_codes ret_code = e_parser_codes::Ok;
+	e_parsing_errors ret_code = e_parsing_errors::OK;
 
 	int index = 0;
 
 	if (buffer[*read_pos] != '#')
 	{
-		ret_code = e_parser_codes::IllegalCaller;
+		ret_code = e_parsing_errors::IllegalCaller;
 		return ret_code;
 	}
 
@@ -455,62 +481,62 @@ c_line::e_parser_codes c_line::__read_class_parameter(char * buffer, int * read_
 	// named parameters look like '<letter...>' or '<_.....>'
 	if (buffer[*read_pos] == '<')
 	{
-		if (c_line::parameter_function_pointers.pntr_get_global_named_parameter == NULL
-			&& c_line::parameter_function_pointers.pntr_get_local_named_parameter == NULL)
+		if (NGC_RS274::LineProcessor::parameter_function_pointers.pntr_get_global_named_parameter == NULL
+		&& NGC_RS274::LineProcessor::parameter_function_pointers.pntr_get_local_named_parameter == NULL)
 		{
-			ret_code = e_parser_codes::NoNamedParametersAvailable;
+			ret_code = e_parsing_errors::NoNamedParametersAvailable;
 			return ret_code;
 		}
 		//this will be a named parameter of local or global scope
-		ret_code = c_line::___read_class_named_parameter(buffer, read_pos, read_value);
-		if (ret_code != e_parser_codes::Ok)
-			return ret_code;
+		ret_code = NGC_RS274::LineProcessor::___read_class_named_parameter(buffer, read_pos, read_value);
+		if (ret_code != e_parsing_errors::OK)
+		return ret_code;
 
 	}
 	else
 	{
-		if (c_line::parameter_function_pointers.pntr_get_numeric_parameter_max == NULL)
+		if (NGC_RS274::LineProcessor::parameter_function_pointers.pntr_get_numeric_parameter_max == NULL)
 		{
-			ret_code = e_parser_codes::NumericParametersMaxNotAvailable;
+			ret_code = e_parsing_errors::NumericParametersMaxNotAvailable;
 		}
 		else
 		{
 			if (!max_numeric_parameter_count)//<--if we dont have max_numeric params count, get it
-				max_numeric_parameter_count = c_line::parameter_function_pointers.pntr_get_numeric_parameter_max();
+			max_numeric_parameter_count = NGC_RS274::LineProcessor::parameter_function_pointers.pntr_get_numeric_parameter_max();
 
-			c_line::___read_integer_value(buffer, read_pos, &index);
+			NGC_RS274::LineProcessor::___read_integer_value(buffer, read_pos, &index);
 			if (buffer[*read_pos] == '=')//<--write param value
 			{
 				*read_pos += 1;
-				ret_code = c_line::_read_as_class_type(buffer, read_pos, read_value);
-				if (ret_code != e_parser_codes::Ok)
-					return ret_code;
+				ret_code = NGC_RS274::LineProcessor::_read_as_class_type(buffer, read_pos, read_value);
+				if (ret_code != e_parsing_errors::OK)
+				return ret_code;
 
-				if (c_line::parameter_function_pointers.pntr_set_numeric_parameter != NULL)
+				if (NGC_RS274::LineProcessor::parameter_function_pointers.pntr_set_numeric_parameter != NULL)
 				{
-					if (!c_line::parameter_function_pointers.pntr_set_numeric_parameter(index, *read_value))
+					if (!NGC_RS274::LineProcessor::parameter_function_pointers.pntr_set_numeric_parameter(index, *read_value))
 					{
-						ret_code = e_parser_codes::NumericParamaterUpdateFailure;
+						ret_code = e_parsing_errors::NumericParamaterUpdateFailure;
 					}
 				}
 				else
 				{
-					ret_code = e_parser_codes::NumericParamaterUpdateUnavailable;
+					ret_code = e_parsing_errors::NumericParamaterUpdateUnavailable;
 				}
 			}
 			else//<--read param value
 			{
 				if (index < 1 || index >= max_numeric_parameter_count)
 				{
-					ret_code = e_parser_codes::ParamaterValueOutOfRange;
+					ret_code = e_parsing_errors::ParamaterValueOutOfRange;
 					*read_value = index;
 				}
 				else
 				{
-					if (c_line::parameter_function_pointers.pntr_get_numeric_parameter != NULL)
-						*read_value = c_line::parameter_function_pointers.pntr_get_numeric_parameter(index);// FAKE_NUMERIC_PARAM_VALUE;
+					if (NGC_RS274::LineProcessor::parameter_function_pointers.pntr_get_numeric_parameter != NULL)
+					*read_value = NGC_RS274::LineProcessor::parameter_function_pointers.pntr_get_numeric_parameter(index);// FAKE_NUMERIC_PARAM_VALUE;
 					else
-						ret_code = e_parser_codes::NumericParametersNotAvailable;
+					ret_code = e_parsing_errors::NumericParametersNotAvailable;
 					//*read_value = FAKE_NUMERIC_PARAM_VALUE;
 				}
 			}
@@ -519,15 +545,15 @@ c_line::e_parser_codes c_line::__read_class_parameter(char * buffer, int * read_
 	return ret_code;
 }
 
-c_line::e_parser_codes c_line::___read_integer_value(char *buffer, int *read_pos, int *integer_value)
+e_parsing_errors NGC_RS274::LineProcessor::___read_integer_value(char *buffer, int *read_pos, int *integer_value)
 {
-	e_parser_codes ret_code = e_parser_codes::Ok;
+	e_parsing_errors ret_code = e_parsing_errors::OK;
 
 	float float_value = 0;
 
-	ret_code = c_line::_read_as_class_type(buffer, read_pos, &float_value);
-	if (ret_code != e_parser_codes::Ok)
-		return ret_code;
+	ret_code = NGC_RS274::LineProcessor::_read_as_class_type(buffer, read_pos, &float_value);
+	if (ret_code != e_parsing_errors::OK)
+	return ret_code;
 
 	*integer_value = (int)floor(float_value);
 	if ((float_value - *integer_value) > NEAR_ONE)
@@ -535,17 +561,17 @@ c_line::e_parser_codes c_line::___read_integer_value(char *buffer, int *read_pos
 		*integer_value = (int)ceil(float_value);
 	}
 	else if ((float_value - *integer_value) > NEAR_ZERO)
-		ret_code = e_parser_codes::IntExpectedAtValue;
+	ret_code = e_parsing_errors::IntExpectedAtValue;
 	return ret_code;
 }
 
-c_line::e_parser_codes c_line::___read_class_named_parameter(char * buffer, int * read_pos, float * read_value)
+e_parsing_errors NGC_RS274::LineProcessor::___read_class_named_parameter(char * buffer, int * read_pos, float * read_value)
 {
-	e_parser_codes ret_code = e_parser_codes::Ok;
+	e_parsing_errors ret_code = e_parsing_errors::OK;
 
 	if (buffer[*read_pos] != '<')
 	{
-		ret_code = e_parser_codes::IllegalCaller;
+		ret_code = e_parsing_errors::IllegalCaller;
 		return ret_code;
 	}
 
@@ -553,16 +579,16 @@ c_line::e_parser_codes c_line::___read_class_named_parameter(char * buffer, int 
 	char parameter_name[MAX_NAMED_PARAM_LENGTH + 1];
 	memset(parameter_name, 0, MAX_NAMED_PARAM_LENGTH);
 
-	c_line::____get_named_parameter_name(buffer, read_pos, parameter_name);
+	NGC_RS274::LineProcessor::____get_named_parameter_name(buffer, read_pos, parameter_name);
 
 	bool update = false;
 	if (buffer[*read_pos] == '=')//<--read or write
 	{
 		update = true;
 		*read_pos += 1;
-		ret_code = c_line::_read_as_class_type(buffer, read_pos, read_value);
-		if (ret_code != e_parser_codes::Ok)
-			return ret_code;
+		ret_code = NGC_RS274::LineProcessor::_read_as_class_type(buffer, read_pos, read_value);
+		if (ret_code != e_parsing_errors::OK)
+		return ret_code;
 	}
 
 	bool global = (parameter_name[0] == '_');//<--global scope
@@ -571,30 +597,30 @@ c_line::e_parser_codes c_line::___read_class_named_parameter(char * buffer, int 
 	{
 		if (global)
 		{
-			if (c_line::parameter_function_pointers.pntr_set_global_named_parameter != NULL)
+			if (NGC_RS274::LineProcessor::parameter_function_pointers.pntr_set_global_named_parameter != NULL)
 			{
-				if (!c_line::parameter_function_pointers.pntr_set_global_named_parameter(parameter_name, *read_value))
+				if (!NGC_RS274::LineProcessor::parameter_function_pointers.pntr_set_global_named_parameter(parameter_name, *read_value))
 				{
-					ret_code = e_parser_codes::NamedParamaterUpdateFailure;
+					ret_code = e_parsing_errors::NamedParamaterUpdateFailure;
 				}
 			}
 			else
 			{
-				ret_code = e_parser_codes::NamedParamaterUpdateUnavailable;
+				ret_code = e_parsing_errors::NamedParamaterUpdateUnavailable;
 			}
 		}
 		else
 		{
-			if (c_line::parameter_function_pointers.pntr_set_local_named_parameter != NULL)
+			if (NGC_RS274::LineProcessor::parameter_function_pointers.pntr_set_local_named_parameter != NULL)
 			{
-				if (!c_line::parameter_function_pointers.pntr_set_local_named_parameter(parameter_name, *read_value))
+				if (!NGC_RS274::LineProcessor::parameter_function_pointers.pntr_set_local_named_parameter(parameter_name, *read_value))
 				{
-					ret_code = e_parser_codes::NamedParamaterUpdateFailure;
+					ret_code = e_parsing_errors::NamedParamaterUpdateFailure;
 				}
 			}
 			else
 			{
-				ret_code = e_parser_codes::NamedParamaterUpdateUnavailable;
+				ret_code = e_parsing_errors::NamedParamaterUpdateUnavailable;
 			}
 		}
 	}
@@ -603,18 +629,18 @@ c_line::e_parser_codes c_line::___read_class_named_parameter(char * buffer, int 
 		//Look in the name we got back from the read. If it starts with _ its a 'global'
 		if (global)//<--global scope
 		{
-			if (c_line::parameter_function_pointers.pntr_get_global_named_parameter != NULL)
-				*read_value = c_line::parameter_function_pointers.pntr_get_global_named_parameter(parameter_name);
+			if (NGC_RS274::LineProcessor::parameter_function_pointers.pntr_get_global_named_parameter != NULL)
+			*read_value = NGC_RS274::LineProcessor::parameter_function_pointers.pntr_get_global_named_parameter(parameter_name);
 			else
-				ret_code = e_parser_codes::GlobalNamedParametersNotAvailable;
+			ret_code = e_parsing_errors::GlobalNamedParametersNotAvailable;
 			//*read_value = FAKE_GLOBAL_NAMED_PARAM_VALUE;
 		}
 		else//<--not global, so its local scope
 		{
-			if (c_line::parameter_function_pointers.pntr_get_local_named_parameter != NULL)
-				*read_value = c_line::parameter_function_pointers.pntr_get_local_named_parameter(parameter_name);
+			if (NGC_RS274::LineProcessor::parameter_function_pointers.pntr_get_local_named_parameter != NULL)
+			*read_value = NGC_RS274::LineProcessor::parameter_function_pointers.pntr_get_local_named_parameter(parameter_name);
 			else
-				ret_code = e_parser_codes::LocalNamedParametersNotAvailable;
+			ret_code = e_parsing_errors::LocalNamedParametersNotAvailable;
 			//*read_value = FAKE_LOCAL_NAMED_PARAM_VALUE;
 		}
 	}
@@ -622,7 +648,7 @@ c_line::e_parser_codes c_line::___read_class_named_parameter(char * buffer, int 
 
 	//Remaining code here we cannot use. The entire parameter table will not fit on an mCU which
 	//is what I am targeting with this code. However I know of a way to fit a nearly infinite number
-	//of parameters into this code.. 
+	//of parameters into this code..
 
 	//char paramNameBuf[LINELEN + 1];
 	//int level;
@@ -663,35 +689,35 @@ c_line::e_parser_codes c_line::___read_class_named_parameter(char * buffer, int 
 	//ERS(EMC_I18N("Named parameter #<%s> not defined"), paramNameBuf);
 }
 
-c_line::e_parser_codes c_line::___execute_atan(char *buffer, int *read_pos, float *read_value)
+e_parsing_errors NGC_RS274::LineProcessor::___execute_atan(char *buffer, int *read_pos, float *read_value)
 {
-	e_parser_codes ret_code = e_parser_codes::Ok;
+	e_parsing_errors ret_code = e_parsing_errors::OK;
 	float argument2 = 0;
 
 	if (buffer[*read_pos] != '/')
 	{
-		ret_code = e_parser_codes::MissingSlashIn_ATAN;
+		ret_code = e_parsing_errors::MissingSlashIn_ATAN;
 		return ret_code;
 	}
 	*read_pos += 1;//(*read_pos + 1);
 	if (buffer[*read_pos] != '[')
 	{
-		ret_code = e_parser_codes::MissingBracketAfterSlash;
+		ret_code = e_parsing_errors::MissingBracketAfterSlash;
 	}
-	c_line::__read_class_expression(buffer, read_pos, &argument2);
+	NGC_RS274::LineProcessor::__read_class_expression(buffer, read_pos, &argument2);
 	*read_value = atan2(*read_value, argument2);  /* value in radians */
 	*read_value = ((*read_value * 180.0) / M_PI);   /* convert to degrees */
 	return ret_code;
 }
 
-c_line::e_parser_codes c_line::____get_named_parameter_name(char * buffer, int * read_pos, char * parameter_name)
+e_parsing_errors NGC_RS274::LineProcessor::____get_named_parameter_name(char * buffer, int * read_pos, char * parameter_name)
 {
 	bool done = false;
-	e_parser_codes ret_code = e_parser_codes::Ok;
+	e_parsing_errors ret_code = e_parsing_errors::OK;
 
 	if (buffer[*read_pos] != '<' && !isalpha(buffer[*(read_pos)]))
 	{
-		ret_code = e_parser_codes::IllegalCaller;
+		ret_code = e_parsing_errors::IllegalCaller;
 		return ret_code;
 	}
 
@@ -713,19 +739,19 @@ c_line::e_parser_codes c_line::____get_named_parameter_name(char * buffer, int *
 
 	// !!!KL need to rename the error message and change text
 	if (!done)
-		ret_code = e_parser_codes::ParameterNameNotClosed;
+	ret_code = e_parsing_errors::ParameterNameNotClosed;
 
 	return ret_code;
 }
 
-c_line::e_parser_codes c_line::__get_unary_operator_class(char * buffer, int * read_pos, e_unary_operator_class_types * operator_class)
+e_parsing_errors NGC_RS274::LineProcessor::__get_unary_operator_class(char * buffer, int * read_pos, e_unary_operator_class_types * operator_class)
 {
-	e_parser_codes ret_code = e_parser_codes::Ok;
+	e_parsing_errors ret_code = e_parsing_errors::OK;
 
 	char c = buffer[*read_pos];
 	*read_pos += 1; //(*read_pos + 1);
 	switch (c) {
-	case 'A':
+		case 'A':
 		if ((buffer[*read_pos] == 'B') && (buffer[(*read_pos) + 1] == 'S')) {
 			*operator_class = e_unary_operator_class_types::Abs;
 			*read_pos += 2;//(*read_pos + 2);
@@ -743,25 +769,25 @@ c_line::e_parser_codes c_line::__get_unary_operator_class(char * buffer, int * r
 			*read_pos += 3;//(*read_pos + 3);
 		}
 		else
-			ret_code = e_parser_codes::Unknown_Op_Name_A;
+		ret_code = e_parsing_errors::Unknown_Op_Name_A;
 		break;
-	case 'C':
+		case 'C':
 		if ((buffer[*read_pos] == 'O') && (buffer[(*read_pos) + 1] == 'C')) {
 			*operator_class = e_unary_operator_class_types::Cos;
 			*read_pos += 2;//(*read_pos + 2);
 		}
 		else
-			ret_code = e_parser_codes::Unknown_Op_Name_C;
+		ret_code = e_parsing_errors::Unknown_Op_Name_C;
 		break;
-	case 'E':
+		case 'E':
 		if ((buffer[*read_pos] == 'X') && (buffer[(*read_pos) + 1] == 'P')) {
 			*operator_class = e_unary_operator_class_types::Exp;
 			*read_pos += 2;//(*read_pos + 2);
 		}
 		else
-			ret_code = e_parser_codes::Unknown_Op_Name_E;
+		ret_code = e_parsing_errors::Unknown_Op_Name_E;
 		break;
-	case 'F':
+		case 'F':
 		if ((buffer[*read_pos] == 'I') && (buffer[(*read_pos) + 1] == 'X')) {
 			*operator_class = e_unary_operator_class_types::Fix;
 			*read_pos += 2;//(*read_pos + 2);
@@ -771,25 +797,25 @@ c_line::e_parser_codes c_line::__get_unary_operator_class(char * buffer, int * r
 			*read_pos += 2;//(*read_pos + 2);
 		}
 		else
-			ret_code = e_parser_codes::Unknown_Op_Name_F;
+		ret_code = e_parsing_errors::Unknown_Op_Name_F;
 		break;
-	case 'L':
+		case 'L':
 		if (buffer[*read_pos] == 'L') {
 			*operator_class = e_unary_operator_class_types::Ln;
 			*read_pos += 1;//(*read_pos + 1);
 		}
 		else
-			ret_code = e_parser_codes::Unknown_Op_Name_L;
+		ret_code = e_parsing_errors::Unknown_Op_Name_L;
 		break;
-	case 'R':
+		case 'R':
 		if (strncmp((buffer + *read_pos), "OUND", 4) == 0) {
 			*operator_class = e_unary_operator_class_types::Round;
 			*read_pos += 4;//(*read_pos + 4);
 		}
 		else
-			ret_code = e_parser_codes::Unknown_Op_Name_R;
+		ret_code = e_parsing_errors::Unknown_Op_Name_R;
 		break;
-	case 'S':
+		case 'S':
 		if ((buffer[*read_pos] == 'I') && (buffer[(*read_pos) + 1] == 'N')) {
 			*operator_class = e_unary_operator_class_types::Sin;
 			*read_pos += 2;//(*read_pos + 2);
@@ -799,102 +825,102 @@ c_line::e_parser_codes c_line::__get_unary_operator_class(char * buffer, int * r
 			*read_pos += 3;//(*read_pos + 3);
 		}
 		else
-			ret_code = e_parser_codes::Unknown_Op_Name_S;
+		ret_code = e_parsing_errors::Unknown_Op_Name_S;
 		break;
-	case 'T':
+		case 'T':
 		if ((buffer[*read_pos] == 'A') && (buffer[(*read_pos) + 1] == 'N')) {
 			*operator_class = e_unary_operator_class_types::Tan;
 			*read_pos += 2;//(*read_pos + 2);
 		}
 		else
-			ret_code = e_parser_codes::Unknown_Op_Name_T;
+		ret_code = e_parsing_errors::Unknown_Op_Name_T;
 		break;
-	default:
-		ret_code = e_parser_codes::UnknownOperationClass;
+		default:
+		ret_code = e_parsing_errors::UnknownOperationClass;
 	}
 	return ret_code;
 }
 
-c_line::e_parser_codes c_line::__get_expression_operator_class(char * buffer, int * read_pos, e_expression_operator_class_types * operator_class)
+e_parsing_errors NGC_RS274::LineProcessor::__get_expression_operator_class(char * buffer, int * read_pos, e_expression_operator_class_types * operator_class)
 {
 	char c = 0;
 
 	c = buffer[*read_pos];
 	*read_pos += 1;//(*read_pos + 1);
 	switch (c) {
-	case '+':
+		case '+':
 		*operator_class = e_expression_operator_class_types::Addition;
 		break;
-	case '-':
+		case '-':
 		*operator_class = e_expression_operator_class_types::Subtract;
 		break;
-	case '/':
+		case '/':
 		*operator_class = e_expression_operator_class_types::Division;
 		break;
-	case '*':
+		case '*':
 		if (buffer[*read_pos] == '*') {
 			*operator_class = e_expression_operator_class_types::Exponent;
 			*read_pos += 1;//(*read_pos + 1);
 		}
 		else
-			*operator_class = e_expression_operator_class_types::Multiplication;
+		*operator_class = e_expression_operator_class_types::Multiplication;
 		break;
-	case ']':
+		case ']':
 		*operator_class = e_expression_operator_class_types::ClosingBracket;
 		break;
-	case 'A':
+		case 'A':
 		if ((buffer[*read_pos] == 'N') && (buffer[(*read_pos) + 1] == 'D')) {
 			*operator_class = e_expression_operator_class_types::And;
 			*read_pos += 2;//(*read_pos + 2);
 		}
 		else
-			return e_parser_codes::Unknown_Op_Name_A;
+		return e_parsing_errors::Unknown_Op_Name_A;
 		break;
-	case 'M':
+		case 'M':
 		if ((buffer[*read_pos] == 'O') && (buffer[(*read_pos) + 1] == 'D')) {
 			*operator_class = e_expression_operator_class_types::Modulus;
 			*read_pos += 2;//(*read_pos + 2);
 		}
 		else
-			e_parser_codes::Unknown_Op_Name_M;
+		e_parsing_errors::Unknown_Op_Name_M;
 		break;
-	case 'O':
+		case 'O':
 		if (buffer[*read_pos] == 'R') {
 			*operator_class = e_expression_operator_class_types::Or;
 			*read_pos += 1;//(*read_pos + 1);
 		}
 		else
-			e_parser_codes::Unknown_Op_Name_O;
+		e_parsing_errors::Unknown_Op_Name_O;
 		break;
-	case 'X':
+		case 'X':
 		if ((buffer[*read_pos] == 'O') && (buffer[(*read_pos) + 1] == 'R')) {
 			*operator_class = e_expression_operator_class_types::Ex_Or;
 			*read_pos += 2;//(*read_pos + 2);
 		}
 		else
-			e_parser_codes::Unknown_Op_Name_X;
+		e_parsing_errors::Unknown_Op_Name_X;
 		break;
 
 		/* relational operators */
-	case 'E':
+		case 'E':
 		if (buffer[*read_pos] == 'Q')
 		{
 			*operator_class = e_expression_operator_class_types::_eq;
 			*read_pos += 1;//(*read_pos + 1);
 		}
 		else
-			e_parser_codes::Unknown_Op_Name_E;
+		e_parsing_errors::Unknown_Op_Name_E;
 		break;
-	case 'N':
+		case 'N':
 		if (buffer[*read_pos] == 'E')
 		{
 			*operator_class = e_expression_operator_class_types::_ne;
 			*read_pos += 1;//(*read_pos + 1);
 		}
 		else
-			e_parser_codes::Unknown_Op_Name_N;
+		e_parsing_errors::Unknown_Op_Name_N;
 		break;
-	case 'G':
+		case 'G':
 		if (buffer[*read_pos] == 'E')
 		{
 			*operator_class = e_expression_operator_class_types::_ge;
@@ -906,9 +932,9 @@ c_line::e_parser_codes c_line::__get_expression_operator_class(char * buffer, in
 			*read_pos += 1;//(*read_pos + 1);
 		}
 		else
-			e_parser_codes::Unknown_Op_Name_G;
+		e_parsing_errors::Unknown_Op_Name_G;
 		break;
-	case 'L':
+		case 'L':
 		if (buffer[*read_pos] == 'E')
 		{
 			*operator_class = e_expression_operator_class_types::_le;
@@ -920,221 +946,221 @@ c_line::e_parser_codes c_line::__get_expression_operator_class(char * buffer, in
 			*read_pos += 1;//(*read_pos + 1);
 		}
 		else
-			e_parser_codes::Unknown_Op_Name_L;
+		e_parsing_errors::Unknown_Op_Name_L;
 		break;
 
-	case 0:
-		e_parser_codes::ExpressionNotClosed;
+		case 0:
+		e_parsing_errors::ExpressionNotClosed;
 		break;
-	default:
-		e_parser_codes::UnknownOperationClass;
+		default:
+		e_parsing_errors::UnknownOperationClass;
 	}
-	return e_parser_codes::Ok;
+	return e_parsing_errors::OK;
 }
 
-int c_line::__get_operator_precedence(e_expression_operator_class_types operator_class)
+int NGC_RS274::LineProcessor::__get_operator_precedence(e_expression_operator_class_types operator_class)
 {
 	switch (operator_class)
 	{
-	case e_expression_operator_class_types::ClosingBracket:
+		case e_expression_operator_class_types::ClosingBracket:
 		return 1;
 
-	case e_expression_operator_class_types::Or:
-	case e_expression_operator_class_types::Ex_Or:
-	case e_expression_operator_class_types::Non_Ex_Or:
+		case e_expression_operator_class_types::Or:
+		case e_expression_operator_class_types::Ex_Or:
+		case e_expression_operator_class_types::Non_Ex_Or:
 		return 2;
 
-	case e_expression_operator_class_types::_lt:
-	case e_expression_operator_class_types::_eq:
-	case e_expression_operator_class_types::_ne:
-	case e_expression_operator_class_types::_le:
-	case e_expression_operator_class_types::_ge:
-	case e_expression_operator_class_types::_gt:
+		case e_expression_operator_class_types::_lt:
+		case e_expression_operator_class_types::_eq:
+		case e_expression_operator_class_types::_ne:
+		case e_expression_operator_class_types::_le:
+		case e_expression_operator_class_types::_ge:
+		case e_expression_operator_class_types::_gt:
 		return 3;
 
-	case e_expression_operator_class_types::Subtract:
-	case e_expression_operator_class_types::Addition:
+		case e_expression_operator_class_types::Subtract:
+		case e_expression_operator_class_types::Addition:
 		return 4;
 
-	case e_expression_operator_class_types::NoOperation:
-	case e_expression_operator_class_types::Division:
-	case e_expression_operator_class_types::Modulus:
-	case e_expression_operator_class_types::Multiplication:
+		case e_expression_operator_class_types::NoOperation:
+		case e_expression_operator_class_types::Division:
+		case e_expression_operator_class_types::Modulus:
+		case e_expression_operator_class_types::Multiplication:
 		return 5;
 
-	case e_expression_operator_class_types::Exponent:
+		case e_expression_operator_class_types::Exponent:
 		return 6;
 	}
 	// should never happen
 	return 0;
 }
 
-c_line::e_parser_codes c_line::___execute_unary(float *read_value, e_unary_operator_class_types operator_class)
+e_parsing_errors NGC_RS274::LineProcessor::___execute_unary(float *read_value, e_unary_operator_class_types operator_class)
 {
-	e_parser_codes ret_code = e_parser_codes::Ok;
+	e_parsing_errors ret_code = e_parsing_errors::OK;
 
 	switch (operator_class) {
-	case e_unary_operator_class_types::Abs:
-	{
-		if (*read_value < 0.0)
+		case e_unary_operator_class_types::Abs:
+		{
+			if (*read_value < 0.0)
 			*read_value = (-1.0 * *read_value);
-		break;
-	}
-	case e_unary_operator_class_types::Acos:
-	{
-		if (*read_value < -1.0 || *read_value > 1.0)
-		{
-			return e_parser_codes::ArcCosValueOutOfRange;
-		}
-		*read_value = acos(*read_value);
-		*read_value = ((*read_value * 180.0) / M_PI);
-		break;
-	}
-	case e_unary_operator_class_types::Asin:
-	{
-		if (*read_value < -1.0 || *read_value > 1.0)
-		{
-			ret_code = e_parser_codes::ArcSinValueOutOfRange;
 			break;
 		}
-		*read_value = asin(*read_value);
-		*read_value = ((*read_value * 180.0) / M_PI);
-		break;
-	}
-	case e_unary_operator_class_types::Cos:
-	{
-		*read_value = cos((*read_value * M_PI) / 180.0);
-		break;
-	}
-	case e_unary_operator_class_types::Exp:
-	{
-		*read_value = exp(*read_value);
-		break;
-	}
-	case e_unary_operator_class_types::Fix:
-	{
-		*read_value = floor(*read_value);
-		break;
-	}
-	case e_unary_operator_class_types::Fup:
-	{
-		*read_value = ceil(*read_value);
-		break;
-	}
-	case e_unary_operator_class_types::Ln:
-	{
-		if (*read_value <= 0.0)
+		case e_unary_operator_class_types::Acos:
 		{
-			ret_code = e_parser_codes::LogValueNegative;
+			if (*read_value < -1.0 || *read_value > 1.0)
+			{
+				return e_parsing_errors::ArcCosValueOutOfRange;
+			}
+			*read_value = acos(*read_value);
+			*read_value = ((*read_value * 180.0) / M_PI);
 			break;
 		}
-		*read_value = log(*read_value);
-		break;
-	}
-	case e_unary_operator_class_types::Round:
-	{
-		*read_value = (float)
+		case e_unary_operator_class_types::Asin:
+		{
+			if (*read_value < -1.0 || *read_value > 1.0)
+			{
+				ret_code = e_parsing_errors::ArcSinValueOutOfRange;
+				break;
+			}
+			*read_value = asin(*read_value);
+			*read_value = ((*read_value * 180.0) / M_PI);
+			break;
+		}
+		case e_unary_operator_class_types::Cos:
+		{
+			*read_value = cos((*read_value * M_PI) / 180.0);
+			break;
+		}
+		case e_unary_operator_class_types::Exp:
+		{
+			*read_value = exp(*read_value);
+			break;
+		}
+		case e_unary_operator_class_types::Fix:
+		{
+			*read_value = floor(*read_value);
+			break;
+		}
+		case e_unary_operator_class_types::Fup:
+		{
+			*read_value = ceil(*read_value);
+			break;
+		}
+		case e_unary_operator_class_types::Ln:
+		{
+			if (*read_value <= 0.0)
+			{
+				ret_code = e_parsing_errors::LogValueNegative;
+				break;
+			}
+			*read_value = log(*read_value);
+			break;
+		}
+		case e_unary_operator_class_types::Round:
+		{
+			*read_value = (float)
 			((int)(*read_value + ((*read_value < 0.0) ? -0.5 : 0.5)));
-		break;
-	}
-	case e_unary_operator_class_types::Sin:
-	{
-		*read_value = sin((*read_value * M_PI) / 180.0);
-		break;
-	}
-	case e_unary_operator_class_types::Sqrt:
-	{
-		if (*read_value < 0.0)
-		{
-			ret_code = e_parser_codes::SqrtValueNegative;
-			return ret_code;
+			break;
 		}
-		*read_value = sqrt(*read_value);
-		break;
-	}
-	case e_unary_operator_class_types::Tan:
-	{
-		*read_value = tan((*read_value * M_PI) / 180.0);
-		break;
-	}
-	default:
+		case e_unary_operator_class_types::Sin:
+		{
+			*read_value = sin((*read_value * M_PI) / 180.0);
+			break;
+		}
+		case e_unary_operator_class_types::Sqrt:
+		{
+			if (*read_value < 0.0)
+			{
+				ret_code = e_parsing_errors::SqrtValueNegative;
+				return ret_code;
+			}
+			*read_value = sqrt(*read_value);
+			break;
+		}
+		case e_unary_operator_class_types::Tan:
+		{
+			*read_value = tan((*read_value * M_PI) / 180.0);
+			break;
+		}
+		default:
 		e_unary_operator_class_types::NoOperation;
 	}
 	return ret_code;
 }
 
-c_line::e_parser_codes c_line::___execute_binary(float *left, e_expression_operator_class_types operator_class, float *right)
+e_parsing_errors NGC_RS274::LineProcessor::___execute_binary(float *left, e_expression_operator_class_types operator_class, float *right)
 {
-	e_parser_codes ret_code = e_parser_codes::Ok;
+	e_parsing_errors ret_code = e_parsing_errors::OK;
 	float diff = 0;
 
 	switch (operator_class) {
-	case e_expression_operator_class_types::Division:
+		case e_expression_operator_class_types::Division:
 		if (*right == 0.0)
 		{
-			ret_code = e_parser_codes::DivideByZero;
+			ret_code = e_parsing_errors::DivideByZero;
 			break;
 		}
 		*left = (*left / *right);
 		break;
-	case e_expression_operator_class_types::Modulus:                 /* always calculates a positive answer */
+		case e_expression_operator_class_types::Modulus:                 /* always calculates a positive answer */
 		*left = fmod(*left, *right);
 		if (*left < 0.0) {
 			*left = (*left + fabs(*right));
 		}
 		break;
-	case e_expression_operator_class_types::Exponent:
+		case e_expression_operator_class_types::Exponent:
 		if (*left < 0.0 && (floor(*right) != *right))
 		{
-			ret_code = e_parser_codes::ExponentOnNegativeNonInteger;
+			ret_code = e_parsing_errors::ExponentOnNegativeNonInteger;
 			break;
 		}
 		*left = pow(*left, *right);
 		break;
-	case e_expression_operator_class_types::Multiplication:
+		case e_expression_operator_class_types::Multiplication:
 		*left = (*left * *right);
 		break;
-	case e_expression_operator_class_types::Or:
+		case e_expression_operator_class_types::Or:
 		*left = ((*left == 0.0) || (*right == 0.0)) ? 0.0 : 1.0;
 		break;
-	case e_expression_operator_class_types::Ex_Or:
+		case e_expression_operator_class_types::Ex_Or:
 		*left = (((*left == 0.0) && (*right != 0.0))
-			|| ((*left != 0.0) && (*right == 0.0))) ? 1.0 : 0.0;
+		|| ((*left != 0.0) && (*right == 0.0))) ? 1.0 : 0.0;
 		break;
-	case e_expression_operator_class_types::Subtract:
+		case e_expression_operator_class_types::Subtract:
 		*left = (*left - *right);
 		break;
-	case e_expression_operator_class_types::Non_Ex_Or:
+		case e_expression_operator_class_types::Non_Ex_Or:
 		*left = ((*left != 0.0) || (*right != 0.0)) ? 1.0 : 0.0;
 		break;
-	case e_expression_operator_class_types::Addition:
+		case e_expression_operator_class_types::Addition:
 		*left = (*left + *right);
 		break;
 
-	case e_expression_operator_class_types::_lt:
+		case e_expression_operator_class_types::_lt:
 		*left = (*left < *right) ? 1.0 : 0.0;
 		break;
-	case e_expression_operator_class_types::_eq:
+		case e_expression_operator_class_types::_eq:
 		diff = *left - *right;
 		diff = (diff < 0) ? -diff : diff;
 		*left = (diff < NEAR_ZERO) ? 1.0 : 0.0;
 		break;
-	case e_expression_operator_class_types::_ne:
+		case e_expression_operator_class_types::_ne:
 		diff = *left - *right;
 		diff = (diff < 0) ? -diff : diff;
 		*left = (diff >= NEAR_ZERO) ? 1.0 : 0.0;
 		break;
-	case e_expression_operator_class_types::_le:
+		case e_expression_operator_class_types::_le:
 		*left = (*left <= *right) ? 1.0 : 0.0;
 		break;
-	case e_expression_operator_class_types::_ge:
+		case e_expression_operator_class_types::_ge:
 		*left = (*left >= *right) ? 1.0 : 0.0;
 		break;
-	case e_expression_operator_class_types::_gt:
+		case e_expression_operator_class_types::_gt:
 		*left = (*left > *right) ? 1.0 : 0.0;
 		break;
-	default:
-		ret_code = e_parser_codes::UnknownOperationClass;
+		default:
+		ret_code = e_parsing_errors::UnknownOperationClass;
 	}
 	return ret_code;
 }

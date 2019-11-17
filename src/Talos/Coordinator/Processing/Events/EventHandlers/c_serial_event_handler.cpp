@@ -41,7 +41,8 @@ void c_serial_event_handler::process(c_ring_buffer<char> * buffer)
 	to be assigned to.
 	*/
 	
-	//Is there a handler assigned for this data class already?
+	//Is there a handler assigned for this data class already? If a handler is assigned
+	//keep using it until all the data is consumed. Otherwise assign a new handler. 
 	if (c_serial_event_handler::pntr_data_handler == NULL)
 	{
 		c_serial_event_handler::__assign_handler(buffer);
@@ -49,6 +50,8 @@ void c_serial_event_handler::process(c_ring_buffer<char> * buffer)
 
 	if (c_serial_event_handler::pntr_data_handler != NULL)
 	{
+		//The handler will release its self when it determines that all of the data for
+		//that particular handler has been consumed. 
 		c_serial_event_handler::pntr_data_handler(buffer);
 	}
 
@@ -66,6 +69,9 @@ void c_serial_event_handler::__assign_handler(c_ring_buffer <char> * buffer)
 	//binary record type.
 	if ((peek_tail >=32 && peek_tail <= 127) || (peek_tail == CR || peek_tail == LF)) 
 	{
+		//TODO:: What if a program is running and the MDI interface sends serial data??
+		//I think we should ignore/lockout MDI input when a program is running. 
+
 		//Assign a specific handler for this data type
 		c_serial_event_handler::pntr_data_handler = c_ngc_data_handler::assign_handler(buffer);
 		//Assign a release call back function. The handler knows nothing about serial events

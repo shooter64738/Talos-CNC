@@ -38,6 +38,7 @@
     <ClInclude Include="..\..\..\..\NGC_RS274\NGC_Block.h" />
     <ClInclude Include="..\..\..\..\NGC_RS274\ngc_defines.h" />
     <ClInclude Include="..\..\..\..\NGC_RS274\NGC_Errors.h" />
+    <ClInclude Include="..\..\..\..\NGC_RS274\ngc_errors_interpreter.h" />
     <ClInclude Include="..\..\..\..\NGC_RS274\NGC_G_Groups.h" />
     <ClInclude Include="..\..\..\..\NGC_RS274\NGC_Interpreter.h" />
     <ClInclude Include="..\..\..\..\NGC_RS274\NGC_Line_Processor.h" />

@@ -21,7 +21,7 @@
 #include "../../Events/extern_events_types.h"
 #include "../../../../communication_def.h"
 #include "../../Main/Main_Process.h"
-#include "../../../../NGC_RS274/NGC_Interpreter.h"
+#include "../../../../NGC_RS274/NGC_Line_Processor.h"
 #include "../../../../c_ring_template.h"
 #include "../../../../NGC_RS274/NGC_Errors.h"
 #include "../../../../Motion/Processing/GCode/c_gcode_buffer.h"
@@ -99,24 +99,25 @@ void c_ngc_data_handler::ngc_load_block(c_ring_buffer <char> * buffer_source
 	//Get a pointer to the current ngc buffer head position. We need this block
 	//because it has the persisted values that were set the last time a block was
 	//processed. If this is the first block we are processing, then head is zero
-	NGC_RS274::NGC_Binary_Block * new_block = buffer_destination->writer_handle();
+	//NGC_RS274::NGC_Binary_Block * new_block = buffer_destination->writer_handle();
 
 	//The ngc interpreter expects there to be a new block prepped and handed to it.
-	uint16_t return_value = NGC_RS274::Interpreter::Processor::process_line(new_block, buffer_source);
+	e_parsing_errors return_value
+		= NGC_RS274::LineProcessor::start(buffer_source->_storage_pointer, buffer_destination);
 
 	//We wrote to the new block by pointer, so if there were no errors the buffer is
 	//updated already and we should advance the head pointer. If we did enconter
 	//an error then nothing should have updated at the buffer position and we can
 	//just move on.
-	if (return_value == NGC_RS274::Interpreter::Errors::OK)
-	{
-		buffer_destination->advance();
-		extern_ancillary_events.event_manager.set((int)s_ancillary_events::e_event_type::NGCBlockReady);
-	}
-	else
-	{
-		c_ngc_data_handler::__assign_error_handler(buffer_source, return_value);
-	}
+	//if (return_value == NGC_RS274::LineProcessor::e_parser_codes::Ok )
+	//{
+	//	buffer_destination->advance();
+	//	extern_ancillary_events.event_manager.set((int)s_ancillary_events::e_event_type::NGCBlockReady);
+	//}
+	//else
+	//{
+	//	//c_ngc_data_handler::__assign_error_handler(buffer_source, return_value);
+	//}
 
 }
 
@@ -131,17 +132,17 @@ void c_ngc_data_handler::__release(c_ring_buffer <char> * buffer_source)
 
 void c_ngc_data_handler::__assign_error_handler(c_ring_buffer <char> * buffer_source, uint16_t error_value)
 {
-	switch (error_value)
-	{
-	case NGC_RS274::Interpreter::Errors::LINE_CONTAINS_NO_DATA:
-	{
-		//These could probably be ignored.
-		extern_ancillary_events.event_manager.set((int)s_ngc_error_events::e_event_type::BlockContiansNoData);
-		break;
-	}
-	default:
-		break;
-	}
+	//switch (error_value)
+	//{
+	//case e_parsing_errors::LINE_CONTAINS_NO_DATA :
+	//{
+	//	//These could probably be ignored.
+	//	extern_ancillary_events.event_manager.set((int)s_ngc_error_events::e_event_type::BlockContiansNoData);
+	//	break;
+	//}
+	//default:
+	//	break;
+	//}
 	
 	
 }

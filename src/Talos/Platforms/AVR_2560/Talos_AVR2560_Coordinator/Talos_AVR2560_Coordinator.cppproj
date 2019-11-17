@@ -342,6 +342,10 @@
       <SubType>compile</SubType>
       <Link>Ngc_Rs274\NGC_Errors.h</Link>
     </Compile>
+    <Compile Include="..\..\..\NGC_RS274\ngc_errors_interpreter.h">
+      <SubType>compile</SubType>
+      <Link>Talos_AVR2560_Coordinator\Ngc_Rs274\ngc_errors_interpreter.h</Link>
+    </Compile>
     <Compile Include="..\..\..\NGC_RS274\NGC_G_Groups.h">
       <SubType>compile</SubType>
       <Link>Ngc_Rs274\NGC_G_Groups.h</Link>

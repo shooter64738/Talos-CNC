@@ -23,6 +23,8 @@
 #define __C_NGC_INTERPRETER_H__
 #include "../Common/Serial/c_Serial.h"
 #include "../NGC_RS274/NGC_Block.h"
+#include "../c_ring_template.h"
+#include "NGC_Errors.h"
 
 #ifdef MSVC
 static float square(float X)
@@ -40,7 +42,8 @@ static float square(float X)
 #ifdef MACHINE_TYPE_LATHE
 #include "Machine Specific/Lathe/NGC_Lathe.h"
 #endif
-#include "../c_ring_template.h"
+#include "ngc_errors_interpreter.h"
+
 
 namespace NGC_RS274
 {
@@ -52,63 +55,35 @@ namespace NGC_RS274
 			
 			//variables
 			public:
-			enum class e_value_types : uint8_t
-			{
-				UnKnown = 0,
-				Numeric = 1,
-				Parameter = 2
-			};
-			
-			static c_Serial *local_serial;
-			//static char Line[CYCLE_LINE_LENGTH];
-			static char * Line;
-			static int HasErrors;
-			static NGC_RS274::NGC_Binary_Block worker_block;
-			static NGC_RS274::NGC_Binary_Block *stager_block;
-			static bool normalize_distance_units_to_mm;
 
 			static uint8_t initialize();
-			static int process_line(NGC_RS274::NGC_Binary_Block*plan_block, c_ring_buffer<char> * data_source);
-			static float evaluate_address(char* Data);
 			//Move G and M codes to the respective groups
-			static int group_word(char Word, float Address);
+			static e_parsing_errors group_word(char Word, float Address, NGC_RS274::NGC_Binary_Block *new_block, NGC_RS274::NGC_Binary_Block *previous_block);
 			//Process G Words ONLY
-			static int _gWord(float Address);
+			static e_parsing_errors _gWord(float Address, NGC_RS274::NGC_Binary_Block *new_block, NGC_RS274::NGC_Binary_Block *previous_block);
 			//Process M Words ONLY
-			static int _mWord(float Address);
+			static e_parsing_errors _mWord(float Address, NGC_RS274::NGC_Binary_Block *new_block, NGC_RS274::NGC_Binary_Block *previous_block);
 			//Process everything EXECEPT G or M words
-			static int _pWord(char Word, float iAddress);
-			static int process_word_values(char Word, float iAddress);
-			static int convert_to_line_index(uint8_t BlockNumber);
-			static int convert_to_line(NGC_RS274::NGC_Binary_Block*local_block);
+			static e_parsing_errors _pWord(char Word, float iAddress, NGC_RS274::NGC_Binary_Block *new_block);
+			static e_parsing_errors process_word_values(char Word, float iAddress, NGC_RS274::NGC_Binary_Block *new_block);
 
 			private:
 			static int parse_values(c_ring_buffer<char> * data_source);
-			static void assign_planes(NGC_RS274::NGC_Binary_Block &plane_block);
+			static void assign_planes(NGC_RS274::NGC_Binary_Block *new_block, NGC_RS274::NGC_Binary_Block *previous_block);
 			
 			//These error checking methods will need to be moved to their machine specific types.
-			static int error_check_main();
-			static int error_check_plane_select(NGC_RS274::NGC_Binary_Block &plane_block);
-			static int error_check_arc();
-			static int error_check_tool_length_offset();
-			static int error_check_cutter_compensation();
-			static int error_check_non_modal();
-			static int error_check_radius_format_arc();
-			static int error_check_center_format_arc();
+			static e_parsing_errors error_check_main(NGC_RS274::NGC_Binary_Block *new_block, NGC_RS274::NGC_Binary_Block *previous_block);
+			static e_parsing_errors error_check_plane_select(NGC_RS274::NGC_Binary_Block *new_block, NGC_RS274::NGC_Binary_Block *previous_block);
+			static e_parsing_errors error_check_arc(NGC_RS274::NGC_Binary_Block *new_block, NGC_RS274::NGC_Binary_Block *previous_block);
+			static e_parsing_errors error_check_tool_length_offset(NGC_RS274::NGC_Binary_Block *new_block, NGC_RS274::NGC_Binary_Block *previous_block);
+			static e_parsing_errors error_check_cutter_compensation(NGC_RS274::NGC_Binary_Block *new_block, NGC_RS274::NGC_Binary_Block *previous_block);
+			static e_parsing_errors error_check_non_modal(NGC_RS274::NGC_Binary_Block *new_block, NGC_RS274::NGC_Binary_Block *previous_block);
+			static e_parsing_errors error_check_radius_format_arc(NGC_RS274::NGC_Binary_Block *new_block, NGC_RS274::NGC_Binary_Block *previous_block);
+			static e_parsing_errors error_check_center_format_arc(NGC_RS274::NGC_Binary_Block *new_block, NGC_RS274::NGC_Binary_Block *previous_block);
 			
-			static int normalize_distance_units();
-
 			static float hypot_f(float x, float y);
 			static float square(float x);
 			static bool determine_motion(NGC_RS274::NGC_Binary_Block*local_block);
-			static int16_t get_word(char byte, c_ring_buffer<char> * buffer);
-			static int16_t get_value(char byte, e_value_types value_type, c_ring_buffer<char> * buffer);
-			static e_value_types get_value_type(char byte, c_ring_buffer<char> * buffer);
-			static bool is_line_terminator(char byte, c_ring_buffer<char> * buffer);
-			static void skip_ignoreables(c_ring_buffer<char>* buffer);
-			static void read_to_end_of_line(c_ring_buffer<char>* buffer);
-			//c_interpreter(const c_interpreter &c);
-			//c_interpreter& operator=(const c_interpreter &c);
 			//c_interpreter();
 			//~c_interpreter();
 
