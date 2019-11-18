@@ -28,24 +28,24 @@
 
 namespace BinaryRecords
 {
-#ifndef __C_CRITICAL_ERRORS
-#define __C_CRITICAL_ERRORS
+	#ifndef __C_CRITICAL_ERRORS
+	#define __C_CRITICAL_ERRORS
 	enum class e_critical_errors
 	{
 		Hardware_failure_force_shutdown = 0
 	};
-#endif
+	#endif
 
-#ifndef __C_RAMP_TYPE
-#define __C_RAMP_TYPE
+	#ifndef __C_RAMP_TYPE
+	#define __C_RAMP_TYPE
 	enum class e_ramp_type
 	{
 		Accel, Cruise, Decel, Decel_Override
 	};
-#endif
+	#endif
 
-#ifndef __C_MOTION_TYPE
-#define __C_MOTION_TYPE
+	#ifndef __C_MOTION_TYPE
+	#define __C_MOTION_TYPE
 	enum class e_motion_type : uint8_t
 	{
 		rapid_linear = 0 * G_CODE_MULTIPLIER,
@@ -53,10 +53,10 @@ namespace BinaryRecords
 		arc_cw = 2 * G_CODE_MULTIPLIER,
 		arc_ccw = 3 * G_CODE_MULTIPLIER
 	};
-#endif
+	#endif
 
-#ifndef __C_BLOCK_FLAG
-#define __C_BLOCK_FLAG
+	#ifndef __C_BLOCK_FLAG
+	#define __C_BLOCK_FLAG
 	enum class e_block_flag : uint8_t
 	{
 		block_state_normal = 0,
@@ -66,10 +66,10 @@ namespace BinaryRecords
 		motion_state_cruising = 4,
 		motion_state_stopping = 5,
 	};
-#endif
+	#endif
 
-#ifndef __C_FEED_MODES
-#define __C_FEED_MODES
+	#ifndef __C_FEED_MODES
+	#define __C_FEED_MODES
 	enum class e_feed_modes : uint16_t
 	{
 		FEED_RATE_MINUTES_PER_UNIT_MODE = 93 * G_CODE_MULTIPLIER,
@@ -78,10 +78,10 @@ namespace BinaryRecords
 		FEED_RATE_CONSTANT_SURFACE_SPEED = 96 * G_CODE_MULTIPLIER,
 		FEED_RATE_RPM_MODE = 97 * G_CODE_MULTIPLIER
 	};
-#endif
+	#endif
 
-#ifndef __C_BINARY_RECORD_TYPES
-#define __C_BINARY_RECORD_TYPES
+	#ifndef __C_BINARY_RECORD_TYPES
+	#define __C_BINARY_RECORD_TYPES
 	enum class e_binary_record_types : uint8_t
 	{
 		//DO NOT use 10 or 13 as binary record type identifiers.
@@ -93,19 +93,19 @@ namespace BinaryRecords
 		Peripheral_Control_Setting = 5,
 		Status = 6
 	};
-#endif
+	#endif
 
-#ifndef __C_UNIT_TYPES
-#define __C_UNIT_TYPES
+	#ifndef __C_UNIT_TYPES
+	#define __C_UNIT_TYPES
 	enum class e_unit_types : uint8_t
 	{
 		MM = 1,
 		INCHES = 2
 	};
-#endif
+	#endif
 
-#ifndef __C_SYSTEM_STATE_RECORD_TYPES
-#define __C_SYSTEM_STATE_RECORD_TYPES
+	#ifndef __C_SYSTEM_STATE_RECORD_TYPES
+	#define __C_SYSTEM_STATE_RECORD_TYPES
 	enum class e_system_state_record_types : uint8_t
 	{
 		Motion_Active = 1, //Motion states 1-9
@@ -118,10 +118,10 @@ namespace BinaryRecords
 		Spindle_Running = 11,
 		System_Error = 99
 	};
-#endif
+	#endif
 
-#ifndef __C_SYSTEM_SUB_STATE_RECORD_TYPES
-#define __C_SYSTEM_SUB_STATE_RECORD_TYPES
+	#ifndef __C_SYSTEM_SUB_STATE_RECORD_TYPES
+	#define __C_SYSTEM_SUB_STATE_RECORD_TYPES
 	enum class e_system_sub_state_record_types : uint8_t
 	{
 		Block_Complete = 1, //The block has completed. Block sequence # is returned in the num_message
@@ -150,12 +150,12 @@ namespace BinaryRecords
 
 	};
 
-#endif
+	#endif
 
 
 
-#ifndef __C_BINARY_RESPONSES
-#define __C_BINARY_RESPONSES
+	#ifndef __C_BINARY_RESPONSES
+	#define __C_BINARY_RESPONSES
 	enum class e_binary_responses : uint8_t
 	{
 		Ok = 240,
@@ -165,10 +165,10 @@ namespace BinaryRecords
 		Data_Rx_Wait = 236,
 		Check_Sum_Failure = 235
 	};
-#endif
+	#endif
 
-#ifndef __C_PERIPHERAL_PANEL_PROCESSING
-#define __C_PERIPHERAL_PANEL_PROCESSING
+	#ifndef __C_PERIPHERAL_PANEL_PROCESSING
+	#define __C_PERIPHERAL_PANEL_PROCESSING
 	enum class e_peripheral_panel_processing : uint16_t
 	{
 		Block_Skip = 1, //when on any lines beginning with the skip '/' char are not executed
@@ -178,10 +178,10 @@ namespace BinaryRecords
 		Coolant_Mist_On_Off = 5,
 		Coolant_Flood_On_Off = 6
 	};
-#endif
+	#endif
 
-#ifndef __C_PERIPHERAL_PANEL_OVERRIDE_RAPIDS
-#define __C_PERIPHERAL_PANEL_OVERRIDE_RAPIDS
+	#ifndef __C_PERIPHERAL_PANEL_OVERRIDE_RAPIDS
+	#define __C_PERIPHERAL_PANEL_OVERRIDE_RAPIDS
 	enum class e_peripheral_panel_override_rapids : uint8_t
 	{
 		Zero = 0,
@@ -189,7 +189,7 @@ namespace BinaryRecords
 		_50 = 50,
 		_100 = 100
 	};
-#endif
+	#endif
 	
 	template <typename TN>
 	struct s_bit_flag_controller
@@ -228,7 +228,62 @@ namespace BinaryRecords
 
 		volatile TN _flag;//because this can be accessed by interrupts, i am making it volatile
 	};
-
+	
+	struct s_ngc_block
+	{
+		float word_values[26]; //<--hard code to 26, cuz there are always 26 letters in the alphabet
+		s_bit_flag_controller<uint32_t> word_flags;
+		s_bit_flag_controller<uint16_t> block_events;
+		uint16_t g_group[COUNT_OF_G_CODE_GROUPS_ARRAY]; //There are 14 groups of gcodes (0-13)
+		s_bit_flag_controller<uint32_t> g_code_defined_in_block;
+		uint16_t m_group[COUNT_OF_M_CODE_GROUPS_ARRAY]; //There are 5 groups of mcodes (0-4)
+		s_bit_flag_controller<uint32_t> m_code_defined_in_block;
+		
+		char comment[256];
+		
+		//double a_number;
+		//double b_number;
+		//double c_number;
+		//char comment[256];
+		//double d_number_float;
+		//double e_number;
+		//double f_number;
+		//int g_modes[16];
+		//int h_number;
+		//double i_number;
+		//double j_number;
+		//double k_number;
+		//int l_number;
+		//int line_number;
+		//int n_number;
+		//int motion_to_be;
+		//int m_count;
+		//int m_modes[11];
+		//int user_m;
+		//double p_number;
+		//double q_number;
+		//double r_number;
+		//double s_number;
+		//int t_number;
+		//double u_number;
+		//double v_number;
+		//double w_number;
+		//double x_number;
+		//double y_number;
+		//double z_number;
+		//
+		//int radius_flag;
+		//double radius;
+		//int theta_flag;
+		//double theta;
+		//
+		//// control (o-word) stuff
+		//long offset;                 // start of line in file
+		//int o_type;
+		//int o_number;
+		//char *o_name;                // !!!KL be sure to free this
+		////double params[INTERP_SUB_PARAMS];
+	};
 
 	//****************************************************************************************
 	//structs in here are packed and byte aligned on 1. This is due to sending serial data in
@@ -362,7 +417,7 @@ namespace BinaryRecords
 		uint8_t invert_mpg_directions = 0;//60
 		BinaryRecords::e_unit_types machine_units = BinaryRecords::e_unit_types::MM;//61
 		s_hardware Hardware_Settings;
-		uint32_t _check_sum = 0;//65	
+		uint32_t _check_sum = 0;//65
 	};
 
 	struct s_spindle_control_settings

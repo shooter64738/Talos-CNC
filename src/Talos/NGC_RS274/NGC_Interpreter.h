@@ -68,7 +68,6 @@ namespace NGC_RS274
 			static e_parsing_errors process_word_values(char Word, float iAddress, NGC_RS274::NGC_Binary_Block *new_block);
 
 			private:
-			static int parse_values(c_ring_buffer<char> * data_source);
 			static void assign_planes(NGC_RS274::NGC_Binary_Block *new_block, NGC_RS274::NGC_Binary_Block *previous_block);
 			
 			//These error checking methods will need to be moved to their machine specific types.
@@ -83,7 +82,7 @@ namespace NGC_RS274
 			
 			static float hypot_f(float x, float y);
 			static float square(float x);
-			static bool determine_motion(NGC_RS274::NGC_Binary_Block*local_block);
+			
 			//c_interpreter();
 			//~c_interpreter();
 

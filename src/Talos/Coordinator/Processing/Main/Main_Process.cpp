@@ -17,11 +17,18 @@ then move to their respective modules.
 #include "../../../Motion/Processing/GCode/c_gcode_buffer.h"
 #include "../../../NGC_RS274/NGC_Line_Processor.h"
 #include "../../../NGC_RS274/NGC_Interpreter.h"
+#include "../../../NGC_RS274/NGC_Block_View.h"
 
 c_Serial Talos::Coordinator::Main_Process::host_serial;
 
 void Talos::Coordinator::Main_Process::initialize()
 {
+	NGC_RS274::Block_View assist = NGC_RS274::Block_View();
+	BinaryRecords::s_ngc_block newblock;
+	assist.clear(&newblock);
+	newblock.g_group[NGC_RS274::Groups::G::PLANE_SELECTION] = 17 * G_CODE_MULTIPLIER;
+	assist.load(&newblock);
+
 	Talos::Coordinator::Main_Process::host_serial = c_Serial(0, 250000); //<--Connect to host
 	Talos::Coordinator::Main_Process::host_serial.print_string("Coordinator initializing\r\n");
 

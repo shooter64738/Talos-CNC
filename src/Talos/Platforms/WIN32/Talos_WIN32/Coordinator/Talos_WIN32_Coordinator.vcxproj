@@ -36,6 +36,7 @@
     <ClInclude Include="..\..\..\..\NGC_RS274\Machine Specific\Mill\NGC_Mill.h" />
     <ClInclude Include="..\..\..\..\NGC_RS274\Machine Specific\Mill\NGC_M_Codes.h" />
     <ClInclude Include="..\..\..\..\NGC_RS274\NGC_Block.h" />
+    <ClInclude Include="..\..\..\..\NGC_RS274\NGC_Block_View.h" />
     <ClInclude Include="..\..\..\..\NGC_RS274\ngc_defines.h" />
     <ClInclude Include="..\..\..\..\NGC_RS274\NGC_Errors.h" />
     <ClInclude Include="..\..\..\..\NGC_RS274\ngc_errors_interpreter.h" />
@@ -69,6 +70,7 @@
     <ClCompile Include="..\..\..\..\NGC_RS274\Machine Specific\Lathe\NGC_Lathe.cpp" />
     <ClCompile Include="..\..\..\..\NGC_RS274\Machine Specific\Mill\NGC_Mill.cpp" />
     <ClCompile Include="..\..\..\..\NGC_RS274\NGC_Block.cpp" />
+    <ClCompile Include="..\..\..\..\NGC_RS274\NGC_Block_View.cpp" />
     <ClCompile Include="..\..\..\..\NGC_RS274\NGC_Interpreter.cpp" />
     <ClCompile Include="..\..\..\..\NGC_RS274\NGC_Line_Processor.cpp" />
     <ClCompile Include="..\..\..\..\NGC_RS274\NGC_Parameters.cpp" />

@@ -57,16 +57,6 @@ uint8_t NGC_RS274::Interpreter::Processor::initialize()
 	return 0;
 }
 
-bool NGC_RS274::Interpreter::Processor::determine_motion(NGC_RS274::NGC_Binary_Block*local_block)
-{
-	if (local_block->g_group[NGC_RS274::Groups::G::Motion] != NGC_RS274::G_codes::MOTION_CANCELED
-	&& !local_block->event_manager.get((int)NGC_RS274::NGC_Binary_Block::e_block_event::Non_modal))
-	{
-		return true;
-	}
-	return false;
-}
-
 /*
 First error check method. Determine the type of motion and perform detailed error checks for that
 particular motion command.

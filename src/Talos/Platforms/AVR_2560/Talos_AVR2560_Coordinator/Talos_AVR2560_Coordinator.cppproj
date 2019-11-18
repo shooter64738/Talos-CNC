@@ -334,6 +334,14 @@
       <SubType>compile</SubType>
       <Link>Ngc_Rs274\NGC_Block.h</Link>
     </Compile>
+    <Compile Include="..\..\..\NGC_RS274\NGC_Block_View.cpp">
+      <SubType>compile</SubType>
+      <Link>Talos_AVR2560_Coordinator\Ngc_Rs274\NGC_Block_View.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\NGC_RS274\NGC_Block_View.h">
+      <SubType>compile</SubType>
+      <Link>Talos_AVR2560_Coordinator\Ngc_Rs274\NGC_Block_View.h</Link>
+    </Compile>
     <Compile Include="..\..\..\NGC_RS274\ngc_defines.h">
       <SubType>compile</SubType>
       <Link>Ngc_Rs274\ngc_defines.h</Link>

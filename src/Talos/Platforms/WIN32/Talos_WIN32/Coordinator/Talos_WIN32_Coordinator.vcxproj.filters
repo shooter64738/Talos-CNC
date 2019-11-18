@@ -164,6 +164,9 @@
     <ClInclude Include="..\..\..\..\NGC_RS274\ngc_errors_interpreter.h">
       <Filter>Ngc_Rs274</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\..\NGC_RS274\NGC_Block_View.h">
+      <Filter>Ngc_Rs274</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\..\Coordinator\coordinator_main.cpp">
@@ -237,6 +240,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\..\Motion\Processing\GCode\c_gcode_buffer.cpp">
       <Filter>Motion\Processing\GCode</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\NGC_RS274\NGC_Block_View.cpp">
+      <Filter>Ngc_Rs274</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
