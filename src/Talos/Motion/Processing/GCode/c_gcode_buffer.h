@@ -24,7 +24,7 @@
 
 #include "../../../c_ring_template.h"
 #include "../../../NGC_RS274/NGC_Block.h"
-#define NGC_BUFFER_SIZE 4
+#define NGC_BUFFER_SIZE 2 //<--we only need to hold 2 items. One for the previous block and one for the current
 
 namespace Talos
 {
@@ -41,7 +41,8 @@ namespace Talos
 			//functions
 			public:
 			static uint8_t initialize();
-			static BinaryRecords::s_ngc_block prep_for_new();
+			static uint8_t(*pntr_buffer_block_write)(BinaryRecords::s_ngc_block * write_block);
+			static uint8_t(*pntr_buffer_block_read)(BinaryRecords::s_ngc_block * read_block);
 			protected:
 			private:
 		}; //c_buffer

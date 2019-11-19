@@ -25,6 +25,7 @@
 #include "NGC_Line_Processor.h"
 #include "NGC_Parameters.h"
 #include "NGC_Block_Assignor.h"
+#include "..\Motion\Processing\GCode\c_gcode_buffer.h"
 
 
 NGC_RS274::LineProcessor::s_param_functions NGC_RS274::LineProcessor::parameter_function_pointers;
@@ -33,8 +34,8 @@ static int max_numeric_parameter_count = 0;
 
 uint8_t NGC_RS274::LineProcessor::initialize()
 {
-	//On second thought, perhaps function pointers for this reason are not needed. 
-	//Just call the required function directly. 
+	//On second thought, perhaps function pointers for this reason are not needed.
+	//Just call the required function directly.
 	NGC_RS274::LineProcessor::parameter_function_pointers.pntr_get_global_named_parameter = NGC_RS274::Parameters::__get_named_gobal_parameter;
 	NGC_RS274::LineProcessor::parameter_function_pointers.pntr_get_local_named_parameter = NGC_RS274::Parameters::__get_named_local_parameter;
 	NGC_RS274::LineProcessor::parameter_function_pointers.pntr_get_numeric_parameter = NGC_RS274::Parameters::__get_numeric_parameter;
@@ -193,7 +194,15 @@ e_parsing_errors NGC_RS274::LineProcessor::_process_buffer
 	//to make the data easier to understand
 	NGC_RS274::Block_View v_new = NGC_RS274::Block_View(new_block);
 	NGC_RS274::Block_View v_previous = NGC_RS274::Block_View(previous_block);
-	NGC_RS274::Error_Check::error_check(&v_new, &v_previous);
+	ret_code = NGC_RS274::Error_Check::error_check(&v_new, &v_previous);
+	if (ret_code == e_parsing_errors::OK)
+	{
+		//Add this block to the buffer
+		Talos::Motion::NgcBuffer::pntr_buffer_block_write(new_block);
+
+		BinaryRecords::s_ngc_block test;
+		Talos::Motion::NgcBuffer::pntr_buffer_block_read(&test);
+	}
 	return ret_code;
 }
 

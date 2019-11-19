@@ -22,23 +22,6 @@ c_Serial Talos::Coordinator::Main_Process::host_serial;
 
 void Talos::Coordinator::Main_Process::initialize()
 {
-	/*BinaryRecords::s_ngc_block newblock;
-	BinaryRecords::s_ngc_block oldblock;
-
-	NGC_RS274::Block_View newblockview = NGC_RS274::Block_View(&newblock);
-	NGC_RS274::Block_View oldlockview = NGC_RS274::Block_View(&oldblock);
-
-	newblockview.clear(&newblock);
-	oldlockview.clear(&oldblock);
-	
-	oldblock.g_group[NGC_RS274::Groups::G::PLANE_SELECTION] = 17 * G_CODE_MULTIPLIER;
-	oldblock.word_values['F' - 'A'] = 999;
-	
-	newblock.g_group[NGC_RS274::Groups::G::PLANE_SELECTION] = 18 * G_CODE_MULTIPLIER;
-	newblock.word_values['F' - 'A'] = 432;
-	
-	NGC_RS274::Block_View::copy_persisted_data(&oldblock, &newblock);*/
-
 	Talos::Coordinator::Main_Process::host_serial = c_Serial(0, 250000); //<--Connect to host
 	Talos::Coordinator::Main_Process::host_serial.print_string("Coordinator initializing\r\n");
 
@@ -52,12 +35,17 @@ void Talos::Coordinator::Main_Process::initialize()
 	__critical_initialization("Motion Control Comms", NULL,STARTUP_CLASS_WARNING);//<--motion controller card
 	__critical_initialization("Spindle Control Comms", NULL,STARTUP_CLASS_WARNING);//<--spindle controller card
 
-
+	//Load the initialize block from settings. These values are the 'initial' values of the gcode blocks
+	//that are processed. 
+	Hardware_Abstraction_Layer::Disk::load_initialize_block(&Talos::Motion::NgcBuffer::gcode_buffer._storage_pointer[0]);
+	Talos::Motion::NgcBuffer::pntr_buffer_block_write = Hardware_Abstraction_Layer::Disk::put_block;
+	Talos::Motion::NgcBuffer::pntr_buffer_block_read = Hardware_Abstraction_Layer::Disk::get_block;
 
 	#ifdef MSVC
-	
+	//simple gcode line
+	Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "g01 y7x4f3g90g20\r\n");//here axis words are used for motion and non modal. Thats an error
 	//purposely bad g code line
-	Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "g01 y7 g10x3 \r\n");//here axis words are used for motion and non modal. Thats an error
+	//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "g01 y7 g10x3 \r\n");//here axis words are used for motion and non modal. Thats an error
 	//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "g0y#525r#<test>[1.0-[5.0+10]]\r\ng1x3\r\n");
 	//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "g99 y [ #777 - [#<test> + #<_glob> +-sqrt[2]] ] \r\n\r\n\r\n\r\n");// /n/ng1x3\r\n");
 	//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "#<tool>=10\r\n");

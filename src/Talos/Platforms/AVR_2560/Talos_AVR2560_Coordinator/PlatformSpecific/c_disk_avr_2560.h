@@ -9,6 +9,7 @@
 #define __C_DISK_AVR_2560_H__
 
 #include <stdint.h>
+#include "../../../../records_def.h"
 
 namespace Hardware_Abstraction_Layer
 {
@@ -31,6 +32,8 @@ namespace Hardware_Abstraction_Layer
 		public:
 		static uint8_t initialize();
 		static uint8_t load_configuration();
+		static uint8_t load_initialize_block(BinaryRecords::s_ngc_block * initial_block );
+		static uint8_t store_block(BinaryRecords::s_ngc_block * write_block);
 		static void write(const char * filename, char * buffer, e_file_modes mode);
 		protected:
 		private:

@@ -37,8 +37,8 @@ e_parsing_errors NGC_RS274::Error_Check::error_check(NGC_RS274::Block_View *v_ne
 	if ((ret_code = error_check_main(v_new_block, v_previous_block)) != e_parsing_errors::OK) return ret_code;
 	if ((ret_code = error_check_plane_select(v_new_block, v_previous_block)) != e_parsing_errors::OK) return ret_code;
 	if ((ret_code = error_check_arc(v_new_block, v_previous_block)) != e_parsing_errors::OK) return ret_code;
-	if ((ret_code = error_check_center_format_arc(v_new_block, v_previous_block)) != e_parsing_errors::OK) return ret_code;
-	if ((ret_code = error_check_radius_format_arc(v_new_block, v_previous_block)) != e_parsing_errors::OK) return ret_code;
+	//if ((ret_code = error_check_center_format_arc(v_new_block, v_previous_block)) != e_parsing_errors::OK) return ret_code;
+	//if ((ret_code = error_check_radius_format_arc(v_new_block, v_previous_block)) != e_parsing_errors::OK) return ret_code;
 	if ((ret_code = error_check_non_modal(v_new_block, v_previous_block)) != e_parsing_errors::OK) return ret_code;
 	if ((ret_code = error_check_tool_length_offset(v_new_block, v_previous_block)) != e_parsing_errors::OK) return ret_code;
 	if ((ret_code = error_check_cutter_compensation(v_new_block, v_previous_block)) != e_parsing_errors::OK) return ret_code;
@@ -197,7 +197,7 @@ e_parsing_errors NGC_RS274::Error_Check::error_check_main(NGC_RS274::Block_View 
 		case NGC_RS274::Groups::G::NON_MODAL: //<--G4,G10,G28,G28.1,G30,G30.1,G53,G92,G92.1,G92.2,G92.3
 		{
 			
-			if (!v_new_block->active_view_block->g_group[NGC_RS274::Groups::G::NON_MODAL])
+			if (!v_new_block->active_view_block->g_code_defined_in_block.get(NGC_RS274::Groups::G::NON_MODAL))
 				break;
 			ReturnValue = error_check_non_modal(v_new_block, v_previous_block);
 			if (ReturnValue != e_parsing_errors::OK)
@@ -213,7 +213,7 @@ e_parsing_errors NGC_RS274::Error_Check::error_check_main(NGC_RS274::Block_View 
 			break;
 		case NGC_RS274::Groups::G::PLANE_SELECTION: //<--G17,G18,G19
 		{
-			if (!v_new_block->active_view_block->g_group[NGC_RS274::Groups::G::PLANE_SELECTION])
+			if (!v_new_block->active_view_block->g_code_defined_in_block.get(NGC_RS274::Groups::G::PLANE_SELECTION))
 				break;
 
 			error_check_plane_select(v_new_block, v_previous_block);
@@ -226,7 +226,7 @@ e_parsing_errors NGC_RS274::Error_Check::error_check_main(NGC_RS274::Block_View 
 			break;
 		case NGC_RS274::Groups::G::Tool_length_offset: //<--G43,G44,G49
 		{
-			if (!v_new_block->active_view_block->g_group[NGC_RS274::Groups::G::Tool_length_offset])
+			if (!v_new_block->active_view_block->g_code_defined_in_block.get((int)NGC_RS274::Groups::G::Tool_length_offset))
 				break;
 
 			ReturnValue = error_check_tool_length_offset(v_new_block, v_previous_block);
@@ -257,6 +257,10 @@ If an arc (g02/g03) command was specified, perform detailed parameter check that
 */
 e_parsing_errors NGC_RS274::Error_Check::error_check_arc(NGC_RS274::Block_View *v_new_block, NGC_RS274::Block_View *v_previous_block)
 {
+	if (*v_new_block->current_g_codes.Motion != 20
+		&& *v_new_block->current_g_codes.Motion != 30)
+		return e_parsing_errors::OK;
+
 	/*The rules :
 	1. Center format arcs should not be more than 180 degrees.
 	2. Center format arcs CAN have an end point the same as the begin point
@@ -462,6 +466,10 @@ e_parsing_errors NGC_RS274::Error_Check::error_check_non_modal(NGC_RS274::Block_
 
 e_parsing_errors NGC_RS274::Error_Check::error_check_tool_length_offset(NGC_RS274::Block_View *v_new_block, NGC_RS274::Block_View *v_previous_block)
 {
+
+	if (*v_new_block->current_g_codes.Tool_length_offset == NGC_RS274::G_codes::CANCEL_TOOL_LENGTH_OFFSET)
+		return e_parsing_errors::OK;
+
 	/*
 	H - an integer value between 1 and 99
 	*/
@@ -487,6 +495,9 @@ e_parsing_errors NGC_RS274::Error_Check::error_check_tool_length_offset(NGC_RS27
 
 e_parsing_errors NGC_RS274::Error_Check::error_check_cutter_compensation(NGC_RS274::Block_View *v_new_block, NGC_RS274::Block_View *v_previous_block)
 {
+
+	if (*v_new_block->current_g_codes.Cutter_radius_compensation == NGC_RS274::G_codes::CANCEL_CUTTER_RADIUS_COMPENSATION)
+		return e_parsing_errors::OK;
 
 	float iAddress = 0;
 

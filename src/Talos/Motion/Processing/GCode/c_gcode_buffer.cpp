@@ -26,52 +26,46 @@
 
 static BinaryRecords::s_ngc_block gcode_data[NGC_BUFFER_SIZE];
 c_ring_buffer<BinaryRecords::s_ngc_block> Talos::Motion::NgcBuffer::gcode_buffer;
+uint8_t(*Talos::Motion::NgcBuffer::pntr_buffer_block_write)(BinaryRecords::s_ngc_block * write_block);
+uint8_t(*Talos::Motion::NgcBuffer::pntr_buffer_block_read)(BinaryRecords::s_ngc_block * read_block);
 
 uint8_t Talos::Motion::NgcBuffer::initialize()
 {
 	gcode_buffer.initialize(gcode_data,NGC_BUFFER_SIZE);
 
 	BinaryRecords::s_ngc_block * first_block = &gcode_data[0];
-	memset(first_block, 0, sizeof(BinaryRecords::s_ngc_block));
-	//point the machine state group arrays to the very first block
-	//c_machine::machine_state_g_group = c_gcode_buffer::collection[0].g_group;
-	//c_machine::machine_state_m_group = c_gcode_buffer::collection[0].m_group;
-	/*
-	Now that each block carries all of its modal states over to the next block on an add
-	there is no need for each block, the machine, and the stager to have separate arrays.
-	This saves about 4% of available space on the AVR chip, and will save some on any other
-	chips as well. The machine states will be automatically updated when a new block is
-	processed in the c_machine::synch_machine_state_X_code methods.
-	*/
 
-	//default the motion state to canceled
-	first_block->g_group[NGC_RS274::Groups::G::Motion] = NGC_RS274::G_codes::MOTION_CANCELED;
-	//default plane selection
-	first_block->g_group[NGC_RS274::Groups::G::PLANE_SELECTION] = NGC_RS274::G_codes::XY_PLANE_SELECTION;
-	//default the machines distance mode to absolute
-	first_block->g_group[NGC_RS274::Groups::G::DISTANCE_MODE] = NGC_RS274::G_codes::ABSOLUTE_DISANCE_MODE;
-	//default feed rate mode
-	first_block->g_group[NGC_RS274::Groups::G::Feed_rate_mode] = NGC_RS274::G_codes::FEED_RATE_UNITS_PER_MINUTE_MODE;
-	//default the machines units to inches
-	first_block->g_group[NGC_RS274::Groups::G::Units] = NGC_RS274::G_codes::MILLIMETER_SYSTEM_SELECTION;
-	//default the machines cutter comp to off
-	first_block->g_group[NGC_RS274::Groups::G::Cutter_radius_compensation] = NGC_RS274::G_codes::CANCEL_CUTTER_RADIUS_COMPENSATION;
-	//default tool length offset
-	first_block->g_group[NGC_RS274::Groups::G::Tool_length_offset] = NGC_RS274::G_codes::CANCEL_TOOL_LENGTH_OFFSET;
-	//default tool length offset
-	first_block->g_group[NGC_RS274::Groups::G::RETURN_MODE_CANNED_CYCLE] = NGC_RS274::G_codes::CANNED_CYCLE_RETURN_TO_Z;
-	//default coordinate system selection
-	first_block->g_group[NGC_RS274::Groups::G::COORDINATE_SYSTEM_SELECTION] = NGC_RS274::G_codes::MOTION_IN_MACHINE_COORDINATE_SYSTEM;
-	//default path control mode
-	first_block->g_group[NGC_RS274::Groups::G::PATH_CONTROL_MODE] = NGC_RS274::G_codes::PATH_CONTROL_EXACT_PATH;
-	//default coordinate system type
-	first_block->g_group[NGC_RS274::Groups::G::RECTANGLAR_POLAR_COORDS_SELECTION] = NGC_RS274::G_codes::RECTANGULAR_COORDINATE_SYSTEM;
-	//default canned cycle return mode
-	first_block->g_group[NGC_RS274::Groups::G::RETURN_MODE_CANNED_CYCLE] = NGC_RS274::G_codes::CANNED_CYCLE_RETURN_TO_R;
-	//default spindle mode
-	first_block->g_group[NGC_RS274::Groups::M::SPINDLE] = NGC_RS274::M_codes::SPINDLE_STOP;
-	//default coolant mode
-	first_block->g_group[NGC_RS274::Groups::M::COOLANT] = NGC_RS274::M_codes::COOLANT_OFF;
+	//clear the block of all values
+	memset(first_block, 0, sizeof(BinaryRecords::s_ngc_block));
+
+	////default the motion state to canceled
+	//first_block->g_group[NGC_RS274::Groups::G::Motion] = NGC_RS274::G_codes::MOTION_CANCELED;
+	////default plane selection
+	//first_block->g_group[NGC_RS274::Groups::G::PLANE_SELECTION] = NGC_RS274::G_codes::XY_PLANE_SELECTION;
+	////default the machines distance mode to absolute
+	//first_block->g_group[NGC_RS274::Groups::G::DISTANCE_MODE] = NGC_RS274::G_codes::ABSOLUTE_DISANCE_MODE;
+	////default feed rate mode
+	//first_block->g_group[NGC_RS274::Groups::G::Feed_rate_mode] = NGC_RS274::G_codes::FEED_RATE_UNITS_PER_MINUTE_MODE;
+	////default the machines units to inches
+	//first_block->g_group[NGC_RS274::Groups::G::Units] = NGC_RS274::G_codes::MILLIMETER_SYSTEM_SELECTION;
+	////default the machines cutter comp to off
+	//first_block->g_group[NGC_RS274::Groups::G::Cutter_radius_compensation] = NGC_RS274::G_codes::CANCEL_CUTTER_RADIUS_COMPENSATION;
+	////default tool length offset
+	//first_block->g_group[NGC_RS274::Groups::G::Tool_length_offset] = NGC_RS274::G_codes::CANCEL_TOOL_LENGTH_OFFSET;
+	////default tool length offset
+	//first_block->g_group[NGC_RS274::Groups::G::RETURN_MODE_CANNED_CYCLE] = NGC_RS274::G_codes::CANNED_CYCLE_RETURN_TO_Z;
+	////default coordinate system selection
+	//first_block->g_group[NGC_RS274::Groups::G::COORDINATE_SYSTEM_SELECTION] = NGC_RS274::G_codes::MOTION_IN_MACHINE_COORDINATE_SYSTEM;
+	////default path control mode
+	//first_block->g_group[NGC_RS274::Groups::G::PATH_CONTROL_MODE] = NGC_RS274::G_codes::PATH_CONTROL_EXACT_PATH;
+	////default coordinate system type
+	//first_block->g_group[NGC_RS274::Groups::G::RECTANGLAR_POLAR_COORDS_SELECTION] = NGC_RS274::G_codes::RECTANGULAR_COORDINATE_SYSTEM;
+	////default canned cycle return mode
+	//first_block->g_group[NGC_RS274::Groups::G::RETURN_MODE_CANNED_CYCLE] = NGC_RS274::G_codes::CANNED_CYCLE_RETURN_TO_R;
+	////default spindle mode
+	//first_block->g_group[NGC_RS274::Groups::M::SPINDLE] = NGC_RS274::M_codes::SPINDLE_STOP;
+	////default coolant mode
+	//first_block->g_group[NGC_RS274::Groups::M::COOLANT] = NGC_RS274::M_codes::COOLANT_OFF;
 	return 0;
 
 }
