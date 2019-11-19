@@ -33,6 +33,7 @@ needed to store in the buffer array. This allows almost twice as much storage sp
 #include <stdint.h>
 #include "../records_def.h"
 #include "ngc_errors_interpreter.h"
+#include "ngc_block_event_enums.h"
 
 namespace NGC_RS274
 {
@@ -41,9 +42,10 @@ namespace NGC_RS274
 		//#define IS_ARC(bool BitTst(exec_flags,2));
 		public:
 		Block_View();
+		Block_View(BinaryRecords::s_ngc_block *block);
 		~Block_View();
-		
-		enum class e_block_event : uint8_t
+
+		/*enum class e_block_event : uint8_t
 		{
 			Motion = 0,
 			Cutter_radius_compensation = 1,
@@ -60,7 +62,7 @@ namespace NGC_RS274
 			Block_Set_To_Execute = 12,
 			Block_Set_To_Held = 13,
 			Canned_Cycle_Active = 14
-		};
+		};*/
 
 		struct s_persisted_values
 		{
@@ -75,7 +77,11 @@ namespace NGC_RS274
 		struct s_axis_property
 		{
 			float *value;
-			uint8_t name;
+			char name;
+			bool is_defined(BinaryRecords::s_ngc_block * block)
+			{
+				return  block->word_flags.get(name - 'A');
+			}
 		};
 
 		struct s_arc_values
@@ -130,7 +136,7 @@ namespace NGC_RS274
 			uint16_t *UNASSIGNED_14;
 			uint16_t *RECTANGLAR_POLAR_COORDS_SELECTION;
 		};
-		
+
 		struct s_mcodes
 		{
 			uint16_t *UNUSED_0;
@@ -152,19 +158,33 @@ namespace NGC_RS274
 		s_plane_axis active_plane;
 		s_gcodes current_g_codes;
 		s_mcodes current_m_codes;
+		
+		BinaryRecords::s_ngc_block * active_view_block;
 
 		void clear(BinaryRecords::s_ngc_block *block);
 		void load(BinaryRecords::s_ngc_block * block);
-		void set_plane(BinaryRecords::s_ngc_block *block);
-		void set_persisted(BinaryRecords::s_ngc_block *block);
-		void set_arc(BinaryRecords::s_ngc_block *block);
-		void set_canned(BinaryRecords::s_ngc_block *block);
-		void set_gcode(BinaryRecords::s_ngc_block * block);
-		void set_mcode(BinaryRecords::s_ngc_block * block);
-		
+		bool any_axis_defined(BinaryRecords::s_ngc_block * block);
+		bool any_linear_axis_was_defined(BinaryRecords::s_ngc_block * block);
+		bool any_rotational_axis_was_defined(BinaryRecords::s_ngc_block * block);
+		bool is_word_defined(BinaryRecords::s_ngc_block * block, char word_value);
+		float * get_word_value(char word_value, BinaryRecords::s_ngc_block * block);
+		bool get_word_value(char word_value, float * value);
+
+		static void copy_persisted_data(BinaryRecords::s_ngc_block * source_block, BinaryRecords::s_ngc_block * destination_block);
 		private:
-		float * __get_word_helper (char word_value, BinaryRecords::s_ngc_block * block);
+		void __assign_plane(BinaryRecords::s_ngc_block *block);
+		void __assign_persisted(BinaryRecords::s_ngc_block *block);
+		void __assign_arc(BinaryRecords::s_ngc_block *block);
+		void __assign_canned(BinaryRecords::s_ngc_block *block);
+		void __assign_gcode(BinaryRecords::s_ngc_block * block);
+		void __assign_mcode(BinaryRecords::s_ngc_block * block);
+		void __set_events(BinaryRecords::s_ngc_block * current_block, BinaryRecords::s_ngc_block * previous_block);
 		void __set_axis_helper(s_axis_property * axis_object, char word_value, BinaryRecords::s_ngc_block * block);
+		void __assign_g_event(BinaryRecords::s_ngc_block * block, uint16_t group_number);
+		void __assign_m_event(BinaryRecords::s_ngc_block * block, uint16_t group_number);
+		void __assign_other_event(BinaryRecords::s_ngc_block * block);
+		bool __group_has_changed(uint16_t * original_value, uint16_t * updated_value, uint8_t group_number);
+		
 	};
 };
 

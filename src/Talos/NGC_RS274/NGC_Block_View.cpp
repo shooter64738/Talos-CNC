@@ -26,6 +26,7 @@
 #include "NGC_M_Groups.h"
 
 NGC_RS274::Block_View::Block_View(){}
+NGC_RS274::Block_View::Block_View(BinaryRecords::s_ngc_block *block) { this->load(block); }
 NGC_RS274::Block_View::~Block_View(){}
 
 void NGC_RS274::Block_View::clear(BinaryRecords::s_ngc_block *block)
@@ -36,15 +37,65 @@ void NGC_RS274::Block_View::clear(BinaryRecords::s_ngc_block *block)
 //Converts the raw struct data underneath, and presents it in an easy to understand format
 void NGC_RS274::Block_View::load(BinaryRecords::s_ngc_block *block)
 {
+	this->active_view_block = block;
 	//set_plane needs to occur first since other values are determined by the plane
-	this->set_plane(block);
-	this->set_persisted(block);
-	this->set_arc(block);
-	this->set_canned(block);
-	this->set_gcode(block);
+	this->__assign_plane(block);
+	this->__assign_persisted(block);
+	this->__assign_arc(block);
+	this->__assign_canned(block);
+	this->__assign_gcode(block);
 }
 
-void NGC_RS274::Block_View::set_plane(BinaryRecords::s_ngc_block *block)
+bool NGC_RS274::Block_View::any_axis_defined(BinaryRecords::s_ngc_block * block)
+{
+	//Quick test here, if NO WORD values were set in the block at all, then we know there couldnt be an axis defined
+	if (block->word_flags._flag == 0)
+	return false;
+	//Check all axis words to see if they were set in the block.
+	if (any_linear_axis_was_defined(block) || any_rotational_axis_was_defined(block))
+	return true;
+
+	return false;
+}
+/*
+Returns TRUE if any LINEAR axis words were set in the block. Returns FALSE if none were.
+*/
+bool NGC_RS274::Block_View::any_linear_axis_was_defined(BinaryRecords::s_ngc_block * block)
+{
+	//Quick test here, if NO WORD values were set in the block at all, then we know there couldnt be an axis defined
+	if (block->word_flags._flag == 0)
+	return false;
+	//Check all 3 axis words to see if they were set in the block.
+	if (!is_word_defined(block,'X')
+	&& !is_word_defined(block, 'Y')
+	&& !is_word_defined(block, 'Z')
+	&& !is_word_defined(block, 'U')
+	&& !is_word_defined(block, 'V')
+	&& !is_word_defined(block, 'W')
+	) return false;
+	
+	return true;
+}
+
+/*
+Returns TRUE if any ROTATIONAL axis words were set in the block. Returns FALSE if none were.
+*/
+bool NGC_RS274::Block_View::any_rotational_axis_was_defined(BinaryRecords::s_ngc_block * block)
+{
+	//Quick test here, if NO WORD values were set in the block at all, then we know there couldnt be an axis defined
+	if (block->word_flags._flag == 0)
+	return false;
+	//Check all 3 axis words to see if they were set in the block.
+	if (!is_word_defined(block, 'A')
+	&& !is_word_defined(block, 'B')
+	&& !is_word_defined(block, 'C')
+	) return false;
+
+	return true;
+
+}
+
+void NGC_RS274::Block_View::__assign_plane(BinaryRecords::s_ngc_block *block)
 {
 	switch (block->g_group[NGC_RS274::Groups::G::PLANE_SELECTION])
 	{
@@ -116,32 +167,32 @@ void NGC_RS274::Block_View::set_plane(BinaryRecords::s_ngc_block *block)
 	}
 }
 
-void NGC_RS274::Block_View::set_persisted(BinaryRecords::s_ngc_block *block)
+void NGC_RS274::Block_View::__assign_persisted(BinaryRecords::s_ngc_block *block)
 {
-	this->persisted_values.active_diameter_D = __get_word_helper('D', block);
-	this->persisted_values.active_height_H = __get_word_helper('H', block);
-	this->persisted_values.active_line_number_N = __get_word_helper('N', block);
-	this->persisted_values.active_spindle_speed_S = __get_word_helper('S', block);
-	this->persisted_values.active_tool_T = __get_word_helper('T', block);
-	this->persisted_values.feed_rate_F = __get_word_helper('F', block);
+	this->persisted_values.active_diameter_D = get_word_value('D', block);
+	this->persisted_values.active_height_H = get_word_value('H', block);
+	this->persisted_values.active_line_number_N = get_word_value('N', block);
+	this->persisted_values.active_spindle_speed_S = get_word_value('S', block);
+	this->persisted_values.active_tool_T = get_word_value('T', block);
+	this->persisted_values.feed_rate_F = get_word_value('F', block);
 }
 
-void NGC_RS274::Block_View::set_arc(BinaryRecords::s_ngc_block *block)
+void NGC_RS274::Block_View::__assign_arc(BinaryRecords::s_ngc_block *block)
 {
-	this->arc_values.Radius = __get_word_helper('r', block);
+	this->arc_values.Radius = get_word_value('r', block);
 }
 
-void NGC_RS274::Block_View::set_canned(BinaryRecords::s_ngc_block * block)
+void NGC_RS274::Block_View::__assign_canned(BinaryRecords::s_ngc_block * block)
 {
-	this->canned_cycles.Q_peck_step_depth = __get_word_helper('Q', block);
-	this->canned_cycles.R_retract_position = __get_word_helper('R', block);
-	this->canned_cycles.L_repeat_count = __get_word_helper('L', block);
-	this->canned_cycles.P_dwell_time_at_bottom = __get_word_helper('P', block);
-	this->canned_cycles.Z_depth_of_hole = __get_word_helper('Z', block);
+	this->canned_cycles.Q_peck_step_depth = get_word_value('Q', block);
+	this->canned_cycles.R_retract_position = get_word_value('R', block);
+	this->canned_cycles.L_repeat_count = get_word_value('L', block);
+	this->canned_cycles.P_dwell_time_at_bottom = get_word_value('P', block);
+	this->canned_cycles.Z_depth_of_hole = get_word_value('Z', block);
 
 }
 
-void NGC_RS274::Block_View::set_gcode(BinaryRecords::s_ngc_block * block)
+void NGC_RS274::Block_View::__assign_gcode(BinaryRecords::s_ngc_block * block)
 {
 	this->current_g_codes.Non_Modal = &block->g_group[NGC_RS274::Groups::G::NON_MODAL];
 	this->current_g_codes.Motion = &block->g_group[NGC_RS274::Groups::G::Motion];
@@ -161,7 +212,7 @@ void NGC_RS274::Block_View::set_gcode(BinaryRecords::s_ngc_block * block)
 	this->current_g_codes.RECTANGLAR_POLAR_COORDS_SELECTION = &block->g_group[NGC_RS274::Groups::G::RECTANGLAR_POLAR_COORDS_SELECTION];
 }
 
-void NGC_RS274::Block_View::set_mcode(BinaryRecords::s_ngc_block * block)
+void NGC_RS274::Block_View::__assign_mcode(BinaryRecords::s_ngc_block * block)
 {
 	this->current_m_codes.UNUSED_0 = &block->m_group[NGC_RS274::Groups::M::UNUSED_0];
 	this->current_m_codes.UNUSED_1 = &block->m_group[NGC_RS274::Groups::M::UNUSED_1];
@@ -176,15 +227,190 @@ void NGC_RS274::Block_View::set_mcode(BinaryRecords::s_ngc_block * block)
 	this->current_m_codes.USER_DEFINED = &block->m_group[NGC_RS274::Groups::M::USER_DEFINED];
 }
 
-float * NGC_RS274::Block_View::__get_word_helper
+void NGC_RS274::Block_View::__set_axis_helper
+(s_axis_property * axis_object, char word_value, BinaryRecords::s_ngc_block * block)
+{
+	axis_object->name = word_value;
+	axis_object->value = get_word_value(word_value, block);
+}
+
+//******************************
+// STATIC METHODS
+//******************************
+
+void NGC_RS274::Block_View::__set_events(BinaryRecords::s_ngc_block * local_block, BinaryRecords::s_ngc_block * previous_block)
+{
+	uint8_t group = 1;
+
+	//Non modals are not held from block to block. If a non modal is specified it only applies once
+	if (local_block->g_code_defined_in_block.get((int)NGC_RS274::Groups::G::NON_MODAL))
+	{
+		__assign_g_event(local_block, NGC_RS274::Groups::G::NON_MODAL);
+		//Events::NGC_Block::event_manager.set((int)Events::NGC_Block::e_event_type::Non_modal);
+		//c_stager::update_non_modals(local_block);
+	}
+
+	//assign any events found in the G group, skipping non-modal. Here we only set a change event
+	//if the value has changed from teh last modal value that was set.
+	for (group = 1; group < COUNT_OF_G_CODE_GROUPS_ARRAY; group++)
+	{
+		if (local_block->g_code_defined_in_block.get(group))
+		{
+			if (__group_has_changed(local_block->g_group, previous_block->g_group, group))
+			{
+				__assign_g_event(local_block, group);
+			}
+		}
+	}
+
+	//Assign any events found in the M group
+	for (group = 0; group < COUNT_OF_M_CODE_GROUPS_ARRAY; group++)
+	{
+		if (local_block->m_code_defined_in_block.get(group))
+		{
+			if (__group_has_changed(local_block->m_group, previous_block->m_group, group))
+			{
+				__assign_m_event(local_block, group);
+			}
+		}
+	}
+
+	//assign any events that arent in a specific group, but we need to track
+	__assign_other_event(local_block);
+}
+
+void NGC_RS274::Block_View::__assign_g_event(BinaryRecords::s_ngc_block * local_block, uint16_t group_number)
+{
+	switch (group_number)
+	{
+		case NGC_RS274::Groups::G::NON_MODAL:
+		{
+			local_block->block_events.set((int)e_block_event::Non_modal);
+			break;
+		}
+		case NGC_RS274::Groups::G::Motion:
+		{
+			local_block->block_events.set((int)e_block_event::Motion);
+			break;
+		}
+
+		case (int)NGC_RS274::Groups::G::Cutter_radius_compensation:
+		{
+			local_block->block_events.set((int)e_block_event::Cutter_radius_compensation);
+			break;
+		}
+
+		case (int)NGC_RS274::Groups::G::Tool_length_offset:
+		{
+			local_block->block_events.set((int)e_block_event::Tool_length_offset);
+			break;
+		}
+		case (int)NGC_RS274::Groups::G::Feed_rate_mode:
+		{
+			local_block->block_events.set((int)e_block_event::Feed_rate_mode);
+			break;
+		}
+		case (int)NGC_RS274::Groups::G::Units:
+		{
+			local_block->block_events.set((int)e_block_event::Units);
+			break;
+		}
+
+		default:
+		/* Your code here */
+		break;
+	}
+
+}
+
+void NGC_RS274::Block_View::__assign_m_event(BinaryRecords::s_ngc_block * local_block, uint16_t group_number)
+{
+	switch (group_number)
+	{
+		case NGC_RS274::Groups::M::TOOL_CHANGE:
+		{
+			local_block->block_events.set((int)e_block_event::Tool_Change_Request);
+			break;
+		}
+		case NGC_RS274::Groups::M::SPINDLE:
+		{
+			local_block->block_events.set((int)e_block_event::Spindle_mode);
+			break;
+		}
+		case NGC_RS274::Groups::M::COOLANT:
+		{
+			local_block->block_events.set((int)e_block_event::Coolant);
+			break;
+		}
+		default:
+		/* Your code here */
+		break;
+	}
+
+}
+
+void NGC_RS274::Block_View::__assign_other_event(BinaryRecords::s_ngc_block * local_block)
+{
+	//Comments are not feasible unless/until someone gets off their ass and adds display support
+
+	//Set feed rate
+	if (is_word_defined(local_block,'F'))
+	{
+		local_block->block_events.set((int)e_block_event::Feed_rate);
+		//local_block->persisted_values.feed_rate = local_block->get_value('F');
+	}
+
+	// Set spindle speed
+	if (is_word_defined(local_block,'S'))
+	{
+		local_block->block_events.set((int)e_block_event::Spindle_rate);
+		//local_block->persisted_values.active_s = local_block->get_value('S');
+	}
+
+	//Select tool
+	if (is_word_defined(local_block, 'T'))
+	{
+		local_block->block_events.set((int)e_block_event::Tool_id);
+		//local_block->persisted_values.active_t = local_block->get_value('T');
+	}
+
+	//Set canned cycle
+	if (local_block->g_group[NGC_RS274::Groups::G::Motion] >= NGC_RS274::G_codes::CANNED_CYCLE_DRILLING
+	&& local_block->g_group[NGC_RS274::Groups::G::Motion] <= NGC_RS274::G_codes::CANNED_CYCLE_BORING_DWELL_FEED_OUT)
+	{
+		local_block->block_events.set((int)e_block_event::Canned_Cycle_Active);
+	}
+	else
+	{
+		local_block->block_events.clear((int)e_block_event::Canned_Cycle_Active);
+	}
+}
+
+bool NGC_RS274::Block_View::__group_has_changed(uint16_t * original_value, uint16_t * updated_value, uint8_t group_number)
+{
+	return original_value[group_number] != updated_value[group_number];
+}
+
+void NGC_RS274::Block_View::copy_persisted_data(BinaryRecords::s_ngc_block * source_block, BinaryRecords::s_ngc_block * destination_block)
+{
+	memcpy(destination_block->g_group, source_block->g_group, COUNT_OF_G_CODE_GROUPS_ARRAY * sizeof(uint16_t));
+	memcpy(destination_block->m_group, source_block->m_group, COUNT_OF_M_CODE_GROUPS_ARRAY * sizeof(uint16_t));
+	memcpy(destination_block->word_values, source_block->word_values, COUNT_OF_BLOCK_WORDS_ARRAY * sizeof(float));
+}
+
+bool NGC_RS274::Block_View::is_word_defined(BinaryRecords::s_ngc_block * block, char word_value)
+{
+	return block->word_flags.get(word_value - 'A');
+}
+
+float * NGC_RS274::Block_View::get_word_value
 (char word_value, BinaryRecords::s_ngc_block * block)
 {
 	return &block->word_values[word_value - 'A'];
 }
 
-void NGC_RS274::Block_View::__set_axis_helper
-(s_axis_property * axis_object, char word_value, BinaryRecords::s_ngc_block * block)
+bool NGC_RS274::Block_View::get_word_value(char word_value, float * value)
 {
-	axis_object->name = word_value;
-	axis_object->value = __get_word_helper(word_value, block);
+	value = &active_view_block->word_values[word_value - 'A'];
+	return  active_view_block->word_flags.get(word_value-'A');
 }

@@ -20,30 +20,19 @@
 
 #include "c_gcode_buffer.h"
 #include <string.h>
-#include "../../../NGC_RS274/NGC_Interpreter.h"
 #include "../../../NGC_RS274/NGC_G_Groups.h"
 #include "../../../NGC_RS274/NGC_M_Groups.h"
 
 
-static NGC_RS274::NGC_Binary_Block gcode_data[NGC_BUFFER_SIZE];
-c_ring_buffer<NGC_RS274::NGC_Binary_Block> Talos::Motion::NgcBuffer::gcode_buffer;
+static BinaryRecords::s_ngc_block gcode_data[NGC_BUFFER_SIZE];
+c_ring_buffer<BinaryRecords::s_ngc_block> Talos::Motion::NgcBuffer::gcode_buffer;
 
 uint8_t Talos::Motion::NgcBuffer::initialize()
 {
 	gcode_buffer.initialize(gcode_data,NGC_BUFFER_SIZE);
-	NGC_RS274::Interpreter::Processor::initialize();
 
-	//c_machine::machine_axis_names[MACHINE_X_AXIS] = 'X';
-	//c_machine::machine_axis_names[MACHINE_Y_AXIS] = 'Y';
-	//c_machine::machine_axis_names[MACHINE_Z_AXIS] = 'Z';
-	//c_machine::machine_axis_names[MACHINE_A_AXIS] = 'A';
-	//c_machine::machine_axis_names[MACHINE_B_AXIS] = 'B';
-	//c_machine::machine_axis_names[MACHINE_C_AXIS] = 'C';
-	//c_machine::machine_axis_names[MACHINE_U_AXIS] = 'U';
-	//c_machine::machine_axis_names[MACHINE_V_AXIS] = 'V';
-
-	NGC_RS274::NGC_Binary_Block * first_block = &gcode_data[0];
-	first_block->initialize();
+	BinaryRecords::s_ngc_block * first_block = &gcode_data[0];
+	memset(first_block, 0, sizeof(BinaryRecords::s_ngc_block));
 	//point the machine state group arrays to the very first block
 	//c_machine::machine_state_g_group = c_gcode_buffer::collection[0].g_group;
 	//c_machine::machine_state_m_group = c_gcode_buffer::collection[0].m_group;
@@ -87,24 +76,3 @@ uint8_t Talos::Motion::NgcBuffer::initialize()
 
 }
 
-NGC_RS274::NGC_Binary_Block Talos::Motion::NgcBuffer::prep_for_new()
-{
-	NGC_RS274::NGC_Binary_Block local_block = Talos::Motion::NgcBuffer::gcode_buffer.peek(Talos::Motion::NgcBuffer::gcode_buffer._newest);
-
-	/*
-	Copy forward the states into the next block from the last modal states, and persisted values
-	As the line data is processed in the interpreter, some (or all of these values) may be changed.
-	We are only defaulting these to what they are now, so modal states and persisted values are retained
-	
-	This had to be moved to here, in case an error occurs in the interpreter and the block gets reset.
-	If we do not reload these values each time, an error in the interpreter will cause the persisted
-	states to be lost.
-	*/
-	
-	NGC_RS274::NGC_Binary_Block::copy_persisted_data(&local_block, &local_block);
-	
-	//Clear the non modal codes if there were any. These would have been carried over by the stager, and non modals are 'not modal' obviously
-	//local_block->g_group[NGC_RS274::Groups::G::NON_MODAL] = 0;
-	
-	return local_block;
-}

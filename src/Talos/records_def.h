@@ -216,6 +216,14 @@ namespace BinaryRecords
 			BitSet_(_flag, set_value);
 		};
 
+		void set(bool bit_value, int bit_num)
+		{
+			if (bit_value)
+				BitSet_(_flag, bit_num);
+			else
+				BitClr_(_flag, bit_num);
+		};
+
 		void clear(int clear_value)
 		{
 			BitClr_(_flag, clear_value);
@@ -233,13 +241,13 @@ namespace BinaryRecords
 	{
 		float word_values[26]; //<--hard code to 26, cuz there are always 26 letters in the alphabet
 		s_bit_flag_controller<uint32_t> word_flags;
-		s_bit_flag_controller<uint16_t> block_events;
+		s_bit_flag_controller<uint32_t> block_events;
 		uint16_t g_group[COUNT_OF_G_CODE_GROUPS_ARRAY]; //There are 14 groups of gcodes (0-13)
 		s_bit_flag_controller<uint32_t> g_code_defined_in_block;
 		uint16_t m_group[COUNT_OF_M_CODE_GROUPS_ARRAY]; //There are 5 groups of mcodes (0-4)
 		s_bit_flag_controller<uint32_t> m_code_defined_in_block;
 		
-		char comment[256];
+		//char comment[256];
 		
 		//double a_number;
 		//double b_number;

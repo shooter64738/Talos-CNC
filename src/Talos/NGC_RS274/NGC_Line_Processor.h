@@ -67,7 +67,7 @@ namespace NGC_RS274
 		static s_param_functions parameter_function_pointers;
 		static int last_read_position;
 		static uint8_t initialize();
-		static e_parsing_errors start(char * line, c_ring_buffer <NGC_RS274::NGC_Binary_Block> * buffer_destination);
+		static e_parsing_errors start(char * line, c_ring_buffer <BinaryRecords::s_ngc_block> * buffer_destination);
 
 		private:
 
@@ -124,7 +124,7 @@ namespace NGC_RS274
 		};
 
 		static uint8_t _set_buffer_to_upper(char * buffer);
-		static e_parsing_errors  _process_buffer(char * buffer, c_ring_buffer <NGC_RS274::NGC_Binary_Block> * buffer_destination);
+		static e_parsing_errors  _process_buffer(char * buffer, c_ring_buffer <BinaryRecords::s_ngc_block> * buffer_destination);
 
 		static e_parsing_errors  _read_as_word(char * buffer, int * read_pos, char word, float * word_value);
 		static e_parsing_errors  _read_as_class_type(char * buffer, int * read_pos, float * word_value);

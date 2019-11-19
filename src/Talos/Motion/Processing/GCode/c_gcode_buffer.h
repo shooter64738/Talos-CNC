@@ -24,7 +24,7 @@
 
 #include "../../../c_ring_template.h"
 #include "../../../NGC_RS274/NGC_Block.h"
-#define NGC_BUFFER_SIZE 2
+#define NGC_BUFFER_SIZE 4
 
 namespace Talos
 {
@@ -34,14 +34,14 @@ namespace Talos
 		{
 			//variables
 			public:
-			static c_ring_buffer<NGC_RS274::NGC_Binary_Block> gcode_buffer;
+			static c_ring_buffer<BinaryRecords::s_ngc_block> gcode_buffer;
 			protected:
 			private:
 
 			//functions
 			public:
 			static uint8_t initialize();
-			static NGC_RS274::NGC_Binary_Block prep_for_new();
+			static BinaryRecords::s_ngc_block prep_for_new();
 			protected:
 			private:
 		}; //c_buffer

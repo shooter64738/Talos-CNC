@@ -16,18 +16,28 @@ then move to their respective modules.
 #include "../Events/extern_events_types.h"
 #include "../../../Motion/Processing/GCode/c_gcode_buffer.h"
 #include "../../../NGC_RS274/NGC_Line_Processor.h"
-#include "../../../NGC_RS274/NGC_Interpreter.h"
 #include "../../../NGC_RS274/NGC_Block_View.h"
 
 c_Serial Talos::Coordinator::Main_Process::host_serial;
 
 void Talos::Coordinator::Main_Process::initialize()
 {
-	NGC_RS274::Block_View assist = NGC_RS274::Block_View();
-	BinaryRecords::s_ngc_block newblock;
-	assist.clear(&newblock);
-	newblock.g_group[NGC_RS274::Groups::G::PLANE_SELECTION] = 17 * G_CODE_MULTIPLIER;
-	assist.load(&newblock);
+	/*BinaryRecords::s_ngc_block newblock;
+	BinaryRecords::s_ngc_block oldblock;
+
+	NGC_RS274::Block_View newblockview = NGC_RS274::Block_View(&newblock);
+	NGC_RS274::Block_View oldlockview = NGC_RS274::Block_View(&oldblock);
+
+	newblockview.clear(&newblock);
+	oldlockview.clear(&oldblock);
+	
+	oldblock.g_group[NGC_RS274::Groups::G::PLANE_SELECTION] = 17 * G_CODE_MULTIPLIER;
+	oldblock.word_values['F' - 'A'] = 999;
+	
+	newblock.g_group[NGC_RS274::Groups::G::PLANE_SELECTION] = 18 * G_CODE_MULTIPLIER;
+	newblock.word_values['F' - 'A'] = 432;
+	
+	NGC_RS274::Block_View::copy_persisted_data(&oldblock, &newblock);*/
 
 	Talos::Coordinator::Main_Process::host_serial = c_Serial(0, 250000); //<--Connect to host
 	Talos::Coordinator::Main_Process::host_serial.print_string("Coordinator initializing\r\n");
@@ -45,8 +55,11 @@ void Talos::Coordinator::Main_Process::initialize()
 
 
 	#ifdef MSVC
+	
+	//purposely bad g code line
+	Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "g01 y7 g10x3 \r\n");//here axis words are used for motion and non modal. Thats an error
 	//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "g0y#525r#<test>[1.0-[5.0+10]]\r\ng1x3\r\n");
-	Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "g99 y [ #777 - [#<test> + #<_glob> +-sqrt[2]] ] \r\n\r\n\r\n\r\n");// /n/ng1x3\r\n");
+	//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "g99 y [ #777 - [#<test> + #<_glob> +-sqrt[2]] ] \r\n\r\n\r\n\r\n");// /n/ng1x3\r\n");
 	//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "#<tool>=10\r\n");
 	#endif
 

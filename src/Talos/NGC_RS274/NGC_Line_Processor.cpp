@@ -23,8 +23,8 @@
 #include <stdlib.h>
 #include <math.h>
 #include "NGC_Line_Processor.h"
-#include "NGC_Interpreter.h"
 #include "NGC_Parameters.h"
+#include "NGC_Block_Assignor.h"
 
 
 NGC_RS274::LineProcessor::s_param_functions NGC_RS274::LineProcessor::parameter_function_pointers;
@@ -56,7 +56,7 @@ uint8_t NGC_RS274::LineProcessor::initialize()
 	return 0;
 }
 
-e_parsing_errors NGC_RS274::LineProcessor::start(char * buffer, c_ring_buffer <NGC_RS274::NGC_Binary_Block> * buffer_destinationk)
+e_parsing_errors NGC_RS274::LineProcessor::start(char * buffer, c_ring_buffer <BinaryRecords::s_ngc_block> * buffer_destinationk)
 {
 	e_parsing_errors ret_code = e_parsing_errors::OK;
 
@@ -113,7 +113,7 @@ uint8_t NGC_RS274::LineProcessor::_set_buffer_to_upper(char * buffer)
 }
 
 e_parsing_errors NGC_RS274::LineProcessor::_process_buffer
-(char * buffer, c_ring_buffer <NGC_RS274::NGC_Binary_Block> * buffer_destination)
+(char * buffer, c_ring_buffer <BinaryRecords::s_ngc_block> * buffer_destination)
 {
 	int read_pos, buff_len = 0;
 
@@ -153,15 +153,15 @@ e_parsing_errors NGC_RS274::LineProcessor::_process_buffer
 	e_parsing_errors ret_code = e_parsing_errors::OK;
 
 	//grab a block from the ring buffer to work on
-	NGC_RS274::NGC_Binary_Block *previous_block = buffer_destination->writer_for_last_added();
-	NGC_RS274::NGC_Binary_Block *new_block = buffer_destination->writer_for_insert();
+	BinaryRecords::s_ngc_block *previous_block = buffer_destination->writer_for_last_added();
+	BinaryRecords::s_ngc_block *new_block = buffer_destination->writer_for_insert();
+	//Forward copy the previous blocks values so they will persist.
+	//If the values need changed during processing it will happen in the assignor
+	NGC_RS274::Block_View::copy_persisted_data(previous_block, new_block);
 
 	//And now without further delay... lets process this line!
 	while (read_pos < buff_len)
 	{
-		//forward copy data from the last block to the new block
-		//this keeps our modal data, well, modal!
-		NGC_Binary_Block::copy_persisted_data(previous_block, new_block);
 
 		word_value = 0.0;
 		//get current word, and advance reader
@@ -180,26 +180,20 @@ e_parsing_errors NGC_RS274::LineProcessor::_process_buffer
 		//This will assign the value to the appropriate place in the block.
 		//If an error occurs because there have been multiple definitions of
 		//The same word in this block, it will be returned here.
-		ret_code = NGC_RS274::Interpreter::Processor::group_word(current_word, word_value, new_block, previous_block);
+		ret_code = NGC_RS274::Block_Assignor::group_word(current_word, word_value, new_block, previous_block);
 		if (ret_code != e_parsing_errors::OK)
 		{
 			//Return the error to the caller
 			return ret_code;
 		}
-		//now run some error checks on the new block
-
-
-
-		//Right here is where we have the word, and its address value.
-		//If you want to update some type of block object with the word
-		//data, do it right here. If there was an expression it would
-		//have been evaluated and calculated already. Parameters would
-		//have already been read. However O words are not currently
-		//handled. I plan to expand that some time but not right now.
-		//block_object_word_array[current_word] = word_value
-
-
 	}
+	//Now that the line parsing is compelte we can run an error check on the line
+
+	//Create a view of the old and new blocks. The view class is just a helper class
+	//to make the data easier to understand
+	NGC_RS274::Block_View v_new = NGC_RS274::Block_View(new_block);
+	NGC_RS274::Block_View v_previous = NGC_RS274::Block_View(previous_block);
+	NGC_RS274::Error_Check::error_check(&v_new, &v_previous);
 	return ret_code;
 }
 

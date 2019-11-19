@@ -110,9 +110,6 @@
     <ClInclude Include="..\..\..\..\Coordinator\Processing\Events\EventHandlers\c_system_events.h">
       <Filter>Coordinator\Processing\Events\EventHandlers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\NGC_RS274\NGC_Block.h">
-      <Filter>Ngc_Rs274</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\..\NGC_RS274\ngc_defines.h">
       <Filter>Ngc_Rs274</Filter>
     </ClInclude>
@@ -120,9 +117,6 @@
       <Filter>Ngc_Rs274</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\NGC_RS274\NGC_G_Groups.h">
-      <Filter>Ngc_Rs274</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\NGC_RS274\NGC_Interpreter.h">
       <Filter>Ngc_Rs274</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\NGC_RS274\NGC_M_Groups.h">
@@ -165,6 +159,15 @@
       <Filter>Ngc_Rs274</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\NGC_RS274\NGC_Block_View.h">
+      <Filter>Ngc_Rs274</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\NGC_RS274\NGC_Error_Check.h">
+      <Filter>Ngc_Rs274</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\NGC_RS274\NGC_Block_Assignor.h">
+      <Filter>Ngc_Rs274</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\NGC_RS274\ngc_block_event_enums.h">
       <Filter>Ngc_Rs274</Filter>
     </ClInclude>
   </ItemGroup>
@@ -214,12 +217,6 @@
     <ClCompile Include="..\..\..\..\Coordinator\Processing\Events\EventHandlers\c_system_events.cpp">
       <Filter>Coordinator\Processing\Events\EventHandlers</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\NGC_RS274\NGC_Block.cpp">
-      <Filter>Ngc_Rs274</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\NGC_RS274\NGC_Interpreter.cpp">
-      <Filter>Ngc_Rs274</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\..\NGC_RS274\Machine Specific\Lathe\NGC_Lathe.cpp">
       <Filter>Ngc_Rs274\MachineSpecific\Lathe</Filter>
     </ClCompile>
@@ -242,6 +239,12 @@
       <Filter>Motion\Processing\GCode</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\..\NGC_RS274\NGC_Block_View.cpp">
+      <Filter>Ngc_Rs274</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\NGC_RS274\NGC_Error_Check.cpp">
+      <Filter>Ngc_Rs274</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\NGC_RS274\NGC_Block_Assignor.cpp">
       <Filter>Ngc_Rs274</Filter>
     </ClCompile>
   </ItemGroup>
