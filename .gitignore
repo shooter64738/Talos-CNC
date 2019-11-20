@@ -352,3 +352,4 @@ src/MotionDriver/AVR_MotionDriver/main.cpp
 src/MotionDriver/AVR_MotionDriver/c_processor.h
 src/MotionDriver/AVR_MotionDriver/AVR_MotionDriver.cppproj
 src/MotionDriver/AVR_MotionDriver/AVR_MotionDriver.componentinfo.xml
+/src/Talos/Platforms/WIN32/Talos_WIN32/Coordinator/cache.dat

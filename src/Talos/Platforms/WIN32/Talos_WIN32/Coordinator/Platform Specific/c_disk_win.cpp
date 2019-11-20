@@ -12,9 +12,21 @@
 #include<iostream>
 #include<fstream>
 using namespace std;
+static std::fstream _cache_file_object;
+static char _cache_file_name[11] = "cache.dat";
+static uint32_t _cache_read_position = 0;
+static uint32_t _cache_write_position = 0;
 
 uint8_t Hardware_Abstraction_Layer::Disk::initialize()
 {
+	_cache_file_object = fstream(_cache_file_name, ios::in | ios::out | ios::app);
+	_cache_file_object.close();
+	_cache_file_object.open(_cache_file_name, std::fstream::in | std::fstream::out | std::fstream::binary);
+	
+	if (!_cache_file_object.is_open()) {
+		cout << "Cannot open file!" << endl;
+		return 1;
+	}
 	return 0;
 }
 
@@ -61,50 +73,46 @@ uint8_t Hardware_Abstraction_Layer::Disk::put_block(BinaryRecords::s_ngc_block *
 {
 	char stream[sizeof(BinaryRecords::s_ngc_block)];
 	memcpy(stream, write_block, sizeof(BinaryRecords::s_ngc_block));
-	write("test.dat", stream, e_file_modes::OpenCreate, sizeof(BinaryRecords::s_ngc_block));
+	write(NULL, stream, e_file_modes::OpenCreate, sizeof(BinaryRecords::s_ngc_block));
+	_cache_write_position = _cache_file_object.tellp();
 	return 1;
 }
 
 uint8_t Hardware_Abstraction_Layer::Disk::get_block(BinaryRecords::s_ngc_block * read_block)
 {
 	char stream[sizeof(BinaryRecords::s_ngc_block)];
-	
-	read("test.dat", stream, e_file_modes::OpenCreate, sizeof(BinaryRecords::s_ngc_block));
 
-	memcpy(read_block, stream, sizeof(BinaryRecords::s_ngc_block));
+	//If a station number was sent with the block we need to seek
+	//that block id in the cache. The offset int he cache is simple.
+	if (read_block->__station__)
+	{
+		uint32_t position = sizeof(BinaryRecords::s_ngc_block) * (read_block->__station__ - 1);
+		//position should now be at the beginning point of the block requested by __station__
+		_cache_file_object.seekp(position,SEEK_SET);
+	}
+
+	read(NULL, stream, e_file_modes::OpenCreate, sizeof(BinaryRecords::s_ngc_block));
 	
+	memcpy(read_block, stream, sizeof(BinaryRecords::s_ngc_block));
+	_cache_read_position = _cache_file_object.tellp();
 	return 1;
 }
 
-
 uint8_t Hardware_Abstraction_Layer::Disk::write(const char * filename, char * buffer, e_file_modes mode, uint16_t size)
 {
-	ofstream wf(filename, ios::out | ios::binary);
-	if (!wf) {
-		cout << "Cannot open file!" << endl;
-		return 1;
-	}
-
-	wf.write(buffer, size);
-	wf.close();
-	if (!wf.good()) {
-		cout << "Error occurred at writing time!" << endl;
-		return 1;
-	}
+	_cache_file_object.write(buffer, size);
+	_cache_file_object.flush();
+	
+	
+	return 0;
 }
 
 uint8_t Hardware_Abstraction_Layer::Disk::read(const char * filename, char * buffer, e_file_modes mode, uint16_t size)
 {
-
-	ifstream rf(filename, ios::out | ios::binary);
-	if (!rf) {
-		cout << "Cannot open file!" << endl;
-		return 1;
-	}
-	rf.read(buffer, size);
-	rf.close();
-
+	_cache_file_object.read(buffer, size);
 	
+
+	return 0;
 }
 
 /*
@@ -123,13 +131,13 @@ uint8_t Hardware_Abstraction_Layer::Disk::read(const char * filename, char * buf
 // - \ref SPI_DLYBCT
 ///
 
-// Calculate the PCS field value given the chip select NPCS value 
+// Calculate the PCS field value given the chip select NPCS value
 #define SPI_PCS(npcs)       ((~(1 << (npcs)) & 0xF) << 16)
 
 // Calculates the value of the CSR SCBR field given the baudrate and MCK.
 #define SPI_SCBR(baudrate, masterClock) ((uint32_t) ((masterClock) / (baudrate)) << 8)
 
-// Calculates the value of the CSR DLYBS field given the desired delay (in ns) 
+// Calculates the value of the CSR DLYBS field given the desired delay (in ns)
 #define SPI_DLYBS(delay, masterClock) ((uint32_t) ((((masterClock) / 1000000) * (delay)) / 1000) << 16)
 
 // Calculates the value of the CSR DLYBCT field given the desired delay (in ns)

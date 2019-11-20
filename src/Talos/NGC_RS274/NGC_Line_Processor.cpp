@@ -156,6 +156,8 @@ e_parsing_errors NGC_RS274::LineProcessor::_process_buffer
 	//grab a block from the ring buffer to work on
 	BinaryRecords::s_ngc_block *previous_block = buffer_destination->writer_for_last_added();
 	BinaryRecords::s_ngc_block *new_block = buffer_destination->writer_for_insert();
+	new_block->__station__++; //<--a unique number to give to this block.
+
 	//Forward copy the previous blocks values so they will persist.
 	//If the values need changed during processing it will happen in the assignor
 	NGC_RS274::Block_View::copy_persisted_data(previous_block, new_block);
@@ -199,8 +201,17 @@ e_parsing_errors NGC_RS274::LineProcessor::_process_buffer
 	{
 		//Add this block to the buffer
 		Talos::Motion::NgcBuffer::pntr_buffer_block_write(new_block);
+		new_block->__station__++;
+		Talos::Motion::NgcBuffer::pntr_buffer_block_write(new_block);
+		new_block->__station__++;
+		Talos::Motion::NgcBuffer::pntr_buffer_block_write(new_block);
+		new_block->__station__++;
+		Talos::Motion::NgcBuffer::pntr_buffer_block_write(new_block);
+		new_block->__station__++;
+		Talos::Motion::NgcBuffer::pntr_buffer_block_write(new_block);
 
 		BinaryRecords::s_ngc_block test;
+		test.__station__ = 2;
 		Talos::Motion::NgcBuffer::pntr_buffer_block_read(&test);
 	}
 	return ret_code;

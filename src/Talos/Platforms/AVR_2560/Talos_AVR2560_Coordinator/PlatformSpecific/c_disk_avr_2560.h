@@ -10,11 +10,13 @@
 
 #include <stdint.h>
 #include "../../../../records_def.h"
+#include "disk_support/ff.h"
 
 namespace Hardware_Abstraction_Layer
 {
 	class Disk
 	{
+	public:
 		enum class e_file_modes
 		{
 			OpenCreate = 0,
@@ -33,8 +35,10 @@ namespace Hardware_Abstraction_Layer
 		static uint8_t initialize();
 		static uint8_t load_configuration();
 		static uint8_t load_initialize_block(BinaryRecords::s_ngc_block * initial_block );
-		static uint8_t store_block(BinaryRecords::s_ngc_block * write_block);
-		static void write(const char * filename, char * buffer, e_file_modes mode);
+		static uint8_t put_block(BinaryRecords::s_ngc_block * write_block);
+		static uint8_t get_block(BinaryRecords::s_ngc_block * read_block);
+		static uint8_t write(FIL file, char * buffer, e_file_modes mode, uint16_t size);
+		static uint8_t read(FIL file, char * buffer, e_file_modes mode, uint16_t size);
 		protected:
 		private:
 		

@@ -17,6 +17,10 @@
 
 static FATFS FatFs;
 static FRESULT FatResult;
+static FIL _cache_file_object;
+static char _cache_file_name[11] ="cache.dat\0";
+static uint32_t _cache_read_position = 0;
+static uint32_t _cache_write_position = 0;
 
 
 uint8_t Hardware_Abstraction_Layer::Disk::initialize()
@@ -33,6 +37,8 @@ uint8_t Hardware_Abstraction_Layer::Disk::initialize()
 	//Talos::Coordinator::Main_Process::host_serial.print_string("f_mount =  ");
 	//Talos::Coordinator::Main_Process::host_serial.print_int32(FatResult);
 	//Talos::Coordinator::Main_Process::host_serial.print_string("\r\n");
+	f_open(&_cache_file_object,_cache_file_name,FA_WRITE|FA_READ|FA_CREATE_NEW);
+
 
 	return (uint8_t) FatResult;
 }
@@ -96,12 +102,55 @@ uint8_t Hardware_Abstraction_Layer::Disk::load_initialize_block(BinaryRecords::s
 	initial_block->g_group[NGC_RS274::Groups::M::COOLANT] = NGC_RS274::M_codes::COOLANT_OFF;
 }
 
-uint8_t Hardware_Abstraction_Layer::Disk::store_block(BinaryRecords::s_ngc_block * write_block)
+uint8_t Hardware_Abstraction_Layer::Disk::put_block(BinaryRecords::s_ngc_block * write_block)
 {
-	return 1;
+	char stream[sizeof(BinaryRecords::s_ngc_block)];
+	
+	memcpy(stream, write_block, sizeof(BinaryRecords::s_ngc_block));
+	
+	_cache_write_position =f_tell(&_cache_file_object);
+
+	return write(_cache_file_object, stream, e_file_modes::OpenCreate, sizeof(BinaryRecords::s_ngc_block));
 }
 
-void Hardware_Abstraction_Layer::Disk::write(const char * filename, char * buffer, e_file_modes mode)
+uint8_t Hardware_Abstraction_Layer::Disk::get_block(BinaryRecords::s_ngc_block * read_block)
 {
+	char stream[sizeof(BinaryRecords::s_ngc_block)];
+
+	//If a station number was sent with the block we need to seek
+	//that block id in the cache. The offset int he cache is simple.
+	if (read_block->__station__)
+	{
+		DWORD position = sizeof(BinaryRecords::s_ngc_block) * (read_block->__station__ -1);
+		//position should now be at the beginning point of the block requested by __station__
+		f_lseek(&_cache_file_object, position);
+	}
+	
+	uint8_t ret_code = read(_cache_file_object, stream, e_file_modes::OpenCreate, sizeof(BinaryRecords::s_ngc_block));
+	if (ret_code) return ret_code;
+
+	memcpy(read_block, stream, sizeof(BinaryRecords::s_ngc_block));
+
+	_cache_read_position = f_tell(&_cache_file_object);
+	return 0;
+}
+
+uint8_t Hardware_Abstraction_Layer::Disk::write(FIL file, char * buffer, e_file_modes mode, uint16_t size)
+{
+	UINT write_size;
+	FRESULT result = FR_OK;
+	
+	result = f_write(&file, buffer, size, &write_size);
+	if (result != FR_OK) return result;
+	
+	result = f_sync(&file);
+	if (result != FR_OK) return result;
+}
+
+uint8_t Hardware_Abstraction_Layer::Disk::read(FIL file, char * buffer, e_file_modes mode, uint16_t size)
+{
+	UINT read_size=0;
+	FRESULT result = f_read(&file, buffer, size, &read_size);
+	
 }
 
