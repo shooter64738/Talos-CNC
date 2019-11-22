@@ -118,6 +118,30 @@ public:
 		}
 		return data;
 	}
+
+	TN * get_h()
+	{
+		//caller should check has_data before calling this. 
+
+		//if head==tail and not full, buffer is empty, no data to provide
+		//if ((this->_head == this->_tail) && !this->_full)
+		//	return 0;
+
+		//since we are pulling a byte off the buffer, it can not be full
+		this->_full = false;
+		//get the byte at the tail
+		TN data = &this->_storage_pointer[this->_tail];
+		//clear this byte. keeps the storage buffered 'nulled'
+		//_storage_pointer[_tail] = 0;
+		//increment tail
+		this->_tail++;
+		//if we are at the size of the buffer, wrap back to zero
+		if (this->_tail == this->_buffer_size)
+		{
+			this->_tail = 0;
+		}
+		return data;
+	}
 	
 	TN * writer_for_insert()
 	{
@@ -128,7 +152,16 @@ public:
 		//	return 0;
 
 		//get the a handle for the object at the head position
+		this->_newest = this->_head;
 		TN * data = &this->_storage_pointer[this->_head];
+
+		//if (this->_head == this->_buffer_size)
+		//{
+		//	this->_head = 0;
+		//}
+		////if head is equal to tail after a write, we are full
+		//if (this->_head == this->_tail)
+		//	this->_full = true;	
 		
 		return data;
 	}
@@ -151,6 +184,14 @@ public:
 	{
 		//caller should check has_data before calling this.
 		this->_head++;
+
+		if (this->_head >= this->_buffer_size)
+		{
+			this->_head = 0;
+		}
+		//if head is equal to tail after a write, we are full
+		if (this->_head == this->_tail)
+			this->_full = true;
 	}
 
 	//Add as the type, but copied from a byte stream
@@ -198,6 +239,7 @@ public:
 
 		return 1;
 	}
+
 
 public:
 
