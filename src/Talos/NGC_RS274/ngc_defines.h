@@ -30,8 +30,10 @@
 #define COUNT_OF_M_CODE_GROUPS_ARRAY 11
 //How many tool offset are in the tool table. (Note tool 0 is used when P value is sent)
 #define COUNT_OF_TOOL_TABLE 10
-
+#define INTERNAL_AXIS_COUNT 9 //x,y,z,a,b,c,u,v,w
 #define G_CODE_MULTIPLIER 10
+#define NEAR_ONE 0.9999
+#define NEAR_ZERO 0.0001
 
 #define A_WORD_BIT 0
 #define B_WORD_BIT 1
@@ -59,6 +61,24 @@
 #define X_WORD_BIT 23
 #define Y_WORD_BIT 24
 #define Z_WORD_BIT 25
+
+struct s_point
+{
+	float X;
+	float Y;
+};
+
+
+
+#define HORIZONTAL_MOTION_AXIS 0
+#define VERTICAL_MOTION_AXIS 1
+#define NORMAL_MOTION_AXIS 2
+#define HORIZONTAL_ROTARY_AXIS 3
+#define VERTICAL_ROTARY_AXIS 4
+#define NORMAL_ROTARY_AXIS 5
+#define HORIZONTAL_INCRIMENTAL_AXIS 6
+#define VERTICAL_INCRIMENTAL_AXIS 7
+#define NORMAL_INCRIMENTAL_AXIS 8
 
 #endif /* NGC_DEFINES_H */
 

@@ -170,6 +170,12 @@
     <ClInclude Include="..\..\..\..\NGC_RS274\ngc_block_event_enums.h">
       <Filter>Ngc_Rs274</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\..\NGC_RS274\NGC_Comp.h">
+      <Filter>Ngc_Rs274</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\NGC_RS274\ngc_compensation_enums.h">
+      <Filter>Ngc_Rs274</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\..\Coordinator\coordinator_main.cpp">
@@ -245,6 +251,9 @@
       <Filter>Ngc_Rs274</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\..\NGC_RS274\NGC_Block_Assignor.cpp">
+      <Filter>Ngc_Rs274</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\NGC_RS274\NGC_Comp.cpp">
       <Filter>Ngc_Rs274</Filter>
     </ClCompile>
   </ItemGroup>

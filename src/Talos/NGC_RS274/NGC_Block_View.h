@@ -40,29 +40,10 @@ namespace NGC_RS274
 	class Block_View
 	{
 		//#define IS_ARC(bool BitTst(exec_flags,2));
-		public:
+	public:
 		Block_View();
 		Block_View(BinaryRecords::s_ngc_block *block);
 		~Block_View();
-
-		/*enum class e_block_event : uint8_t
-		{
-			Motion = 0,
-			Cutter_radius_compensation = 1,
-			Tool_length_offset = 2,
-			Feed_rate_mode = 3,
-			Feed_rate = 4,
-			Spindle_rate = 5,
-			Spindle_mode = 6,
-			Tool_id = 7,
-			Non_modal = 8,
-			Units = 9,
-			Coolant = 10,
-			Tool_Change_Request = 11,
-			Block_Set_To_Execute = 12,
-			Block_Set_To_Held = 13,
-			Canned_Cycle_Active = 14
-		};*/
 
 		struct s_persisted_values
 		{
@@ -133,7 +114,7 @@ namespace NGC_RS274
 			uint16_t *UNASSIGNED_11;
 			uint16_t *COORDINATE_SYSTEM_SELECTION;
 			uint16_t *PATH_CONTROL_MODE;
-			uint16_t *UNASSIGNED_14;
+			uint16_t *SPINDLE_CONTROL;
 			uint16_t *RECTANGLAR_POLAR_COORDS_SELECTION;
 		};
 
@@ -156,13 +137,15 @@ namespace NGC_RS274
 		s_arc_values arc_values;
 		s_canned_values canned_cycles;
 		s_plane_axis active_plane;
+		s_plane_axis previous_plane;
 		s_gcodes current_g_codes;
 		s_mcodes current_m_codes;
-		
+
 		BinaryRecords::s_ngc_block * active_view_block;
 
 		void clear(BinaryRecords::s_ngc_block *block);
 		void load(BinaryRecords::s_ngc_block * block);
+		void comp_fragments(BinaryRecords::s_ngc_block * block);
 		bool any_axis_defined(BinaryRecords::s_ngc_block * block);
 		bool any_linear_axis_was_defined(BinaryRecords::s_ngc_block * block);
 		bool any_rotational_axis_was_defined(BinaryRecords::s_ngc_block * block);
@@ -171,7 +154,7 @@ namespace NGC_RS274
 		bool get_word_value(char word_value, float * value);
 
 		static void copy_persisted_data(BinaryRecords::s_ngc_block * source_block, BinaryRecords::s_ngc_block * destination_block);
-		private:
+	private:
 		void __assign_plane(BinaryRecords::s_ngc_block *block);
 		void __assign_persisted(BinaryRecords::s_ngc_block *block);
 		void __assign_arc(BinaryRecords::s_ngc_block *block);
@@ -179,12 +162,12 @@ namespace NGC_RS274
 		void __assign_gcode(BinaryRecords::s_ngc_block * block);
 		void __assign_mcode(BinaryRecords::s_ngc_block * block);
 		void __set_events(BinaryRecords::s_ngc_block * current_block, BinaryRecords::s_ngc_block * previous_block);
-		void __set_axis_helper(s_axis_property * axis_object, char word_value, BinaryRecords::s_ngc_block * block);
+		void __set_active_plane_axis_helper(s_axis_property * axis_object, char word_value, BinaryRecords::s_ngc_block * block);
 		void __assign_g_event(BinaryRecords::s_ngc_block * block, uint16_t group_number);
 		void __assign_m_event(BinaryRecords::s_ngc_block * block, uint16_t group_number);
 		void __assign_other_event(BinaryRecords::s_ngc_block * block);
 		bool __group_has_changed(uint16_t * original_value, uint16_t * updated_value, uint8_t group_number);
-		
+
 	};
 };
 

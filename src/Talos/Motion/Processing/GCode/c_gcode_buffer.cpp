@@ -28,6 +28,7 @@ static BinaryRecords::s_ngc_block gcode_data[NGC_BUFFER_SIZE];
 c_ring_buffer<BinaryRecords::s_ngc_block> Talos::Motion::NgcBuffer::gcode_buffer;
 uint8_t(*Talos::Motion::NgcBuffer::pntr_buffer_block_write)(BinaryRecords::s_ngc_block * write_block);
 uint8_t(*Talos::Motion::NgcBuffer::pntr_buffer_block_read)(BinaryRecords::s_ngc_block * read_block);
+uint8_t(*Talos::Motion::NgcBuffer::pntr_buffer_block_update)(BinaryRecords::s_ngc_block * update_block);
 
 uint8_t Talos::Motion::NgcBuffer::initialize()
 {

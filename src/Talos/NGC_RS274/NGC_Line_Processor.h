@@ -33,8 +33,7 @@
 
 
 #define MAX_EXPRESSION_OPS 7
-#define NEAR_ONE 0.9999
-#define NEAR_ZERO 0.0001
+
 #define RS274NGC_MAX_PARAMETERS 5414
 #define MAX_NAMED_PARAM_LENGTH 64
 #define M_PI 3.14159265358979323846
@@ -63,11 +62,11 @@ namespace NGC_RS274
 			int(*pntr_set_numeric_parameter)(int param_number, float value);
 			
 		};
-
+		static char line_buffer[];
 		static s_param_functions parameter_function_pointers;
 		static int last_read_position;
 		static uint8_t initialize();
-		static e_parsing_errors start(char * line, c_ring_buffer <BinaryRecords::s_ngc_block> * buffer_destination);
+		static e_parsing_errors start(c_ring_buffer<char> * ring_buffer, c_ring_buffer <BinaryRecords::s_ngc_block> * buffer_destination);
 
 		private:
 
@@ -123,7 +122,7 @@ namespace NGC_RS274
 			Tan = 13
 		};
 
-		static uint8_t _set_buffer_to_upper(char * buffer);
+		static uint8_t _set_buffer_to_upper(char * ring_buffer);
 		static e_parsing_errors  _process_buffer(char * buffer, c_ring_buffer <BinaryRecords::s_ngc_block> * buffer_destination);
 
 		static e_parsing_errors  _read_as_word(char * buffer, int * read_pos, char word, float * word_value);

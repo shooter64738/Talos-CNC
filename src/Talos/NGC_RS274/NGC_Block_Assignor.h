@@ -40,7 +40,6 @@ namespace NGC_RS274
 {
 	class Block_Assignor
 	{
-		//#define IS_ARC(bool BitTst(exec_flags,2));
 	public:
 		//Block_Assignor();
 		//~Block_Assignor();
@@ -53,9 +52,6 @@ namespace NGC_RS274
 		static e_parsing_errors _pWord(char Word, float iAddress, BinaryRecords::s_ngc_block *new_block, BinaryRecords::s_ngc_block *previous_block);
 		static e_parsing_errors _process_word_values(char Word, float iAddress, BinaryRecords::s_ngc_block *new_block, BinaryRecords::s_ngc_block *previous_block);
 		static bool _group_value_changed(uint16_t old_value, uint16_t new_value);
-		//e_parsing_errors error_check_main(BinaryRecords::s_ngc_block *new_block, BinaryRecords::s_ngc_block * previous_block);
-
-
 	};
 };
 

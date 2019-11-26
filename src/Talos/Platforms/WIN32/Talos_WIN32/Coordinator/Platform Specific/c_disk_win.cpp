@@ -66,6 +66,8 @@ uint8_t Hardware_Abstraction_Layer::Disk::load_initialize_block(BinaryRecords::s
 	initial_block->m_group[NGC_RS274::Groups::M::SPINDLE] = NGC_RS274::M_codes::SPINDLE_STOP;
 	//default coolant mode
 	initial_block->m_group[NGC_RS274::Groups::M::COOLANT] = NGC_RS274::M_codes::COOLANT_OFF;
+
+	initial_block->__station__ = 1;
 	return 0;
 }
 
@@ -73,6 +75,31 @@ uint8_t Hardware_Abstraction_Layer::Disk::put_block(BinaryRecords::s_ngc_block *
 {
 	char stream[sizeof(BinaryRecords::s_ngc_block)];
 	memcpy(stream, write_block, sizeof(BinaryRecords::s_ngc_block));
+	if (write_block->__station__)
+	{
+		uint32_t position = sizeof(BinaryRecords::s_ngc_block) * (write_block->__station__ - 1);
+		//position should now be at the beginning point of the block requested by __station__
+		_cache_file_object.seekp(position, SEEK_SET);
+	}
+	write(NULL, stream, e_file_modes::OpenCreate, sizeof(BinaryRecords::s_ngc_block));
+	_cache_write_position = _cache_file_object.tellp();
+	return 1;
+}
+
+uint8_t Hardware_Abstraction_Layer::Disk::update_block(BinaryRecords::s_ngc_block * update_block)
+{
+	char stream[sizeof(BinaryRecords::s_ngc_block)];
+	memcpy(stream, update_block, sizeof(BinaryRecords::s_ngc_block));
+
+	//If a station number was sent with the block we need to seek
+	//that block id in the cache. The offset in the cache is simple.
+	if (update_block->__station__)
+	{
+		uint32_t position = sizeof(BinaryRecords::s_ngc_block) * (update_block->__station__ - 1);
+		//position should now be at the beginning point of the block requested by __station__
+		_cache_file_object.seekp(position, SEEK_SET);
+	}
+
 	write(NULL, stream, e_file_modes::OpenCreate, sizeof(BinaryRecords::s_ngc_block));
 	_cache_write_position = _cache_file_object.tellp();
 	return 1;
@@ -83,7 +110,7 @@ uint8_t Hardware_Abstraction_Layer::Disk::get_block(BinaryRecords::s_ngc_block *
 	char stream[sizeof(BinaryRecords::s_ngc_block)];
 
 	//If a station number was sent with the block we need to seek
-	//that block id in the cache. The offset int he cache is simple.
+	//that block id in the cache. The offset in the cache is simple.
 	if (read_block->__station__)
 	{
 		uint32_t position = sizeof(BinaryRecords::s_ngc_block) * (read_block->__station__ - 1);

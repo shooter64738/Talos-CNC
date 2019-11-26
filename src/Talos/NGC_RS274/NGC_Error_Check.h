@@ -35,9 +35,20 @@ needed to store in the buffer array. This allows almost twice as much storage sp
 #include "ngc_errors_interpreter.h"
 #include "NGC_Block_View.h"
 
+//Changing the MACHINE_TYPE in the physical_machine_parameters.h file will change what
+//is included to process gcode specific to one machine or the other.
+#ifdef MACHINE_TYPE_MILL
+#include "Machine Specific/Mill/NGC_Mill.h"
+#endif
+#ifdef MACHINE_TYPE_LATHE
+#include "Machine Specific/Lathe/NGC_Lathe.h"
+#endif
+#include "ngc_errors_interpreter.h"
+
+
 namespace NGC_RS274
 {
-	class Error_Check //: public NGC_RS274::Block_View
+	class Error_Check : public NGC_Machine_Specific
 	{
 		//#define IS_ARC(bool BitTst(exec_flags,2));
 		public:
@@ -45,16 +56,19 @@ namespace NGC_RS274
 		//~Error_Check();
 			static e_parsing_errors error_check(NGC_RS274::Block_View *new_block, NGC_RS274::Block_View *previous_block);
 	private:
-		static e_parsing_errors error_check_main(NGC_RS274::Block_View *new_block, NGC_RS274::Block_View *previous_block);
-		static e_parsing_errors error_check_plane_select(NGC_RS274::Block_View *v_new_block, NGC_RS274::Block_View *v_previous_block);
-		static e_parsing_errors error_check_arc(NGC_RS274::Block_View *v_new_block, NGC_RS274::Block_View *v_previous_block);
-		static e_parsing_errors error_check_center_format_arc(NGC_RS274::Block_View *v_new_block, NGC_RS274::Block_View *v_previous_block);
-		static e_parsing_errors error_check_radius_format_arc(NGC_RS274::Block_View *v_new_block, NGC_RS274::Block_View *v_previous_block);
-		static e_parsing_errors error_check_non_modal(NGC_RS274::Block_View *v_new_block, NGC_RS274::Block_View *v_previous_block);
-		static e_parsing_errors error_check_tool_length_offset(NGC_RS274::Block_View *v_new_block, NGC_RS274::Block_View *v_previous_block);
-		static e_parsing_errors error_check_cutter_compensation(NGC_RS274::Block_View *v_new_block, NGC_RS274::Block_View *v_previous_block);
-		static float hypot_f(float x, float y);
-		static float square(float X);
+		static e_parsing_errors __error_check_main(NGC_RS274::Block_View *new_block, NGC_RS274::Block_View *previous_block);
+		static e_parsing_errors __error_check_plane_select(NGC_RS274::Block_View *v_new_block, NGC_RS274::Block_View *v_previous_block);
+		static e_parsing_errors __error_check_arc(NGC_RS274::Block_View *v_new_block, NGC_RS274::Block_View *v_previous_block);
+		
+		static e_parsing_errors __error_check_non_modal(NGC_RS274::Block_View *v_new_block, NGC_RS274::Block_View *v_previous_block);
+		static e_parsing_errors __error_check_tool_length_offset(NGC_RS274::Block_View *v_new_block, NGC_RS274::Block_View *v_previous_block);
+		static e_parsing_errors __error_check_cutter_compensation(NGC_RS274::Block_View *v_new_block, NGC_RS274::Block_View *v_previous_block);
+
+		static float __hypot_f(float x, float y);
+		static float __square(float X);
+
+		static e_parsing_errors ____error_check_center_format_arc(NGC_RS274::Block_View *v_new_block, NGC_RS274::Block_View *v_previous_block);
+		static e_parsing_errors ____error_check_radius_format_arc(NGC_RS274::Block_View *v_new_block, NGC_RS274::Block_View *v_previous_block);
 	};
 };
 

@@ -28,24 +28,24 @@
 
 namespace BinaryRecords
 {
-	#ifndef __C_CRITICAL_ERRORS
-	#define __C_CRITICAL_ERRORS
+#ifndef __C_CRITICAL_ERRORS
+#define __C_CRITICAL_ERRORS
 	enum class e_critical_errors
 	{
 		Hardware_failure_force_shutdown = 0
 	};
-	#endif
+#endif
 
-	#ifndef __C_RAMP_TYPE
-	#define __C_RAMP_TYPE
+#ifndef __C_RAMP_TYPE
+#define __C_RAMP_TYPE
 	enum class e_ramp_type
 	{
 		Accel, Cruise, Decel, Decel_Override
 	};
-	#endif
+#endif
 
-	#ifndef __C_MOTION_TYPE
-	#define __C_MOTION_TYPE
+#ifndef __C_MOTION_TYPE
+#define __C_MOTION_TYPE
 	enum class e_motion_type : uint8_t
 	{
 		rapid_linear = 0 * G_CODE_MULTIPLIER,
@@ -53,10 +53,10 @@ namespace BinaryRecords
 		arc_cw = 2 * G_CODE_MULTIPLIER,
 		arc_ccw = 3 * G_CODE_MULTIPLIER
 	};
-	#endif
+#endif
 
-	#ifndef __C_BLOCK_FLAG
-	#define __C_BLOCK_FLAG
+#ifndef __C_BLOCK_FLAG
+#define __C_BLOCK_FLAG
 	enum class e_block_flag : uint8_t
 	{
 		block_state_normal = 0,
@@ -66,10 +66,10 @@ namespace BinaryRecords
 		motion_state_cruising = 4,
 		motion_state_stopping = 5,
 	};
-	#endif
+#endif
 
-	#ifndef __C_FEED_MODES
-	#define __C_FEED_MODES
+#ifndef __C_FEED_MODES
+#define __C_FEED_MODES
 	enum class e_feed_modes : uint16_t
 	{
 		FEED_RATE_MINUTES_PER_UNIT_MODE = 93 * G_CODE_MULTIPLIER,
@@ -78,10 +78,10 @@ namespace BinaryRecords
 		FEED_RATE_CONSTANT_SURFACE_SPEED = 96 * G_CODE_MULTIPLIER,
 		FEED_RATE_RPM_MODE = 97 * G_CODE_MULTIPLIER
 	};
-	#endif
+#endif
 
-	#ifndef __C_BINARY_RECORD_TYPES
-	#define __C_BINARY_RECORD_TYPES
+#ifndef __C_BINARY_RECORD_TYPES
+#define __C_BINARY_RECORD_TYPES
 	enum class e_binary_record_types : uint8_t
 	{
 		//DO NOT use 10 or 13 as binary record type identifiers.
@@ -93,19 +93,19 @@ namespace BinaryRecords
 		Peripheral_Control_Setting = 5,
 		Status = 6
 	};
-	#endif
+#endif
 
-	#ifndef __C_UNIT_TYPES
-	#define __C_UNIT_TYPES
+#ifndef __C_UNIT_TYPES
+#define __C_UNIT_TYPES
 	enum class e_unit_types : uint8_t
 	{
 		MM = 1,
 		INCHES = 2
 	};
-	#endif
+#endif
 
-	#ifndef __C_SYSTEM_STATE_RECORD_TYPES
-	#define __C_SYSTEM_STATE_RECORD_TYPES
+#ifndef __C_SYSTEM_STATE_RECORD_TYPES
+#define __C_SYSTEM_STATE_RECORD_TYPES
 	enum class e_system_state_record_types : uint8_t
 	{
 		Motion_Active = 1, //Motion states 1-9
@@ -118,10 +118,10 @@ namespace BinaryRecords
 		Spindle_Running = 11,
 		System_Error = 99
 	};
-	#endif
+#endif
 
-	#ifndef __C_SYSTEM_SUB_STATE_RECORD_TYPES
-	#define __C_SYSTEM_SUB_STATE_RECORD_TYPES
+#ifndef __C_SYSTEM_SUB_STATE_RECORD_TYPES
+#define __C_SYSTEM_SUB_STATE_RECORD_TYPES
 	enum class e_system_sub_state_record_types : uint8_t
 	{
 		Block_Complete = 1, //The block has completed. Block sequence # is returned in the num_message
@@ -150,12 +150,12 @@ namespace BinaryRecords
 
 	};
 
-	#endif
+#endif
 
 
 
-	#ifndef __C_BINARY_RESPONSES
-	#define __C_BINARY_RESPONSES
+#ifndef __C_BINARY_RESPONSES
+#define __C_BINARY_RESPONSES
 	enum class e_binary_responses : uint8_t
 	{
 		Ok = 240,
@@ -165,10 +165,10 @@ namespace BinaryRecords
 		Data_Rx_Wait = 236,
 		Check_Sum_Failure = 235
 	};
-	#endif
+#endif
 
-	#ifndef __C_PERIPHERAL_PANEL_PROCESSING
-	#define __C_PERIPHERAL_PANEL_PROCESSING
+#ifndef __C_PERIPHERAL_PANEL_PROCESSING
+#define __C_PERIPHERAL_PANEL_PROCESSING
 	enum class e_peripheral_panel_processing : uint16_t
 	{
 		Block_Skip = 1, //when on any lines beginning with the skip '/' char are not executed
@@ -178,10 +178,10 @@ namespace BinaryRecords
 		Coolant_Mist_On_Off = 5,
 		Coolant_Flood_On_Off = 6
 	};
-	#endif
+#endif
 
-	#ifndef __C_PERIPHERAL_PANEL_OVERRIDE_RAPIDS
-	#define __C_PERIPHERAL_PANEL_OVERRIDE_RAPIDS
+#ifndef __C_PERIPHERAL_PANEL_OVERRIDE_RAPIDS
+#define __C_PERIPHERAL_PANEL_OVERRIDE_RAPIDS
 	enum class e_peripheral_panel_override_rapids : uint8_t
 	{
 		Zero = 0,
@@ -189,8 +189,8 @@ namespace BinaryRecords
 		_50 = 50,
 		_100 = 100
 	};
-	#endif
-	
+#endif
+
 	template <typename TN>
 	struct s_bit_flag_controller
 	{
@@ -236,7 +236,7 @@ namespace BinaryRecords
 
 		volatile TN _flag;//because this can be accessed by interrupts, i am making it volatile
 	};
-	
+
 	struct s_ngc_block
 	{
 		float word_values[26]; //<--hard code to 26, cuz there are always 26 letters in the alphabet
@@ -246,10 +246,15 @@ namespace BinaryRecords
 		s_bit_flag_controller<uint32_t> g_code_defined_in_block;
 		uint16_t m_group[COUNT_OF_M_CODE_GROUPS_ARRAY]; //There are 5 groups of mcodes (0-4)
 		s_bit_flag_controller<uint32_t> m_code_defined_in_block;
+		float target_motion_position[INTERNAL_AXIS_COUNT];  //Positions the last block of motion left us at
+														    //when reading these we must always assume the plane
+														    //values were h,v,n,hr,hv,hn,ih,iv,in because do not
+															//have the plane data to review after the block is
+															//processed and cached.
 		uint32_t __station__;
-		
+
 		//char comment[256];
-		
+
 		//double a_number;
 		//double b_number;
 		//double c_number;
@@ -365,16 +370,16 @@ namespace BinaryRecords
 		const BinaryRecords::e_binary_record_types record_type = BinaryRecords::e_binary_record_types::Jog;
 		float axis_value;
 		uint8_t axis;
-		uint32_t flag = (int) BinaryRecords::e_block_flag::block_state_normal;
+		uint32_t flag = (int)BinaryRecords::e_block_flag::block_state_normal;
 		uint32_t _check_sum = 0;
 	};
 
 	struct s_encoder_meta
 	{
-		int32_t reg_tc0_cv1=0;
-		int32_t reg_tc0_ra0=0;
-		float speed_rps=0;
-		float speed_rpm=0;
+		int32_t reg_tc0_cv1 = 0;
+		int32_t reg_tc0_ra0 = 0;
+		float speed_rps = 0;
+		float speed_rpm = 0;
 	};
 	struct s_encoders
 	{
@@ -388,7 +393,7 @@ namespace BinaryRecords
 		uint8_t wait_spindle_at_speed;//do we wait for the spindle to get to speed before we start interpolation? 1 = yes, 0 = no
 		uint8_t lock_to_axis;//if spindle lock_to_axis is set ('X','Y','Z','A','B','C','U','V','W') moving that axis will cause the spindle to rotate
 		int32_t spindle_synch_wait_time_ms;//when we are waiting for spindle at speed, how many milliseconds do we wait for synch to occur.
-		
+
 		//function to determine if we are near enough to the rpm to start interpolation
 		uint8_t near(uint32_t current_rpm, uint32_t target_rpm, uint8_t variable_percent)
 		{

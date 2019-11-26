@@ -40,10 +40,18 @@ void Talos::Coordinator::Main_Process::initialize()
 	Hardware_Abstraction_Layer::Disk::load_initialize_block(&Talos::Motion::NgcBuffer::gcode_buffer._storage_pointer[0]);
 	Talos::Motion::NgcBuffer::pntr_buffer_block_write = Hardware_Abstraction_Layer::Disk::put_block;
 	Talos::Motion::NgcBuffer::pntr_buffer_block_read = Hardware_Abstraction_Layer::Disk::get_block;
+	Talos::Motion::NgcBuffer::pntr_buffer_block_update = Hardware_Abstraction_Layer::Disk::update_block;
+	//Write the start up block to cache
+	Talos::Motion::NgcBuffer::pntr_buffer_block_write(&Talos::Motion::NgcBuffer::gcode_buffer._storage_pointer[0]);
+
 
 	#ifdef MSVC
+	//cutter comp line 1
+	Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "p.25 g1 f1 g41 x1 y0\r\n g2 x1.5y0.5 i1.5 j0\r\n g1 x1.5y1.5\r\ng1 x3.5 y1.5\r\n");//here axis words are used for motion and non modal. Thats an error
+	//cutter comp line 2
+	//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "p.25 g1 f1 g42 x1 y0\r\n g2 x2y0 i1.5 j0\r\n g1 x3y0\r\ng1 x4 y0\r\n");//here axis words are used for motion and non modal. Thats an error
 	//simple gcode line
-	Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "g01 y7x4f3g90g20\r\n");//here axis words are used for motion and non modal. Thats an error
+	//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "g01 y7x4g90g20\r\n");//here axis words are used for motion and non modal. Thats an error
 	//purposely bad g code line
 	//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "g01 y7 g10x3 \r\n");//here axis words are used for motion and non modal. Thats an error
 	//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "g0y#525r#<test>[1.0-[5.0+10]]\r\ng1x3\r\n");

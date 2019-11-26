@@ -43,6 +43,7 @@ namespace Talos
 			static uint8_t initialize();
 			static uint8_t(*pntr_buffer_block_write)(BinaryRecords::s_ngc_block * write_block);
 			static uint8_t(*pntr_buffer_block_read)(BinaryRecords::s_ngc_block * read_block);
+			static uint8_t(*pntr_buffer_block_update)(BinaryRecords::s_ngc_block * update_block);
 			protected:
 			private:
 		}; //c_buffer

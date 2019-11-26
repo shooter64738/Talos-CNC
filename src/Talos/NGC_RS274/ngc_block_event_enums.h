@@ -24,6 +24,7 @@ enum class e_block_event : uint8_t
 	RECTANGLAR_POLAR_COORDS_SELECTION = 20,
 	STOPPING = 21,
 	OVERRIDE = 25,
-	USER_DEFINED = 26
+	USER_DEFINED = 26,
+	HoldBlockForCRC = 27
 
 };

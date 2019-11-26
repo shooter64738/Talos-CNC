@@ -24,7 +24,7 @@
 #include <string.h>
 
 #include "../../NGC_G_Groups.h"
-#include "NGC_G_Codes.h"
+
 #include "../../NGC_Errors.h"
 /*
 If a canned cycle (g81-g89) command was specified, perform detailed parameter check that applies
@@ -99,38 +99,39 @@ only to canned cycles.
 //	return  e_parsing_errors::OK;
 //}
 //
-//e_parsing_errors NGC_RS274::Interpreter::NGC_Machine_Specific::error_check_feed_mode(int gCode, NGC_RS274::NGC_Binary_Block *new_block, NGC_RS274::NGC_Binary_Block *previous_block)
-//{
-//	//When we are in time per unit feed rate mode (also known as inverse time), a feed rate must be set per line, for any motion command
-//	if (new_block->get_g_code_value_x(NGC_RS274::Groups::G::Feed_rate_mode) == NGC_RS274::G_codes::FEED_RATE_MINUTES_PER_UNIT_MODE
-//		&& !new_block->get_defined(('F')))
-//		return  e_parsing_errors::NO_FEED_RATE_SPECIFIED_FOR_UNIT_PER_MINUTE;
-//	
-//	//When we are in unit per rotation feed rate mode, the spindle must already be active
-//	//or become active on this line.
-//	if (new_block->get_g_code_value_x(NGC_RS274::Groups::G::Feed_rate_mode)
-//	== NGC_RS274::G_codes::FEED_RATE_UNITS_PER_ROTATION)
-//	{
-//		//Is the spindle on, or coming on at this line?
-//		if (new_block->get_m_code_value_x(NGC_RS274::Groups::M::SPINDLE)
-//		==NGC_RS274::M_codes::SPINDLE_STOP)
-//		{
-//			return  e_parsing_errors::NO_SPINDLE_MODE_FOR_UNIT_PER_ROTATION;
-//		}
-//		//Was a spindle rpm set here or previously? It has to be on or coming on in order for this to not error
-//		if (new_block->block_word_values['S' - 65] == 0)
-//		{
-//			return  e_parsing_errors::NO_SPINDLE_VALUE_FOR_UNIT_PER_ROTATION;
-//		}
-//	}
-//
-//	//if G0 is active we don't need a feed rate. G1,G2,G3,all canned motions, do require a feed rate be active
-//	if (new_block->block_word_values['F' - 65] == 0 && gCode > 0)
-//	{
-//		//feedrate is now a persisted value in a block. IF it was EVER set it will get carried forward to the next block
-//		return  e_parsing_errors::NO_FEED_RATE_SPECIFIED;
-//	}
-//
-//	return  e_parsing_errors::OK;
-//}
+e_parsing_errors NGC_RS274::NGC_Machine_Specific::error_check_feed_mode(int gCode, NGC_RS274::Block_View *new_block, NGC_RS274::Block_View *previous_block)
+{
+	//When we are in time per unit feed rate mode (also known as inverse time), a feed rate must be set per line, for any motion command
+	if (*new_block->current_g_codes.Feed_rate_mode == NGC_RS274::G_codes::FEED_RATE_MINUTES_PER_UNIT_MODE
+		&& !new_block->is_word_defined(new_block->active_view_block,'F'))
+		return  e_parsing_errors::NO_FEED_RATE_SPECIFIED_FOR_UNIT_PER_MINUTE;
+	
+	float word_value = 0;
+	//When we are in unit per rotation feed rate mode, the spindle must already be active
+	//or become active on this line.
+	if (*new_block->current_g_codes.Feed_rate_mode == NGC_RS274::G_codes::FEED_RATE_UNITS_PER_ROTATION)
+	{
+		//Is the spindle on, or coming on at this line?
+		if (*new_block->current_m_codes.SPINDLE == NGC_RS274::M_codes::SPINDLE_STOP)
+		{
+			return  e_parsing_errors::NO_SPINDLE_MODE_FOR_UNIT_PER_ROTATION;
+		}
+		
+		new_block->get_word_value('S', &word_value);
+		//Was a spindle rpm set here or previously? It has to be on or coming on in order for this to not error
+		if (word_value)
+		{
+			return  e_parsing_errors::NO_SPINDLE_VALUE_FOR_UNIT_PER_ROTATION;
+		}
+	}
+	new_block->get_word_value('F', &word_value);
+	//if G0 is active we don't need a feed rate. G1,G2,G3,all canned motions, do require a feed rate be active
+	if (word_value == 0 && gCode > 0)
+	{
+		//feedrate is now a persisted value in a block. IF it was EVER set it will get carried forward to the next block
+		return  e_parsing_errors::NO_FEED_RATE_SPECIFIED;
+	}
+
+	return  e_parsing_errors::OK;
+}
 #endif

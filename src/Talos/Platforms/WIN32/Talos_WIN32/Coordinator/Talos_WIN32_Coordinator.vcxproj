@@ -38,6 +38,8 @@
     <ClInclude Include="..\..\..\..\NGC_RS274\NGC_Block_Assignor.h" />
     <ClInclude Include="..\..\..\..\NGC_RS274\ngc_block_event_enums.h" />
     <ClInclude Include="..\..\..\..\NGC_RS274\NGC_Block_View.h" />
+    <ClInclude Include="..\..\..\..\NGC_RS274\NGC_Comp.h" />
+    <ClInclude Include="..\..\..\..\NGC_RS274\ngc_compensation_enums.h" />
     <ClInclude Include="..\..\..\..\NGC_RS274\ngc_defines.h" />
     <ClInclude Include="..\..\..\..\NGC_RS274\NGC_Errors.h" />
     <ClInclude Include="..\..\..\..\NGC_RS274\ngc_errors_interpreter.h" />
@@ -72,6 +74,7 @@
     <ClCompile Include="..\..\..\..\NGC_RS274\Machine Specific\Mill\NGC_Mill.cpp" />
     <ClCompile Include="..\..\..\..\NGC_RS274\NGC_Block_Assignor.cpp" />
     <ClCompile Include="..\..\..\..\NGC_RS274\NGC_Block_View.cpp" />
+    <ClCompile Include="..\..\..\..\NGC_RS274\NGC_Comp.cpp" />
     <ClCompile Include="..\..\..\..\NGC_RS274\NGC_Error_Check.cpp" />
     <ClCompile Include="..\..\..\..\NGC_RS274\NGC_Line_Processor.cpp" />
     <ClCompile Include="..\..\..\..\NGC_RS274\NGC_Parameters.cpp" />

@@ -22,20 +22,16 @@
 #ifdef MACHINE_TYPE_MILL
 #ifndef NGC_MILL_H
 #define NGC_MILL_H
-
 #include <stdint.h>
-#include "../../NGC_Block.h"
+#include "../../NGC_Block_View.h"
 #include "../../ngc_errors_interpreter.h"
 namespace NGC_RS274
 {
-	namespace Interpreter
+	class NGC_Machine_Specific
 	{
-		class NGC_Machine_Specific
-		{
-			public:
-				static e_parsing_errors error_check_canned_cycle(NGC_RS274::NGC_Binary_Block *new_block, NGC_RS274::NGC_Binary_Block *previous_block);
-				static e_parsing_errors error_check_feed_mode(int gCode, NGC_RS274::NGC_Binary_Block *new_block, NGC_RS274::NGC_Binary_Block *previous_block);
-		};
+		public:
+		static e_parsing_errors error_check_canned_cycle(NGC_RS274::Block_View *new_block, NGC_RS274::Block_View *previous_block);
+		static e_parsing_errors error_check_feed_mode(int gCode, NGC_RS274::Block_View *new_block, NGC_RS274::Block_View *previous_block);
 	};
 };
 #endif
