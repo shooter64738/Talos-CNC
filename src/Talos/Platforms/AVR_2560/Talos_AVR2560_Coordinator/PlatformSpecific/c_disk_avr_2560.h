@@ -37,6 +37,7 @@ namespace Hardware_Abstraction_Layer
 		static uint8_t load_initialize_block(BinaryRecords::s_ngc_block * initial_block );
 		static uint8_t put_block(BinaryRecords::s_ngc_block * write_block);
 		static uint8_t get_block(BinaryRecords::s_ngc_block * read_block);
+		static uint8_t update_block(BinaryRecords::s_ngc_block * update_block);
 		static uint8_t write(FIL file, char * buffer, e_file_modes mode, uint16_t size);
 		static uint8_t read(FIL file, char * buffer, e_file_modes mode, uint16_t size);
 		protected:

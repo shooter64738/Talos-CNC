@@ -47,9 +47,9 @@ void Talos::Coordinator::Main_Process::initialize()
 
 	#ifdef MSVC
 	//cutter comp line 1
-	Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "p.25 g1 f1 g41 x1 y0\r\n g2 x1.5y0.5 i1.5 j0\r\n g1 x1.5y1.5\r\ng1 x3.5 y1.5\r\n");//here axis words are used for motion and non modal. Thats an error
+	//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "p.25 g1 f1 g41 x1 y0\r\n g2 x1.5y0.5 i1.5 j0\r\n g1 x1.5y1.5\r\ng1 x3.5 y1.5\r\n");
 	//cutter comp line 2
-	//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "p.25 g1 f1 g42 x1 y0\r\n g2 x2y0 i1.5 j0\r\n g1 x3y0\r\ng1 x4 y0\r\n");//here axis words are used for motion and non modal. Thats an error
+	//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "p.25 g1 f1 g42 x1 y0\r\n g2 x2y0 i1.5 j0\r\n g1 x3y0\r\ng1 x4 y0\r\n");
 	//simple gcode line
 	//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "g01 y7x4g90g20\r\n");//here axis words are used for motion and non modal. Thats an error
 	//purposely bad g code line

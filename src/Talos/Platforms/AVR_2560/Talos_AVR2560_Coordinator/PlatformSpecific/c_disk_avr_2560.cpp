@@ -15,6 +15,7 @@
 #include "../../../../NGC_RS274/NGC_G_Groups.h"
 #include "../../../../NGC_RS274/NGC_M_Groups.h"
 
+
 static FATFS FatFs;
 static FRESULT FatResult;
 static FIL _cache_file_object;
@@ -107,10 +108,36 @@ uint8_t Hardware_Abstraction_Layer::Disk::put_block(BinaryRecords::s_ngc_block *
 	char stream[sizeof(BinaryRecords::s_ngc_block)];
 	
 	memcpy(stream, write_block, sizeof(BinaryRecords::s_ngc_block));
-	
-	_cache_write_position =f_tell(&_cache_file_object);
+
+	if (write_block->__station__)
+	{
+		uint32_t position = sizeof(BinaryRecords::s_ngc_block) * (write_block->__station__ - 1);
+		//position should now be at the beginning point of the block requested by __station__
+		f_lseek(&_cache_file_object,position);
+	}
 
 	return write(_cache_file_object, stream, e_file_modes::OpenCreate, sizeof(BinaryRecords::s_ngc_block));
+
+	_cache_write_position =f_tell(&_cache_file_object);
+}
+
+uint8_t Hardware_Abstraction_Layer::Disk::update_block(BinaryRecords::s_ngc_block * update_block)
+{
+
+	char stream[sizeof(BinaryRecords::s_ngc_block)];
+	
+	memcpy(stream, update_block, sizeof(BinaryRecords::s_ngc_block));
+	
+	if (update_block->__station__)
+	{
+		uint32_t position = sizeof(BinaryRecords::s_ngc_block) * (update_block->__station__ - 1);
+		//position should now be at the beginning point of the block requested by __station__
+		f_lseek(&_cache_file_object,position);
+	}
+
+	return write(_cache_file_object, stream, e_file_modes::OpenCreate, sizeof(BinaryRecords::s_ngc_block));
+
+	_cache_write_position =f_tell(&_cache_file_object);
 }
 
 uint8_t Hardware_Abstraction_Layer::Disk::get_block(BinaryRecords::s_ngc_block * read_block)
