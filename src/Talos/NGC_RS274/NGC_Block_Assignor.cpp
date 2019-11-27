@@ -32,7 +32,7 @@
 
 uint16_t _ngc_working_group = 0;
 
-e_parsing_errors NGC_RS274::Block_Assignor::group_word(char Word, float Address, BinaryRecords::s_ngc_block *new_block, BinaryRecords::s_ngc_block *previous_block)
+e_parsing_errors NGC_RS274::Block_Assignor::group_word(char Word, float Address, s_ngc_block *new_block, s_ngc_block *previous_block)
 {
 	switch (Word)
 	{
@@ -53,7 +53,7 @@ e_parsing_errors NGC_RS274::Block_Assignor::group_word(char Word, float Address,
 /*
 Assign the corresponding value to a Group number for an Address
 */
-e_parsing_errors NGC_RS274::Block_Assignor::_gWord(float Address, BinaryRecords::s_ngc_block *new_block, BinaryRecords::s_ngc_block *previous_block)
+e_parsing_errors NGC_RS274::Block_Assignor::_gWord(float Address, s_ngc_block *new_block, s_ngc_block *previous_block)
 {
 	/*
 	|***************************************************************************************|
@@ -249,7 +249,7 @@ e_parsing_errors NGC_RS274::Block_Assignor::_gWord(float Address, BinaryRecords:
 /*
 Assign the corresponding Group number for an M code
 */
-e_parsing_errors NGC_RS274::Block_Assignor::_mWord(float Address, BinaryRecords::s_ngc_block *new_block, BinaryRecords::s_ngc_block *previous_block)
+e_parsing_errors NGC_RS274::Block_Assignor::_mWord(float Address, s_ngc_block *new_block, s_ngc_block *previous_block)
 {
 	/*
 	|****************************************************************************************|
@@ -352,7 +352,7 @@ e_parsing_errors NGC_RS274::Block_Assignor::_mWord(float Address, BinaryRecords:
 /*
 Assign the corresponding Address value for a specific G Word
 */
-e_parsing_errors NGC_RS274::Block_Assignor::_pWord(char Word, float iAddress, BinaryRecords::s_ngc_block *new_block, BinaryRecords::s_ngc_block *previous_block)
+e_parsing_errors NGC_RS274::Block_Assignor::_pWord(char Word, float iAddress, s_ngc_block *new_block, s_ngc_block *previous_block)
 {
 	//TODO: I dont recall what I had to do!
 	//We can't just assume these values are usable as is. We have
@@ -386,7 +386,7 @@ e_parsing_errors NGC_RS274::Block_Assignor::_pWord(char Word, float iAddress, Bi
 }
 
 e_parsing_errors NGC_RS274::Block_Assignor::_process_word_values
-(char Word, float iAddress, BinaryRecords::s_ngc_block *new_block, BinaryRecords::s_ngc_block *previous_block)
+(char Word, float iAddress, s_ngc_block *new_block, s_ngc_block *previous_block)
 {
 	/*
 	|***************************************************************************************|

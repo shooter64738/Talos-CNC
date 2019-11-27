@@ -24,20 +24,20 @@
 #include "../../../NGC_RS274/NGC_M_Groups.h"
 
 
-static BinaryRecords::s_ngc_block gcode_data[NGC_BUFFER_SIZE];
-c_ring_buffer<BinaryRecords::s_ngc_block> Talos::Motion::NgcBuffer::gcode_buffer;
-uint8_t(*Talos::Motion::NgcBuffer::pntr_buffer_block_write)(BinaryRecords::s_ngc_block * write_block);
-uint8_t(*Talos::Motion::NgcBuffer::pntr_buffer_block_read)(BinaryRecords::s_ngc_block * read_block);
-uint8_t(*Talos::Motion::NgcBuffer::pntr_buffer_block_update)(BinaryRecords::s_ngc_block * update_block);
+static s_ngc_block gcode_data[NGC_BUFFER_SIZE];
+c_ring_buffer<s_ngc_block> Talos::Motion::NgcBuffer::gcode_buffer;
+uint8_t(*Talos::Motion::NgcBuffer::pntr_buffer_block_write)(s_ngc_block * write_block);
+uint8_t(*Talos::Motion::NgcBuffer::pntr_buffer_block_read)(s_ngc_block * read_block);
+uint8_t(*Talos::Motion::NgcBuffer::pntr_buffer_block_update)(s_ngc_block * update_block);
 
 uint8_t Talos::Motion::NgcBuffer::initialize()
 {
 	gcode_buffer.initialize(gcode_data,NGC_BUFFER_SIZE);
 
-	BinaryRecords::s_ngc_block * first_block = &gcode_data[0];
+	s_ngc_block * first_block = &gcode_data[0];
 
 	//clear the block of all values
-	memset(first_block, 0, sizeof(BinaryRecords::s_ngc_block));
+	memset(first_block, 0, sizeof(s_ngc_block));
 
 	////default the motion state to canceled
 	//first_block->g_group[NGC_RS274::Groups::G::Motion] = NGC_RS274::G_codes::MOTION_CANCELED;

@@ -59,7 +59,7 @@ uint8_t NGC_RS274::LineProcessor::initialize()
 	return 0;
 }
 
-e_parsing_errors NGC_RS274::LineProcessor::start(c_ring_buffer<char> * ring_buffer, c_ring_buffer <BinaryRecords::s_ngc_block> * buffer_destinationk)
+e_parsing_errors NGC_RS274::LineProcessor::start(c_ring_buffer<char> * ring_buffer, c_ring_buffer <s_ngc_block> * buffer_destinationk)
 {
 	e_parsing_errors ret_code = e_parsing_errors::OK;
 	char * buffer = NULL;
@@ -133,7 +133,7 @@ uint8_t NGC_RS274::LineProcessor::_set_buffer_to_upper(char * buffer)
 }
 
 e_parsing_errors NGC_RS274::LineProcessor::_process_buffer
-(char * buffer, c_ring_buffer <BinaryRecords::s_ngc_block> * buffer_destination)
+(char * buffer, c_ring_buffer <s_ngc_block> * buffer_destination)
 {
 	int read_pos, buff_len = 0;
 
@@ -175,9 +175,9 @@ e_parsing_errors NGC_RS274::LineProcessor::_process_buffer
 
 
 	//grab a block from the ring buffer to work on
-	BinaryRecords::s_ngc_block *previous_block = buffer_destination->writer_for_last_added();
+	s_ngc_block *previous_block = buffer_destination->writer_for_last_added();
 	buffer_destination->advance(); //writers dont move the head. We have to do that ourselves.
-	BinaryRecords::s_ngc_block *new_block = buffer_destination->writer_for_insert();
+	s_ngc_block *new_block = buffer_destination->writer_for_insert();
 	
 	//Forward copy the previous blocks values so they will persist. Thsi also clears whats in the block now.
 	//If the values need changed during processing it will happen in the assignor

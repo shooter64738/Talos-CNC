@@ -2,6 +2,8 @@
 #include "../bit_manipulation.h"
 #include "../records_def.h"
 
+#ifndef NGC_BLOCK_STRUCT_H
+#define NGC_BLOCK_STRUCT_H
 struct s_ngc_block
 {
 	float word_values[26]; //<--hard code to 26, cuz there are always 26 letters in the alphabet
@@ -32,3 +34,5 @@ struct s_ngc_block
 	//char *o_name;                // !!!KL be sure to free this
 	////double params[INTERP_SUB_PARAMS];
 };
+
+#endif

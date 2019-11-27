@@ -24,7 +24,7 @@
 
 #include <stdint.h>
 #include "../../../../c_ring_template.h"
-#include "../../../../NGC_RS274/NGC_Block.h"
+#include ".../../../../../../NGC_RS274/ngc_block_struct.h"
 
 typedef void(*ret_pointer)(c_ring_buffer <char> * buffer);
 
@@ -44,7 +44,7 @@ class c_ngc_data_handler
 	static void ngc_handler(c_ring_buffer <char> * buffer);
 	//static void ngc_load_block(NGC_RS274::NGC_Binary_Block * ngc_block, c_ring_buffer <char> * string_buffer);
 	static void ngc_load_block(c_ring_buffer <char> * buffer_source
-	, c_ring_buffer <BinaryRecords::s_ngc_block> * buffer_destination);
+	, c_ring_buffer <s_ngc_block> * buffer_destination);
 	protected:
 	private:
 	static void __release(c_ring_buffer <char> * buffer_source);

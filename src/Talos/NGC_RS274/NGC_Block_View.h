@@ -60,7 +60,7 @@ namespace NGC_RS274
 		{
 			float *value;
 			char name;
-			bool is_defined(BinaryRecords::s_ngc_block * block)
+			bool is_defined(s_ngc_block * block)
 			{
 				return  block->word_flags.get(name - 'A');
 			}
@@ -142,31 +142,31 @@ namespace NGC_RS274
 		s_gcodes current_g_codes;
 		s_mcodes current_m_codes;
 
-		BinaryRecords::s_ngc_block * active_view_block;
+		s_ngc_block * active_view_block;
 
-		void clear(BinaryRecords::s_ngc_block *block);
-		void load(BinaryRecords::s_ngc_block * block);
-		void comp_fragments(BinaryRecords::s_ngc_block * block);
-		bool any_axis_defined(BinaryRecords::s_ngc_block * block);
-		bool any_linear_axis_was_defined(BinaryRecords::s_ngc_block * block);
-		bool any_rotational_axis_was_defined(BinaryRecords::s_ngc_block * block);
-		bool is_word_defined(BinaryRecords::s_ngc_block * block, char word_value);
-		float * get_word_value(char word_value, BinaryRecords::s_ngc_block * block);
+		void clear(s_ngc_block *block);
+		void load(s_ngc_block * block);
+		void comp_fragments(s_ngc_block * block);
+		bool any_axis_defined(s_ngc_block * block);
+		bool any_linear_axis_was_defined(s_ngc_block * block);
+		bool any_rotational_axis_was_defined(s_ngc_block * block);
+		bool is_word_defined(s_ngc_block * block, char word_value);
+		float * get_word_value(char word_value, s_ngc_block * block);
 		bool get_word_value(char word_value, float * value);
 
-		static void copy_persisted_data(BinaryRecords::s_ngc_block * source_block, BinaryRecords::s_ngc_block * destination_block);
+		static void copy_persisted_data(s_ngc_block * source_block, s_ngc_block * destination_block);
 	private:
-		void __assign_plane(BinaryRecords::s_ngc_block *block);
-		void __assign_persisted(BinaryRecords::s_ngc_block *block);
-		void __assign_arc(BinaryRecords::s_ngc_block *block);
-		void __assign_canned(BinaryRecords::s_ngc_block *block);
-		void __assign_gcode(BinaryRecords::s_ngc_block * block);
-		void __assign_mcode(BinaryRecords::s_ngc_block * block);
-		void __set_events(BinaryRecords::s_ngc_block * current_block, BinaryRecords::s_ngc_block * previous_block);
-		void __set_active_plane_axis_helper(s_axis_property * axis_object, char word_value, BinaryRecords::s_ngc_block * block);
-		void __assign_g_event(BinaryRecords::s_ngc_block * block, uint16_t group_number);
-		void __assign_m_event(BinaryRecords::s_ngc_block * block, uint16_t group_number);
-		void __assign_other_event(BinaryRecords::s_ngc_block * block);
+		void __assign_plane(s_ngc_block *block);
+		void __assign_persisted(s_ngc_block *block);
+		void __assign_arc(s_ngc_block *block);
+		void __assign_canned(s_ngc_block *block);
+		void __assign_gcode(s_ngc_block * block);
+		void __assign_mcode(s_ngc_block * block);
+		void __set_events(s_ngc_block * current_block, s_ngc_block * previous_block);
+		void __set_active_plane_axis_helper(s_axis_property * axis_object, char word_value, s_ngc_block * block);
+		void __assign_g_event(s_ngc_block * block, uint16_t group_number);
+		void __assign_m_event(s_ngc_block * block, uint16_t group_number);
+		void __assign_other_event(s_ngc_block * block);
 		bool __group_has_changed(uint16_t * original_value, uint16_t * updated_value, uint8_t group_number);
 
 	};

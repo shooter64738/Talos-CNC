@@ -34,6 +34,7 @@ needed to store in the buffer array. This allows almost twice as much storage sp
 #include "../records_def.h"
 #include "ngc_errors_interpreter.h"
 #include "NGC_Error_Check.h"
+#include "ngc_block_struct.h"
 
 
 namespace NGC_RS274
@@ -44,13 +45,13 @@ namespace NGC_RS274
 		//Block_Assignor();
 		//~Block_Assignor();
 
-		static e_parsing_errors group_word(char Word, float Address, BinaryRecords::s_ngc_block *new_block, BinaryRecords::s_ngc_block *previous_block);
+		static e_parsing_errors group_word(char Word, float Address, s_ngc_block *new_block, s_ngc_block *previous_block);
 
 	private:
-		static e_parsing_errors _gWord(float Address, BinaryRecords::s_ngc_block *new_block, BinaryRecords::s_ngc_block *previous_block);
-		static e_parsing_errors _mWord(float Address, BinaryRecords::s_ngc_block *new_block, BinaryRecords::s_ngc_block *previous_block);
-		static e_parsing_errors _pWord(char Word, float iAddress, BinaryRecords::s_ngc_block *new_block, BinaryRecords::s_ngc_block *previous_block);
-		static e_parsing_errors _process_word_values(char Word, float iAddress, BinaryRecords::s_ngc_block *new_block, BinaryRecords::s_ngc_block *previous_block);
+		static e_parsing_errors _gWord(float Address, s_ngc_block *new_block, s_ngc_block *previous_block);
+		static e_parsing_errors _mWord(float Address, s_ngc_block *new_block, s_ngc_block *previous_block);
+		static e_parsing_errors _pWord(char Word, float iAddress, s_ngc_block *new_block, s_ngc_block *previous_block);
+		static e_parsing_errors _process_word_values(char Word, float iAddress, s_ngc_block *new_block, s_ngc_block *previous_block);
 		static bool _group_value_changed(uint16_t old_value, uint16_t new_value);
 	};
 };

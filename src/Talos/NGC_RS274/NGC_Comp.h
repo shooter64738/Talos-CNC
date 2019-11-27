@@ -94,7 +94,7 @@ namespace NGC_RS274
 		static void __normalize_point(s_point * point);
 		static uint8_t __line_line_intersect(NGC_RS274::Block_View * v_new_block, NGC_RS274::Block_View * v_previous_block, s_point * int1, s_point * int2);
 		static s_point __get_offset_from_point(s_point Point, float Angle_RAD, float Distance);
-		static BinaryRecords::s_ngc_block __set_outside_corner_arc(s_path current_path, s_path forward_path, s_point arc_center, BinaryRecords::s_ngc_block * block);
+		static s_ngc_block __set_outside_corner_arc(s_path current_path, s_path forward_path, s_point arc_center, s_ngc_block * block);
 		static float __Angle_RAD(s_point origin, s_point target);
 		static float __Angle_DEG(s_point origin, s_point target);
 		static float __get_distance(NGC_RS274::Block_View * v_new_block, NGC_RS274::Block_View * v_previous_block);

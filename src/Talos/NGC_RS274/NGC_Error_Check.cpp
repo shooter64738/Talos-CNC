@@ -279,6 +279,8 @@ uint8_t NGC_RS274::Error_Check::__has_motion(NGC_RS274::Block_View *v_new_block,
 	
 	if ((h + v + n + hi + vi + ni + hr + vr + nr) != 0)
 		v_new_block->active_view_block->block_events.set((int)e_block_event::BlockHasMotion);
+
+	return 0;
 }
 
 e_parsing_errors NGC_RS274::Error_Check::__error_check_plane_select(NGC_RS274::Block_View *v_new_block, NGC_RS274::Block_View *v_previous_block)

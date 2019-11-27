@@ -23,7 +23,7 @@
 #define __C_MOTION_NGC_BUFFER_H__
 
 #include "../../../c_ring_template.h"
-#include "../../../NGC_RS274/NGC_Block.h"
+#include "../../../NGC_RS274/ngc_block_struct.h"
 #define NGC_BUFFER_SIZE 2 //<--we only need to hold 2 items. One for the previous block and one for the current
 
 namespace Talos
@@ -34,16 +34,16 @@ namespace Talos
 		{
 			//variables
 			public:
-			static c_ring_buffer<BinaryRecords::s_ngc_block> gcode_buffer;
+			static c_ring_buffer<s_ngc_block> gcode_buffer;
 			protected:
 			private:
 
 			//functions
 			public:
 			static uint8_t initialize();
-			static uint8_t(*pntr_buffer_block_write)(BinaryRecords::s_ngc_block * write_block);
-			static uint8_t(*pntr_buffer_block_read)(BinaryRecords::s_ngc_block * read_block);
-			static uint8_t(*pntr_buffer_block_update)(BinaryRecords::s_ngc_block * update_block);
+			static uint8_t(*pntr_buffer_block_write)(s_ngc_block * write_block);
+			static uint8_t(*pntr_buffer_block_read)(s_ngc_block * read_block);
+			static uint8_t(*pntr_buffer_block_update)(s_ngc_block * update_block);
 			protected:
 			private:
 		}; //c_buffer

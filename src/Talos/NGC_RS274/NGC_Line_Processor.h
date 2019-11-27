@@ -27,9 +27,10 @@
 
 #include "../records_def.h"
 #include "../c_ring_template.h"
-#include "NGC_Block.h"
+//#include "NGC_Block.h"
 #include "NGC_Errors.h"
 #include "ngc_errors_interpreter.h"
+#include "ngc_block_struct.h"
 
 
 #define MAX_EXPRESSION_OPS 7
@@ -66,7 +67,7 @@ namespace NGC_RS274
 		static s_param_functions parameter_function_pointers;
 		static int last_read_position;
 		static uint8_t initialize();
-		static e_parsing_errors start(c_ring_buffer<char> * ring_buffer, c_ring_buffer <BinaryRecords::s_ngc_block> * buffer_destination);
+		static e_parsing_errors start(c_ring_buffer<char> * ring_buffer, c_ring_buffer <s_ngc_block> * buffer_destination);
 
 		private:
 
@@ -123,7 +124,7 @@ namespace NGC_RS274
 		};
 
 		static uint8_t _set_buffer_to_upper(char * ring_buffer);
-		static e_parsing_errors  _process_buffer(char * buffer, c_ring_buffer <BinaryRecords::s_ngc_block> * buffer_destination);
+		static e_parsing_errors  _process_buffer(char * buffer, c_ring_buffer <s_ngc_block> * buffer_destination);
 
 		static e_parsing_errors  _read_as_word(char * buffer, int * read_pos, char word, float * word_value);
 		static e_parsing_errors  _read_as_class_type(char * buffer, int * read_pos, float * word_value);

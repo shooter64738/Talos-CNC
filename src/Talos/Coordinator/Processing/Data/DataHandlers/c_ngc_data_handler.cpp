@@ -99,7 +99,7 @@ void c_ngc_data_handler::ngc_handler(c_ring_buffer <char> * buffer)
 }
 
 void c_ngc_data_handler::ngc_load_block(c_ring_buffer <char> * buffer_source
-	, c_ring_buffer <BinaryRecords::s_ngc_block> * buffer_destination)
+	, c_ring_buffer <s_ngc_block> * buffer_destination)
 {
 
 	//Talos::Coordinator::Main_Process::host_serial.print_string("NGC READY\r\n");

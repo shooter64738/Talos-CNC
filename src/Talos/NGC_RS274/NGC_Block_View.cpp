@@ -28,7 +28,7 @@
 #include <math.h>
 
 NGC_RS274::Block_View::Block_View(){}
-NGC_RS274::Block_View::Block_View(BinaryRecords::s_ngc_block *block) { this->load(block); }
+NGC_RS274::Block_View::Block_View(s_ngc_block *block) { this->load(block); }
 NGC_RS274::Block_View::~Block_View(){}
 
 #define t_size 0.25
@@ -38,13 +38,13 @@ NGC_RS274::Block_View::~Block_View(){}
 
 
 
-void NGC_RS274::Block_View::clear(BinaryRecords::s_ngc_block *block)
+void NGC_RS274::Block_View::clear(s_ngc_block *block)
 {
-	memset(block, 0, sizeof(BinaryRecords::s_ngc_block));
+	memset(block, 0, sizeof(s_ngc_block));
 }
 
 //Converts the raw struct data underneath, and presents it in an easy to understand format
-void NGC_RS274::Block_View::load(BinaryRecords::s_ngc_block *block)
+void NGC_RS274::Block_View::load(s_ngc_block *block)
 {
 	this->active_view_block = block;
 	//set_plane needs to occur first since other values are determined by the plane
@@ -57,7 +57,7 @@ void NGC_RS274::Block_View::load(BinaryRecords::s_ngc_block *block)
 	this->comp_fragments(block);
 }
 
-void NGC_RS274::Block_View::comp_fragments(BinaryRecords::s_ngc_block * local_block)
+void NGC_RS274::Block_View::comp_fragments(s_ngc_block * local_block)
 {
 
 	//float radius = t_size;
@@ -90,7 +90,7 @@ void NGC_RS274::Block_View::comp_fragments(BinaryRecords::s_ngc_block * local_bl
 
 }
 
-bool NGC_RS274::Block_View::any_axis_defined(BinaryRecords::s_ngc_block * block)
+bool NGC_RS274::Block_View::any_axis_defined(s_ngc_block * block)
 {
 	//Quick test here, if NO WORD values were set in the block at all, then we know there couldnt be an axis defined
 	if (block->word_flags._flag == 0)
@@ -104,7 +104,7 @@ bool NGC_RS274::Block_View::any_axis_defined(BinaryRecords::s_ngc_block * block)
 /*
 Returns TRUE if any LINEAR axis words were set in the block. Returns FALSE if none were.
 */
-bool NGC_RS274::Block_View::any_linear_axis_was_defined(BinaryRecords::s_ngc_block * block)
+bool NGC_RS274::Block_View::any_linear_axis_was_defined(s_ngc_block * block)
 {
 	//Quick test here, if NO WORD values were set in the block at all, then we know there couldnt be an axis defined
 	if (block->word_flags._flag == 0)
@@ -124,7 +124,7 @@ bool NGC_RS274::Block_View::any_linear_axis_was_defined(BinaryRecords::s_ngc_blo
 /*
 Returns TRUE if any ROTATIONAL axis words were set in the block. Returns FALSE if none were.
 */
-bool NGC_RS274::Block_View::any_rotational_axis_was_defined(BinaryRecords::s_ngc_block * block)
+bool NGC_RS274::Block_View::any_rotational_axis_was_defined(s_ngc_block * block)
 {
 	//Quick test here, if NO WORD values were set in the block at all, then we know there couldnt be an axis defined
 	if (block->word_flags._flag == 0)
@@ -139,7 +139,7 @@ bool NGC_RS274::Block_View::any_rotational_axis_was_defined(BinaryRecords::s_ngc
 
 }
 
-void NGC_RS274::Block_View::__assign_plane(BinaryRecords::s_ngc_block *block)
+void NGC_RS274::Block_View::__assign_plane(s_ngc_block *block)
 {
 	switch (block->g_group[NGC_RS274::Groups::G::PLANE_SELECTION])
 	{
@@ -279,7 +279,7 @@ void NGC_RS274::Block_View::__assign_plane(BinaryRecords::s_ngc_block *block)
 	}
 }
 
-void NGC_RS274::Block_View::__assign_persisted(BinaryRecords::s_ngc_block *block)
+void NGC_RS274::Block_View::__assign_persisted(s_ngc_block *block)
 {
 	this->persisted_values.active_diameter_D = get_word_value('D', block);
 	this->persisted_values.active_height_H = get_word_value('H', block);
@@ -289,12 +289,12 @@ void NGC_RS274::Block_View::__assign_persisted(BinaryRecords::s_ngc_block *block
 	this->persisted_values.feed_rate_F = get_word_value('F', block);
 }
 
-void NGC_RS274::Block_View::__assign_arc(BinaryRecords::s_ngc_block *block)
+void NGC_RS274::Block_View::__assign_arc(s_ngc_block *block)
 {
 	this->arc_values.Radius = get_word_value('r', block);
 }
 
-void NGC_RS274::Block_View::__assign_canned(BinaryRecords::s_ngc_block * block)
+void NGC_RS274::Block_View::__assign_canned(s_ngc_block * block)
 {
 	this->canned_cycles.Q_peck_step_depth = get_word_value('Q', block);
 	this->canned_cycles.R_retract_position = get_word_value('R', block);
@@ -304,7 +304,7 @@ void NGC_RS274::Block_View::__assign_canned(BinaryRecords::s_ngc_block * block)
 
 }
 
-void NGC_RS274::Block_View::__assign_gcode(BinaryRecords::s_ngc_block * block)
+void NGC_RS274::Block_View::__assign_gcode(s_ngc_block * block)
 {
 	this->current_g_codes.Non_Modal = &block->g_group[NGC_RS274::Groups::G::NON_MODAL];
 	this->current_g_codes.Motion = &block->g_group[NGC_RS274::Groups::G::Motion];
@@ -324,7 +324,7 @@ void NGC_RS274::Block_View::__assign_gcode(BinaryRecords::s_ngc_block * block)
 	this->current_g_codes.RECTANGLAR_POLAR_COORDS_SELECTION = &block->g_group[NGC_RS274::Groups::G::RECTANGLAR_POLAR_COORDS_SELECTION];
 }
 
-void NGC_RS274::Block_View::__assign_mcode(BinaryRecords::s_ngc_block * block)
+void NGC_RS274::Block_View::__assign_mcode(s_ngc_block * block)
 {
 	this->current_m_codes.UNUSED_0 = &block->m_group[NGC_RS274::Groups::M::UNUSED_0];
 	this->current_m_codes.UNUSED_1 = &block->m_group[NGC_RS274::Groups::M::UNUSED_1];
@@ -340,7 +340,7 @@ void NGC_RS274::Block_View::__assign_mcode(BinaryRecords::s_ngc_block * block)
 }
 
 void NGC_RS274::Block_View::__set_active_plane_axis_helper
-(s_axis_property * axis_object, char word_value, BinaryRecords::s_ngc_block * block)
+(s_axis_property * axis_object, char word_value, s_ngc_block * block)
 {
 	axis_object->name = word_value;
 	axis_object->value = get_word_value(word_value, block);
@@ -350,7 +350,7 @@ void NGC_RS274::Block_View::__set_active_plane_axis_helper
 // STATIC METHODS
 //******************************
 
-void NGC_RS274::Block_View::__set_events(BinaryRecords::s_ngc_block * local_block, BinaryRecords::s_ngc_block * previous_block)
+void NGC_RS274::Block_View::__set_events(s_ngc_block * local_block, s_ngc_block * previous_block)
 {
 	uint8_t group = 1;
 
@@ -391,7 +391,7 @@ void NGC_RS274::Block_View::__set_events(BinaryRecords::s_ngc_block * local_bloc
 	__assign_other_event(local_block);
 }
 
-void NGC_RS274::Block_View::__assign_g_event(BinaryRecords::s_ngc_block * local_block, uint16_t group_number)
+void NGC_RS274::Block_View::__assign_g_event(s_ngc_block * local_block, uint16_t group_number)
 {
 	switch (group_number)
 	{
@@ -435,7 +435,7 @@ void NGC_RS274::Block_View::__assign_g_event(BinaryRecords::s_ngc_block * local_
 
 }
 
-void NGC_RS274::Block_View::__assign_m_event(BinaryRecords::s_ngc_block * local_block, uint16_t group_number)
+void NGC_RS274::Block_View::__assign_m_event(s_ngc_block * local_block, uint16_t group_number)
 {
 	switch (group_number)
 	{
@@ -461,7 +461,7 @@ void NGC_RS274::Block_View::__assign_m_event(BinaryRecords::s_ngc_block * local_
 
 }
 
-void NGC_RS274::Block_View::__assign_other_event(BinaryRecords::s_ngc_block * local_block)
+void NGC_RS274::Block_View::__assign_other_event(s_ngc_block * local_block)
 {
 	//Comments are not feasible unless/until someone gets off their ass and adds display support
 
@@ -503,10 +503,10 @@ bool NGC_RS274::Block_View::__group_has_changed(uint16_t * original_value, uint1
 	return original_value[group_number] != updated_value[group_number];
 }
 
-void NGC_RS274::Block_View::copy_persisted_data(BinaryRecords::s_ngc_block * source_block, BinaryRecords::s_ngc_block * destination_block)
+void NGC_RS274::Block_View::copy_persisted_data(s_ngc_block * source_block, s_ngc_block * destination_block)
 {
 	//clear what is there
-	memset(destination_block, 0, sizeof(BinaryRecords::s_ngc_block));
+	memset(destination_block, 0, sizeof(s_ngc_block));
 
 	memcpy(destination_block->g_group, source_block->g_group, COUNT_OF_G_CODE_GROUPS_ARRAY * sizeof(uint16_t));
 	memcpy(destination_block->m_group, source_block->m_group, COUNT_OF_M_CODE_GROUPS_ARRAY * sizeof(uint16_t));
@@ -514,13 +514,13 @@ void NGC_RS274::Block_View::copy_persisted_data(BinaryRecords::s_ngc_block * sou
 	memcpy(destination_block->target_motion_position,source_block->target_motion_position, INTERNAL_AXIS_COUNT * sizeof(float));
 }
 
-bool NGC_RS274::Block_View::is_word_defined(BinaryRecords::s_ngc_block * block, char word_value)
+bool NGC_RS274::Block_View::is_word_defined(s_ngc_block * block, char word_value)
 {
 	return block->word_flags.get(word_value - 'A');
 }
 
 float * NGC_RS274::Block_View::get_word_value
-(char word_value, BinaryRecords::s_ngc_block * block)
+(char word_value, s_ngc_block * block)
 {
 	return &block->word_values[word_value - 'A'];
 }

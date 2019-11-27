@@ -143,7 +143,7 @@ e_compensation_errors NGC_RS274::Compensation::__continuous_motion(NGC_RS274::Bl
 	if (!intersects)
 	{
 		//int1 is tthe end point of the closing arc.
-		BinaryRecords::s_ngc_block arc_block = __set_outside_corner_arc(
+		s_ngc_block arc_block = __set_outside_corner_arc(
 			comp_control.active_path, comp_control.forward_path, int2, v_previous_block->active_view_block);
 		//Update the currently held block using station id. This will set the end
 		//point the machine must move too during compensation
@@ -214,7 +214,7 @@ uint8_t NGC_RS274::Compensation::__update_active_path(s_point udpate_point)
 
 uint8_t NGC_RS274::Compensation::__update_locked_block(s_point new_target, uint32_t block_station_id)
 {
-	BinaryRecords::s_ngc_block releasing_block;
+	s_ngc_block releasing_block;
 	releasing_block.__station__ = block_station_id;
 	Talos::Motion::NgcBuffer::pntr_buffer_block_read(&releasing_block);
 	releasing_block.block_events.clear((int)e_block_event::HoldBlockForCRC);
@@ -632,7 +632,7 @@ s_point NGC_RS274::Compensation::__get_offset_from_point(s_point Point, float An
 	return new_point;
 }
 
-BinaryRecords::s_ngc_block NGC_RS274::Compensation::__set_outside_corner_arc(s_path current_path, s_path forward_path, s_point comp_path, BinaryRecords::s_ngc_block * block)
+s_ngc_block NGC_RS274::Compensation::__set_outside_corner_arc(s_path current_path, s_path forward_path, s_point comp_path, s_ngc_block * block)
 {
 	/*
 	The held block in cutter compensation may need an extra arc to close an outside corner
@@ -642,7 +642,7 @@ BinaryRecords::s_ngc_block NGC_RS274::Compensation::__set_outside_corner_arc(s_p
 	*/
 	//c_Cutter_Comp::corner_path.reset();//<--Clear the block of any old data. We dont need the modal g or m codes
 
-	BinaryRecords::s_ngc_block arc_block;
+	s_ngc_block arc_block;
 	NGC_RS274::Block_View::copy_persisted_data(block, &arc_block);
 	NGC_RS274::Block_View corner_path = NGC_RS274::Block_View(&arc_block);
 
