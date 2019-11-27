@@ -35,6 +35,8 @@ needed to store in the buffer array. This allows almost twice as much storage sp
 #include "_ngc_errors_interpreter.h"
 #include "NGC_Block_View.h"
 
+#include "../physical_machine_parameters.h"
+
 //Changing the MACHINE_TYPE in the physical_machine_parameters.h file will change what
 //is included to process gcode specific to one machine or the other.
 #ifdef MACHINE_TYPE_MILL

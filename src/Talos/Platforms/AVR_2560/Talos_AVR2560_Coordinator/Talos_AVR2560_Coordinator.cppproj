@@ -166,10 +166,6 @@
     </ToolchainSettings>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\..\..\bit_manipulation.h">
-      <SubType>compile</SubType>
-      <Link>bit_manipulation.h</Link>
-    </Compile>
     <Compile Include="..\..\..\communication_def.h">
       <SubType>compile</SubType>
       <Link>communication_def.h</Link>
@@ -418,9 +414,53 @@
       <SubType>compile</SubType>
       <Link>physical_machine_parameters.h</Link>
     </Compile>
-    <Compile Include="..\..\..\records_def.h">
+    <Compile Include="..\..\..\Shared Data\_peripheral_overide_enums.h">
       <SubType>compile</SubType>
-      <Link>records_def.h</Link>
+      <Link>Shared Data\_peripheral_overide_enums.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Shared Data\_peripheral_panel_control_enums.h">
+      <SubType>compile</SubType>
+      <Link>Shared Data\_peripheral_panel_control_enums.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Shared Data\_system_response_enums.h">
+      <SubType>compile</SubType>
+      <Link>Shared Data\_system_response_enums.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Shared Data\_system_sub_state_enums.h">
+      <SubType>compile</SubType>
+      <Link>Shared Data\_system_sub_state_enums.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Shared Data\_sytem_state_enums.h">
+      <SubType>compile</SubType>
+      <Link>Shared Data\_sytem_state_enums.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Shared Data\_s_encoder_struct.h">
+      <SubType>compile</SubType>
+      <Link>Shared Data\_s_encoder_struct.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Shared Data\_s_jog_data_struct.h">
+      <SubType>compile</SubType>
+      <Link>Shared Data\_s_jog_data_struct.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Shared Data\_s_motion_control_struct.h">
+      <SubType>compile</SubType>
+      <Link>Shared Data\_s_motion_control_struct.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Shared Data\_s_motion_hardware_struct.h">
+      <SubType>compile</SubType>
+      <Link>Shared Data\_s_motion_hardware_struct.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Shared Data\_s_peripheral_panel_struct.h">
+      <SubType>compile</SubType>
+      <Link>Shared Data\_s_peripheral_panel_struct.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Shared Data\_unit_type_enums.h">
+      <SubType>compile</SubType>
+      <Link>Shared Data\_unit_type_enums.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\_bit_manipulation.h">
+      <SubType>compile</SubType>
+      <Link>_bit_manipulation.h</Link>
     </Compile>
     <Compile Include="PlatformSpecific\c_core_avr_2560.cpp">
       <SubType>compile</SubType>
@@ -479,6 +519,7 @@
     <Folder Include="Motion" />
     <Folder Include="Motion\Processing" />
     <Folder Include="Motion\Processing\GCode" />
+    <Folder Include="Shared Data" />
     <Folder Include="Ngc_Rs274" />
     <Folder Include="Ngc_Rs274\MachineSpecific" />
     <Folder Include="Ngc_Rs274\MachineSpecific\Lathe" />

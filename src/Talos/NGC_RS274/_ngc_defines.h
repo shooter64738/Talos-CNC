@@ -22,6 +22,8 @@
 #ifndef NGC_DEFINES_H
 #define NGC_DEFINES_H
 
+#include "../physical_machine_parameters.h"
+
 //How many words can a block contain
 #define COUNT_OF_BLOCK_WORDS_ARRAY 26
 //How many elements are in the G code group array
