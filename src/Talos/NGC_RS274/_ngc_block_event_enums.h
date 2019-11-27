@@ -13,7 +13,7 @@ enum class e_block_event : uint8_t
 	Units = 9,
 	Coolant = 10,
 	Tool_Change_Request = 11,
-	Block_Set_To_Execute = 12,
+	BlockSkipOptionActive = 12,
 	BlockHasMotion = 13,
 	Canned_Cycle_Active = 14,
 	PLANE_SELECTION = 15,

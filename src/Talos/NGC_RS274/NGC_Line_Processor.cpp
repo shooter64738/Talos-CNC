@@ -60,7 +60,7 @@ uint8_t NGC_RS274::LineProcessor::initialize()
 	return 0;
 }
 
-e_parsing_errors NGC_RS274::LineProcessor::start(c_ring_buffer<char> * ring_buffer, c_ring_buffer <s_ngc_block> * buffer_destinationk)
+e_parsing_errors NGC_RS274::LineProcessor::start(c_ring_buffer<char> * ring_buffer, c_ring_buffer <s_ngc_block> * buffer_destination)
 {
 	e_parsing_errors ret_code = e_parsing_errors::OK;
 	char * buffer = NULL;
@@ -81,28 +81,10 @@ e_parsing_errors NGC_RS274::LineProcessor::start(c_ring_buffer<char> * ring_buff
 	//If there are any line terminators, split this line so they are not parsed.
 	int startlen = strlen(buffer);
 	char * buffer_no_eol = strtok(buffer, "\r\n");
-	int endlen = strlen(buffer_no_eol);
 
-	ret_code = _process_buffer(buffer, buffer_destinationk);
 
-	/*
-	You can send a string of gcode that is actually multiple 'lines' containing multip \r\n characters
-	so as a convenience to the caller I process only the first 'line' then once finished, we set the
-	start pointer to the end+1 of the previous 'line' so that the buffer is ready the next time we
-	get called. If there was actually no more data a NULL character will be pointed too and the caller
-	can check for a NULL before calling this again.
+	ret_code = _process_buffer(buffer, buffer_destination);
 
-	If ret_code was success, we can skip forwad in the buffer, but if it was not a success we will NOT
-	set the buffer pointer ahead.
-	*/
-
-	if (startlen != endlen && ret_code == e_parsing_errors::OK)
-		//advance buffer to next 'line' (if NUll no data available)
-	{
-		buffer = buffer + (endlen + 1);
-		
-	}
-	//ring_buffer->_tail += endlen + 1;
 	return ret_code;
 
 }
@@ -157,7 +139,7 @@ e_parsing_errors NGC_RS274::LineProcessor::_process_buffer
 	//We process this line regardless and give it to the motion
 	//controller which will determine if it should process it
 	//depending on the block skip hardware switch
-	read_pos = buffer[read_pos] == '/' ? read_pos++ : read_pos;
+	
 
 	//We could read the N word here. For nwo I am handling it as
 	//I do any other word.
@@ -191,7 +173,11 @@ e_parsing_errors NGC_RS274::LineProcessor::_process_buffer
 	
 	new_block->__station__ = previous_block->__station__ + 1; //<--a unique number to give to this block.
 															  //Wonder if the stationing system can be used for subroutines as well... 
-
+	if (buffer[read_pos] == '/')
+	{
+		new_block->block_events.set((int)e_block_event::BlockSkipOptionActive);
+		read_pos++;
+	}
 	//And now without further delay... lets process this line!
 	while (read_pos < buff_len)
 	{

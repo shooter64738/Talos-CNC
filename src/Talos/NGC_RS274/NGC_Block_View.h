@@ -35,6 +35,9 @@ needed to store in the buffer array. This allows almost twice as much storage sp
 #include "_ngc_errors_interpreter.h"
 #include "_ngc_block_event_enums.h"
 #include "_ngc_block_struct.h"
+#include "_ngc_axis_struct.h"
+#include "_ngc_arc_struct.h"
+#include "_ngc_plane_struct.h"
 
 namespace NGC_RS274
 {
@@ -56,25 +59,6 @@ namespace NGC_RS274
 			float *active_line_number_N;
 		};
 
-		struct s_axis_property
-		{
-			float *value;
-			char name;
-			bool is_defined(s_ngc_block * block)
-			{
-				return  block->word_flags.get(name - 'A');
-			}
-		};
-
-		struct s_arc_values
-		{
-			s_axis_property horizontal_offset;
-			s_axis_property vertical_offset;
-			s_axis_property normal_offset;
-			e_parsing_errors plane_error;
-			float *Radius;
-		};
-
 		struct s_canned_values
 		{
 			float *Q_peck_step_depth; //<--Depth increase per peck
@@ -83,20 +67,6 @@ namespace NGC_RS274
 			float *P_dwell_time_at_bottom; //<--Dwell time at bottom of hole.
 			float *Z_depth_of_hole; //<--Hole Bottom
 			//void(*PNTR_RECALLS)(NGC_Binary_Block*);
-		};
-
-		struct s_plane_axis
-		{
-			s_axis_property horizontal_axis; //changes depending on plane
-			s_axis_property rotary_horizontal_axis; //complimentary/rotary axis
-			s_axis_property inc_horizontal_axis; //incremental version of same axis, regardless of G90 or G91 state
-			s_axis_property vertical_axis;
-			s_axis_property rotary_vertical_axis;
-			s_axis_property inc_vertical_axis;
-			s_axis_property normal_axis;
-			s_axis_property rotary_normal_axis;
-			s_axis_property inc_normal_axis;
-			e_parsing_errors plane_error;
 		};
 
 		struct s_gcodes

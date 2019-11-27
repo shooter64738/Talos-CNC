@@ -374,6 +374,14 @@
       <SubType>compile</SubType>
       <Link>Ngc_Rs274\NGC_Parameters.h</Link>
     </Compile>
+    <Compile Include="..\..\..\NGC_RS274\_ngc_arc_struct.h">
+      <SubType>compile</SubType>
+      <Link>Ngc_Rs274\_ngc_arc_struct.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\NGC_RS274\_ngc_axis_struct.h">
+      <SubType>compile</SubType>
+      <Link>Ngc_Rs274\_ngc_axis_struct.h</Link>
+    </Compile>
     <Compile Include="..\..\..\NGC_RS274\_ngc_block_event_enums.h">
       <SubType>compile</SubType>
       <Link>Ngc_Rs274\_ngc_block_event_enums.h</Link>
@@ -405,6 +413,10 @@
     <Compile Include="..\..\..\NGC_RS274\_ngc_m_groups.h">
       <SubType>compile</SubType>
       <Link>Ngc_Rs274\_ngc_m_groups.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\NGC_RS274\_ngc_plane_struct.h">
+      <SubType>compile</SubType>
+      <Link>Ngc_Rs274\_ngc_plane_struct.h</Link>
     </Compile>
     <Compile Include="..\..\..\NGC_RS274\_ngc_point_definition.h">
       <SubType>compile</SubType>

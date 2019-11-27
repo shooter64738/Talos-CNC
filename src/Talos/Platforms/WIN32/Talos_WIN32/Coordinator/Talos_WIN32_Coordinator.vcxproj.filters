@@ -215,6 +215,15 @@
     <ClInclude Include="..\..\..\..\Shared Data\_binary_record_enums.h">
       <Filter>Shared Data</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\..\NGC_RS274\_ngc_arc_struct.h">
+      <Filter>Ngc_Rs274</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\NGC_RS274\_ngc_axis_struct.h">
+      <Filter>Ngc_Rs274</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\NGC_RS274\_ngc_plane_struct.h">
+      <Filter>Ngc_Rs274</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\..\Coordinator\coordinator_main.cpp">
