@@ -24,7 +24,6 @@
 #include "physical_machine_parameters.h"
 #include "NGC_RS274/_ngc_defines.h"
 #include "_bit_manipulation.h"
-//#include "_bit_flag_control.h"
 #include <string.h>
 
 namespace BinaryRecords
@@ -153,8 +152,6 @@ namespace BinaryRecords
 
 #endif
 
-
-
 #ifndef __C_BINARY_RESPONSES
 #define __C_BINARY_RESPONSES
 	enum class e_binary_responses : uint8_t
@@ -210,7 +207,6 @@ namespace BinaryRecords
 		float Scale;
 	};
 
-
 	struct s_peripheral_panel
 	{
 		const BinaryRecords::e_binary_record_types record_type = BinaryRecords::e_binary_record_types::Peripheral_Control_Setting;
@@ -264,7 +260,6 @@ namespace BinaryRecords
 			return (current_rpm >= (target_rpm - target_percent)) && (current_rpm <= (target_rpm + target_percent));
 		};
 	};
-
 
 	struct s_hardware
 	{

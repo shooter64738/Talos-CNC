@@ -34,9 +34,6 @@
 #include "Machine Specific/Lathe/NGC_Lathe.h"
 #endif
 
-#define TWOPI 6.2831853071795865
-#define RAD2DEG 57.2957795130823209
-#define DEG2RAD 0.0174532925199
 
 
 namespace NGC_RS274

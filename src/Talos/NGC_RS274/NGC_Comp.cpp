@@ -21,6 +21,7 @@
 #include "NGC_Comp.h"
 #include "..\Motion\Processing\GCode\c_gcode_buffer.h"
 #include <math.h>
+#include "_ngc_math_constants.h"
 
 
 NGC_RS274::Compensation::s_comp_settings NGC_RS274::Compensation::comp_control;

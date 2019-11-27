@@ -402,6 +402,10 @@
       <SubType>compile</SubType>
       <Link>Ngc_Rs274\_ngc_g_groups.h</Link>
     </Compile>
+    <Compile Include="..\..\..\NGC_RS274\_ngc_math_constants.h">
+      <SubType>compile</SubType>
+      <Link>Ngc_Rs274\_ngc_math_constants.h</Link>
+    </Compile>
     <Compile Include="..\..\..\NGC_RS274\_ngc_m_groups.h">
       <SubType>compile</SubType>
       <Link>Ngc_Rs274\_ngc_m_groups.h</Link>

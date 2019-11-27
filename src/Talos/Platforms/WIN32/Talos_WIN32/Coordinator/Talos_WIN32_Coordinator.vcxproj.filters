@@ -183,6 +183,9 @@
     <ClInclude Include="..\..\..\..\NGC_RS274\_ngc_point_definition.h">
       <Filter>Ngc_Rs274</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\..\NGC_RS274\_ngc_math_constants.h">
+      <Filter>Ngc_Rs274</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\..\Coordinator\coordinator_main.cpp">

@@ -27,6 +27,7 @@
 #include "NGC_Block_Assignor.h"
 #include "..\Motion\Processing\GCode\c_gcode_buffer.h"
 #include "NGC_Comp.h"
+#include "_ngc_math_constants.h"
 
 
 NGC_RS274::LineProcessor::s_param_functions NGC_RS274::LineProcessor::parameter_function_pointers;
@@ -54,7 +55,7 @@ uint8_t NGC_RS274::LineProcessor::initialize()
 		|| NGC_RS274::LineProcessor::parameter_function_pointers.pntr_set_global_named_parameter == NULL
 		|| NGC_RS274::LineProcessor::parameter_function_pointers.pntr_set_local_named_parameter == NULL
 		|| NGC_RS274::LineProcessor::parameter_function_pointers.pntr_set_numeric_parameter == NULL)
-		return 1; //<--this shoudl never happen for real. This is only for debugging
+		return 1; //<--this should never happen for real. This is only for debugging
 
 	return 0;
 }

@@ -32,11 +32,6 @@ NGC_RS274::Block_View::Block_View(s_ngc_block *block) { this->load(block); }
 NGC_RS274::Block_View::~Block_View(){}
 
 #define t_size 0.25
-#define M_PI 3.14159265358979323846
-
-
-
-
 
 void NGC_RS274::Block_View::clear(s_ngc_block *block)
 {

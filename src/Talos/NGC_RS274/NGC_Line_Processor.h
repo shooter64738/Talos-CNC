@@ -35,9 +35,6 @@
 
 #define MAX_EXPRESSION_OPS 7
 
-#define RS274NGC_MAX_PARAMETERS 5414
-#define MAX_NAMED_PARAM_LENGTH 64
-#define M_PI 3.14159265358979323846
 
 //find FAKE_NUMERIC_PARAM_VALUE in the code to see where you need to load numeric params at.
 #define FAKE_NUMERIC_PARAM_VALUE 100
