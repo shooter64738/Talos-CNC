@@ -235,18 +235,6 @@ e_parsing_errors NGC_RS274::LineProcessor::_process_buffer
 	{
 		//Add this block to the buffer
 		Talos::Motion::NgcBuffer::pntr_buffer_block_write(new_block);
-		/*new_block->__station__++;
-		Talos::Motion::NgcBuffer::pntr_buffer_block_write(new_block);
-		new_block->__station__++;
-		Talos::Motion::NgcBuffer::pntr_buffer_block_write(new_block);
-		new_block->__station__++;
-		Talos::Motion::NgcBuffer::pntr_buffer_block_write(new_block);
-		new_block->__station__++;
-		Talos::Motion::NgcBuffer::pntr_buffer_block_write(new_block);
-
-		BinaryRecords::s_ngc_block test;
-		test.__station__ = 2;
-		Talos::Motion::NgcBuffer::pntr_buffer_block_read(&test);*/
 	}
 	return ret_code;
 }

@@ -78,15 +78,16 @@ namespace NGC_RS274
 		static s_comp_settings comp_control;
 
 
-		static void process(NGC_RS274::Block_View * v_new_block, NGC_RS274::Block_View * v_previous_block);
+		static e_compensation_errors process(NGC_RS274::Block_View * v_new_block, NGC_RS274::Block_View * v_previous_block);
 
 	private:
-		static void __first_motion(NGC_RS274::Block_View * v_new_block, NGC_RS274::Block_View * v_previous_block);
-		static void __continuous_motion(NGC_RS274::Block_View * v_new_block, NGC_RS274::Block_View * v_previous_block);
-		static void __last_motion(NGC_RS274::Block_View * v_new_block, NGC_RS274::Block_View * v_previous_block);
+		static e_compensation_errors __first_motion(NGC_RS274::Block_View * v_new_block, NGC_RS274::Block_View * v_previous_block);
+		static e_compensation_errors __continuous_motion(NGC_RS274::Block_View * v_new_block, NGC_RS274::Block_View * v_previous_block);
+		static e_compensation_errors __last_motion(NGC_RS274::Block_View * v_new_block, NGC_RS274::Block_View * v_previous_block);
 		static uint8_t __update_active_path(s_point udpate_point);
 		static uint8_t __update_locked_block(s_point new_target, uint32_t block_station_id);
 		static uint8_t __line_arc_intersect(NGC_RS274::Block_View * v_new_block, NGC_RS274::Block_View * v_previous_block, s_point * intersection1, s_point * intersection2);
+		static uint8_t __arc_arc_intersect(NGC_RS274::Block_View * v_new_block, NGC_RS274::Block_View * v_previous_block, s_point * intersection1, s_point * intersection2);
 		static void __arc_help(NGC_RS274::Block_View * v_new_block, s_point line_origin, s_point line_target, float * dx, float * dy, float * A, float * B, float * C);
 		static uint8_t __calculate_arc(NGC_RS274::Block_View * v_new_block, NGC_RS274::Block_View * v_previous_block, s_path * path_object);
 		static uint8_t __calculate_line(NGC_RS274::Block_View * v_new_block, NGC_RS274::Block_View * v_previous_block, s_path * path_object);
@@ -96,6 +97,7 @@ namespace NGC_RS274
 		static BinaryRecords::s_ngc_block __set_outside_corner_arc(s_path current_path, s_path forward_path, s_point arc_center, BinaryRecords::s_ngc_block * block);
 		static float __Angle_RAD(s_point origin, s_point target);
 		static float __Angle_DEG(s_point origin, s_point target);
+		static float __get_distance(NGC_RS274::Block_View * v_new_block, NGC_RS274::Block_View * v_previous_block);
 
 	};
 };

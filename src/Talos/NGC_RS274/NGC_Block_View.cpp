@@ -143,7 +143,7 @@ void NGC_RS274::Block_View::__assign_plane(BinaryRecords::s_ngc_block *block)
 {
 	switch (block->g_group[NGC_RS274::Groups::G::PLANE_SELECTION])
 	{
-		case NGC_RS274::G_codes::XY_PLANE_SELECTION:
+		case NGC_RS274::G_codes::XY_PLANE_SELECTION: //G17
 		{
 			this->__set_active_plane_axis_helper(&this->active_plane.horizontal_axis, 'X', block);
 			this->__set_active_plane_axis_helper(&this->active_plane.vertical_axis, 'Y', block);
@@ -165,7 +165,7 @@ void NGC_RS274::Block_View::__assign_plane(BinaryRecords::s_ngc_block *block)
 			this->arc_values.plane_error = e_parsing_errors::MISSING_CIRCLE_OFFSET_IJ;
 		}
 		break;
-		case NGC_RS274::G_codes::XZ_PLANE_SELECTION:
+		case NGC_RS274::G_codes::XZ_PLANE_SELECTION: //G18
 		{
 			this->__set_active_plane_axis_helper(&this->active_plane.horizontal_axis, 'X', block);
 			this->__set_active_plane_axis_helper(&this->active_plane.vertical_axis, 'Z', block);
@@ -187,7 +187,7 @@ void NGC_RS274::Block_View::__assign_plane(BinaryRecords::s_ngc_block *block)
 			this->arc_values.plane_error = e_parsing_errors::MISSING_CIRCLE_OFFSET_IK;
 		}
 		break;
-		case NGC_RS274::G_codes::YZ_PLANE_SELECTION:
+		case NGC_RS274::G_codes::YZ_PLANE_SELECTION://G19
 		{
 			this->__set_active_plane_axis_helper(&this->active_plane.horizontal_axis, 'Y', block);
 			this->__set_active_plane_axis_helper(&this->active_plane.vertical_axis, 'Z', block);
@@ -201,6 +201,74 @@ void NGC_RS274::Block_View::__assign_plane(BinaryRecords::s_ngc_block *block)
 			this->__set_active_plane_axis_helper(&this->active_plane.inc_vertical_axis, 'W', block);
 			this->__set_active_plane_axis_helper(&this->active_plane.inc_normal_axis, 'U', block);
 			this->active_plane.plane_error = e_parsing_errors::MISSING_CIRCLE_AXIS_YZ;
+
+
+			this->__set_active_plane_axis_helper(&this->arc_values.horizontal_offset, 'J', block);
+			this->__set_active_plane_axis_helper(&this->arc_values.vertical_offset, 'K', block);
+			this->__set_active_plane_axis_helper(&this->arc_values.normal_offset, 'I', block);
+			this->arc_values.plane_error = e_parsing_errors::MISSING_CIRCLE_OFFSET_JK;
+		}
+		break;
+		case NGC_RS274::G_codes::UV_PLANE_SELECTION://G17.1
+		{
+			this->__set_active_plane_axis_helper(&this->active_plane.horizontal_axis, 'U', block);
+			this->__set_active_plane_axis_helper(&this->active_plane.vertical_axis, 'V', block);
+			this->__set_active_plane_axis_helper(&this->active_plane.normal_axis, 'W', block);
+			this->active_plane.plane_error = e_parsing_errors::MISSING_CIRCLE_AXIS_UV;
+			
+			this->__set_active_plane_axis_helper(&this->active_plane.rotary_horizontal_axis, 'A', block);
+			this->__set_active_plane_axis_helper(&this->active_plane.rotary_vertical_axis, 'B', block);
+			this->__set_active_plane_axis_helper(&this->active_plane.rotary_normal_axis, 'C', block);
+
+			this->__set_active_plane_axis_helper(&this->active_plane.inc_horizontal_axis, 'X', block);
+			this->__set_active_plane_axis_helper(&this->active_plane.inc_vertical_axis, 'Y', block);
+			this->__set_active_plane_axis_helper(&this->active_plane.inc_normal_axis, 'Z', block);
+			
+
+
+			this->__set_active_plane_axis_helper(&this->arc_values.horizontal_offset, 'I', block);
+			this->__set_active_plane_axis_helper(&this->arc_values.vertical_offset, 'J', block);
+			this->__set_active_plane_axis_helper(&this->arc_values.normal_offset, 'K', block);
+			this->arc_values.plane_error = e_parsing_errors::MISSING_CIRCLE_OFFSET_IJ;
+		}
+		break;
+		case NGC_RS274::G_codes::UW_PLANE_SELECTION://G18.1
+		{
+			this->__set_active_plane_axis_helper(&this->active_plane.horizontal_axis, 'U', block);
+			this->__set_active_plane_axis_helper(&this->active_plane.vertical_axis, 'W', block);
+			this->__set_active_plane_axis_helper(&this->active_plane.normal_axis, 'V', block);
+			this->active_plane.plane_error = e_parsing_errors::MISSING_CIRCLE_AXIS_UW;
+
+			this->__set_active_plane_axis_helper(&this->active_plane.rotary_horizontal_axis, 'A', block);
+			this->__set_active_plane_axis_helper(&this->active_plane.rotary_vertical_axis, 'C', block);
+			this->__set_active_plane_axis_helper(&this->active_plane.rotary_normal_axis, 'B', block);
+			
+			this->__set_active_plane_axis_helper(&this->active_plane.inc_horizontal_axis, 'X', block);
+			this->__set_active_plane_axis_helper(&this->active_plane.inc_vertical_axis, 'Z', block);
+			this->__set_active_plane_axis_helper(&this->active_plane.inc_normal_axis, 'Y', block);		
+
+
+			this->__set_active_plane_axis_helper(&this->arc_values.horizontal_offset, 'I', block);
+			this->__set_active_plane_axis_helper(&this->arc_values.vertical_offset, 'K', block);
+			this->__set_active_plane_axis_helper(&this->arc_values.normal_offset, 'J', block);
+			this->arc_values.plane_error = e_parsing_errors::MISSING_CIRCLE_OFFSET_IK;
+		}
+		break;
+		case NGC_RS274::G_codes::VW_PLANE_SELECTION://G19.1
+		{
+			this->__set_active_plane_axis_helper(&this->active_plane.horizontal_axis, 'V', block);
+			this->__set_active_plane_axis_helper(&this->active_plane.vertical_axis, 'W', block);
+			this->__set_active_plane_axis_helper(&this->active_plane.normal_axis, 'U', block);
+			this->active_plane.plane_error = e_parsing_errors::MISSING_CIRCLE_AXIS_VW;
+
+			this->__set_active_plane_axis_helper(&this->active_plane.rotary_horizontal_axis, 'B', block);
+			this->__set_active_plane_axis_helper(&this->active_plane.rotary_vertical_axis, 'C', block);
+			this->__set_active_plane_axis_helper(&this->active_plane.rotary_normal_axis, 'A', block);
+
+			this->__set_active_plane_axis_helper(&this->active_plane.inc_horizontal_axis, 'Y', block);
+			this->__set_active_plane_axis_helper(&this->active_plane.inc_vertical_axis, 'Z', block);
+			this->__set_active_plane_axis_helper(&this->active_plane.inc_normal_axis, 'X', block);	
+
 
 			this->__set_active_plane_axis_helper(&this->arc_values.horizontal_offset, 'J', block);
 			this->__set_active_plane_axis_helper(&this->arc_values.vertical_offset, 'K', block);

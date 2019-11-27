@@ -117,7 +117,7 @@ e_parsing_errors NGC_RS274::Error_Check::__error_check_main(NGC_RS274::Block_Vie
 		case NGC_RS274::Groups::G::Motion: //<--G0,G1,G02,G03,G38.2,G80,G81,G82,G83,G84,G85,G86,G87.G88.G89
 		{
 			//The motion code is modal, so it was either set on this line, or a line before it.
-			//There is also a startup/default configuration that the machien wills tart up with
+			//There is also a startup/default configuration that the machine will start up with
 			//and that default value could be whats set right now. 
 			if (*v_new_block->current_g_codes.Motion == 0)
 				break;
@@ -199,6 +199,9 @@ e_parsing_errors NGC_RS274::Error_Check::__error_check_main(NGC_RS274::Block_Vie
 				break;
 			}
 
+			//And lastly, lets see if this command actually produces motion
+			__has_motion(v_new_block, v_previous_block);
+
 			break;
 		}
 		case NGC_RS274::Groups::G::NON_MODAL: //<--G4,G10,G28,G28.1,G30,G30.1,G53,G92,G92.1,G92.2,G92.3
@@ -260,6 +263,22 @@ e_parsing_errors NGC_RS274::Error_Check::__error_check_main(NGC_RS274::Block_Vie
 		}
 	}
 	return  e_parsing_errors::OK;
+}
+
+uint8_t NGC_RS274::Error_Check::__has_motion(NGC_RS274::Block_View *v_new_block, NGC_RS274::Block_View *v_previous_block)
+{
+	float h = (v_new_block->active_plane.horizontal_axis.value - v_previous_block->active_plane.horizontal_axis.value);
+	float v = (v_new_block->active_plane.vertical_axis.value - v_previous_block->active_plane.vertical_axis.value);
+	float n = (v_new_block->active_plane.normal_axis.value - v_previous_block->active_plane.normal_axis.value);
+	float hi = (v_new_block->active_plane.inc_horizontal_axis.value - v_previous_block->active_plane.inc_horizontal_axis.value);
+	float vi = (v_new_block->active_plane.inc_vertical_axis.value - v_previous_block->active_plane.inc_vertical_axis.value);
+	float ni = (v_new_block->active_plane.inc_normal_axis.value - v_previous_block->active_plane.inc_normal_axis.value);
+	float hr = (v_new_block->active_plane.rotary_horizontal_axis.value - v_previous_block->active_plane.rotary_horizontal_axis.value);
+	float vr = (v_new_block->active_plane.rotary_vertical_axis.value - v_previous_block->active_plane.rotary_vertical_axis.value);
+	float nr = (v_new_block->active_plane.rotary_normal_axis.value - v_previous_block->active_plane.rotary_normal_axis.value);
+	
+	if ((h + v + n + hi + vi + ni + hr + vr + nr) != 0)
+		v_new_block->active_view_block->block_events.set((int)e_block_event::BlockHasMotion);
 }
 
 e_parsing_errors NGC_RS274::Error_Check::__error_check_plane_select(NGC_RS274::Block_View *v_new_block, NGC_RS274::Block_View *v_previous_block)
@@ -398,6 +417,18 @@ e_parsing_errors NGC_RS274::Error_Check::____error_check_radius_format_arc(NGC_R
 
 e_parsing_errors NGC_RS274::Error_Check::__error_check_non_modal(NGC_RS274::Block_View *v_new_block, NGC_RS274::Block_View *v_previous_block)
 {
+	/*
+	
+  group 12 - gez[8]  g54, g55, g56, g57, g58, g59, g59.1, g59.2, g59.3 - coordinate system
+  
+	gez[12] =(settings->origin_index <7) ? (530 + (10 * settings->origin_index)) : (584 + settings->origin_index);
+	
+	group 8  - gez[9]  g43, g49 - tool length offset
+	gez[8] = (settings->tool_offset.tran.x || settings->tool_offset.tran.y || settings->tool_offset.tran.z ||
+		settings->tool_offset.a || settings->tool_offset.b || settings->tool_offset.c ||
+		settings->tool_offset.u || settings->tool_offset.v || settings->tool_offset.w) ? G_43 : G_49;
+	gez[10] = (settings->retract_mode == OLD_Z) ? G_98 : G_99;
+	*/
 
 	float iAddress = 0;
 	//Check individual gcodes for their specific values
@@ -407,8 +438,8 @@ e_parsing_errors NGC_RS274::Error_Check::__error_check_non_modal(NGC_RS274::Bloc
 	case NGC_RS274::G_codes::G10_PARAM_WRITE: //<-G10
 	{
 		//It is illegal to specify G10 with a motion command
-		if (v_new_block->active_view_block->g_group[NGC_RS274::Groups::G::NON_MODAL]
-			&& v_new_block->active_view_block->g_group[NGC_RS274::Groups::G::Motion]
+		if (v_new_block->active_view_block->g_code_defined_in_block.get((int)NGC_RS274::Groups::G::NON_MODAL)
+			&& v_new_block->active_view_block->g_code_defined_in_block.get((int)NGC_RS274::Groups::G::Motion)
 			&& v_new_block->any_axis_defined(v_new_block->active_view_block))
 		{
 			return  e_parsing_errors::G_CODE_GROUP_NON_MODAL_AXIS_CANNOT_BE_SPECIFIED_WITH_MOTION;
@@ -580,6 +611,8 @@ e_parsing_errors NGC_RS274::Error_Check::__error_check_cutter_compensation(NGC_R
 		}
 		else
 		{
+			//its currently off, we are activating it now
+			NGC_RS274::Compensation::comp_control.state = e_compensation_states::CurrentCompensationOnDeactivating;
 			//comp is deactivating
 		}
 	}

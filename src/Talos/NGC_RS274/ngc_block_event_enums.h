@@ -14,7 +14,7 @@ enum class e_block_event : uint8_t
 	Coolant = 10,
 	Tool_Change_Request = 11,
 	Block_Set_To_Execute = 12,
-	Block_Set_To_Held = 13,
+	BlockHasMotion = 13,
 	Canned_Cycle_Active = 14,
 	PLANE_SELECTION = 15,
 	DISTANCE_MODE = 16,

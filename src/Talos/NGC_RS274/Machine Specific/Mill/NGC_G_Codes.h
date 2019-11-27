@@ -41,8 +41,11 @@ namespace NGC_RS274
 		static const unsigned int RECTANGULAR_COORDINATE_SYSTEM = 15 * G_CODE_MULTIPLIER;
 		static const unsigned int POLAR_COORDINATE_SYSTEM = 16 * G_CODE_MULTIPLIER;
 		static const unsigned int XY_PLANE_SELECTION = 17 * G_CODE_MULTIPLIER;
+		static const unsigned int UV_PLANE_SELECTION = 17.1 * G_CODE_MULTIPLIER;
 		static const unsigned int XZ_PLANE_SELECTION = 18 * G_CODE_MULTIPLIER;
+		static const unsigned int UW_PLANE_SELECTION = 18.1 * G_CODE_MULTIPLIER;
 		static const unsigned int YZ_PLANE_SELECTION = 19 * G_CODE_MULTIPLIER;
+		static const unsigned int VW_PLANE_SELECTION = 19.1 * G_CODE_MULTIPLIER;
 		static const unsigned int INCH_SYSTEM_SELECTION = 20 * G_CODE_MULTIPLIER;
 		static const unsigned int MILLIMETER_SYSTEM_SELECTION = 21 * G_CODE_MULTIPLIER;
 		static const unsigned int RETURN_TO_HOME = 28 * G_CODE_MULTIPLIER;

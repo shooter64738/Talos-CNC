@@ -37,6 +37,7 @@
     <ClInclude Include="..\..\..\..\NGC_RS274\Machine Specific\Mill\NGC_M_Codes.h" />
     <ClInclude Include="..\..\..\..\NGC_RS274\NGC_Block_Assignor.h" />
     <ClInclude Include="..\..\..\..\NGC_RS274\ngc_block_event_enums.h" />
+    <ClInclude Include="..\..\..\..\NGC_RS274\ngc_block_struct.h" />
     <ClInclude Include="..\..\..\..\NGC_RS274\NGC_Block_View.h" />
     <ClInclude Include="..\..\..\..\NGC_RS274\NGC_Comp.h" />
     <ClInclude Include="..\..\..\..\NGC_RS274\ngc_compensation_enums.h" />

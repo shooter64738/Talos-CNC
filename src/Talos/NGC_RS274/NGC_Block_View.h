@@ -34,6 +34,7 @@ needed to store in the buffer array. This allows almost twice as much storage sp
 #include "../records_def.h"
 #include "ngc_errors_interpreter.h"
 #include "ngc_block_event_enums.h"
+#include "ngc_block_struct.h"
 
 namespace NGC_RS274
 {
@@ -42,7 +43,7 @@ namespace NGC_RS274
 		//#define IS_ARC(bool BitTst(exec_flags,2));
 	public:
 		Block_View();
-		Block_View(BinaryRecords::s_ngc_block *block);
+		Block_View(s_ngc_block *block);
 		~Block_View();
 
 		struct s_persisted_values

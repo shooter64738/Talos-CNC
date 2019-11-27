@@ -56,6 +56,8 @@ namespace NGC_RS274
 		//~Error_Check();
 			static e_parsing_errors error_check(NGC_RS274::Block_View *new_block, NGC_RS274::Block_View *previous_block);
 	private:
+		static uint8_t __has_motion(NGC_RS274::Block_View * v_new_block, NGC_RS274::Block_View * v_previous_block);
+		
 		static e_parsing_errors __error_check_main(NGC_RS274::Block_View *new_block, NGC_RS274::Block_View *previous_block);
 		static e_parsing_errors __error_check_plane_select(NGC_RS274::Block_View *v_new_block, NGC_RS274::Block_View *v_previous_block);
 		static e_parsing_errors __error_check_arc(NGC_RS274::Block_View *v_new_block, NGC_RS274::Block_View *v_previous_block);
@@ -70,6 +72,7 @@ namespace NGC_RS274
 		static e_parsing_errors ____error_check_center_format_arc(NGC_RS274::Block_View *v_new_block, NGC_RS274::Block_View *v_previous_block);
 		static e_parsing_errors ____error_check_radius_format_arc(NGC_RS274::Block_View *v_new_block, NGC_RS274::Block_View *v_previous_block);
 	};
+	
 };
 
 #endif /* NGC_BINARY_BLOCK_H */
