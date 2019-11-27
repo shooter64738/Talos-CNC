@@ -22,9 +22,9 @@
 #define NGC_COMP_H_
 
 #include <stdint.h>
-#include "ngc_defines.h"
+#include "_ngc_defines.h"
 #include "../physical_machine_parameters.h"
-#include "ngc_compensation_enums.h"
+#include "_ngc_compensation_enums.h"
 
 #ifdef MACHINE_TYPE_MILL
 #include "Machine Specific/Mill/NGC_Mill.h"

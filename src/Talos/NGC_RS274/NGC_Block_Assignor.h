@@ -32,9 +32,9 @@ needed to store in the buffer array. This allows almost twice as much storage sp
 
 #include <stdint.h>
 #include "../records_def.h"
-#include "ngc_errors_interpreter.h"
+#include "_ngc_errors_interpreter.h"
 #include "NGC_Error_Check.h"
-#include "ngc_block_struct.h"
+#include "_ngc_block_struct.h"
 
 
 namespace NGC_RS274

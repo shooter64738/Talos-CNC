@@ -20,8 +20,8 @@
 
 #include "c_gcode_buffer.h"
 #include <string.h>
-#include "../../../NGC_RS274/NGC_G_Groups.h"
-#include "../../../NGC_RS274/NGC_M_Groups.h"
+#include "../../../NGC_RS274/_ngc_g_groups.h"
+#include "../../../NGC_RS274/_ngc_m_groups.h"
 
 
 static s_ngc_block gcode_data[NGC_BUFFER_SIZE];

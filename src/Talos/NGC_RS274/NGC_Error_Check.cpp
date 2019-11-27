@@ -22,10 +22,10 @@
 #include "NGC_Error_Check.h"
 #include <string.h>
 #include "../bit_manipulation.h"
-#include "NGC_G_Groups.h"
-#include "NGC_M_Groups.h"
+#include "_ngc_g_Groups.h"
+#include "_ngc_m_Groups.h"
 #include "NGC_Comp.h"
-#include "ngc_compensation_enums.h"
+#include "_ngc_compensation_enums.h"
 #include <math.h>
 
 

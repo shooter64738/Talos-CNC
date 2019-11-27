@@ -24,7 +24,7 @@
 #define NGC_MILL_H
 #include <stdint.h>
 #include "../../NGC_Block_View.h"
-#include "../../ngc_errors_interpreter.h"
+#include "../../_ngc_errors_interpreter.h"
 namespace NGC_RS274
 {
 	class NGC_Machine_Specific

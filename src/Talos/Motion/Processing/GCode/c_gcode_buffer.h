@@ -23,7 +23,7 @@
 #define __C_MOTION_NGC_BUFFER_H__
 
 #include "../../../c_ring_template.h"
-#include "../../../NGC_RS274/ngc_block_struct.h"
+#include "../../../NGC_RS274/_ngc_block_struct.h"
 #define NGC_BUFFER_SIZE 2 //<--we only need to hold 2 items. One for the previous block and one for the current
 
 namespace Talos

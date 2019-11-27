@@ -12,8 +12,8 @@
 #include "../../../../Coordinator/coordinator_hardware_def.h"
 #include "../../../../Coordinator/Processing/Main/Main_Process.h"
 #include "disk_support/ff.h"
-#include "../../../../NGC_RS274/NGC_G_Groups.h"
-#include "../../../../NGC_RS274/NGC_M_Groups.h"
+#include "../../../../NGC_RS274/_ngc_g_Groups.h"
+#include "../../../../NGC_RS274/_ngc_m_Groups.h"
 
 
 static FATFS FatFs;
@@ -71,7 +71,7 @@ uint8_t Hardware_Abstraction_Layer::Disk::load_configuration()
 	
 }
 
-uint8_t Hardware_Abstraction_Layer::Disk::load_initialize_block(BinaryRecords::s_ngc_block * initial_block )
+uint8_t Hardware_Abstraction_Layer::Disk::load_initialize_block(s_ngc_block * initial_block )
 {
 	//default the motion state to canceled
 	initial_block->g_group[NGC_RS274::Groups::G::Motion] = NGC_RS274::G_codes::MOTION_CANCELED;
@@ -103,60 +103,60 @@ uint8_t Hardware_Abstraction_Layer::Disk::load_initialize_block(BinaryRecords::s
 	initial_block->g_group[NGC_RS274::Groups::M::COOLANT] = NGC_RS274::M_codes::COOLANT_OFF;
 }
 
-uint8_t Hardware_Abstraction_Layer::Disk::put_block(BinaryRecords::s_ngc_block * write_block)
+uint8_t Hardware_Abstraction_Layer::Disk::put_block(s_ngc_block * write_block)
 {
-	char stream[sizeof(BinaryRecords::s_ngc_block)];
+	char stream[sizeof(s_ngc_block)];
 	
-	memcpy(stream, write_block, sizeof(BinaryRecords::s_ngc_block));
+	memcpy(stream, write_block, sizeof(s_ngc_block));
 
 	if (write_block->__station__)
 	{
-		uint32_t position = sizeof(BinaryRecords::s_ngc_block) * (write_block->__station__ - 1);
+		uint32_t position = sizeof(s_ngc_block) * (write_block->__station__ - 1);
 		//position should now be at the beginning point of the block requested by __station__
 		f_lseek(&_cache_file_object,position);
 	}
 
-	return write(_cache_file_object, stream, e_file_modes::OpenCreate, sizeof(BinaryRecords::s_ngc_block));
+	return write(_cache_file_object, stream, e_file_modes::OpenCreate, sizeof(s_ngc_block));
 
 	_cache_write_position =f_tell(&_cache_file_object);
 }
 
-uint8_t Hardware_Abstraction_Layer::Disk::update_block(BinaryRecords::s_ngc_block * update_block)
+uint8_t Hardware_Abstraction_Layer::Disk::update_block(s_ngc_block * update_block)
 {
 
-	char stream[sizeof(BinaryRecords::s_ngc_block)];
+	char stream[sizeof(s_ngc_block)];
 	
-	memcpy(stream, update_block, sizeof(BinaryRecords::s_ngc_block));
+	memcpy(stream, update_block, sizeof(s_ngc_block));
 	
 	if (update_block->__station__)
 	{
-		uint32_t position = sizeof(BinaryRecords::s_ngc_block) * (update_block->__station__ - 1);
+		uint32_t position = sizeof(s_ngc_block) * (update_block->__station__ - 1);
 		//position should now be at the beginning point of the block requested by __station__
 		f_lseek(&_cache_file_object,position);
 	}
 
-	return write(_cache_file_object, stream, e_file_modes::OpenCreate, sizeof(BinaryRecords::s_ngc_block));
+	return write(_cache_file_object, stream, e_file_modes::OpenCreate, sizeof(s_ngc_block));
 
 	_cache_write_position =f_tell(&_cache_file_object);
 }
 
-uint8_t Hardware_Abstraction_Layer::Disk::get_block(BinaryRecords::s_ngc_block * read_block)
+uint8_t Hardware_Abstraction_Layer::Disk::get_block(s_ngc_block * read_block)
 {
-	char stream[sizeof(BinaryRecords::s_ngc_block)];
+	char stream[sizeof(s_ngc_block)];
 
 	//If a station number was sent with the block we need to seek
 	//that block id in the cache. The offset int he cache is simple.
 	if (read_block->__station__)
 	{
-		DWORD position = sizeof(BinaryRecords::s_ngc_block) * (read_block->__station__ -1);
+		DWORD position = sizeof(s_ngc_block) * (read_block->__station__ -1);
 		//position should now be at the beginning point of the block requested by __station__
 		f_lseek(&_cache_file_object, position);
 	}
 	
-	uint8_t ret_code = read(_cache_file_object, stream, e_file_modes::OpenCreate, sizeof(BinaryRecords::s_ngc_block));
+	uint8_t ret_code = read(_cache_file_object, stream, e_file_modes::OpenCreate, sizeof(s_ngc_block));
 	if (ret_code) return ret_code;
 
-	memcpy(read_block, stream, sizeof(BinaryRecords::s_ngc_block));
+	memcpy(read_block, stream, sizeof(s_ngc_block));
 
 	_cache_read_position = f_tell(&_cache_file_object);
 	return 0;

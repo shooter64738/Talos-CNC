@@ -7,8 +7,8 @@
 
 
 #include "c_disk_win.h"
-#include "../../../../../NGC_RS274/NGC_G_Groups.h"
-#include "../../../../../NGC_RS274/NGC_M_Groups.h"
+#include "../../../../../NGC_RS274/_ngc_g_Groups.h"
+#include "../../../../../NGC_RS274/_ngc_m_Groups.h"
 #include<iostream>
 #include<fstream>
 using namespace std;

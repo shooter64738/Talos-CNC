@@ -22,10 +22,10 @@
 #include "NGC_Block_Assignor.h"
 #include <string.h>
 #include "../bit_manipulation.h"
-#include "NGC_G_Groups.h"
-#include "NGC_M_Groups.h"
+#include "_ngc_g_Groups.h"
+#include "_ngc_m_Groups.h"
 #include "NGC_Block_View.h"
-#include "ngc_errors_interpreter.h"
+#include "_ngc_errors_interpreter.h"
 
 //NGC_RS274::Block_Assignor::Block_Assignor(){}
 //NGC_RS274::Block_Assignor::~Block_Assignor(){}

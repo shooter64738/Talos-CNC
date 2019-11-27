@@ -350,21 +350,9 @@
       <SubType>compile</SubType>
       <Link>Ngc_Rs274\NGC_Comp.h</Link>
     </Compile>
-    <Compile Include="..\..\..\NGC_RS274\ngc_compensation_enums.h">
-      <SubType>compile</SubType>
-      <Link>Ngc_Rs274\ngc_compensation_enums.h</Link>
-    </Compile>
-    <Compile Include="..\..\..\NGC_RS274\ngc_defines.h">
-      <SubType>compile</SubType>
-      <Link>Ngc_Rs274\ngc_defines.h</Link>
-    </Compile>
     <Compile Include="..\..\..\NGC_RS274\NGC_Errors.h">
       <SubType>compile</SubType>
       <Link>Ngc_Rs274\NGC_Errors.h</Link>
-    </Compile>
-    <Compile Include="..\..\..\NGC_RS274\ngc_errors_interpreter.h">
-      <SubType>compile</SubType>
-      <Link>Ngc_Rs274\ngc_errors_interpreter.h</Link>
     </Compile>
     <Compile Include="..\..\..\NGC_RS274\NGC_Error_Check.cpp">
       <SubType>compile</SubType>
@@ -374,10 +362,6 @@
       <SubType>compile</SubType>
       <Link>Ngc_Rs274\NGC_Error_Check.h</Link>
     </Compile>
-    <Compile Include="..\..\..\NGC_RS274\NGC_G_Groups.h">
-      <SubType>compile</SubType>
-      <Link>Ngc_Rs274\NGC_G_Groups.h</Link>
-    </Compile>
     <Compile Include="..\..\..\NGC_RS274\NGC_Line_Processor.cpp">
       <SubType>compile</SubType>
       <Link>Ngc_Rs274\NGC_Line_Processor.cpp</Link>
@@ -386,10 +370,6 @@
       <SubType>compile</SubType>
       <Link>Ngc_Rs274\NGC_Line_Processor.h</Link>
     </Compile>
-    <Compile Include="..\..\..\NGC_RS274\NGC_M_Groups.h">
-      <SubType>compile</SubType>
-      <Link>Ngc_Rs274\NGC_M_Groups.h</Link>
-    </Compile>
     <Compile Include="..\..\..\NGC_RS274\NGC_Parameters.cpp">
       <SubType>compile</SubType>
       <Link>Ngc_Rs274\NGC_Parameters.cpp</Link>
@@ -397,6 +377,34 @@
     <Compile Include="..\..\..\NGC_RS274\NGC_Parameters.h">
       <SubType>compile</SubType>
       <Link>Ngc_Rs274\NGC_Parameters.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\NGC_RS274\_ngc_block_event_enums.h">
+      <SubType>compile</SubType>
+      <Link>Ngc_Rs274\_ngc_block_event_enums.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\NGC_RS274\_ngc_block_struct.h">
+      <SubType>compile</SubType>
+      <Link>Ngc_Rs274\_ngc_block_struct.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\NGC_RS274\_ngc_compensation_enums.h">
+      <SubType>compile</SubType>
+      <Link>Ngc_Rs274\_ngc_compensation_enums.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\NGC_RS274\_ngc_defines.h">
+      <SubType>compile</SubType>
+      <Link>Ngc_Rs274\_ngc_defines.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\NGC_RS274\_ngc_errors_interpreter.h">
+      <SubType>compile</SubType>
+      <Link>Ngc_Rs274\_ngc_errors_interpreter.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\NGC_RS274\_ngc_g_groups.h">
+      <SubType>compile</SubType>
+      <Link>Ngc_Rs274\_ngc_g_groups.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\NGC_RS274\_ngc_m_groups.h">
+      <SubType>compile</SubType>
+      <Link>Ngc_Rs274\_ngc_m_groups.h</Link>
     </Compile>
     <Compile Include="..\..\..\physical_machine_parameters.h">
       <SubType>compile</SubType>

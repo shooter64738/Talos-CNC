@@ -20,8 +20,8 @@
 
 #ifndef NGC_Interpreter_Errors_h
 #define NGC_Interpreter_Errors_h
-#include "NGC_G_Groups.h"
-#include "NGC_M_Groups.h"
+#include "_ngc_g_groups.h"
+#include "_ngc_m_groups.h"
 
 #endif
 

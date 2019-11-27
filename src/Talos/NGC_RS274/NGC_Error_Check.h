@@ -32,7 +32,7 @@ needed to store in the buffer array. This allows almost twice as much storage sp
 
 #include <stdint.h>
 #include "../records_def.h"
-#include "ngc_errors_interpreter.h"
+#include "_ngc_errors_interpreter.h"
 #include "NGC_Block_View.h"
 
 //Changing the MACHINE_TYPE in the physical_machine_parameters.h file will change what
@@ -43,7 +43,7 @@ needed to store in the buffer array. This allows almost twice as much storage sp
 #ifdef MACHINE_TYPE_LATHE
 #include "Machine Specific/Lathe/NGC_Lathe.h"
 #endif
-#include "ngc_errors_interpreter.h"
+#include "_ngc_errors_interpreter.h"
 
 
 namespace NGC_RS274

@@ -32,15 +32,15 @@ needed to store in the buffer array. This allows almost twice as much storage sp
 
 #include <stdint.h>
 #include "../records_def.h"
-#include "ngc_errors_interpreter.h"
-#include "ngc_block_event_enums.h"
-#include "ngc_block_struct.h"
+#include "_ngc_errors_interpreter.h"
+#include "_ngc_block_event_enums.h"
+#include "_ngc_block_struct.h"
 
 namespace NGC_RS274
 {
 	class Block_View
 	{
-		//#define IS_ARC(bool BitTst(exec_flags,2));
+
 	public:
 		Block_View();
 		Block_View(s_ngc_block *block);

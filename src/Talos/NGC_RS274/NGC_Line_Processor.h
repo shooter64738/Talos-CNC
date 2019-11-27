@@ -29,8 +29,8 @@
 #include "../c_ring_template.h"
 //#include "NGC_Block.h"
 #include "NGC_Errors.h"
-#include "ngc_errors_interpreter.h"
-#include "ngc_block_struct.h"
+#include "_ngc_errors_interpreter.h"
+#include "_ngc_block_struct.h"
 
 
 #define MAX_EXPRESSION_OPS 7

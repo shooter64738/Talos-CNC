@@ -10,7 +10,7 @@
 
 #include <stdint.h>
 #include "../../../../../records_def.h"
-#include "../../../../../NGC_RS274/ngc_block_struct.h"
+#include "../../../../../NGC_RS274/_ngc_block_struct.h"
 
 namespace Hardware_Abstraction_Layer
 {

@@ -110,21 +110,6 @@
     <ClInclude Include="..\..\..\..\Coordinator\Processing\Events\EventHandlers\c_system_events.h">
       <Filter>Coordinator\Processing\Events\EventHandlers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\NGC_RS274\ngc_defines.h">
-      <Filter>Ngc_Rs274</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\NGC_RS274\NGC_Errors.h">
-      <Filter>Ngc_Rs274</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\NGC_RS274\NGC_G_Groups.h">
-      <Filter>Ngc_Rs274</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\NGC_RS274\NGC_M_Groups.h">
-      <Filter>Ngc_Rs274</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\NGC_RS274\NGC_Parameters.h">
-      <Filter>Ngc_Rs274</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\..\NGC_RS274\Machine Specific\Lathe\NGC_G_Codes.h">
       <Filter>Ngc_Rs274\MachineSpecific\Lathe</Filter>
     </ClInclude>
@@ -146,37 +131,52 @@
     <ClInclude Include="..\..\..\..\Coordinator\Processing\Events\EventHandlers\c_ancillary_event_handler.h">
       <Filter>Coordinator\Processing\Events\EventHandlers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\NGC_RS274\NGC_Line_Processor.h">
-      <Filter>Ngc_Rs274</Filter>
-    </ClInclude>
     <ClInclude Include="Platform Specific\c_disk_win.h">
       <Filter>Platform Specific</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\Motion\Processing\GCode\c_gcode_buffer.h">
       <Filter>Motion\Processing\GCode</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\NGC_RS274\ngc_errors_interpreter.h">
+    <ClInclude Include="..\..\..\..\NGC_RS274\_ngc_block_event_enums.h">
       <Filter>Ngc_Rs274</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\NGC_RS274\NGC_Block_View.h">
+    <ClInclude Include="..\..\..\..\NGC_RS274\_ngc_block_struct.h">
       <Filter>Ngc_Rs274</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\NGC_RS274\NGC_Error_Check.h">
+    <ClInclude Include="..\..\..\..\NGC_RS274\_ngc_compensation_enums.h">
+      <Filter>Ngc_Rs274</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\NGC_RS274\_ngc_defines.h">
+      <Filter>Ngc_Rs274</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\NGC_RS274\_ngc_errors_interpreter.h">
+      <Filter>Ngc_Rs274</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\NGC_RS274\_ngc_g_groups.h">
+      <Filter>Ngc_Rs274</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\NGC_RS274\_ngc_m_groups.h">
       <Filter>Ngc_Rs274</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\NGC_RS274\NGC_Block_Assignor.h">
       <Filter>Ngc_Rs274</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\NGC_RS274\ngc_block_event_enums.h">
+    <ClInclude Include="..\..\..\..\NGC_RS274\NGC_Block_View.h">
       <Filter>Ngc_Rs274</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\NGC_RS274\NGC_Comp.h">
       <Filter>Ngc_Rs274</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\NGC_RS274\ngc_compensation_enums.h">
+    <ClInclude Include="..\..\..\..\NGC_RS274\NGC_Error_Check.h">
       <Filter>Ngc_Rs274</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\NGC_RS274\ngc_block_struct.h">
+    <ClInclude Include="..\..\..\..\NGC_RS274\NGC_Errors.h">
+      <Filter>Ngc_Rs274</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\NGC_RS274\NGC_Line_Processor.h">
+      <Filter>Ngc_Rs274</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\NGC_RS274\NGC_Parameters.h">
       <Filter>Ngc_Rs274</Filter>
     </ClInclude>
   </ItemGroup>
@@ -235,28 +235,28 @@
     <ClCompile Include="..\..\..\..\Coordinator\Processing\Events\EventHandlers\c_ancillary_event_handler.cpp">
       <Filter>Coordinator\Processing\Events\EventHandlers</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\NGC_RS274\NGC_Line_Processor.cpp">
-      <Filter>Ngc_Rs274</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\NGC_RS274\NGC_Parameters.cpp">
-      <Filter>Ngc_Rs274</Filter>
-    </ClCompile>
     <ClCompile Include="Platform Specific\c_disk_win.cpp">
       <Filter>Platform Specific</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\..\Motion\Processing\GCode\c_gcode_buffer.cpp">
       <Filter>Motion\Processing\GCode</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\..\NGC_RS274\NGC_Block_Assignor.cpp">
+      <Filter>Ngc_Rs274</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\..\..\NGC_RS274\NGC_Block_View.cpp">
+      <Filter>Ngc_Rs274</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\NGC_RS274\NGC_Comp.cpp">
       <Filter>Ngc_Rs274</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\..\NGC_RS274\NGC_Error_Check.cpp">
       <Filter>Ngc_Rs274</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\NGC_RS274\NGC_Block_Assignor.cpp">
+    <ClCompile Include="..\..\..\..\NGC_RS274\NGC_Line_Processor.cpp">
       <Filter>Ngc_Rs274</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\NGC_RS274\NGC_Comp.cpp">
+    <ClCompile Include="..\..\..\..\NGC_RS274\NGC_Parameters.cpp">
       <Filter>Ngc_Rs274</Filter>
     </ClCompile>
   </ItemGroup>

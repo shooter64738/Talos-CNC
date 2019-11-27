@@ -23,9 +23,9 @@
 
 #include <string.h>
 
-#include "../../NGC_G_Groups.h"
+#include "../../_ngc_g_Groups.h"
 
-#include "../../NGC_Errors.h"
+#include "../../_ngc_m_Groups.h"
 /*
 If a canned cycle (g81-g89) command was specified, perform detailed parameter check that applies
 only to canned cycles.

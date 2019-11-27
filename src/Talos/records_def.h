@@ -22,7 +22,7 @@
 #ifndef RECORDS_DEF_H
 #define RECORDS_DEF_H
 #include "physical_machine_parameters.h"
-#include "NGC_RS274/ngc_defines.h"
+#include "NGC_RS274/_ngc_defines.h"
 #include "bit_manipulation.h"
 #include <string.h>
 

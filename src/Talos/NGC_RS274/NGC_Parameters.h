@@ -22,7 +22,7 @@
 #define NGC_PARAMETERS_H_
 
 #include <stdint.h>
-#include "ngc_defines.h"
+#include "_ngc_defines.h"
 #include "../physical_machine_parameters.h"
 
 #ifdef MACHINE_TYPE_MILL
