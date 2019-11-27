@@ -62,12 +62,6 @@
 #define Y_WORD_BIT 24
 #define Z_WORD_BIT 25
 
-struct s_point
-{
-	float X;
-	float Y;
-};
-
 
 
 #define HORIZONTAL_MOTION_AXIS 0

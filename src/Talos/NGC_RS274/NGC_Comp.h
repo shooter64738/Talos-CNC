@@ -23,6 +23,7 @@
 
 #include <stdint.h>
 #include "_ngc_defines.h"
+#include "_ngc_point_definition.h"
 #include "../physical_machine_parameters.h"
 #include "_ngc_compensation_enums.h"
 

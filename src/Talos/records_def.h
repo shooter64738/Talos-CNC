@@ -23,7 +23,8 @@
 #define RECORDS_DEF_H
 #include "physical_machine_parameters.h"
 #include "NGC_RS274/_ngc_defines.h"
-#include "bit_manipulation.h"
+#include "_bit_manipulation.h"
+//#include "_bit_flag_control.h"
 #include <string.h>
 
 namespace BinaryRecords
@@ -190,120 +191,6 @@ namespace BinaryRecords
 		_100 = 100
 	};
 #endif
-
-	template <typename TN>
-	struct s_bit_flag_controller
-	{
-		bool get(int get_value)
-		{
-			return (BitGet(_flag, get_value));
-		};
-
-		bool get_clr(int get_value)
-		{
-			bool ret = (BitGet(_flag, get_value));
-			clear(get_value);
-			return ret;
-		};
-
-		void flip(int flip_value)
-		{
-			BitFlp(_flag, flip_value);
-		};
-
-		void set(int set_value)
-		{
-			BitSet_(_flag, set_value);
-		};
-
-		void set(bool bit_value, int bit_num)
-		{
-			if (bit_value)
-				BitSet_(_flag, bit_num);
-			else
-				BitClr_(_flag, bit_num);
-		};
-
-		void clear(int clear_value)
-		{
-			BitClr_(_flag, clear_value);
-		};
-
-		void reset()
-		{
-			_flag = 0;
-		};
-
-		volatile TN _flag;//because this can be accessed by interrupts, i am making it volatile
-	};
-
-	//struct s_ngc_block
-	//{
-	//	float word_values[26]; //<--hard code to 26, cuz there are always 26 letters in the alphabet
-	//	s_bit_flag_controller<uint32_t> word_flags;
-	//	s_bit_flag_controller<uint32_t> block_events;
-	//	uint16_t g_group[COUNT_OF_G_CODE_GROUPS_ARRAY]; //There are 14 groups of gcodes (0-13)
-	//	s_bit_flag_controller<uint32_t> g_code_defined_in_block;
-	//	uint16_t m_group[COUNT_OF_M_CODE_GROUPS_ARRAY]; //There are 5 groups of mcodes (0-4)
-	//	s_bit_flag_controller<uint32_t> m_code_defined_in_block;
-	//	float target_motion_position[INTERNAL_AXIS_COUNT];  //Positions that this block of motion left us at.
-	//														//When reading these we must always assume the plane
-	//														//values were h,v,n,hr,vr,nr,ih,iv,in because we do
-	//														//not have the plane data to review after the block
-	//														//is processed and cached. We rely on the order of
-	//														//the array
-	//	uint32_t __station__;
-
-	//	//not sure what I would use these for yet.
-	//	//int radius_flag;
-	//	//double radius;
-	//	//int theta_flag;
-	//	//double theta;
-	//	//
-	//	//// control (o-word) stuff
-	//	//long offset;                 // start of line in file
-	//	//int o_type;
-	//	//int o_number;
-	//	//char *o_name;                // !!!KL be sure to free this
-	//	////double params[INTERP_SUB_PARAMS];
-	//};
-
-	//****************************************************************************************
-	//structs in here are packed and byte aligned on 1. This is due to sending serial data in
-	//binary format from one mcu to another and the mcu's have different architectures.
-	//Some are 8 bit, some are 32 bit. When/if all mcus are using the same architecture this
-	//struct packing can be removed. I am aware that there is a processor cost for this.
-	//****************************************************************************************
-	struct s_motion_arc_values
-	{
-		float horizontal_offset = 0;
-		float vertical_offset = 0;
-		float Radius = 0;
-	};
-
-	struct s_motion_data_block
-	{
-		s_motion_data_block()
-		{
-			s_motion_data_block::flag.reset();
-			memset(s_motion_data_block::axis_values, 0, sizeof(s_motion_data_block::axis_values));
-		}
-		const BinaryRecords::e_binary_record_types record_type = BinaryRecords::e_binary_record_types::Motion;
-		BinaryRecords::e_motion_type motion_type = BinaryRecords::e_motion_type::rapid_linear;
-		float feed_rate = 0;
-		float spindle_speed = 0;
-		uint8_t spindle_state = 0;
-		BinaryRecords::e_feed_modes feed_rate_mode = BinaryRecords::e_feed_modes::FEED_RATE_UNITS_PER_MINUTE_MODE;
-		//float word_values[26];
-		uint32_t line_number = 0;
-		float axis_values[MACHINE_AXIS_COUNT];
-		s_motion_arc_values arc_values;
-		s_bit_flag_controller<uint32_t> flag;
-		uint32_t sequence = 0; //system set value, used to track when a block of code as completed.
-		uint32_t _check_sum = 0;
-
-	};
-
 
 	struct s_peripheral_group_processing
 	{

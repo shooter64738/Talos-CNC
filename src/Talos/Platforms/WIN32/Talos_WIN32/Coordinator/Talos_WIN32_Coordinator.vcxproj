@@ -11,7 +11,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\..\bit_manipulation.h" />
+    <ClInclude Include="..\..\..\..\NGC_RS274\_ngc_point_definition.h" />
+    <ClInclude Include="..\..\..\..\_bit_manipulation.h" />
     <ClInclude Include="..\..\..\..\communication_def.h" />
     <ClInclude Include="..\..\..\..\Coordinator\coordinator_hardware_def.h" />
     <ClInclude Include="..\..\..\..\Coordinator\Processing\Consumer\c_ngc_consumer.h" />
@@ -51,6 +52,7 @@
     <ClInclude Include="..\..\..\..\NGC_RS274\_ngc_m_groups.h" />
     <ClInclude Include="..\..\..\..\physical_machine_parameters.h" />
     <ClInclude Include="..\..\..\..\records_def.h" />
+    <ClInclude Include="..\..\..\..\_bit_flag_control.h" />
     <ClInclude Include="Platform Specific\c_core_win.h" />
     <ClInclude Include="Platform Specific\c_disk_win.h" />
     <ClInclude Include="Platform Specific\c_serial_win.h" />

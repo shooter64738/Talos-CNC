@@ -1,6 +1,7 @@
 
 #include <stdint.h>
-#include "../../../records_def.h"
+#include "../../../_bit_flag_control.h"
+
 #ifndef __EXTERN_DATA_EVENTS
 #define __EXTERN_DATA_EVENTS
 
@@ -12,7 +13,7 @@ struct s_ancillary_events
 		
 
 	};
-	BinaryRecords::s_bit_flag_controller<uint32_t> event_manager;
+	s_bit_flag_controller<uint32_t> event_manager;
 };
 
 struct s_ngc_error_events
@@ -23,7 +24,7 @@ struct s_ngc_error_events
 
 
 	};
-	BinaryRecords::s_bit_flag_controller<uint32_t> event_manager;
+	s_bit_flag_controller<uint32_t> event_manager;
 };
 
 
@@ -38,7 +39,7 @@ struct s_data_events
 		SPIBusDataArrival = 4,
 		NetworkDataArrival = 5
 	};
-	BinaryRecords::s_bit_flag_controller<uint32_t> event_manager;
+	s_bit_flag_controller<uint32_t> event_manager;
 };
 
 struct s_system_events
@@ -48,7 +49,7 @@ struct s_system_events
 		SystemAllOk = 0,
 		SystemCritical = 31
 	};
-	BinaryRecords::s_bit_flag_controller<uint32_t> event_manager;
+	s_bit_flag_controller<uint32_t> event_manager;
 };
 #ifdef __EXTERN_EVENTS__
 s_data_events extern_data_events;

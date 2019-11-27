@@ -57,7 +57,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\..\bit_manipulation.h" />
     <ClInclude Include="..\..\..\..\communication_def.h" />
     <ClInclude Include="..\..\..\..\physical_machine_parameters.h" />
     <ClInclude Include="..\..\..\..\records_def.h" />
@@ -177,6 +176,11 @@
       <Filter>Ngc_Rs274</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\NGC_RS274\NGC_Parameters.h">
+      <Filter>Ngc_Rs274</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\_bit_flag_control.h" />
+    <ClInclude Include="..\..\..\..\_bit_manipulation.h" />
+    <ClInclude Include="..\..\..\..\NGC_RS274\_ngc_point_definition.h">
       <Filter>Ngc_Rs274</Filter>
     </ClInclude>
   </ItemGroup>

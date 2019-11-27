@@ -21,7 +21,7 @@
 
 #include "NGC_Block_Assignor.h"
 #include <string.h>
-#include "../bit_manipulation.h"
+#include "../_bit_manipulation.h"
 #include "_ngc_g_Groups.h"
 #include "_ngc_m_Groups.h"
 #include "NGC_Block_View.h"

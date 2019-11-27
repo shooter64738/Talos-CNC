@@ -1,18 +1,19 @@
 #include <stdint.h>
-#include "../bit_manipulation.h"
-#include "../records_def.h"
+#include "../_bit_manipulation.h"
+#include "../_bit_flag_control.h"
+#include "_ngc_defines.h"
 
 #ifndef NGC_BLOCK_STRUCT_H
 #define NGC_BLOCK_STRUCT_H
 struct s_ngc_block
 {
 	float word_values[26]; //<--hard code to 26, cuz there are always 26 letters in the alphabet
-	BinaryRecords::s_bit_flag_controller<uint32_t> word_flags;
-	BinaryRecords::s_bit_flag_controller<uint32_t> block_events;
+	s_bit_flag_controller<uint32_t> word_flags;
+	s_bit_flag_controller<uint32_t> block_events;
 	uint16_t g_group[COUNT_OF_G_CODE_GROUPS_ARRAY]; //There are 14 groups of gcodes (0-13)
-	BinaryRecords::s_bit_flag_controller<uint32_t> g_code_defined_in_block;
+	s_bit_flag_controller<uint32_t> g_code_defined_in_block;
 	uint16_t m_group[COUNT_OF_M_CODE_GROUPS_ARRAY]; //There are 5 groups of mcodes (0-4)
-	BinaryRecords::s_bit_flag_controller<uint32_t> m_code_defined_in_block;
+	s_bit_flag_controller<uint32_t> m_code_defined_in_block;
 	float target_motion_position[INTERNAL_AXIS_COUNT];  //Positions that this block of motion left us at.
 														//When reading these we must always assume the plane
 														//values were h,v,n,hr,vr,nr,ih,iv,in because we do

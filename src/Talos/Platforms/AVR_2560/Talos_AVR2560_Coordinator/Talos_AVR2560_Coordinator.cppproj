@@ -406,6 +406,10 @@
       <SubType>compile</SubType>
       <Link>Ngc_Rs274\_ngc_m_groups.h</Link>
     </Compile>
+    <Compile Include="..\..\..\NGC_RS274\_ngc_point_definition.h">
+      <SubType>compile</SubType>
+      <Link>Ngc_Rs274\_ngc_point_definition.h</Link>
+    </Compile>
     <Compile Include="..\..\..\physical_machine_parameters.h">
       <SubType>compile</SubType>
       <Link>physical_machine_parameters.h</Link>
