@@ -58,6 +58,9 @@
     <Filter Include="Shared Data">
       <UniqueIdentifier>{c1ba3884-8fc3-46cf-aa6a-d4572b181ae5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Ngc_Rs274\Dialect">
+      <UniqueIdentifier>{9eccca2d-1da0-4dc1-b64e-96f4e0acc195}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\communication_def.h" />
@@ -224,6 +227,27 @@
     <ClInclude Include="..\..\..\..\NGC_RS274\_ngc_plane_struct.h">
       <Filter>Ngc_Rs274</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\..\NGC_RS274\NGC_Set_Targets.h">
+      <Filter>Ngc_Rs274</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\NGC_RS274\NGC_Tool.h">
+      <Filter>Ngc_Rs274</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\NGC_RS274\_ngc_tool_struct.h">
+      <Filter>Ngc_Rs274</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\NGC_RS274\Dialect\_ngc_validate_0_group_nonmodal.h">
+      <Filter>Ngc_Rs274\Dialect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\NGC_RS274\Dialect\_ngc_validate_1_motion.h">
+      <Filter>Ngc_Rs274\Dialect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\NGC_RS274\Dialect\_ngc_dialect_validate.h">
+      <Filter>Ngc_Rs274\Dialect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\NGC_RS274\Dialect\_ngc_validate_16_plane_rotation.h">
+      <Filter>Ngc_Rs274\Dialect</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\..\Coordinator\coordinator_main.cpp">
@@ -302,6 +326,12 @@
       <Filter>Ngc_Rs274</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\..\NGC_RS274\NGC_Parameters.cpp">
+      <Filter>Ngc_Rs274</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\NGC_RS274\NGC_Set_Targets.cpp">
+      <Filter>Ngc_Rs274</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\NGC_RS274\NGC_Tool.cpp">
       <Filter>Ngc_Rs274</Filter>
     </ClCompile>
   </ItemGroup>

@@ -11,11 +11,18 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\..\NGC_RS274\Dialect\_ngc_dialect_validate.h" />
+    <ClInclude Include="..\..\..\..\NGC_RS274\Dialect\_ngc_validate_0_group_nonmodal.h" />
+    <ClInclude Include="..\..\..\..\NGC_RS274\Dialect\_ngc_validate_16_plane_rotation.h" />
+    <ClInclude Include="..\..\..\..\NGC_RS274\Dialect\_ngc_validate_1_motion.h" />
+    <ClInclude Include="..\..\..\..\NGC_RS274\NGC_Set_Targets.h" />
+    <ClInclude Include="..\..\..\..\NGC_RS274\NGC_Tool.h" />
     <ClInclude Include="..\..\..\..\NGC_RS274\_ngc_arc_struct.h" />
     <ClInclude Include="..\..\..\..\NGC_RS274\_ngc_axis_struct.h" />
     <ClInclude Include="..\..\..\..\NGC_RS274\_ngc_math_constants.h" />
     <ClInclude Include="..\..\..\..\NGC_RS274\_ngc_plane_struct.h" />
     <ClInclude Include="..\..\..\..\NGC_RS274\_ngc_point_definition.h" />
+    <ClInclude Include="..\..\..\..\NGC_RS274\_ngc_tool_struct.h" />
     <ClInclude Include="..\..\..\..\Shared Data\_binary_record_enums.h" />
     <ClInclude Include="..\..\..\..\Shared Data\_peripheral_overide_enums.h" />
     <ClInclude Include="..\..\..\..\Shared Data\_peripheral_panel_control_enums.h" />
@@ -93,6 +100,8 @@
     <ClCompile Include="..\..\..\..\NGC_RS274\NGC_Error_Check.cpp" />
     <ClCompile Include="..\..\..\..\NGC_RS274\NGC_Line_Processor.cpp" />
     <ClCompile Include="..\..\..\..\NGC_RS274\NGC_Parameters.cpp" />
+    <ClCompile Include="..\..\..\..\NGC_RS274\NGC_Set_Targets.cpp" />
+    <ClCompile Include="..\..\..\..\NGC_RS274\NGC_Tool.cpp" />
     <ClCompile Include="Platform Specific\c_core_win.cpp" />
     <ClCompile Include="Platform Specific\c_disk_win.cpp" />
     <ClCompile Include="Platform Specific\c_serial_win.cpp" />

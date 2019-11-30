@@ -22,18 +22,21 @@
 #include <string.h>
 #include <stdlib.h>
 #include <math.h>
+#include "_ngc_math_constants.h"
+#include "..\Motion\Processing\GCode\c_gcode_buffer.h"
+
 #include "NGC_Line_Processor.h"
 #include "NGC_Parameters.h"
 #include "NGC_Block_Assignor.h"
-#include "..\Motion\Processing\GCode\c_gcode_buffer.h"
-#include "NGC_Comp.h"
-#include "_ngc_math_constants.h"
+#include "NGC_Set_Targets.h"
 
 
 NGC_RS274::LineProcessor::s_param_functions NGC_RS274::LineProcessor::parameter_function_pointers;
 int NGC_RS274::LineProcessor::last_read_position = 0;
 static int max_numeric_parameter_count = 0;
 char NGC_RS274::LineProcessor::line_buffer[256];
+
+char * error_pointer = NGC_RS274::LineProcessor::line_buffer;
 
 uint8_t NGC_RS274::LineProcessor::initialize()
 {
@@ -60,30 +63,17 @@ uint8_t NGC_RS274::LineProcessor::initialize()
 	return 0;
 }
 
-e_parsing_errors NGC_RS274::LineProcessor::start(c_ring_buffer<char> * ring_buffer, c_ring_buffer <s_ngc_block> * buffer_destination)
+e_parsing_errors NGC_RS274::LineProcessor::start(c_ring_buffer <s_ngc_block> * buffer_destination)
 {
 	e_parsing_errors ret_code = e_parsing_errors::OK;
-	char * buffer = NULL;
-
-	if (ring_buffer == NULL)
-		buffer = NGC_RS274::LineProcessor::line_buffer;
-	else
-	{
-		buffer = ring_buffer->_storage_pointer;
-	}
-
+		
 	//set line data to all upper case
-	if (!_set_buffer_to_upper(buffer))
+	if (!_set_buffer_to_upper(line_buffer))
 	{/*return bad data in the buffer*/
 		return e_parsing_errors::BadDataInBuffer;
 	}
 
-	//If there are any line terminators, split this line so they are not parsed.
-	int startlen = strlen(buffer);
-	char * buffer_no_eol = strtok(buffer, "\r\n");
-
-
-	ret_code = _process_buffer(buffer, buffer_destination);
+	ret_code = _process_buffer(line_buffer, buffer_destination);
 
 	return ret_code;
 
@@ -104,12 +94,6 @@ uint8_t NGC_RS274::LineProcessor::_set_buffer_to_upper(char * buffer)
 
 			buffer[count++] = toupper(buffer[i]);
 		}
-		else
-		{
-			//if we skip a character the tail has to be moved forward too. 
-			//ring_buffer->_tail++;
-		}
-
 	}
 	buffer[count] = '\0';
 	return 1;
@@ -173,6 +157,10 @@ e_parsing_errors NGC_RS274::LineProcessor::_process_buffer
 	
 	new_block->__station__ = previous_block->__station__ + 1; //<--a unique number to give to this block.
 															  //Wonder if the stationing system can be used for subroutines as well... 
+	
+	//If this block is skipable, process it anyway, but flag it as a skippable block
+	//and we can check it when the motion conrol executes it. If the skip switch is
+	//on we will go ahead and skip it. If it is off, we can execute it. 
 	if (buffer[read_pos] == '/')
 	{
 		new_block->block_events.set((int)e_block_event::BlockSkipOptionActive);
@@ -186,7 +174,7 @@ e_parsing_errors NGC_RS274::LineProcessor::_process_buffer
 		//get current word, and advance reader
 		current_word = buffer[read_pos];
 		//process this data but do it on the new block
-		ret_code = _read_as_word(buffer, &read_pos, current_word, &word_value);
+		CHK_CALL(_read_as_word(buffer, &read_pos, current_word, &word_value));
 
 		//This will be useful to the end user to determine where the gcode data had an error
 		NGC_RS274::LineProcessor::last_read_position = read_pos;
@@ -199,12 +187,8 @@ e_parsing_errors NGC_RS274::LineProcessor::_process_buffer
 		//This will assign the value to the appropriate place in the block.
 		//If an error occurs because there have been multiple definitions of
 		//The same word in this block, it will be returned here.
-		ret_code = NGC_RS274::Block_Assignor::group_word(current_word, word_value, new_block, previous_block);
-		if (ret_code != e_parsing_errors::OK)
-		{
-			//Return the error to the caller
-			return ret_code;
-		}
+
+		CHK_CALL_RTN_ERROR_CODE(NGC_RS274::Block_Assignor::group_word(current_word, word_value, new_block, previous_block));
 	}
 	//Now that the line parsing is complete we can run an error check on the line
 
@@ -212,11 +196,9 @@ e_parsing_errors NGC_RS274::LineProcessor::_process_buffer
 	//to make the data easier to understand
 	NGC_RS274::Block_View v_new = NGC_RS274::Block_View(new_block);
 	NGC_RS274::Block_View v_previous = NGC_RS274::Block_View(previous_block);
-	ret_code = NGC_RS274::Error_Check::error_check(&v_new, &v_previous);
+	CHK_CALL_RTN_ERROR_CODE(NGC_RS274::Error_Check::error_check(&v_new, &v_previous));
 
-	//now check crc if its needed
-	if (NGC_RS274::Compensation::comp_control.state != e_compensation_states::CurrentCompensationOffNotActivating)
-		NGC_RS274::Compensation::process(&v_new, &v_previous);
+	NGC_RS274::Set_Targets::adjust(&v_new, &v_previous);
 
 	if (ret_code == e_parsing_errors::OK)
 	{

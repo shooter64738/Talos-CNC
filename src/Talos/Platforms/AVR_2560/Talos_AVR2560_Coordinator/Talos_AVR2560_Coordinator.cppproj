@@ -374,6 +374,14 @@
       <SubType>compile</SubType>
       <Link>Ngc_Rs274\NGC_Parameters.h</Link>
     </Compile>
+    <Compile Include="..\..\..\NGC_RS274\NGC_Set_Targets.cpp">
+      <SubType>compile</SubType>
+      <Link>Ngc_Rs274\NGC_Set_Targets.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\NGC_RS274\NGC_Set_Targets.h">
+      <SubType>compile</SubType>
+      <Link>Ngc_Rs274\NGC_Set_Targets.h</Link>
+    </Compile>
     <Compile Include="..\..\..\NGC_RS274\_ngc_arc_struct.h">
       <SubType>compile</SubType>
       <Link>Ngc_Rs274\_ngc_arc_struct.h</Link>
@@ -469,6 +477,10 @@
     <Compile Include="..\..\..\Shared Data\_unit_type_enums.h">
       <SubType>compile</SubType>
       <Link>Shared Data\_unit_type_enums.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\_bit_flag_control.h">
+      <SubType>compile</SubType>
+      <Link>_bit_flag_control.h</Link>
     </Compile>
     <Compile Include="..\..\..\_bit_manipulation.h">
       <SubType>compile</SubType>

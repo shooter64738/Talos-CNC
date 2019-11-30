@@ -92,14 +92,12 @@ void c_ngc_data_handler::ngc_handler(c_ring_buffer <char> * buffer)
 		}
 		//set an event so the rest of the program knows we are ready with ngc data.
 		//extern_ancillary_events.event_manager.set((int)s_ancillary_events::e_event_type::NGCLineReadyUsart0);
-		c_ngc_data_handler::ngc_load_block(NULL
-			, &Talos::Motion::NgcBuffer::gcode_buffer);
+		c_ngc_data_handler::ngc_load_block(&Talos::Motion::NgcBuffer::gcode_buffer);
 		
 	}
 }
 
-void c_ngc_data_handler::ngc_load_block(c_ring_buffer <char> * buffer_source
-	, c_ring_buffer <s_ngc_block> * buffer_destination)
+void c_ngc_data_handler::ngc_load_block(c_ring_buffer <s_ngc_block> * buffer_destination)
 {
 
 	//Talos::Coordinator::Main_Process::host_serial.print_string("NGC READY\r\n");
@@ -112,7 +110,7 @@ void c_ngc_data_handler::ngc_load_block(c_ring_buffer <char> * buffer_source
 	//The ngc interpreter expects there to be a new block prepped and handed to it.
 	
 	e_parsing_errors return_value
-		= NGC_RS274::LineProcessor::start(buffer_source, buffer_destination);
+		= NGC_RS274::LineProcessor::start(buffer_destination);
 
 	//We wrote to the new block by pointer, so if there were no errors the buffer is
 	//updated already and we should advance the head pointer. If we did enconter

@@ -64,7 +64,7 @@ namespace NGC_RS274
 		static s_param_functions parameter_function_pointers;
 		static int last_read_position;
 		static uint8_t initialize();
-		static e_parsing_errors start(c_ring_buffer<char> * ring_buffer, c_ring_buffer <s_ngc_block> * buffer_destination);
+		static e_parsing_errors start(c_ring_buffer<s_ngc_block>* buffer_destination);
 
 		private:
 

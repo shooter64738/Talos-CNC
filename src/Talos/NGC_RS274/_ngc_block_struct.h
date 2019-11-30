@@ -20,7 +20,7 @@ struct s_ngc_block
 														//not have the plane data to review after the block
 														//is processed and cached. We rely on the order of
 														//the array
-	uint32_t __station__;
+	float __station__; //making this a float. I think I can use this for subroutines as a float.
 
 	//not sure what I would use these for yet.
 	//int radius_flag;

@@ -57,6 +57,7 @@ namespace NGC_RS274
 		//Error_Check();
 		//~Error_Check();
 			static e_parsing_errors error_check(NGC_RS274::Block_View *new_block, NGC_RS274::Block_View *previous_block);
+
 	private:
 		static uint8_t __has_motion(NGC_RS274::Block_View * v_new_block, NGC_RS274::Block_View * v_previous_block);
 		
@@ -73,6 +74,27 @@ namespace NGC_RS274
 
 		static e_parsing_errors ____error_check_center_format_arc(NGC_RS274::Block_View *v_new_block, NGC_RS274::Block_View *v_previous_block);
 		static e_parsing_errors ____error_check_radius_format_arc(NGC_RS274::Block_View *v_new_block, NGC_RS274::Block_View *v_previous_block);
+
+
+		static e_parsing_errors __chk_NON_MODAL(NGC_RS274::Block_View *v_new_block, NGC_RS274::Block_View *v_previous_block);
+		static e_parsing_errors __chk_Motion(NGC_RS274::Block_View *v_new_block, NGC_RS274::Block_View *v_previous_block);
+		static e_parsing_errors __chk_PLANE_SELECTION(NGC_RS274::Block_View *v_new_block, NGC_RS274::Block_View *v_previous_block);
+		static e_parsing_errors __chk_DISTANCE_MODE(NGC_RS274::Block_View *v_new_block, NGC_RS274::Block_View *v_previous_block);
+		static e_parsing_errors __chk_UNASSIGNED_4(NGC_RS274::Block_View *v_new_block, NGC_RS274::Block_View *v_previous_block);
+		static e_parsing_errors __chk_Feed_rate_mode(NGC_RS274::Block_View *v_new_block, NGC_RS274::Block_View *v_previous_block);
+		static e_parsing_errors __chk_Units(NGC_RS274::Block_View *v_new_block, NGC_RS274::Block_View *v_previous_block);
+		static e_parsing_errors __chk_Cutter_radius_compensation(NGC_RS274::Block_View *v_new_block, NGC_RS274::Block_View *v_previous_block);
+		static e_parsing_errors __chk_Tool_length_offset(NGC_RS274::Block_View *v_new_block, NGC_RS274::Block_View *v_previous_block);
+		static e_parsing_errors __chk_UNASSIGNED_9(NGC_RS274::Block_View *v_new_block, NGC_RS274::Block_View *v_previous_block);
+		static e_parsing_errors __chk_RETURN_MODE_CANNED_CYCLE(NGC_RS274::Block_View *v_new_block, NGC_RS274::Block_View *v_previous_block);
+		static e_parsing_errors __chk_UNASSIGNED_11(NGC_RS274::Block_View *v_new_block, NGC_RS274::Block_View *v_previous_block);
+		static e_parsing_errors __chk_COORDINATE_SYSTEM_SELECTION(NGC_RS274::Block_View *v_new_block, NGC_RS274::Block_View *v_previous_block);
+		static e_parsing_errors __chk_PATH_CONTROL_MODE(NGC_RS274::Block_View *v_new_block, NGC_RS274::Block_View *v_previous_block);
+		static e_parsing_errors __chk_SPINDLE_CONTROL(NGC_RS274::Block_View *v_new_block, NGC_RS274::Block_View *v_previous_block);
+		static e_parsing_errors __chk_RECTANGLAR_POLAR_COORDS_SELECTION(NGC_RS274::Block_View *v_new_block, NGC_RS274::Block_View *v_previous_block);
+		static e_parsing_errors __chk_PLANE_ROTATION(NGC_RS274::Block_View *v_new_block, NGC_RS274::Block_View *v_previous_block);
+
+
 	};
 	
 };

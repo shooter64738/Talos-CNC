@@ -46,6 +46,7 @@ namespace NGC_RS274
 			static const uint8_t PATH_CONTROL_MODE = 13;
 			static const uint8_t SPINDLE_CONTROL = 14; //because linux cnc has this... thats why.. 
 			static const uint8_t RECTANGLAR_POLAR_COORDS_SELECTION = 15;
+			static const uint8_t PLANE_ROTATION = 16; //because... 
 		};
 	};
 }
