@@ -14,6 +14,7 @@ struct s_ngc_block
 	s_bit_flag_controller<uint32_t> g_code_defined_in_block;
 	uint16_t m_group[COUNT_OF_M_CODE_GROUPS_ARRAY]; //There are 5 groups of mcodes (0-4)
 	s_bit_flag_controller<uint32_t> m_code_defined_in_block;
+	s_bit_flag_controller<uint32_t> dot_safety;
 	float target_motion_position[INTERNAL_AXIS_COUNT];  //Positions that this block of motion left us at.
 														//When reading these we must always assume the plane
 														//values were h,v,n,hr,vr,nr,ih,iv,in because we do

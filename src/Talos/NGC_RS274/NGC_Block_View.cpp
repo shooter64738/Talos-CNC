@@ -24,7 +24,6 @@
 #include "../_bit_manipulation.h"
 #include "_ngc_g_Groups.h"
 #include "_ngc_m_Groups.h"
-
 #include <math.h>
 
 NGC_RS274::Block_View::Block_View(){}
@@ -41,6 +40,7 @@ void NGC_RS274::Block_View::clear(s_ngc_block *block)
 //Converts the raw struct data underneath, and presents it in an easy to understand format
 void NGC_RS274::Block_View::load(s_ngc_block *block)
 {
+
 	this->active_view_block = block;
 	//set_plane needs to occur first since other values are determined by the plane
 	this->__assign_plane(block);
@@ -48,41 +48,7 @@ void NGC_RS274::Block_View::load(s_ngc_block *block)
 	this->__assign_arc(block);
 	this->__assign_canned(block);
 	this->__assign_gcode(block);
-
-	this->comp_fragments(block);
-}
-
-void NGC_RS274::Block_View::comp_fragments(s_ngc_block * local_block)
-{
-
-	//float radius = t_size;
-	//float cx = local_block->target_motion_position[HORIZONTAL_MOTION_AXIS];
-	//float cy = local_block->target_motion_position[VERTICAL_MOTION_AXIS];
-
-	//float px = *this->active_plane.horizontal_axis.value;
-	//float py = *this->active_plane.vertical_axis.value;
-
-	//float distance = hypot((px - cx), (py - cy));
-
-	//uint16_t cutter_comp_setting = local_block->g_group[NGC_RS274::Groups::G::Cutter_radius_compensation];
-
-	//if (cutter_comp_setting != NGC_RS274::G_codes::START_CUTTER_RADIUS_COMPENSATION_LEFT
-	//	&& cutter_comp_setting != NGC_RS274::G_codes::START_CUTTER_RADIUS_COMPENSATION_RIGHT
-	//	)
-	//{
-	//	//CHKS(((side != LEFT) && (side != RIGHT)), NCE_BUG_SIDE_NOT_RIGHT_OR_LEFT);
-	//}
-	//if (distance <= radius)
-	//{
-	//	//CHKS((distance <= radius), "Length of cutter compensation entry move is not greater than the tool radius");
-	//}
-
-	//float alpha = atan2(py - cy, px - cx) +
-	//	(cutter_comp_setting == NGC_RS274::G_codes::START_CUTTER_RADIUS_COMPENSATION_LEFT ? M_PI / 2. : -M_PI / 2.);
-
-	//float end_x = (px + (radius * cos(alpha)));
-	//float end_y = (py + (radius * sin(alpha)));
-
+	this->__assign_mcode(block);
 }
 
 bool NGC_RS274::Block_View::any_axis_defined(s_ngc_block * block)
@@ -301,7 +267,11 @@ void NGC_RS274::Block_View::__assign_canned(s_ngc_block * block)
 
 void NGC_RS274::Block_View::__assign_gcode(s_ngc_block * block)
 {
-	this->current_g_codes.Non_Modal = &block->g_group[NGC_RS274::Groups::G::NON_MODAL];
+	this->current_g_codes.Non_Modal = 0;
+	//only set non_modal if a nto modal code was set on the line
+	if (block->g_code_defined_in_block.get((int)NGC_RS274::Groups::G::NON_MODAL))
+		this->current_g_codes.Non_Modal = &block->g_group[NGC_RS274::Groups::G::NON_MODAL];
+
 	this->current_g_codes.Motion = &block->g_group[NGC_RS274::Groups::G::Motion];
 	this->current_g_codes.PLANE_SELECTION = &block->g_group[NGC_RS274::Groups::G::PLANE_SELECTION];
 	this->current_g_codes.DISTANCE_MODE = &block->g_group[NGC_RS274::Groups::G::DISTANCE_MODE];
@@ -345,14 +315,14 @@ void NGC_RS274::Block_View::__set_active_plane_axis_helper
 // STATIC METHODS
 //******************************
 
-void NGC_RS274::Block_View::__set_events(s_ngc_block * local_block, s_ngc_block * previous_block)
+void NGC_RS274::Block_View::xset_events(s_ngc_block * local_block, s_ngc_block * previous_block)
 {
 	uint8_t group = 1;
 
 	//Non modals are not held from block to block. If a non modal is specified it only applies once
 	if (local_block->g_code_defined_in_block.get((int)NGC_RS274::Groups::G::NON_MODAL))
 	{
-		__assign_g_event(local_block, NGC_RS274::Groups::G::NON_MODAL);
+		x__assign_g_event(local_block, NGC_RS274::Groups::G::NON_MODAL);
 		//Events::NGC_Block::event_manager.set((int)Events::NGC_Block::e_event_type::Non_modal);
 		//c_stager::update_non_modals(local_block);
 	}
@@ -363,9 +333,9 @@ void NGC_RS274::Block_View::__set_events(s_ngc_block * local_block, s_ngc_block 
 	{
 		if (local_block->g_code_defined_in_block.get(group))
 		{
-			if (__group_has_changed(local_block->g_group, previous_block->g_group, group))
+			if (x__group_has_changed(local_block->g_group, previous_block->g_group, group))
 			{
-				__assign_g_event(local_block, group);
+				x__assign_g_event(local_block, group);
 			}
 		}
 	}
@@ -375,18 +345,18 @@ void NGC_RS274::Block_View::__set_events(s_ngc_block * local_block, s_ngc_block 
 	{
 		if (local_block->m_code_defined_in_block.get(group))
 		{
-			if (__group_has_changed(local_block->m_group, previous_block->m_group, group))
+			if (x__group_has_changed(local_block->m_group, previous_block->m_group, group))
 			{
-				__assign_m_event(local_block, group);
+				x__assign_m_event(local_block, group);
 			}
 		}
 	}
 
 	//assign any events that arent in a specific group, but we need to track
-	__assign_other_event(local_block);
+	x__assign_other_event(local_block);
 }
 
-void NGC_RS274::Block_View::__assign_g_event(s_ngc_block * local_block, uint16_t group_number)
+void NGC_RS274::Block_View::x__assign_g_event(s_ngc_block * local_block, uint16_t group_number)
 {
 	switch (group_number)
 	{
@@ -397,6 +367,8 @@ void NGC_RS274::Block_View::__assign_g_event(s_ngc_block * local_block, uint16_t
 		}
 		case NGC_RS274::Groups::G::Motion:
 		{
+			//we set block assignments when we loaded the code. we dont need to do it here too. 
+			//or maybe this is really a better place because we only flag it if its changed?
 			local_block->block_events.set((int)e_block_event::Motion);
 			break;
 		}
@@ -430,7 +402,7 @@ void NGC_RS274::Block_View::__assign_g_event(s_ngc_block * local_block, uint16_t
 
 }
 
-void NGC_RS274::Block_View::__assign_m_event(s_ngc_block * local_block, uint16_t group_number)
+void NGC_RS274::Block_View::x__assign_m_event(s_ngc_block * local_block, uint16_t group_number)
 {
 	switch (group_number)
 	{
@@ -456,7 +428,7 @@ void NGC_RS274::Block_View::__assign_m_event(s_ngc_block * local_block, uint16_t
 
 }
 
-void NGC_RS274::Block_View::__assign_other_event(s_ngc_block * local_block)
+void NGC_RS274::Block_View::x__assign_other_event(s_ngc_block * local_block)
 {
 	//Comments are not feasible unless/until someone gets off their ass and adds display support
 
@@ -493,7 +465,7 @@ void NGC_RS274::Block_View::__assign_other_event(s_ngc_block * local_block)
 	}
 }
 
-bool NGC_RS274::Block_View::__group_has_changed(uint16_t * original_value, uint16_t * updated_value, uint8_t group_number)
+bool NGC_RS274::Block_View::x__group_has_changed(uint16_t * original_value, uint16_t * updated_value, uint8_t group_number)
 {
 	return original_value[group_number] != updated_value[group_number];
 }

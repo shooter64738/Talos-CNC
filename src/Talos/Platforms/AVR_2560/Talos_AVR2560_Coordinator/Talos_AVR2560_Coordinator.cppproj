@@ -170,6 +170,14 @@
       <SubType>compile</SubType>
       <Link>communication_def.h</Link>
     </Compile>
+    <Compile Include="..\..\..\Configuration\c_configuration.cpp">
+      <SubType>compile</SubType>
+      <Link>Configuration\c_configuration.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\Configuration\c_configuration.h">
+      <SubType>compile</SubType>
+      <Link>Configuration\c_configuration.h</Link>
+    </Compile>
     <Compile Include="..\..\..\Coordinator\coordinator_hardware_def.h">
       <SubType>compile</SubType>
       <Link>Coordinator\coordinator_hardware_def.h</Link>
@@ -177,14 +185,6 @@
     <Compile Include="..\..\..\Coordinator\coordinator_main.cpp">
       <SubType>compile</SubType>
       <Link>Coordinator\coordinator_main.cpp</Link>
-    </Compile>
-    <Compile Include="..\..\..\Coordinator\Processing\Consumer\c_ngc_consumer.cpp">
-      <SubType>compile</SubType>
-      <Link>Coordinator\Processing\Consumer\c_ngc_consumer.cpp</Link>
-    </Compile>
-    <Compile Include="..\..\..\Coordinator\Processing\Consumer\c_ngc_consumer.h">
-      <SubType>compile</SubType>
-      <Link>Coordinator\Processing\Consumer\c_ngc_consumer.h</Link>
     </Compile>
     <Compile Include="..\..\..\Coordinator\Processing\Data\DataHandlers\c_binary_data_handler.cpp">
       <SubType>compile</SubType>
@@ -282,13 +282,49 @@
       <SubType>compile</SubType>
       <Link>c_ring_template.h</Link>
     </Compile>
-    <Compile Include="..\..\..\Motion\Processing\GCode\c_gcode_buffer.cpp">
+    <Compile Include="..\..\..\Motion\Processing\GCode\xc_gcode_buffer.cpp">
       <SubType>compile</SubType>
-      <Link>Motion\Processing\GCode\c_gcode_buffer.cpp</Link>
+      <Link>Motion\Processing\GCode\xc_gcode_buffer.cpp</Link>
     </Compile>
-    <Compile Include="..\..\..\Motion\Processing\GCode\c_gcode_buffer.h">
+    <Compile Include="..\..\..\Motion\Processing\GCode\xc_gcode_buffer.h">
       <SubType>compile</SubType>
-      <Link>Motion\Processing\GCode\c_gcode_buffer.h</Link>
+      <Link>Motion\Processing\GCode\xc_gcode_buffer.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\NGC_RS274\Dialect\_ngc_dialect_validate.cpp">
+      <SubType>compile</SubType>
+      <Link>Ngc_Rs274\Dialect\_ngc_dialect_validate.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\NGC_RS274\Dialect\_ngc_dialect_validate.h">
+      <SubType>compile</SubType>
+      <Link>Ngc_Rs274\Dialect\_ngc_dialect_validate.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\NGC_RS274\Dialect\_ngc_validate_0_nonmodal.h">
+      <SubType>compile</SubType>
+      <Link>Ngc_Rs274\Dialect\_ngc_validate_0_nonmodal.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\NGC_RS274\Dialect\_ngc_validate_16_plane_rotation.cpp">
+      <SubType>compile</SubType>
+      <Link>Ngc_Rs274\Dialect\_ngc_validate_16_plane_rotation.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\NGC_RS274\Dialect\_ngc_validate_16_plane_rotation.h">
+      <SubType>compile</SubType>
+      <Link>Ngc_Rs274\Dialect\_ngc_validate_16_plane_rotation.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\NGC_RS274\Dialect\_ngc_validate_1_motion.cpp">
+      <SubType>compile</SubType>
+      <Link>Ngc_Rs274\Dialect\_ngc_validate_1_motion.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\NGC_RS274\Dialect\_ngc_validate_1_motion.h">
+      <SubType>compile</SubType>
+      <Link>Ngc_Rs274\Dialect\_ngc_validate_1_motion.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\NGC_RS274\Dialect\_ngc_validate_5_feed_rate_mode.cpp">
+      <SubType>compile</SubType>
+      <Link>Ngc_Rs274\Dialect\_ngc_validate_5_feed_rate_mode.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\NGC_RS274\Dialect\_ngc_validate_5_feed_rate_mode.h">
+      <SubType>compile</SubType>
+      <Link>Ngc_Rs274\Dialect\_ngc_validate_5_feed_rate_mode.h</Link>
     </Compile>
     <Compile Include="..\..\..\NGC_RS274\Machine Specific\Lathe\NGC_G_Codes.h">
       <SubType>compile</SubType>
@@ -406,6 +442,10 @@
       <SubType>compile</SubType>
       <Link>Ngc_Rs274\_ngc_defines.h</Link>
     </Compile>
+    <Compile Include="..\..\..\NGC_RS274\_ngc_dialect_enum.h">
+      <SubType>compile</SubType>
+      <Link>Ngc_Rs274\_ngc_dialect_enum.h</Link>
+    </Compile>
     <Compile Include="..\..\..\NGC_RS274\_ngc_errors_interpreter.h">
       <SubType>compile</SubType>
       <Link>Ngc_Rs274\_ngc_errors_interpreter.h</Link>
@@ -457,6 +497,10 @@
     <Compile Include="..\..\..\Shared Data\_s_encoder_struct.h">
       <SubType>compile</SubType>
       <Link>Shared Data\_s_encoder_struct.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Shared Data\_s_interp_config_struct.h">
+      <SubType>compile</SubType>
+      <Link>Shared Data\_s_interp_config_struct.h</Link>
     </Compile>
     <Compile Include="..\..\..\Shared Data\_s_jog_data_struct.h">
       <SubType>compile</SubType>
@@ -534,7 +578,6 @@
     <Folder Include="Coordinator\Processing\Data\" />
     <Folder Include="Coordinator\Processing\Data\DataHandlers\" />
     <Folder Include="Coordinator\Processing\Events\EventHandlers" />
-    <Folder Include="Coordinator\Processing\Consumer" />
     <Folder Include="Coordinator\Serial" />
     <Folder Include="Coordinator\Processing\" />
     <Folder Include="Coordinator\Processing\GCode\" />
@@ -543,6 +586,8 @@
     <Folder Include="Motion" />
     <Folder Include="Motion\Processing" />
     <Folder Include="Motion\Processing\GCode" />
+    <Folder Include="Configuration" />
+    <Folder Include="Ngc_Rs274\Dialect" />
     <Folder Include="Shared Data" />
     <Folder Include="Ngc_Rs274" />
     <Folder Include="Ngc_Rs274\MachineSpecific" />

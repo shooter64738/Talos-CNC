@@ -23,7 +23,7 @@
 #include "../extern_events_types.h"
 #include "../../../../communication_def.h"
 #include "../../Data/DataHandlers/c_ngc_data_handler.h"
-#include "../../../../Motion/Processing/GCode/c_gcode_buffer.h"
+//#include "../../../../Motion/Processing/GCode/c_gcode_buffer.h"
 
 
 void c_ancillary_event_handler::process()

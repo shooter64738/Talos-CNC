@@ -23,15 +23,12 @@
 #include <stdlib.h>
 #include <math.h>
 #include "_ngc_math_constants.h"
-#include "..\Motion\Processing\GCode\c_gcode_buffer.h"
-
 #include "NGC_Line_Processor.h"
 #include "NGC_Parameters.h"
 #include "NGC_Block_Assignor.h"
-#include "NGC_Set_Targets.h"
+#include "../Configuration/c_configuration.h"
+#include "Dialect/_ngc_dialect_validate.h"
 
-
-NGC_RS274::LineProcessor::s_param_functions NGC_RS274::LineProcessor::parameter_function_pointers;
 int NGC_RS274::LineProcessor::last_read_position = 0;
 static int max_numeric_parameter_count = 0;
 char NGC_RS274::LineProcessor::line_buffer[256];
@@ -40,40 +37,21 @@ char * error_pointer = NGC_RS274::LineProcessor::line_buffer;
 
 uint8_t NGC_RS274::LineProcessor::initialize()
 {
-	//On second thought, perhaps function pointers for this reason are not needed.
-	//Just call the required function directly.
-	NGC_RS274::LineProcessor::parameter_function_pointers.pntr_get_global_named_parameter = NGC_RS274::Parameters::__get_named_gobal_parameter;
-	NGC_RS274::LineProcessor::parameter_function_pointers.pntr_get_local_named_parameter = NGC_RS274::Parameters::__get_named_local_parameter;
-	NGC_RS274::LineProcessor::parameter_function_pointers.pntr_get_numeric_parameter = NGC_RS274::Parameters::__get_numeric_parameter;
-	NGC_RS274::LineProcessor::parameter_function_pointers.pntr_get_numeric_parameter_max = NGC_RS274::Parameters::__get_numeric_parameter_max;
-
-	NGC_RS274::LineProcessor::parameter_function_pointers.pntr_set_global_named_parameter = NGC_RS274::Parameters::__set_named_gobal_parameter;
-	NGC_RS274::LineProcessor::parameter_function_pointers.pntr_set_local_named_parameter = NGC_RS274::Parameters::__set_named_local_parameter;
-	NGC_RS274::LineProcessor::parameter_function_pointers.pntr_set_numeric_parameter = NGC_RS274::Parameters::__set_numeric_parameter;
-
-	if (NGC_RS274::LineProcessor::parameter_function_pointers.pntr_get_global_named_parameter == NULL
-		|| NGC_RS274::LineProcessor::parameter_function_pointers.pntr_get_local_named_parameter == NULL
-		|| NGC_RS274::LineProcessor::parameter_function_pointers.pntr_get_numeric_parameter == NULL
-		|| NGC_RS274::LineProcessor::parameter_function_pointers.pntr_get_numeric_parameter_max == NULL
-		|| NGC_RS274::LineProcessor::parameter_function_pointers.pntr_set_global_named_parameter == NULL
-		|| NGC_RS274::LineProcessor::parameter_function_pointers.pntr_set_local_named_parameter == NULL
-		|| NGC_RS274::LineProcessor::parameter_function_pointers.pntr_set_numeric_parameter == NULL)
-		return 1; //<--this should never happen for real. This is only for debugging
-
+	
 	return 0;
 }
 
-e_parsing_errors NGC_RS274::LineProcessor::start(c_ring_buffer <s_ngc_block> * buffer_destination)
+e_parsing_errors NGC_RS274::LineProcessor::start(s_ngc_block * block)
 {
 	e_parsing_errors ret_code = e_parsing_errors::OK;
-		
+
 	//set line data to all upper case
 	if (!_set_buffer_to_upper(line_buffer))
 	{/*return bad data in the buffer*/
 		return e_parsing_errors::BadDataInBuffer;
 	}
 
-	ret_code = _process_buffer(line_buffer, buffer_destination);
+	ret_code = _process_buffer(line_buffer, block);
 
 	return ret_code;
 
@@ -82,7 +60,7 @@ e_parsing_errors NGC_RS274::LineProcessor::start(c_ring_buffer <s_ngc_block> * b
 uint8_t NGC_RS274::LineProcessor::_set_buffer_to_upper(char * buffer)
 {
 	int count = 0;
-	
+
 	for (int i = 0; buffer[i]; i++)
 	{
 		//remove all spaces, tabs, and line feeds
@@ -99,8 +77,7 @@ uint8_t NGC_RS274::LineProcessor::_set_buffer_to_upper(char * buffer)
 	return 1;
 }
 
-e_parsing_errors NGC_RS274::LineProcessor::_process_buffer
-(char * buffer, c_ring_buffer <s_ngc_block> * buffer_destination)
+e_parsing_errors NGC_RS274::LineProcessor::_process_buffer(char * buffer, s_ngc_block * block)
 {
 	int read_pos, buff_len = 0;
 
@@ -123,7 +100,7 @@ e_parsing_errors NGC_RS274::LineProcessor::_process_buffer
 	//We process this line regardless and give it to the motion
 	//controller which will determine if it should process it
 	//depending on the block skip hardware switch
-	
+
 
 	//We could read the N word here. For nwo I am handling it as
 	//I do any other word.
@@ -138,43 +115,29 @@ e_parsing_errors NGC_RS274::LineProcessor::_process_buffer
 	//get current word, and advance reader
 	char current_word = 0;
 	e_parsing_errors ret_code = e_parsing_errors::OK;
+	//Wonder if the stationing system can be used for subroutines as well... 
 
-
-
-	//grab a block from the ring buffer to work on
-	s_ngc_block *previous_block = buffer_destination->writer_for_last_added();
-	buffer_destination->advance(); //writers dont move the head. We have to do that ourselves.
-	s_ngc_block *new_block = buffer_destination->writer_for_insert();
-	
-	//Forward copy the previous blocks values so they will persist. Thsi also clears whats in the block now.
-	//If the values need changed during processing it will happen in the assignor
-	NGC_RS274::Block_View::copy_persisted_data(previous_block, new_block);
-	/*
-	The __station__ value is an indexing value used to give each block a unique ID number in the collection
-	of binary converted data. It is currently an int type, but if it were converted to a float I think
-	it could also be used to locate and identify subroutines.
-	*/
-	
-	new_block->__station__ = previous_block->__station__ + 1; //<--a unique number to give to this block.
-															  //Wonder if the stationing system can be used for subroutines as well... 
-	
 	//If this block is skipable, process it anyway, but flag it as a skippable block
 	//and we can check it when the motion conrol executes it. If the skip switch is
 	//on we will go ahead and skip it. If it is off, we can execute it. 
 	if (buffer[read_pos] == '/')
 	{
-		new_block->block_events.set((int)e_block_event::BlockSkipOptionActive);
+		block->block_events.set((int)e_block_event::BlockSkipOptionActive);
 		read_pos++;
 	}
+
+	//Clear the dialect verification array
+	//memset(NGC_RS274::Error_Check::dialect_verify, 0, sizeof(NGC_RS274::Error_Check::dialect_verify));
+
 	//And now without further delay... lets process this line!
 	while (read_pos < buff_len)
 	{
-
+		bool word_has_decimal = false;
 		word_value = 0.0;
 		//get current word, and advance reader
 		current_word = buffer[read_pos];
 		//process this data but do it on the new block
-		CHK_CALL(_read_as_word(buffer, &read_pos, current_word, &word_value));
+		CHK_CALL(_read_as_word(buffer, &read_pos, current_word, &word_value, &word_has_decimal));
 
 		//This will be useful to the end user to determine where the gcode data had an error
 		NGC_RS274::LineProcessor::last_read_position = read_pos;
@@ -187,29 +150,23 @@ e_parsing_errors NGC_RS274::LineProcessor::_process_buffer
 		//This will assign the value to the appropriate place in the block.
 		//If an error occurs because there have been multiple definitions of
 		//The same word in this block, it will be returned here.
+		if (Talos::Confguration::Interpreter::Parameters.dialect == e_dialects::Fanuc && !word_has_decimal)
+		{
+			block->dot_safety.set((int)current_word - 'A');
 
-		CHK_CALL_RTN_ERROR_CODE(NGC_RS274::Block_Assignor::group_word(current_word, word_value, new_block, previous_block));
-	}
-	//Now that the line parsing is complete we can run an error check on the line
+			NGC_RS274::Dialect::Validate::set_fanuc_decimal_by_parameter(current_word, &word_value,
+				(block->g_group[NGC_RS274::Groups::G::Units] == NGC_RS274::G_codes::MILLIMETER_SYSTEM_SELECTION ?
+					LEAST_INPUT_INCRIMET_MM : LEAST_INPUT_INCRIMET_INCH));
 
-	//Create a view of the old and new blocks. The view class is just a helper class
-	//to make the data easier to understand
-	NGC_RS274::Block_View v_new = NGC_RS274::Block_View(new_block);
-	NGC_RS274::Block_View v_previous = NGC_RS274::Block_View(previous_block);
-	CHK_CALL_RTN_ERROR_CODE(NGC_RS274::Error_Check::error_check(&v_new, &v_previous));
-
-	NGC_RS274::Set_Targets::adjust(&v_new, &v_previous);
-
-	if (ret_code == e_parsing_errors::OK)
-	{
-		//Add this block to the buffer
-		Talos::Motion::NgcBuffer::pntr_buffer_block_write(new_block);
+		}
+		//assign the word value. return an error if there is one.
+		CHK_CALL_RTN_ERROR_CODE(NGC_RS274::Block_Assignor::group_word(current_word, word_value, block));
 	}
 	return ret_code;
 }
 
 e_parsing_errors NGC_RS274::LineProcessor::_read_as_word
-(char * buffer, int * read_pos, char word, float * word_value)
+(char * buffer, int * read_pos, char word, float * word_value, bool * has_decimal)
 {
 	//linux cnc/emc used a function pointer to read each 'word'. We dont have the space for a 256 element
 	//array here, so instead I process any letters, and then check individual characters as needed if they
@@ -219,26 +176,26 @@ e_parsing_errors NGC_RS274::LineProcessor::_read_as_word
 	if (word >= 'A' & word <= 'Z') //letter A-Z
 	{
 		*read_pos += 1;
-		ret_code = _read_as_class_type(buffer, read_pos, word_value);
+		ret_code = _read_as_class_type(buffer, read_pos, word_value, has_decimal);
 
 	}
 	else if (word == '#') //parameter flag #
 	{
-		ret_code = NGC_RS274::LineProcessor::__read_class_parameter(buffer, read_pos, word_value);
+		ret_code = NGC_RS274::LineProcessor::__read_class_parameter(buffer, read_pos, word_value, has_decimal);
 	}
 	else //anything else not covered above
 	{
-		ret_code = _read_as_class_type(buffer, read_pos, word_value);
+		ret_code = _read_as_class_type(buffer, read_pos, word_value, has_decimal);
 	}
 
 	return ret_code;
 }
 
-e_parsing_errors NGC_RS274::LineProcessor::_read_as_class_type(char * buffer, int * read_pos, float * word_value)
+e_parsing_errors NGC_RS274::LineProcessor::_read_as_class_type(char * buffer, int * read_pos, float * word_value, bool * has_decimal)
 {
 	e_parsing_errors ret_code = e_parsing_errors::OK;
 
-	e_value_class_types current_class = NGC_RS274::LineProcessor::__get_value_class(buffer, read_pos, word_value);
+	e_value_class_types current_class = NGC_RS274::LineProcessor::__get_value_class(buffer, read_pos, word_value, has_decimal);
 
 	switch (current_class)
 	{
@@ -259,32 +216,32 @@ e_parsing_errors NGC_RS274::LineProcessor::_read_as_class_type(char * buffer, in
 	}
 	case NGC_RS274::LineProcessor::e_value_class_types::Expression:
 	{
-		ret_code = NGC_RS274::LineProcessor::__read_class_expression(buffer, read_pos, word_value);
+		ret_code = NGC_RS274::LineProcessor::__read_class_expression(buffer, read_pos, word_value, has_decimal);
 		break;
 	}
 	case NGC_RS274::LineProcessor::e_value_class_types::Parameter:
 	{
-		ret_code = NGC_RS274::LineProcessor::__read_class_parameter(buffer, read_pos, word_value);
+		ret_code = NGC_RS274::LineProcessor::__read_class_parameter(buffer, read_pos, word_value, has_decimal);
 		break;
 	}
 	case NGC_RS274::LineProcessor::e_value_class_types::NamedParameterAssign:
 	{
-		ret_code = NGC_RS274::LineProcessor::__read_class_parameter(buffer, read_pos, word_value);
+		ret_code = NGC_RS274::LineProcessor::__read_class_parameter(buffer, read_pos, word_value, has_decimal);
 		break;
 	}
 	case NGC_RS274::LineProcessor::e_value_class_types::NumericParameterAssign:
 	{
-		ret_code = NGC_RS274::LineProcessor::__read_class_parameter(buffer, read_pos, word_value);
+		ret_code = NGC_RS274::LineProcessor::__read_class_parameter(buffer, read_pos, word_value, has_decimal);
 		break;
 	}
 	case NGC_RS274::LineProcessor::e_value_class_types::Unary:
 	{
-		ret_code = NGC_RS274::LineProcessor::__read_class_unary(buffer, read_pos, word_value);
+		ret_code = NGC_RS274::LineProcessor::__read_class_unary(buffer, read_pos, word_value, has_decimal);
 		break;
 	}
 	case NGC_RS274::LineProcessor::e_value_class_types::Numeric:
 	{
-		ret_code = NGC_RS274::LineProcessor::__read_class_numeric(buffer, read_pos, word_value);
+		ret_code = NGC_RS274::LineProcessor::__read_class_numeric(buffer, read_pos, word_value, has_decimal);
 		break;
 	}
 	case NGC_RS274::LineProcessor::e_value_class_types::ClosingBracket:
@@ -301,7 +258,7 @@ e_parsing_errors NGC_RS274::LineProcessor::_read_as_class_type(char * buffer, in
 	return ret_code;
 }
 
-NGC_RS274::LineProcessor::e_value_class_types NGC_RS274::LineProcessor::__get_value_class(char * buffer, int * read_pos, float * word_value)
+NGC_RS274::LineProcessor::e_value_class_types NGC_RS274::LineProcessor::__get_value_class(char * buffer, int * read_pos, float * word_value, bool * has_decimal)
 {
 	e_parsing_errors ret_code = e_parsing_errors::OK;
 
@@ -326,46 +283,29 @@ NGC_RS274::LineProcessor::e_value_class_types NGC_RS274::LineProcessor::__get_va
 	}
 
 	else if (current_byte == '#')
-	{
-		if (NGC_RS274::LineProcessor::parameter_function_pointers.pntr_get_global_named_parameter != NULL
-			|| NGC_RS274::LineProcessor::parameter_function_pointers.pntr_get_local_named_parameter != NULL
-			|| (NGC_RS274::LineProcessor::parameter_function_pointers.pntr_get_numeric_parameter != NULL
-				&&NGC_RS274::LineProcessor::parameter_function_pointers.pntr_get_numeric_parameter_max != NULL))
-			return e_value_class_types::Parameter;
-		else
-		{
-			if (NGC_RS274::LineProcessor::parameter_function_pointers.pntr_get_global_named_parameter == NULL
-				|| NGC_RS274::LineProcessor::parameter_function_pointers.pntr_get_local_named_parameter == NULL)
-			{
-				return e_value_class_types::NamedParametersNotAvailable;
-			}
-			else if (NGC_RS274::LineProcessor::parameter_function_pointers.pntr_get_numeric_parameter == NULL
-				|| NGC_RS274::LineProcessor::parameter_function_pointers.pntr_get_numeric_parameter_max == NULL)
-			{
-				return e_value_class_types::NumericParametersNotAvailable;
-			}
-		}
+	{	
+		return e_value_class_types::Parameter;
 	}
 	else if (current_byte == '+' && next_byte && !isdigit(next_byte) && next_byte != '.')
 	{
 		//this is most likely a unary that was signed positive
 		(*read_pos)++;
-		ret_code = NGC_RS274::LineProcessor::_read_as_class_type(buffer, read_pos, word_value);
+		ret_code = NGC_RS274::LineProcessor::_read_as_class_type(buffer, read_pos, word_value, has_decimal);
 		if (ret_code != e_parsing_errors::OK)
 			return e_value_class_types::UnSpecified;
 		*word_value = +*word_value;
-		return NGC_RS274::LineProcessor::__get_value_class(buffer, read_pos, word_value);
+		return NGC_RS274::LineProcessor::__get_value_class(buffer, read_pos, word_value, has_decimal);
 		//return e_value_class_types::ClosingBracket;
 	}
 	else if (current_byte == '-' && next_byte && !isdigit(next_byte) && next_byte != '.')
 	{
 		//this is most likely a unary that was signed negative
 		(*read_pos)++;
-		ret_code = NGC_RS274::LineProcessor::_read_as_class_type(buffer, read_pos, word_value);
+		ret_code = NGC_RS274::LineProcessor::_read_as_class_type(buffer, read_pos, word_value, has_decimal);
 		if (ret_code != e_parsing_errors::OK)
 			return e_value_class_types::UnSpecified;
 		*word_value = -*word_value;
-		return NGC_RS274::LineProcessor::__get_value_class(buffer, read_pos, word_value);
+		return NGC_RS274::LineProcessor::__get_value_class(buffer, read_pos, word_value, has_decimal);
 		//return e_value_class_types::ClosingBracket;
 	}
 	else if ((current_byte >= 'A') && (current_byte <= 'Z'))
@@ -377,7 +317,7 @@ NGC_RS274::LineProcessor::e_value_class_types NGC_RS274::LineProcessor::__get_va
 
 }
 
-e_parsing_errors NGC_RS274::LineProcessor::__read_class_unary(char * buffer, int * read_pos, float * read_value)
+e_parsing_errors NGC_RS274::LineProcessor::__read_class_unary(char * buffer, int * read_pos, float * read_value, bool * has_decimal)
 {
 
 	e_parsing_errors ret_code = e_parsing_errors::OK;
@@ -393,16 +333,16 @@ e_parsing_errors NGC_RS274::LineProcessor::__read_class_unary(char * buffer, int
 		ret_code = e_parsing_errors::UnaryMissingOpen;
 		return ret_code;
 	}
-	NGC_RS274::LineProcessor::__read_class_expression(buffer, read_pos, read_value);
+	NGC_RS274::LineProcessor::__read_class_expression(buffer, read_pos, read_value, has_decimal);
 
 	if (operation == e_unary_operator_class_types::Atan)
-		ret_code = NGC_RS274::LineProcessor::___execute_atan(buffer, read_pos, read_value);
+		ret_code = NGC_RS274::LineProcessor::___execute_atan(buffer, read_pos, read_value, has_decimal);
 	else
 		ret_code = NGC_RS274::LineProcessor::___execute_unary(read_value, operation);
 	return ret_code;
 }
 
-e_parsing_errors NGC_RS274::LineProcessor::__read_class_numeric(char * buffer, int * read_pos, float * read_value)
+e_parsing_errors NGC_RS274::LineProcessor::__read_class_numeric(char * buffer, int * read_pos, float * read_value, bool * has_decimal)
 {
 	char *end, restore_byte;
 	size_t _size;
@@ -415,6 +355,13 @@ e_parsing_errors NGC_RS274::LineProcessor::__read_class_numeric(char * buffer, i
 	restore_byte = (buffer + (*read_pos))[_size];
 	//replace the byte where the numbers end with a null
 	(buffer + (*read_pos))[_size] = 0;
+	//check to see if a . was entered
+	char * dot_point = strstr((buffer + (*read_pos)), ".");
+	if (dot_point != NULL)
+	{
+		//this may need further work to impliment dot safety
+		*has_decimal = true;
+	}
 	//convert the string portion to a number, &end gets updated to the byte count converted
 	*read_value = strtod((buffer + (*read_pos)), &end);
 	//put the saved byte back so the null isnt there anymore
@@ -429,7 +376,7 @@ e_parsing_errors NGC_RS274::LineProcessor::__read_class_numeric(char * buffer, i
 	return e_parsing_errors::OK;
 }
 
-e_parsing_errors NGC_RS274::LineProcessor::__read_class_expression(char * buffer, int * read_pos, float * read_value)
+e_parsing_errors NGC_RS274::LineProcessor::__read_class_expression(char * buffer, int * read_pos, float * read_value, bool * has_decimal)
 {
 	e_parsing_errors ret_code = e_parsing_errors::OK;
 
@@ -447,7 +394,7 @@ e_parsing_errors NGC_RS274::LineProcessor::__read_class_expression(char * buffer
 
 	*read_pos += 1;//(*read_pos + 1);
 	//read_real_value(line, counter, values, parameters);
-	ret_code = NGC_RS274::LineProcessor::_read_as_class_type(buffer, read_pos, values);
+	ret_code = NGC_RS274::LineProcessor::_read_as_class_type(buffer, read_pos, values, has_decimal);
 	if (ret_code != e_parsing_errors::OK)
 	{
 		*read_value = values[0];
@@ -460,7 +407,7 @@ e_parsing_errors NGC_RS274::LineProcessor::__read_class_expression(char * buffer
 
 	while (operators[0] != e_expression_operator_class_types::ClosingBracket)
 	{
-		ret_code = NGC_RS274::LineProcessor::_read_as_class_type(buffer, read_pos, values + stack_index);
+		ret_code = NGC_RS274::LineProcessor::_read_as_class_type(buffer, read_pos, values + stack_index, has_decimal);
 		//If we dont get an ok response processing, we should be at the end of the expression
 		//Otherwise its a problem.
 		if (ret_code == e_parsing_errors::OK)
@@ -495,7 +442,7 @@ e_parsing_errors NGC_RS274::LineProcessor::__read_class_expression(char * buffer
 	return ret_code;
 }
 
-e_parsing_errors NGC_RS274::LineProcessor::__read_class_parameter(char * buffer, int * read_pos, float * read_value)
+e_parsing_errors NGC_RS274::LineProcessor::__read_class_parameter(char * buffer, int * read_pos, float * read_value, bool * has_decimal)
 {
 	e_parsing_errors ret_code = e_parsing_errors::OK;
 
@@ -512,77 +459,52 @@ e_parsing_errors NGC_RS274::LineProcessor::__read_class_parameter(char * buffer,
 	// named parameters look like '<letter...>' or '<_.....>'
 	if (buffer[*read_pos] == '<')
 	{
-		if (NGC_RS274::LineProcessor::parameter_function_pointers.pntr_get_global_named_parameter == NULL
-			&& NGC_RS274::LineProcessor::parameter_function_pointers.pntr_get_local_named_parameter == NULL)
-		{
-			ret_code = e_parsing_errors::NoNamedParametersAvailable;
-			return ret_code;
-		}
 		//this will be a named parameter of local or global scope
-		ret_code = NGC_RS274::LineProcessor::___read_class_named_parameter(buffer, read_pos, read_value);
+		ret_code = NGC_RS274::LineProcessor::___read_class_named_parameter(buffer, read_pos, read_value, has_decimal);
 		if (ret_code != e_parsing_errors::OK)
 			return ret_code;
 
 	}
 	else
 	{
-		if (NGC_RS274::LineProcessor::parameter_function_pointers.pntr_get_numeric_parameter_max == NULL)
+
+		if (!max_numeric_parameter_count)//<--if we dont have max_numeric params count, get it
+			max_numeric_parameter_count = NGC_RS274::Parameters::__get_numeric_parameter_max();
+
+		NGC_RS274::LineProcessor::___read_integer_value(buffer, read_pos, &index, has_decimal);
+		if (buffer[*read_pos] == '=')//<--write param value
 		{
-			ret_code = e_parsing_errors::NumericParametersMaxNotAvailable;
+			*read_pos += 1;
+			ret_code = NGC_RS274::LineProcessor::_read_as_class_type(buffer, read_pos, read_value, has_decimal);
+			if (ret_code != e_parsing_errors::OK)
+				return ret_code;
+
+			ret_code = e_parsing_errors::NumericParamaterUpdateUnavailable;
 		}
-		else
+		else//<--read param value
 		{
-			if (!max_numeric_parameter_count)//<--if we dont have max_numeric params count, get it
-				max_numeric_parameter_count = NGC_RS274::LineProcessor::parameter_function_pointers.pntr_get_numeric_parameter_max();
-
-			NGC_RS274::LineProcessor::___read_integer_value(buffer, read_pos, &index);
-			if (buffer[*read_pos] == '=')//<--write param value
+			if (index < 1 || index >= max_numeric_parameter_count)
 			{
-				*read_pos += 1;
-				ret_code = NGC_RS274::LineProcessor::_read_as_class_type(buffer, read_pos, read_value);
-				if (ret_code != e_parsing_errors::OK)
-					return ret_code;
-
-				if (NGC_RS274::LineProcessor::parameter_function_pointers.pntr_set_numeric_parameter != NULL)
-				{
-					if (!NGC_RS274::LineProcessor::parameter_function_pointers.pntr_set_numeric_parameter(index, *read_value))
-					{
-						ret_code = e_parsing_errors::NumericParamaterUpdateFailure;
-					}
-				}
-				else
-				{
-					ret_code = e_parsing_errors::NumericParamaterUpdateUnavailable;
-				}
+				ret_code = e_parsing_errors::ParamaterValueOutOfRange;
+				*read_value = index;
 			}
-			else//<--read param value
+			else
 			{
-				if (index < 1 || index >= max_numeric_parameter_count)
-				{
-					ret_code = e_parsing_errors::ParamaterValueOutOfRange;
-					*read_value = index;
-				}
-				else
-				{
-					if (NGC_RS274::LineProcessor::parameter_function_pointers.pntr_get_numeric_parameter != NULL)
-						*read_value = NGC_RS274::LineProcessor::parameter_function_pointers.pntr_get_numeric_parameter(index);// FAKE_NUMERIC_PARAM_VALUE;
-					else
-						ret_code = e_parsing_errors::NumericParametersNotAvailable;
-					//*read_value = FAKE_NUMERIC_PARAM_VALUE;
-				}
+				*read_value = NGC_RS274::Parameters::__get_numeric_parameter(index);// FAKE_NUMERIC_PARAM_VALUE;
 			}
 		}
+
 	}
 	return ret_code;
 }
 
-e_parsing_errors NGC_RS274::LineProcessor::___read_integer_value(char *buffer, int *read_pos, int *integer_value)
+e_parsing_errors NGC_RS274::LineProcessor::___read_integer_value(char *buffer, int *read_pos, int *integer_value, bool * has_decimal)
 {
 	e_parsing_errors ret_code = e_parsing_errors::OK;
 
 	float float_value = 0;
 
-	ret_code = NGC_RS274::LineProcessor::_read_as_class_type(buffer, read_pos, &float_value);
+	ret_code = NGC_RS274::LineProcessor::_read_as_class_type(buffer, read_pos, &float_value, has_decimal);
 	if (ret_code != e_parsing_errors::OK)
 		return ret_code;
 
@@ -596,7 +518,7 @@ e_parsing_errors NGC_RS274::LineProcessor::___read_integer_value(char *buffer, i
 	return ret_code;
 }
 
-e_parsing_errors NGC_RS274::LineProcessor::___read_class_named_parameter(char * buffer, int * read_pos, float * read_value)
+e_parsing_errors NGC_RS274::LineProcessor::___read_class_named_parameter(char * buffer, int * read_pos, float * read_value, bool * has_decimal)
 {
 	e_parsing_errors ret_code = e_parsing_errors::OK;
 
@@ -617,7 +539,7 @@ e_parsing_errors NGC_RS274::LineProcessor::___read_class_named_parameter(char * 
 	{
 		update = true;
 		*read_pos += 1;
-		ret_code = NGC_RS274::LineProcessor::_read_as_class_type(buffer, read_pos, read_value);
+		ret_code = NGC_RS274::LineProcessor::_read_as_class_type(buffer, read_pos, read_value, has_decimal);
 		if (ret_code != e_parsing_errors::OK)
 			return ret_code;
 	}
@@ -628,30 +550,16 @@ e_parsing_errors NGC_RS274::LineProcessor::___read_class_named_parameter(char * 
 	{
 		if (global)
 		{
-			if (NGC_RS274::LineProcessor::parameter_function_pointers.pntr_set_global_named_parameter != NULL)
+			if (!NGC_RS274::Parameters::__set_named_gobal_parameter(parameter_name, *read_value))
 			{
-				if (!NGC_RS274::LineProcessor::parameter_function_pointers.pntr_set_global_named_parameter(parameter_name, *read_value))
-				{
-					ret_code = e_parsing_errors::NamedParamaterUpdateFailure;
-				}
-			}
-			else
-			{
-				ret_code = e_parsing_errors::NamedParamaterUpdateUnavailable;
+				ret_code = e_parsing_errors::NamedParamaterUpdateFailure;
 			}
 		}
 		else
 		{
-			if (NGC_RS274::LineProcessor::parameter_function_pointers.pntr_set_local_named_parameter != NULL)
+			if (!NGC_RS274::Parameters::__set_named_local_parameter(parameter_name, *read_value))
 			{
-				if (!NGC_RS274::LineProcessor::parameter_function_pointers.pntr_set_local_named_parameter(parameter_name, *read_value))
-				{
-					ret_code = e_parsing_errors::NamedParamaterUpdateFailure;
-				}
-			}
-			else
-			{
-				ret_code = e_parsing_errors::NamedParamaterUpdateUnavailable;
+				ret_code = e_parsing_errors::NamedParamaterUpdateFailure;
 			}
 		}
 	}
@@ -660,19 +568,11 @@ e_parsing_errors NGC_RS274::LineProcessor::___read_class_named_parameter(char * 
 		//Look in the name we got back from the read. If it starts with _ its a 'global'
 		if (global)//<--global scope
 		{
-			if (NGC_RS274::LineProcessor::parameter_function_pointers.pntr_get_global_named_parameter != NULL)
-				*read_value = NGC_RS274::LineProcessor::parameter_function_pointers.pntr_get_global_named_parameter(parameter_name);
-			else
-				ret_code = e_parsing_errors::GlobalNamedParametersNotAvailable;
-			//*read_value = FAKE_GLOBAL_NAMED_PARAM_VALUE;
+			*read_value = NGC_RS274::Parameters::__get_named_gobal_parameter(parameter_name);
 		}
 		else//<--not global, so its local scope
 		{
-			if (NGC_RS274::LineProcessor::parameter_function_pointers.pntr_get_local_named_parameter != NULL)
-				*read_value = NGC_RS274::LineProcessor::parameter_function_pointers.pntr_get_local_named_parameter(parameter_name);
-			else
-				ret_code = e_parsing_errors::LocalNamedParametersNotAvailable;
-			//*read_value = FAKE_LOCAL_NAMED_PARAM_VALUE;
+			*read_value = NGC_RS274::Parameters::__get_named_local_parameter(parameter_name);
 		}
 	}
 	return ret_code;
@@ -720,7 +620,7 @@ e_parsing_errors NGC_RS274::LineProcessor::___read_class_named_parameter(char * 
 	//ERS(EMC_I18N("Named parameter #<%s> not defined"), paramNameBuf);
 }
 
-e_parsing_errors NGC_RS274::LineProcessor::___execute_atan(char *buffer, int *read_pos, float *read_value)
+e_parsing_errors NGC_RS274::LineProcessor::___execute_atan(char *buffer, int *read_pos, float *read_value, bool * has_decimal)
 {
 	e_parsing_errors ret_code = e_parsing_errors::OK;
 	float argument2 = 0;
@@ -735,7 +635,7 @@ e_parsing_errors NGC_RS274::LineProcessor::___execute_atan(char *buffer, int *re
 	{
 		ret_code = e_parsing_errors::MissingBracketAfterSlash;
 	}
-	NGC_RS274::LineProcessor::__read_class_expression(buffer, read_pos, &argument2);
+	NGC_RS274::LineProcessor::__read_class_expression(buffer, read_pos, &argument2, has_decimal);
 	*read_value = atan2(*read_value, argument2);  /* value in radians */
 	*read_value = ((*read_value * 180.0) / M_PI);   /* convert to degrees */
 	return ret_code;

@@ -39,6 +39,7 @@ needed to store in the buffer array. This allows almost twice as much storage sp
 #include "_ngc_arc_struct.h"
 #include "_ngc_plane_struct.h"
 
+
 namespace NGC_RS274
 {
 	class Block_View
@@ -116,28 +117,30 @@ namespace NGC_RS274
 
 		void clear(s_ngc_block *block);
 		void load(s_ngc_block * block);
-		void comp_fragments(s_ngc_block * block);
 		bool any_axis_defined(s_ngc_block * block);
 		bool any_linear_axis_was_defined(s_ngc_block * block);
 		bool any_rotational_axis_was_defined(s_ngc_block * block);
 		bool is_word_defined(s_ngc_block * block, char word_value);
 		float * get_word_value(char word_value, s_ngc_block * block);
 		bool get_word_value(char word_value, float * value);
+		
 
 		static void copy_persisted_data(s_ngc_block * source_block, s_ngc_block * destination_block);
 	private:
+		void xset_events(s_ngc_block * current_block, s_ngc_block * previous_block);
+
 		void __assign_plane(s_ngc_block *block);
 		void __assign_persisted(s_ngc_block *block);
 		void __assign_arc(s_ngc_block *block);
 		void __assign_canned(s_ngc_block *block);
 		void __assign_gcode(s_ngc_block * block);
 		void __assign_mcode(s_ngc_block * block);
-		void __set_events(s_ngc_block * current_block, s_ngc_block * previous_block);
+		
 		void __set_active_plane_axis_helper(s_axis_property * axis_object, char word_value, s_ngc_block * block);
-		void __assign_g_event(s_ngc_block * block, uint16_t group_number);
-		void __assign_m_event(s_ngc_block * block, uint16_t group_number);
-		void __assign_other_event(s_ngc_block * block);
-		bool __group_has_changed(uint16_t * original_value, uint16_t * updated_value, uint8_t group_number);
+		void x__assign_g_event(s_ngc_block * block, uint16_t group_number);
+		void x__assign_m_event(s_ngc_block * block, uint16_t group_number);
+		void x__assign_other_event(s_ngc_block * block);
+		bool x__group_has_changed(uint16_t * original_value, uint16_t * updated_value, uint8_t group_number);
 
 	};
 };

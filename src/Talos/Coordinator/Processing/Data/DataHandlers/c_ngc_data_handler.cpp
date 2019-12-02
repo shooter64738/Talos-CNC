@@ -24,7 +24,9 @@
 #include "../../../../NGC_RS274/NGC_Line_Processor.h"
 #include "../../../../c_ring_template.h"
 #include "../../../../NGC_RS274/NGC_Errors.h"
-#include "../../../../Motion/Processing/GCode/c_gcode_buffer.h"
+#include "../../../../NGC_RS274/NGC_Block_View.h"
+#include "../../../../NGC_RS274/NGC_Error_Check.h"
+#include "../../../../Motion/Processing/GCode/xc_gcode_buffer.h"
 
 
 /*
@@ -81,51 +83,65 @@ void c_ngc_data_handler::ngc_handler(c_ring_buffer <char> * buffer)
 	*/
 	if (has_eol)
 	{
-		memcpy(NGC_RS274::LineProcessor::line_buffer, buffer->_storage_pointer + buffer->_tail, eol_position);
-		NGC_RS274::LineProcessor::line_buffer[eol_position] = '\0';
+		memcpy(NGC_RS274::LineProcessor::line_buffer, buffer->_storage_pointer + buffer->_tail, eol_position-1);
+		NGC_RS274::LineProcessor::line_buffer[eol_position-1] = '\0';
 		buffer->_tail += eol_position;
 		c_ngc_data_handler::__release(buffer);
 		if ((*NGC_RS274::LineProcessor::line_buffer == '\r' || *NGC_RS274::LineProcessor::line_buffer == '\n')
-			&& strlen(NGC_RS274::LineProcessor::line_buffer) == 1)
+			|| strlen(NGC_RS274::LineProcessor::line_buffer) == 0)
 		{
 			return;
 		}
 		//set an event so the rest of the program knows we are ready with ngc data.
 		//extern_ancillary_events.event_manager.set((int)s_ancillary_events::e_event_type::NGCLineReadyUsart0);
-		c_ngc_data_handler::ngc_load_block(&Talos::Motion::NgcBuffer::gcode_buffer);
+		c_ngc_data_handler::ngc_load_block();
 		
 	}
 }
 
-void c_ngc_data_handler::ngc_load_block(c_ring_buffer <s_ngc_block> * buffer_destination)
+e_parsing_errors c_ngc_data_handler::ngc_load_block()
 {
-
-	//Talos::Coordinator::Main_Process::host_serial.print_string("NGC READY\r\n");
-
-	//Get a pointer to the current ngc buffer head position. We need this block
-	//because it has the persisted values that were set the last time a block was
-	//processed. If this is the first block we are processing, then head is zero
-	//NGC_RS274::NGC_Binary_Block * new_block = buffer_destination->writer_handle();
-
-	//The ngc interpreter expects there to be a new block prepped and handed to it.
 	
-	e_parsing_errors return_value
-		= NGC_RS274::LineProcessor::start(buffer_destination);
+	s_ngc_block new_block;
+	
+	//Forward copy the previous blocks values so they will persist. This also clears whats in the block now.
+	//If the values need changed during processing it will happen in the assignor
+	NGC_RS274::Block_View::copy_persisted_data(&Talos::Motion::NgcBuffer::init_block, &new_block);
+	/*
+	The __station__ value is an indexing value used to give each block a unique ID number in the collection
+	of binary converted data. It is currently an int type, but if it were converted to a float I think
+	it could also be used to locate and identify subroutines.
+	*/
+	
+	e_parsing_errors return_value = NGC_RS274::LineProcessor::start(&new_block);
 
-	//We wrote to the new block by pointer, so if there were no errors the buffer is
-	//updated already and we should advance the head pointer. If we did enconter
-	//an error then nothing should have updated at the buffer position and we can
-	//just move on.
-	//if (return_value == NGC_RS274::LineProcessor::e_parser_codes::Ok )
-	//{
-	//	buffer_destination->advance();
-	//	extern_ancillary_events.event_manager.set((int)s_ancillary_events::e_event_type::NGCBlockReady);
-	//}
-	//else
-	//{
-	//	//c_ngc_data_handler::__assign_error_handler(buffer_source, return_value);
-	//}
+	//Now that the line parsing is complete we can run an error check on the line
 
+	//Create a view of the old and new blocks. The view class is just a helper class
+	//to make the data easier to understand
+	NGC_RS274::Block_View v_new = NGC_RS274::Block_View(&new_block);
+	NGC_RS274::Block_View v_previous = NGC_RS274::Block_View(&Talos::Motion::NgcBuffer::init_block);
+	return_value = NGC_RS274::Error_Check::error_check(&v_new, &v_previous);
+
+	//NGC_RS274::Set_Targets::adjust(&v_new, &v_previous);
+
+	if (return_value == e_parsing_errors::OK)
+	{
+		//Add this block to the buffer
+		new_block.__station__ = Talos::Motion::NgcBuffer::init_block.__station__+1;
+		Talos::Motion::NgcBuffer::pntr_buffer_block_write(&new_block);
+		//Now mvoe the data from the new block back to the init block. This keeps
+		//the block modal values in synch
+		NGC_RS274::Block_View::copy_persisted_data(&new_block,&Talos::Motion::NgcBuffer::init_block);
+		//We dont copy station numbers so set this here.
+		Talos::Motion::NgcBuffer::init_block.__station__ = new_block.__station__;
+	}
+	else
+	{
+		Talos::Coordinator::Main_Process::host_serial.print_string("interp err:");
+		Talos::Coordinator::Main_Process::host_serial.print_int32((int)return_value);
+		Talos::Coordinator::Main_Process::host_serial.Write(CR);
+	}
 }
 
 void c_ngc_data_handler::__release(c_ring_buffer <char> * buffer_source)

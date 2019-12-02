@@ -19,7 +19,7 @@
 */
 
 #include "NGC_Comp.h"
-#include "..\Motion\Processing\GCode\c_gcode_buffer.h"
+#include "..\Motion\Processing\GCode\xc_gcode_buffer.h"
 #include <math.h>
 #include "_ngc_math_constants.h"
 

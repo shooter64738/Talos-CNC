@@ -18,23 +18,22 @@
 *  along with Talos.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "c_gcode_buffer.h"
+#include "xc_gcode_buffer.h"
 #include <string.h>
 #include "../../../NGC_RS274/_ngc_g_groups.h"
 #include "../../../NGC_RS274/_ngc_m_groups.h"
 
 
-static s_ngc_block gcode_data[NGC_BUFFER_SIZE];
-c_ring_buffer<s_ngc_block> Talos::Motion::NgcBuffer::gcode_buffer;
+
+s_ngc_block Talos::Motion::NgcBuffer::init_block;
 uint8_t(*Talos::Motion::NgcBuffer::pntr_buffer_block_write)(s_ngc_block * write_block);
 uint8_t(*Talos::Motion::NgcBuffer::pntr_buffer_block_read)(s_ngc_block * read_block);
 uint8_t(*Talos::Motion::NgcBuffer::pntr_buffer_block_update)(s_ngc_block * update_block);
 
 uint8_t Talos::Motion::NgcBuffer::initialize()
 {
-	gcode_buffer.initialize(gcode_data,NGC_BUFFER_SIZE);
 
-	s_ngc_block * first_block = &gcode_data[0];
+	s_ngc_block * first_block = &Talos::Motion::NgcBuffer::init_block;
 
 	//clear the block of all values
 	memset(first_block, 0, sizeof(s_ngc_block));
@@ -70,4 +69,3 @@ uint8_t Talos::Motion::NgcBuffer::initialize()
 	return 0;
 
 }
-

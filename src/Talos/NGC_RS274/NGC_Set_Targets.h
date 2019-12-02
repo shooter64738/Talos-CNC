@@ -32,7 +32,7 @@ needed to store in the buffer array. This allows almost twice as much storage sp
 
 #include <stdint.h>
 #include "_ngc_errors_interpreter.h"
-#include "_ngc_block_struct.h"
+#include "NGC_Block_View.h"
 
 
 
@@ -43,12 +43,14 @@ namespace NGC_RS274
 	public:
 		//Block_Assignor();
 		//~Block_Assignor();
-		static e_parsing_errors adjust(NGC_RS274::Block_View * v_new_block, NGC_RS274::Block_View * v_previous_block);
+		//static e_parsing_errors adjust(NGC_RS274::Block_View * v_new_block, NGC_RS274::Block_View * v_previous_block);
 
 		
 
-	private:
-		static e_parsing_errors find_ends(NGC_RS274::Block_View * v_new_block, NGC_RS274::Block_View * s, double * px, double * py, double * pz, double * AA_p, double * BB_p, double * CC_p, double * u_p, double * v_p, double * w_p);
+	//private:
+		static e_parsing_errors adjust(NGC_RS274::Block_View * v_new_block, NGC_RS274::Block_View * v_previous_block);
+		static e_parsing_errors find_ends(NGC_RS274::Block_View * v_new_block, NGC_RS274::Block_View * ss, double * px, double * py, double * pz, double * AA_p, double * BB_p, double * CC_p, double * u_p, double * v_p, double * w_p);
+		//static e_parsing_errors find_ends(NGC_RS274::Block_View * v_new_block, NGC_RS274::Block_View * s, double * px, double * py, double * pz, double * AA_p, double * BB_p, double * CC_p, double * u_p, double * v_p, double * w_p);
 		static void rotate(double * x, double * y, double theta);
 		static e_parsing_errors unwrap_rotary(double * r, double sign_of, double commanded, double current, char axis);
 		

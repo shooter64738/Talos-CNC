@@ -22,7 +22,7 @@
 #ifndef __C_MOTION_NGC_BUFFER_H__
 #define __C_MOTION_NGC_BUFFER_H__
 
-#include "../../../c_ring_template.h"
+//#include "../../../c_ring_template.h"
 #include "../../../NGC_RS274/_ngc_block_struct.h"
 #define NGC_BUFFER_SIZE 2 //<--we only need to hold 2 items. One for the previous block and one for the current
 
@@ -34,13 +34,23 @@ namespace Talos
 		{
 			//variables
 			public:
-			static c_ring_buffer<s_ngc_block> gcode_buffer;
+			static s_ngc_block init_block;
 			protected:
 			private:
 
 			//functions
 			public:
 			static uint8_t initialize();
+			
+			/*
+			using function pointers here because there are 2 different 
+			'read','write','update' method types depending on the hal
+			between the block processor and the data storage system.
+			On the coordinator, data storage is reading, writing, updating
+			to eeprom devices. On the motion controller reading, writing,
+			updating is a serial request to the coordinator cpu to fetch
+			and send a block of data, or receive and write a block of data.
+			*/
 			static uint8_t(*pntr_buffer_block_write)(s_ngc_block * write_block);
 			static uint8_t(*pntr_buffer_block_read)(s_ngc_block * read_block);
 			static uint8_t(*pntr_buffer_block_update)(s_ngc_block * update_block);

@@ -35,38 +35,18 @@
 
 #define MAX_EXPRESSION_OPS 7
 
-
-//find FAKE_NUMERIC_PARAM_VALUE in the code to see where you need to load numeric params at.
-#define FAKE_NUMERIC_PARAM_VALUE 100
-#define FAKE_LOCAL_NAMED_PARAM_VALUE 200
-#define FAKE_GLOBAL_NAMED_PARAM_VALUE 300
-
 namespace NGC_RS274
 {
 	class LineProcessor
 	{
 
-		public:
-		
-		struct s_param_functions
-		{
-			float(*pntr_get_global_named_parameter)(char * param_name);
-			float(*pntr_get_local_named_parameter)(char * param_name);
-			float(*pntr_get_numeric_parameter)(int param_number);
-			int(*pntr_get_numeric_parameter_max)();
-
-			int(*pntr_set_global_named_parameter)(char * param_name, float value);
-			int(*pntr_set_local_named_parameter)(char * param_name, float value);
-			int(*pntr_set_numeric_parameter)(int param_number, float value);
-			
-		};
+	public:
 		static char line_buffer[];
-		static s_param_functions parameter_function_pointers;
 		static int last_read_position;
 		static uint8_t initialize();
-		static e_parsing_errors start(c_ring_buffer<s_ngc_block>* buffer_destination);
+		static e_parsing_errors start(s_ngc_block * block);
 
-		private:
+	private:
 
 		enum class e_value_class_types
 		{
@@ -121,17 +101,17 @@ namespace NGC_RS274
 		};
 
 		static uint8_t _set_buffer_to_upper(char * ring_buffer);
-		static e_parsing_errors  _process_buffer(char * buffer, c_ring_buffer <s_ngc_block> * buffer_destination);
+		static e_parsing_errors  _process_buffer(char * buffer, s_ngc_block * block);
 
-		static e_parsing_errors  _read_as_word(char * buffer, int * read_pos, char word, float * word_value);
-		static e_parsing_errors  _read_as_class_type(char * buffer, int * read_pos, float * word_value);
-		static e_parsing_errors  __read_class_numeric(char * buffer, int * read_pos, float * read_value);
-		static e_parsing_errors  __read_class_expression(char * buffer, int * read_pos, float * read_value);
-		static e_parsing_errors  __read_class_parameter(char * buffer, int * read_pos, float * read_value);
-		static e_parsing_errors  ___read_integer_value(char * line, int * counter, int * integer_value);
-		static e_parsing_errors  ___read_class_named_parameter(char * buffer, int * read_pos, float * read_value);
-		static e_value_class_types __get_value_class(char * buffer, int * read_pos, float * word_value);
-		static e_parsing_errors  __read_class_unary(char * buffer, int * read_pos, float * read_value);
+		static e_parsing_errors  _read_as_word(char * buffer, int * read_pos, char word, float * word_value, bool * has_decimal);
+		static e_parsing_errors  _read_as_class_type(char * buffer, int * read_pos, float * word_value, bool * has_decimal);
+		static e_parsing_errors  __read_class_numeric(char * buffer, int * read_pos, float * read_value, bool * has_decimal);
+		static e_parsing_errors  __read_class_expression(char * buffer, int * read_pos, float * read_value, bool * has_decimal);
+		static e_parsing_errors  __read_class_parameter(char * buffer, int * read_pos, float * read_value, bool * has_decimal);
+		static e_parsing_errors  ___read_integer_value(char * line, int * counter, int * integer_value, bool * has_decimal);
+		static e_parsing_errors  ___read_class_named_parameter(char * buffer, int * read_pos, float * read_value, bool * has_decimal);
+		static e_value_class_types __get_value_class(char * buffer, int * read_pos, float * word_value, bool * has_decimal);
+		static e_parsing_errors  __read_class_unary(char * buffer, int * read_pos, float * read_value, bool * has_decimal);
 		static e_parsing_errors  ____get_named_parameter_name(char * buffer, int * read_pos, char * parameter_name);
 		static e_parsing_errors  __get_unary_operator_class
 		(char * buffer, int * read_pos, e_unary_operator_class_types * operator_class);
@@ -139,7 +119,7 @@ namespace NGC_RS274
 		(char * buffer, int * read_pos, e_expression_operator_class_types * operator_class);
 		static int __get_operator_precedence(e_expression_operator_class_types operator_class);
 		static e_parsing_errors  ___execute_binary(float *left, e_expression_operator_class_types operator_class, float *right);
-		static e_parsing_errors  ___execute_atan(char * line, int * counter, float * double_ptr);
+		static e_parsing_errors  ___execute_atan(char * line, int * counter, float * double_ptr, bool * has_decimal);
 		static e_parsing_errors  ___execute_unary(float * double_ptr, e_unary_operator_class_types operation);
 	};
 };

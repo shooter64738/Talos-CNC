@@ -104,7 +104,7 @@ e_parsing_errors NGC_RS274::NGC_Machine_Specific::error_check_feed_mode(int gCod
 	//When we are in time per unit feed rate mode (also known as inverse time), a feed rate must be set per line, for any motion command
 	if (*new_block->current_g_codes.Feed_rate_mode == NGC_RS274::G_codes::FEED_RATE_MINUTES_PER_UNIT_MODE
 		&& !new_block->is_word_defined(new_block->active_view_block,'F'))
-		return  e_parsing_errors::NO_FEED_RATE_SPECIFIED_FOR_UNIT_PER_MINUTE;
+		return  e_parsing_errors::NO_FEED_RATE_SPECIFIED;
 	
 	float word_value = 0;
 	//When we are in unit per rotation feed rate mode, the spindle must already be active

@@ -25,26 +25,27 @@
 #include <stdint.h>
 #include "../../../../c_ring_template.h"
 #include ".../../../../../../NGC_RS274/_ngc_block_struct.h"
+#include "../../../../NGC_RS274/_ngc_errors_interpreter.h"
 
 typedef void(*ret_pointer)(c_ring_buffer <char> * buffer);
 
 class c_ngc_data_handler
 {
 	//variables
-	public:
+public:
 	static void(*pntr_data_handler_release)(c_ring_buffer<char> * buffer);
-	
-	protected:
-	private:
+
+protected:
+private:
 
 
 	//functions
-	public:
+public:
 	static ret_pointer assign_handler(c_ring_buffer <char> * buffer);
 	static void ngc_handler(c_ring_buffer <char> * buffer);
-	static void ngc_load_block(c_ring_buffer<s_ngc_block>* buffer_destination);
-	protected:
-	private:
+	static e_parsing_errors ngc_load_block();
+protected:
+private:
 	static void __release(c_ring_buffer <char> * buffer_source);
 	static void __assign_error_handler(c_ring_buffer <char> * buffer_source, uint16_t error_value);
 }; //c_serial_events

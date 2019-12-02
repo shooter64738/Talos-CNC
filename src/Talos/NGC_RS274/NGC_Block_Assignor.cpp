@@ -26,24 +26,28 @@
 #include "_ngc_m_Groups.h"
 #include "NGC_Block_View.h"
 #include "_ngc_errors_interpreter.h"
+#include "_ngc_dialect_enum.h"
+#include "Dialect/_ngc_validate_16_plane_rotation.h"
+#include "Dialect/_ngc_validate_1_motion.h"
+#include "NGC_Error_Check.h"
 
 //NGC_RS274::Block_Assignor::Block_Assignor(){}
 //NGC_RS274::Block_Assignor::~Block_Assignor(){}
 
 uint16_t _ngc_working_group = 0;
 
-e_parsing_errors NGC_RS274::Block_Assignor::group_word(char Word, float Address, s_ngc_block *new_block, s_ngc_block *previous_block)
+e_parsing_errors NGC_RS274::Block_Assignor::group_word(char Word, float Address, s_ngc_block *new_block)
 {
 	switch (Word)
 	{
 		case 'G': //<--Process words for G (G10,G20,G91, etc..)
-		return _gWord(Address, new_block, previous_block);
+		return _gWord(Address, new_block);
 		break;
 		case 'M': //<--Process words for M (M3,M90,M5, etc..)
-		return _mWord(Address, new_block, previous_block);
+		return _mWord(Address, new_block);
 		break;
 		default:
-		return _pWord(Word, Address, new_block, previous_block); //<--Process words for Everything else (X__,Y__,Z__,I__,D__, etc..)
+		return _pWord(Word, Address, new_block); //<--Process words for Everything else (X__,Y__,Z__,I__,D__, etc..)
 		break;
 	}
 
@@ -53,7 +57,7 @@ e_parsing_errors NGC_RS274::Block_Assignor::group_word(char Word, float Address,
 /*
 Assign the corresponding value to a Group number for an Address
 */
-e_parsing_errors NGC_RS274::Block_Assignor::_gWord(float Address, s_ngc_block *new_block, s_ngc_block *previous_block)
+e_parsing_errors NGC_RS274::Block_Assignor::_gWord(float Address, s_ngc_block *new_block)
 {
 	/*
 	|***************************************************************************************|
@@ -99,27 +103,30 @@ e_parsing_errors NGC_RS274::Block_Assignor::_gWord(float Address, s_ngc_block *n
 		//Any of these are motions, but I want to also differentiate between a typical interpolation and a canned cycle
 		_ngc_working_group = NGC_RS274::Groups::G::Motion;
 		//Flag it as a motion change
-		new_block->block_events.set(_group_value_changed(new_block->g_group[NGC_RS274::Groups::G::Motion], iAddress), (int)e_block_event::Motion);
+		//new_block->block_events.set(_group_value_changed(new_block->g_group[NGC_RS274::Groups::G::Motion], iAddress), (int)e_block_event::Motion);
 		
 		
 		if (iAddress > NGC_RS274::G_codes::MOTION_CANCELED)
 		{
 			//Flag it as a canned cycle change.
-			new_block->block_events.set(_group_value_changed(new_block->g_group[NGC_RS274::Groups::G::Motion], iAddress), (int)e_block_event::Canned_Cycle_Active);
+			//new_block->block_events.set(_group_value_changed(new_block->g_group[NGC_RS274::Groups::G::Motion], iAddress), (int)e_block_event::Canned_Cycle_Active);
 		}
 		new_block->g_group[NGC_RS274::Groups::G::Motion] = (iAddress);
+
+		//NGC_RS274::Error_Check::dialect_verify[_ngc_working_group] = NGC_RS274::Dialect::Group1::motion_validate;
+
 		break;
 
 		case NGC_RS274::G_codes::G10_PARAM_WRITE: //<-G10
 		_ngc_working_group = NGC_RS274::Groups::G::NON_MODAL;//<-G4,G10,G28,G30,G53,G92,92.2,G92.3
-		new_block->block_events.set(_group_value_changed(new_block->g_group[NGC_RS274::Groups::G::Motion], iAddress), (int)e_block_event::Non_modal);
+		//new_block->block_events.set(_group_value_changed(new_block->g_group[NGC_RS274::Groups::G::Motion], iAddress), (int)e_block_event::Non_modal);
 		new_block->g_group[NGC_RS274::Groups::G::NON_MODAL] = (iAddress);
 		break;
 
 		case NGC_RS274::G_codes::RECTANGULAR_COORDINATE_SYSTEM: //<-G15
 		case NGC_RS274::G_codes::POLAR_COORDINATE_SYSTEM: //<-G16
 		_ngc_working_group = NGC_RS274::Groups::G::RECTANGLAR_POLAR_COORDS_SELECTION;
-		new_block->block_events.set(_group_value_changed(new_block->g_group[NGC_RS274::Groups::G::Motion], iAddress), (int)e_block_event::RECTANGLAR_POLAR_COORDS_SELECTION);
+		//new_block->block_events.set(_group_value_changed(new_block->g_group[NGC_RS274::Groups::G::Motion], iAddress), (int)e_block_event::RECTANGLAR_POLAR_COORDS_SELECTION);
 		new_block->g_group[NGC_RS274::Groups::G::RECTANGLAR_POLAR_COORDS_SELECTION] = (iAddress);
 		break;
 
@@ -128,7 +135,7 @@ e_parsing_errors NGC_RS274::Block_Assignor::_gWord(float Address, s_ngc_block *n
 		case NGC_RS274::G_codes::YZ_PLANE_SELECTION: //<-G19
 
 		_ngc_working_group = NGC_RS274::Groups::G::PLANE_SELECTION;
-		new_block->block_events.set(_group_value_changed(new_block->g_group[NGC_RS274::Groups::G::Motion], iAddress), (int)e_block_event::PLANE_SELECTION);
+		//new_block->block_events.set(_group_value_changed(new_block->g_group[NGC_RS274::Groups::G::Motion], iAddress), (int)e_block_event::PLANE_SELECTION);
 		new_block->g_group[NGC_RS274::Groups::G::PLANE_SELECTION] = (iAddress);
 		//Block_Assignor::error_check_plane_select(new_block, previous_block);
 		break;
@@ -154,7 +161,7 @@ e_parsing_errors NGC_RS274::Block_Assignor::_gWord(float Address, s_ngc_block *n
 		//		('F', new_block->get_value('F') / 25.4);
 		//	}
 		//}
-		new_block->block_events.set(_group_value_changed(new_block->g_group[NGC_RS274::Groups::G::Motion], iAddress), (int)e_block_event::Units);
+		//new_block->block_events.set(_group_value_changed(new_block->g_group[NGC_RS274::Groups::G::Motion], iAddress), (int)e_block_event::Units);
 		new_block->g_group[NGC_RS274::Groups::G::Units] = (iAddress);
 		break;
 
@@ -162,14 +169,14 @@ e_parsing_errors NGC_RS274::Block_Assignor::_gWord(float Address, s_ngc_block *n
 		case NGC_RS274::G_codes::START_CUTTER_RADIUS_COMPENSATION_LEFT: //<-G41
 		case NGC_RS274::G_codes::START_CUTTER_RADIUS_COMPENSATION_RIGHT: //<-G42
 		_ngc_working_group = NGC_RS274::Groups::G::Cutter_radius_compensation;
-		new_block->block_events.set(_group_value_changed(new_block->g_group[NGC_RS274::Groups::G::Motion], iAddress), (int)e_block_event::Cutter_radius_compensation);
+		//new_block->block_events.set(_group_value_changed(new_block->g_group[NGC_RS274::Groups::G::Motion], iAddress), (int)e_block_event::Cutter_radius_compensation);
 		new_block->g_group[NGC_RS274::Groups::G::Cutter_radius_compensation] = (iAddress);
 		break;
 
 
 		case NGC_RS274::G_codes::MOTION_IN_MACHINE_COORDINATE_SYSTEM: //<-G53
 		_ngc_working_group = NGC_RS274::Groups::G::COORDINATE_SYSTEM_SELECTION;
-		new_block->block_events.set(_group_value_changed(new_block->g_group[NGC_RS274::Groups::G::Motion], iAddress), (int)e_block_event::COORDINATE_SYSTEM_SELECTION);
+		//new_block->block_events.set(_group_value_changed(new_block->g_group[NGC_RS274::Groups::G::Motion], iAddress), (int)e_block_event::COORDINATE_SYSTEM_SELECTION);
 		new_block->g_group[NGC_RS274::Groups::G::COORDINATE_SYSTEM_SELECTION] = (iAddress);
 		break;
 
@@ -184,14 +191,14 @@ e_parsing_errors NGC_RS274::Block_Assignor::_gWord(float Address, s_ngc_block *n
 		case NGC_RS274::G_codes::WORK_OFFSET_POSITION_6_G59_3:
 		//this->WorkOffsetValue = iAddress;
 		_ngc_working_group = NGC_RS274::Groups::G::COORDINATE_SYSTEM_SELECTION;
-		new_block->block_events.set(_group_value_changed(new_block->g_group[NGC_RS274::Groups::G::Motion], iAddress), (int)e_block_event::COORDINATE_SYSTEM_SELECTION);
+		//new_block->block_events.set(_group_value_changed(new_block->g_group[NGC_RS274::Groups::G::Motion], iAddress), (int)e_block_event::COORDINATE_SYSTEM_SELECTION);
 		new_block->g_group[NGC_RS274::Groups::G::COORDINATE_SYSTEM_SELECTION] = (iAddress);
 		break;
 
 		case NGC_RS274::G_codes::ABSOLUTE_DISANCE_MODE: //<-G90
 		case NGC_RS274::G_codes::INCREMENTAL_DISTANCE_MODE: //<-G91
 		_ngc_working_group = NGC_RS274::Groups::G::DISTANCE_MODE;
-		new_block->block_events.set(_group_value_changed(new_block->g_group[NGC_RS274::Groups::G::Motion], iAddress), (int)e_block_event::DISTANCE_MODE);
+		//new_block->block_events.set(_group_value_changed(new_block->g_group[NGC_RS274::Groups::G::Motion], iAddress), (int)e_block_event::DISTANCE_MODE);
 		new_block->g_group[NGC_RS274::Groups::G::DISTANCE_MODE] = (iAddress);
 		break;
 
@@ -199,14 +206,14 @@ e_parsing_errors NGC_RS274::Block_Assignor::_gWord(float Address, s_ngc_block *n
 		case NGC_RS274::G_codes::FEED_RATE_UNITS_PER_MINUTE_MODE: //<-G94
 		case NGC_RS274::G_codes::FEED_RATE_UNITS_PER_ROTATION: //<-G95
 		_ngc_working_group = NGC_RS274::Groups::G::Feed_rate_mode;
-		new_block->block_events.set(_group_value_changed(new_block->g_group[NGC_RS274::Groups::G::Motion], iAddress), (int)e_block_event::Feed_rate_mode);
+		//new_block->block_events.set(_group_value_changed(new_block->g_group[NGC_RS274::Groups::G::Motion], iAddress), (int)e_block_event::Feed_rate_mode);
 		new_block->g_group[NGC_RS274::Groups::G::Feed_rate_mode] = (iAddress);
 		break;
 
 		case NGC_RS274::G_codes::CANNED_CYCLE_RETURN_TO_R: //<-G99
 		case NGC_RS274::G_codes::CANNED_CYCLE_RETURN_TO_Z: //<-G98
 		_ngc_working_group = NGC_RS274::Groups::G::RETURN_MODE_CANNED_CYCLE;
-		new_block->block_events.set(_group_value_changed(new_block->g_group[NGC_RS274::Groups::G::Motion], iAddress), (int)e_block_event::RETURN_MODE_CANNED_CYCLE);
+		//new_block->block_events.set(_group_value_changed(new_block->g_group[NGC_RS274::Groups::G::Motion], iAddress), (int)e_block_event::RETURN_MODE_CANNED_CYCLE);
 		new_block->g_group[NGC_RS274::Groups::G::RETURN_MODE_CANNED_CYCLE] = (iAddress);
 		break;
 
@@ -215,7 +222,7 @@ e_parsing_errors NGC_RS274::Block_Assignor::_gWord(float Address, s_ngc_block *n
 		case NGC_RS274::G_codes::USE_TOOL_LENGTH_OFFSET_FOR_TRANSIENT_TOOL: //<-G43.1
 		case NGC_RS274::G_codes::NEGATIVE_TOOL_LENGTH_OFFSET: //<-G44
 		_ngc_working_group = NGC_RS274::Groups::G::Tool_length_offset;
-		new_block->block_events.set(_group_value_changed(new_block->g_group[NGC_RS274::Groups::G::Motion], iAddress), (int)e_block_event::Tool_length_offset);
+		//new_block->block_events.set(_group_value_changed(new_block->g_group[NGC_RS274::Groups::G::Motion], iAddress), (int)e_block_event::Tool_length_offset);
 		new_block->g_group[NGC_RS274::Groups::G::Tool_length_offset] = (iAddress);
 		break;
 
@@ -243,13 +250,14 @@ e_parsing_errors NGC_RS274::Block_Assignor::_gWord(float Address, s_ngc_block *n
 	group is on the line again, the logic above will catch it and return an error
 	*/
 	new_block->g_code_defined_in_block.set(_ngc_working_group);
+	
 	return  e_parsing_errors::OK;
 }
 
 /*
 Assign the corresponding Group number for an M code
 */
-e_parsing_errors NGC_RS274::Block_Assignor::_mWord(float Address, s_ngc_block *new_block, s_ngc_block *previous_block)
+e_parsing_errors NGC_RS274::Block_Assignor::_mWord(float Address, s_ngc_block *new_block)
 {
 	/*
 	|****************************************************************************************|
@@ -272,7 +280,7 @@ e_parsing_errors NGC_RS274::Block_Assignor::_mWord(float Address, s_ngc_block *n
 		case NGC_RS274::M_codes::SPINDLE_STOP: //<-M05
 		{
 			_ngc_working_group = NGC_RS274::Groups::M::SPINDLE;
-			new_block->block_events.set(_group_value_changed(new_block->m_group[NGC_RS274::Groups::M::SPINDLE], iAddress), (int)e_block_event::Spindle_mode);
+			//new_block->block_events.set(_group_value_changed(new_block->m_group[NGC_RS274::Groups::M::SPINDLE], iAddress), (int)e_block_event::Spindle_mode);
 			new_block->m_group[NGC_RS274::Groups::M::SPINDLE] = (iAddress);
 			break;
 		}
@@ -282,14 +290,14 @@ e_parsing_errors NGC_RS274::Block_Assignor::_mWord(float Address, s_ngc_block *n
 		case NGC_RS274::M_codes::TOOL_CHANGE_PAUSE: //<-M06
 		{
 			_ngc_working_group = NGC_RS274::Groups::M::TOOL_CHANGE;
-			new_block->block_events.set(_group_value_changed(new_block->m_group[NGC_RS274::Groups::M::SPINDLE], iAddress), (int)e_block_event::Tool_Change_Request);
+			//new_block->block_events.set(_group_value_changed(new_block->m_group[NGC_RS274::Groups::M::SPINDLE], iAddress), (int)e_block_event::Tool_Change_Request);
 			new_block->m_group[NGC_RS274::Groups::M::TOOL_CHANGE] = (iAddress);
 			break;
 		}
 		case NGC_RS274::M_codes::PALLET_CHANGE_PAUSE: //<-M60
 		{
 			_ngc_working_group = NGC_RS274::Groups::M::STOPPING;
-			new_block->block_events.set(_group_value_changed(new_block->m_group[NGC_RS274::Groups::M::SPINDLE], iAddress), (int)e_block_event::STOPPING);
+			//new_block->block_events.set(_group_value_changed(new_block->m_group[NGC_RS274::Groups::M::SPINDLE], iAddress), (int)e_block_event::STOPPING);
 			new_block->m_group[NGC_RS274::Groups::M::STOPPING] = (iAddress);
 			break;
 		}
@@ -299,7 +307,7 @@ e_parsing_errors NGC_RS274::Block_Assignor::_mWord(float Address, s_ngc_block *n
 		case NGC_RS274::M_codes::COOLANT_OFF: //<-M09
 		{
 			_ngc_working_group = NGC_RS274::Groups::M::COOLANT;
-			new_block->block_events.set(_group_value_changed(new_block->m_group[NGC_RS274::Groups::M::SPINDLE], iAddress), (int)e_block_event::Coolant);
+			//new_block->block_events.set(_group_value_changed(new_block->m_group[NGC_RS274::Groups::M::SPINDLE], iAddress), (int)e_block_event::Coolant);
 			new_block->m_group[NGC_RS274::Groups::M::COOLANT] = (iAddress);
 			//Since we DO allow multiple coolant modes at the same time, we are just going to return here
 			//No need to check if this modal group was already set on the line.
@@ -311,7 +319,7 @@ e_parsing_errors NGC_RS274::Block_Assignor::_mWord(float Address, s_ngc_block *n
 		case NGC_RS274::M_codes::DISABLE_FEED_SPEED_OVERRIDE: //<-M49
 		{
 			_ngc_working_group = NGC_RS274::Groups::M::OVERRIDE;
-			new_block->block_events.set(_group_value_changed(new_block->m_group[NGC_RS274::Groups::M::SPINDLE], iAddress), (int)e_block_event::OVERRIDE);
+			//new_block->block_events.set(_group_value_changed(new_block->m_group[NGC_RS274::Groups::M::SPINDLE], iAddress), (int)e_block_event::OVERRIDE);
 			new_block->m_group[NGC_RS274::Groups::M::OVERRIDE] = (iAddress);
 			break;
 		}
@@ -320,7 +328,7 @@ e_parsing_errors NGC_RS274::Block_Assignor::_mWord(float Address, s_ngc_block *n
 		if (iAddress >= 100 && iAddress <= 199)
 		{
 			_ngc_working_group = NGC_RS274::Groups::M::USER_DEFINED;
-			new_block->block_events.set(_group_value_changed(new_block->m_group[NGC_RS274::Groups::M::SPINDLE], iAddress), (int)e_block_event::USER_DEFINED);
+			//new_block->block_events.set(_group_value_changed(new_block->m_group[NGC_RS274::Groups::M::SPINDLE], iAddress), (int)e_block_event::USER_DEFINED);
 			new_block->m_group[NGC_RS274::Groups::M::USER_DEFINED] = (iAddress);
 		}
 		else
@@ -352,7 +360,7 @@ e_parsing_errors NGC_RS274::Block_Assignor::_mWord(float Address, s_ngc_block *n
 /*
 Assign the corresponding Address value for a specific G Word
 */
-e_parsing_errors NGC_RS274::Block_Assignor::_pWord(char Word, float iAddress, s_ngc_block *new_block, s_ngc_block *previous_block)
+e_parsing_errors NGC_RS274::Block_Assignor::_pWord(char Word, float iAddress, s_ngc_block *new_block)
 {
 	//TODO: I dont recall what I had to do!
 	//We can't just assume these values are usable as is. We have
@@ -379,14 +387,14 @@ e_parsing_errors NGC_RS274::Block_Assignor::_pWord(char Word, float iAddress, s_
 	default:*/
 	{
 		//Catch any words that doesnt have to be in a  group, such as feedrate(F), offsets(D), etc..
-		ReturnValue = _process_word_values(Word, iAddress, new_block, previous_block);
+		ReturnValue = _process_word_values(Word, iAddress, new_block);
 		//break;
 	}
 	return ReturnValue;
 }
 
 e_parsing_errors NGC_RS274::Block_Assignor::_process_word_values
-(char Word, float iAddress, s_ngc_block *new_block, s_ngc_block *previous_block)
+(char Word, float iAddress, s_ngc_block *new_block)
 {
 	/*
 	|***************************************************************************************|
@@ -449,8 +457,8 @@ e_parsing_errors NGC_RS274::Block_Assignor::_process_word_values
 	return  e_parsing_errors::OK;
 }
 
-bool NGC_RS274::Block_Assignor::_group_value_changed(uint16_t old_value, uint16_t new_value)
-{
-	//return true if they are different
-	return !(new_value == old_value);
-}
+//bool NGC_RS274::Block_Assignor::_group_value_changed(uint16_t old_value, uint16_t new_value)
+//{
+//	//return true if they are different
+//	return !(new_value == old_value);
+//}

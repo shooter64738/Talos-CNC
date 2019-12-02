@@ -10,9 +10,6 @@
     <Filter Include="Coordinator\Processing\Events">
       <UniqueIdentifier>{c88e137f-ec18-4d60-9b47-51f3022816f1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Coordinator\Processing\GCode">
-      <UniqueIdentifier>{b7659d18-1774-4b01-abf4-dd6ae20aa73b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Coordinator\Processing\Main">
       <UniqueIdentifier>{02a61e4e-f97e-4a39-a614-c25fa6914312}</UniqueIdentifier>
     </Filter>
@@ -43,9 +40,6 @@
     <Filter Include="Ngc_Rs274\MachineSpecific\Mill">
       <UniqueIdentifier>{d003fd04-39ed-4126-8152-be37c9312c60}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Coordinator\Processing\Consumers">
-      <UniqueIdentifier>{3ba14a15-e8e5-4824-8204-747d34043628}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Motion">
       <UniqueIdentifier>{ef714a6e-cbba-466e-97d5-1a5a039f896e}</UniqueIdentifier>
     </Filter>
@@ -60,6 +54,9 @@
     </Filter>
     <Filter Include="Ngc_Rs274\Dialect">
       <UniqueIdentifier>{9eccca2d-1da0-4dc1-b64e-96f4e0acc195}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Configuration">
+      <UniqueIdentifier>{e1574bd0-3650-4e23-8650-59b11823a09f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -86,9 +83,6 @@
     <ClInclude Include="..\..\..\..\c_ring_template.h" />
     <ClInclude Include="..\..\..\..\Coordinator\Serial\c_Serial.h">
       <Filter>Coordinator\Serial</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Coordinator\Processing\Consumer\c_ngc_consumer.h">
-      <Filter>Coordinator\Processing\Consumers</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\Coordinator\Processing\Data\DataHandlers\c_binary_data_handler.h">
       <Filter>Coordinator\Processing\Data\DataHandlers</Filter>
@@ -137,9 +131,6 @@
     </ClInclude>
     <ClInclude Include="Platform Specific\c_disk_win.h">
       <Filter>Platform Specific</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Motion\Processing\GCode\c_gcode_buffer.h">
-      <Filter>Motion\Processing\GCode</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\NGC_RS274\_ngc_block_event_enums.h">
       <Filter>Ngc_Rs274</Filter>
@@ -236,9 +227,6 @@
     <ClInclude Include="..\..\..\..\NGC_RS274\_ngc_tool_struct.h">
       <Filter>Ngc_Rs274</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\NGC_RS274\Dialect\_ngc_validate_0_group_nonmodal.h">
-      <Filter>Ngc_Rs274\Dialect</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\..\NGC_RS274\Dialect\_ngc_validate_1_motion.h">
       <Filter>Ngc_Rs274\Dialect</Filter>
     </ClInclude>
@@ -247,6 +235,27 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\NGC_RS274\Dialect\_ngc_validate_16_plane_rotation.h">
       <Filter>Ngc_Rs274\Dialect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\NGC_RS274\Dialect\_ngc_validate_0_nonmodal.h">
+      <Filter>Ngc_Rs274\Dialect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\NGC_RS274\_ngc_dialect_enum.h">
+      <Filter>Ngc_Rs274</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\NGC_RS274\Dialect\_ngc_validate_5_feed_rate_mode.h">
+      <Filter>Ngc_Rs274\Dialect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Configuration\_interp_config_struct.h">
+      <Filter>Configuration</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Motion\Processing\GCode\xc_gcode_buffer.h">
+      <Filter>Motion\Processing\GCode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared Data\_s_interp_config_struct.h">
+      <Filter>Shared Data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Configuration\c_configuration.h">
+      <Filter>Configuration</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -270,9 +279,6 @@
     </ClCompile>
     <ClCompile Include="..\..\..\..\Coordinator\Serial\c_Serial.cpp">
       <Filter>Coordinator\Serial</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\Coordinator\Processing\Consumer\c_ngc_consumer.cpp">
-      <Filter>Coordinator\Processing\Consumers</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\..\Coordinator\Processing\Data\DataHandlers\c_binary_data_handler.cpp">
       <Filter>Coordinator\Processing\Data\DataHandlers</Filter>
@@ -307,9 +313,6 @@
     <ClCompile Include="Platform Specific\c_disk_win.cpp">
       <Filter>Platform Specific</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\Motion\Processing\GCode\c_gcode_buffer.cpp">
-      <Filter>Motion\Processing\GCode</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\..\NGC_RS274\NGC_Block_Assignor.cpp">
       <Filter>Ngc_Rs274</Filter>
     </ClCompile>
@@ -333,6 +336,27 @@
     </ClCompile>
     <ClCompile Include="..\..\..\..\NGC_RS274\NGC_Tool.cpp">
       <Filter>Ngc_Rs274</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\NGC_RS274\Dialect\_ngc_validate_16_plane_rotation.cpp">
+      <Filter>Ngc_Rs274\Dialect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\NGC_RS274\Dialect\_ngc_dialect_validate.cpp">
+      <Filter>Ngc_Rs274\Dialect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\NGC_RS274\Dialect\_ngc_validate_1_motion.cpp">
+      <Filter>Ngc_Rs274\Dialect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\NGC_RS274\Dialect\_ngc_validate_5_feed_rate_mode.cpp">
+      <Filter>Ngc_Rs274\Dialect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\NGC_RS274\Dialect\_ngc_validate_0_nonmodal.cpp">
+      <Filter>Ngc_Rs274\Dialect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Motion\Processing\GCode\xc_gcode_buffer.cpp">
+      <Filter>Motion\Processing\GCode</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Configuration\c_configuration.cpp">
+      <Filter>Configuration</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -18,29 +18,37 @@
 *  along with Talos.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef __C_NGC_CONSUMER_H__
-#define __C_NGC_CONSUMER_H__
+#ifndef __C_CONFIGURATION_H__
+#define __C_CONFIGURATION_H__
 
 #include <stdint.h>
-#include "../../../c_ring_template.h"
+#include "../Shared Data/_s_interp_config_struct.h"
 namespace Talos
 {
-	namespace Coordinator
+	namespace Confguration
 	{
-		class NgcConsumer
+		class Interpreter
 		{
 			//variables
 			public:
+				static s_interpreter_configuration Parameters;
 			protected:
 			private:
 
 
 			//functions
 			public:
-
+				static uint8_t initialize();
 			protected:
 			private:
 		};
+		
+		//call to initialize all
+		static uint8_t initialize()
+		{
+			Interpreter::initialize();
+			return 0;
+		}
 	};
 };
 #endif //__C_EVENTS_H__

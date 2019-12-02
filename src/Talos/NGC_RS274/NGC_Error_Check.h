@@ -34,7 +34,7 @@ needed to store in the buffer array. This allows almost twice as much storage sp
 #include "../records_def.h"
 #include "_ngc_errors_interpreter.h"
 #include "NGC_Block_View.h"
-
+#include "_ngc_dialect_enum.h"
 #include "../physical_machine_parameters.h"
 
 //Changing the MACHINE_TYPE in the physical_machine_parameters.h file will change what
@@ -57,6 +57,7 @@ namespace NGC_RS274
 		//Error_Check();
 		//~Error_Check();
 			static e_parsing_errors error_check(NGC_RS274::Block_View *new_block, NGC_RS274::Block_View *previous_block);
+			//static e_parsing_errors(*dialect_verify[16])(NGC_RS274::Block_View * new_block, e_dialects dialect);
 
 	private:
 		static uint8_t __has_motion(NGC_RS274::Block_View * v_new_block, NGC_RS274::Block_View * v_previous_block);
@@ -75,7 +76,9 @@ namespace NGC_RS274
 		static e_parsing_errors ____error_check_center_format_arc(NGC_RS274::Block_View *v_new_block, NGC_RS274::Block_View *v_previous_block);
 		static e_parsing_errors ____error_check_radius_format_arc(NGC_RS274::Block_View *v_new_block, NGC_RS274::Block_View *v_previous_block);
 
+		
 
+		/*
 		static e_parsing_errors __chk_NON_MODAL(NGC_RS274::Block_View *v_new_block, NGC_RS274::Block_View *v_previous_block);
 		static e_parsing_errors __chk_Motion(NGC_RS274::Block_View *v_new_block, NGC_RS274::Block_View *v_previous_block);
 		static e_parsing_errors __chk_PLANE_SELECTION(NGC_RS274::Block_View *v_new_block, NGC_RS274::Block_View *v_previous_block);
@@ -93,7 +96,7 @@ namespace NGC_RS274
 		static e_parsing_errors __chk_SPINDLE_CONTROL(NGC_RS274::Block_View *v_new_block, NGC_RS274::Block_View *v_previous_block);
 		static e_parsing_errors __chk_RECTANGLAR_POLAR_COORDS_SELECTION(NGC_RS274::Block_View *v_new_block, NGC_RS274::Block_View *v_previous_block);
 		static e_parsing_errors __chk_PLANE_ROTATION(NGC_RS274::Block_View *v_new_block, NGC_RS274::Block_View *v_previous_block);
-
+		*/
 
 	};
 	

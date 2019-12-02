@@ -12,11 +12,11 @@ then move to their respective modules.
 
 #include "Main_Process.h"
 #include "../Events/c_events.h"
-#include "../../../c_ring_template.h"
 #include "../Events/extern_events_types.h"
-#include "../../../Motion/Processing/GCode/c_gcode_buffer.h"
+#include "../../../Motion/Processing/GCode/xc_gcode_buffer.h"
 #include "../../../NGC_RS274/NGC_Line_Processor.h"
-#include "../../../NGC_RS274/NGC_Block_View.h"
+#include "../../../Configuration/c_configuration.h"
+#include "../Data/DataHandlers/c_ngc_data_handler.h";
 
 c_Serial Talos::Coordinator::Main_Process::host_serial;
 
@@ -29,29 +29,36 @@ void Talos::Coordinator::Main_Process::initialize()
 	__critical_initialization("Interrupts", Hardware_Abstraction_Layer::Core::start_interrupts,STARTUP_CLASS_CRITICAL);//<--start interrupts on hardware
 	__critical_initialization("Disk", Hardware_Abstraction_Layer::Disk::initialize, STARTUP_CLASS_CRITICAL);//<--drive/eprom storage
 	__critical_initialization("\tSettings", Hardware_Abstraction_Layer::Disk::load_configuration, STARTUP_CLASS_WARNING);//<--drive/eprom storage
+	__critical_initialization("\tConfiguration", Talos::Confguration::initialize, STARTUP_CLASS_CRITICAL);//<--g code buffer
 	__critical_initialization("Events", Talos::Coordinator::Events::initialize,STARTUP_CLASS_CRITICAL);//<--init events
-	__critical_initialization("Ngc Buffer", Talos::Motion::NgcBuffer::initialize,STARTUP_CLASS_CRITICAL);//<--g code buffer
-	__critical_initialization("Ngc Line", NGC_RS274::LineProcessor::initialize,STARTUP_CLASS_CRITICAL);//<--g code interpreter
+	//__critical_initialization("Ngc Buffer", Talos::Motion::NgcBuffer::initialize,STARTUP_CLASS_CRITICAL);//<--g code buffer
+	//__critical_initialization("Ngc Startup", c_ngc_data_handler::initialize, STARTUP_CLASS_CRITICAL);//<--g code buffer
+	//__critical_initialization("Ngc Line", NGC_RS274::LineProcessor::initialize,STARTUP_CLASS_CRITICAL);//<--g code interpreter
 	__critical_initialization("Motion Control Comms", NULL,STARTUP_CLASS_WARNING);//<--motion controller card
 	__critical_initialization("Spindle Control Comms", NULL,STARTUP_CLASS_WARNING);//<--spindle controller card
 
 	//Load the initialize block from settings. These values are the 'initial' values of the gcode blocks
 	//that are processed. 
-	Hardware_Abstraction_Layer::Disk::load_initialize_block(&Talos::Motion::NgcBuffer::gcode_buffer._storage_pointer[0]);
+	Hardware_Abstraction_Layer::Disk::load_initialize_block(&Talos::Motion::NgcBuffer::init_block);
+	//Assign the read,write,update function pointers. These assignments must take place outside the 
+	//block buffer control. The block buffer control system must not know anything about the HAL it
+	//is servicing.
 	Talos::Motion::NgcBuffer::pntr_buffer_block_write = Hardware_Abstraction_Layer::Disk::put_block;
 	Talos::Motion::NgcBuffer::pntr_buffer_block_read = Hardware_Abstraction_Layer::Disk::get_block;
 	Talos::Motion::NgcBuffer::pntr_buffer_block_update = Hardware_Abstraction_Layer::Disk::update_block;
 	//Write the start up block to cache
-	Talos::Motion::NgcBuffer::pntr_buffer_block_write(&Talos::Motion::NgcBuffer::gcode_buffer._storage_pointer[0]);
+	Talos::Motion::NgcBuffer::pntr_buffer_block_write(&Talos::Motion::NgcBuffer::init_block);
 
 
 	#ifdef MSVC
+	Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "f4g1y1.\r\nx5\r\n");
+	
 	//cutter comp line 1 left comp test
 	//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "p.25 g1 f1 g41 x1 y0\r\n g2 x1.5y0.5 i1.5 j0\r\n g1 x1.5y1.5\r\ng1 x3.5 y1.5\r\n");
 	//cutter comp line 2 right comp test
 	//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "p.25 g1 f1 g42 x1 y0\r\n g2 x2y0 i1.5 j0\r\n g1 x3y0\r\ng1 x4 y0\r\n");
 	//cutter comp line 3 left comp start comp with arc
-	Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "p.25 f1 g41 g2 x0.5 y0.5 i0.5 j0.0\r\n g1 x0.5y1.5\r\ng1 x0.5 y2.5\r\n");
+	//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "p.25 f1 g41 g2 x0.5 y0.5 i0.5 j0.0\r\n g1 x0.5y1.5\r\ng1 x0.5 y2.5\r\n");
 
 	//simple gcode line
 	//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "g01 y7x4g90g20\r\n");//here axis words are used for motion and non modal. Thats an error
