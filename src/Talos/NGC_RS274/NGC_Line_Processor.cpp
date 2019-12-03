@@ -150,7 +150,8 @@ e_parsing_errors NGC_RS274::LineProcessor::_process_buffer(char * buffer, s_ngc_
 		//This will assign the value to the appropriate place in the block.
 		//If an error occurs because there have been multiple definitions of
 		//The same word in this block, it will be returned here.
-		if (Talos::Confguration::Interpreter::Parameters.dialect == e_dialects::Fanuc && !word_has_decimal)
+		if ((Talos::Confguration::Interpreter::Parameters.dialect == e_dialects::Fanuc && !word_has_decimal)
+			&& (current_word != 'G' && current_word != 'M'))
 		{
 			block->dot_safety.set((int)current_word - 'A');
 

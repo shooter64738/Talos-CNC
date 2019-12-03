@@ -32,7 +32,7 @@ needed to store in the buffer array. This allows almost twice as much storage sp
 
 #include <stdint.h>
 #include "_ngc_errors_interpreter.h"
-#include "NGC_Error_Check.h"
+#include "_ngc_tool_struct.h"
 
 namespace NGC_RS274
 {
@@ -41,7 +41,7 @@ namespace NGC_RS274
 	public:
 		//Block_Assignor();
 		//~Block_Assignor();
-
+		static s_tool_table ToolTable;
 
 	private:
 

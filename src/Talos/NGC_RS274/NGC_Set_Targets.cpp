@@ -75,8 +75,8 @@ e_parsing_errors NGC_RS274::Set_Targets::find_ends(NGC_RS274::Block_View *v_new_
 
 	comp_first_move_done = NGC_RS274::Compensation::comp_control.state == e_compensation_states::CurrentCompensationOffNotActivating;
 	comp_side_is_off = (NGC_RS274::Compensation::comp_control.state != e_compensation_states::CurrentCompensationOffNotActivating);
-
-	struct s_current
+	
+	/*struct s_current
 	{
 		float current_x;
 		float current_y;
@@ -104,10 +104,10 @@ e_parsing_errors NGC_RS274::Set_Targets::find_ends(NGC_RS274::Block_View *v_new_
 		float BB_axis_offset;
 		float CC_axis_offset;
 		
-		s_tool_offset tool_offset;
+		s_tool_table tool_offset;
 	};
 	s_current the_currents;
-	s_current *s = &the_currents;
+	s_current *s = &the_currents;*/
 	
 	
 
@@ -409,7 +409,7 @@ e_parsing_errors NGC_RS274::Set_Targets::find_ends(NGC_RS274::Block_View *v_new_
 void NGC_RS274::Set_Targets::rotate(double *x, double *y, double theta)
 {
 	double xx, yy;
-	double t = D2R(theta);
+	double t = DEGREE_TO_RADIAN(theta);
 	xx = *x * cos(t) - *y * sin(t);
 	yy = *x * sin(t) + *y * cos(t);
 	*x = xx;

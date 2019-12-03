@@ -257,6 +257,9 @@
     <ClInclude Include="..\..\..\..\Configuration\c_configuration.h">
       <Filter>Configuration</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\..\NGC_RS274\Dialect\_ngc_validate_2_plane_selection.h">
+      <Filter>Ngc_Rs274\Dialect</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\..\Coordinator\coordinator_main.cpp">
@@ -357,6 +360,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\..\Configuration\c_configuration.cpp">
       <Filter>Configuration</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\NGC_RS274\Dialect\_ngc_validate_2_plane_selection.cpp">
+      <Filter>Ngc_Rs274\Dialect</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

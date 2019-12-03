@@ -549,11 +549,11 @@ uint8_t NGC_RS274::Compensation::__calculate_arc(NGC_RS274::Block_View * v_new_b
 	//origin and target path angles are the same
 
 	path_object->origin.compensated = __get_offset_from_point(path_object->origin.programed
-		, (path_object->angle + (inclusive_angle * (int)comp_control.side)) * DEG2RAD, comp_control.tool_radius);
+		, (path_object->angle + (inclusive_angle * (int)comp_control.side)) * DEG2RAD_CONST, comp_control.tool_radius);
 	__normalize_point(&path_object->origin.compensated);
 
 	path_object->target.compensated = __get_offset_from_point(path_object->target.programed
-		, (path_object->angle + ((180 - inclusive_angle) * (int)comp_control.side)) * DEG2RAD, comp_control.tool_radius);
+		, (path_object->angle + ((180 - inclusive_angle) * (int)comp_control.side)) * DEG2RAD_CONST, comp_control.tool_radius);
 	__normalize_point(&path_object->target.compensated);
 
 	return 1;
@@ -577,11 +577,11 @@ uint8_t NGC_RS274::Compensation::__calculate_line(NGC_RS274::Block_View * v_new_
 	//origin and target path angles are the same
 
 	path_object->origin.compensated = __get_offset_from_point(path_object->origin.programed
-		, (path_object->angle + (90 * (int)comp_control.side)) * DEG2RAD, comp_control.tool_radius);
+		, (path_object->angle + (90 * (int)comp_control.side)) * DEG2RAD_CONST, comp_control.tool_radius);
 	__normalize_point(&path_object->origin.compensated);
 
 	path_object->target.compensated = __get_offset_from_point(path_object->target.programed
-		, (path_object->angle + (90 * (int)comp_control.side)) * DEG2RAD, comp_control.tool_radius);
+		, (path_object->angle + (90 * (int)comp_control.side)) * DEG2RAD_CONST, comp_control.tool_radius);
 	__normalize_point(&path_object->target.compensated);
 
 	return 1;
@@ -589,16 +589,8 @@ uint8_t NGC_RS274::Compensation::__calculate_line(NGC_RS274::Block_View * v_new_
 
 void NGC_RS274::Compensation::__normalize_point(s_point * point)
 {
-	if (point->X < 0)
-		point->X = point->X > -NEAR_ZERO ? 0 : point->X;
-	else
-		point->X = point->X < NEAR_ZERO ? 0 : point->X;
-
-	if (point->Y < 0)
-		point->Y = point->Y > -NEAR_ZERO ? 0 : point->Y;
-	else
-		point->Y = point->Y < NEAR_ZERO ? 0 : point->Y;
-
+	_check_near_zero(&point->X);
+	_check_near_zero(&point->Y);
 }
 
 float NGC_RS274::Compensation::__Angle_RAD(s_point origin, s_point target)
@@ -614,7 +606,7 @@ float NGC_RS274::Compensation::__Angle_DEG(s_point origin, s_point target)
 	double theta = atan2(target.Y - origin.Y, target.X - origin.X);
 	if (theta < 0.0)
 		theta += TWOPI;
-	float angle = RAD2DEG * theta;
+	float angle = RAD2DEG_CONST * theta;
 	return angle;
 }
 

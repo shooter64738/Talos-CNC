@@ -74,6 +74,9 @@ namespace NGC_RS274
 		static const unsigned int PATH_CONTROL_EXACT_STOP = 61.1 * G_CODE_MULTIPLIER;
 		static const unsigned int PATH_CONTROL_CONTINUOUS_WITH_TOLERANCE = 64 * G_CODE_MULTIPLIER;
 
+		static const unsigned int PLANE_ROTATION_START = 68 * G_CODE_MULTIPLIER;
+		static const unsigned int PLANE_ROTATION_CANCEL = 69 * G_CODE_MULTIPLIER;
+
 		static const unsigned int MOTION_CANCELED = 80 * G_CODE_MULTIPLIER;
 		static const unsigned int CANNED_CYCLE_PECK_DRILLING_HIGH_SPEED = 73 * G_CODE_MULTIPLIER;
 		static const unsigned int CANNED_CYCLE_FINE_BORING = 76 * G_CODE_MULTIPLIER;

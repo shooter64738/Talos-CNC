@@ -17,6 +17,7 @@
     <ClInclude Include="..\..\..\..\NGC_RS274\Dialect\_ngc_validate_0_nonmodal.h" />
     <ClInclude Include="..\..\..\..\NGC_RS274\Dialect\_ngc_validate_16_plane_rotation.h" />
     <ClInclude Include="..\..\..\..\NGC_RS274\Dialect\_ngc_validate_1_motion.h" />
+    <ClInclude Include="..\..\..\..\NGC_RS274\Dialect\_ngc_validate_2_plane_selection.h" />
     <ClInclude Include="..\..\..\..\NGC_RS274\Dialect\_ngc_validate_5_feed_rate_mode.h" />
     <ClInclude Include="..\..\..\..\NGC_RS274\NGC_Set_Targets.h" />
     <ClInclude Include="..\..\..\..\NGC_RS274\NGC_Tool.h" />
@@ -100,6 +101,7 @@
     <ClCompile Include="..\..\..\..\NGC_RS274\Dialect\_ngc_validate_0_nonmodal.cpp" />
     <ClCompile Include="..\..\..\..\NGC_RS274\Dialect\_ngc_validate_16_plane_rotation.cpp" />
     <ClCompile Include="..\..\..\..\NGC_RS274\Dialect\_ngc_validate_1_motion.cpp" />
+    <ClCompile Include="..\..\..\..\NGC_RS274\Dialect\_ngc_validate_2_plane_selection.cpp" />
     <ClCompile Include="..\..\..\..\NGC_RS274\Dialect\_ngc_validate_5_feed_rate_mode.cpp" />
     <ClCompile Include="..\..\..\..\NGC_RS274\Machine Specific\Lathe\NGC_Lathe.cpp" />
     <ClCompile Include="..\..\..\..\NGC_RS274\Machine Specific\Mill\NGC_Mill.cpp" />

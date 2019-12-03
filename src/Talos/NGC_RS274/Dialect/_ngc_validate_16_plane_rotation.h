@@ -17,8 +17,10 @@ namespace NGC_RS274
 		{
 			
 		public:
-
-			static e_parsing_errors G68_Rotation(NGC_RS274::Block_View * v_block, e_dialects dialect);
+			static bool rotation_active;
+			static e_parsing_errors rotation_validate(NGC_RS274::Block_View * v_block, e_dialects dialect);
+			static e_parsing_errors _start(NGC_RS274::Block_View * v_block, e_dialects dialect);
+			static uint8_t _rotate(float * x, float * y, float theta);
 		};
 	};
 };

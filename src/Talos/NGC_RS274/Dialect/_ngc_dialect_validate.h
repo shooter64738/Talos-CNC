@@ -14,11 +14,12 @@ namespace NGC_RS274
 		{
 
 		public:
-			static char validation_params[10];
+			/*static char validation_params[10];
 			static int param_count;
 
 			static int _Param_Entered_Test(s_ngc_block * block, char * params, int param_count);
-			static int _get_word_index(uint8_t word_value);
+			static bool _Param_Entered_Test(s_ngc_block * block, char word);
+			static int _get_word_index(uint8_t word_value);*/
 			static void set_fanuc_decimal_by_parameter(uint8_t word, float * word_value, float factor);
 		};
 	};

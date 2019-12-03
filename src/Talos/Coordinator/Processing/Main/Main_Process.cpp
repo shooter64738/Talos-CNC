@@ -51,7 +51,7 @@ void Talos::Coordinator::Main_Process::initialize()
 
 
 	#ifdef MSVC
-	Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "f4g1y1.\r\nx5\r\n");
+	Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "g68x5.y5.R28.\r\ng0x6\r\n f4g1y1.\r\nx5\r\n");
 	
 	//cutter comp line 1 left comp test
 	//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "p.25 g1 f1 g41 x1 y0\r\n g2 x1.5y0.5 i1.5 j0\r\n g1 x1.5y1.5\r\ng1 x3.5 y1.5\r\n");

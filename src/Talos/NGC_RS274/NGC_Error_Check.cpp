@@ -28,6 +28,7 @@
 #include "_ngc_compensation_enums.h"
 #include "Dialect/_ngc_validate_16_plane_rotation.h"
 #include "Dialect/_ngc_validate_1_motion.h"
+#include "Dialect/_ngc_validate_2_plane_selection.h"
 #include "../Configuration/c_configuration.h"
 #include <math.h>
 
@@ -35,24 +36,17 @@
 //NGC_RS274::Error_Check::Error_Check(){}
 //NGC_RS274::Error_Check::~Error_Check(){}
 
-static e_parsing_errors(*pntr_error_check)(NGC_RS274::Block_View *v_new_block, NGC_RS274::Block_View *v_previous_block);
-
-//e_parsing_errors(*NGC_RS274::Error_Check::dialect_verify[16])(NGC_RS274::Block_View * v_block, e_dialects dialect);
-
 e_parsing_errors NGC_RS274::Error_Check::error_check(NGC_RS274::Block_View *v_new_block, NGC_RS274::Block_View *v_previous_block)
 {
 	e_parsing_errors ret_code = e_parsing_errors::OK;
 
-	//loop through all g code groups and call any dialect verification functions that were assigned
-	/*for (int i = 0; i < COUNT_OF_G_CODE_GROUPS_ARRAY; i++)
-	{
-		if (dialect_verify[i] != NULL)
-			dialect_verify[i](v_new_block, e_dialects::Fanuc);
-	}*/
+	
+	//rotation depends on plane, so set plane first. add all offsets (work, tool, radius) before rotating
+	CHK_CALL_RTN_ERROR_CODE(NGC_RS274::Dialect::Group2::plane_validate(v_new_block, Talos::Confguration::Interpreter::Parameters.dialect));
+	CHK_CALL_RTN_ERROR_CODE(NGC_RS274::Dialect::Group16::rotation_validate(v_new_block, Talos::Confguration::Interpreter::Parameters.dialect));
 
 	//Feed rate mode only needs validation if a motion is going to run. So do not call that here on its own. 
 	CHK_CALL_RTN_ERROR_CODE(NGC_RS274::Dialect::Group1::motion_validate(v_new_block, Talos::Confguration::Interpreter::Parameters.dialect));
-	CHK_CALL_RTN_ERROR_CODE(NGC_RS274::Dialect::Group16::G68_Rotation(v_new_block, Talos::Confguration::Interpreter::Parameters.dialect));
 
 	//if ((ret_code = __error_check_main(v_new_block, v_previous_block)) != e_parsing_errors::OK) return ret_code;
 	//if ((ret_code = __error_check_plane_select(v_new_block, v_previous_block)) != e_parsing_errors::OK) return ret_code;
@@ -87,7 +81,7 @@ e_parsing_errors NGC_RS274::Error_Check::__error_check_main(NGC_RS274::Block_Vie
 	{
 		int gCode = v_new_block->active_view_block->g_group[i];
 
-		pntr_error_check = NULL;
+		//pntr_error_check = NULL;
 
 		switch (i)
 		{
@@ -215,7 +209,7 @@ e_parsing_errors NGC_RS274::Error_Check::__error_check_main(NGC_RS274::Block_Vie
 			if (!v_new_block->active_view_block->block_events.get((int)NGC_RS274::Groups::G::PLANE_ROTATION))
 				continue;
 
-			ReturnValue = NGC_RS274::Dialect::Group16::G68_Rotation(v_new_block, e_dialects::Fanuc);
+			ReturnValue = NGC_RS274::Dialect::Group16::rotation_validate(v_new_block, e_dialects::Fanuc);
 
 			break;
 		}
@@ -224,8 +218,8 @@ e_parsing_errors NGC_RS274::Error_Check::__error_check_main(NGC_RS274::Block_Vie
 			break;
 		}
 
-		if (pntr_error_check != NULL)
-			pntr_error_check(v_new_block, v_previous_block);
+		//if (pntr_error_check != NULL)
+		//	pntr_error_check(v_new_block, v_previous_block);
 		//Do we want to do something here if we have no error check for a group? I guess its ok for now. 
 			//else
 

@@ -9,7 +9,7 @@ e_parsing_errors NGC_RS274::Dialect::Group5::feed_rate_mode_validate(NGC_RS274::
 {
 	//Common feed mode types are checked here. Most feed mode checks
 	//test for F value on the line and/or a valid value being set
-	feed_rate_defined = v_block->get_word_value('F', &feed_rate_value);
+	feed_rate_defined = v_block->get_word_value( 'F', &feed_rate_value);
 
 	switch (*v_block->current_g_codes.Feed_rate_mode)
 	{
@@ -17,9 +17,9 @@ e_parsing_errors NGC_RS274::Dialect::Group5::feed_rate_mode_validate(NGC_RS274::
 	case NGC_RS274::G_codes::FEED_RATE_MINUTES_PER_UNIT_MODE:
 		//G93 resuires F word to be specified EVERY time.
 		CHK_CALL_RTN_ERROR_CODE(__common_feed_define_check(v_block, dialect));
-		//fall through
+		//fall through to check set value
 	case NGC_RS274::G_codes::FEED_RATE_UNITS_PER_MINUTE_MODE:
-		//G94 resuires F word to be specified at any point, but the value must not be <=zero.
+		//G94 requires F word to be specified at any point, but the value must not be <=zero.
 		CHK_CALL_RTN_ERROR_CODE(__common_feed_rate_check(v_block, dialect));
 		break;
 	case NGC_RS274::G_codes::FEED_RATE_UNITS_PER_ROTATION:

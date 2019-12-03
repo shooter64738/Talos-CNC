@@ -226,6 +226,13 @@ e_parsing_errors NGC_RS274::Block_Assignor::_gWord(float Address, s_ngc_block *n
 		new_block->g_group[NGC_RS274::Groups::G::Tool_length_offset] = (iAddress);
 		break;
 
+		case NGC_RS274::G_codes::PLANE_ROTATION_START: //<-G68
+		case NGC_RS274::G_codes::PLANE_ROTATION_CANCEL: //<-G69
+			_ngc_working_group = NGC_RS274::Groups::G::PLANE_ROTATION;
+			//new_block->block_events.set(_group_value_changed(new_block->g_group[NGC_RS274::Groups::G::Motion], iAddress), (int)e_block_event::Tool_length_offset);
+			new_block->g_group[NGC_RS274::Groups::G::PLANE_ROTATION] = (iAddress);
+			break;
+
 		default:
 		return  e_parsing_errors::INTERPRETER_DOES_NOT_UNDERSTAND_G_WORD_VALUE; //<-- -1
 		break;

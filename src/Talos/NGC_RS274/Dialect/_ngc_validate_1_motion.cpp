@@ -17,15 +17,8 @@ e_parsing_errors NGC_RS274::Dialect::Group1::motion_validate(NGC_RS274::Block_Vi
 	bool axis_word_defined = v_block->any_axis_defined(v_block->active_view_block);
 
 	//First check to see if a non modal command, requiring an axis was specified
-	if (v_block->active_view_block->g_code_defined_in_block.get((int)NGC_RS274::Groups::G::NON_MODAL))
+	if (v_block->non_modal_with_axis_in_block(v_block->active_view_block))
 	{
-		//The axis word-using G-codes from group 0 are G10, G28, G30, and G92
-		//Does this non modal require an axis word? If it does we cannot use it for motion
-		if (*v_block->current_g_codes.Non_Modal == NGC_RS274::G_codes::G10_PARAM_WRITE
-			|| *v_block->current_g_codes.Non_Modal == NGC_RS274::G_codes::RETURN_TO_HOME
-			|| *v_block->current_g_codes.Non_Modal == NGC_RS274::G_codes::RETURN_TO_SECONDARY_HOME)
-			//|| *v_block->current_g_codes.Non_Modal == NGC_RS274::G_codes::RETURN_TO_HOME)
-		{
 			//If a motion command was explicitly set here, its an error
 			if (v_block->active_view_block->g_code_defined_in_block.get((int)NGC_RS274::Groups::G::Motion))
 			{
@@ -33,8 +26,11 @@ e_parsing_errors NGC_RS274::Dialect::Group1::motion_validate(NGC_RS274::Block_Vi
 			}
 			//Return here. This is a non motion command, we are just updating a parameter.
 			return e_parsing_errors::OK;
-		}
-		//Anyother non modals can go by here, becasue they do not use axis words.
+	}
+	else if (v_block->axis_rotation_in_block(v_block->active_view_block))
+	{
+		//Return here. We are setting up axis rotation. The axis words are not for motion
+		return e_parsing_errors::OK;
 	}
 
 	//If motion mode is 80 (canceled) and:

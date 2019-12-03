@@ -318,6 +318,14 @@
       <SubType>compile</SubType>
       <Link>Ngc_Rs274\Dialect\_ngc_validate_1_motion.h</Link>
     </Compile>
+    <Compile Include="..\..\..\NGC_RS274\Dialect\_ngc_validate_2_plane_selection.cpp">
+      <SubType>compile</SubType>
+      <Link>Ngc_Rs274\Dialect\_ngc_validate_2_plane_selection.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\NGC_RS274\Dialect\_ngc_validate_2_plane_selection.h">
+      <SubType>compile</SubType>
+      <Link>Ngc_Rs274\Dialect\_ngc_validate_2_plane_selection.h</Link>
+    </Compile>
     <Compile Include="..\..\..\NGC_RS274\Dialect\_ngc_validate_5_feed_rate_mode.cpp">
       <SubType>compile</SubType>
       <Link>Ngc_Rs274\Dialect\_ngc_validate_5_feed_rate_mode.cpp</Link>

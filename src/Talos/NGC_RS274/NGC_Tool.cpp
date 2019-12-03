@@ -30,6 +30,9 @@
 //NGC_RS274::Block_Assignor::Block_Assignor(){}
 //NGC_RS274::Block_Assignor::~Block_Assignor(){}
 
+s_tool_table NGC_RS274::Tool_Control::ToolTable;
+
+
 //int NGC_RS274::Tool_Control::convert_tool_length_offset(int g_code,       //!< g_code being executed (must be G_43 or G_49)
 //	block_pointer block,      //!< pointer to a block of RS274/NGC instructions
 //	setup_pointer settings)   //!< pointer to machine settings                 

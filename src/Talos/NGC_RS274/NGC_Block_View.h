@@ -38,6 +38,7 @@ needed to store in the buffer array. This allows almost twice as much storage sp
 #include "_ngc_axis_struct.h"
 #include "_ngc_arc_struct.h"
 #include "_ngc_plane_struct.h"
+#include "_ngc_point_definition.h"
 
 
 namespace NGC_RS274
@@ -88,6 +89,7 @@ namespace NGC_RS274
 			uint16_t *PATH_CONTROL_MODE;
 			uint16_t *SPINDLE_CONTROL;
 			uint16_t *RECTANGLAR_POLAR_COORDS_SELECTION;
+			uint16_t *Plane_Rotation;
 		};
 
 		struct s_mcodes
@@ -123,9 +125,13 @@ namespace NGC_RS274
 		bool is_word_defined(s_ngc_block * block, char word_value);
 		float * get_word_value(char word_value, s_ngc_block * block);
 		bool get_word_value(char word_value, float * value);
-		
 
+		static bool get_G_value(s_ngc_block * local_block, uint8_t g_group, float * value);
+		static bool non_modal_with_axis_in_block(s_ngc_block * block);
+		static bool axis_rotation_in_block(s_ngc_block * block);
+		static bool axis_rotation_stopped(s_ngc_block * block);
 		static void copy_persisted_data(s_ngc_block * source_block, s_ngc_block * destination_block);
+
 	private:
 		void xset_events(s_ngc_block * current_block, s_ngc_block * previous_block);
 

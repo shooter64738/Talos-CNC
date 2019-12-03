@@ -142,6 +142,8 @@ e_parsing_errors c_ngc_data_handler::ngc_load_block()
 		Talos::Coordinator::Main_Process::host_serial.print_int32((int)return_value);
 		Talos::Coordinator::Main_Process::host_serial.Write(CR);
 	}
+
+	return return_value;
 }
 
 void c_ngc_data_handler::__release(c_ring_buffer <char> * buffer_source)
