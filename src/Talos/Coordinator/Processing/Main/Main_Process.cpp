@@ -15,6 +15,8 @@ then move to their respective modules.
 #include "../Events/extern_events_types.h"
 #include "../../../Motion/Processing/GCode/xc_gcode_buffer.h"
 #include "../../../NGC_RS274/NGC_Line_Processor.h"
+#include "../../../NGC_RS274/NGC_Tool.h"
+#include "../../../NGC_RS274/NGC_Coordinates.h"
 #include "../../../Configuration/c_configuration.h"
 #include "../Data/DataHandlers/c_ngc_data_handler.h";
 
@@ -40,14 +42,21 @@ void Talos::Coordinator::Main_Process::initialize()
 	//Load the initialize block from settings. These values are the 'initial' values of the gcode blocks
 	//that are processed. 
 	Hardware_Abstraction_Layer::Disk::load_initialize_block(&Talos::Motion::NgcBuffer::init_block);
-	//Assign the read,write,update function pointers. These assignments must take place outside the 
+	//Assign the read,write function pointers. These assignments must take place outside the 
 	//block buffer control. The block buffer control system must not know anything about the HAL it
 	//is servicing.
 	Talos::Motion::NgcBuffer::pntr_buffer_block_write = Hardware_Abstraction_Layer::Disk::put_block;
 	Talos::Motion::NgcBuffer::pntr_buffer_block_read = Hardware_Abstraction_Layer::Disk::get_block;
-	Talos::Motion::NgcBuffer::pntr_buffer_block_update = Hardware_Abstraction_Layer::Disk::update_block;
 	//Write the start up block to cache
 	Talos::Motion::NgcBuffer::pntr_buffer_block_write(&Talos::Motion::NgcBuffer::init_block);
+
+	//setup the tool table controller
+	NGC_RS274::Tool_Control::Table::pntr_tool_table_read = Hardware_Abstraction_Layer::Disk::get_tool;
+	NGC_RS274::Tool_Control::Table::pntr_tool_table_write = Hardware_Abstraction_Layer::Disk::put_tool;
+
+	//setup the wcs controller
+	NGC_RS274::Coordinate_Control::WCS::pntr_wcs_read = Hardware_Abstraction_Layer::Disk::get_wcs;
+	NGC_RS274::Coordinate_Control::WCS::pntr_wcs_write = Hardware_Abstraction_Layer::Disk::put_wcs;
 
 
 	#ifdef MSVC

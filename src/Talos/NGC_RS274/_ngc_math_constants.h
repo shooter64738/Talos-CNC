@@ -1,3 +1,4 @@
+#include <math.h>
 
 #ifndef NGC_MATH_CONSTANTS_H
 #define NGC_MATH_CONSTANTS_H
@@ -20,5 +21,17 @@ static void _check_near_zero(float *value)
 		*value = *value < NEAR_ZERO ? 0 : *value;
 
 };
+
+static bool _check_near_one(float *value)
+{
+	if (*value >= NEAR_ONE)
+		return true;
+};
+
+static bool _check_near_int(int *int_value, float *value)
+{
+	*int_value = (int)(*value + .5);
+	return fabs(*int_value - *value) < NEAR_ZERO;
+}
 
 #endif

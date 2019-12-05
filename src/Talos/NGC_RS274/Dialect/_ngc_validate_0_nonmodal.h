@@ -18,6 +18,10 @@ namespace NGC_RS274
 
 		private:
 			static e_parsing_errors _G004(NGC_RS274::Block_View * v_block, e_dialects dialect);
+			static e_parsing_errors _G010(NGC_RS274::Block_View * v_block, e_dialects dialect);
+			static e_parsing_errors _L0010(NGC_RS274::Block_View * v_block, uint16_t param_value, uint16_t L_value);
+			static void _set_tool_value(NGC_RS274::Block_View * v_block, char param_word, uint16_t L_value, float tool_value, uint8_t position_axis_id, float * updating_value);
+			static e_parsing_errors _L0020(NGC_RS274::Block_View * v_block, uint16_t param_value, uint16_t L_value);
 		};
 	};
 };

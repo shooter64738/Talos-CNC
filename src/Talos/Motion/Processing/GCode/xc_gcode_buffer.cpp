@@ -28,7 +28,6 @@
 s_ngc_block Talos::Motion::NgcBuffer::init_block;
 uint8_t(*Talos::Motion::NgcBuffer::pntr_buffer_block_write)(s_ngc_block * write_block);
 uint8_t(*Talos::Motion::NgcBuffer::pntr_buffer_block_read)(s_ngc_block * read_block);
-uint8_t(*Talos::Motion::NgcBuffer::pntr_buffer_block_update)(s_ngc_block * update_block);
 
 uint8_t Talos::Motion::NgcBuffer::initialize()
 {

@@ -11,7 +11,9 @@ e_parsing_errors NGC_RS274::Dialect::Group2::plane_validate(NGC_RS274::Block_Vie
 	switch (dialect)
 	{
 	//need to determine if these dialects also error if plane changes during rotation
-	case e_dialects::Fanuc:
+	case e_dialects::Fanuc_A:
+	case e_dialects::Fanuc_B:
+	case e_dialects::Fanuc_C:
 	case e_dialects::Mach:
 	case e_dialects::Siemens:
 		break;

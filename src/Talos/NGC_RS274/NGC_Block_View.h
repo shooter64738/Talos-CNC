@@ -127,6 +127,8 @@ namespace NGC_RS274
 		bool get_word_value(char word_value, float * value);
 
 		static bool get_G_value(s_ngc_block * local_block, uint8_t g_group, float * value);
+		static uint8_t get_axis_number(char word_value);
+		static char get_axis_letter(uint8_t axis_index);
 		static bool non_modal_with_axis_in_block(s_ngc_block * block);
 		static bool axis_rotation_in_block(s_ngc_block * block);
 		static bool axis_rotation_stopped(s_ngc_block * block);

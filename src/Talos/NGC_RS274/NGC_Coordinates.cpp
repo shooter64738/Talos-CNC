@@ -19,7 +19,7 @@
 */
 
 
-#include "NGC_Tool.h"
+#include "NGC_Coordinates.h"
 #include <string.h>
 #include "../_bit_manipulation.h"
 #include "_ngc_g_Groups.h"
@@ -27,25 +27,22 @@
 #include "NGC_Block_View.h"
 #include "_ngc_errors_interpreter.h"
 
-//NGC_RS274::Block_Assignor::Block_Assignor(){}
-//NGC_RS274::Block_Assignor::~Block_Assignor(){}
+uint8_t(*NGC_RS274::Coordinate_Control::WCS::pntr_wcs_write)(s_wcs * write_tool);
+uint8_t(*NGC_RS274::Coordinate_Control::WCS::pntr_wcs_read)(s_wcs * read_tool);
 
-s_tool_definition NGC_RS274::Tool_Control::Active_Tool;
+s_wcs NGC_RS274::Coordinate_Control::Active_WCS;
 
-uint8_t(*NGC_RS274::Tool_Control::Table::pntr_tool_table_write)(s_tool_definition * write_tool);
-uint8_t(*NGC_RS274::Tool_Control::Table::pntr_tool_table_read)(s_tool_definition * read_tool);
-
-s_tool_definition NGC_RS274::Tool_Control::Table::get(uint16_t tool_id)
+s_wcs NGC_RS274::Coordinate_Control::WCS::get(uint16_t wcs_id)
 {
-	s_tool_definition get_def;
-	get_def.toolno = tool_id;
-	pntr_tool_table_read(&get_def);
+	s_wcs get_def;
+	get_def.wcs_id = wcs_id;
+	pntr_wcs_read(&get_def);
 	return get_def;
 }
 
-uint8_t NGC_RS274::Tool_Control::Table::save(s_tool_definition *put_tool)
+uint8_t NGC_RS274::Coordinate_Control::WCS::save(s_wcs *wcs_object)
 {
-	pntr_tool_table_write(put_tool);
+	pntr_wcs_write(wcs_object);
 	return 0;
 }
 //int NGC_RS274::Tool_Control::convert_tool_length_offset(int g_code,       //!< g_code being executed (must be G_43 or G_49)

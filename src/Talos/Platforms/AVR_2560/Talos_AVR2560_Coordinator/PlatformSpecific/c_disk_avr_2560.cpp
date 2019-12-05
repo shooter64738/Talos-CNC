@@ -23,6 +23,16 @@ static char _cache_file_name[11] ="cache.dat\0";
 static uint32_t _cache_read_position = 0;
 static uint32_t _cache_write_position = 0;
 
+static FIL _tool_file_object;
+static char _tool_file_name[11] ="cache.dat\0";
+static uint32_t _tool_read_position = 0;
+static uint32_t _tool_write_position = 0;
+
+static FIL _wcs_file_object;
+static char _wcs_file_name[11] ="cache.dat\0";
+static uint32_t _wcs_read_position = 0;
+static uint32_t _wcs_write_position = 0;
+
 
 uint8_t Hardware_Abstraction_Layer::Disk::initialize()
 {
@@ -39,6 +49,8 @@ uint8_t Hardware_Abstraction_Layer::Disk::initialize()
 	//Talos::Coordinator::Main_Process::host_serial.print_int32(FatResult);
 	//Talos::Coordinator::Main_Process::host_serial.print_string("\r\n");
 	f_open(&_cache_file_object,_cache_file_name,FA_WRITE|FA_READ|FA_CREATE_NEW);
+	f_open(&_tool_file_object,_tool_file_name,FA_WRITE|FA_READ|FA_CREATE_NEW);
+	f_open(&_wcs_file_object,_wcs_file_name,FA_WRITE|FA_READ|FA_CREATE_NEW);
 
 
 	return (uint8_t) FatResult;
@@ -105,60 +117,127 @@ uint8_t Hardware_Abstraction_Layer::Disk::load_initialize_block(s_ngc_block * in
 
 uint8_t Hardware_Abstraction_Layer::Disk::put_block(s_ngc_block * write_block)
 {
-	char stream[sizeof(s_ngc_block)];
+	const uint16_t rec_size = sizeof(s_ngc_block);
+	char stream[rec_size];
 	
-	memcpy(stream, write_block, sizeof(s_ngc_block));
+	memcpy(stream, write_block, rec_size);
 
 	if (write_block->__station__)
 	{
-		uint32_t position = sizeof(s_ngc_block) * (write_block->__station__ - 1);
+		uint32_t position = rec_size * (write_block->__station__ - 1);
 		//position should now be at the beginning point of the block requested by __station__
 		f_lseek(&_cache_file_object,position);
 	}
 
-	return write(_cache_file_object, stream, e_file_modes::OpenCreate, sizeof(s_ngc_block));
-
-	_cache_write_position =f_tell(&_cache_file_object);
-}
-
-uint8_t Hardware_Abstraction_Layer::Disk::update_block(s_ngc_block * update_block)
-{
-
-	char stream[sizeof(s_ngc_block)];
-	
-	memcpy(stream, update_block, sizeof(s_ngc_block));
-	
-	if (update_block->__station__)
-	{
-		uint32_t position = sizeof(s_ngc_block) * (update_block->__station__ - 1);
-		//position should now be at the beginning point of the block requested by __station__
-		f_lseek(&_cache_file_object,position);
-	}
-
-	return write(_cache_file_object, stream, e_file_modes::OpenCreate, sizeof(s_ngc_block));
+	return write(_cache_file_object, stream, e_file_modes::OpenCreate, rec_size);
 
 	_cache_write_position =f_tell(&_cache_file_object);
 }
 
 uint8_t Hardware_Abstraction_Layer::Disk::get_block(s_ngc_block * read_block)
 {
-	char stream[sizeof(s_ngc_block)];
+	const uint16_t rec_size = sizeof(s_ngc_block);
+	char stream[rec_size];
 
 	//If a station number was sent with the block we need to seek
 	//that block id in the cache. The offset int he cache is simple.
 	if (read_block->__station__)
 	{
-		DWORD position = sizeof(s_ngc_block) * (read_block->__station__ -1);
+		DWORD position = rec_size * (read_block->__station__ -1);
 		//position should now be at the beginning point of the block requested by __station__
 		f_lseek(&_cache_file_object, position);
 	}
 	
-	uint8_t ret_code = read(_cache_file_object, stream, e_file_modes::OpenCreate, sizeof(s_ngc_block));
+	uint8_t ret_code = read(_cache_file_object, stream, e_file_modes::OpenCreate, rec_size);
 	if (ret_code) return ret_code;
 
-	memcpy(read_block, stream, sizeof(s_ngc_block));
+	memcpy(read_block, stream, rec_size);
 
 	_cache_read_position = f_tell(&_cache_file_object);
+	return 0;
+}
+
+uint8_t Hardware_Abstraction_Layer::Disk::put_tool(s_tool_definition * write_tool)
+{
+	const uint16_t rec_size = sizeof(s_tool_definition);
+	char stream[rec_size];
+	
+	memcpy(stream, write_tool, rec_size);
+
+	if (write_tool->toolno)
+	{
+		uint32_t position = rec_size * (write_tool->toolno - 1);
+		//position should now be at the beginning point of the block requested by __station__
+		f_lseek(&_tool_file_object,position);
+	}
+
+	return write(_tool_file_object, stream, e_file_modes::OpenCreate, rec_size);
+
+	_tool_write_position =f_tell(&_tool_file_object);
+}
+
+uint8_t Hardware_Abstraction_Layer::Disk::get_tool(s_tool_definition * read_tool)
+{
+	const uint16_t rec_size = sizeof(s_tool_definition);
+	char stream[rec_size];
+
+	//If a station number was sent with the block we need to seek
+	//that block id in the cache. The offset in the cache is simple.
+	if (read_tool->toolno)
+	{
+		DWORD position = rec_size * (read_tool->toolno -1);
+		//position should now be at the beginning point of the block requested by __station__
+		f_lseek(&_cache_file_object, position);
+	}
+	
+	uint8_t ret_code = read(_tool_file_object, stream, e_file_modes::OpenCreate, rec_size);
+	if (ret_code) return ret_code;
+
+	memcpy(read_tool, stream, rec_size);
+
+	_tool_read_position = f_tell(&_tool_file_object);
+	return 0;
+}
+
+uint8_t Hardware_Abstraction_Layer::Disk::put_wcs(s_wcs * write_wcs)
+{
+	const uint16_t rec_size = sizeof(s_wcs);
+	char stream[rec_size];
+	
+	memcpy(stream, write_wcs, rec_size);
+
+	if (write_wcs->wcs_id)
+	{
+		uint32_t position = rec_size * (write_wcs->wcs_id - 1);
+		//position should now be at the beginning point of the block requested by __station__
+		f_lseek(&_wcs_file_object,position);
+	}
+
+	return write(_wcs_file_object, stream, e_file_modes::OpenCreate, rec_size);
+
+	_wcs_write_position =f_tell(&_wcs_file_object);
+}
+
+uint8_t Hardware_Abstraction_Layer::Disk::get_wcs(s_wcs * read_wcs)
+{
+	const uint16_t rec_size = sizeof(s_wcs);
+	char stream[rec_size];
+
+	//If a station number was sent with the block we need to seek
+	//that block id in the cache. The offset in the cache is simple.
+	if (read_wcs->wcs_id)
+	{
+		DWORD position = rec_size * (read_wcs->wcs_id -1);
+		//position should now be at the beginning point of the block requested by __station__
+		f_lseek(&_wcs_file_object, position);
+	}
+	
+	uint8_t ret_code = read(_wcs_file_object, stream, e_file_modes::OpenCreate, rec_size);
+	if (ret_code) return ret_code;
+
+	memcpy(read_wcs, stream, rec_size);
+
+	_wcs_read_position = f_tell(&_wcs_file_object);
 	return 0;
 }
 

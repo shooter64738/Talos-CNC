@@ -14,7 +14,7 @@ e_parsing_errors NGC_RS274::Dialect::Group16::rotation_validate(NGC_RS274::Block
 	if (v_block->axis_rotation_in_block(v_block->active_view_block))
 	{
 		//Rotation is activating in this block
-		_start(v_block, dialect);
+		_G0068(v_block, dialect);
 		rotation_active = true;
 		return e_parsing_errors::OK;
 	}
@@ -47,7 +47,7 @@ e_parsing_errors NGC_RS274::Dialect::Group16::rotation_validate(NGC_RS274::Block
 	}
 }
 
-e_parsing_errors NGC_RS274::Dialect::Group16::_start(NGC_RS274::Block_View * v_block, e_dialects dialect)
+e_parsing_errors NGC_RS274::Dialect::Group16::_G0068(NGC_RS274::Block_View * v_block, e_dialects dialect)
 {
 	char center_axis_1 = v_block->active_plane.horizontal_axis.name;
 	char center_axis_2 = v_block->active_plane.vertical_axis.name;
@@ -55,7 +55,9 @@ e_parsing_errors NGC_RS274::Dialect::Group16::_start(NGC_RS274::Block_View * v_b
 	switch (dialect)
 	{
 	case e_dialects::Haas:
-	case e_dialects::Fanuc:
+	case e_dialects::Fanuc_A:
+	case e_dialects::Fanuc_B:
+	case e_dialects::Fanuc_C:
 	{
 		//defaulted to x/y/z already
 		break;

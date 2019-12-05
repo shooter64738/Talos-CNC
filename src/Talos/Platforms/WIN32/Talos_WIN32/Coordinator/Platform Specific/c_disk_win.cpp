@@ -12,13 +12,17 @@
 #include "../../../../../NGC_RS274/_ngc_g_Groups.h"
 #include "../../../../../NGC_RS274/_ngc_m_Groups.h"
 #include "../../../../../NGC_RS274/_ngc_m_Groups.h"
-#include<iostream>
-#include<fstream>
+
 using namespace std;
 static std::fstream _cache_file_object;
 static char _cache_file_name[11] = "cache.dat";
 static uint32_t _cache_read_position = 0;
 static uint32_t _cache_write_position = 0;
+
+static std::fstream _tool_file_object;
+static char _tool_file_name[11] = "tool.dat";
+static uint32_t _tool_read_position = 0;
+static uint32_t _tool_write_position = 0;
 
 uint8_t Hardware_Abstraction_Layer::Disk::initialize()
 {
@@ -27,7 +31,16 @@ uint8_t Hardware_Abstraction_Layer::Disk::initialize()
 	_cache_file_object.open(_cache_file_name, std::fstream::in | std::fstream::out | std::fstream::binary);
 	
 	if (!_cache_file_object.is_open()) {
-		cout << "Cannot open file!" << endl;
+		cout << "Cannot open cache file!" << endl;
+		return 1;
+	}
+
+	_tool_file_object = fstream(_cache_file_name, ios::in | ios::out | ios::app);
+	_tool_file_object.close();
+	_tool_file_object.open(_cache_file_name, std::fstream::in | std::fstream::out | std::fstream::binary);
+
+	if (!_tool_file_object.is_open()) {
+		cout << "Cannot open tool file!" << endl;
 		return 1;
 	}
 	return 0;
@@ -76,70 +89,131 @@ uint8_t Hardware_Abstraction_Layer::Disk::load_initialize_block(s_ngc_block * in
 
 uint8_t Hardware_Abstraction_Layer::Disk::put_block(s_ngc_block * write_block)
 {
-	char stream[sizeof(s_ngc_block)];
-	memcpy(stream, write_block, sizeof(s_ngc_block));
+	const uint16_t rec_size = sizeof(s_ngc_block);
+
+	char stream[rec_size];
+	memcpy(stream, write_block, rec_size);
 	if (write_block->__station__)
 	{
-		uint32_t position = sizeof(s_ngc_block) * (write_block->__station__ - 1);
+		uint32_t position = rec_size * (write_block->__station__ - 1);
 		//position should now be at the beginning point of the block requested by __station__
 		_cache_file_object.seekp(position, SEEK_SET);
 	}
-	write(NULL, stream, e_file_modes::OpenCreate, sizeof(s_ngc_block));
-	_cache_write_position = _cache_file_object.tellp();
-	return 1;
-}
-
-uint8_t Hardware_Abstraction_Layer::Disk::update_block(s_ngc_block * update_block)
-{
-	char stream[sizeof(s_ngc_block)];
-	memcpy(stream, update_block, sizeof(s_ngc_block));
-
-	//If a station number was sent with the block we need to seek
-	//that block id in the cache. The offset in the cache is simple.
-	if (update_block->__station__)
-	{
-		uint32_t position = sizeof(s_ngc_block) * (update_block->__station__ - 1);
-		//position should now be at the beginning point of the block requested by __station__
-		_cache_file_object.seekp(position, SEEK_SET);
-	}
-
-	write(NULL, stream, e_file_modes::OpenCreate, sizeof(s_ngc_block));
+	write(NULL, stream, e_file_modes::OpenCreate, rec_size, _cache_file_object);
 	_cache_write_position = _cache_file_object.tellp();
 	return 1;
 }
 
 uint8_t Hardware_Abstraction_Layer::Disk::get_block(s_ngc_block * read_block)
 {
-	char stream[sizeof(s_ngc_block)];
+	const uint16_t rec_size = sizeof(s_ngc_block);
+
+	char stream[rec_size];
 
 	//If a station number was sent with the block we need to seek
 	//that block id in the cache. The offset in the cache is simple.
 	if (read_block->__station__)
 	{
-		uint32_t position = sizeof(s_ngc_block) * (read_block->__station__ - 1);
+		uint32_t position = rec_size * (read_block->__station__ - 1);
 		//position should now be at the beginning point of the block requested by __station__
 		_cache_file_object.seekp(position,SEEK_SET);
 	}
 
-	read(NULL, stream, e_file_modes::OpenCreate, sizeof(s_ngc_block));
+	read(NULL, stream, e_file_modes::OpenCreate, rec_size, _cache_file_object);
 	
-	memcpy(read_block, stream, sizeof(s_ngc_block));
+	memcpy(read_block, stream, rec_size);
 	_cache_read_position = _cache_file_object.tellp();
 	return 1;
 }
 
-uint8_t Hardware_Abstraction_Layer::Disk::write(const char * filename, char * buffer, e_file_modes mode, uint16_t size)
+uint8_t Hardware_Abstraction_Layer::Disk::put_tool(s_tool_definition * write_tool)
 {
-	_cache_file_object.write(buffer, size);
-	_cache_file_object.flush();
+	const uint16_t rec_size = sizeof(s_tool_definition);
+
+	char stream[rec_size];
+	memcpy(stream, write_tool, rec_size);
+	if (write_tool->toolno)
+	{
+		uint32_t position = rec_size * (write_tool->toolno - 1);
+		//position should now be at the beginning point of the block requested by __station__
+		_cache_file_object.seekp(position, SEEK_SET);
+	}
+	write(NULL, stream, e_file_modes::OpenCreate, rec_size, _cache_file_object);
+	_cache_write_position = _cache_file_object.tellp();
+	return 1;
+}
+
+uint8_t Hardware_Abstraction_Layer::Disk::get_tool(s_tool_definition * read_tool)
+{
+	const uint16_t rec_size = sizeof(s_tool_definition);
+	char stream[rec_size];
+
+	//If a station number was sent with the block we need to seek
+	//that block id in the cache. The offset in the cache is simple.
+	if (read_tool->toolno)
+	{
+		uint32_t position = rec_size * (read_tool->toolno - 1);
+		//position should now be at the beginning point of the block requested by __station__
+		_tool_file_object.seekp(position, SEEK_SET);
+	}
+
+	read(NULL, stream, e_file_modes::OpenCreate, rec_size, _cache_file_object);
+
+	memcpy(read_tool, stream, rec_size);
+	_tool_read_position = _tool_file_object.tellp();
+	return 1;
+}
+
+uint8_t Hardware_Abstraction_Layer::Disk::put_wcs(s_wcs * write_wcs)
+{
+	const uint16_t rec_size = sizeof(s_wcs);
+
+	char stream[rec_size];
+	memcpy(stream, write_wcs, rec_size);
+	if (write_wcs->wcs_id)
+	{
+		uint32_t position = rec_size * (write_wcs->wcs_id - 1);
+		//position should now be at the beginning point of the block requested by __station__
+		_cache_file_object.seekp(position, SEEK_SET);
+	}
+	write(NULL, stream, e_file_modes::OpenCreate, rec_size, _cache_file_object);
+	_cache_write_position = _cache_file_object.tellp();
+	return 1;
+}
+
+uint8_t Hardware_Abstraction_Layer::Disk::get_wcs(s_wcs * read_wcs)
+{
+	const uint16_t rec_size = sizeof(s_ngc_block);
+	char stream[rec_size];
+
+	//If a station number was sent with the block we need to seek
+	//that block id in the cache. The offset in the cache is simple.
+	if (read_wcs->wcs_id)
+	{
+		uint32_t position = rec_size * (read_wcs->wcs_id - 1);
+		//position should now be at the beginning point of the block requested by __station__
+		_tool_file_object.seekp(position, SEEK_SET);
+	}
+
+	read(NULL, stream, e_file_modes::OpenCreate, rec_size, _cache_file_object);
+
+	memcpy(read_wcs, stream, rec_size);
+	_tool_read_position = _tool_file_object.tellp();
+	return 1;
+}
+
+uint8_t Hardware_Abstraction_Layer::Disk::write(const char * filename, char * buffer, e_file_modes mode, uint16_t size, std::fstream &stream_object)
+{
+	stream_object.write(buffer, size);
+	stream_object.flush();
 	
 	
 	return 0;
 }
 
-uint8_t Hardware_Abstraction_Layer::Disk::read(const char * filename, char * buffer, e_file_modes mode, uint16_t size)
+uint8_t Hardware_Abstraction_Layer::Disk::read(const char * filename, char * buffer, e_file_modes mode, uint16_t size, std::fstream &stream_object)
 {
-	_cache_file_object.read(buffer, size);
+	stream_object.read(buffer, size);
 	
 
 	return 0;

@@ -22,7 +22,7 @@
 s_interpreter_configuration Talos::Confguration::Interpreter::Parameters;
 uint8_t Talos::Confguration::Interpreter::initialize()
 {
-	Talos::Confguration::Interpreter::Parameters.dialect = e_dialects::Fanuc;
+	Talos::Confguration::Interpreter::Parameters.dialect = e_dialects::Fanuc_A;
 	//Talos::Confguration::Interpreter::Parameters.flags.set((int)e_config_bit_flags::DecimalPointInput);
 	return 0;
 }

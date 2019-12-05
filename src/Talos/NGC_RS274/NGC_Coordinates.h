@@ -19,30 +19,31 @@
 */
 
 
-#ifndef NGC_TOOL_CONTROL_H
-#define NGC_TOOL_CONTROL_H
+#ifndef NGC_COORDINATE_CONTROL_H
+#define NGC_COORDINATE_CONTROL_H
 
 #include <stdint.h>
 #include "_ngc_errors_interpreter.h"
-#include "_ngc_tool_struct.h"
+#include "_ngc_coordinate_struct.h"
 
 namespace NGC_RS274
 {
-	class Tool_Control
+	class Coordinate_Control
 	{
+		
 	public:
-		class Table
+		class WCS
 		{
 		public:
-			static s_tool_definition get(uint16_t tool_id);
-			static uint8_t save(s_tool_definition * put_def);
+			static s_wcs get(uint16_t tool_id);
+			static uint8_t save(s_wcs * put_def);
 
-			static uint8_t(*pntr_tool_table_write)(s_tool_definition * write_tool);
-			static uint8_t(*pntr_tool_table_read)(s_tool_definition * read_tool);
+			static uint8_t(*pntr_wcs_write)(s_wcs * write_wcs);
+			static uint8_t(*pntr_wcs_read)(s_wcs * read_wcs);
 		};
 		//Block_Assignor();
 		//~Block_Assignor();
-		static s_tool_definition Active_Tool;
+		static s_wcs Active_WCS;
 
 	private:
 

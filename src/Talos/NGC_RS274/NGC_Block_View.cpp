@@ -240,7 +240,7 @@ void NGC_RS274::Block_View::__assign_plane(s_ngc_block *block)
 	}
 	break;
 	}
-	Tool_Control::ToolTable.offset = this->active_plane;
+	
 }
 
 void NGC_RS274::Block_View::__assign_persisted(s_ngc_block *block)
@@ -506,6 +506,48 @@ bool NGC_RS274::Block_View::get_G_value(s_ngc_block * local_block, uint8_t g_gro
 {
 	*value = local_block->g_group[g_group];
 	return  (local_block->g_code_defined_in_block.get(g_group));
+}
+
+uint8_t NGC_RS274::Block_View::get_axis_number(char axis_letter)
+{
+	switch (axis_letter)
+	{
+	case 'X':
+	case 'Y':
+	case 'Z':
+		return axis_letter - 'X';
+	case 'A':
+	case 'B':
+	case 'C':
+		return axis_letter - 'A';
+	case 'U':
+	case 'V':
+	case 'W':
+		return axis_letter - 'U';
+	default:
+		break;
+	}
+}
+
+char NGC_RS274::Block_View::get_axis_letter(uint8_t axis_index)
+{
+	switch (axis_index)
+	{
+	case 0:
+	case 1:
+	case 2:
+		return 'X' + axis_index;
+	case 3:
+	case 4:
+	case 5:
+		return 'A' + axis_index;
+	case 6:
+	case 7:
+	case 8:
+		return 'U' + axis_index;
+	default:
+		break;
+	}
 }
 
 bool NGC_RS274::Block_View::non_modal_with_axis_in_block(s_ngc_block * block)

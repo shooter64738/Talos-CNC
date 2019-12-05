@@ -298,6 +298,10 @@
       <SubType>compile</SubType>
       <Link>Ngc_Rs274\Dialect\_ngc_dialect_validate.h</Link>
     </Compile>
+    <Compile Include="..\..\..\NGC_RS274\Dialect\_ngc_validate_0_nonmodal.cpp">
+      <SubType>compile</SubType>
+      <Link>Ngc_Rs274\Dialect\_ngc_validate_0_nonmodal.cpp</Link>
+    </Compile>
     <Compile Include="..\..\..\NGC_RS274\Dialect\_ngc_validate_0_nonmodal.h">
       <SubType>compile</SubType>
       <Link>Ngc_Rs274\Dialect\_ngc_validate_0_nonmodal.h</Link>
@@ -390,6 +394,14 @@
       <SubType>compile</SubType>
       <Link>Ngc_Rs274\NGC_Comp.h</Link>
     </Compile>
+    <Compile Include="..\..\..\NGC_RS274\NGC_Coordinates.cpp">
+      <SubType>compile</SubType>
+      <Link>Ngc_Rs274\NGC_Coordinates.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\NGC_RS274\NGC_Coordinates.h">
+      <SubType>compile</SubType>
+      <Link>Ngc_Rs274\NGC_Coordinates.h</Link>
+    </Compile>
     <Compile Include="..\..\..\NGC_RS274\NGC_Errors.h">
       <SubType>compile</SubType>
       <Link>Ngc_Rs274\NGC_Errors.h</Link>
@@ -426,6 +438,14 @@
       <SubType>compile</SubType>
       <Link>Ngc_Rs274\NGC_Set_Targets.h</Link>
     </Compile>
+    <Compile Include="..\..\..\NGC_RS274\NGC_Tool.cpp">
+      <SubType>compile</SubType>
+      <Link>Ngc_Rs274\MachineSpecific\NGC_Tool.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\NGC_RS274\NGC_Tool.h">
+      <SubType>compile</SubType>
+      <Link>Ngc_Rs274\MachineSpecific\NGC_Tool.h</Link>
+    </Compile>
     <Compile Include="..\..\..\NGC_RS274\_ngc_arc_struct.h">
       <SubType>compile</SubType>
       <Link>Ngc_Rs274\_ngc_arc_struct.h</Link>
@@ -445,6 +465,10 @@
     <Compile Include="..\..\..\NGC_RS274\_ngc_compensation_enums.h">
       <SubType>compile</SubType>
       <Link>Ngc_Rs274\_ngc_compensation_enums.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\NGC_RS274\_ngc_coordinate_struct.h">
+      <SubType>compile</SubType>
+      <Link>Ngc_Rs274\_ngc_coordinate_struct.h</Link>
     </Compile>
     <Compile Include="..\..\..\NGC_RS274\_ngc_defines.h">
       <SubType>compile</SubType>

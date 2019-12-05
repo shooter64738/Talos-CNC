@@ -27,6 +27,7 @@
 #include "NGC_Comp.h"
 #include "_ngc_compensation_enums.h"
 #include "Dialect/_ngc_validate_16_plane_rotation.h"
+#include "Dialect/_ngc_validate_0_nonmodal.h"
 #include "Dialect/_ngc_validate_1_motion.h"
 #include "Dialect/_ngc_validate_2_plane_selection.h"
 #include "../Configuration/c_configuration.h"
@@ -41,7 +42,10 @@ e_parsing_errors NGC_RS274::Error_Check::error_check(NGC_RS274::Block_View *v_ne
 	e_parsing_errors ret_code = e_parsing_errors::OK;
 
 	
+	//tool select should happen before non modals since it will effect non modals. 
+
 	//rotation depends on plane, so set plane first. add all offsets (work, tool, radius) before rotating
+	CHK_CALL_RTN_ERROR_CODE(NGC_RS274::Dialect::Group0::non_modal_validate(v_new_block, Talos::Confguration::Interpreter::Parameters.dialect));
 	CHK_CALL_RTN_ERROR_CODE(NGC_RS274::Dialect::Group2::plane_validate(v_new_block, Talos::Confguration::Interpreter::Parameters.dialect));
 	CHK_CALL_RTN_ERROR_CODE(NGC_RS274::Dialect::Group16::rotation_validate(v_new_block, Talos::Confguration::Interpreter::Parameters.dialect));
 
@@ -209,7 +213,7 @@ e_parsing_errors NGC_RS274::Error_Check::__error_check_main(NGC_RS274::Block_Vie
 			if (!v_new_block->active_view_block->block_events.get((int)NGC_RS274::Groups::G::PLANE_ROTATION))
 				continue;
 
-			ReturnValue = NGC_RS274::Dialect::Group16::rotation_validate(v_new_block, e_dialects::Fanuc);
+			ReturnValue = NGC_RS274::Dialect::Group16::rotation_validate(v_new_block, e_dialects::Fanuc_A);
 
 			break;
 		}
@@ -429,11 +433,11 @@ e_parsing_errors NGC_RS274::Error_Check::__error_check_non_modal(NGC_RS274::Bloc
 			//The P value should be defined AND be an integer between 0 and 255
 			if (!v_new_block->get_word_value('P', &iAddress))
 			{
-				return  e_parsing_errors::TOOL_OFFSET_SETTING_MISSING_P_VALUE;
+				return  e_parsing_errors::TOOL_OFFSET_SETTING_MISSING_PARAM_VALUE;
 			}
 			if (iAddress < 0 || iAddress>255)
 			{
-				return  e_parsing_errors::TOOL_OFFSET_SETTING_P_VALUE_OUT_OF_RANGE;
+				return  e_parsing_errors::TOOL_OFFSET_SETTING_PARAM_VALUE_OUT_OF_RANGE;
 			}
 			if (!v_new_block->any_axis_defined(v_new_block->active_view_block))
 			{
@@ -452,7 +456,7 @@ e_parsing_errors NGC_RS274::Error_Check::__error_check_non_modal(NGC_RS274::Bloc
 			}
 			if (iAddress < 0 || iAddress>9)
 			{
-				return  e_parsing_errors::COORDINATE_SETTING_P_VALUE_OUT_OF_RANGE;
+				return  e_parsing_errors::COORDINATE_SETTING_PARAM_VALUE_OUT_OF_RANGE;
 			}
 			if (!v_new_block->any_axis_defined(v_new_block->active_view_block))
 			{

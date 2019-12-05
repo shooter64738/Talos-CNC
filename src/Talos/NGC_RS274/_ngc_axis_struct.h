@@ -1,4 +1,5 @@
 #include <stdint.h>
+#include "_ngc_block_struct.h"
 
 #ifndef NGC_AXIS_STRUCT_H
 #define NGC_AXIS_STRUCT_H

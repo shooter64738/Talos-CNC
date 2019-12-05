@@ -11,13 +11,15 @@
 #include <stdint.h>
 #include "../../../../records_def.h"
 #include "../../../../NGC_RS274/_ngc_block_struct.h"
+#include "../../../../NGC_RS274/_ngc_tool_struct.h"
+#include "../../../../NGC_RS274/_ngc_coordinate_struct.h"
 #include "disk_support/ff.h"
 
 namespace Hardware_Abstraction_Layer
 {
 	class Disk
 	{
-	public:
+		public:
 		enum class e_file_modes
 		{
 			OpenCreate = 0,
@@ -36,9 +38,16 @@ namespace Hardware_Abstraction_Layer
 		static uint8_t initialize();
 		static uint8_t load_configuration();
 		static uint8_t load_initialize_block(s_ngc_block * initial_block );
+		
 		static uint8_t put_block(s_ngc_block * write_block);
 		static uint8_t get_block(s_ngc_block * read_block);
-		static uint8_t update_block(s_ngc_block * update_block);
+		
+		static uint8_t put_tool(s_tool_definition * write_tool);
+		static uint8_t get_tool(s_tool_definition * read_tool);
+
+		static uint8_t put_wcs(s_wcs * write_wcs);
+		static uint8_t get_wcs(s_wcs * read_wcs);
+
 		static uint8_t write(FIL file, char * buffer, e_file_modes mode, uint16_t size);
 		static uint8_t read(FIL file, char * buffer, e_file_modes mode, uint16_t size);
 		protected:

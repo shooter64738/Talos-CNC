@@ -260,6 +260,18 @@
     <ClInclude Include="..\..\..\..\NGC_RS274\Dialect\_ngc_validate_2_plane_selection.h">
       <Filter>Ngc_Rs274\Dialect</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\..\NGC_RS274\_ngc_offset_type_enums.h">
+      <Filter>Ngc_Rs274</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\NGC_RS274\_ngc_offset_struct.h">
+      <Filter>Ngc_Rs274</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\NGC_RS274\NGC_Coordinates.h">
+      <Filter>Ngc_Rs274</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\NGC_RS274\_ngc_coordinate_struct.h">
+      <Filter>Ngc_Rs274</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\..\Coordinator\coordinator_main.cpp">
@@ -363,6 +375,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\..\NGC_RS274\Dialect\_ngc_validate_2_plane_selection.cpp">
       <Filter>Ngc_Rs274\Dialect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\NGC_RS274\NGC_Coordinates.cpp">
+      <Filter>Ngc_Rs274</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

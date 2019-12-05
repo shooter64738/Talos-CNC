@@ -53,7 +53,6 @@ namespace Talos
 			*/
 			static uint8_t(*pntr_buffer_block_write)(s_ngc_block * write_block);
 			static uint8_t(*pntr_buffer_block_read)(s_ngc_block * read_block);
-			static uint8_t(*pntr_buffer_block_update)(s_ngc_block * update_block);
 			protected:
 			private:
 		}; //c_buffer

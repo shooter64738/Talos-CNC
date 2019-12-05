@@ -19,12 +19,16 @@
     <ClInclude Include="..\..\..\..\NGC_RS274\Dialect\_ngc_validate_1_motion.h" />
     <ClInclude Include="..\..\..\..\NGC_RS274\Dialect\_ngc_validate_2_plane_selection.h" />
     <ClInclude Include="..\..\..\..\NGC_RS274\Dialect\_ngc_validate_5_feed_rate_mode.h" />
+    <ClInclude Include="..\..\..\..\NGC_RS274\NGC_Coordinates.h" />
     <ClInclude Include="..\..\..\..\NGC_RS274\NGC_Set_Targets.h" />
     <ClInclude Include="..\..\..\..\NGC_RS274\NGC_Tool.h" />
     <ClInclude Include="..\..\..\..\NGC_RS274\_ngc_arc_struct.h" />
     <ClInclude Include="..\..\..\..\NGC_RS274\_ngc_axis_struct.h" />
+    <ClInclude Include="..\..\..\..\NGC_RS274\_ngc_coordinate_struct.h" />
     <ClInclude Include="..\..\..\..\NGC_RS274\_ngc_dialect_enum.h" />
     <ClInclude Include="..\..\..\..\NGC_RS274\_ngc_math_constants.h" />
+    <ClInclude Include="..\..\..\..\NGC_RS274\_ngc_offset_struct.h" />
+    <ClInclude Include="..\..\..\..\NGC_RS274\_ngc_offset_type_enums.h" />
     <ClInclude Include="..\..\..\..\NGC_RS274\_ngc_plane_struct.h" />
     <ClInclude Include="..\..\..\..\NGC_RS274\_ngc_point_definition.h" />
     <ClInclude Include="..\..\..\..\NGC_RS274\_ngc_tool_struct.h" />
@@ -108,6 +112,7 @@
     <ClCompile Include="..\..\..\..\NGC_RS274\NGC_Block_Assignor.cpp" />
     <ClCompile Include="..\..\..\..\NGC_RS274\NGC_Block_View.cpp" />
     <ClCompile Include="..\..\..\..\NGC_RS274\NGC_Comp.cpp" />
+    <ClCompile Include="..\..\..\..\NGC_RS274\NGC_Coordinates.cpp" />
     <ClCompile Include="..\..\..\..\NGC_RS274\NGC_Error_Check.cpp" />
     <ClCompile Include="..\..\..\..\NGC_RS274\NGC_Line_Processor.cpp" />
     <ClCompile Include="..\..\..\..\NGC_RS274\NGC_Parameters.cpp" />

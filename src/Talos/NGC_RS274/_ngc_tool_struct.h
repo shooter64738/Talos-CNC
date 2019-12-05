@@ -1,13 +1,13 @@
 #include <stdint.h>
-#include "_ngc_plane_struct.h"
+
 
 #ifndef NGC_TOOL_STRUCT_H
 #define NGC_TOOL_STRUCT_H
-
-struct s_tool_table
+#include "_ngc_offset_struct.h"
+struct s_tool_definition
 {
 	int toolno;
-	s_plane_axis offset;
+	s_axis_offsets offset;
 	double diameter;
 	double frontangle;
 	double backangle;

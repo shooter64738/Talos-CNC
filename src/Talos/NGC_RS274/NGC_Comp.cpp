@@ -152,7 +152,7 @@ e_compensation_errors NGC_RS274::Compensation::__continuous_motion(NGC_RS274::Bl
 		//insert arc block using the v_new_block_station id.
 		//incriment v_new_block_station_id so it has a new unique value.
 		arc_block.__station__ = v_new_block->active_view_block->__station__++;
-		Talos::Motion::NgcBuffer::pntr_buffer_block_update(&arc_block);
+		Talos::Motion::NgcBuffer::pntr_buffer_block_write(&arc_block);
 		//since we are inserting an arc, int2 is actually the new end point for current path.
 		int1 = int2;
 	}
@@ -226,7 +226,7 @@ uint8_t NGC_RS274::Compensation::__update_locked_block(s_point new_target, uint3
 	*v_locked_block.active_plane.vertical_axis.value = new_target.Y;
 
 	//put block back in cache.
-	Talos::Motion::NgcBuffer::pntr_buffer_block_update(v_locked_block.active_view_block);
+	Talos::Motion::NgcBuffer::pntr_buffer_block_write(v_locked_block.active_view_block);
 
 	return 0;
 }
