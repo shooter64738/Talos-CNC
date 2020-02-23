@@ -24,7 +24,6 @@
 
 #include <stdint.h>
 #include "../../../coordinator_hardware_def.h"
-#include "../../../../records_def.h"
 
 class c_system_events
 {

@@ -9,8 +9,7 @@
 #ifndef __C_SYSTEM_H__
 #define __C_SYSTEM_H__
 #include <stdint.h>
-#include "..\physical_machine_parameters.h"
-#include "..\records_def.h"
+#include "../../physical_machine_parameters.h"
 
 
 //#define STEP_CONTROL_EXECUTE_HOLD         bit(1)

@@ -24,7 +24,6 @@
 #define __C_SYSTEM_EVENTS_H__
 
 #include <stdint.h>
-#include "..\records_def.h"
 #include "..\Common\Serial\c_Serial.h"
 namespace Events
 {

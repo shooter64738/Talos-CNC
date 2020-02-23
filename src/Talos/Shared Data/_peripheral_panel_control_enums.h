@@ -21,9 +21,10 @@
 
 #ifndef RECORDS_DEF_H
 #define RECORDS_DEF_H
-#include "physical_machine_parameters.h"
-#include "NGC_RS274/_ngc_defines.h"
-#include "_bit_manipulation.h"
+#include <stdint.h>
+#include "../physical_machine_parameters.h"
+#include "../NGC_RS274/_ngc_defines.h"
+#include "../_bit_manipulation.h"
 #include <string.h>
 
 namespace BinaryRecords

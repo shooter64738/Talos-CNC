@@ -5,12 +5,11 @@
 * Author: jeff_d
 */
 #include <stdint.h>
-
+#include "../../../../../Motion/motion_hardware_def.h"
 
 #ifdef MSVC
 
 #include <stdint.h>
-#include "..\..\..\..\records_def.h"
 #ifndef __C_MOTIONCORE_WIN_SPINDLE_H__
 #define __C_MOTIONCORE_WIN_SPINDLE_H__
 

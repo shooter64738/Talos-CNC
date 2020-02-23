@@ -18,7 +18,7 @@
 *  You should have received a copy of the GNU General Public License
 *  along with Talos.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "..\..\..\..\hardware_def.h"
+#include "../../../../../Motion/motion_hardware_def.h"
 #ifdef MSVC//<--This will stop the multiple ISR definition error
 
 #ifndef __C_CORE_WIN_H__

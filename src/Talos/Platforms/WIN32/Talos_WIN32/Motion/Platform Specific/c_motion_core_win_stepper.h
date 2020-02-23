@@ -4,9 +4,9 @@
 * Created: 3/7/2019 10:22:11 AM
 * Author: jeff_d
 */
-#include "..\..\..\..\hardware_def.h"
-#include "..\..\..\..\Motion_Core\c_motion_core.h"
-#include "..\..\..\..\Motion_Core\c_interpollation_hardware.h"
+#include "../../../../../Motion/motion_hardware_def.h"
+#include "../../../../../Motion/Core/c_motion_core.h"
+#include "../../../../../Motion/Core/c_interpollation_hardware.h"
 #ifdef MSVC
 #include <thread>
 #ifndef __C_MOTION_CORE_WIN_STEPPER_H__

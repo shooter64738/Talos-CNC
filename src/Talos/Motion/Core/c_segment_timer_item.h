@@ -1,6 +1,6 @@
 #include <stdint.h>
 #include "c_segment_timer_bresenham.h"
-#include "..\records_def.h"
+#include "../../_bit_flag_control.h"
 namespace Motion_Core
 {
 	namespace Segment
@@ -24,7 +24,7 @@ namespace Motion_Core
 				//BinaryRecords::e_block_flag flag;
 
 				uint32_t sequence; //Increments as each gcode block is loaded. May match line number, but not always.
-				BinaryRecords::s_bit_flag_controller<uint32_t> flag;
+				s_bit_flag_controller<uint32_t> flag;
 			public:
 				Timer_Item();
 				~Timer_Item();

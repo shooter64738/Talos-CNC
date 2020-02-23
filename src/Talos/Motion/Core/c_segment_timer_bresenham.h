@@ -1,7 +1,8 @@
 #include <stdint.h>
 #include <stddef.h>
 #include "c_motion_core.h"
-#include "..\physical_machine_parameters.h"
+
+#include "../../physical_machine_parameters.h"
 namespace Motion_Core
 {
 	namespace Segment

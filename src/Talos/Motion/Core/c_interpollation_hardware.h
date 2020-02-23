@@ -2,7 +2,7 @@
 #include "c_segment_timer_bresenham.h"
 #include "c_segment_timer_item.h"
 #include "c_motion_core.h"
-#include "..\records_def.h"
+#include "../../Shared Data/_peripheral_panel_control_enums.h"
 
 namespace Motion_Core
 {

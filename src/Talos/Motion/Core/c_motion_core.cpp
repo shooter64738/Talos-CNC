@@ -1,5 +1,5 @@
 #include "c_motion_core.h"
-#include "..\bit_manipulation.h"
+#include "../../_bit_manipulation.h"
 
 BinaryRecords::s_motion_control_settings Motion_Core::Settings::_Settings;
 

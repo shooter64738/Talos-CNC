@@ -6,8 +6,9 @@
 */
 
 #include "c_motion_core_win_spindle.h"
-#include "..\..\..\..\physical_machine_parameters.h"
-#include "..\..\..\..\Motion_Core\c_interpollation_hardware.h"
+#include "../../../../../physical_machine_parameters.h"
+#include "../../../../../Motion/Core/c_interpollation_hardware.h"
+#include "../../../../../Shared Data/_peripheral_panel_control_enums.h"
 
 #define TIME_OUT_TIMER_CLOCK TC_CMR_TCCLKS_TIMER_CLOCK4
 #define UPDATE_INTERVAL_TIMER_CLOCK TC_CMR_TCCLKS_TIMER_CLOCK1

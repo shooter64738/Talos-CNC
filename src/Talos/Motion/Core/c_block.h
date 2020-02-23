@@ -1,8 +1,8 @@
 #ifndef __C_BLOCK_ITEM
 #define __C_BLOCK_ITEM
 #include <stdint.h>
-#include "..\records_def.h"
-#include "..\physical_machine_parameters.h"
+
+#include "../../physical_machine_parameters.h"
 
 namespace Motion_Core
 {

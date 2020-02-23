@@ -6,7 +6,7 @@
 */
 
 #include "c_motion_core_win_inputs.h"
-#include "..\..\..\..\physical_machine_parameters.h"
+#include "../../../../../physical_machine_parameters.h"
 
 volatile uint32_t reads;
 uint8_t Hardware_Abstraction_Layer::MotionCore::Inputs::Driver_Alarms = 0;

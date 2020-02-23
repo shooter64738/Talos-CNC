@@ -2,9 +2,8 @@
 #include <math.h>
 #include <stdint.h>
 #include <stddef.h>
-#include "..\records_def.h"
-//#include "..\hardware_def.h"
-#include "..\bit_manipulation.h"
+#include "../../_bit_manipulation.h"
+#include "../../Shared Data/_peripheral_panel_control_enums.h"
 
 
 //#define MOTION_RECORD 1
