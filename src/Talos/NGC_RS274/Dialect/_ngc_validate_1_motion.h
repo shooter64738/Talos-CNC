@@ -32,6 +32,10 @@ namespace NGC_RS274
 			static e_parsing_errors _G088(NGC_RS274::Block_View * v_block, e_dialects dialect);
 			static e_parsing_errors _G089(NGC_RS274::Block_View * v_block, e_dialects dialect);
 
+			static e_parsing_errors __error_check_arc(NGC_RS274::Block_View * v_new_block);
+			static e_parsing_errors ____error_check_center_format_arc(NGC_RS274::Block_View * v_new_block);
+			static e_parsing_errors ____error_check_radius_format_arc(NGC_RS274::Block_View * v_new_block);
+
 		};
 	};
 };

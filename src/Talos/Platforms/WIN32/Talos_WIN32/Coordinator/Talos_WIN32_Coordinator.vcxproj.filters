@@ -245,9 +245,6 @@
     <ClInclude Include="..\..\..\..\NGC_RS274\Dialect\_ngc_validate_5_feed_rate_mode.h">
       <Filter>Ngc_Rs274\Dialect</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Configuration\_interp_config_struct.h">
-      <Filter>Configuration</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\..\Motion\Processing\GCode\xc_gcode_buffer.h">
       <Filter>Motion\Processing\GCode</Filter>
     </ClInclude>
@@ -260,9 +257,6 @@
     <ClInclude Include="..\..\..\..\NGC_RS274\Dialect\_ngc_validate_2_plane_selection.h">
       <Filter>Ngc_Rs274\Dialect</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\NGC_RS274\_ngc_offset_type_enums.h">
-      <Filter>Ngc_Rs274</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\..\NGC_RS274\_ngc_offset_struct.h">
       <Filter>Ngc_Rs274</Filter>
     </ClInclude>
@@ -271,6 +265,18 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\NGC_RS274\_ngc_coordinate_struct.h">
       <Filter>Ngc_Rs274</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\NGC_RS274\xx_ngc_offset_type_enums.h">
+      <Filter>Ngc_Rs274</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\NGC_RS274\Dialect\_ngc_validate_7_cutter_radius_compensation.h">
+      <Filter>Ngc_Rs274\Dialect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\NGC_RS274\NGC_System.h">
+      <Filter>Ngc_Rs274</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\NGC_RS274\Dialect\_ngc_validate_3_distance_mode.h">
+      <Filter>Ngc_Rs274\Dialect</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -378,6 +384,15 @@
     </ClCompile>
     <ClCompile Include="..\..\..\..\NGC_RS274\NGC_Coordinates.cpp">
       <Filter>Ngc_Rs274</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\NGC_RS274\Dialect\_ngc_validate_7_cutter_radius_compensation.cpp">
+      <Filter>Ngc_Rs274\Dialect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\NGC_RS274\NGC_System.cpp">
+      <Filter>Ngc_Rs274</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\NGC_RS274\Dialect\_ngc_validate_3_distance_mode.cpp">
+      <Filter>Ngc_Rs274\Dialect</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

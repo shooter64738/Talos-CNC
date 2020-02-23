@@ -1,6 +1,5 @@
 #include <stdint.h>
 
-
 #ifndef NGC_TOOL_STRUCT_H
 #define NGC_TOOL_STRUCT_H
 #include "_ngc_offset_struct.h"

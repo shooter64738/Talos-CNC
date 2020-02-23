@@ -34,7 +34,7 @@ namespace Talos
 		{
 			//variables
 			public:
-			static s_ngc_block init_block;
+			
 			protected:
 			private:
 

@@ -17,6 +17,7 @@ then move to their respective modules.
 #include "../../../NGC_RS274/NGC_Line_Processor.h"
 #include "../../../NGC_RS274/NGC_Tool.h"
 #include "../../../NGC_RS274/NGC_Coordinates.h"
+#include "../../../NGC_RS274/NGC_System.h"
 #include "../../../Configuration/c_configuration.h"
 #include "../Data/DataHandlers/c_ngc_data_handler.h";
 
@@ -41,14 +42,14 @@ void Talos::Coordinator::Main_Process::initialize()
 
 	//Load the initialize block from settings. These values are the 'initial' values of the gcode blocks
 	//that are processed. 
-	Hardware_Abstraction_Layer::Disk::load_initialize_block(&Talos::Motion::NgcBuffer::init_block);
+	Hardware_Abstraction_Layer::Disk::load_initialize_block(&NGC_RS274::System::system_block);
 	//Assign the read,write function pointers. These assignments must take place outside the 
 	//block buffer control. The block buffer control system must not know anything about the HAL it
 	//is servicing.
 	Talos::Motion::NgcBuffer::pntr_buffer_block_write = Hardware_Abstraction_Layer::Disk::put_block;
 	Talos::Motion::NgcBuffer::pntr_buffer_block_read = Hardware_Abstraction_Layer::Disk::get_block;
 	//Write the start up block to cache
-	Talos::Motion::NgcBuffer::pntr_buffer_block_write(&Talos::Motion::NgcBuffer::init_block);
+	Talos::Motion::NgcBuffer::pntr_buffer_block_write(&NGC_RS274::System::system_block);
 
 	//setup the tool table controller
 	NGC_RS274::Tool_Control::Table::pntr_tool_table_read = Hardware_Abstraction_Layer::Disk::get_tool;
@@ -60,8 +61,7 @@ void Talos::Coordinator::Main_Process::initialize()
 
 
 	#ifdef MSVC
-	Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "g68x5.y5.R28.\r\ng0x6\r\n f4g1y1.\r\nx5\r\n");
-	
+	//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "g68x5.y5.R28.\r\ng0x6\r\n f4g1y1.\r\nx5\r\n");
 	//cutter comp line 1 left comp test
 	//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "p.25 g1 f1 g41 x1 y0\r\n g2 x1.5y0.5 i1.5 j0\r\n g1 x1.5y1.5\r\ng1 x3.5 y1.5\r\n");
 	//cutter comp line 2 right comp test
@@ -70,7 +70,10 @@ void Talos::Coordinator::Main_Process::initialize()
 	//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "p.25 f1 g41 g2 x0.5 y0.5 i0.5 j0.0\r\n g1 x0.5y1.5\r\ng1 x0.5 y2.5\r\n");
 
 	//simple gcode line
-	//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "g01 y7x4g90g20\r\n");//here axis words are used for motion and non modal. Thats an error
+	//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "g01y5x5g91g20\r\n");
+	//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "g01y10x10g91g20\r\n");
+	//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "g01y0x0g91g20\r\n");
+	//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "g01y0x0g90g20\r\n");
 	//purposely bad g code line
 	//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "g01 y7 g10x3 \r\n");//here axis words are used for motion and non modal. Thats an error
 	//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "g0y#525r#<test>[1.0-[5.0+10]]\r\ng1x3\r\n");
@@ -123,6 +126,15 @@ void Talos::Coordinator::Main_Process::run()
 	//Start the eventing loop, stop loop if a critical system error occurs
 	while (extern_system_events.event_manager.get((int)s_system_events::e_event_type::SystemAllOk))
 	{
+#ifdef MSVC
+		Hardware_Abstraction_Layer::Serial::_usart0_buffer._head +=
+			Hardware_Abstraction_Layer::Disk::read_file("c:\\jeff\\1001.txt", Hardware_Abstraction_Layer::Serial::_usart0_buffer._storage_pointer);
+
+		Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "");
+#endif // MSVC
+
+		
+
 		//This firmware is mostly event driven. This is the main entry point for checking
 		//which events have been set to execute, and then executing them.
 		Talos::Coordinator::Events::process();

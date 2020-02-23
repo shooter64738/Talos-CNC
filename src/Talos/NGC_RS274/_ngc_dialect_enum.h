@@ -5,9 +5,12 @@ enum class e_dialects
 	Fanuc_A = 0,
 	Fanuc_B = 1,
 	Fanuc_C = 2,
-	Mach = 3,
-	Haas = 4,
-	Siemens = 5,
-	Yasnac = 6
+	Mach3 = 3,
+	Mach4 = 4,
+	LinuxCNC = 5,
+	Haas = 6,
+	Siemens_ISO = 7,
+	Siemens_Shop = 8,
+	Yasnac = 9
 };
 #endif

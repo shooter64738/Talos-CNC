@@ -12,6 +12,7 @@
 #include "../../../../../NGC_RS274/_ngc_g_Groups.h"
 #include "../../../../../NGC_RS274/_ngc_m_Groups.h"
 #include "../../../../../NGC_RS274/_ngc_m_Groups.h"
+#include "../../../../../Coordinator/Processing/Events/extern_events_types.h"
 
 using namespace std;
 static std::fstream _cache_file_object;
@@ -24,12 +25,15 @@ static char _tool_file_name[11] = "tool.dat";
 static uint32_t _tool_read_position = 0;
 static uint32_t _tool_write_position = 0;
 
+static std::fstream _text_file_object;
+
+
 uint8_t Hardware_Abstraction_Layer::Disk::initialize()
 {
 	_cache_file_object = fstream(_cache_file_name, ios::in | ios::out | ios::app);
 	_cache_file_object.close();
 	_cache_file_object.open(_cache_file_name, std::fstream::in | std::fstream::out | std::fstream::binary);
-	
+
 	if (!_cache_file_object.is_open()) {
 		cout << "Cannot open cache file!" << endl;
 		return 1;
@@ -116,11 +120,11 @@ uint8_t Hardware_Abstraction_Layer::Disk::get_block(s_ngc_block * read_block)
 	{
 		uint32_t position = rec_size * (read_block->__station__ - 1);
 		//position should now be at the beginning point of the block requested by __station__
-		_cache_file_object.seekp(position,SEEK_SET);
+		_cache_file_object.seekp(position, SEEK_SET);
 	}
 
 	read(NULL, stream, e_file_modes::OpenCreate, rec_size, _cache_file_object);
-	
+
 	memcpy(read_block, stream, rec_size);
 	_cache_read_position = _cache_file_object.tellp();
 	return 1;
@@ -202,19 +206,46 @@ uint8_t Hardware_Abstraction_Layer::Disk::get_wcs(s_wcs * read_wcs)
 	return 1;
 }
 
+uint8_t Hardware_Abstraction_Layer::Disk::read_file(char * filename, char * buffer)
+{
+	uint8_t byte_count = 0;
+
+	if (!_text_file_object.is_open())
+	{
+		_text_file_object = fstream(filename, fstream::in);
+		//_text_file_object.open(filename);
+	}
+	char byte = 0;
+	while (!_text_file_object.eof())
+	{
+		//read(NULL, buffer, e_file_modes::Open, 1, _text_file_object);
+		_text_file_object.read(&byte, 1);
+		if (byte == '\r' || byte == '\n')
+		{
+			byte_count++;
+			break;
+		}
+		buffer++;
+		byte_count++;
+	}
+	if (byte_count)
+		extern_data_events.event_manager.set((int)s_data_events::e_event_type::DiskDataArrival);
+	return byte_count;
+}
+
 uint8_t Hardware_Abstraction_Layer::Disk::write(const char * filename, char * buffer, e_file_modes mode, uint16_t size, std::fstream &stream_object)
 {
 	stream_object.write(buffer, size);
 	stream_object.flush();
-	
-	
+
+
 	return 0;
 }
 
 uint8_t Hardware_Abstraction_Layer::Disk::read(const char * filename, char * buffer, e_file_modes mode, uint16_t size, std::fstream &stream_object)
 {
 	stream_object.read(buffer, size);
-	
+
 
 	return 0;
 }

@@ -26,12 +26,15 @@
 #include "_ngc_m_Groups.h"
 #include "NGC_Comp.h"
 #include "_ngc_compensation_enums.h"
-#include "Dialect/_ngc_validate_16_plane_rotation.h"
 #include "Dialect/_ngc_validate_0_nonmodal.h"
 #include "Dialect/_ngc_validate_1_motion.h"
 #include "Dialect/_ngc_validate_2_plane_selection.h"
+#include "Dialect/_ngc_validate_3_distance_mode.h"
+#include "Dialect/_ngc_validate_7_cutter_radius_compensation.h"
+#include "Dialect/_ngc_validate_16_plane_rotation.h"
 #include "../Configuration/c_configuration.h"
 #include <math.h>
+#include "NGC_System.h"
 
 
 //NGC_RS274::Error_Check::Error_Check(){}
@@ -44,13 +47,23 @@ e_parsing_errors NGC_RS274::Error_Check::error_check(NGC_RS274::Block_View *v_ne
 	
 	//tool select should happen before non modals since it will effect non modals. 
 
-	//rotation depends on plane, so set plane first. add all offsets (work, tool, radius) before rotating
+	
 	CHK_CALL_RTN_ERROR_CODE(NGC_RS274::Dialect::Group0::non_modal_validate(v_new_block, Talos::Confguration::Interpreter::Parameters.dialect));
+	//i think plane validation should be first because it effects so many other things
 	CHK_CALL_RTN_ERROR_CODE(NGC_RS274::Dialect::Group2::plane_validate(v_new_block, Talos::Confguration::Interpreter::Parameters.dialect));
+		
+	//rotation depends on plane, so set plane first. add all offsets (work, tool, radius) before rotating
 	CHK_CALL_RTN_ERROR_CODE(NGC_RS274::Dialect::Group16::rotation_validate(v_new_block, Talos::Confguration::Interpreter::Parameters.dialect));
 
-	//Feed rate mode only needs validation if a motion is going to run. So do not call that here on its own. 
+	//Feed rate mode only needs validation if a motion is going to run. Do not call that here on its own. 
+	//CHK_CALL_RTN_ERROR_CODE(NGC_RS274::Dialect::Group5::feed_rate_validate(v_new_block, Talos::Confguration::Interpreter::Parameters.dialect));
+	//Distance mode is checked inside the motion validate. Do not call it here on its own.
+	//CHK_CALL_RTN_ERROR_CODE(NGC_RS274::Dialect::Group3::distance_mode_validate(v_new_block, Talos::Confguration::Interpreter::Parameters.dialect));
 	CHK_CALL_RTN_ERROR_CODE(NGC_RS274::Dialect::Group1::motion_validate(v_new_block, Talos::Confguration::Interpreter::Parameters.dialect));
+	
+	
+	//all offsets and motion should be valid before we get to cutter compensation
+	//CHK_CALL_RTN_ERROR_CODE(NGC_RS274::Dialect::Group7::cutter_radius_comp_validate(v_new_block, v_previous_block,Talos::Confguration::Interpreter::Parameters.dialect));
 
 	//if ((ret_code = __error_check_main(v_new_block, v_previous_block)) != e_parsing_errors::OK) return ret_code;
 	//if ((ret_code = __error_check_plane_select(v_new_block, v_previous_block)) != e_parsing_errors::OK) return ret_code;
@@ -59,7 +72,10 @@ e_parsing_errors NGC_RS274::Error_Check::error_check(NGC_RS274::Block_View *v_ne
 	//if ((ret_code = __error_check_tool_length_offset(v_new_block, v_previous_block)) != e_parsing_errors::OK) return ret_code;
 	//if ((ret_code = __error_check_cutter_compensation(v_new_block, v_previous_block)) != e_parsing_errors::OK) return ret_code;
 
-
+	//if (!v_new_block->active_view_block->block_events.get((int)e_block_event::HoldBlockForCRC))
+	//{
+	//	//NGC_RS274::System::Position.update_system_position(v_new_block->active_view_block);
+	//}
 
 
 	return ret_code;
@@ -540,7 +556,7 @@ e_parsing_errors NGC_RS274::Error_Check::__error_check_cutter_compensation(NGC_R
 					return  e_parsing_errors::CUTTER_RADIUS_COMP_WHEN_MOTION_CANCELED;
 
 				//its currently off, we are activating it now
-				NGC_RS274::Compensation::comp_control.state = e_compensation_states::CurrentCompensationOffActiving;
+				//NGC_RS274::Compensation::comp_control.state = e_compensation_states::CurrentCompensationOffActiving;
 				//specifc the side
 				NGC_RS274::Compensation::comp_control.side = (e_compensation_side)(current_comp_state == NGC_RS274::G_codes::START_CUTTER_RADIUS_COMPENSATION_LEFT ? 1 : -1);
 

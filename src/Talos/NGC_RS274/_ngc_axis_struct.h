@@ -12,5 +12,15 @@ struct s_axis_property
 		return  block->word_flags.get(name - 'A');
 	}
 };
+#endif
+
+#ifndef NGC_AXIS_STRUCT_L_H
+#define NGC_AXIS_STRUCT_L_H
+
+struct s_axis_property_l
+{
+	float value;
+	char name;
+};
 
 #endif

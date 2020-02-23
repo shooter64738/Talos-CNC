@@ -45,6 +45,7 @@ e_parsing_errors NGC_RS274::Dialect::Group16::rotation_validate(NGC_RS274::Block
 		*v_block->arc_values.vertical_offset.value = test_y + rotation_center.Y;
 
 	}
+	e_parsing_errors::OK;
 }
 
 e_parsing_errors NGC_RS274::Dialect::Group16::_G0068(NGC_RS274::Block_View * v_block, e_dialects dialect)
@@ -63,8 +64,8 @@ e_parsing_errors NGC_RS274::Dialect::Group16::_G0068(NGC_RS274::Block_View * v_b
 		break;
 	}
 
-	case e_dialects::Mach:
-	case e_dialects::Siemens:
+	case e_dialects::Mach3:
+	case e_dialects::Siemens_ISO:
 	{
 		center_axis_1 = 'A';
 		center_axis_2 = 'B';

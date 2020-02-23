@@ -6,7 +6,7 @@
 #include "../_ngc_errors_interpreter.h"
 #include "../NGC_Block_View.h"
 #include "../_ngc_dialect_enum.h"
-#include "_ngc_dialect_validate.h"
+//#include "_ngc_dialect_validate.h"
 namespace NGC_RS274
 {
 	namespace Dialect
@@ -20,7 +20,7 @@ namespace NGC_RS274
 			static e_parsing_errors _G004(NGC_RS274::Block_View * v_block, e_dialects dialect);
 			static e_parsing_errors _G010(NGC_RS274::Block_View * v_block, e_dialects dialect);
 			static e_parsing_errors _L0010(NGC_RS274::Block_View * v_block, uint16_t param_value, uint16_t L_value);
-			static void _set_tool_value(NGC_RS274::Block_View * v_block, char param_word, uint16_t L_value, float tool_value, uint8_t position_axis_id, float * updating_value);
+			static void _set_offsetting_value(NGC_RS274::Block_View * v_block, char param_word, uint16_t L_value, float tool_value, uint8_t position_axis_id, float * updating_value);
 			static e_parsing_errors _L0020(NGC_RS274::Block_View * v_block, uint16_t param_value, uint16_t L_value);
 		};
 	};

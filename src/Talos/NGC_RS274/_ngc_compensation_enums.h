@@ -4,7 +4,7 @@
 enum class e_compensation_states : int8_t
 {
 	CurrentCompensationOffNotActivating = 0,
-	CurrentCompensationOffActiving = 1,
+	//CurrentCompensationOffActiving = 1,
 	CurrentCompensationOnActive = 2,
 	CurrentCompensationOnDeactivating = 3
 };

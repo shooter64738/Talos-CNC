@@ -20,22 +20,21 @@
 
 #include "xc_gcode_buffer.h"
 #include <string.h>
-#include "../../../NGC_RS274/_ngc_g_groups.h"
-#include "../../../NGC_RS274/_ngc_m_groups.h"
+//#include "../../../NGC_RS274/_ngc_g_groups.h"
+//#include "../../../NGC_RS274/_ngc_m_groups.h"
+#include "../../../NGC_RS274/NGC_System.h"
 
 
 
-s_ngc_block Talos::Motion::NgcBuffer::init_block;
+
 uint8_t(*Talos::Motion::NgcBuffer::pntr_buffer_block_write)(s_ngc_block * write_block);
 uint8_t(*Talos::Motion::NgcBuffer::pntr_buffer_block_read)(s_ngc_block * read_block);
 
 uint8_t Talos::Motion::NgcBuffer::initialize()
 {
 
-	s_ngc_block * first_block = &Talos::Motion::NgcBuffer::init_block;
-
 	//clear the block of all values
-	memset(first_block, 0, sizeof(s_ngc_block));
+	memset(&NGC_RS274::System::system_block, 0, sizeof(s_ngc_block));
 
 	////default the motion state to canceled
 	//first_block->g_group[NGC_RS274::Groups::G::Motion] = NGC_RS274::G_codes::MOTION_CANCELED;

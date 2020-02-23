@@ -28,7 +28,6 @@
 NGC_RS274::Compensation::s_comp_settings NGC_RS274::Compensation::comp_control;
 
 uint32_t held_block_station_id;
-
 static s_ngc_block releasing_block;
 static NGC_RS274::Block_View v_held_block;
 
@@ -49,13 +48,20 @@ e_compensation_errors NGC_RS274::Compensation::process(NGC_RS274::Block_View * v
 		releasing_block.__station__ = held_block_station_id;
 		Talos::Motion::NgcBuffer::pntr_buffer_block_read(&releasing_block);
 		v_held_block.load(&releasing_block);
-		__continuous_motion(v_new_block);
+
+		__continuous_motion(v_new_block, &v_held_block);
 		//Set this block to a held state. We cant execute it until we have the next motion block
 		v_new_block->active_view_block->block_events.set((int)e_block_event::HoldBlockForCRC);
+
 	}
 	else if (NGC_RS274::Compensation::comp_control.state == e_compensation_states::CurrentCompensationOnDeactivating)
 	{
-		__last_motion(v_new_block);
+		//We have a block being held that we shoudl be able to release now. Load it up.
+		releasing_block.__station__ = held_block_station_id;
+		Talos::Motion::NgcBuffer::pntr_buffer_block_read(&releasing_block);
+		v_held_block.load(&releasing_block);
+
+		__last_motion(v_new_block, &v_held_block);
 		//Set crc state to active off
 		NGC_RS274::Compensation::comp_control.state = e_compensation_states::CurrentCompensationOffNotActivating;
 
@@ -95,7 +101,7 @@ e_compensation_errors NGC_RS274::Compensation::__first_motion(NGC_RS274::Block_V
 	}
 
 	//Current path only gets calculated on the first move. The rest of the time it is updated AFTER using its values in the __continuous_motion method
-	comp_control.active_path.object_calculator(v_new_block, &comp_control.active_path);
+	comp_control.active_path.object_calculator(v_new_block, v_previous_block, &comp_control.active_path);
 
 	//we will need this value so we can get the cached block and update its end point later.
 	held_block_station_id = v_new_block->active_view_block->__station__;
@@ -103,7 +109,7 @@ e_compensation_errors NGC_RS274::Compensation::__first_motion(NGC_RS274::Block_V
 	return e_compensation_errors::OK;
 }
 
-e_compensation_errors NGC_RS274::Compensation::__continuous_motion(NGC_RS274::Block_View * v_new_block)
+e_compensation_errors NGC_RS274::Compensation::__continuous_motion(NGC_RS274::Block_View * v_new_block, NGC_RS274::Block_View * v_previous_block)
 {
 	s_path * path_object;
 	s_point int1, int2;
@@ -120,11 +126,11 @@ e_compensation_errors NGC_RS274::Compensation::__continuous_motion(NGC_RS274::Bl
 	else
 	{
 		comp_control.forward_path.object_calculator = __calculate_arc;
-		comp_control.forward_path.type = e_path_type::Arc;	
+		comp_control.forward_path.type = e_path_type::Arc;
 	}
 
 	//Calculate point on the new object.
-	comp_control.forward_path.object_calculator(v_new_block, &comp_control.forward_path);
+	comp_control.forward_path.object_calculator(v_new_block, v_previous_block, &comp_control.forward_path);
 
 	//Assign the correct intersector calculation
 
@@ -145,13 +151,14 @@ e_compensation_errors NGC_RS274::Compensation::__continuous_motion(NGC_RS274::Bl
 
 	}
 
-	intersects = comp_control.instersect_calculator(v_new_block, &int1, &int2);
+	intersects = comp_control.instersect_calculator(v_new_block, v_previous_block, &int1, &int2);
 
 	//If there is no intersection, a closing arc is needed
 	if (!intersects)
 	{
-		//int1 is the end point of the closing arc.
-		s_ngc_block arc_block = __set_outside_corner_arc(comp_control.active_path, comp_control.forward_path, int2, v_new_block->active_view_block);
+		//int1 is tthe end point of the closing arc.
+		s_ngc_block arc_block = __set_outside_corner_arc(
+			comp_control.active_path, comp_control.forward_path, int2, v_previous_block->active_view_block);
 		//Update the currently held block using station id. This will set the end
 		//point the machine must move too during compensation
 		__update_locked_block(int1, held_block_station_id);
@@ -161,16 +168,12 @@ e_compensation_errors NGC_RS274::Compensation::__continuous_motion(NGC_RS274::Bl
 		Talos::Motion::NgcBuffer::pntr_buffer_block_write(&arc_block);
 		//since we are inserting an arc, int2 is actually the new end point for current path.
 		int1 = int2;
-		//update the systems position
-		//NGC_RS274::System::Position.update_system_position(&arc_block);
 	}
 	else
 	{
 		//Update the currently held block using station id. This will set the end
 		//point the machine must move too during compensation
 		__update_locked_block(int1, held_block_station_id);
-		//update the systems position
-		//NGC_RS274::System::Position.update_system_position(v_held_block.active_view_block);
 
 	}
 
@@ -178,8 +181,7 @@ e_compensation_errors NGC_RS274::Compensation::__continuous_motion(NGC_RS274::Bl
 	__update_active_path(int1);
 
 	//forward calculate so that the values are set for the forward object on the next call in here. 
-	comp_control.active_path.object_calculator(v_new_block, &comp_control.active_path);
-
+	comp_control.active_path.object_calculator(v_new_block, v_previous_block, &comp_control.active_path);
 
 	//we will need this value so we can get the cached block and update its end point later.
 	held_block_station_id = v_new_block->active_view_block->__station__;
@@ -187,7 +189,7 @@ e_compensation_errors NGC_RS274::Compensation::__continuous_motion(NGC_RS274::Bl
 	return e_compensation_errors::OK;
 }
 
-e_compensation_errors NGC_RS274::Compensation::__last_motion(NGC_RS274::Block_View * v_new_block)
+e_compensation_errors NGC_RS274::Compensation::__last_motion(NGC_RS274::Block_View * v_new_block, NGC_RS274::Block_View * v_previous_block)
 {
 	//make sure the lead out motion is a line, not an arc
 	if (*v_new_block->current_g_codes.Motion == NGC_RS274::G_codes::CIRCULAR_INTERPOLATION_CCW
@@ -197,7 +199,7 @@ e_compensation_errors NGC_RS274::Compensation::__last_motion(NGC_RS274::Block_Vi
 	}
 
 	//make sure the leadout motion is far enough
-	if (__get_distance(v_new_block) <= comp_control.tool_radius)
+	if (__get_distance(v_new_block, v_previous_block) <= comp_control.tool_radius)
 	{
 		return e_compensation_errors::LeadOutMotionSmallerThanToolRadius;
 	}
@@ -226,20 +228,23 @@ uint8_t NGC_RS274::Compensation::__update_active_path(s_point udpate_point)
 
 uint8_t NGC_RS274::Compensation::__update_locked_block(s_point new_target, uint32_t block_station_id)
 {
-	
-	
+	s_ngc_block releasing_block;
+	releasing_block.__station__ = block_station_id;
+	Talos::Motion::NgcBuffer::pntr_buffer_block_read(&releasing_block);
 	releasing_block.block_events.clear((int)e_block_event::HoldBlockForCRC);
-	
-	v_held_block.active_view_block->target_motion_position[HORIZONTAL_MOTION_AXIS] = new_target.X;
-	v_held_block.active_view_block->target_motion_position[VERTICAL_MOTION_AXIS] = new_target.Y;
-	
+
+	NGC_RS274::Block_View v_locked_block = NGC_RS274::Block_View(&releasing_block);
+
+	*v_locked_block.active_plane.horizontal_axis.value = new_target.X;
+	*v_locked_block.active_plane.vertical_axis.value = new_target.Y;
+
 	//put block back in cache.
-	Talos::Motion::NgcBuffer::pntr_buffer_block_write(v_held_block.active_view_block);
+	Talos::Motion::NgcBuffer::pntr_buffer_block_write(v_locked_block.active_view_block);
 
 	return 0;
 }
 
-uint8_t  NGC_RS274::Compensation::__line_line_intersect(NGC_RS274::Block_View * v_new_block, s_point * int1, s_point * int2)
+uint8_t  NGC_RS274::Compensation::__line_line_intersect(NGC_RS274::Block_View * v_new_block, NGC_RS274::Block_View * v_previous_block, s_point * int1, s_point * int2)
 {
 	s_point cur_path_target = comp_control.active_path.target.compensated;
 	s_point cur_path_origin = comp_control.active_path.origin.compensated;
@@ -289,12 +294,12 @@ uint8_t  NGC_RS274::Compensation::__line_line_intersect(NGC_RS274::Block_View * 
 	return false;
 }
 
-uint8_t  NGC_RS274::Compensation::__line_arc_intersect(NGC_RS274::Block_View * v_new_block, s_point * intersection1, s_point * intersection2)
+uint8_t  NGC_RS274::Compensation::__line_arc_intersect(NGC_RS274::Block_View * v_new_block, NGC_RS274::Block_View * v_previous_block, s_point * intersection1, s_point * intersection2)
 {
 	s_point line_target;
 	s_point line_origin;
 
-	//default line to forward path
+	//default to forward path
 	line_target = comp_control.forward_path.target.compensated;
 	line_origin = comp_control.forward_path.origin.compensated;
 
@@ -429,14 +434,14 @@ uint8_t  NGC_RS274::Compensation::__line_arc_intersect(NGC_RS274::Block_View * v
 	}
 }
 
-uint8_t NGC_RS274::Compensation::__arc_arc_intersect(NGC_RS274::Block_View * v_new_block, s_point * intersection1, s_point * intersection2)
+uint8_t NGC_RS274::Compensation::__arc_arc_intersect(NGC_RS274::Block_View * v_new_block, NGC_RS274::Block_View * v_previous_block, s_point * intersection1, s_point * intersection2)
 //(NGC_RS274::Block_View * v_new_block, NGC_RS274::Block_View * v_previous_block, s_point c0, float c0_radius, s_point c1, float c1_radius, s_point &intersection1, s_point &intersection2)
 {
 
 	float c0_radius = *v_new_block->arc_values.Radius;
-	float c1_radius = *v_held_block.arc_values.Radius;
+	float c1_radius = *v_previous_block->arc_values.Radius;;
 	s_point c0; c0.X = *v_new_block->arc_values.horizontal_offset.value; c0.Y = *v_new_block->arc_values.vertical_offset.value;
-	s_point c1; c1.X = *v_held_block.arc_values.horizontal_offset.value; c1.Y = *v_held_block.arc_values.vertical_offset.value;
+	s_point c1; c1.X = *v_previous_block->arc_values.horizontal_offset.value; c1.Y = *v_previous_block->arc_values.vertical_offset.value;
 
 	// Find the distance between the centers.
 	float dx = c0.X - c1.X;
@@ -505,13 +510,13 @@ void NGC_RS274::Compensation::__arc_help(NGC_RS274::Block_View * v_new_block, s_
 		pow((*v_new_block->arc_values.Radius + (comp_control.tool_radius * (int)comp_control.side)), 2);
 }
 
-uint8_t NGC_RS274::Compensation::__calculate_arc(NGC_RS274::Block_View * v_new_block, s_path * path_object)
+uint8_t NGC_RS274::Compensation::__calculate_arc(NGC_RS274::Block_View * v_new_block, NGC_RS274::Block_View * v_previous_block, s_path * path_object)
 {
-	path_object->origin.programed.X = NGC_RS274::System::Position.sys_axis.horizontal_axis.value;
-	path_object->origin.programed.Y = NGC_RS274::System::Position.sys_axis.vertical_axis.value;
+	path_object->origin.programed.X = *v_previous_block->active_plane.horizontal_axis.value;
+	path_object->origin.programed.Y = *v_previous_block->active_plane.vertical_axis.value;
 	path_object->target.programed.X = *v_new_block->active_plane.horizontal_axis.value;
 	path_object->target.programed.Y = *v_new_block->active_plane.vertical_axis.value;
-	
+
 	//Default the compensations origin point to this blocks programmed point.
 	//The reason THIS blocks end point is the comp blocks START point is because we cannot
 	//actually move UNTIL we find out what the NEXT block ahead of this block is going to
@@ -524,14 +529,14 @@ uint8_t NGC_RS274::Compensation::__calculate_arc(NGC_RS274::Block_View * v_new_b
 	if (1 == 1)
 	{
 		// tool inside the arc: ends up toward the center
-		gamma = atan2((*v_new_block->arc_values.vertical_offset.value - NGC_RS274::System::Position.sys_axis.vertical_axis.value)
-			, (*v_new_block->arc_values.horizontal_offset.value - NGC_RS274::System::Position.sys_axis.horizontal_axis.value));
+		gamma = atan2((*v_new_block->arc_values.vertical_offset.value - *v_previous_block->active_plane.vertical_axis.value)
+			, (*v_new_block->arc_values.horizontal_offset.value - *v_previous_block->active_plane.horizontal_axis.value));
 	}
 	else
 	{
 		// outside: away from the center
-		gamma = atan2((NGC_RS274::System::Position.sys_axis.vertical_axis.value - *v_new_block->arc_values.vertical_offset.value )
-			, (NGC_RS274::System::Position.sys_axis.horizontal_axis.value - *v_new_block->arc_values.horizontal_offset.value));
+		gamma = atan2((*v_previous_block->active_plane.vertical_axis.value - *v_new_block->arc_values.vertical_offset.value )
+			, (*v_previous_block->active_plane.horizontal_axis.value - *v_new_block->arc_values.horizontal_offset.value));
 	}
 	end_x += comp_control.tool_radius * cos(gamma);
 	end_y += comp_control.tool_radius * sin(gamma);
@@ -540,11 +545,11 @@ uint8_t NGC_RS274::Compensation::__calculate_arc(NGC_RS274::Block_View * v_new_b
 
 	float inclusive_angle = 0;
 	//if the arc is current use angle
-	if (comp_control.active_path.type == e_path_type::Arc && !(NGC_RS274::Compensation::comp_control.state == e_compensation_states::CurrentCompensationOffNotActivating))
+	if (comp_control.active_path.type == e_path_type::Arc && !(NGC_RS274::Compensation::comp_control.state == e_compensation_states::CurrentCompensationOffActiving))
 	{
 		inclusive_angle = path_object->angle;
 	}
-	else if (NGC_RS274::Compensation::comp_control.state == e_compensation_states::CurrentCompensationOffNotActivating)
+	else if (NGC_RS274::Compensation::comp_control.state == e_compensation_states::CurrentCompensationOffActiving)
 	{
 		inclusive_angle = 180 + ( 180 - path_object->angle);
 	}
@@ -567,10 +572,10 @@ uint8_t NGC_RS274::Compensation::__calculate_arc(NGC_RS274::Block_View * v_new_b
 	return 1;
 }
 
-uint8_t NGC_RS274::Compensation::__calculate_line(NGC_RS274::Block_View * v_new_block, s_path * path_object)
+uint8_t NGC_RS274::Compensation::__calculate_line(NGC_RS274::Block_View * v_new_block, NGC_RS274::Block_View * v_previous_block, s_path * path_object)
 {
-	path_object->origin.programed.X = NGC_RS274::System::Position.sys_axis.horizontal_axis.value;
-	path_object->origin.programed.Y = NGC_RS274::System::Position.sys_axis.vertical_axis.value;
+	path_object->origin.programed.X = *v_previous_block->active_plane.horizontal_axis.value;
+	path_object->origin.programed.Y = *v_previous_block->active_plane.vertical_axis.value;
 	path_object->target.programed.X = *v_new_block->active_plane.horizontal_axis.value;
 	path_object->target.programed.Y = *v_new_block->active_plane.vertical_axis.value;
 
@@ -623,9 +628,11 @@ float NGC_RS274::Compensation::__get_distance(NGC_RS274::Block_View * v_new_bloc
 	/*return hypot(
 		(*v_new_block->active_plane.horizontal_axis.value - *v_previous_block->active_plane.horizontal_axis.value)
 		, (*v_new_block->active_plane.horizontal_axis.value - *v_previous_block->active_plane.horizontal_axis.value));*/
+
 	return hypot(
-		(*v_new_block->active_plane.horizontal_axis.value - NGC_RS274::System::Position.sys_axis.horizontal_axis.value)
-		, (*v_new_block->active_plane.vertical_axis.value - NGC_RS274::System::Position.sys_axis.vertical_axis.value));
+		(*v_new_block->active_plane.horizontal_axis.value - NGC_RS274::System::Position.horizontal_axis)
+		, (*v_new_block->active_plane.vertical_axis.value - NGC_RS274::System::Position.vertical_axis));
+
 }
 
 s_point NGC_RS274::Compensation::__get_offset_from_point(s_point Point, float Angle_RAD, float Distance)
@@ -672,18 +679,6 @@ s_ngc_block NGC_RS274::Compensation::__set_outside_corner_arc(s_path current_pat
 	{
 		int x = 0;
 	}
-
-	arc_block.target_motion_position[HORIZONTAL_MOTION_AXIS] = *corner_path.active_plane.horizontal_axis.value;
-	arc_block.target_motion_position[HORIZONTAL_ROTARY_AXIS] = *corner_path.active_plane.rotary_horizontal_axis.value;
-	arc_block.target_motion_position[HORIZONTAL_INCRIMENTAL_AXIS] = *corner_path.active_plane.inc_horizontal_axis.value;
-	
-	arc_block.target_motion_position[VERTICAL_MOTION_AXIS] = *corner_path.active_plane.vertical_axis.value;
-	arc_block.target_motion_position[VERTICAL_ROTARY_AXIS] = *corner_path.active_plane.rotary_vertical_axis.value;
-	arc_block.target_motion_position[VERTICAL_INCRIMENTAL_AXIS] = *corner_path.active_plane.inc_vertical_axis.value;
-	
-	arc_block.target_motion_position[NORMAL_MOTION_AXIS] = *corner_path.active_plane.normal_axis.value;
-	arc_block.target_motion_position[NORMAL_ROTARY_AXIS] = *corner_path.active_plane.rotary_normal_axis.value;
-	arc_block.target_motion_position[NORMAL_INCRIMENTAL_AXIS] = *corner_path.active_plane.inc_normal_axis.value;
 
 	return arc_block;
 }

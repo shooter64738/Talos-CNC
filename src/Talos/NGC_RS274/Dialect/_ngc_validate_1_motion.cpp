@@ -1,6 +1,9 @@
 #include "_ngc_validate_1_motion.h"
+#include "_ngc_validate_3_distance_mode.h"
 #include "_ngc_validate_5_feed_rate_mode.h"
 #include "../_ngc_g_groups.h"
+#include "../NGC_System.h"
+#include "../_ngc_math_constants.h"
 
 e_parsing_errors NGC_RS274::Dialect::Group1::motion_validate(NGC_RS274::Block_View * v_block, e_dialects dialect)
 {
@@ -107,6 +110,25 @@ e_parsing_errors NGC_RS274::Dialect::Group1::motion_validate(NGC_RS274::Block_Vi
 	default:
 		break;
 	}
+
+
+	CHK_CALL_RTN_ERROR_CODE(NGC_RS274::Dialect::Group3::distance_mode_validate(v_block, dialect));
+
+	v_block->active_view_block->target_motion_position[HORIZONTAL_MOTION_AXIS] = *v_block->active_plane.horizontal_axis.value;
+	v_block->active_view_block->target_motion_position[HORIZONTAL_ROTARY_AXIS] = *v_block->active_plane.rotary_horizontal_axis.value;
+	v_block->active_view_block->target_motion_position[HORIZONTAL_INCRIMENTAL_AXIS] = *v_block->active_plane.inc_horizontal_axis.value;
+
+	v_block->active_view_block->target_motion_position[VERTICAL_MOTION_AXIS] = *v_block->active_plane.vertical_axis.value;
+	v_block->active_view_block->target_motion_position[VERTICAL_ROTARY_AXIS] = *v_block->active_plane.rotary_vertical_axis.value;
+	v_block->active_view_block->target_motion_position[VERTICAL_INCRIMENTAL_AXIS] = *v_block->active_plane.inc_vertical_axis.value;
+
+	v_block->active_view_block->target_motion_position[NORMAL_MOTION_AXIS] = *v_block->active_plane.normal_axis.value;
+	v_block->active_view_block->target_motion_position[NORMAL_ROTARY_AXIS] = *v_block->active_plane.rotary_normal_axis.value;
+	v_block->active_view_block->target_motion_position[NORMAL_INCRIMENTAL_AXIS] = *v_block->active_plane.inc_normal_axis.value;
+	
+	
+
+	return e_parsing_errors::OK;
 }
 
 e_parsing_errors NGC_RS274::Dialect::Group1::_G000(NGC_RS274::Block_View * v_block, e_dialects dialect)
@@ -123,6 +145,8 @@ e_parsing_errors NGC_RS274::Dialect::Group1::_G001(NGC_RS274::Block_View * v_blo
 e_parsing_errors NGC_RS274::Dialect::Group1::_G002_G003(NGC_RS274::Block_View * v_block, e_dialects dialect, int8_t direction)
 {
 	CHK_CALL_RTN_ERROR_CODE(NGC_RS274::Dialect::Group5::feed_rate_mode_validate(v_block, dialect));
+	__error_check_arc(v_block);
+
 	return e_parsing_errors::OK;
 }
 e_parsing_errors NGC_RS274::Dialect::Group1::_G382(NGC_RS274::Block_View * v_block, e_dialects dialect)
@@ -179,4 +203,127 @@ e_parsing_errors NGC_RS274::Dialect::Group1::_G089(NGC_RS274::Block_View * v_blo
 {
 	CHK_CALL_RTN_ERROR_CODE(NGC_RS274::Dialect::Group5::feed_rate_mode_validate(v_block, dialect));
 	return e_parsing_errors::OK;
+}
+
+e_parsing_errors NGC_RS274::Dialect::Group1::__error_check_arc(NGC_RS274::Block_View *v_new_block)
+{
+	
+	/*The rules :
+	1. Center format arcs should not be more than 180 degrees.
+	2. Center format arcs CAN have an end point the same as the begin point
+	3. Do not assume a previous IJK value can be used again, if it was already set
+	for a previous arc.
+	4. Both offset values are not required, but one is.
+	5. We do not require both axis' be defined on the end point, but one of them must be
+	6. If only one axis is defined, assume the missing axis value is the current location of the axis
+	*/
+
+	/*My understanding is the IJK offset values have to be set on the line. If I/J/K was already set and it is zero
+	we should not assume that 0 is correct this time. So we check the bit flags to see if I or J or K was set
+
+	It is preferable to use center format arcs. If I/J/K values are set AND the R value is set, I am deferring to
+	a center format instead of the radius format. It is less error prone due to round off.
+	*/
+
+	//Must have horizontal or vertical but we don't have to have both
+	if (!v_new_block->active_plane.horizontal_axis.is_defined(v_new_block->active_view_block) &&
+		!v_new_block->active_plane.vertical_axis.is_defined(v_new_block->active_view_block))
+		return v_new_block->active_plane.plane_error;
+
+	//Was radius specified?
+	if (!v_new_block->is_word_defined(v_new_block->active_view_block, 'R'))
+	{
+		//Must have H or V, but we don't have to have both
+		if (!v_new_block->arc_values.horizontal_offset.is_defined(v_new_block->active_view_block) &&
+			!v_new_block->arc_values.vertical_offset.is_defined(v_new_block->active_view_block))
+			return v_new_block->arc_values.plane_error;
+
+		return ____error_check_center_format_arc(v_new_block);
+	}
+	else
+	{
+		return ____error_check_radius_format_arc(v_new_block);
+	}
+}
+
+e_parsing_errors NGC_RS274::Dialect::Group1::____error_check_center_format_arc(NGC_RS274::Block_View *v_new_block)
+{
+	// Arc radius from center to target
+	float target_r = _hypot_f
+	(-(*v_new_block->active_plane.horizontal_axis.value - *v_new_block->arc_values.horizontal_offset.value),
+		-(*v_new_block->active_plane.vertical_axis.value - *v_new_block->arc_values.vertical_offset.value));
+
+	// Compute arc radius for mc_arc. Defined from current location to center.
+	*v_new_block->arc_values.Radius =
+		_hypot_f((*v_new_block->active_plane.horizontal_axis.value - *v_new_block->arc_values.horizontal_offset.value)
+			, (*v_new_block->active_plane.vertical_axis.value - *v_new_block->arc_values.vertical_offset.value));
+
+	// Compute difference between current location and target radii for final error-checks.
+	float delta_r = fabs(target_r - *v_new_block->arc_values.Radius);
+	//If the radius difference is greater than .005 mm we MAY, throw an error, or we MAY not
+	if (delta_r > 0.005)
+	{
+		//If the radius difference is more than .5mm we error
+		if (delta_r > 0.5)
+			return  e_parsing_errors::CENTER_FORMAT_ARC_RADIUS_ERROR_EXCEEDS_005; // [Arc definition error] > 0.5mm
+
+																				  //If the radius difference is more than .001mm AND its a small arc, we error
+		if (delta_r > (0.001 * *v_new_block->arc_values.Radius))
+			return  e_parsing_errors::CENTER_FORMAT_ARC_RADIUS_ERROR_EXCEEDS_PERCENTAGE; // [Arc definition error] > 0.005mm AND 0.1% radius
+	}
+
+	return  e_parsing_errors::OK;
+}
+
+/*
+These arc center calculations are pretty simple. I do not know who created it originaly
+but this is a near verbatim copy of it from the Grbl control 'gcode.c' file
+*/
+e_parsing_errors NGC_RS274::Dialect::Group1::____error_check_radius_format_arc(NGC_RS274::Block_View *v_new_block)
+{
+	// Calculate the change in position along each selected axis
+	float horizontal_delta = *v_new_block->active_plane.horizontal_axis.value - NGC_RS274::System::Position.sys_axis.horizontal_axis.value;
+	float vertical_delta = *v_new_block->active_plane.vertical_axis.value - NGC_RS274::System::Position.sys_axis.vertical_axis.value;
+
+	// First, use h_x2_div_d to compute 4*h^2 to check if it is negative or r is smaller
+	// than d. If so, the sqrt of a negative number is complex and error out.
+	float h_x2_div_d = 4.0 * _square(*v_new_block->arc_values.Radius)
+		- _square(horizontal_delta)
+		- _square(vertical_delta);
+
+	if (h_x2_div_d < 0)
+		return  e_parsing_errors::RADIUS_FORMAT_ARC_RADIUS_LESS_THAN_ZERO; // [Arc radius error]
+
+																		   // Finish computing h_x2_div_d.
+	h_x2_div_d = -sqrt(h_x2_div_d) / _hypot_f(horizontal_delta, vertical_delta); // == -(h * 2 / d)
+
+																				  // Invert the sign of h_x2_div_d if the circle is counter clockwise (see sketch below)
+	if (v_new_block->active_view_block->g_group[NGC_RS274::Groups::G::Motion] == NGC_RS274::G_codes::CIRCULAR_INTERPOLATION_CCW)
+		h_x2_div_d = -h_x2_div_d;
+
+
+	// Negative R is g-code-alese for "I want a circle with more than 180 degrees of travel" (go figure!),
+	// even though it is advised against ever generating such circles in a single line of g-code. By
+	// inverting the sign of h_x2_div_d the center of the circles is placed on the opposite side of the line of
+	// travel and thus we get the inadvisable long arcs as prescribed.
+
+	if (*v_new_block->arc_values.Radius < 0)
+	{
+		h_x2_div_d = -h_x2_div_d;
+		*v_new_block->arc_values.Radius
+			= -*v_new_block->arc_values.Radius; // Finished with r. Set to positive for mc_arc
+	}
+	// Complete the operation by calculating the actual center of the arc
+	*v_new_block->arc_values.horizontal_offset.value = (0.5 * (horizontal_delta - (vertical_delta * h_x2_div_d)));
+	*v_new_block->arc_values.vertical_offset.value = (0.5 * (vertical_delta + (horizontal_delta * h_x2_div_d)));
+
+	//*NGC_RS274::Interpreter::Processor::local_block.arc_values.horizontal_center.value =
+	//*NGC_RS274::Interpreter::Processor::stager_block->active_plane.horizontal_axis.value
+	//+ NGC_RS274::Interpreter::Processor::local_block.arc_values.horizontal_relative_offset;
+	//
+	//*NGC_RS274::Interpreter::Processor::local_block.arc_values.vertical_center.value =
+	//*NGC_RS274::Interpreter::Processor::stager_block->active_plane.vertical_axis.value
+	//+ NGC_RS274::Interpreter::Processor::local_block.arc_values.vertical_relative_offset;
+
+	return  e_parsing_errors::OK;
 }

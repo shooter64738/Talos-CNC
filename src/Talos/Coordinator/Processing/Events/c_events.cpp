@@ -22,6 +22,7 @@
 #include "../Main/Main_Process.h"
 #define __EXTERN_EVENTS__
 #include "extern_events_types.h"
+#include "../../../NGC_RS274/NGC_System.h"
 
 c_data_events Talos::Coordinator::Events::data_event_handler;
 c_system_events Talos::Coordinator::Events::system_event_handler;
@@ -62,6 +63,59 @@ void Talos::Coordinator::Events::process()
 
 	//3: Handle ancillary events
 	Talos::Coordinator::Events::ancillary_event_handler.process();
+
+	//4:: Handle ngc processing events
+	if (
+		NGC_RS274::System::Events.Notifications.Update.get_clr((int)NGC_RS274::System::s_notification_events::e_event_type::SystemPositionChange)
+		)
+	{
+		
+		Talos::Coordinator::Main_Process::host_serial.print_string("Sys Pos:");
+		Talos::Coordinator::Main_Process::host_serial.Write(NGC_RS274::System::Position.sys_axis.horizontal_axis.name);
+		Talos::Coordinator::Main_Process::host_serial.print_float(NGC_RS274::System::Position.sys_axis.horizontal_axis.value);
+		Talos::Coordinator::Main_Process::host_serial.print_string(", ");
+
+		Talos::Coordinator::Main_Process::host_serial.Write(NGC_RS274::System::Position.sys_axis.vertical_axis.name);
+		Talos::Coordinator::Main_Process::host_serial.print_float(NGC_RS274::System::Position.sys_axis.vertical_axis.value);
+		Talos::Coordinator::Main_Process::host_serial.print_string(", ");
+
+		Talos::Coordinator::Main_Process::host_serial.Write(NGC_RS274::System::Position.sys_axis.normal_axis.name);
+		Talos::Coordinator::Main_Process::host_serial.print_float(NGC_RS274::System::Position.sys_axis.normal_axis.value);
+		Talos::Coordinator::Main_Process::host_serial.print_string(", ");
+
+		Talos::Coordinator::Main_Process::host_serial.Write(NGC_RS274::System::Position.sys_axis.rotary_horizontal_axis.name);
+		Talos::Coordinator::Main_Process::host_serial.print_float(NGC_RS274::System::Position.sys_axis.rotary_horizontal_axis.value);
+		Talos::Coordinator::Main_Process::host_serial.print_string(", ");
+
+		Talos::Coordinator::Main_Process::host_serial.Write(NGC_RS274::System::Position.sys_axis.rotary_vertical_axis.name);
+		Talos::Coordinator::Main_Process::host_serial.print_float(NGC_RS274::System::Position.sys_axis.rotary_vertical_axis.value);
+		Talos::Coordinator::Main_Process::host_serial.print_string(", ");
+
+		Talos::Coordinator::Main_Process::host_serial.Write(NGC_RS274::System::Position.sys_axis.rotary_normal_axis.name);
+		Talos::Coordinator::Main_Process::host_serial.print_float(NGC_RS274::System::Position.sys_axis.rotary_normal_axis.value);
+		Talos::Coordinator::Main_Process::host_serial.print_string(", ");
+
+		Talos::Coordinator::Main_Process::host_serial.Write(NGC_RS274::System::Position.sys_axis.inc_horizontal_axis.name);
+		Talos::Coordinator::Main_Process::host_serial.print_float(NGC_RS274::System::Position.sys_axis.inc_horizontal_axis.value);
+		Talos::Coordinator::Main_Process::host_serial.print_string(", ");
+
+		Talos::Coordinator::Main_Process::host_serial.Write(NGC_RS274::System::Position.sys_axis.inc_vertical_axis.name);
+		Talos::Coordinator::Main_Process::host_serial.print_float(NGC_RS274::System::Position.sys_axis.inc_vertical_axis.value);
+		Talos::Coordinator::Main_Process::host_serial.print_string(", ");
+
+		Talos::Coordinator::Main_Process::host_serial.Write(NGC_RS274::System::Position.sys_axis.inc_normal_axis.name);
+		Talos::Coordinator::Main_Process::host_serial.print_float(NGC_RS274::System::Position.sys_axis.inc_normal_axis.value);
+
+		Talos::Coordinator::Main_Process::host_serial.print_string("\r\n");
+		int x = 0;
+	}
+	if (
+		NGC_RS274::System::Events.Notifications.Update.get_clr((int)NGC_RS274::System::s_notification_events::e_event_type::SystemPositionHold)
+		)
+	{
+
+		Talos::Coordinator::Main_Process::host_serial.print_string("Sys Pos: HOLD\r\n");
+	}
 
 
 }

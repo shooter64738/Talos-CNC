@@ -1,5 +1,5 @@
 /*
-*  NGC_Block.h - NGC_RS274 controller.
+*  NGC_Block.cpp - NGC_RS274 controller.
 *  A component of Talos
 *
 *  Copyright (c) 2016-2019 Jeff Dill
@@ -19,35 +19,14 @@
 */
 
 
-#ifndef NGC_COORDINATE_CONTROL_H
-#define NGC_COORDINATE_CONTROL_H
+#include "NGC_System.h"
+s_ngc_block NGC_RS274::System::system_block;
 
-#include <stdint.h>
-#include "_ngc_errors_interpreter.h"
-#include "_ngc_coordinate_struct.h"
+NGC_RS274::System::s_system_position NGC_RS274::System::Position;
+NGC_RS274::System::s_ngc_system_events NGC_RS274::System::Events;
 
-namespace NGC_RS274
+uint8_t NGC_RS274::System::intialize()
 {
-	class Coordinate_Control
-	{
-		
-	public:
-		class WCS
-		{
-		public:
-			static s_wcs get(uint16_t wcs_id);
-			static uint8_t save(s_wcs * put_def);
+	return 0;
+}
 
-			static uint8_t(*pntr_wcs_write)(s_wcs * write_wcs);
-			static uint8_t(*pntr_wcs_read)(s_wcs * read_wcs);
-		};
-		//Block_Assignor();
-		//~Block_Assignor();
-		static s_wcs Active_WCS;
-		
-	private:
-
-	};
-};
-
-#endif /* NGC_BINARY_BLOCK_H */

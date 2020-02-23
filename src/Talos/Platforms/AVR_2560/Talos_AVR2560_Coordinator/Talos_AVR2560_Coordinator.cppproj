@@ -338,6 +338,14 @@
       <SubType>compile</SubType>
       <Link>Ngc_Rs274\Dialect\_ngc_validate_5_feed_rate_mode.h</Link>
     </Compile>
+    <Compile Include="..\..\..\NGC_RS274\Dialect\_ngc_validate_7_cutter_radius_compensation.cpp">
+      <SubType>compile</SubType>
+      <Link>Ngc_Rs274\Dialect\_ngc_validate_7_cutter_radius_compensation.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\NGC_RS274\Dialect\_ngc_validate_7_cutter_radius_compensation.h">
+      <SubType>compile</SubType>
+      <Link>Ngc_Rs274\Dialect\_ngc_validate_7_cutter_radius_compensation.h</Link>
+    </Compile>
     <Compile Include="..\..\..\NGC_RS274\Machine Specific\Lathe\NGC_G_Codes.h">
       <SubType>compile</SubType>
       <Link>Ngc_Rs274\MachineSpecific\Lathe\NGC_G_Codes.h</Link>
@@ -437,6 +445,14 @@
     <Compile Include="..\..\..\NGC_RS274\NGC_Set_Targets.h">
       <SubType>compile</SubType>
       <Link>Ngc_Rs274\NGC_Set_Targets.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\NGC_RS274\NGC_System.cpp">
+      <SubType>compile</SubType>
+      <Link>Ngc_Rs274\NGC_System.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\NGC_RS274\NGC_System.h">
+      <SubType>compile</SubType>
+      <Link>Ngc_Rs274\NGC_System.h</Link>
     </Compile>
     <Compile Include="..\..\..\NGC_RS274\NGC_Tool.cpp">
       <SubType>compile</SubType>

@@ -39,7 +39,7 @@ e_parsing_errors NGC_RS274::Set_Targets::adjust(NGC_RS274::Block_View *v_new_blo
 	//now check crc if its needed
 	if (NGC_RS274::Compensation::comp_control.state != e_compensation_states::CurrentCompensationOffNotActivating)
 		//if comp is in ANY state other than off and deactivated this needs to be called.
-		NGC_RS274::Compensation::process(v_new_block, v_previous_block);
+		NGC_RS274::Compensation::process(v_new_block);
 
 	/*
 	Now we need to find the true target. The programmed point may not be correct unless:

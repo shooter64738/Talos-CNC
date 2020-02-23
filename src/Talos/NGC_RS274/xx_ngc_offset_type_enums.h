@@ -1,6 +1,4 @@
 #include <stdint.h>
-#include "../_bit_manipulation.h"
-#include "../_bit_flag_control.h"
 #include "_ngc_defines.h"
 
 #ifndef NGC_OFFSET_TYPE_ENUM_H

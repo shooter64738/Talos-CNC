@@ -13,6 +13,16 @@
 #define DEGREE_TO_RADIAN(r) ((r)*M_PI/180.0)
 #define RADIAN_TO_DEGREE(r) ((r)*180.0/M_PI)
 
+static float _hypot_f(float x, float y)
+{
+	return (sqrt(x * x + y * y));
+}
+
+static float _square(float X)
+{
+	return X * X;
+}
+
 static void _check_near_zero(float *value)
 {
 	if (value < 0)

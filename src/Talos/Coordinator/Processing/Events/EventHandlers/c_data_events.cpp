@@ -68,6 +68,21 @@ void c_data_events::process()
 			extern_data_events.event_manager.clear((int)s_data_events::e_event_type::Usart0DataArrival);
 		}
 	}
+
+	if (extern_data_events.event_manager.get((int)s_data_events::e_event_type::DiskDataArrival))
+	{
+		//See if all buffered data is processed
+		if (Hardware_Abstraction_Layer::Disk:: :Serial::_usart0_buffer.has_data())
+		{
+			//this is a serial 0 event, so we use the serial event handler.
+			//since it is coming from usart0, we pass that as the data buffer.
+			c_serial_event_handler::process(&Hardware_Abstraction_Layer::Serial::_usart0_buffer);
+		}
+		else
+		{
+			extern_data_events.event_manager.clear((int)s_data_events::e_event_type::Usart0DataArrival);
+		}
+	}
 }
 
 

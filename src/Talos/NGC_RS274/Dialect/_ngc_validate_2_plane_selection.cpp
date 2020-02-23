@@ -14,8 +14,8 @@ e_parsing_errors NGC_RS274::Dialect::Group2::plane_validate(NGC_RS274::Block_Vie
 	case e_dialects::Fanuc_A:
 	case e_dialects::Fanuc_B:
 	case e_dialects::Fanuc_C:
-	case e_dialects::Mach:
-	case e_dialects::Siemens:
+	case e_dialects::Mach3:
+	case e_dialects::Siemens_ISO:
 		break;
 	case e_dialects::Haas:
 		//see if a plane was defined that is different than our current plane and rotation is active.

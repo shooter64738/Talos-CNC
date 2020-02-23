@@ -39,6 +39,8 @@ namespace Hardware_Abstraction_Layer
 		static uint8_t load_configuration();
 		static uint8_t load_initialize_block(s_ngc_block * initial_block);
 
+		static uint8_t read_file(char * filename, char * buffer);
+		
 		static uint8_t put_block(s_ngc_block * write_block);
 		static uint8_t get_block(s_ngc_block * read_block);
 

@@ -21,8 +21,6 @@ struct s_ngc_error_events
 	enum class e_event_type : uint8_t
 	{
 		BlockContiansNoData = 0
-
-
 	};
 	s_bit_flag_controller<uint32_t> event_manager;
 };
@@ -37,7 +35,8 @@ struct s_data_events
 		Usart2DataArrival = 2,
 		Usart3DataArrival = 3,
 		SPIBusDataArrival = 4,
-		NetworkDataArrival = 5
+		NetworkDataArrival = 5,
+		DiskDataArrival = 6
 	};
 	s_bit_flag_controller<uint32_t> event_manager;
 };
