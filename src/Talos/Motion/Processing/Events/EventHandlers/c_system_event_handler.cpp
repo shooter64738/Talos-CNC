@@ -1,5 +1,5 @@
 /*
-*  c_block_events.h - NGC_RS274 controller.
+*  c_motion_events.cpp - NGC_RS274 controller.
 *  A component of Talos
 *
 *  Copyright (c) 2016-2019 Jeff Dill
@@ -18,28 +18,13 @@
 *  along with Talos.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef __C_BLOCK_EVENTS_H__
-#define __C_BLOCK_EVENTS_H__
+#include "c_system_event_handler.h"
 
-#include <stdint.h>
-#include "..\records_def.h"
-namespace Events
+// default constructor
+c_system_event_handler::c_system_event_handler()
 {
-	class NGC_Block
-	{
-		//variables
-		public:
-		protected:
-		private:
-		
-
-		//functions
-		public:
-		static void check_events();
-
-		protected:
-		private:
-
-	}; //c_block_events
-};
-#endif //__C_BLOCK_EVENTS_H__
+}
+// default destructor
+c_system_event_handler::~c_system_event_handler()
+{
+}

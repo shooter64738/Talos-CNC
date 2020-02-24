@@ -69,5 +69,45 @@ void Talos::Motion::Main_Process::__initialization_response(uint8_t response_cod
 
 void Talos::Motion::Main_Process::run()
 {
+	/*
+	design thoughts.... 
+	need to determine what data is required int eh binary record. 
+	These are the ones I know of at this time
+	1. feed type
+	2. feed mode
+	3. feed rate
+	4. spindle speed
+	5. spindle mode
+	6. origin position
+	7. target position
+	8. arc center
+	9. arc offset
+	10. arc radius
+	??others??
+	*/
+
+	//descriptive pseudo code
+	/*
+	The initialize routine will determine if the system is healthy and ready to run. If initialize fails we will not
+	make it to the fun function. 
+	*/
+
+	/*
+	Check for healthy system. Anything that would stop us from processing motion except for an intended feed hold is
+	considered unhealthy.
+	1. lost comms
+	2. hardware fauilt detected
+	3. spindle error
+	etc... 
+	If the system is not healthy we need to shut down, and its will either be a hard fail or a soft fail. soft fails
+	can be recovered, hard fails cannot. 
+	*/
+
+	/*
+	Determine if motion control is configured to auto start, or start only on command
+	If auto start, then motion may begin executing when the coordiantor has processed
+	data and it is ready to send to the motion controller.
+	check for auto start command
+	*/
 	
 }

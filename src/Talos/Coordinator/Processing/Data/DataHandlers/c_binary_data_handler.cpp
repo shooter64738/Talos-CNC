@@ -20,7 +20,6 @@
 
 #include "c_binary_data_handler.h"
 #include "../../Main/Main_Process.h"
-#include "../../../../records_def.h"
 #include "../../../../Shared Data/_binary_record_enums.h"
 /*
 We should NEVER include this file, this way these handlers stay totaly

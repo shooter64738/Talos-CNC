@@ -3,6 +3,7 @@
 #include <stdint.h>
 
 #include "../../physical_machine_parameters.h"
+#include "../../_bit_flag_control.h"
 
 namespace Motion_Core
 {
@@ -39,7 +40,7 @@ namespace Motion_Core
 										  // Stored spindle speed data used by spindle overrides and resuming methods.
 			uint8_t Station;
 			uint32_t sequence;
-			BinaryRecords::s_bit_flag_controller_32 flag;
+			s_bit_flag_controller<uint32_t> flag;
 			float programmed_spindle_speed;
 			uint8_t spindle_state;
 			void Reset();

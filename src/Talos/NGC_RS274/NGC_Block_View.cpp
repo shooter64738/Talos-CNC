@@ -527,6 +527,7 @@ uint8_t NGC_RS274::Block_View::get_axis_number(char axis_letter)
 	default:
 		break;
 	}
+	return 0;
 }
 
 char NGC_RS274::Block_View::get_axis_letter(uint8_t axis_index)
@@ -548,6 +549,8 @@ char NGC_RS274::Block_View::get_axis_letter(uint8_t axis_index)
 	default:
 		break;
 	}
+
+	return 0;
 }
 
 bool NGC_RS274::Block_View::non_modal_with_axis_in_block(s_ngc_block * block)

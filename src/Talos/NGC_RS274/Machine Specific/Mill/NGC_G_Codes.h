@@ -93,7 +93,7 @@ namespace NGC_RS274
 		static const unsigned int CANNED_CYCLE_BACK_BORING = 87 * G_CODE_MULTIPLIER;
 		static const unsigned int CANNED_CYCLE_BORING_SPINDLE_STOP_MANUAL_OUT = 88 * G_CODE_MULTIPLIER;
 		static const unsigned int CANNED_CYCLE_BORING_DWELL_FEED_OUT = 89 * G_CODE_MULTIPLIER;
-		static const unsigned int CANNED_CYCLE_RETURN_TO_Z = 98 * G_CODE_MULTIPLIER;
+		static const unsigned int CANNED_CYCLE_RETURN_TO_Z = 98 * G_CODE_MULTIPLIER; //Use to jump over clamp/ 
 		static const unsigned int CANNED_CYCLE_RETURN_TO_R = 99 * G_CODE_MULTIPLIER;
 
 		static const unsigned int ABSOLUTE_DISANCE_MODE = 90 * G_CODE_MULTIPLIER;

@@ -20,9 +20,3 @@
 
 
 #include "c_block_events.h"
-#include "..\bit_manipulation.h"
-
-void Events::NGC_Block::check_events()
-{
-
-}

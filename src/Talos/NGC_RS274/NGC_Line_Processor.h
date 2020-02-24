@@ -25,7 +25,6 @@
 #include <stdint.h>
 #include <ctype.h>
 
-#include "../records_def.h"
 #include "../c_ring_template.h"
 //#include "NGC_Block.h"
 #include "NGC_Errors.h"

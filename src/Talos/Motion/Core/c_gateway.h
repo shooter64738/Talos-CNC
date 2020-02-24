@@ -9,8 +9,8 @@
 #ifndef __C_PROCESSOR_H__
 #define __C_PROCESSOR_H__
 
-#include "..\hardware_def.h"
-#include "..\records_def.h"
+#include "../Serial/c_Serial.h"
+#include "../motion_hardware_def.h"
 
 
 namespace Motion_Core

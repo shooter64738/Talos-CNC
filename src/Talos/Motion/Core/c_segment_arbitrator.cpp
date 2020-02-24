@@ -33,7 +33,7 @@ float Motion_Core::Segment::Arbitrator::inv_rate = 0;    // Used by PWM laser mo
 uint16_t Motion_Core::Segment::Arbitrator::current_spindle_pwm = 0;
 uint16_t Motion_Core::Segment::Arbitrator::line_number = 0;
 uint32_t Motion_Core::Segment::Arbitrator::sequence = 0;
-BinaryRecords::s_bit_flag_controller_32 Motion_Core::Segment::Arbitrator::flag;
+s_bit_flag_controller<uint32_t> Motion_Core::Segment::Arbitrator::flag;
 
 void Motion_Core::Segment::Arbitrator::Reset()
 {

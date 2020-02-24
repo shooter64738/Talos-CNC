@@ -1,6 +1,6 @@
 #include <stdint.h>
 #include "c_planner_compute_block.h"
-#include "..\records_def.h"
+#include "../../Shared Data/_peripheral_panel_control_enums.h"
 
 #ifndef __C_SOFTWARE_INTERPOLLATION
 #define __C_SOFTWARE_INTERPOLLATION

@@ -10,6 +10,7 @@
 #define __C_SYSTEM_H__
 #include <stdint.h>
 #include "../../physical_machine_parameters.h"
+#include "../../_bit_flag_control.h"
 
 
 //#define STEP_CONTROL_EXECUTE_HOLD         bit(1)
@@ -51,9 +52,9 @@ namespace Motion_Core
 
 		struct s_state_modes
 		{
-			BinaryRecords::s_bit_flag_controller_8 spindle_modes;
-			BinaryRecords::s_bit_flag_controller_8 step_modes;
-			BinaryRecords::s_bit_flag_controller_8 control_modes;
+			s_bit_flag_controller<uint8_t> spindle_modes;
+			s_bit_flag_controller<uint8_t> step_modes;
+			s_bit_flag_controller<uint8_t> control_modes;
 		};
 		
 		static s_state_modes state_mode;

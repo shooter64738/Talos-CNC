@@ -1,4 +1,4 @@
-#ifndef __C_BINARY_RECORD_TYPES
+//#ifndef __C_BINARY_RECORD_TYPES
 #define __C_BINARY_RECORD_TYPES
 #include <stdint.h>
 
@@ -13,4 +13,4 @@
 		Peripheral_Control_Setting = 5,
 		Status = 6
 	};
-#endif /* RECORDS_DEF_H */
+//#endif /* RECORDS_DEF_H */

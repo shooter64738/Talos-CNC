@@ -1,6 +1,5 @@
-
 /*
-*  c_system_events.h - NGC_RS274 controller.
+*  c_events.h - NGC_RS274 controller.
 *  A component of Talos
 *
 *  Copyright (c) 2016-2019 Jeff Dill
@@ -18,40 +17,29 @@
 *  You should have received a copy of the GNU General Public License
 *  along with Talos.  If not, see <http://www.gnu.org/licenses/>.
 */
-
-
-#ifndef __C_SYSTEM_EVENTS_H__
-#define __C_SYSTEM_EVENTS_H__
-
 #include <stdint.h>
-#include "..\Common\Serial\c_Serial.h"
+#ifndef __C_EVENTS_H__
+#define __C_EVENTS_H__
+
+
 namespace Events
 {
-	
-	class System
+	class Main_Process
 	{
 		//variables
 		public:
-		enum class e_event_type : uint8_t
-		{
-			Critical_Must_Shutdown = 0,
-			Non_Critical_Hardware = 1,
-			NGC_Error = 10
-		};
-		static BinaryRecords::s_bit_flag_controller_16 event_manager;
-		static BinaryRecords::s_status_message events_statistics;
-		static c_Serial *local_serial;
-
 		protected:
 		private:
-		//static bool active;
+
 
 		//functions
 		public:
-		static void check_events();
+			static void initialize();
+			static void set_events();
+			static void check_events();
 
 		protected:
 		private:
-	}; 
+	};
 };
-#endif //__C_SYSTEM_EVENTS_H__
+#endif //__C_EVENTS_H__

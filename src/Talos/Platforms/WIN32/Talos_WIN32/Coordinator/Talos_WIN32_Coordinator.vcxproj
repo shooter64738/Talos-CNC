@@ -38,8 +38,8 @@
     <ClInclude Include="..\..\..\..\Shared Data\_peripheral_overide_enums.h" />
     <ClInclude Include="..\..\..\..\Shared Data\_peripheral_panel_control_enums.h" />
     <ClInclude Include="..\..\..\..\Shared Data\_system_response_enums.h" />
+    <ClInclude Include="..\..\..\..\Shared Data\_system_state_enums.h" />
     <ClInclude Include="..\..\..\..\Shared Data\_system_sub_state_enums.h" />
-    <ClInclude Include="..\..\..\..\Shared Data\_sytem_state_enums.h" />
     <ClInclude Include="..\..\..\..\Shared Data\_s_interp_config_struct.h" />
     <ClInclude Include="..\..\..\..\Shared Data\_s_jog_data_struct.h" />
     <ClInclude Include="..\..\..\..\Shared Data\_s_peripheral_panel_struct.h" />

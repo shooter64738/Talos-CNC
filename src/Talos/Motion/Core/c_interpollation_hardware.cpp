@@ -1,5 +1,5 @@
 #include "c_interpollation_hardware.h"
-#include "..\hardware_def.h"
+#include "../motion_hardware_def.h"
 #include "c_motion_core.h"
 
 #ifdef MSVC
@@ -12,8 +12,9 @@ static ofstream myfile;
 #endif // MSVC
 #include "c_gateway.h"
 #include "c_segment_arbitrator.h"
-#include "..\Events\c_motion_control_events.h"
-#include "..\Events\c_system_events.h"
+#include "../Processing/Events/EventHandlers/c_motion_control_event_handler.h"
+#include "../Processing/Events/EventHandlers/c_system_event_handler.h"
+#include "../Processing/Events/extern_events_types.h"
 
 Motion_Core::Segment::Bresenham::Bresenham_Item *Motion_Core::Hardware::Interpolation::Change_Check_Exec_Timer_Bresenham; // Tracks the current st_block index. Change indicates new block.
 Motion_Core::Segment::Timer::Timer_Item *Motion_Core::Hardware::Interpolation::Exec_Timer_Item;  // Pointer to the segment being executed
@@ -100,7 +101,8 @@ void Motion_Core::Hardware::Interpolation::interpolation_begin()
 			
 			//set the waiting event for spindle synch. the event manager will handle when/if
 			//interpolation can start.
-			Events::Motion_Controller::event_manager.set((int)Events::Motion_Controller::e_event_type::Spindle_To_Speed_Wait);
+			
+			extern_motion_control_events.event_manager.set((int)s_motion_controller_events::e_event_type::SpindleToSpeedWait);
 			
 			//This is driven externally by the encoder input from the spindle
 			//If feedmode is spindle synch, what for spindle to get to speed if
@@ -117,8 +119,9 @@ void Motion_Core::Hardware::Interpolation::interpolation_begin()
 
 void Motion_Core::Hardware::Interpolation::spindle_at_speed_timeout(uint32_t parameter)
 {
-	Events::Motion_Controller::event_manager.set((int)Events::Motion_Controller::e_event_type::Spindle_Error_Speed_Timeout);
-	Events::System::event_manager.set((int)Events::System::e_event_type::Critical_Must_Shutdown);
+	extern_motion_control_events.event_manager.set((int)s_motion_controller_events::e_event_type::SpindleToSpeedTimeOut);
+	extern_system_events.event_manager.set((int)s_system_events::e_event_type::SystemCritical);
+
 	Motion_Core::Hardware::Interpolation::Shutdown();
 	Motion_Core::Hardware::Interpolation::Exec_Timer_Item = NULL;
 	Motion_Core::Segment::Timer::Buffer::Reset();
@@ -181,7 +184,7 @@ uint8_t Motion_Core::Hardware::Interpolation::check_spindle_at_speed()
 	The speed is only adjusted AFTER acceleration has completed, and BEFORE deceleration begins
 	*/
 	//set the at speed event
-	Events::Motion_Controller::event_manager.set((int)Events::Motion_Controller::e_event_type::Spindle_At_Speed);
+	extern_motion_control_events.event_manager.set((int)s_motion_controller_events::e_event_type::SpindleAtSpeed);
 
 	return true;
 }

@@ -1,6 +1,7 @@
 
 #include <stdint.h>
 #include "../../../_bit_flag_control.h"
+#include "../../../Shared Data/_system_state_enums.h"
 
 #ifndef __EXTERN_DATA_EVENTS
 #define __EXTERN_DATA_EVENTS
@@ -40,6 +41,7 @@ struct s_data_events
 	};
 	s_bit_flag_controller<uint32_t> event_manager;
 };
+
 
 struct s_system_events
 {

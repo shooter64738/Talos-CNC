@@ -103,12 +103,12 @@ uint8_t Motion_Core::Software::Interpolation::_mc_line(BinaryRecords::s_motion_d
 uint8_t Motion_Core::Software::Interpolation::_mc_arc(BinaryRecords::s_motion_data_block * target_block)
 {
 	//x=0, y=2
-	float center_axis0 = Motion_Core::Software::Interpolation::system_position[0] + target_block->arc_values.horizontal_offset;
-	float center_axis1 = Motion_Core::Software::Interpolation::system_position[1] + target_block->arc_values.vertical_offset;
+	float center_axis0 = Motion_Core::Software::Interpolation::system_position[0] + *target_block->arc_values.horizontal_offset.value;
+	float center_axis1 = Motion_Core::Software::Interpolation::system_position[1] + *target_block->arc_values.vertical_offset.value;
 	
 	
-	float r_axis0 = -target_block->arc_values.horizontal_offset;
-	float r_axis1 = -target_block->arc_values.vertical_offset;
+	float r_axis0 = - *target_block->arc_values.horizontal_offset.value;
+	float r_axis1 = - *target_block->arc_values.vertical_offset.value;
 	float rt_axis0 = target_block->axis_values[0] - center_axis0;
 	float rt_axis1 = target_block->axis_values[1] - center_axis1;
 	
@@ -134,8 +134,8 @@ uint8_t Motion_Core::Software::Interpolation::_mc_arc(BinaryRecords::s_motion_da
 	// (2x) settings.arc_tolerance. For 99% of users, this is just fine. If a different arc segment fit
 	// is desired, i.e. least-squares, midpoint on arc, just change the mm_per_arc_segment calculation.
 	// For the intended uses of Grbl, this value shouldn't exceed 2000 for the strictest of cases.
-	uint16_t segments = floor(fabs(0.5 * angular_travel * (target_block->arc_values.Radius))
-	/ sqrt(Motion_Core::Settings::_Settings.arc_tolerance * (2 * (target_block->arc_values.Radius) - Motion_Core::Settings::_Settings.arc_tolerance)));
+	uint16_t segments = floor(fabs(0.5 * angular_travel * (*target_block->arc_values.Radius))
+	/ sqrt(Motion_Core::Settings::_Settings.arc_tolerance * (2 * (*target_block->arc_values.Radius) - Motion_Core::Settings::_Settings.arc_tolerance)));
 	
 	if (segments)
 	{
@@ -205,10 +205,10 @@ uint8_t Motion_Core::Software::Interpolation::_mc_arc(BinaryRecords::s_motion_da
 				// Compute exact location by applying transformation matrix from initial radius vector(=-offset).
 				cos_Ti = cos(i * theta_per_segment);
 				sin_Ti = sin(i * theta_per_segment);
-				r_axis0 = -target_block->arc_values.horizontal_offset * cos_Ti
-				+ target_block->arc_values.vertical_offset * sin_Ti;
-				r_axis1 = -target_block->arc_values.horizontal_offset * sin_Ti
-				- target_block->arc_values.vertical_offset * cos_Ti;
+				r_axis0 = - *target_block->arc_values.horizontal_offset.value * cos_Ti
+				+ *target_block->arc_values.vertical_offset.value * sin_Ti;
+				r_axis1 = - *target_block->arc_values.horizontal_offset.value * sin_Ti
+				- *target_block->arc_values.vertical_offset.value * cos_Ti;
 				count = 0;
 			}
 			

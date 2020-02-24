@@ -7,7 +7,7 @@
 
 
 #include "c_system.h"
-#include "..\bit_manipulation.h"
+#include "../../_bit_manipulation.h"
 //uint32_t Motion_Core::System::control_state_modes = 0;
 //BinaryRecords::s_bit_flag_controller_32 Motion_Core::System::control_state_modes;
 uint32_t Motion_Core::System::new_sequence = 0;

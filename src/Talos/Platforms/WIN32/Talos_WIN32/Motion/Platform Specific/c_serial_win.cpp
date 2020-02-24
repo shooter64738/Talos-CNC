@@ -10,7 +10,7 @@
 #include "c_core_win.h"
 #include <iostream>
 #include "../../../../../c_ring_template.h"
-#include "../../../../../Coordinator/Processing/Events/extern_events_types.h"
+#include "../../../../../Motion/Processing/Events/extern_events_types.h"
 c_ring_buffer<char> Hardware_Abstraction_Layer::Serial::_usart0_buffer;
 static char _usart0_data[256];
 

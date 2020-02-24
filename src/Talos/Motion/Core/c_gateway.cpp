@@ -12,10 +12,11 @@
 #include "c_motion_core.h"
 #include "c_interpollation_hardware.h"
 #include "c_system.h"
-#include "..\communication_def.h"
+#include "../../communication_def.h"
 #include <string.h>
-#include "..\Events\c_motion_events.h"
-#include "..\Events\c_motion_control_events.h"
+#include "../Processing/Events/EventHandlers/c_motion_event_handler.h"
+#include "../Processing/Events/EventHandlers/c_motion_control_event_handler.h"
+#include "../Processing/Events/extern_events_types.h"
 #define MOTION_BUFFER_SIZE 2
 
 static BinaryRecords::s_motion_data_block jog_mot;
@@ -31,10 +32,10 @@ static uint16_t motion_buffer_tail = 0;
 
 void Motion_Core::Gateway::add_motion(BinaryRecords::s_motion_data_block new_blk)
 {
-	int test = sizeof(BinaryRecords::s_motion_data_block);
+	
 
 	//If the buffer is full we cant add a new motion yet
-	if (Events::Motion_Controller::event_manager.get((int)Events::Motion_Controller::e_event_type::Motion_buffer_full))
+	if (extern_motion_control_events.event_manager.get((int)s_motion_controller_events::e_event_type::MotionBufferFull))
 	{
 		return; //<--no space for a new item right now
 	}
@@ -48,12 +49,12 @@ void Motion_Core::Gateway::add_motion(BinaryRecords::s_motion_data_block new_blk
 	}
 	if (motion_buffer_head == motion_buffer_tail)
 	{
-		Events::Motion_Controller::event_manager.set((int)Events::Motion_Controller::e_event_type::Motion_buffer_full);
+		extern_motion_control_events.event_manager.set((int)s_motion_controller_events::e_event_type::MotionBufferFull);
 	}
 	//the buffer defaults to empty, but since we jsut added an item, its not empty anymore
-	Events::Motion_Controller::event_manager.clear((int)Events::Motion_Controller::e_event_type::Motion_buffer_empty);
+	extern_motion_control_events.event_manager.clear((int)s_motion_controller_events::e_event_type::MotionBufferEmpty);
 
-	Events::Motion_Controller::event_manager.set((int)Events::Motion_Controller::e_event_type::Motion_Added_to_Buffer);
+	extern_motion_control_events.event_manager.set((int)s_motion_controller_events::e_event_type::MotionBufferAdd);
 	
 	//Motion_Core::Gateway::process_motion(&_blk);
 }
@@ -98,7 +99,7 @@ void Motion_Core::Gateway::process_motion()
 {
 	//If head and tail are equal, and the empty flag is set, nothing has been put in the buffer.
 	if ((motion_buffer_head == motion_buffer_tail)
-		&& Events::Motion_Controller::event_manager.get((int)Events::Motion_Controller::e_event_type::Motion_buffer_empty))
+		&& extern_motion_control_events.event_manager.get((int)s_motion_controller_events::e_event_type::MotionBufferEmpty))
 	{
 		return; //<--nothing in the buffer, just return
 	}
@@ -110,7 +111,7 @@ void Motion_Core::Gateway::process_motion()
 	
 	
 	//since we processed a block, we have freed a space in the buffer, so its no longer 'full'
-	Events::Motion_Controller::event_manager.clear((int)Events::Motion_Controller::e_event_type::Motion_buffer_full);
+	extern_motion_control_events.event_manager.clear((int)s_motion_controller_events::e_event_type::MotionBufferFull);
 
 	//See if we are wrapping the buffer
 	if (motion_buffer_tail == MOTION_BUFFER_SIZE)
@@ -121,7 +122,7 @@ void Motion_Core::Gateway::process_motion()
 	//If head and tail are equal we have nothing left to consume so set the buffer to empty
 	if (motion_buffer_head == motion_buffer_tail)
 	{
-		Events::Motion_Controller::event_manager.set((int)Events::Motion_Controller::e_event_type::Motion_buffer_empty);
+		extern_motion_control_events.event_manager.set((int)s_motion_controller_events::e_event_type::MotionBufferEmpty);
 	}
 	
 }
@@ -158,13 +159,13 @@ void Motion_Core::Gateway::process_motion(BinaryRecords::s_motion_data_block *mo
 		uint16_t return_code = Motion_Core::Software::Interpolation::load_block(mot);
 		if (return_code)
 		{
-			Events::Motion_Controller::event_manager.set((int)Events::Motion_Controller::e_event_type::Block_Executing);
+			extern_motion_control_events.event_manager.set((int)s_motion_controller_events::e_event_type::BlockExecuting);
 			Motion_Core::System::state_mode.control_modes.set((int)Motion_Core::System::e_control_event_type::Control_motion_interpolation);
 		}
 		else if (return_code == 0)
 		{
-			Events::Motion_Controller::events_statistics.num_message = mot->sequence;
-			Events::Motion_Controller::event_manager.set((int)Events::Motion_Controller::e_event_type::Block_Discarded);
+			//Events::Motion_Controller::events_statistics.num_message = mot->sequence;
+			extern_motion_control_events.event_manager.set((int)s_motion_controller_events::e_event_type::BlockDiscarded);
 		}
 	}
 	
@@ -218,20 +219,21 @@ void Motion_Core::Gateway::check_sequence_complete()
 	{
 		if (Motion_Core::Hardware::Interpolation::Interpolation_Active)
 		{
-			Events::Motion_Controller::events_statistics.system_state = BinaryRecords::e_system_state_record_types::Motion_Active;
+			//Events::Motion_Controller::events_statistics.system_state = BinaryRecords::e_system_state_record_types::Motion_Active;
 		}
 		else
 		{
-			Events::Motion_Controller::events_statistics.system_state = BinaryRecords::e_system_state_record_types::Motion_Idle;
+			//Events::Motion_Controller::events_statistics.system_state = BinaryRecords::e_system_state_record_types::Motion_Idle;
 		}
 
-		Events::Motion_Controller::events_statistics.system_sub_state = BinaryRecords::e_system_sub_state_record_types::Block_Complete;
+		//Events::Motion_Controller::events_statistics.system_sub_state = BinaryRecords::e_system_sub_state_record_types::Block_Complete;
 		
-		Events::Motion_Controller::events_statistics.num_message = Motion_Core::Hardware::Interpolation::Last_Completed_Sequence;
+		//Events::Motion_Controller::events_statistics.num_message = Motion_Core::Hardware::Interpolation::Last_Completed_Sequence;
 		Motion_Core::Hardware::Interpolation::Last_Completed_Sequence = 0;
 		
 		//flag an event so that Main_Processing can pick it up.
-		Events::Motion_Controller::event_manager.set((int)Events::Motion_Controller::e_event_type::Block_Complete);
+		extern_motion_control_events.event_manager.set((int)s_motion_controller_events::e_event_type::BlockComplete);
+
 	}
 }
 

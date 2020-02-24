@@ -200,9 +200,6 @@
     <ClInclude Include="..\..\..\..\Shared Data\_system_sub_state_enums.h">
       <Filter>Shared Data</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Shared Data\_sytem_state_enums.h">
-      <Filter>Shared Data</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\..\Shared Data\_unit_type_enums.h">
       <Filter>Shared Data</Filter>
     </ClInclude>
@@ -277,6 +274,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\NGC_RS274\Dialect\_ngc_validate_3_distance_mode.h">
       <Filter>Ngc_Rs274\Dialect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared Data\_system_state_enums.h">
+      <Filter>Shared Data</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

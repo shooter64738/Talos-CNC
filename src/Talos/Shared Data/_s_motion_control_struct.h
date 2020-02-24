@@ -1,8 +1,10 @@
 #include "_unit_type_enums.h"
+#include "_binary_record_enums.h"
+#include "_s_motion_hardware_struct.h"
 
 struct s_motion_control_settings
 {
-	const BinaryRecords::e_binary_record_types record_type = BinaryRecords::e_binary_record_types::Motion_Control_Setting;
+	const e_binary_record_types record_type = e_binary_record_types::Motion_Control_Setting;
 	float junction_deviation = 0;//43
 	float arc_tolerance = 0;//47
 	uint16_t arc_angular_correction = 12;//59

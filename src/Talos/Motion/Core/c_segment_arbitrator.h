@@ -6,7 +6,7 @@
 #include "c_block.h"
 #include "c_block_buffer.h"
 #include "c_motion_core.h"
-#include "..\hardware_def.h"
+#include "../motion_hardware_def.h"
 
 
 namespace Motion_Core
@@ -45,7 +45,7 @@ namespace Motion_Core
 			static uint16_t current_spindle_pwm;
 			static uint16_t line_number;
 			static uint32_t sequence;
-			static BinaryRecords::s_bit_flag_controller_32 flag;
+			static s_bit_flag_controller<uint32_t> flag;
 
 			//static c_planner::plan_block_t *pl_block;
 			static Motion_Core::Planner::Block_Item *Active_Block;

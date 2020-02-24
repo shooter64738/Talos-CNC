@@ -4,7 +4,7 @@
 #include "c_motion_core.h"
 #include "c_gateway.h"
 #include "c_interpollation_software.h"
-#include "..\bit_manipulation.h"
+#include "../../_bit_manipulation.h"
 
 
 
@@ -22,7 +22,7 @@ uint8_t Motion_Core::Planner::Calculator::_plan_buffer_line(BinaryRecords::s_mot
 	
 	planning_block->line_number = target_block.line_number;
 	planning_block->sequence = target_block.sequence;
-	planning_block->flag = target_block.flag;
+	planning_block->flag._flag = target_block.flag;
 	planning_block->programmed_spindle_speed = target_block.spindle_speed;
 	planning_block->spindle_state = target_block.spindle_state;
 	

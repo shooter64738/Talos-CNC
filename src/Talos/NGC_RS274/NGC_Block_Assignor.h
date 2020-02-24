@@ -31,7 +31,6 @@ needed to store in the buffer array. This allows almost twice as much storage sp
 #define NGC_BLOCK_ASSIGNOR_H
 
 #include <stdint.h>
-#include "../records_def.h"
 #include "_ngc_errors_interpreter.h"
 #include "_ngc_block_struct.h"
 

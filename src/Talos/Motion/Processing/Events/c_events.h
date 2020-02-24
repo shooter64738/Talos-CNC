@@ -17,29 +17,48 @@
 *  You should have received a copy of the GNU General Public License
 *  along with Talos.  If not, see <http://www.gnu.org/licenses/>.
 */
+
+#ifndef __C_COORDINATOR_EVENTS_H__
+#define __C_COORDINATOR_EVENTS_H__
+
 #include <stdint.h>
-#ifndef __C_EVENTS_H__
-#define __C_EVENTS_H__
+#include "EventHandlers/c_system_event_handler.h"
+#include "EventHandlers/c_data_event_handler.h"
+#include "EventHandlers/c_motion_event_handler.h"
+#include "EventHandlers/c_motion_control_event_handler.h"
 
 
-namespace Events
+namespace Talos
 {
-	class Main_Process
+	namespace Motion
 	{
-		//variables
+		class Events
+		{
+			//variables
 		public:
+			static c_system_event_handler system_event_handler;
+			static c_data_event_handler data_event_handler;
+			static c_motion_event_handler motion_event_handler;
+			static c_motion_control_event_handler motion_control_event_handler;
+			//static c_ancillary_event_handler ancillary_event_handler;
 		protected:
 		private:
 
 
-		//functions
+			//functions
 		public:
-			static void initialize();
-			static void set_events();
-			static void check_events();
+			/*Events();
+			~Events();
+			Events(const Events &c);
+			Events& operator=(const Events &c);*/
+
+			static uint8_t initialize();
+			static void process();
+
 
 		protected:
 		private:
+		};
 	};
 };
 #endif //__C_EVENTS_H__

@@ -24,6 +24,7 @@
 #include <stdint.h>
 #include "../physical_machine_parameters.h"
 #include "../NGC_RS274/_ngc_defines.h"
+#include "../NGC_RS274/_ngc_arc_struct.h"
 #include "../_bit_manipulation.h"
 #include <string.h>
 
@@ -81,20 +82,22 @@ namespace BinaryRecords
 	};
 #endif
 
-#ifndef __C_BINARY_RECORD_TYPES
-#define __C_BINARY_RECORD_TYPES
-	enum class e_binary_record_types : uint8_t
-	{
-		//DO NOT use 10 or 13 as binary record type identifiers.
-		Unknown = 0,
-		Motion = 1,
-		Motion_Control_Setting = 2,
-		Spindle_Control_Setting = 3,
-		Jog = 4,
-		Peripheral_Control_Setting = 5,
-		Status = 6
-	};
-#endif
+#include "_binary_record_enums.h"
+
+//#ifndef __C_BINARY_RECORD_TYPES
+//#define __C_BINARY_RECORD_TYPES
+//	enum class e_binary_record_types : uint8_t
+//	{
+//		//DO NOT use 10 or 13 as binary record type identifiers.
+//		Unknown = 0,
+//		Motion = 1,
+//		Motion_Control_Setting = 2,
+//		Spindle_Control_Setting = 3,
+//		Jog = 4,
+//		Peripheral_Control_Setting = 5,
+//		Status = 6
+//	};
+//#endif
 
 #ifndef __C_UNIT_TYPES
 #define __C_UNIT_TYPES
@@ -300,6 +303,21 @@ namespace BinaryRecords
 		float num_message = 0.0;
 		char * chr_message;
 		uint32_t _check_sum = 0;
+	};
+
+	struct s_motion_data_block
+	{
+		const BinaryRecords::e_binary_record_types record_type = BinaryRecords::e_binary_record_types::Motion;
+		e_feed_modes feed_rate_mode;
+		e_motion_type motion_type;
+		s_arc_values arc_values;
+		float axis_values[MACHINE_AXIS_COUNT];
+		float feed_rate;
+		float spindle_speed;
+		uint8_t spindle_state;
+		uint32_t flag;
+		uint32_t line_number;
+		uint32_t sequence;
 	};
 
 };
