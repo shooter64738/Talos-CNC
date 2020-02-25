@@ -34,13 +34,13 @@
     <ClInclude Include="..\..\..\..\NGC_RS274\_ngc_plane_struct.h" />
     <ClInclude Include="..\..\..\..\NGC_RS274\_ngc_point_definition.h" />
     <ClInclude Include="..\..\..\..\NGC_RS274\_ngc_tool_struct.h" />
+    <ClInclude Include="..\..\..\..\Shared Data\Settings\Coordinator\_s_interp_config_struct.h" />
     <ClInclude Include="..\..\..\..\Shared Data\_binary_record_enums.h" />
     <ClInclude Include="..\..\..\..\Shared Data\_peripheral_overide_enums.h" />
     <ClInclude Include="..\..\..\..\Shared Data\_peripheral_panel_control_enums.h" />
     <ClInclude Include="..\..\..\..\Shared Data\_system_response_enums.h" />
     <ClInclude Include="..\..\..\..\Shared Data\_system_state_enums.h" />
     <ClInclude Include="..\..\..\..\Shared Data\_system_sub_state_enums.h" />
-    <ClInclude Include="..\..\..\..\Shared Data\_s_interp_config_struct.h" />
     <ClInclude Include="..\..\..\..\Shared Data\_s_jog_data_struct.h" />
     <ClInclude Include="..\..\..\..\Shared Data\_s_peripheral_panel_struct.h" />
     <ClInclude Include="..\..\..\..\Shared Data\_unit_type_enums.h" />

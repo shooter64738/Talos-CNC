@@ -58,6 +58,12 @@
     <Filter Include="Configuration">
       <UniqueIdentifier>{e1574bd0-3650-4e23-8650-59b11823a09f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shared Data\Settings">
+      <UniqueIdentifier>{0b55549e-60fb-4ae4-9a3c-a5e45e33ba04}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shared Data\Settings\Coordinator">
+      <UniqueIdentifier>{04a6e8a7-8ed7-4783-b20e-3202dbe3dbeb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\communication_def.h" />
@@ -245,9 +251,6 @@
     <ClInclude Include="..\..\..\..\Motion\Processing\GCode\xc_gcode_buffer.h">
       <Filter>Motion\Processing\GCode</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Shared Data\_s_interp_config_struct.h">
-      <Filter>Shared Data</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\..\Configuration\c_configuration.h">
       <Filter>Configuration</Filter>
     </ClInclude>
@@ -277,6 +280,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\Shared Data\_system_state_enums.h">
       <Filter>Shared Data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared Data\Settings\Coordinator\_s_interp_config_struct.h">
+      <Filter>Shared Data\Settings\Coordinator</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

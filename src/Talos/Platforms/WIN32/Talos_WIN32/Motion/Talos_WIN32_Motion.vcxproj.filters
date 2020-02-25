@@ -52,6 +52,12 @@
     <Filter Include="Motion\Processing\Planner\CRC">
       <UniqueIdentifier>{17c11b40-914f-49b0-9125-e80ed4a87bcd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shared data\Settings">
+      <UniqueIdentifier>{5ad3ac02-2b3b-4ee4-8afd-1e11e16b799c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shared data\Settings\Motion">
+      <UniqueIdentifier>{fdc3f069-7f5c-46e9-af9c-e87dd1364df2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\..\Motion\motion_main.cpp">
@@ -171,12 +177,6 @@
       <Filter>Shared data</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\Shared Data\_s_jog_data_struct.h">
-      <Filter>Shared data</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Shared Data\_s_motion_control_struct.h">
-      <Filter>Shared data</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Shared Data\_s_motion_hardware_struct.h">
       <Filter>Shared data</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\Shared Data\_s_peripheral_panel_struct.h">
@@ -302,6 +302,15 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\Motion\Processing\Events\EventHandlers\c_system_event_handler.h">
       <Filter>Motion\Processing\Events\EventHandlers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared Data\Settings\Motion\_s_motion_hardware_struct.h">
+      <Filter>Shared data\Settings\Motion</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared Data\Settings\Motion\_s_motion_tolerance_struct.h">
+      <Filter>Shared data\Settings\Motion</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared Data\Settings\Motion\_s_motion_control_settings_encapsulation.h">
+      <Filter>Shared data\Settings\Motion</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

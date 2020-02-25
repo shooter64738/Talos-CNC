@@ -7,7 +7,8 @@
 
 
 #include "Main_Process.h"
-
+#include "../Events/c_events.h"
+#include "../Events/extern_events_types.h"
 c_Serial Talos::Motion::Main_Process::host_serial;
 
 void Talos::Motion::Main_Process::initialize()
@@ -20,11 +21,11 @@ void Talos::Motion::Main_Process::initialize()
 
 	
 	__initialization_start("Interrupts", Hardware_Abstraction_Layer::Core::start_interrupts,STARTUP_CLASS_CRITICAL);//<--start interrupts on hardware
-	//__initialization_start("Events", Talos::Motion::Events::initialize);//<--init events
+	__initialization_start("Events", Talos::Motion::Events::initialize, STARTUP_CLASS_CRITICAL);//<--init events
 	//__initialization_start("Ngc Buffer", Talos::Motion::NgcBuffer::initialize);//<--g code buffer
 	//__initialization_start("Ngc Interpreter", NGC_RS274::Interpreter::Processor::initialize);//<--g code interpreter
 	__initialization_start("Disk", Hardware_Abstraction_Layer::Disk::initialize,STARTUP_CLASS_CRITICAL);//<--drive/eprom storage
-	__initialization_start("Coordinator Comms", NULL,STARTUP_CLASS_CRITICAL);//<--motion controller card
+	__initialization_start("Coordinator Comms", NULL,STARTUP_CLASS_CRITICAL);//<--coordinator controller card
 	__initialization_start("Spindle Control Comms", NULL,STARTUP_CLASS_CRITICAL);//<--spindle controller card
 
 }
@@ -71,7 +72,7 @@ void Talos::Motion::Main_Process::run()
 {
 	/*
 	design thoughts.... 
-	need to determine what data is required int eh binary record. 
+	need to determine what data is required in the binary record. 
 	These are the ones I know of at this time
 	1. feed type
 	2. feed mode
@@ -89,7 +90,7 @@ void Talos::Motion::Main_Process::run()
 	//descriptive pseudo code
 	/*
 	The initialize routine will determine if the system is healthy and ready to run. If initialize fails we will not
-	make it to the fun function. 
+	make it to the run function. 
 	*/
 
 	/*
@@ -99,7 +100,7 @@ void Talos::Motion::Main_Process::run()
 	2. hardware fauilt detected
 	3. spindle error
 	etc... 
-	If the system is not healthy we need to shut down, and its will either be a hard fail or a soft fail. soft fails
+	If the system is not healthy we need to shut down, and it will either be a hard fail or a soft fail. soft fails
 	can be recovered, hard fails cannot. 
 	*/
 
@@ -110,4 +111,12 @@ void Talos::Motion::Main_Process::run()
 	check for auto start command
 	*/
 	
+	//Start the eventing loop, stop loop if a critical system error occurs
+	while (extern_system_events.event_manager.get((int)s_system_events::e_event_type::SystemAllOk))
+	{
+		//This firmware is mostly event driven. This is the main entry point for checking
+		//which events have been set to execute, and then executing them.
+		Talos::Motion::Events::process();
+	}
+
 }

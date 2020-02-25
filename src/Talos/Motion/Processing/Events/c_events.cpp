@@ -41,28 +41,19 @@ void Talos::Motion::Events::process()
 {
 	//First check to make sure the system is healthy
 	if (!extern_system_events.event_manager.get((int)s_system_events::e_event_type::SystemAllOk))
-	return;
-	
-	//Execute the events having their bit flags set
-	/*
-	Need to consider handler priority. At the moment I propose this priority
-	0. system events. This could stop processing in its tracks so check this first
-	1. hardware input events. Not implemented but probably will be.
-	2. data events, such as incoming gcode, configuration records, disk or network data, etc..
-	3. ancillary events, events that spawn off because other events have taken place. (ngc data ready etc..)
-	*/
+		return;
+
 	//0: Handle system events
 	//Talos::Motion::Events::system_event_handler.process();
 	//if there are any system critical events check them here and do not process further
 
-	//1: Handle hardware events
-	//Talos::Motion::Events::hardware_event_handler.process();
+	//1: Handle motion controller events. These are hardware events
+	Talos::Motion::Events::motion_control_event_handler.process();
 
 	//2: Handle data events
 	Talos::Motion::Events::data_event_handler.process();
 
-	//3: Handle ancillary events
-	//Talos::Motion::Events::ancillary_event_handler.process();
+	//3: Handle motion events. These are software processing events
+	Talos::Motion::Events::motion_event_handler.process();
 
-	//4:: Handle ngc processing events
 }

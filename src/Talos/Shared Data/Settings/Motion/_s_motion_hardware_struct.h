@@ -1,3 +1,8 @@
+
+#include <stdint.h>
+#include "../../_s_encoder_struct.h"
+#include "../../../physical_machine_parameters.h"
+
 struct s_hardware
 {
 	s_encoders spindle_encoder;
