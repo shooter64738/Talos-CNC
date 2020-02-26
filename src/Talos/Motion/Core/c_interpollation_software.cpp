@@ -68,14 +68,14 @@ uint16_t Motion_Core::Software::Interpolation::load_block(BinaryRecords::s_motio
 	
 	switch (block->motion_type)
 	{
-		case BinaryRecords::e_motion_type::rapid_linear:
-		case BinaryRecords::e_motion_type::feed_linear:
+		case e_motion_type::rapid_linear:
+		case e_motion_type::feed_linear:
 		{
 			return_value = Motion_Core::Software::Interpolation::_mc_line(block);
 			break;
 		}
-		case BinaryRecords::e_motion_type::arc_cw:
-		case BinaryRecords::e_motion_type::arc_ccw:
+		case e_motion_type::arc_cw:
+		case e_motion_type::arc_ccw:
 		{
 			return_value = Motion_Core::Software::Interpolation::_mc_arc(block);
 			break;
@@ -114,7 +114,7 @@ uint8_t Motion_Core::Software::Interpolation::_mc_arc(BinaryRecords::s_motion_da
 	
 	// CCW angle between position and target from circle center. Only one atan2() trig computation required.
 	float angular_travel = atan2(r_axis0 * rt_axis1 - r_axis1 * rt_axis0, r_axis0 * rt_axis0 + r_axis1 * rt_axis1);
-	if (target_block->motion_type == BinaryRecords::e_motion_type::arc_cw)
+	if (target_block->motion_type == e_motion_type::arc_cw)
 	{
 		// Correct atan2 output per direction
 		if (angular_travel >= -ARC_ANGULAR_TRAVEL_EPSILON)
@@ -142,7 +142,7 @@ uint8_t Motion_Core::Software::Interpolation::_mc_arc(BinaryRecords::s_motion_da
 		// Multiply inverse feed_rate to compensate for the fact that this movement is approximated
 		// by a number of discrete segments. The inverse feed_rate should be correct for the sum of
 		// all segments.
-		if (target_block->feed_rate_mode == BinaryRecords::e_feed_modes::FEED_RATE_MINUTES_PER_UNIT_MODE)
+		if (target_block->feed_rate_mode == e_feed_modes::FEED_RATE_MINUTES_PER_UNIT_MODE)
 		
 		{
 			target_block->feed_rate *= segments;

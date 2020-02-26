@@ -41,7 +41,7 @@ c_Serial::c_Serial(uint8_t Port, uint32_t BaudRate)
 
 bool c_Serial::HasData()
 {
-	return Hardware_Abstraction_Layer::Serial::_usart0_buffer.has_data();
+	return Hardware_Abstraction_Layer::Serial::_usart0_read_buffer.has_data();
 }
 
 /*This sends the specified string. It will not return until transmission is complete*/

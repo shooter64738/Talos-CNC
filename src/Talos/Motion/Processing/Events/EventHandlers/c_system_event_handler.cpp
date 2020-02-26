@@ -19,12 +19,6 @@
 */
 
 #include "c_system_event_handler.h"
-
-// default constructor
-c_system_event_handler::c_system_event_handler()
-{
-}
-// default destructor
-c_system_event_handler::~c_system_event_handler()
+void c_system_event_handler::process()
 {
 }

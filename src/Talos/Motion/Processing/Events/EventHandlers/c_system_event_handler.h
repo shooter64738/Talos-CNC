@@ -35,10 +35,12 @@ private:
 
 	//functions
 public:
-	c_system_event_handler();
+	/*c_system_event_handler();
 	~c_system_event_handler();
 	c_system_event_handler(const c_system_event_handler &c);
-	c_system_event_handler& operator=(const c_system_event_handler &c);
+	c_system_event_handler& operator=(const c_system_event_handler &c);*/
+
+	static void process();
 
 protected:
 private:

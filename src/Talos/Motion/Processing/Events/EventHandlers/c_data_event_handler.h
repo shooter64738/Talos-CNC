@@ -40,6 +40,7 @@ class c_data_event_handler
 		//c_data_events& operator=(const c_data_events &c);
 		
 		static void process();
+		
 
 	protected:
 	private:

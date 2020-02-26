@@ -44,7 +44,7 @@ void Talos::Motion::Events::process()
 		return;
 
 	//0: Handle system events
-	//Talos::Motion::Events::system_event_handler.process();
+	Talos::Motion::Events::system_event_handler.process();
 	//if there are any system critical events check them here and do not process further
 
 	//1: Handle motion controller events. These are hardware events

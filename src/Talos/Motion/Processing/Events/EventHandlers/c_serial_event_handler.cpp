@@ -25,11 +25,10 @@
 #include "../../Data/DataHandlers/c_ngc_data_handler.h"
 #include "../../../../communication_def.h"
 
-void(*c_serial_event_handler::pntr_data_handler)(c_ring_buffer<char> * buffer);
 
-//We know a serial data event has occurred but we dont have any details.
-//This event processor will determine the type of data, and in whatway
-//the data consumer needs to use it.
+void(*c_serial_event_handler::pntr_data_read_handler)(c_ring_buffer<char> * buffer);
+void(*c_serial_event_handler::pntr_data_write_handler)(c_ring_buffer<char> * buffer);
+
 void c_serial_event_handler::process(c_ring_buffer<char> * buffer)
 {
 	/*
@@ -43,22 +42,38 @@ void c_serial_event_handler::process(c_ring_buffer<char> * buffer)
 	
 	//Is there a handler assigned for this data class already? If a handler is assigned
 	//keep using it until all the data is consumed. Otherwise assign a new handler. 
-	if (c_serial_event_handler::pntr_data_handler == NULL)
+	if (c_serial_event_handler::pntr_data_read_handler == NULL)
 	{
-		c_serial_event_handler::__assign_handler(buffer);
+		c_serial_event_handler::__assign_read_handler(buffer);
 	}
 
-	if (c_serial_event_handler::pntr_data_handler != NULL)
+	if (c_serial_event_handler::pntr_data_read_handler != NULL)
 	{
 		//The handler will release its self when it determines that all of the data for
 		//that particular handler has been consumed. 
-		c_serial_event_handler::pntr_data_handler(buffer);
+		c_serial_event_handler::pntr_data_read_handler(buffer);
 	}
-
-	
 }
 
-void c_serial_event_handler::__assign_handler(c_ring_buffer <char> * buffer)
+void c_serial_event_handler::process(c_ring_buffer<char> * buffer, e_record_types rec_type)
+{
+
+	//Is there a handler assigned for this data class already? If a handler is assigned
+	//keep using it until all the data is consumed. Otherwise assign a new handler. 
+	if (c_serial_event_handler::pntr_data_write_handler == NULL)
+	{
+		c_serial_event_handler::__assign_write_handler(buffer, rec_type);
+	}
+
+	if (c_serial_event_handler::pntr_data_write_handler != NULL)
+	{
+		//The handler will release its self when it determines that all of the data for
+		//that particular handler has been consumed. 
+		c_serial_event_handler::pntr_data_write_handler(buffer);
+	}
+}
+
+void c_serial_event_handler::__assign_read_handler(c_ring_buffer <char> * buffer)
 {
 	//Tail is always assumed to be at the 'start' of data
 	
@@ -81,26 +96,56 @@ void c_serial_event_handler::__assign_handler(c_ring_buffer <char> * buffer)
 	}
 }
 
+void c_serial_event_handler::__assign_write_handler(c_ring_buffer <char> * buffer, e_record_types rec_type)
+{
+	switch (rec_type)
+	{
+	case e_record_types::Unknown:
+		break;
+	case e_record_types::Motion:
+		break;
+	case e_record_types::Motion_Control_Setting:
+		break;
+	case e_record_types::Spindle_Control_Setting:
+		break;
+	case e_record_types::Jog:
+		break;
+	case e_record_types::Peripheral_Control_Setting:
+		break;
+	case e_record_types::Status:
+		break;
+	case e_record_types::NgcBlockRecordRequest:
+		//I could hard code a function pointer here, but this gives me more flexability. I let the 
+		//data handler decide how this data gets processed
+		c_serial_event_handler::pntr_data_write_handler = c_ngc_data_handler::assign_write_handler(buffer);
+		//This is function point that gets 'called back' when all the data is done processing. 
+		c_ngc_data_handler::pntr_data_handler_release = c_serial_event_handler::write_data_handler_releaser;
+		
+		break;
+	default:
+		break;
+	}
+}
+
 void c_serial_event_handler::__unkown_handler(c_ring_buffer <char> * buffer)
 {
 	//this was some unknown type of data.
 	char peek_newest = buffer->peek(buffer->_newest);
 	Talos::Motion::Main_Process::host_serial.print_string("UKNOWN:");
 	Talos::Motion::Main_Process::host_serial.print_int32(peek_newest);
-	c_serial_event_handler::pntr_data_handler = NULL;
+	c_serial_event_handler::pntr_data_read_handler = NULL;
 }
 
 void c_serial_event_handler::__control_handler(c_ring_buffer <char> * buffer)
 {
 	//release the handler because we should be done with it now.
-	c_serial_event_handler::pntr_data_handler = NULL;
+	c_serial_event_handler::pntr_data_read_handler = NULL;
 	Talos::Motion::Main_Process::host_serial.print_string("control\r\n");
 }
 
-
-void c_serial_event_handler::data_handler_releaser(c_ring_buffer<char> * released_buffer)
+void c_serial_event_handler::read_data_handler_releaser(c_ring_buffer<char> * released_buffer)
 {
-	c_serial_event_handler::pntr_data_handler = NULL;
+	c_serial_event_handler::pntr_data_read_handler = NULL;
 	//We may have read SOME data, but that doesnt mean we read all the data in the buffer
 	//if (released_buffer->has_data())
 	//{
@@ -109,6 +154,49 @@ void c_serial_event_handler::data_handler_releaser(c_ring_buffer<char> * release
 	//	c_serial_event_handler::pntr_data_handler(released_buffer);
 	//}
 }
+
+void c_serial_event_handler::write_data_handler_releaser(c_ring_buffer<char> * released_buffer)
+{
+	c_serial_event_handler::pntr_data_write_handler = NULL;
+	//We may have read SOME data, but that doesnt mean we read all the data in the buffer
+	//if (released_buffer->has_data())
+	//{
+	//	//Still have data to read so just repoint to the data type assigner
+	//	c_serial_event_handler::pntr_data_handler = c_serial_event_handler::process;
+	//	c_serial_event_handler::pntr_data_handler(released_buffer);
+	//}
+}
+
+//uint8_t c_serial_event_handler::request(e_record_types request_type)
+//{
+//	char data[256];//<--create a buffer for our stream
+//	char *data_pntr;
+//	switch (request_type)
+//	{
+//	case e_record_types::Unknown:
+//		break;
+//	case e_record_types::Motion:
+//		break;
+//	case e_record_types::Motion_Control_Setting:
+//		break;
+//	case e_record_types::Spindle_Control_Setting:
+//		break;
+//	case e_record_types::Jog:
+//		break;
+//	case e_record_types::Peripheral_Control_Setting:
+//		break;
+//	case e_record_types::Status:
+//		break;
+//	case e_record_types::NgcBlockRecordRequest:
+//		memcpy(data_pntr, &loaded_block, loaded_block._size);
+//		break;
+//	default:
+//		break;
+//	}
+//
+//	//return 0 if request sent. return 1 if it was not. 
+//	return 0;
+//}
 
 //// default constructor
 //c_serial_event_handler::c_serial_event_handler()

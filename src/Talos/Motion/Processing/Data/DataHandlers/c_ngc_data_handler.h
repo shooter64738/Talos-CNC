@@ -21,24 +21,30 @@
 
 #ifndef __C_MOTION_NGC_DATA_HANDLER_H__
 #define __C_MOTION_NGC_DATA_HANDLER_H__
+#include <stdint.h>
+#include "../../../../Shared Data/_e_record_types.h"
+#include "../../../../c_ring_template.h"
 
-//typedef void(*ret_pointer)(c_ring_buffer <char> * buffer);
+typedef void(*ret_pointer)(c_ring_buffer <char> * buffer);
 
 class c_ngc_data_handler
 {
 	//variables
 public:
-	
+	static void(*pntr_data_handler_release)(c_ring_buffer<char> * buffer);
 protected:
 private:
 
 
 	//functions
 public:
-	//static ret_pointer assign_handler(c_ring_buffer <char> * buffer);
-	
+	static ret_pointer assign_write_handler(c_ring_buffer <char> * buffer);
+	static void ngc_write_handler(c_ring_buffer <char> * buffer);
+	static ret_pointer assign_read_handler(c_ring_buffer <char> * buffer);
+	static void ngc_read_handler(c_ring_buffer <char> * buffer);
 protected:
 private:
-	
+	static void __release(c_ring_buffer <char> * buffer_source);
+	static void __assign_error_handler(c_ring_buffer <char> * buffer_source, uint16_t error_value);
 }; //c_serial_events
 #endif //__C_DATA_EVENTS_H__

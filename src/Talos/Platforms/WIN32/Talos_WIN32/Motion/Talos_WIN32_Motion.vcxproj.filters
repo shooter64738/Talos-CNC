@@ -161,9 +161,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\..\Shared Data\_binary_record_enums.h">
-      <Filter>Shared data</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\..\Shared Data\_peripheral_overide_enums.h">
       <Filter>Shared data</Filter>
     </ClInclude>
@@ -311,6 +308,22 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\Shared Data\Settings\Motion\_s_motion_control_settings_encapsulation.h">
       <Filter>Shared data\Settings\Motion</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\NGC_RS274\_ngc_block_struct.h">
+      <Filter>Ngc_Rs274</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared Data\_s_motion_record.h">
+      <Filter>Shared data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared Data\_e_feed_modes.h">
+      <Filter>Shared data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared Data\_e_feed_types.h">
+      <Filter>Shared data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\c_ring_template.h" />
+    <ClInclude Include="..\..\..\..\Shared Data\_e_record_types.h">
+      <Filter>Shared data</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -19,3 +19,6 @@
 */
 
 #include "c_motion_control_event_handler.h"
+void c_motion_control_event_handler::process()
+{
+}

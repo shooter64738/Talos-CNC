@@ -121,8 +121,3 @@ void Talos::Motion::Main_Process::run()
 	}
 
 }
-
-/*
-Flow
-Main->eventss->data_events_handler->serial_event_handler->assign_handler->request_block
-*/

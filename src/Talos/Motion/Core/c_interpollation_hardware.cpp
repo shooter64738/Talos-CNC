@@ -44,7 +44,7 @@ uint32_t Motion_Core::Hardware::Interpolation::Current_Sequence = 0;
 uint32_t Motion_Core::Hardware::Interpolation::Last_Completed_Sequence = 0;
 
 uint8_t Motion_Core::Hardware::Interpolation::direction_set = 0;
-BinaryRecords::e_feed_modes Motion_Core::Hardware::Interpolation::drive_mode;
+e_feed_modes Motion_Core::Hardware::Interpolation::drive_mode;
 BinaryRecords::s_encoders * Motion_Core::Hardware::Interpolation::spindle_encoder;
 uint32_t Motion_Core::Hardware::Interpolation::spindle_calculated_delay = 0;
 uint8_t Motion_Core::Hardware::Interpolation::spindle_synch = 0;
@@ -81,8 +81,8 @@ void Motion_Core::Hardware::Interpolation::interpolation_begin()
 	switch (Motion_Core::Hardware::Interpolation::drive_mode)
 	{
 		//G93 and G94 feed modes
-		case BinaryRecords::e_feed_modes::FEED_RATE_MINUTES_PER_UNIT_MODE:
-		case BinaryRecords::e_feed_modes::FEED_RATE_UNITS_PER_MINUTE_MODE:
+		case e_feed_modes::FEED_RATE_MINUTES_PER_UNIT_MODE:
+		case e_feed_modes::FEED_RATE_UNITS_PER_MINUTE_MODE:
 		{
 
 			//This is driven internally by the motion controllers timer
@@ -90,7 +90,7 @@ void Motion_Core::Hardware::Interpolation::interpolation_begin()
 			break;
 		}
 		//G95 feed mode
-		case BinaryRecords::e_feed_modes::FEED_RATE_UNITS_PER_ROTATION:
+		case e_feed_modes::FEED_RATE_UNITS_PER_ROTATION:
 		{
 			//TODO:Setup a timer for the specified delay time. Error if synch is not complete by then
 			//on time out call Motion_Core::Hardware::Interpollation::spindle_synch_timeout()
@@ -297,7 +297,7 @@ void Motion_Core::Hardware::Interpolation::step_tick()
 	//If feedmode is spindle synch, calculate the correct delay value for
 	//the feedrate, based on spindle current speed
 	//TODO: is there a better way to do this without several if statements?
-	if (Motion_Core::Hardware::Interpolation::drive_mode == BinaryRecords::e_feed_modes::FEED_RATE_UNITS_PER_ROTATION)
+	if (Motion_Core::Hardware::Interpolation::drive_mode == e_feed_modes::FEED_RATE_UNITS_PER_ROTATION)
 	{
 		//only adjust the delay value if we are in 'cruise' state.
 		//The arbitrator still controls motion during accel and decel

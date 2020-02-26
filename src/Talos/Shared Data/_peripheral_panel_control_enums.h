@@ -26,6 +26,8 @@
 #include "../NGC_RS274/_ngc_defines.h"
 #include "../NGC_RS274/_ngc_arc_struct.h"
 #include "../_bit_manipulation.h"
+#include "_e_feed_modes.h"
+#include "_e_feed_types.h"
 #include <string.h>
 
 namespace BinaryRecords
@@ -46,16 +48,7 @@ namespace BinaryRecords
 	};
 #endif
 
-#ifndef __C_MOTION_TYPE
-#define __C_MOTION_TYPE
-	enum class e_motion_type : uint8_t
-	{
-		rapid_linear = 0 * G_CODE_MULTIPLIER,
-		feed_linear = 1 * G_CODE_MULTIPLIER,
-		arc_cw = 2 * G_CODE_MULTIPLIER,
-		arc_ccw = 3 * G_CODE_MULTIPLIER
-	};
-#endif
+
 
 #ifndef __C_BLOCK_FLAG
 #define __C_BLOCK_FLAG
@@ -70,23 +63,13 @@ namespace BinaryRecords
 	};
 #endif
 
-#ifndef __C_FEED_MODES
-#define __C_FEED_MODES
-	enum class e_feed_modes : uint16_t
-	{
-		FEED_RATE_MINUTES_PER_UNIT_MODE = 93 * G_CODE_MULTIPLIER,
-		FEED_RATE_UNITS_PER_MINUTE_MODE = 94 * G_CODE_MULTIPLIER,
-		FEED_RATE_UNITS_PER_ROTATION = 95 * G_CODE_MULTIPLIER,
-		FEED_RATE_CONSTANT_SURFACE_SPEED = 96 * G_CODE_MULTIPLIER,
-		FEED_RATE_RPM_MODE = 97 * G_CODE_MULTIPLIER
-	};
-#endif
 
-#include "_binary_record_enums.h"
+
+#include "_e_record_types.h"
 
 //#ifndef __C_BINARY_RECORD_TYPES
 //#define __C_BINARY_RECORD_TYPES
-//	enum class e_binary_record_types : uint8_t
+//	enum class e_record_types : uint8_t
 //	{
 //		//DO NOT use 10 or 13 as binary record type identifiers.
 //		Unknown = 0,
@@ -213,7 +196,7 @@ namespace BinaryRecords
 
 	struct s_peripheral_panel
 	{
-		const BinaryRecords::e_binary_record_types record_type = BinaryRecords::e_binary_record_types::Peripheral_Control_Setting;
+		const e_record_types record_type = e_record_types::Peripheral_Control_Setting;
 		s_peripheral_group_processing Processing;
 		s_peripheral_group_overrides OverRides;
 		s_peripheral_group_jogging Jogging;
@@ -223,7 +206,7 @@ namespace BinaryRecords
 
 	struct s_jog_data_block
 	{
-		const BinaryRecords::e_binary_record_types record_type = BinaryRecords::e_binary_record_types::Jog;
+		const e_record_types record_type = e_record_types::Jog;
 		float axis_value;
 		uint8_t axis;
 		uint32_t flag = (int)BinaryRecords::e_block_flag::block_state_normal;
@@ -279,7 +262,7 @@ namespace BinaryRecords
 
 	struct s_motion_control_settings
 	{
-		const BinaryRecords::e_binary_record_types record_type = BinaryRecords::e_binary_record_types::Motion_Control_Setting;
+		const e_record_types record_type = e_record_types::Motion_Control_Setting;
 		float junction_deviation = 0;//43
 		float arc_tolerance = 0;//47
 		uint16_t arc_angular_correction = 12;//59
@@ -296,7 +279,7 @@ namespace BinaryRecords
 
 	struct s_status_message
 	{
-		const BinaryRecords::e_binary_record_types record_type = BinaryRecords::e_binary_record_types::Status;
+		const e_record_types record_type = e_record_types::Status;
 		BinaryRecords::e_system_state_record_types system_state;
 		BinaryRecords::e_system_sub_state_record_types system_sub_state;
 		float position[MACHINE_AXIS_COUNT];
@@ -307,7 +290,7 @@ namespace BinaryRecords
 
 	struct s_motion_data_block
 	{
-		const BinaryRecords::e_binary_record_types record_type = BinaryRecords::e_binary_record_types::Motion;
+		const e_record_types record_type = e_record_types::Motion;
 		e_feed_modes feed_rate_mode;
 		e_motion_type motion_type;
 		s_arc_values arc_values;

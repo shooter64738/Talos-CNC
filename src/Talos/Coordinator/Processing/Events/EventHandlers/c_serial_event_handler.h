@@ -29,7 +29,7 @@ class c_serial_event_handler
 {
 	//variables
 public:
-	static void(*pntr_data_handler)(c_ring_buffer<char> * buffer);
+	static void(*pntr_data_read_handler)(c_ring_buffer<char> * buffer);
 
 protected:
 private:

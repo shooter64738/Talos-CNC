@@ -89,18 +89,18 @@ uint8_t Motion_Core::Planner::Calculator::_plan_buffer_line(BinaryRecords::s_mot
 
 
 	// Store programmed rate.
-	if (target_block.motion_type == BinaryRecords::e_motion_type::rapid_linear)
+	if (target_block.motion_type == e_motion_type::rapid_linear)
 	{
 		planning_block->programmed_rate = planning_block->rapid_rate;
 	}
 	else
 	{
 		planning_block->programmed_rate = target_block.feed_rate;
-		if (target_block.feed_rate_mode == BinaryRecords::e_feed_modes::FEED_RATE_MINUTES_PER_UNIT_MODE)
+		if (target_block.feed_rate_mode == e_feed_modes::FEED_RATE_MINUTES_PER_UNIT_MODE)
 		{
 			planning_block->programmed_rate *= planning_block->millimeters;
 		}
-		else if (target_block.feed_rate_mode == BinaryRecords::e_feed_modes::FEED_RATE_UNITS_PER_ROTATION)
+		else if (target_block.feed_rate_mode == e_feed_modes::FEED_RATE_UNITS_PER_ROTATION)
 		{
 			planning_block->programmed_rate *= planning_block->millimeters * planning_block->programmed_spindle_speed;
 		}

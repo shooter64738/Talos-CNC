@@ -32,13 +32,9 @@ struct s_data_events
 {
 	enum class e_event_type : uint8_t
 	{
-		Usart0DataArrival = 0,
-		Usart1DataArrival = 1,
-		Usart2DataArrival = 2,
-		Usart3DataArrival = 3,
-		SPIBusDataArrival = 4,
-		NetworkDataArrival = 5,
-		DiskDataArrival = 6
+		NgcBlockRequest = 0,
+		Usart0DataArrival = 1,
+		DiskDataArrival = 2,
 	};
 	s_bit_flag_controller<uint32_t> event_manager;
 };

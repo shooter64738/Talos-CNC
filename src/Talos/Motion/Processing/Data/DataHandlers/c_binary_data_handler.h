@@ -24,6 +24,7 @@
 
 #include <stdint.h>
 #include "../../../../c_ring_template.h"
+#include "../../../../Shared Data/_e_record_types.h"
 
 typedef void (*xret_pointer)(c_ring_buffer <char> * buffer);
 

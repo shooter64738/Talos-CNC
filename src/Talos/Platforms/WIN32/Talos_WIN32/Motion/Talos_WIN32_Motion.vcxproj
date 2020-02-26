@@ -47,6 +47,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\communication_def.h" />
+    <ClInclude Include="..\..\..\..\c_ring_template.h" />
     <ClInclude Include="..\..\..\..\Motion\Core\c_block.h" />
     <ClInclude Include="..\..\..\..\Motion\Core\c_block_buffer.h" />
     <ClInclude Include="..\..\..\..\Motion\Core\c_gateway.h" />
@@ -76,11 +77,14 @@
     <ClInclude Include="..\..\..\..\Motion\Processing\Planner\c_stager.h" />
     <ClInclude Include="..\..\..\..\Motion\Processing\Planner\Stager_Errors.h" />
     <ClInclude Include="..\..\..\..\Motion\Serial\c_Serial.h" />
+    <ClInclude Include="..\..\..\..\NGC_RS274\_ngc_block_struct.h" />
     <ClInclude Include="..\..\..\..\physical_machine_parameters.h" />
     <ClInclude Include="..\..\..\..\Shared Data\Settings\Motion\_s_motion_control_settings_encapsulation.h" />
     <ClInclude Include="..\..\..\..\Shared Data\Settings\Motion\_s_motion_tolerance_struct.h" />
     <ClInclude Include="..\..\..\..\Shared Data\Settings\Motion\_s_motion_hardware_struct.h" />
-    <ClInclude Include="..\..\..\..\Shared Data\_binary_record_enums.h" />
+    <ClInclude Include="..\..\..\..\Shared Data\_e_record_types.h" />
+    <ClInclude Include="..\..\..\..\Shared Data\_e_feed_modes.h" />
+    <ClInclude Include="..\..\..\..\Shared Data\_e_feed_types.h" />
     <ClInclude Include="..\..\..\..\Shared Data\_peripheral_overide_enums.h" />
     <ClInclude Include="..\..\..\..\Shared Data\_peripheral_panel_control_enums.h" />
     <ClInclude Include="..\..\..\..\Shared Data\_system_response_enums.h" />
@@ -89,6 +93,7 @@
     <ClInclude Include="..\..\..\..\Shared Data\_s_encoder_struct.h" />
     <ClInclude Include="..\..\..\..\Shared Data\_s_interp_config_struct.h" />
     <ClInclude Include="..\..\..\..\Shared Data\_s_jog_data_struct.h" />
+    <ClInclude Include="..\..\..\..\Shared Data\_s_motion_record.h" />
     <ClInclude Include="..\..\..\..\Shared Data\_s_peripheral_panel_struct.h" />
     <ClInclude Include="..\..\..\..\Shared Data\_unit_type_enums.h" />
     <ClInclude Include="..\..\..\..\_bit_flag_control.h" />

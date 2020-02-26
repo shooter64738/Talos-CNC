@@ -25,7 +25,7 @@
 #include "../../Data/DataHandlers/c_ngc_data_handler.h"
 #include "../../../../communication_def.h"
 
-void(*c_serial_event_handler::pntr_data_handler)(c_ring_buffer<char> * buffer);
+void(*c_serial_event_handler::pntr_data_read_handler)(c_ring_buffer<char> * buffer);
 
 //We know a serial data event has occurred but we dont have any details.
 //This event processor will determine the type of data, and in whatway
@@ -33,7 +33,7 @@ void(*c_serial_event_handler::pntr_data_handler)(c_ring_buffer<char> * buffer);
 void c_serial_event_handler::process(c_ring_buffer<char> * buffer)
 {
 	/*
-	When we receive the first bye of data, we determine which handler to use.
+	When we receive the first byte of data, we determine which handler to use.
 	Until all of that particular data type is received we will not change
 	the handler. Ngc data will be handled until we encounter a CR or LF,
 	binary data will handled until the specified length is reached,	and
@@ -43,16 +43,16 @@ void c_serial_event_handler::process(c_ring_buffer<char> * buffer)
 	
 	//Is there a handler assigned for this data class already? If a handler is assigned
 	//keep using it until all the data is consumed. Otherwise assign a new handler. 
-	if (c_serial_event_handler::pntr_data_handler == NULL)
+	if (c_serial_event_handler::pntr_data_read_handler == NULL)
 	{
 		c_serial_event_handler::__assign_handler(buffer);
 	}
 
-	if (c_serial_event_handler::pntr_data_handler != NULL)
+	if (c_serial_event_handler::pntr_data_read_handler != NULL)
 	{
 		//The handler will release its self when it determines that all of the data for
 		//that particular handler has been consumed. 
-		c_serial_event_handler::pntr_data_handler(buffer);
+		c_serial_event_handler::pntr_data_read_handler(buffer);
 	}
 
 	
@@ -73,7 +73,7 @@ void c_serial_event_handler::__assign_handler(c_ring_buffer <char> * buffer)
 		//I think we should ignore/lockout MDI input when a program is running. 
 
 		//Assign a specific handler for this data type
-		c_serial_event_handler::pntr_data_handler = c_ngc_data_handler::assign_handler(buffer);
+		c_serial_event_handler::pntr_data_read_handler = c_ngc_data_handler::assign_read_handler(buffer);
 		//Assign a release call back function. The handler knows nothing about serial events
 		//and we want to keep it that way.
 		c_ngc_data_handler::pntr_data_handler_release = c_serial_event_handler::data_handler_releaser;
@@ -107,20 +107,20 @@ void c_serial_event_handler::__unkown_handler(c_ring_buffer <char> * buffer)
 	char peek_newest = buffer->peek(buffer->_newest);
 	Talos::Coordinator::Main_Process::host_serial.print_string("UKNOWN:");
 	Talos::Coordinator::Main_Process::host_serial.print_int32(peek_newest);
-	c_serial_event_handler::pntr_data_handler = NULL;
+	c_serial_event_handler::pntr_data_read_handler = NULL;
 }
 
 void c_serial_event_handler::__control_handler(c_ring_buffer <char> * buffer)
 {
 	//release the handler because we should be done with it now.
-	c_serial_event_handler::pntr_data_handler = NULL;
+	c_serial_event_handler::pntr_data_read_handler = NULL;
 	Talos::Coordinator::Main_Process::host_serial.print_string("control\r\n");
 }
 
 
 void c_serial_event_handler::data_handler_releaser(c_ring_buffer<char> * released_buffer)
 {
-	c_serial_event_handler::pntr_data_handler = NULL;
+	c_serial_event_handler::pntr_data_read_handler = NULL;
 	//We may have read SOME data, but that doesnt mean we read all the data in the buffer
 	//if (released_buffer->has_data())
 	//{

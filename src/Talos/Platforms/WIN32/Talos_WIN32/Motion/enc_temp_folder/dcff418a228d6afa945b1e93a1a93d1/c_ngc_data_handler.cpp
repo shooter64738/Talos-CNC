@@ -62,17 +62,11 @@ void c_ngc_data_handler::ngc_read_handler(c_ring_buffer <char> * buffer)
 
 void c_ngc_data_handler::ngc_write_handler(c_ring_buffer <char> * buffer)
 {
-	//this only writes 1 byte at a time.. one byte per proram loop. We could change it to write all of it at once here
-	//but then while its writing this data out it will not process other events, it will only service ISRs
 	buffer->pntr_write(1, *buffer->_storage_pointer++);
 	write_count--;
 	//when write count reaches zero we have written all data for the record
 	if (!write_count)
 	{
-		//At this point we have sent all the block data. The receiver will look at the first byte of the data and
-		//determine that it is a binary record requesting an 's_motion_block'. it will laod one from storage and
-		//send the block data back to us. When that occurs a usart0 event will occure and we will read that block
-		//then store it in this class in the 'loaded_block' variable. then we can execute that motion. 
 		//for good measure, lets reset the buffer
 		buffer->reset();
 		//call the release method.. Remember back in the serial handler we assigned a call back function to release?

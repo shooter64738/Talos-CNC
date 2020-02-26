@@ -41,8 +41,8 @@ private:
 
 	//functions
 public:
-	static ret_pointer assign_handler(c_ring_buffer <char> * buffer);
-	static void ngc_handler(c_ring_buffer <char> * buffer);
+	static ret_pointer assign_read_handler(c_ring_buffer <char> * buffer);
+	static void ngc_read_handler(c_ring_buffer <char> * buffer);
 	static e_parsing_errors ngc_load_block();
 protected:
 private:
