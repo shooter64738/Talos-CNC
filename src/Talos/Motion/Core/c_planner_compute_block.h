@@ -5,6 +5,7 @@
 #include <stddef.h>
 #include "c_block.h"
 #include "c_interpollation_software.h"
+#include "../../Shared Data/_s_motion_data_block.h"
 
 namespace Motion_Core
 {

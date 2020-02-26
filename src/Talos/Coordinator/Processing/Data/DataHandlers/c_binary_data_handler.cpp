@@ -20,7 +20,8 @@
 
 #include "c_binary_data_handler.h"
 #include "../../Main/Main_Process.h"
-#include "../../../../Shared Data/_binary_record_enums.h"
+#include "../../../../Shared Data/_e_record_types.h"
+
 /*
 We should NEVER include this file, this way these handlers stay totaly
 encapsulated and walled off from the rest of the world. They are ONLY
@@ -41,11 +42,11 @@ void(*c_binary_data_handler::pntr_data_handler_release)();
 //Determine which handler to use and return it to the caller.
 xret_pointer c_binary_data_handler::assign_handler(c_ring_buffer <char> * buffer)
 {
-	e_binary_record_types record_type = (e_binary_record_types)buffer->peek(buffer->_tail);
+	e_record_types record_type = (e_record_types)buffer->peek(buffer->_tail);
 	
 	switch (record_type)
 	{
-		case e_binary_record_types::Motion_Control_Setting :
+		case e_record_types::Motion_Control_Setting :
 		{
 			return c_binary_data_handler::motion_control_setting_handler;
 			break;

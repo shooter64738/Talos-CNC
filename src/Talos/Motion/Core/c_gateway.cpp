@@ -17,6 +17,7 @@
 #include "../Processing/Events/EventHandlers/c_motion_event_handler.h"
 #include "../Processing/Events/EventHandlers/c_motion_control_event_handler.h"
 #include "../Processing/Events/extern_events_types.h"
+#include "../../Shared Data/_s_status_record.h"
 #define MOTION_BUFFER_SIZE 2
 
 static s_motion_data_block jog_mot;
@@ -173,7 +174,7 @@ void Motion_Core::Gateway::process_motion(s_motion_data_block *mot)
 
 void Motion_Core::Gateway::check_hardware_faults()
 {
-	BinaryRecords::s_status_message *status;
+	s_status_message *status;
 	
 	//See if there is a hardware alarm from a stepper/servo driver
 	if (Hardware_Abstraction_Layer::MotionCore::Inputs::Driver_Alarms >0)
@@ -187,17 +188,17 @@ void Motion_Core::Gateway::check_hardware_faults()
 		}
 		
 		
-		status->system_state = BinaryRecords::e_system_state_record_types::System_Error;
+		status->system_state = e_motion_state::System_Error;
 		
 		for (int i=0;i<MACHINE_AXIS_COUNT;i++)
 		{
 			//Which axis has faulted?
 			if (Hardware_Abstraction_Layer::MotionCore::Inputs::Driver_Alarms & (1<<i))
 			{
-				uint8_t axis_id = (uint8_t) BinaryRecords::e_system_sub_state_record_types::Error_Axis_Drive_Fault_X
+				uint8_t axis_id = (uint8_t) e_motion_sub_state::Error_Axis_Drive_Fault_X
 				+ i;
 				status->system_sub_state =
-				(BinaryRecords::e_system_sub_state_record_types)axis_id;
+				(e_motion_sub_state)axis_id;
 				
 				//Motion_Core::Gateway::local_serial->print_string("Drive on Axis ");
 				//Motion_Core::Gateway::local_serial->print_int32(i);

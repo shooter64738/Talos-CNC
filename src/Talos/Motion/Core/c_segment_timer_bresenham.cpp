@@ -1,5 +1,6 @@
 #include "c_segment_timer_bresenham.h"
 #include "c_segment_timer_item.h"
+#include <string.h>
 
 
 

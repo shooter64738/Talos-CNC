@@ -1,6 +1,7 @@
 #ifndef __C_BINARY_RESPONSES
 #define __C_BINARY_RESPONSES
-enum class e_binary_responses : uint8_t
+#include <stdint.h>
+enum class e_binary_comm_response : uint8_t
 {
 	Ok = 240,
 	Data_Error = 239,

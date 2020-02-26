@@ -41,23 +41,23 @@ namespace NGC_RS274
 		static const unsigned int RECTANGULAR_COORDINATE_SYSTEM = 15 * G_CODE_MULTIPLIER;
 		static const unsigned int POLAR_COORDINATE_SYSTEM = 16 * G_CODE_MULTIPLIER;
 		static const unsigned int XY_PLANE_SELECTION = 17 * G_CODE_MULTIPLIER;
-		static const unsigned int UV_PLANE_SELECTION = 17.1 * G_CODE_MULTIPLIER;
+		static const unsigned int UV_PLANE_SELECTION = (int)(17.1 * G_CODE_MULTIPLIER);
 		static const unsigned int XZ_PLANE_SELECTION = 18 * G_CODE_MULTIPLIER;
-		static const unsigned int UW_PLANE_SELECTION = 18.1 * G_CODE_MULTIPLIER;
+		static const unsigned int UW_PLANE_SELECTION = (int)(18.1 * G_CODE_MULTIPLIER);
 		static const unsigned int YZ_PLANE_SELECTION = 19 * G_CODE_MULTIPLIER;
-		static const unsigned int VW_PLANE_SELECTION = 19.1 * G_CODE_MULTIPLIER;
+		static const unsigned int VW_PLANE_SELECTION = (int)(19.1 * G_CODE_MULTIPLIER);
 		static const unsigned int INCH_SYSTEM_SELECTION = 20 * G_CODE_MULTIPLIER;
 		static const unsigned int MILLIMETER_SYSTEM_SELECTION = 21 * G_CODE_MULTIPLIER;
 		static const unsigned int RETURN_TO_HOME = 28 * G_CODE_MULTIPLIER;
 		static const unsigned int RETURN_TO_SECONDARY_HOME = 30 * G_CODE_MULTIPLIER;
-		static const unsigned int STRAIGHT_PROBE = 38.2 * G_CODE_MULTIPLIER;
+		static const unsigned int STRAIGHT_PROBE = (int)(38.2 * G_CODE_MULTIPLIER);
 		static const unsigned int CANCEL_CUTTER_RADIUS_COMPENSATION = 40 * G_CODE_MULTIPLIER;
 		static const unsigned int START_CUTTER_RADIUS_COMPENSATION_LEFT = 41 * G_CODE_MULTIPLIER;
-		static const unsigned int START_CUTTER_RADIUS_COMPENSATION_LEFT_DYNAMIC = 41.1 * G_CODE_MULTIPLIER;
+		static const unsigned int START_CUTTER_RADIUS_COMPENSATION_LEFT_DYNAMIC = (int)(41.1 * G_CODE_MULTIPLIER);
 		static const unsigned int START_CUTTER_RADIUS_COMPENSATION_RIGHT = 42 * G_CODE_MULTIPLIER;
-		static const unsigned int START_CUTTER_RADIUS_COMPENSATION_RIGHT_DYNAMIC = 42.1 * G_CODE_MULTIPLIER;
+		static const unsigned int START_CUTTER_RADIUS_COMPENSATION_RIGHT_DYNAMIC = (int)(42.1 * G_CODE_MULTIPLIER);
 		static const unsigned int POSITIVE_TOOL_LENGTH_OFFSET = 43 * G_CODE_MULTIPLIER;
-		static const unsigned int USE_TOOL_LENGTH_OFFSET_FOR_TRANSIENT_TOOL = 43.1 * G_CODE_MULTIPLIER;
+		static const unsigned int USE_TOOL_LENGTH_OFFSET_FOR_TRANSIENT_TOOL = (int)(43.1 * G_CODE_MULTIPLIER);
 		static const unsigned int NEGATIVE_TOOL_LENGTH_OFFSET = 44 * G_CODE_MULTIPLIER;
 		static const unsigned int CANCEL_TOOL_LENGTH_OFFSET = 49 * G_CODE_MULTIPLIER;
 		static const unsigned int MOTION_IN_MACHINE_COORDINATE_SYSTEM = 53 * G_CODE_MULTIPLIER;
@@ -68,12 +68,12 @@ namespace NGC_RS274
 		static const unsigned int WORK_OFFSET_POSITION_4_G57 = 57 * G_CODE_MULTIPLIER;
 		static const unsigned int WORK_OFFSET_POSITION_5_G58 = 58 * G_CODE_MULTIPLIER;
 		static const unsigned int WORK_OFFSET_POSITION_6_G59 = 59 * G_CODE_MULTIPLIER;
-		static const unsigned int WORK_OFFSET_POSITION_6_G59_1 = 59.1 * G_CODE_MULTIPLIER;
-		static const unsigned int WORK_OFFSET_POSITION_6_G59_2 = 59.2 * G_CODE_MULTIPLIER;
-		static const unsigned int WORK_OFFSET_POSITION_6_G59_3 = 59.3 * G_CODE_MULTIPLIER;
+		static const unsigned int WORK_OFFSET_POSITION_6_G59_1 = (int)(59.1 * G_CODE_MULTIPLIER);
+		static const unsigned int WORK_OFFSET_POSITION_6_G59_2 = (int)(59.2 * G_CODE_MULTIPLIER);
+		static const unsigned int WORK_OFFSET_POSITION_6_G59_3 = (int)(59.3 * G_CODE_MULTIPLIER);
 
 		static const unsigned int PATH_CONTROL_EXACT_PATH = 61 * G_CODE_MULTIPLIER;
-		static const unsigned int PATH_CONTROL_EXACT_STOP = 61.1 * G_CODE_MULTIPLIER;
+		static const unsigned int PATH_CONTROL_EXACT_STOP = (int)(61.1 * G_CODE_MULTIPLIER);
 		static const unsigned int PATH_CONTROL_CONTINUOUS_WITH_TOLERANCE = 64 * G_CODE_MULTIPLIER;
 
 		static const unsigned int PLANE_ROTATION_START = 68 * G_CODE_MULTIPLIER;
@@ -86,8 +86,8 @@ namespace NGC_RS274
 		static const unsigned int CANNED_CYCLE_DRILLING_WITH_DWELL = 82 * G_CODE_MULTIPLIER;
 		static const unsigned int CANNED_CYCLE_PECK_DRILLING = 83 * G_CODE_MULTIPLIER;
 		static const unsigned int CANNED_CYCLE_RIGHT_HAND_TAPPING = 84 * G_CODE_MULTIPLIER;
-		static const unsigned int CANNED_CYCLE_RIGHT_HAND_TAPPING_RIGID_HOLDER = 84.2 * G_CODE_MULTIPLIER;
-		static const unsigned int CANNED_CYCLE_LEFT_HAND_TAPPING_RIGID_HOLDER = 84.3 * G_CODE_MULTIPLIER;
+		static const unsigned int CANNED_CYCLE_RIGHT_HAND_TAPPING_RIGID_HOLDER = (int)(84.2 * G_CODE_MULTIPLIER);
+		static const unsigned int CANNED_CYCLE_LEFT_HAND_TAPPING_RIGID_HOLDER = (int)(84.3 * G_CODE_MULTIPLIER);
 		static const unsigned int CANNED_CYCLE_BORING_NO_DWELL_FEED_OUT = 85 * G_CODE_MULTIPLIER;
 		static const unsigned int CANNED_CYCLE_BORING_SPINDLE_STOP_RAPID_OUT = 86 * G_CODE_MULTIPLIER;
 		static const unsigned int CANNED_CYCLE_BACK_BORING = 87 * G_CODE_MULTIPLIER;
@@ -97,9 +97,9 @@ namespace NGC_RS274
 		static const unsigned int CANNED_CYCLE_RETURN_TO_R = 99 * G_CODE_MULTIPLIER;
 
 		static const unsigned int ABSOLUTE_DISANCE_MODE = 90 * G_CODE_MULTIPLIER;
-		static const unsigned int ARC_IJK_ABSOLUTE = 90.1 * G_CODE_MULTIPLIER;
+		static const unsigned int ARC_IJK_ABSOLUTE = (int)(90.1 * G_CODE_MULTIPLIER);
 		static const unsigned int INCREMENTAL_DISTANCE_MODE = 91 * G_CODE_MULTIPLIER;
-		static const unsigned int ARC_IJK_RELATIVE_TO_START = 91.1 * G_CODE_MULTIPLIER;
+		static const unsigned int ARC_IJK_RELATIVE_TO_START = (int)(91.1 * G_CODE_MULTIPLIER);
 		static const unsigned int SET_COORDINATE_OFFSET = 92 * G_CODE_MULTIPLIER;
 		static const unsigned int FEED_RATE_MINUTES_PER_UNIT_MODE = 93 * G_CODE_MULTIPLIER;
 		static const unsigned int FEED_RATE_UNITS_PER_MINUTE_MODE = 94 * G_CODE_MULTIPLIER;

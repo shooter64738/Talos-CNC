@@ -10,7 +10,7 @@ struct s_bit_flag_controller
 {
 	bool get(int get_value)
 	{
-		return (BitGet(_flag, get_value));
+		return (bool)(BitGet(_flag, get_value));
 	};
 
 	bool get_clr(int get_value)

@@ -1,7 +1,7 @@
 
 #include <stdint.h>
 #include "../../../_bit_flag_control.h"
-#include "../../../Shared Data/_system_state_enums.h"
+#include "../../../Shared Data/_e_motion_state.h"
 
 #ifndef __EXTERN_DATA_EVENTS
 #define __EXTERN_DATA_EVENTS

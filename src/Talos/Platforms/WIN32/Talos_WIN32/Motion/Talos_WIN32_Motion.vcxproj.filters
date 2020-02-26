@@ -164,9 +164,6 @@
     <ClInclude Include="..\..\..\..\Shared Data\_peripheral_overide_enums.h">
       <Filter>Shared data</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Shared Data\_peripheral_panel_control_enums.h">
-      <Filter>Shared data</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\..\Shared Data\_s_encoder_struct.h">
       <Filter>Shared data</Filter>
     </ClInclude>
@@ -177,12 +174,6 @@
       <Filter>Shared data</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\Shared Data\_s_peripheral_panel_struct.h">
-      <Filter>Shared data</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Shared Data\_system_response_enums.h">
-      <Filter>Shared data</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Shared Data\_system_sub_state_enums.h">
       <Filter>Shared data</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\Motion\motion_hardware_def.h">
@@ -279,9 +270,6 @@
     <ClInclude Include="Platform Specific\c_disk_win.h">
       <Filter>Platform Specific</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Shared Data\_system_state_enums.h">
-      <Filter>Shared data</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\..\Motion\Processing\Events\EventHandlers\c_block_events.h">
       <Filter>Motion\Processing\Events\EventHandlers</Filter>
     </ClInclude>
@@ -324,6 +312,27 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\Shared Data\Settings\Motion\_s_motion_hardware.h">
       <Filter>Shared data\Settings\Motion</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared Data\_e_binary_comm_response.h">
+      <Filter>Shared data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared Data\_e_motion_state.h">
+      <Filter>Shared data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared Data\_e_motion_sub_state.h">
+      <Filter>Shared data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared Data\_e_ramp_type.h">
+      <Filter>Shared data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared Data\_e_block_state.h">
+      <Filter>Shared data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared Data\_s_status_record.h">
+      <Filter>Shared data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared Data\x_peripheral_panel_control_enums.h">
+      <Filter>Shared data</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

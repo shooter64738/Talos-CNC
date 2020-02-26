@@ -1,3 +1,6 @@
+#ifndef _C_MOTION_DATA_BLOCK
+#define _C_MOTION_DATA_BLOCK
+
 #include <stdint.h>
 #include "_e_record_types.h"
 #include "../physical_machine_parameters.h"
@@ -20,3 +23,4 @@ struct s_motion_data_block
 	uint32_t station;
 	static const uint8_t _size = 200; // speify size here.. 'sizeof()' will not work across differing platforms (8bit/32bit)
 };
+#endif // _C_MOTION_DATA_BLOCK

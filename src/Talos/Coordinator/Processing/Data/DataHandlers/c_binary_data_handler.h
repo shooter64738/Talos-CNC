@@ -25,6 +25,7 @@
 #include <stdint.h>
 #include "../../../../c_ring_template.h"
 
+
 typedef void (*xret_pointer)(c_ring_buffer <char> * buffer);
 
 class c_binary_data_handler

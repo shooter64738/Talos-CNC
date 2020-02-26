@@ -8,7 +8,7 @@
 #include "c_motion_core_win_spindle.h"
 #include "../../../../../physical_machine_parameters.h"
 #include "../../../../../Motion/Core/c_interpollation_hardware.h"
-#include "../../../../../Shared Data/_peripheral_panel_control_enums.h"
+
 
 #define TIME_OUT_TIMER_CLOCK TC_CMR_TCCLKS_TIMER_CLOCK4
 #define UPDATE_INTERVAL_TIMER_CLOCK TC_CMR_TCCLKS_TIMER_CLOCK1
@@ -16,7 +16,7 @@
 #define SYS_TICKS (84)
 volatile uint32_t time_out_ticks = 0;
 
-BinaryRecords::s_encoders * Hardware_Abstraction_Layer::MotionCore::Spindle::spindle_encoder;
+s_encoders * Hardware_Abstraction_Layer::MotionCore::Spindle::spindle_encoder;
 
 /***************************************************************************************************/
 /*                          QDEC Speed mode by polling in loop()                                   */
@@ -36,7 +36,7 @@ care, the results may be inaccurate.
 //const uint32_t ENCODER_SAMPLES_PER_SECOND = 10;              // this will need to be tuned depending on your use case...
 
 
-void Hardware_Abstraction_Layer::MotionCore::Spindle::initialize(BinaryRecords::s_encoders * encoder_data)
+void Hardware_Abstraction_Layer::MotionCore::Spindle::initialize(s_encoders * encoder_data)
 {
 	Hardware_Abstraction_Layer::MotionCore::Spindle::spindle_encoder = encoder_data;
 }
@@ -62,7 +62,7 @@ void Hardware_Abstraction_Layer::MotionCore::Spindle::OCR1A_set(uint32_t delay)
 }
 
 int32_t Hardware_Abstraction_Layer::MotionCore::Spindle::get_rpm() {
-	BinaryRecords::s_encoders * encode = Hardware_Abstraction_Layer::MotionCore::Spindle::spindle_encoder;
+	s_encoders * encode = Hardware_Abstraction_Layer::MotionCore::Spindle::spindle_encoder;
 
 	encode->meta_data.reg_tc0_ra0 = 2;
 

@@ -1,3 +1,6 @@
+#ifndef _C_ENCODER_STRUCT
+#define _C_ENCODER_STRUCT
+#include <stdint.h>
 struct s_encoder_meta
 {
 	int32_t reg_tc0_cv1 = 0;
@@ -33,3 +36,4 @@ struct s_encoders
 		return (current_rpm >= (target_rpm - target_percent)) && (current_rpm <= (target_rpm + target_percent));
 	};
 };
+#endif // _C_ENCODER_STRUCT

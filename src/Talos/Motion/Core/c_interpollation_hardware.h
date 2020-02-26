@@ -2,7 +2,7 @@
 #include "c_segment_timer_bresenham.h"
 #include "c_segment_timer_item.h"
 #include "c_motion_core.h"
-#include "../../Shared Data/_peripheral_panel_control_enums.h"
+#include "../../Shared Data/_s_motion_data_block.h"
 #include "../../Shared Data/_e_feed_modes.h"
 
 namespace Motion_Core
@@ -33,7 +33,7 @@ namespace Motion_Core
 			static e_feed_modes drive_mode;
 			static void step_tick();
 			static uint8_t is_active();
-			static void initialize(BinaryRecords::s_encoders * encoder_data);
+			static void initialize(s_encoders * encoder_data);
 			static void interpolation_begin_new_block(s_motion_data_block block);
 			static void interpolation_begin();
 			static void spindle_at_speed_timeout(uint32_t parameter);
@@ -42,7 +42,7 @@ namespace Motion_Core
 			static uint8_t check_spindle_at_speed();
 			static int32_t system_position[MACHINE_AXIS_COUNT];
 
-			static BinaryRecords::s_encoders * spindle_encoder;
+			static s_encoders * spindle_encoder;
 
 			private:
 			static uint32_t spindle_calculated_delay;

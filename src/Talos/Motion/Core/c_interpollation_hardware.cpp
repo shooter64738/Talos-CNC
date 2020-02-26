@@ -15,6 +15,7 @@ static ofstream myfile;
 #include "../Processing/Events/EventHandlers/c_motion_control_event_handler.h"
 #include "../Processing/Events/EventHandlers/c_system_event_handler.h"
 #include "../Processing/Events/extern_events_types.h"
+#include "../../Shared Data/_e_block_state.h"
 
 Motion_Core::Segment::Bresenham::Bresenham_Item *Motion_Core::Hardware::Interpolation::Change_Check_Exec_Timer_Bresenham; // Tracks the current st_block index. Change indicates new block.
 Motion_Core::Segment::Timer::Timer_Item *Motion_Core::Hardware::Interpolation::Exec_Timer_Item;  // Pointer to the segment being executed
@@ -45,11 +46,11 @@ uint32_t Motion_Core::Hardware::Interpolation::Last_Completed_Sequence = 0;
 
 uint8_t Motion_Core::Hardware::Interpolation::direction_set = 0;
 e_feed_modes Motion_Core::Hardware::Interpolation::drive_mode;
-BinaryRecords::s_encoders * Motion_Core::Hardware::Interpolation::spindle_encoder;
+s_encoders * Motion_Core::Hardware::Interpolation::spindle_encoder;
 uint32_t Motion_Core::Hardware::Interpolation::spindle_calculated_delay = 0;
 uint8_t Motion_Core::Hardware::Interpolation::spindle_synch = 0;
 
-void Motion_Core::Hardware::Interpolation::initialize(BinaryRecords::s_encoders * encoder_data)
+void Motion_Core::Hardware::Interpolation::initialize(s_encoders * encoder_data)
 {
 	Motion_Core::Hardware::Interpolation::spindle_encoder = encoder_data;
 }
@@ -282,7 +283,7 @@ void Motion_Core::Hardware::Interpolation::step_tick()
 			Motion_Core::Hardware::Interpolation::Exec_Timer_Item->bresenham_in_item->step_event_count;
 
 			//We arent changing system position on a backlash comp motion.
-			if (!Motion_Core::Hardware::Interpolation::Exec_Timer_Item->flag.get((int)BinaryRecords::e_block_flag::block_state_skip_sys_pos_update))
+			if (!Motion_Core::Hardware::Interpolation::Exec_Timer_Item->flag.get((int)e_block_state::block_state_skip_sys_pos_update))
 			{
 				if (Motion_Core::Hardware::Interpolation::Exec_Timer_Item->bresenham_in_item->direction_bits & (1 << i))
 				Motion_Core::Hardware::Interpolation::system_position[i]--;
@@ -301,7 +302,7 @@ void Motion_Core::Hardware::Interpolation::step_tick()
 	{
 		//only adjust the delay value if we are in 'cruise' state.
 		//The arbitrator still controls motion during accel and decel
-		if (Motion_Core::Hardware::Interpolation::Exec_Timer_Item->flag.get((int)BinaryRecords::e_block_flag::motion_state_cruising))
+		if (Motion_Core::Hardware::Interpolation::Exec_Timer_Item->flag.get((int)e_block_state::motion_state_cruising))
 		{
 			
 			if (Hardware_Abstraction_Layer::MotionCore::Spindle::spindle_encoder->feedrate_delay <1)

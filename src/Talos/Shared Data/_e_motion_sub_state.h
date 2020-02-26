@@ -1,6 +1,7 @@
 #ifndef __C_SYSTEM_SUB_STATE_RECORD_TYPES
 #define __C_SYSTEM_SUB_STATE_RECORD_TYPES
-enum class e_system_sub_state_record_types : uint8_t
+#include <stdint.h>
+enum class e_motion_sub_state : uint8_t
 {
 	Block_Complete = 1, //The block has completed. Block sequence # is returned in the num_message
 	Block_Starting = 2, //Block is starting execution

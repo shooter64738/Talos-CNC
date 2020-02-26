@@ -1,7 +1,7 @@
-//#ifndef __C_SYSTEM_STATE_RECORD_TYPES
-#define __C_SYSTEM_MOTION_STATE_RECORD_TYPES
+#ifndef __C_SYSTEM_MOTION_STATES
+#define __C_SYSTEM_MOTION_STATES
 #include <stdint.h>
-enum class e_system_motion_state_enum : uint8_t
+enum class e_motion_state : uint8_t
 {
 	Active = 1, //Motion states 1-9
 	Complete = 2,
@@ -13,4 +13,4 @@ enum class e_system_motion_state_enum : uint8_t
 	Spindle_Running = 11,
 	System_Error = 31
 };
-//#endif
+#endif

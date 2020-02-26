@@ -7,6 +7,7 @@
 #include "c_block_buffer.h"
 #include "c_motion_core.h"
 #include "../motion_hardware_def.h"
+#include "../../Shared Data/_e_ramp_type.h"
 
 
 namespace Motion_Core
@@ -32,7 +33,7 @@ namespace Motion_Core
 
 
 			//static uint8_t ramp_type;      // Current segment ramp state
-			static BinaryRecords::e_ramp_type ramp_type;
+			static e_ramp_type ramp_type;
 			static float mm_complete;      // End of velocity profile from end of current planner block in (mm).
 			// NOTE: This value must coincide with a step(no mantissa) when converted.
 			static float current_speed;    // Current speed at the end of the segment buffer (mm/min)

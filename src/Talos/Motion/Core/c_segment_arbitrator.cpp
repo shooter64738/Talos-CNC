@@ -7,6 +7,8 @@
 #include "c_gateway.h"
 #include "c_interpollation_hardware.h"
 #include "c_system.h"
+#include "../../Shared Data/_e_block_state.h"
+#include "../../Shared Data/_s_status_record.h"
 
 
 uint8_t Motion_Core::Segment::Arbitrator::recalculate_flag = 0;
@@ -19,7 +21,7 @@ float Motion_Core::Segment::Arbitrator::mm_remaining = 0;
 Motion_Core::Planner::Block_Item *Motion_Core::Segment::Arbitrator::Active_Block;
 
 
-BinaryRecords::e_ramp_type Motion_Core::Segment::Arbitrator::ramp_type = BinaryRecords::e_ramp_type::Accel;      // Current segment ramp state
+e_ramp_type Motion_Core::Segment::Arbitrator::ramp_type = e_ramp_type::Accel;      // Current segment ramp state
 float Motion_Core::Segment::Arbitrator::mm_complete = 0;      // End of velocity profile from end of current planner block in (mm).
 // NOTE: This value must coincide with a step(no mantissa) when converted.
 
@@ -44,7 +46,7 @@ void Motion_Core::Segment::Arbitrator::Reset()
 	Motion_Core::Segment::Arbitrator::step_per_mm = 0;
 	Motion_Core::Segment::Arbitrator::req_mm_increment = 0;
 
-	Motion_Core::Segment::Arbitrator::ramp_type = BinaryRecords::e_ramp_type::Accel;      // Current segment ramp state
+	Motion_Core::Segment::Arbitrator::ramp_type = e_ramp_type::Accel;      // Current segment ramp state
 	Motion_Core::Segment::Arbitrator::mm_complete = 0;      // End of velocity profile from end of current planner block in (mm).
 	// NOTE: This value must coincide with a step(no mantissa) when converted.
 
@@ -212,7 +214,7 @@ uint8_t Motion_Core::Segment::Arbitrator::Base_Calculate()
 	{ // [Forced Deceleration to Zero Velocity]
 		// Compute velocity profile parameters for a feed hold in-progress. This profile overrides
 		// the planner block profile, enforcing a deceleration to zero speed.
-		Motion_Core::Segment::Arbitrator::ramp_type = BinaryRecords::e_ramp_type::Decel;
+		Motion_Core::Segment::Arbitrator::ramp_type = e_ramp_type::Decel;
 		// Compute decelerate distance relative to end of block.
 		float decel_dist = Motion_Core::Segment::Arbitrator::Active_Block->millimeters - inv_2_accel * Motion_Core::Segment::Arbitrator::Active_Block->entry_speed_sqr;
 		if (decel_dist < 0.0)
@@ -229,7 +231,7 @@ uint8_t Motion_Core::Segment::Arbitrator::Base_Calculate()
 	else
 	{ // [Normal Operation]
 		// Compute or recompute velocity profile parameters of the prepped planner block.
-		Motion_Core::Segment::Arbitrator::ramp_type = BinaryRecords::e_ramp_type::Accel; // Initialize as acceleration ramp.
+		Motion_Core::Segment::Arbitrator::ramp_type = e_ramp_type::Accel; // Initialize as acceleration ramp.
 		Motion_Core::Segment::Arbitrator::accelerate_until = Motion_Core::Segment::Arbitrator::Active_Block->millimeters;
 
 		float exit_speed_sqr;
@@ -246,7 +248,7 @@ uint8_t Motion_Core::Segment::Arbitrator::Base_Calculate()
 			Motion_Core::Segment::Arbitrator::accelerate_until = Motion_Core::Segment::Arbitrator::Active_Block->millimeters - inv_2_accel * (Motion_Core::Segment::Arbitrator::Active_Block->entry_speed_sqr - nominal_speed_sqr);
 			if (Motion_Core::Segment::Arbitrator::accelerate_until <= 0.0)
 			{ // Deceleration-only.
-				Motion_Core::Segment::Arbitrator::ramp_type = BinaryRecords::e_ramp_type::Decel;
+				Motion_Core::Segment::Arbitrator::ramp_type = e_ramp_type::Decel;
 
 				// Compute override block exit speed since it doesn't match the planner exit speed.
 				Motion_Core::Segment::Arbitrator::exit_speed = sqrt(Motion_Core::Segment::Arbitrator::Active_Block->entry_speed_sqr - 2 * Motion_Core::Segment::Arbitrator::Active_Block->acceleration * Motion_Core::Segment::Arbitrator::Active_Block->millimeters);
@@ -258,7 +260,7 @@ uint8_t Motion_Core::Segment::Arbitrator::Base_Calculate()
 				// Decelerate to cruise or cruise-decelerate types. Guaranteed to intersect updated plan.
 				Motion_Core::Segment::Arbitrator::decelerate_after = inv_2_accel * (nominal_speed_sqr - exit_speed_sqr);
 				Motion_Core::Segment::Arbitrator::maximum_speed = nominal_speed;
-				Motion_Core::Segment::Arbitrator::ramp_type = BinaryRecords::e_ramp_type::Decel_Override;
+				Motion_Core::Segment::Arbitrator::ramp_type = e_ramp_type::Decel_Override;
 			}
 		}
 		else if (intersect_distance > 0.0)
@@ -273,7 +275,7 @@ uint8_t Motion_Core::Segment::Arbitrator::Base_Calculate()
 					if (Motion_Core::Segment::Arbitrator::Active_Block->entry_speed_sqr == nominal_speed_sqr)
 					{
 						// Cruise-deceleration or cruise-only type.
-						Motion_Core::Segment::Arbitrator::ramp_type = BinaryRecords::e_ramp_type::Cruise;
+						Motion_Core::Segment::Arbitrator::ramp_type = e_ramp_type::Cruise;
 					}
 					else
 					{
@@ -290,7 +292,7 @@ uint8_t Motion_Core::Segment::Arbitrator::Base_Calculate()
 			}
 			else
 			{ // Deceleration-only type
-				Motion_Core::Segment::Arbitrator::ramp_type = BinaryRecords::e_ramp_type::Decel;
+				Motion_Core::Segment::Arbitrator::ramp_type = e_ramp_type::Decel;
 			}
 		}
 		else
@@ -339,7 +341,7 @@ uint8_t Motion_Core::Segment::Arbitrator::Segment_Calculate()
 	segment_item->flag._flag = Motion_Core::Segment::Arbitrator::flag._flag;
 	//default segment state is accelerating. Effectively as soon as a segment
 	//is loaded, it is assumed to be accelerating
-	segment_item->flag.set((int)BinaryRecords::e_block_flag::motion_state_accelerating);
+	segment_item->flag.set((int)e_block_state::motion_state_accelerating);
 
 	/*------------------------------------------------------------------------------------
 	Compute the average velocity of this new segment by determining the total distance
@@ -369,9 +371,9 @@ uint8_t Motion_Core::Segment::Arbitrator::Segment_Calculate()
 	
 	do
 	{
-		switch ((BinaryRecords::e_ramp_type)Motion_Core::Segment::Arbitrator::ramp_type)
+		switch ((e_ramp_type)Motion_Core::Segment::Arbitrator::ramp_type)
 		{
-			case BinaryRecords::e_ramp_type::Decel_Override:
+			case e_ramp_type::Decel_Override:
 			{
 				speed_var = Motion_Core::Segment::Arbitrator::Active_Block->acceleration * time_var;
 				mm_var = time_var * (Motion_Core::Segment::Arbitrator::current_speed - 0.5 * speed_var);
@@ -381,8 +383,8 @@ uint8_t Motion_Core::Segment::Arbitrator::Segment_Calculate()
 					// Cruise or cruise-deceleration types only for deceleration override.
 					Motion_Core::Segment::Arbitrator::mm_remaining = Motion_Core::Segment::Arbitrator::accelerate_until; // NOTE: 0.0 at EOB
 					time_var = 2.0 * (Motion_Core::Segment::Arbitrator::Active_Block->millimeters - Motion_Core::Segment::Arbitrator::mm_remaining) / (Motion_Core::Segment::Arbitrator::current_speed + Motion_Core::Segment::Arbitrator::maximum_speed);
-					Motion_Core::Segment::Arbitrator::ramp_type = BinaryRecords::e_ramp_type::Cruise;
-					segment_item->flag.set((int)BinaryRecords::e_block_flag::motion_state_cruising);
+					Motion_Core::Segment::Arbitrator::ramp_type = e_ramp_type::Cruise;
+					segment_item->flag.set((int)e_block_state::motion_state_cruising);
 					Motion_Core::Segment::Arbitrator::current_speed = Motion_Core::Segment::Arbitrator::maximum_speed;
 				}
 				else
@@ -395,7 +397,7 @@ uint8_t Motion_Core::Segment::Arbitrator::Segment_Calculate()
 				//c_processor::debug_serial.Write(CR);
 			}
 			break;
-			case BinaryRecords::e_ramp_type::Accel:
+			case e_ramp_type::Accel:
 			{
 				// NOTE: Acceleration ramp only computes during first do-while loop.
 				speed_var = Motion_Core::Segment::Arbitrator::Active_Block->acceleration * time_var;
@@ -410,13 +412,13 @@ uint8_t Motion_Core::Segment::Arbitrator::Segment_Calculate()
 
 					if (Motion_Core::Segment::Arbitrator::mm_remaining == Motion_Core::Segment::Arbitrator::decelerate_after)
 					{
-						Motion_Core::Segment::Arbitrator::ramp_type = BinaryRecords::e_ramp_type::Decel;
-						segment_item->flag.set((int)BinaryRecords::e_block_flag::motion_state_decelerating);
+						Motion_Core::Segment::Arbitrator::ramp_type = e_ramp_type::Decel;
+						segment_item->flag.set((int)e_block_state::motion_state_decelerating);
 					}
 					else
 					{
-						Motion_Core::Segment::Arbitrator::ramp_type = BinaryRecords::e_ramp_type::Cruise;
-						segment_item->flag.set((int)BinaryRecords::e_block_flag::motion_state_cruising);
+						Motion_Core::Segment::Arbitrator::ramp_type = e_ramp_type::Cruise;
+						segment_item->flag.set((int)e_block_state::motion_state_cruising);
 					}
 					Motion_Core::Segment::Arbitrator::current_speed = Motion_Core::Segment::Arbitrator::maximum_speed;
 				}
@@ -431,9 +433,9 @@ uint8_t Motion_Core::Segment::Arbitrator::Segment_Calculate()
 
 			}
 			break;
-			case BinaryRecords::e_ramp_type::Cruise:
+			case e_ramp_type::Cruise:
 			{
-				segment_item->flag.set((int)BinaryRecords::e_block_flag::motion_state_cruising);
+				segment_item->flag.set((int)e_block_state::motion_state_cruising);
 				// NOTE: mm_var used to retain the last mm_remaining for incomplete segment time_var calculations.
 				// NOTE: If maximum_speed*time_var value is too low, round-off can cause mm_var to not change. To
 				//   prevent this, simply enforce a minimum speed threshold in the planner.
@@ -443,8 +445,8 @@ uint8_t Motion_Core::Segment::Arbitrator::Segment_Calculate()
 					// Cruise-deceleration junction or end of block.
 					time_var = (Motion_Core::Segment::Arbitrator::mm_remaining - Motion_Core::Segment::Arbitrator::decelerate_after) / Motion_Core::Segment::Arbitrator::maximum_speed;
 					Motion_Core::Segment::Arbitrator::mm_remaining = Motion_Core::Segment::Arbitrator::decelerate_after; // NOTE: 0.0 at EOB
-					Motion_Core::Segment::Arbitrator::ramp_type = BinaryRecords::e_ramp_type::Decel;
-					segment_item->flag.set((int)BinaryRecords::e_block_flag::motion_state_decelerating);
+					Motion_Core::Segment::Arbitrator::ramp_type = e_ramp_type::Decel;
+					segment_item->flag.set((int)e_block_state::motion_state_decelerating);
 				}
 				else
 				{ // Cruising only.
@@ -599,7 +601,7 @@ void Motion_Core::Segment::Arbitrator::st_update_plan_block_parameters()
 
 void Motion_Core::Segment::Arbitrator::cycle_hold()
 {
-	BinaryRecords::s_status_message status;
+	s_status_message status;
 	if (Motion_Core::System::state_mode.step_modes._flag == 0)
 	{
 
