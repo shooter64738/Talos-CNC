@@ -20,7 +20,7 @@
 #include "c_ngc_data_handler.h"
 #include <string.h>
 #include "../../Events/extern_events_types.h"
-#include "../../../../Shared Data/_s_motion_record.h"
+#include "../../../../Shared Data/_s_motion_data_block.h"
 
 
 static s_motion_data_block loaded_block;

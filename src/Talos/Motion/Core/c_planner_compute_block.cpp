@@ -14,14 +14,14 @@ float Motion_Core::Planner::Calculator::previous_unit_vec[MACHINE_AXIS_COUNT];
 float Motion_Core::Planner::Calculator::previous_nominal_speed;
 
 
-uint8_t Motion_Core::Planner::Calculator::_plan_buffer_line(BinaryRecords::s_motion_data_block target_block)
+uint8_t Motion_Core::Planner::Calculator::_plan_buffer_line(s_motion_data_block target_block)
 {
 	//this is a 'temporary' get from teh buffer. We may find this block has no distance to move and we dont want to advance
 	//the buffer unless we will actually execute this block of data.
 	Motion_Core::Planner::Block_Item *planning_block = &Motion_Core::Planner::Buffer::_buffer[Motion_Core::Planner::Buffer::_head];
 	
 	planning_block->line_number = target_block.line_number;
-	planning_block->sequence = target_block.sequence;
+	planning_block->sequence = target_block.station;
 	planning_block->flag._flag = target_block.flag;
 	planning_block->programmed_spindle_speed = target_block.spindle_speed;
 	planning_block->spindle_state = target_block.spindle_state;

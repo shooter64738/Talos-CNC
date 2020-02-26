@@ -81,7 +81,7 @@
     <ClInclude Include="..\..\..\..\physical_machine_parameters.h" />
     <ClInclude Include="..\..\..\..\Shared Data\Settings\Motion\_s_motion_control_settings_encapsulation.h" />
     <ClInclude Include="..\..\..\..\Shared Data\Settings\Motion\_s_motion_tolerance_struct.h" />
-    <ClInclude Include="..\..\..\..\Shared Data\Settings\Motion\_s_motion_hardware_struct.h" />
+    <ClInclude Include="..\..\..\..\Shared Data\Settings\Motion\_s_motion_hardware.h" />
     <ClInclude Include="..\..\..\..\Shared Data\_e_record_types.h" />
     <ClInclude Include="..\..\..\..\Shared Data\_e_feed_modes.h" />
     <ClInclude Include="..\..\..\..\Shared Data\_e_feed_types.h" />
@@ -93,9 +93,9 @@
     <ClInclude Include="..\..\..\..\Shared Data\_s_encoder_struct.h" />
     <ClInclude Include="..\..\..\..\Shared Data\_s_interp_config_struct.h" />
     <ClInclude Include="..\..\..\..\Shared Data\_s_jog_data_struct.h" />
-    <ClInclude Include="..\..\..\..\Shared Data\_s_motion_record.h" />
+    <ClInclude Include="..\..\..\..\Shared Data\_s_motion_data_block.h" />
     <ClInclude Include="..\..\..\..\Shared Data\_s_peripheral_panel_struct.h" />
-    <ClInclude Include="..\..\..\..\Shared Data\_unit_type_enums.h" />
+    <ClInclude Include="..\..\..\..\Shared Data\_e_unit_types.h" />
     <ClInclude Include="..\..\..\..\_bit_flag_control.h" />
     <ClInclude Include="..\..\..\..\_bit_manipulation.h" />
     <ClInclude Include="Platform Specific\c_core_win.h" />

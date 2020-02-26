@@ -1,9 +1,10 @@
-
+#ifndef _C_MOTION_HARDWARE_STRUCT
+#define _C_MOTION_HARDWARE_STRUCT
 #include <stdint.h>
 #include "../../_s_encoder_struct.h"
 #include "../../../physical_machine_parameters.h"
 
-struct s_hardware
+struct s_motion_hardware
 {
 	s_encoders spindle_encoder;
 	float back_lash_comp_distance[MACHINE_AXIS_COUNT];//53
@@ -14,3 +15,4 @@ struct s_hardware
 	uint16_t steps_per_mm[MACHINE_AXIS_COUNT];//31
 	uint16_t pulse_length = 0;//49
 };
+#endif

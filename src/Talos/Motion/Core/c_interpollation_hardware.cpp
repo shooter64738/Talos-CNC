@@ -54,7 +54,7 @@ void Motion_Core::Hardware::Interpolation::initialize(BinaryRecords::s_encoders 
 	Motion_Core::Hardware::Interpolation::spindle_encoder = encoder_data;
 }
 
-void Motion_Core::Hardware::Interpolation::interpolation_begin_new_block(BinaryRecords::s_motion_data_block block )
+void Motion_Core::Hardware::Interpolation::interpolation_begin_new_block(s_motion_data_block block )
 {
 	#ifdef MSVC
 	myfile.open("acceleration.txt");

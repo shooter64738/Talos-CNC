@@ -28,6 +28,10 @@
 #include "../_bit_manipulation.h"
 #include "_e_feed_modes.h"
 #include "_e_feed_types.h"
+#include "_e_record_types.h"
+#include "_s_motion_data_block.h"
+#include "Settings/Motion/_s_motion_tolerance_struct.h"
+#include "_e_unit_types.h"
 #include <string.h>
 
 namespace BinaryRecords
@@ -63,33 +67,14 @@ namespace BinaryRecords
 	};
 #endif
 
-
-
-#include "_e_record_types.h"
-
-//#ifndef __C_BINARY_RECORD_TYPES
-//#define __C_BINARY_RECORD_TYPES
-//	enum class e_record_types : uint8_t
+//#ifndef __C_UNIT_TYPES
+//#define __C_UNIT_TYPES
+//	enum class e_unit_types : uint8_t
 //	{
-//		//DO NOT use 10 or 13 as binary record type identifiers.
-//		Unknown = 0,
-//		Motion = 1,
-//		Motion_Control_Setting = 2,
-//		Spindle_Control_Setting = 3,
-//		Jog = 4,
-//		Peripheral_Control_Setting = 5,
-//		Status = 6
+//		MM = 1,
+//		INCHES = 2
 //	};
 //#endif
-
-#ifndef __C_UNIT_TYPES
-#define __C_UNIT_TYPES
-	enum class e_unit_types : uint8_t
-	{
-		MM = 1,
-		INCHES = 2
-	};
-#endif
 
 #ifndef __C_SYSTEM_STATE_RECORD_TYPES
 #define __C_SYSTEM_STATE_RECORD_TYPES
@@ -260,18 +245,6 @@ namespace BinaryRecords
 		uint16_t pulse_length = 0;//49
 	};
 
-	struct s_motion_control_settings
-	{
-		const e_record_types record_type = e_record_types::Motion_Control_Setting;
-		float junction_deviation = 0;//43
-		float arc_tolerance = 0;//47
-		uint16_t arc_angular_correction = 12;//59
-		uint8_t invert_mpg_directions = 0;//60
-		BinaryRecords::e_unit_types machine_units = BinaryRecords::e_unit_types::MM;//61
-		s_hardware Hardware_Settings;
-		uint32_t _check_sum = 0;//65
-	};
-
 	struct s_spindle_control_settings
 	{
 		uint32_t _check_sum = 0;
@@ -287,21 +260,5 @@ namespace BinaryRecords
 		char * chr_message;
 		uint32_t _check_sum = 0;
 	};
-
-	struct s_motion_data_block
-	{
-		const e_record_types record_type = e_record_types::Motion;
-		e_feed_modes feed_rate_mode;
-		e_motion_type motion_type;
-		s_arc_values arc_values;
-		float axis_values[MACHINE_AXIS_COUNT];
-		float feed_rate;
-		float spindle_speed;
-		uint8_t spindle_state;
-		uint32_t flag;
-		uint32_t line_number;
-		uint32_t sequence;
-	};
-
 };
 #endif /* RECORDS_DEF_H */

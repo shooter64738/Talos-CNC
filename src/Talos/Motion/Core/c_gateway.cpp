@@ -19,18 +19,18 @@
 #include "../Processing/Events/extern_events_types.h"
 #define MOTION_BUFFER_SIZE 2
 
-static BinaryRecords::s_motion_data_block jog_mot;
+static s_motion_data_block jog_mot;
 //c_Serial Motion_Core::c_processor::coordinator_serial;
 c_Serial *Motion_Core::Gateway::local_serial;
 
 //static uint32_t serial_try = 0;
 //static uint32_t last_serial_size = 0;
-static BinaryRecords::s_motion_data_block mots[MOTION_BUFFER_SIZE];
+static s_motion_data_block mots[MOTION_BUFFER_SIZE];
 static uint16_t mot_index = 0;
 static uint16_t motion_buffer_head = 0;
 static uint16_t motion_buffer_tail = 0;
 
-void Motion_Core::Gateway::add_motion(BinaryRecords::s_motion_data_block new_blk)
+void Motion_Core::Gateway::add_motion(s_motion_data_block new_blk)
 {
 	
 
@@ -40,8 +40,8 @@ void Motion_Core::Gateway::add_motion(BinaryRecords::s_motion_data_block new_blk
 		return; //<--no space for a new item right now
 	}
 
-	BinaryRecords::s_motion_data_block *_blk = &mots[motion_buffer_head++];
-	memcpy(_blk,&new_blk,sizeof(BinaryRecords::s_motion_data_block));
+	s_motion_data_block *_blk = &mots[motion_buffer_head++];
+	memcpy(_blk,&new_blk,sizeof(s_motion_data_block));
 
 	if (motion_buffer_head == MOTION_BUFFER_SIZE)
 	{
@@ -105,7 +105,7 @@ void Motion_Core::Gateway::process_motion()
 	}
 
 	//Grab the block at tail position to process, and incriment the tail
-	BinaryRecords::s_motion_data_block *_blk = &mots[motion_buffer_tail++];
+	s_motion_data_block *_blk = &mots[motion_buffer_tail++];
 	//process the block at tail position
 	Motion_Core::Gateway::process_motion(_blk);
 	
@@ -127,9 +127,9 @@ void Motion_Core::Gateway::process_motion()
 	
 }
 
-void Motion_Core::Gateway::process_motion(BinaryRecords::s_motion_data_block *mot)
+void Motion_Core::Gateway::process_motion(s_motion_data_block *mot)
 {
-	Motion_Core::System::new_sequence = mot->sequence;
+	Motion_Core::System::new_sequence = mot->station;
 	
 	//mot->axis_values[0]=50;
 	#ifdef DEBUG_REPORTING

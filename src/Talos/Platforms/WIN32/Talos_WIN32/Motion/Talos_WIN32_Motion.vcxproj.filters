@@ -185,9 +185,6 @@
     <ClInclude Include="..\..\..\..\Shared Data\_system_sub_state_enums.h">
       <Filter>Shared data</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Shared Data\_unit_type_enums.h">
-      <Filter>Shared data</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\..\Motion\motion_hardware_def.h">
       <Filter>Motion</Filter>
     </ClInclude>
@@ -300,9 +297,6 @@
     <ClInclude Include="..\..\..\..\Motion\Processing\Events\EventHandlers\c_system_event_handler.h">
       <Filter>Motion\Processing\Events\EventHandlers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Shared Data\Settings\Motion\_s_motion_hardware_struct.h">
-      <Filter>Shared data\Settings\Motion</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\..\Shared Data\Settings\Motion\_s_motion_tolerance_struct.h">
       <Filter>Shared data\Settings\Motion</Filter>
     </ClInclude>
@@ -311,9 +305,6 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\NGC_RS274\_ngc_block_struct.h">
       <Filter>Ngc_Rs274</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Shared Data\_s_motion_record.h">
-      <Filter>Shared data</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\Shared Data\_e_feed_modes.h">
       <Filter>Shared data</Filter>
@@ -324,6 +315,15 @@
     <ClInclude Include="..\..\..\..\c_ring_template.h" />
     <ClInclude Include="..\..\..\..\Shared Data\_e_record_types.h">
       <Filter>Shared data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared Data\_s_motion_data_block.h">
+      <Filter>Shared data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared Data\_e_unit_types.h">
+      <Filter>Shared data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared Data\Settings\Motion\_s_motion_hardware.h">
+      <Filter>Shared data\Settings\Motion</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

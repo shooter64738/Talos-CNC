@@ -1,7 +1,7 @@
 #include "c_motion_core.h"
 #include "../../_bit_manipulation.h"
 
-BinaryRecords::s_motion_control_settings Motion_Core::Settings::_Settings;
+s_motion_tolerance_settings Motion_Core::Settings::_Settings;
 
 
 //int16_t Motion_Core::Settings.steps_per_mm[MACHINE_AXIS_COUNT]{160};

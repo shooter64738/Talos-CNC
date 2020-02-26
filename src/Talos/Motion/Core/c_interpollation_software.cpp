@@ -12,7 +12,7 @@
 Motion_Core::Software::Interpolation::s_backlash_comp Motion_Core::Software::Interpolation::back_comp;
 int32_t Motion_Core::Software::Interpolation::system_position[MACHINE_AXIS_COUNT]{0};
 
-uint16_t Motion_Core::Software::Interpolation::load_block(BinaryRecords::s_motion_data_block *block)
+uint16_t Motion_Core::Software::Interpolation::load_block(s_motion_data_block *block)
 {
 	uint8_t return_value = 0;
 	
@@ -94,13 +94,13 @@ uint16_t Motion_Core::Software::Interpolation::load_block(BinaryRecords::s_motio
 	return return_value;
 }
 
-uint8_t Motion_Core::Software::Interpolation::_mc_line(BinaryRecords::s_motion_data_block *target_block)
+uint8_t Motion_Core::Software::Interpolation::_mc_line(s_motion_data_block *target_block)
 {
 	return Motion_Core::Planner::Calculator::_plan_buffer_line(*target_block);
 }
 
 
-uint8_t Motion_Core::Software::Interpolation::_mc_arc(BinaryRecords::s_motion_data_block * target_block)
+uint8_t Motion_Core::Software::Interpolation::_mc_arc(s_motion_data_block * target_block)
 {
 	//x=0, y=2
 	float center_axis0 = Motion_Core::Software::Interpolation::system_position[0] + *target_block->arc_values.horizontal_offset.value;
