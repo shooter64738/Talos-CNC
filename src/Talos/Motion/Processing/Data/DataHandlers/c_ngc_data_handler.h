@@ -22,8 +22,9 @@
 #ifndef __C_MOTION_NGC_DATA_HANDLER_H__
 #define __C_MOTION_NGC_DATA_HANDLER_H__
 #include <stdint.h>
-#include "../../../../Shared Data/_e_record_types.h"
+#include "../../Events/extern_events_types.h"
 #include "../../../../c_ring_template.h"
+#include "../../../../communication_def.h"
 
 typedef void(*ret_pointer)(c_ring_buffer <char> * buffer);
 
@@ -38,9 +39,13 @@ private:
 
 	//functions
 public:
-	static ret_pointer assign_write_handler(c_ring_buffer <char> * buffer);
+	static ret_pointer assign_handler(
+		c_ring_buffer <char> * buffer, s_outbound_data *event_object, s_outbound_data::e_event_type event_id, uint8_t size);
+	static ret_pointer assign_handler(
+		c_ring_buffer <char> * buffer, s_inbound_data * event_object, s_inbound_data::e_event_type event_id);
+
 	static void ngc_write_handler(c_ring_buffer <char> * buffer);
-	static ret_pointer assign_read_handler(c_ring_buffer <char> * buffer);
+	
 	static void ngc_read_handler(c_ring_buffer <char> * buffer);
 protected:
 private:

@@ -112,6 +112,11 @@ void Talos::Motion::Main_Process::run()
 	check for auto start command
 	*/
 	
+	//setup a fake event indicating we want an ngc block record
+	extern_data_events.serial.outbound.event_manager.set((int)s_outbound_data::e_event_type::NgcBlockRequest);
+	//setup a fake event indicating we want to update position on the host
+	extern_data_events.serial.outbound.event_manager.set((int)s_outbound_data::e_event_type::StatusUpdate);
+
 	//Start the eventing loop, stop loop if a critical system error occurs
 	while (extern_system_events.event_manager.get((int)s_system_events::e_event_type::SystemAllOk))
 	{

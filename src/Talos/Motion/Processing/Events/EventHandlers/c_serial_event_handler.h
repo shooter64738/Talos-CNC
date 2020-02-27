@@ -24,7 +24,8 @@
 
 #include <stdint.h>
 #include "../../../../c_ring_template.h"
-#include "../../../../Shared Data/_e_record_types.h"
+#include "../extern_events_types.h"
+//#include "../../../../Shared Data/_e_record_types.h"
 #include "../../../../NGC_RS274/_ngc_block_struct.h"
 
 class c_serial_event_handler
@@ -40,8 +41,8 @@ private:
 
 	//functions
 public:
-	static void process(c_ring_buffer<char> * buffer);
-	static void process(c_ring_buffer<char> * buffer, e_record_types rec_type);
+	static void process(c_ring_buffer<char> * buffer, s_outbound_data * event_object, s_outbound_data::e_event_type event_id);
+	static void process(c_ring_buffer<char> * buffer, s_inbound_data * event_object, s_inbound_data::e_event_type event_id);
 	//static void data_handler_releaser(bool has_data);
 	static void read_data_handler_releaser(c_ring_buffer<char> * has_data);
 	static void write_data_handler_releaser(c_ring_buffer<char> * has_data);
@@ -56,8 +57,8 @@ protected:
 private:
 	static void __unkown_handler(c_ring_buffer <char> * buffer);
 	static void __control_handler(c_ring_buffer <char> * buffer);
-	static void __assign_read_handler(c_ring_buffer<char> *buffer);
-	static void __assign_write_handler(c_ring_buffer<char> *buffer, e_record_types rec_type);
+	static void __assign_handler(c_ring_buffer<char> *buffer, s_inbound_data * event_object, s_inbound_data::e_event_type event_id);
+	static void __assign_handler(c_ring_buffer<char> *buffer, s_outbound_data * event_object, s_outbound_data::e_event_type event_id);
 
 }; //c_serial_events
 #endif //__C_DATA_EVENTS_H__

@@ -18,45 +18,51 @@
 *  along with Talos.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "c_ngc_data_handler.h"
-#include <string.h>
-#include "../../Events/extern_events_types.h"
-#include "../../../../Shared Data/_s_motion_data_block.h"
 
 
-static s_motion_data_block loaded_block;
 static uint8_t write_count = 0;
+static s_outbound_data::e_event_type tracked_write_event;
+static s_outbound_data * tracked_write_object;
+static s_inbound_data::e_event_type tracked_read_event;
+static s_inbound_data * tracked_read_object;
 
 void(*c_ngc_data_handler::pntr_data_handler_release)(c_ring_buffer<char> * buffer);
 
-ret_pointer c_ngc_data_handler::assign_read_handler(c_ring_buffer <char> * buffer)
+ret_pointer c_ngc_data_handler::assign_handler(c_ring_buffer <char> * buffer, s_inbound_data * event_object, s_inbound_data::e_event_type event_id)
 {
+	//hold this event id. We will need it when we release the reader
+	tracked_read_event = event_id;
+	tracked_read_object = event_object;
 	return c_ngc_data_handler::ngc_read_handler;
 }
 
-ret_pointer c_ngc_data_handler::assign_write_handler(c_ring_buffer <char> * buffer)
+ret_pointer c_ngc_data_handler::assign_handler(c_ring_buffer <char> * buffer, s_outbound_data * event_object, s_outbound_data::e_event_type event_id, uint8_t size)
 {
-	//Convert the loaded_block that is in here into a a stream. 
-	//place the stream into the buffer. the write handler will do the rest.
-	
-	//If this is the first time here, the blocks station value will be zero. 
-	//The station value indicates which record we are expecting to get from the coordiantor.
-	loaded_block.station++;
-	write_count = loaded_block._size;
-	memcpy(buffer->_storage_pointer, &loaded_block, loaded_block._size);
+	//hold this event id. We will need it when we release the writer
+	tracked_write_event = event_id;
+	tracked_write_object = event_object;
+	write_count = size;
 	return c_ngc_data_handler::ngc_write_handler;
 }
 
 void c_ngc_data_handler::ngc_read_handler(c_ring_buffer <char> * buffer)
 {
-	buffer->pntr_write(1, *buffer->_storage_pointer++);
-	write_count--;
-	//when write count reaches zero we have written all data for the record
-	if (!write_count)
+	uint8_t eol_position = 0;
+	bool has_eol = false;
+	if (buffer->has_data())
 	{
-		//for good measure, lets reset the buffer
-		buffer->reset();
-		//call the release method.. Remember back in the serial handler we assigned a call back function to release?
-		c_ngc_data_handler::__release(buffer);
+		//wait for the CR to come in so we know there is a complete line
+		char peek_at = 0;
+
+		while (!has_eol)
+		{
+			peek_at = buffer->peek_step();
+
+			if (peek_at == 0)
+				break;
+			eol_position++;
+			has_eol = (peek_at == CR || peek_at == LF);
+		}
 	}
 }
 
@@ -76,6 +82,9 @@ void c_ngc_data_handler::ngc_write_handler(c_ring_buffer <char> * buffer)
 		//for good measure, lets reset the buffer
 		buffer->reset();
 		//call the release method.. Remember back in the serial handler we assigned a call back function to release?
+		tracked_write_object->event_manager.clear((int)tracked_write_event);
+		tracked_write_object = NULL;
+		
 		c_ngc_data_handler::__release(buffer);
 	}
 }

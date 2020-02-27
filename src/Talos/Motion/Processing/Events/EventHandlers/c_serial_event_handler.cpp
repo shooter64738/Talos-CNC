@@ -20,16 +20,16 @@
 
 #include "c_serial_event_handler.h"
 #include "../../Main/Main_Process.h"
-#include "../extern_events_types.h"
 #include "../../Data/DataHandlers/c_binary_data_handler.h"
 #include "../../Data/DataHandlers/c_ngc_data_handler.h"
 #include "../../../../communication_def.h"
+#include "../../Data/cache_data.h"
 
 
 void(*c_serial_event_handler::pntr_data_read_handler)(c_ring_buffer<char> * buffer);
 void(*c_serial_event_handler::pntr_data_write_handler)(c_ring_buffer<char> * buffer);
 
-void c_serial_event_handler::process(c_ring_buffer<char> * buffer)
+void c_serial_event_handler::process(c_ring_buffer<char> * buffer, s_inbound_data * event_object, s_inbound_data::e_event_type event_id)
 {
 	/*
 	When we receive the first bye of data, we determine which handler to use.
@@ -39,12 +39,12 @@ void c_serial_event_handler::process(c_ring_buffer<char> * buffer)
 	control data will be read until we determine what the control is supposed
 	to be assigned to.
 	*/
-	
+
 	//Is there a handler assigned for this data class already? If a handler is assigned
 	//keep using it until all the data is consumed. Otherwise assign a new handler. 
 	if (c_serial_event_handler::pntr_data_read_handler == NULL)
 	{
-		c_serial_event_handler::__assign_read_handler(buffer);
+		c_serial_event_handler::__assign_handler(buffer, event_object, event_id);
 	}
 
 	if (c_serial_event_handler::pntr_data_read_handler != NULL)
@@ -55,14 +55,14 @@ void c_serial_event_handler::process(c_ring_buffer<char> * buffer)
 	}
 }
 
-void c_serial_event_handler::process(c_ring_buffer<char> * buffer, e_record_types rec_type)
+void c_serial_event_handler::process(c_ring_buffer<char> * buffer, s_outbound_data * event_object, s_outbound_data::e_event_type event_id)
 {
 
-	//Is there a handler assigned for this data class already? If a handler is assigned
+	//Is there is a handler assigned for this data class already? If a handler is assigned
 	//keep using it until all the data is consumed. Otherwise assign a new handler. 
 	if (c_serial_event_handler::pntr_data_write_handler == NULL)
 	{
-		c_serial_event_handler::__assign_write_handler(buffer, rec_type);
+		c_serial_event_handler::__assign_handler(buffer, event_object, event_id);
 	}
 
 	if (c_serial_event_handler::pntr_data_write_handler != NULL)
@@ -73,7 +73,7 @@ void c_serial_event_handler::process(c_ring_buffer<char> * buffer, e_record_type
 	}
 }
 
-void c_serial_event_handler::__assign_read_handler(c_ring_buffer <char> * buffer)
+void c_serial_event_handler::__assign_handler(c_ring_buffer <char> * buffer, s_inbound_data * event_object, s_inbound_data::e_event_type event_id)
 {
 	//Tail is always assumed to be at the 'start' of data
 	
@@ -96,35 +96,32 @@ void c_serial_event_handler::__assign_read_handler(c_ring_buffer <char> * buffer
 	}
 }
 
-void c_serial_event_handler::__assign_write_handler(c_ring_buffer <char> * buffer, e_record_types rec_type)
+void c_serial_event_handler::__assign_handler(c_ring_buffer <char> * buffer, s_outbound_data * event_object, s_outbound_data::e_event_type event_id)
 {
-	switch (rec_type)
+	uint8_t write_count = 0;
+
+	switch (event_id)
 	{
-	case e_record_types::Unknown:
+	case s_outbound_data::e_event_type::NgcBlockRequest:
+
+		//changed the way this is handled a little bit. Now pulling a record from the cache class
+		//theres no need to do the record type checking twice this way. 
+		c_cache_data::motion_block_record.station++;
+		write_count = c_cache_data::motion_block_record._size;
+		memcpy(buffer->_storage_pointer, &c_cache_data::motion_block_record, write_count);
 		break;
-	case e_record_types::Motion:
-		break;
-	case e_record_types::Motion_Control_Setting:
-		break;
-	case e_record_types::Spindle_Control_Setting:
-		break;
-	case e_record_types::Jog:
-		break;
-	case e_record_types::Peripheral_Control_Setting:
-		break;
-	case e_record_types::Status:
-		break;
-	case e_record_types::NgcBlockRecordRequest:
-		//I could hard code a function pointer here, but this gives me more flexability. I let the 
-		//data handler decide how this data gets processed
-		c_serial_event_handler::pntr_data_write_handler = c_ngc_data_handler::assign_write_handler(buffer);
-		//This is function point that gets 'called back' when all the data is done processing. 
-		c_ngc_data_handler::pntr_data_handler_release = c_serial_event_handler::write_data_handler_releaser;
-		
-		break;
-	default:
+
+	case s_outbound_data::e_event_type::StatusUpdate:
+		write_count = c_cache_data::status_record._size;
+		memcpy(buffer->_storage_pointer, &c_cache_data::status_record, write_count);
 		break;
 	}
+
+	//I could hard code a function pointer here, but this gives me more flexability. I let the 
+	//data handler decide how this data gets processed
+	c_serial_event_handler::pntr_data_write_handler = c_ngc_data_handler::assign_handler(buffer, event_object, event_id, write_count);
+	//This is function point that gets 'called back' when all the data is done processing. 
+	c_ngc_data_handler::pntr_data_handler_release = c_serial_event_handler::write_data_handler_releaser;
 }
 
 void c_serial_event_handler::__unkown_handler(c_ring_buffer <char> * buffer)

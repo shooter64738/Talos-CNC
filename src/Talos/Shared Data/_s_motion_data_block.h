@@ -21,6 +21,6 @@ struct s_motion_data_block
 	uint32_t flag;
 	uint32_t line_number;
 	uint32_t station;
-	static const uint8_t _size = 200; // speify size here.. 'sizeof()' will not work across differing platforms (8bit/32bit)
+	static const uint8_t _size = 5; // speify size here.. 'sizeof()' will not work across differing platforms (8bit/32bit)
 };
 #endif // _C_MOTION_DATA_BLOCK

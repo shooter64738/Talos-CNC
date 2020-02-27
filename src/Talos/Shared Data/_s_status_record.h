@@ -13,6 +13,6 @@ struct s_status_message
 	float position[MACHINE_AXIS_COUNT];
 	float num_message = 0.0;
 	char * chr_message;
-	uint32_t _check_sum = 0;
+	static const uint8_t _size = 5; // speify size here.. 'sizeof()' will not work across differing platforms (8bit/32bit)
 };
 #endif // !_C_STATUS_MESSAGE

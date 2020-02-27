@@ -159,6 +159,9 @@
     <ClCompile Include="..\..\..\..\Motion\Processing\Events\EventHandlers\c_system_event_handler.cpp">
       <Filter>Motion\Processing\Events\EventHandlers</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\..\Motion\Processing\Data\cache_data.cpp">
+      <Filter>Motion\Processing\Data</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\Shared Data\_peripheral_overide_enums.h">
@@ -333,6 +336,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\Shared Data\x_peripheral_panel_control_enums.h">
       <Filter>Shared data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Motion\Processing\Data\cache_data.h">
+      <Filter>Motion\Processing\Data</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

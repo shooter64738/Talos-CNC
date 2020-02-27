@@ -27,17 +27,97 @@ struct s_ngc_error_events
 	s_bit_flag_controller<uint32_t> event_manager;
 };
 
+#pragma region Data structures
 
-struct s_data_events
+struct s_inbound_data
 {
 	enum class e_event_type : uint8_t
 	{
 		NgcBlockRequest = 0,
-		Usart0DataArrival = 1,
+		StatusUpdate = 1,
 		DiskDataArrival = 2,
 	};
 	s_bit_flag_controller<uint32_t> event_manager;
 };
+
+struct s_outbound_data
+{
+	enum class e_event_type : uint8_t
+	{
+		NgcBlockRequest = 0,
+		StatusUpdate = 1,
+		DiskDataArrival = 2,
+	};
+	s_bit_flag_controller<uint32_t> event_manager;
+};
+
+struct s_serial
+{
+	s_inbound_data inbound;
+	s_outbound_data outbound;
+	bool any()
+	{
+		if ((inbound.event_manager._flag + outbound.event_manager._flag) > 0)
+			return true;
+		else
+			return false;
+	}
+	bool in_events()
+	{
+		if ((inbound.event_manager._flag) > 0)
+			return true;
+		else
+			return false;
+	}
+	bool out_events()
+	{
+		if ((outbound.event_manager._flag) > 0)
+			return true;
+		else
+			return false;
+	}
+};
+
+struct s_disk
+{
+	s_inbound_data inbound;
+	s_outbound_data outbound;
+	bool any()
+	{
+		if ((inbound.event_manager._flag + outbound.event_manager._flag) > 0)
+			return true;
+		else
+			return false;
+	}
+	bool in_events()
+	{
+		if ((inbound.event_manager._flag) > 0)
+			return true;
+		else
+			return false;
+	}
+	bool out_events()
+	{
+		if ((outbound.event_manager._flag) > 0)
+			return true;
+		else
+			return false;
+	}
+};
+
+struct s_data_events
+{
+	s_serial serial;
+	s_disk disk;
+	bool any()
+	{
+		if (serial.any() || disk.any())
+			return true;
+		else
+			return false;
+	}
+};
+#pragma endregion
 
 struct s_motion_events
 {
@@ -77,12 +157,14 @@ struct s_system_events
 	s_bit_flag_controller<uint32_t> event_manager;
 };
 #ifdef __EXTERN_EVENTS__
+//s_data_events extern_data_events;
 s_data_events extern_data_events;
 s_ancillary_events extern_ancillary_events;
 s_system_events extern_system_events;
 s_motion_controller_events extern_motion_control_events;
 
 #else
+//extern s_data_events extern_data_events;
 extern s_data_events extern_data_events;
 extern s_ancillary_events extern_ancillary_events;
 extern s_system_events extern_system_events;

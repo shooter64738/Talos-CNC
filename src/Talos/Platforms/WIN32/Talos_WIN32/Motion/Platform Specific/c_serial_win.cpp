@@ -39,7 +39,7 @@ void Hardware_Abstraction_Layer::Serial::add_to_buffer(uint8_t port, const char 
 		Hardware_Abstraction_Layer::Serial::_usart0_read_buffer.put(*data);
 		data++;
 	}
-	extern_data_events.event_manager.set((int)s_data_events::e_event_type::Usart0DataArrival);
+	//extern_data_events.event_manager.set((int)s_data_events::e_event_type::Usart0DataArrival);
 	/*rxBuffer[port].Buffer[rxBuffer[port].Head++] = 13;
 	rxBuffer[port].EOL++;*/
 }
