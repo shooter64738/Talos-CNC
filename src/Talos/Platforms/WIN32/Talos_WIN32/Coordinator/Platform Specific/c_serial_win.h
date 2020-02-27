@@ -16,14 +16,17 @@ namespace Hardware_Abstraction_Layer
 	{
 		//variables
 		public:
-			static c_ring_buffer<char> _usart0_buffer;
+			static c_ring_buffer<char> _usart0_read_buffer;
+			static c_ring_buffer<char> _usart1_read_buffer;
+			static c_ring_buffer<char> _usart1_write_buffer;
+
 		protected:
 		private:
 
 		//functions
 		public:
 		static void initialize(uint8_t Port, uint32_t BaudRate);
-		static void send(uint8_t Port, char byte);
+		static uint8_t send(uint8_t Port, char byte);
 		static void add_to_buffer(uint8_t port, const char * data);
 		static bool hasdata(uint8_t port);
 

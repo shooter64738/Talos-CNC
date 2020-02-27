@@ -229,7 +229,7 @@ uint8_t Hardware_Abstraction_Layer::Disk::read_file(char * filename, char * buff
 		byte_count++;
 	}
 	if (byte_count)
-		extern_data_events.event_manager.set((int)s_data_events::e_event_type::DiskDataArrival);
+		extern_data_events.disk.inbound.event_manager.set((int)s_inbound_data::e_event_type::DiskDataArrival);
 	return byte_count;
 }
 

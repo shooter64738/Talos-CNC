@@ -76,23 +76,43 @@ void c_serial_event_handler::process(c_ring_buffer<char> * buffer, s_outbound_da
 void c_serial_event_handler::__assign_handler(c_ring_buffer <char> * buffer, s_inbound_data * event_object, s_inbound_data::e_event_type event_id)
 {
 	//Tail is always assumed to be at the 'start' of data
-	
+
 	char peek_tail = buffer->peek(buffer->_tail);
-	
+
 	//Printable data is ngc line data. We need to check cr or lf because those are
 	//special line ending characters for ngc data. We will NEVER use 10 or 13 as a
 	//binary record type.
-	if ((peek_tail >=32 && peek_tail <= 127) || (peek_tail == CR || peek_tail == LF)) 
+	if ((peek_tail >= 32 && peek_tail <= 127) || (peek_tail == CR || peek_tail == LF))
 	{
 		//TODO:: What if a program is running and the MDI interface sends serial data??
 		//I think we should ignore/lockout MDI input when a program is running. 
 
 		//Assign a specific handler for this data type
-		//c_serial_event_handler::pntr_data_handler = c_ngc_data_handler::assign_handler(buffer);
+		c_serial_event_handler::pntr_data_read_handler = c_ngc_data_handler::assign_handler(buffer, event_object, event_id);
 		//Assign a release call back function. The handler knows nothing about serial events
 		//and we want to keep it that way.
+		c_ngc_data_handler::pntr_data_handler_release = c_serial_event_handler::read_data_handler_releaser;
+
+	}
+	else if (peek_tail >0 && peek_tail < 32) //non-printable and below 32 is a binary record
+	{
+		//Assign a specific handler for this data type
+		//c_serial_event_handler::pntr_data_handler = c_binary_data_handler::assign_handler(buffer);
+		//Assign a release call back function. The handler knows nothing about serial events
+		//and we want to keep it that way.
+		//c_binary_data_handler::pntr_data_handler_release = c_serial_event_handler::data_handler_releaser;
+
+	}
+	else if (peek_tail >127) //non-printable and above 127 is a control code
+	{
+		//this is control data, probably just a single byte
+		//c_serial_event_handler::pntr_data_handler = c_serial_event_handler::__control_handler;
 		//c_ngc_data_handler::pntr_data_handler_release = c_serial_event_handler::data_handler_releaser;
-		
+	}
+	else //we dont know what kind of data it is
+	{
+		//c_serial_event_handler::pntr_data_handler = c_serial_event_handler::__unkown_handler;
+		//c_ngc_data_handler::pntr_data_handler_release = c_serial_event_handler::data_handler_releaser;
 	}
 }
 
@@ -163,43 +183,3 @@ void c_serial_event_handler::write_data_handler_releaser(c_ring_buffer<char> * r
 	//	c_serial_event_handler::pntr_data_handler(released_buffer);
 	//}
 }
-
-//uint8_t c_serial_event_handler::request(e_record_types request_type)
-//{
-//	char data[256];//<--create a buffer for our stream
-//	char *data_pntr;
-//	switch (request_type)
-//	{
-//	case e_record_types::Unknown:
-//		break;
-//	case e_record_types::Motion:
-//		break;
-//	case e_record_types::Motion_Control_Setting:
-//		break;
-//	case e_record_types::Spindle_Control_Setting:
-//		break;
-//	case e_record_types::Jog:
-//		break;
-//	case e_record_types::Peripheral_Control_Setting:
-//		break;
-//	case e_record_types::Status:
-//		break;
-//	case e_record_types::NgcBlockRecordRequest:
-//		memcpy(data_pntr, &loaded_block, loaded_block._size);
-//		break;
-//	default:
-//		break;
-//	}
-//
-//	//return 0 if request sent. return 1 if it was not. 
-//	return 0;
-//}
-
-//// default constructor
-//c_serial_event_handler::c_serial_event_handler()
-//{
-//}
-//// default destructor
-//c_serial_event_handler::~c_serial_event_handler()
-//{
-//}

@@ -127,8 +127,8 @@ void Talos::Coordinator::Main_Process::run()
 	while (extern_system_events.event_manager.get((int)s_system_events::e_event_type::SystemAllOk))
 	{
 #ifdef MSVC
-		Hardware_Abstraction_Layer::Serial::_usart0_buffer._head +=
-			Hardware_Abstraction_Layer::Disk::read_file("c:\\jeff\\1001.txt", Hardware_Abstraction_Layer::Serial::_usart0_buffer._storage_pointer);
+		Hardware_Abstraction_Layer::Serial::_usart0_read_buffer._head +=
+			Hardware_Abstraction_Layer::Disk::read_file("c:\\jeff\\1001.txt", Hardware_Abstraction_Layer::Serial::_usart0_read_buffer._storage_pointer);
 
 		Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "");
 #endif // MSVC
