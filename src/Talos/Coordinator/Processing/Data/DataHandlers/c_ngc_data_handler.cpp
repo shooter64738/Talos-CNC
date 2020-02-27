@@ -61,7 +61,7 @@ ret_pointer c_ngc_data_handler::assign_handler(c_ring_buffer <char> * buffer, s_
 		break;
 	case e_record_types::Status:
 		break;
-	case e_record_types::NgcBlockRecordRequest:
+	case e_record_types::MotionDataBlock:
 		break;
 	case e_record_types::NgcBlockRecord:
 		return c_ngc_data_handler::ngc_read_handler;
@@ -175,7 +175,6 @@ e_parsing_errors c_ngc_data_handler::ngc_load_block()
 
 	return return_value;
 }
-
 
 void c_ngc_data_handler::ngc_write_handler(c_ring_buffer <char> * buffer)
 {

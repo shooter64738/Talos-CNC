@@ -3,7 +3,7 @@
 
 #include "../../../Shared Data/_s_motion_data_block.h"
 #include "../../../Shared Data/_s_status_record.h"
-#include "../../../Shared Data/_s_motion_data_block.h"
+#include "../../../Shared Data/_s_ngc_line_record.h"
 
 //typedef void(*ret_pointer)(c_ring_buffer <char> * buffer);
 
@@ -12,9 +12,9 @@ class c_cache_data
 	//variables
 public:
 	//static void(*pntr_data_handler_release)(c_ring_buffer<char> * buffer);
-	static s_ngc_block ngc_block_record;
 	static s_motion_data_block motion_block_record;
 	static s_status_message status_record;
+	static s_ngc_line_record ngc_record;
 protected:
 private:
 

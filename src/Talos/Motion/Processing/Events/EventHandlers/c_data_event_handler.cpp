@@ -23,7 +23,6 @@
 #include "../extern_events_types.h"
 #include "../../../motion_hardware_def.h"
 #include "../../../../NGC_RS274/_ngc_block_struct.h"
-#include "../../Data/DataHandlers/c_ngc_data_handler.h"
 #include "../../../../Shared Data/_e_record_types.h"
 
 //Execute the events that have their flags set

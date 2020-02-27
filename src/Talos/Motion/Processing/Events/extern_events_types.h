@@ -51,6 +51,25 @@ struct s_outbound_data
 	s_bit_flag_controller<uint32_t> event_manager;
 };
 
+struct s_ready_data
+{
+	enum class e_event_type : uint8_t
+	{
+		NgcDataLine = 0,
+		Status = 1,
+		MotionDataBlock = 2,
+	};
+	s_bit_flag_controller<uint32_t> event_manager;
+	bool any()
+	{
+		if (event_manager > 0)
+			return true;
+		else
+			return false;
+	}
+};
+
+
 struct s_serial
 {
 	s_inbound_data inbound;
@@ -109,9 +128,10 @@ struct s_data_events
 {
 	s_serial serial;
 	s_disk disk;
+	s_ready_data ready;
 	bool any()
 	{
-		if (serial.any() || disk.any())
+		if (serial.any() || disk.any() || ready.any())
 			return true;
 		else
 			return false;

@@ -1,4 +1,4 @@
-/* 
+/*
 * c_serial_avr_328.cpp
 *
 * Created: 2/27/2019 10:45:57 AM
@@ -39,6 +39,13 @@ void Hardware_Abstraction_Layer::Serial::add_to_buffer(uint8_t port, const char 
 		Hardware_Abstraction_Layer::Serial::_usart0_read_buffer.put(*data);
 		data++;
 	}
+	extern_data_events.serial.inbound.event_manager.set((int)s_inbound_data::e_event_type::Usart0DataArrival);
+	/*rxBuffer[port].Buffer[rxBuffer[port].Head++] = 13;
+	rxBuffer[port].EOL++;*/
+}
+void Hardware_Abstraction_Layer::Serial::add_to_buffer(uint8_t port, const char data)
+{
+	Hardware_Abstraction_Layer::Serial::_usart0_read_buffer.put(data);
 	extern_data_events.serial.inbound.event_manager.set((int)s_inbound_data::e_event_type::Usart0DataArrival);
 	/*rxBuffer[port].Buffer[rxBuffer[port].Head++] = 13;
 	rxBuffer[port].EOL++;*/

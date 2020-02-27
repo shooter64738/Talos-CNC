@@ -21,6 +21,11 @@ then move to their respective modules.
 #include "../../../Configuration/c_configuration.h"
 #include "../Data/DataHandlers/c_ngc_data_handler.h";
 
+#ifdef MSVC
+static char test_line[256] = "g01y5x5g91g20\r\n";
+static int test_byte = 0;
+#endif
+
 c_Serial Talos::Coordinator::Main_Process::host_serial;
 
 void Talos::Coordinator::Main_Process::initialize()
@@ -70,7 +75,7 @@ void Talos::Coordinator::Main_Process::initialize()
 	//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "p.25 f1 g41 g2 x0.5 y0.5 i0.5 j0.0\r\n g1 x0.5y1.5\r\ng1 x0.5 y2.5\r\n");
 
 	//simple gcode line
-	Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "g01y5x5g91g20\r\n");
+	//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "g01y5x5g91g20\r\n");
 	//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "g01y10x10g91g20\r\n");
 	//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "g01y0x0g91g20\r\n");
 	//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "g01y0x0g90g20\r\n");
@@ -126,12 +131,18 @@ void Talos::Coordinator::Main_Process::run()
 	//Start the eventing loop, stop loop if a critical system error occurs
 	while (extern_system_events.event_manager.get((int)s_system_events::e_event_type::SystemAllOk))
 	{
-//#ifdef MSVC
+
+#ifdef MSVC
+		//simulate serial data coming in 1 byte at a time. This is a text record test
+		char byte = test_line[test_byte++];
+		Hardware_Abstraction_Layer::Serial::add_to_buffer(0, byte);
+
+
 //		Hardware_Abstraction_Layer::Serial::_usart0_read_buffer._head +=
 //			Hardware_Abstraction_Layer::Disk::read_file("c:\\jeff\\1001.txt", Hardware_Abstraction_Layer::Serial::_usart0_read_buffer._storage_pointer);
 //
 //		Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "");
-//#endif // MSVC
+#endif // MSVC
 //
 		
 

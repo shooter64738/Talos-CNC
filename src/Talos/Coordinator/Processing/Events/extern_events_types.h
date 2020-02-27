@@ -2,6 +2,8 @@
 #include <stdint.h>
 #include "../../../_bit_flag_control.h"
 #include "../../../Shared Data/_e_motion_state.h"
+#include "../../../Shared Data/_s_framework_error.h"
+#include "../../../c_ring_template.h"
 
 
 #ifndef __EXTERN_DATA_EVENTS
@@ -33,7 +35,7 @@ struct s_inbound_data
 {
 	enum class e_event_type : uint8_t
 	{
-		NgcBlockRequest = 0,
+		MotionDataBlock = 0,
 		StatusUpdate = 1,
 		DiskDataArrival = 2,
 		Usart0DataArrival = 3
@@ -45,11 +47,29 @@ struct s_outbound_data
 {
 	enum class e_event_type : uint8_t
 	{
-		NgcBlockRequest = 0,
+		MotionDataBlock = 0,
 		StatusUpdate = 1,
 		DiskDataArrival = 2,
 	};
 	s_bit_flag_controller<uint32_t> event_manager;
+};
+
+struct s_ready_data
+{
+	enum class e_event_type : uint8_t
+	{
+		NgcDataLine = 0,
+		Status = 1,
+		MotionDataBlock = 2,
+	};
+	s_bit_flag_controller<uint32_t> event_manager;
+	bool any()
+	{
+		if (event_manager._flag > 0)
+			return true;
+		else
+			return false;
+	}
 };
 
 struct s_serial
@@ -110,9 +130,10 @@ struct s_data_events
 {
 	s_serial serial;
 	s_disk disk;
+	s_ready_data ready;
 	bool any()
 	{
-		if (serial.any() || disk.any())
+		if (serial.any() || disk.any() || ready.any())
 			return true;
 		else
 			return false;
@@ -157,12 +178,14 @@ struct s_system_events
 	};
 	s_bit_flag_controller<uint32_t> event_manager;
 };
+
 #ifdef __EXTERN_EVENTS__
 //s_data_events extern_data_events;
 s_data_events extern_data_events;
 s_ancillary_events extern_ancillary_events;
 s_system_events extern_system_events;
 s_motion_controller_events extern_motion_control_events;
+void(*extern_pntr_error_handler)(c_ring_buffer<char> * buffer, s_framework_error error);
 
 #else
 //extern s_data_events extern_data_events;
@@ -170,6 +193,7 @@ extern s_data_events extern_data_events;
 extern s_ancillary_events extern_ancillary_events;
 extern s_system_events extern_system_events;
 extern s_motion_controller_events extern_motion_control_events;
+extern void(*extern_pntr_error_handler)(c_ring_buffer<char> * buffer, s_framework_error error);
 #endif
 #endif // !__EXTERN_DATA_EVENTS
 

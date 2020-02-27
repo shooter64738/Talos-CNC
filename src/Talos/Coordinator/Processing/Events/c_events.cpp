@@ -30,6 +30,7 @@ c_ancillary_event_handler Talos::Coordinator::Events::ancillary_event_handler;
 
 uint8_t Talos::Coordinator::Events::initialize()
 {
+	extern_pntr_error_handler = Talos::Coordinator::Events::error_handler;
 	extern_system_events.event_manager.set((int)s_system_events::e_event_type::SystemAllOk);
 	return 0;
 }
@@ -117,6 +118,28 @@ void Talos::Coordinator::Events::process()
 		Talos::Coordinator::Main_Process::host_serial.print_string("Sys Pos: HOLD\r\n");
 	}
 
+
+}
+
+void Talos::Coordinator::Events::error_handler(c_ring_buffer<char> * released_buffer, s_framework_error error)
+{
+	Talos::Coordinator::Main_Process::host_serial.print_string("ERROR:");
+	
+	Talos::Coordinator::Main_Process::host_serial.print_string("\r\n\tsource:");
+	Talos::Coordinator::Main_Process::host_serial.print_int32((int)error.source);
+	Talos::Coordinator::Main_Process::host_serial.print_string("\r\n\tbehavior:");
+	Talos::Coordinator::Main_Process::host_serial.print_int32((int)error.behavior);
+	Talos::Coordinator::Main_Process::host_serial.print_string("\r\n\tcode:");
+	Talos::Coordinator::Main_Process::host_serial.print_int32((int)error.code);
+	Talos::Coordinator::Main_Process::host_serial.print_string("\r\n\tdata_size:");
+	Talos::Coordinator::Main_Process::host_serial.print_int32((int)error.data_size);
+	Talos::Coordinator::Main_Process::host_serial.print_string("\r\n\tgroup:");
+	Talos::Coordinator::Main_Process::host_serial.print_int32((int)error.group);
+	Talos::Coordinator::Main_Process::host_serial.print_string("\r\n\tprocess:");
+	Talos::Coordinator::Main_Process::host_serial.print_int32((int)error.process);
+	Talos::Coordinator::Main_Process::host_serial.print_string("\r\n\trecord_type:");
+	Talos::Coordinator::Main_Process::host_serial.print_int32((int)error.record_type);
+	Talos::Coordinator::Main_Process::host_serial.print_string("\r\n");
 
 }
 

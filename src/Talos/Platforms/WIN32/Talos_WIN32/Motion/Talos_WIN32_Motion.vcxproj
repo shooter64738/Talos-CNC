@@ -24,8 +24,8 @@
     <ClCompile Include="..\..\..\..\Motion\Core\c_system.cpp" />
     <ClCompile Include="..\..\..\..\Motion\motion_main.cpp" />
     <ClCompile Include="..\..\..\..\Motion\Processing\Data\cache_data.cpp" />
+    <ClCompile Include="..\..\..\..\Motion\Processing\Data\c_data_handler.cpp" />
     <ClCompile Include="..\..\..\..\Motion\Processing\Data\DataHandlers\c_binary_data_handler.cpp" />
-    <ClCompile Include="..\..\..\..\Motion\Processing\Data\DataHandlers\c_ngc_data_handler.cpp" />
     <ClCompile Include="..\..\..\..\Motion\Processing\Events\c_events.cpp" />
     <ClCompile Include="..\..\..\..\Motion\Processing\Events\EventHandlers\c_block_events.cpp" />
     <ClCompile Include="..\..\..\..\Motion\Processing\Events\EventHandlers\c_data_event_handler.cpp" />
@@ -62,8 +62,8 @@
     <ClInclude Include="..\..\..\..\Motion\Core\c_system.h" />
     <ClInclude Include="..\..\..\..\Motion\motion_hardware_def.h" />
     <ClInclude Include="..\..\..\..\Motion\Processing\Data\cache_data.h" />
+    <ClInclude Include="..\..\..\..\Motion\Processing\Data\c_data_handler.h" />
     <ClInclude Include="..\..\..\..\Motion\Processing\Data\DataHandlers\c_binary_data_handler.h" />
-    <ClInclude Include="..\..\..\..\Motion\Processing\Data\DataHandlers\c_ngc_data_handler.h" />
     <ClInclude Include="..\..\..\..\Motion\Processing\Events\c_events.h" />
     <ClInclude Include="..\..\..\..\Motion\Processing\Events\EventHandlers\c_block_events.h" />
     <ClInclude Include="..\..\..\..\Motion\Processing\Events\EventHandlers\c_data_event_handler.h" />

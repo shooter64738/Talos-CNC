@@ -50,7 +50,7 @@ xret_pointer c_binary_data_handler::assign_handler(c_ring_buffer <char> * buffer
 			return c_binary_data_handler::motion_control_setting_handler;
 			break;
 		}
-		case e_record_types::NgcBlockRecordRequest:
+		case e_record_types::MotionDataBlock:
 		{
 			return c_binary_data_handler::motion_control_setting_handler;
 			break;

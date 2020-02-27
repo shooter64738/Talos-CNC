@@ -25,6 +25,7 @@
 #include "EventHandlers/c_data_events.h"
 #include "EventHandlers/c_system_events.h"
 #include "EventHandlers/c_ancillary_event_handler.h"
+#include "../../../Shared Data/_s_framework_error.h"
 
 namespace Talos
 {
@@ -50,6 +51,7 @@ namespace Talos
 
 			static uint8_t initialize();
 			static void process();
+			static void error_handler(c_ring_buffer<char> * released_buffer, s_framework_error error);
 			
 
 			protected:

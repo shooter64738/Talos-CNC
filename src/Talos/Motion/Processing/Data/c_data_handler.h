@@ -19,17 +19,18 @@
 */
 
 
-#ifndef __C_MOTION_NGC_DATA_HANDLER_H__
-#define __C_MOTION_NGC_DATA_HANDLER_H__
+#ifndef __C_MOTION_DATA_HANDLER_H__
+#define __C_MOTION_DATA_HANDLER_H__
 #include <stdint.h>
-#include "../../Events/extern_events_types.h"
-#include "../../../../c_ring_template.h"
-#include "../../../../communication_def.h"
-#include "../../../../Shared Data/_e_record_types.h"
+#include "../Events/extern_events_types.h"
+#include "../../../c_ring_template.h"
+#include "../../../communication_def.h"
+#include "../../../Shared Data/_e_record_types.h"
+#include "cache_data.h"
 
 typedef void(*ret_pointer)(c_ring_buffer <char> * buffer);
 
-class c_ngc_data_handler
+class c_data_handler
 {
 	//variables
 public:
@@ -45,9 +46,10 @@ public:
 	static ret_pointer assign_handler(
 		c_ring_buffer <char> * buffer, s_inbound_data * event_object, s_inbound_data::e_event_type event_id, e_record_types rec_type);
 
-	static void ngc_write_handler(c_ring_buffer <char> * buffer);
+	static void write_handler(c_ring_buffer <char> * buffer);
 	
-	static void ngc_read_handler(c_ring_buffer <char> * buffer);
+	static void txt_read_handler(c_ring_buffer <char> * buffer);
+	static void bin_read_handler(c_ring_buffer <char> * buffer);
 protected:
 private:
 	static void __release(c_ring_buffer <char> * buffer_source);

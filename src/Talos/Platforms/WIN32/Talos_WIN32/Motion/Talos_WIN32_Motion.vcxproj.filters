@@ -138,9 +138,6 @@
     <ClCompile Include="..\..\..\..\Motion\Processing\Data\DataHandlers\c_binary_data_handler.cpp">
       <Filter>Motion\Processing\Data\DataHandlers</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\Motion\Processing\Data\DataHandlers\c_ngc_data_handler.cpp">
-      <Filter>Motion\Processing\Data\DataHandlers</Filter>
-    </ClCompile>
     <ClCompile Include="Platform Specific\c_disk_win.cpp">
       <Filter>Platform Specific</Filter>
     </ClCompile>
@@ -160,6 +157,9 @@
       <Filter>Motion\Processing\Events\EventHandlers</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\..\Motion\Processing\Data\cache_data.cpp">
+      <Filter>Motion\Processing\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Motion\Processing\Data\c_data_handler.cpp">
       <Filter>Motion\Processing\Data</Filter>
     </ClCompile>
   </ItemGroup>
@@ -267,9 +267,6 @@
     <ClInclude Include="..\..\..\..\Motion\Processing\Data\DataHandlers\c_binary_data_handler.h">
       <Filter>Motion\Processing\Data\DataHandlers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Motion\Processing\Data\DataHandlers\c_ngc_data_handler.h">
-      <Filter>Motion\Processing\Data\DataHandlers</Filter>
-    </ClInclude>
     <ClInclude Include="Platform Specific\c_disk_win.h">
       <Filter>Platform Specific</Filter>
     </ClInclude>
@@ -338,6 +335,9 @@
       <Filter>Shared data</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\Motion\Processing\Data\cache_data.h">
+      <Filter>Motion\Processing\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Motion\Processing\Data\c_data_handler.h">
       <Filter>Motion\Processing\Data</Filter>
     </ClInclude>
   </ItemGroup>

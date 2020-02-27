@@ -21,7 +21,7 @@
 #include "c_serial_event_handler.h"
 #include "../../Main/Main_Process.h"
 #include "../../Data/DataHandlers/c_binary_data_handler.h"
-#include "../../Data/DataHandlers/c_ngc_data_handler.h"
+#include "../../Data/c_data_handler.h"
 #include "../../../../communication_def.h"
 #include "../../Data/cache_data.h"
 
@@ -88,26 +88,28 @@ void c_serial_event_handler::__assign_handler(c_ring_buffer <char> * buffer, s_i
 		//I think we should ignore/lockout MDI input when a program is running. 
 
 		//Assign a specific handler for this data type
-		c_serial_event_handler::pntr_data_read_handler = c_ngc_data_handler::assign_handler(buffer, event_object, event_id, e_record_types::NgcBlockRecord);
+		c_serial_event_handler::pntr_data_read_handler = c_data_handler::assign_handler(buffer, event_object, event_id, e_record_types::NgcBlockRecord);
 		//Assign a release call back function. The handler knows nothing about serial events
 		//and we want to keep it that way.
-		c_ngc_data_handler::pntr_data_handler_release = c_serial_event_handler::read_data_handler_releaser;
+		c_data_handler::pntr_data_handler_release = c_serial_event_handler::read_data_handler_releaser;
 
 	}
 	else if (peek_tail >0 && peek_tail < 32) //non-printable and below 32 is a binary record
 	{
 		//Assign a specific handler for this data type
-		//c_serial_event_handler::pntr_data_handler = c_binary_data_handler::assign_handler(buffer);
+		c_serial_event_handler::pntr_data_read_handler = c_data_handler::assign_handler(buffer, event_object, event_id, (e_record_types)peek_tail);
 		//Assign a release call back function. The handler knows nothing about serial events
 		//and we want to keep it that way.
-		//c_binary_data_handler::pntr_data_handler_release = c_serial_event_handler::data_handler_releaser;
+		c_data_handler::pntr_data_handler_release = c_serial_event_handler::read_data_handler_releaser;
 
 	}
 	else if (peek_tail >127) //non-printable and above 127 is a control code
 	{
-		//this is control data, probably just a single byte
-		//c_serial_event_handler::pntr_data_handler = c_serial_event_handler::__control_handler;
-		//c_ngc_data_handler::pntr_data_handler_release = c_serial_event_handler::data_handler_releaser;
+		//Assign a specific handler for this data type
+		c_serial_event_handler::pntr_data_read_handler = c_data_handler::assign_handler(buffer, event_object, event_id, (e_record_types)peek_tail);
+		//Assign a release call back function. The handler knows nothing about serial events
+		//and we want to keep it that way.
+		c_data_handler::pntr_data_handler_release = c_serial_event_handler::read_data_handler_releaser;
 	}
 	else //we dont know what kind of data it is
 	{
@@ -139,9 +141,9 @@ void c_serial_event_handler::__assign_handler(c_ring_buffer <char> * buffer, s_o
 
 	//I could hard code a function pointer here, but this gives me more flexability. I let the 
 	//data handler decide how this data gets processed
-	c_serial_event_handler::pntr_data_write_handler = c_ngc_data_handler::assign_handler(buffer, event_object, event_id, write_count);
+	c_serial_event_handler::pntr_data_write_handler = c_data_handler::assign_handler(buffer, event_object, event_id, write_count);
 	//This is function point that gets 'called back' when all the data is done processing. 
-	c_ngc_data_handler::pntr_data_handler_release = c_serial_event_handler::write_data_handler_releaser;
+	c_data_handler::pntr_data_handler_release = c_serial_event_handler::write_data_handler_releaser;
 }
 
 void c_serial_event_handler::__unkown_handler(c_ring_buffer <char> * buffer)

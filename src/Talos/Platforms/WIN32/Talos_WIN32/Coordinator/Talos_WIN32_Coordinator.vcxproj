@@ -13,6 +13,7 @@
   <ItemGroup>
     <ClInclude Include="..\..\..\..\Configuration\c_configuration.h" />
     <ClInclude Include="..\..\..\..\Coordinator\Processing\Data\cache_data.h" />
+    <ClInclude Include="..\..\..\..\Coordinator\Processing\Data\c_data_handler.h" />
     <ClInclude Include="..\..\..\..\NGC_RS274\Dialect\_ngc_dialect_validate.h" />
     <ClInclude Include="..\..\..\..\NGC_RS274\Dialect\_ngc_validate_0_nonmodal.h" />
     <ClInclude Include="..\..\..\..\NGC_RS274\Dialect\_ngc_validate_16_plane_rotation.h" />
@@ -47,8 +48,10 @@
     <ClInclude Include="..\..\..\..\Shared Data\_e_unit_types.h" />
     <ClInclude Include="..\..\..\..\Shared Data\_peripheral_overide_enums.h" />
     <ClInclude Include="..\..\..\..\Shared Data\_s_encoder_struct.h" />
+    <ClInclude Include="..\..\..\..\Shared Data\_s_framework_error.h" />
     <ClInclude Include="..\..\..\..\Shared Data\_s_jog_data_struct.h" />
     <ClInclude Include="..\..\..\..\Shared Data\_s_motion_data_block.h" />
+    <ClInclude Include="..\..\..\..\Shared Data\_s_ngc_line_record.h" />
     <ClInclude Include="..\..\..\..\Shared Data\_s_peripheral_panel_struct.h" />
     <ClInclude Include="..\..\..\..\Shared Data\_s_status_record.h" />
     <ClInclude Include="..\..\..\..\_bit_manipulation.h" />
@@ -99,6 +102,7 @@
     <ClCompile Include="..\..\..\..\Configuration\c_configuration.cpp" />
     <ClCompile Include="..\..\..\..\Coordinator\coordinator_main.cpp" />
     <ClCompile Include="..\..\..\..\Coordinator\Processing\Data\cache_data.cpp" />
+    <ClCompile Include="..\..\..\..\Coordinator\Processing\Data\c_data_handler.cpp" />
     <ClCompile Include="..\..\..\..\Coordinator\Processing\Data\DataHandlers\c_binary_data_handler.cpp" />
     <ClCompile Include="..\..\..\..\Coordinator\Processing\Data\DataHandlers\c_ngc_data_handler.cpp" />
     <ClCompile Include="..\..\..\..\Coordinator\Processing\Events\c_events.cpp" />

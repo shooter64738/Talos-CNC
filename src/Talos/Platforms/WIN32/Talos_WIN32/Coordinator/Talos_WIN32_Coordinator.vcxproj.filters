@@ -305,6 +305,15 @@
     <ClInclude Include="..\..\..\..\Coordinator\Processing\Data\cache_data.h">
       <Filter>Coordinator\Processing\Data</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\..\Coordinator\Processing\Data\c_data_handler.h">
+      <Filter>Coordinator\Processing\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared Data\_s_ngc_line_record.h">
+      <Filter>Shared Data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared Data\_s_framework_error.h">
+      <Filter>Shared Data</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\..\Coordinator\coordinator_main.cpp">
@@ -422,6 +431,9 @@
       <Filter>Ngc_Rs274\Dialect</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\..\Coordinator\Processing\Data\cache_data.cpp">
+      <Filter>Coordinator\Processing\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Coordinator\Processing\Data\c_data_handler.cpp">
       <Filter>Coordinator\Processing\Data</Filter>
     </ClCompile>
   </ItemGroup>
