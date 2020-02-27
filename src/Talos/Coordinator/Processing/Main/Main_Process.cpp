@@ -70,7 +70,7 @@ void Talos::Coordinator::Main_Process::initialize()
 	//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "p.25 f1 g41 g2 x0.5 y0.5 i0.5 j0.0\r\n g1 x0.5y1.5\r\ng1 x0.5 y2.5\r\n");
 
 	//simple gcode line
-	//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "g01y5x5g91g20\r\n");
+	Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "g01y5x5g91g20\r\n");
 	//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "g01y10x10g91g20\r\n");
 	//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "g01y0x0g91g20\r\n");
 	//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "g01y0x0g90g20\r\n");
@@ -126,13 +126,13 @@ void Talos::Coordinator::Main_Process::run()
 	//Start the eventing loop, stop loop if a critical system error occurs
 	while (extern_system_events.event_manager.get((int)s_system_events::e_event_type::SystemAllOk))
 	{
-#ifdef MSVC
-		Hardware_Abstraction_Layer::Serial::_usart0_read_buffer._head +=
-			Hardware_Abstraction_Layer::Disk::read_file("c:\\jeff\\1001.txt", Hardware_Abstraction_Layer::Serial::_usart0_read_buffer._storage_pointer);
-
-		Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "");
-#endif // MSVC
-
+//#ifdef MSVC
+//		Hardware_Abstraction_Layer::Serial::_usart0_read_buffer._head +=
+//			Hardware_Abstraction_Layer::Disk::read_file("c:\\jeff\\1001.txt", Hardware_Abstraction_Layer::Serial::_usart0_read_buffer._storage_pointer);
+//
+//		Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "");
+//#endif // MSVC
+//
 		
 
 		//This firmware is mostly event driven. This is the main entry point for checking

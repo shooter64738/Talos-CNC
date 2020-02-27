@@ -25,6 +25,7 @@
 #include "../../Events/extern_events_types.h"
 #include "../../../../c_ring_template.h"
 #include "../../../../communication_def.h"
+#include "../../../../Shared Data/_e_record_types.h"
 
 typedef void(*ret_pointer)(c_ring_buffer <char> * buffer);
 
@@ -42,7 +43,7 @@ public:
 	static ret_pointer assign_handler(
 		c_ring_buffer <char> * buffer, s_outbound_data *event_object, s_outbound_data::e_event_type event_id, uint8_t size);
 	static ret_pointer assign_handler(
-		c_ring_buffer <char> * buffer, s_inbound_data * event_object, s_inbound_data::e_event_type event_id);
+		c_ring_buffer <char> * buffer, s_inbound_data * event_object, s_inbound_data::e_event_type event_id, e_record_types rec_type);
 
 	static void ngc_write_handler(c_ring_buffer <char> * buffer);
 	

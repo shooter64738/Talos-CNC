@@ -12,6 +12,7 @@
 		Jog = 4,
 		Peripheral_Control_Setting = 5,
 		Status = 6,
-		NgcBlockRecordRequest = 7
+		NgcBlockRecordRequest = 7,
+		NgcBlockRecord = 8
 	};
 #endif /* RECORDS_DEF_H */

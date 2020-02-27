@@ -28,7 +28,7 @@ static s_inbound_data * tracked_read_object;
 
 void(*c_ngc_data_handler::pntr_data_handler_release)(c_ring_buffer<char> * buffer);
 
-ret_pointer c_ngc_data_handler::assign_handler(c_ring_buffer <char> * buffer, s_inbound_data * event_object, s_inbound_data::e_event_type event_id)
+ret_pointer c_ngc_data_handler::assign_handler(c_ring_buffer <char> * buffer, s_inbound_data * event_object, s_inbound_data::e_event_type event_id, e_record_types rec_type)
 {
 	//hold this event id. We will need it when we release the reader
 	tracked_read_event = event_id;
