@@ -6,14 +6,16 @@
 enum class e_error_group :uint8_t
 {
 	EventHandler = 0,
-	DataHandler = 1
+	DataHandler = 1,
+	Interpreter = 2
 };
 
 enum class e_error_source :uint8_t
 {
-	Serial = 0,
-	Disk = 1,
-	Network = 2
+	None = 0,
+	Serial = 1,
+	Disk = 2,
+	Network = 3
 };
 
 enum class e_error_process :uint8_t
@@ -24,7 +26,8 @@ enum class e_error_process :uint8_t
 	Process = 3,
 	Store = 4,
 	Delete = 5,
-	Read = 6
+	Read = 6,
+	NgcParsing = 7
 };
 
 enum class e_error_behavior :uint8_t
@@ -39,6 +42,7 @@ enum class e_error_code :uint8_t
 	AttemptToHandleNewEventWhilePreviousIsPending = 0,
 	UnExpectedDataTypeForRecord = 1,
 	UnHandledRecordType = 2,
+	InterpreterError = 3
 	
 };
 

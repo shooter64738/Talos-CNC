@@ -44,15 +44,9 @@ private:
 public:
 	static void process(c_ring_buffer<char> * buffer, s_outbound_data * event_object, s_outbound_data::e_event_type event_id);
 	static void process(c_ring_buffer<char> * buffer, s_inbound_data * event_object, s_inbound_data::e_event_type event_id);
-	//static void data_handler_releaser(bool has_data);
+	
 	static void read_data_handler_releaser(c_ring_buffer<char> * has_data);
 	static void write_data_handler_releaser(c_ring_buffer<char> * has_data);
-
-	//c_serial_event_handler();
-	//~c_serial_event_handler();
-
-	//c_serial_event_handler(const c_serial_event_handler &c);
-	//c_serial_event_handler& operator=(const c_serial_event_handler &c);
 
 protected:
 private:
@@ -60,7 +54,6 @@ private:
 		, uint8_t data_size, e_error_group e_group, e_error_process e_process, e_record_types e_rec_type
 		, e_error_source e_source, e_error_code e_code);
 
-	static void __control_handler(c_ring_buffer <char> * buffer);
 	static void __assign_handler(c_ring_buffer<char> *buffer, s_inbound_data * event_object, s_inbound_data::e_event_type event_id);
 	static void __assign_handler(c_ring_buffer<char> *buffer, s_outbound_data * event_object, s_outbound_data::e_event_type event_id);
 

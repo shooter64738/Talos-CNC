@@ -90,7 +90,6 @@ void c_serial_event_handler::__assign_handler(c_ring_buffer <char> * buffer, s_i
 		//I think we should ignore/lockout MDI input when a program is running. 
 
 		//Assign a specific handler for this data type
-		//c_serial_event_handler::pntr_data_read_handler = c_ngc_data_handler::assign_handler(buffer, event_object, event_id, e_record_types::NgcBlockRecord);
 		c_serial_event_handler::pntr_data_read_handler = c_data_handler::assign_handler(buffer, event_object, event_id, e_record_types::NgcBlockRecord);
 		//Assign a release call back function. The handler knows nothing about serial events
 		//and we want to keep it that way.
@@ -100,7 +99,6 @@ void c_serial_event_handler::__assign_handler(c_ring_buffer <char> * buffer, s_i
 	else if (peek_tail > 0 && peek_tail < 32) //non-printable and below 32 is a binary record
 	{
 		//Assign a specific handler for this data type
-		//c_serial_event_handler::pntr_data_read_handler = c_ngc_data_handler::assign_handler(buffer, event_object, event_id, (e_record_types)peek_tail);
 		c_serial_event_handler::pntr_data_read_handler = c_data_handler::assign_handler(buffer, event_object, event_id, (e_record_types)peek_tail);
 		//Assign a release call back function. The handler knows nothing about serial events
 		//and we want to keep it that way.
@@ -109,7 +107,6 @@ void c_serial_event_handler::__assign_handler(c_ring_buffer <char> * buffer, s_i
 	else if (peek_tail > 127) //non-printable and above 127 is a control code
 	{
 		//Assign a specific handler for this data type
-		//c_serial_event_handler::pntr_data_read_handler = c_ngc_data_handler::assign_handler(buffer, event_object, event_id, (e_record_types)peek_tail);
 		c_serial_event_handler::pntr_data_read_handler = c_data_handler::assign_handler(buffer, event_object, event_id, (e_record_types)peek_tail);
 		//Assign a release call back function. The handler knows nothing about serial events
 		//and we want to keep it that way.
@@ -154,7 +151,7 @@ void c_serial_event_handler::__assign_handler(c_ring_buffer <char> * buffer, s_o
 	//c_serial_event_handler::pntr_data_write_handler = c_ngc_data_handler::assign_handler(buffer, event_object, event_id, write_count);
 	c_serial_event_handler::pntr_data_write_handler = c_data_handler::assign_handler(buffer, event_object, event_id, write_count);
 	//This is function point that gets 'called back' when all the data is done processing. 
-	c_ngc_data_handler::pntr_data_handler_release = c_serial_event_handler::write_data_handler_releaser;
+	c_data_handler::pntr_data_handler_release = c_serial_event_handler::write_data_handler_releaser;
 }
 
 void c_serial_event_handler::__raise_error(c_ring_buffer <char> * buffer_source, e_error_behavior e_behavior
@@ -176,14 +173,6 @@ void c_serial_event_handler::__raise_error(c_ring_buffer <char> * buffer_source,
 	tracked_error.source = e_source;
 	tracked_error.code = e_code;
 	extern_pntr_error_handler(buffer_source, tracked_error);
-	//c_data_handler::pntr_error_handler(buffer_source, tracked_error);
-
-}
-void c_serial_event_handler::__control_handler(c_ring_buffer <char> * buffer)
-{
-	//release the handler because we should be done with it now.
-	c_serial_event_handler::pntr_data_read_handler = NULL;
-	Talos::Coordinator::Main_Process::host_serial.print_string("control\r\n");
 }
 
 void c_serial_event_handler::read_data_handler_releaser(c_ring_buffer<char> * released_buffer)
