@@ -38,6 +38,9 @@
 #include "../Platforms/ARM_3X8E/Talos_ARM3X8E_Motion/PlatformSpecific/c_core_arm_3x8e.h"
 #include "../Platforms/ARM_3X8E/Talos_ARM3X8E_Motion/PlatformSpecific/c_serial_arm_3x8e.h"
 #include "../Platforms/ARM_3X8E/Talos_ARM3X8E_Motion/PlatformSpecific/c_spi_arm_3x8e.h"
+#include "../Platforms/ARM_3X8E/Talos_ARM3X8E_Motion/PlatformSpecific/c_motion_core_arm_3x8e_inputs.h"
+#include "../Platforms/ARM_3X8E/Talos_ARM3X8E_Motion/PlatformSpecific/c_motion_core_arm_3x8e_stepper.h"
+#include "../Platforms/ARM_3X8E/Talos_ARM3X8E_Motion/PlatformSpecific/c_motion_core_arm_3x8e_spindle.h"
 #endif
 
 #ifdef MSVC

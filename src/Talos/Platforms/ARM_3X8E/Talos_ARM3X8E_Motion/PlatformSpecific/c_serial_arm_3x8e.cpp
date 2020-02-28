@@ -12,9 +12,13 @@
 #include "c_core_arm_3x8e.h"
 #include "component\usart.h"
 #include "component\uart.h"
-
-c_ring_buffer<char> Hardware_Abstraction_Layer::Serial::_usart0_buffer;
-static char _usart0_data[USART0_BUFFER_SIZE];
+#include "../../../../Shared Data/Event/extern_events_types.h"
+c_ring_buffer<char> Hardware_Abstraction_Layer::Serial::_usart0_read_buffer;
+static char _usart0_read_data[256];
+c_ring_buffer<char> Hardware_Abstraction_Layer::Serial::_usart1_read_buffer;
+static char _usart1_read_data[256];
+c_ring_buffer<char> Hardware_Abstraction_Layer::Serial::_usart1_write_buffer;
+static char _usart1_write_data[256];
 
 void Hardware_Abstraction_Layer::Serial::USART_Configure(Usart *usart, uint32_t mode, uint32_t baudrate, uint32_t masterClock)
 {
@@ -59,7 +63,13 @@ void Hardware_Abstraction_Layer::Serial::initialize(uint8_t Port, uint32_t BaudR
 	{
 		case 0:
 		{
-			_usart0_buffer.initialize(_usart0_data,USART0_BUFFER_SIZE);
+			_usart0_read_buffer.initialize(_usart0_read_data,USART0_BUFFER_SIZE);
+			
+			_usart1_write_buffer.pntr_device_write = Hardware_Abstraction_Layer::Serial::send;
+			
+			extern_data_events.serial.inbound.device = &Hardware_Abstraction_Layer::Serial::_usart0_read_buffer;
+			extern_data_events.serial.outbound.device = &Hardware_Abstraction_Layer::Serial::_usart1_write_buffer;
+			
 			// ==> Pin configuration
 			// Disable interrupts on Rx and Tx
 			PIOA->PIO_IDR = PIO_PA8A_URXD | PIO_PA9A_UTXD;
@@ -320,7 +330,7 @@ void Hardware_Abstraction_Layer::Serial::initialize(uint8_t Port, uint32_t BaudR
 	}
 }
 
-void Hardware_Abstraction_Layer::Serial::send(uint8_t Port, char byte)
+uint8_t Hardware_Abstraction_Layer::Serial::send(uint8_t Port, char byte)
 {
 	Usart * port_usart = NULL;
 	switch (Port)
@@ -402,7 +412,7 @@ void UART_Handler(void)
 		
 		
 		//UART->UART_THR = Byte;
-		Hardware_Abstraction_Layer::Serial::_usart0_buffer.put(Byte);
+		Hardware_Abstraction_Layer::Serial::_usart0_read_buffer.put(Byte);
 	}
 }
 

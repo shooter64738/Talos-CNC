@@ -5,7 +5,7 @@
 * Author: jeff_d
 */
 #include <stdint.h>
-#include "..\..\..\..\records_def.h"
+#include "..\..\..\..\Shared Data\_s_encoder_struct.h"
 
 #ifndef __C_MOTIONCORE_ARM_3X8E_SPINDLE_H__
 #define __C_MOTIONCORE_ARM_3X8E_SPINDLE_H__
@@ -24,7 +24,7 @@ namespace Hardware_Abstraction_Layer
 			//variables
 			public:
 			//static function_pointer Pntr_timer_function;
-			static BinaryRecords::s_encoders * spindle_encoder;
+			static s_encoders * spindle_encoder;
 			//static s_qdec qdec0;
 			protected:
 			private:
@@ -33,7 +33,7 @@ namespace Hardware_Abstraction_Layer
 			
 			//functions
 			public:
-			static void initialize(BinaryRecords::s_encoders * encoder_data);
+			static void initialize(s_encoders * encoder_data);
 			static void qdec_speed_config();
 			static void pwm_drive_configure();
 			static void set_speed(int32_t new_speed);

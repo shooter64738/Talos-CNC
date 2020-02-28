@@ -5,6 +5,7 @@
 #include "c_gateway.h"
 #include "c_interpollation_software.h"
 #include "../../_bit_manipulation.h"
+#include <stdlib.h>
 
 
 

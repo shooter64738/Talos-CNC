@@ -18,6 +18,7 @@
 #include "../Processing/Events/EventHandlers/c_motion_control_event_handler.h"
 #include "../../Shared Data/Event/extern_events_types.h"
 #include "../../Shared Data/_s_status_record.h"
+
 #define MOTION_BUFFER_SIZE 2
 
 static s_motion_data_block jog_mot;
