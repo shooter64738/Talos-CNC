@@ -25,7 +25,7 @@
 #include "../../../NGC_RS274/NGC_System.h"
 
 
-
+ 
 
 uint8_t(*Talos::Motion::NgcBuffer::pntr_buffer_block_write)(s_ngc_block * write_block);
 uint8_t(*Talos::Motion::NgcBuffer::pntr_buffer_block_read)(s_ngc_block * read_block);

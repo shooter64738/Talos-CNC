@@ -22,12 +22,12 @@
 #include "../../../../NGC_RS274/NGC_Errors.h"
 #include "../../../../NGC_RS274/NGC_Block_View.h"
 #include "../../../../NGC_RS274/NGC_Error_Check.h"
-#include "../../../../Motion/Processing/GCode/xc_gcode_buffer.h"
 #include "../../../../NGC_RS274/NGC_System.h"
 #include "../../../../communication_def.h"
 #include "../../../../NGC_RS274/NGC_Line_Processor.h"
 #include "../../Main/Main_Process.h"
 #include "../../../../Shared Data/Data/cache_data.h"
+#include "../../../../Motion/Processing/GCode/xc_gcode_buffer.h"
 
 e_parsing_errors Talos::Coordinator::Data::Ngc::load_block_from_cache()
 {
