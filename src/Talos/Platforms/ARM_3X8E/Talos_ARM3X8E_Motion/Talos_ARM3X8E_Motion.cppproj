@@ -36,7 +36,7 @@
   <documentation help="" />
   <offline-documentation help="" />
   <dependencies>
-    <content-extension eid="atmel.asf" uuidref="Atmel.ASF" version="3.26.0" />
+    <content-extension eid="atmel.asf" uuidref="Atmel.ASF" version="3.37" />
   </dependencies>
 </framework-data>
     </AsfFrameworkConfig>
@@ -57,7 +57,7 @@
   <armgcc.compiler.directories.IncludePaths>
     <ListValues>
       <Value>%24(PackRepoDir)\ARM\CMSIS\5.4.0\CMSIS\Core\Include\</Value>
-      <Value>%24(PackRepoDir)\atmel\SAM3X_DFP\1.0.51\include</Value>
+      <Value>%24(PackRepoDir)\atmel\SAM3X_DFP\1.0.50\include</Value>
     </ListValues>
   </armgcc.compiler.directories.IncludePaths>
   <armgcc.compiler.optimization.level>Optimize for size (-Os)</armgcc.compiler.optimization.level>
@@ -71,7 +71,7 @@
   <armgcccpp.compiler.directories.IncludePaths>
     <ListValues>
       <Value>%24(PackRepoDir)\ARM\CMSIS\5.4.0\CMSIS\Core\Include\</Value>
-      <Value>%24(PackRepoDir)\atmel\SAM3X_DFP\1.0.51\include</Value>
+      <Value>%24(PackRepoDir)\atmel\SAM3X_DFP\1.0.50\include</Value>
     </ListValues>
   </armgcccpp.compiler.directories.IncludePaths>
   <armgcccpp.compiler.optimization.level>Optimize for size (-Os)</armgcccpp.compiler.optimization.level>
@@ -92,13 +92,13 @@
   <armgcccpp.assembler.general.IncludePaths>
     <ListValues>
       <Value>%24(PackRepoDir)\ARM\CMSIS\5.4.0\CMSIS\Core\Include\</Value>
-      <Value>%24(PackRepoDir)\atmel\SAM3X_DFP\1.0.51\include</Value>
+      <Value>%24(PackRepoDir)\atmel\SAM3X_DFP\1.0.50\include</Value>
     </ListValues>
   </armgcccpp.assembler.general.IncludePaths>
   <armgcccpp.preprocessingassembler.general.IncludePaths>
     <ListValues>
       <Value>%24(PackRepoDir)\ARM\CMSIS\5.4.0\CMSIS\Core\Include\</Value>
-      <Value>%24(PackRepoDir)\atmel\SAM3X_DFP\1.0.51\include</Value>
+      <Value>%24(PackRepoDir)\atmel\SAM3X_DFP\1.0.50\include</Value>
     </ListValues>
   </armgcccpp.preprocessingassembler.general.IncludePaths>
 </ArmGccCpp>
@@ -120,7 +120,7 @@
   <armgcc.compiler.directories.IncludePaths>
     <ListValues>
       <Value>%24(PackRepoDir)\ARM\CMSIS\5.4.0\CMSIS\Core\Include\</Value>
-      <Value>%24(PackRepoDir)\atmel\SAM3X_DFP\1.0.51\include</Value>
+      <Value>%24(PackRepoDir)\atmel\SAM3X_DFP\1.0.50\include</Value>
     </ListValues>
   </armgcc.compiler.directories.IncludePaths>
   <armgcc.compiler.optimization.level>Optimize (-O1)</armgcc.compiler.optimization.level>
@@ -135,7 +135,7 @@
   <armgcccpp.compiler.directories.IncludePaths>
     <ListValues>
       <Value>%24(PackRepoDir)\ARM\CMSIS\5.4.0\CMSIS\Core\Include\</Value>
-      <Value>%24(PackRepoDir)\atmel\SAM3X_DFP\1.0.51\include</Value>
+      <Value>%24(PackRepoDir)\atmel\SAM3X_DFP\1.0.50\include</Value>
     </ListValues>
   </armgcccpp.compiler.directories.IncludePaths>
   <armgcccpp.compiler.optimization.level>Optimize (-O1)</armgcccpp.compiler.optimization.level>
@@ -157,14 +157,14 @@
   <armgcccpp.assembler.general.IncludePaths>
     <ListValues>
       <Value>%24(PackRepoDir)\ARM\CMSIS\5.4.0\CMSIS\Core\Include\</Value>
-      <Value>%24(PackRepoDir)\atmel\SAM3X_DFP\1.0.51\include</Value>
+      <Value>%24(PackRepoDir)\atmel\SAM3X_DFP\1.0.50\include</Value>
     </ListValues>
   </armgcccpp.assembler.general.IncludePaths>
   <armgcccpp.assembler.debugging.DebugLevel>Default (-g)</armgcccpp.assembler.debugging.DebugLevel>
   <armgcccpp.preprocessingassembler.general.IncludePaths>
     <ListValues>
       <Value>%24(PackRepoDir)\ARM\CMSIS\5.4.0\CMSIS\Core\Include\</Value>
-      <Value>%24(PackRepoDir)\atmel\SAM3X_DFP\1.0.51\include</Value>
+      <Value>%24(PackRepoDir)\atmel\SAM3X_DFP\1.0.50\include</Value>
     </ListValues>
   </armgcccpp.preprocessingassembler.general.IncludePaths>
   <armgcccpp.preprocessingassembler.debugging.DebugLevel>Default (-Wa,-g)</armgcccpp.preprocessingassembler.debugging.DebugLevel>
@@ -172,10 +172,6 @@
     </ToolchainSettings>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\..\..\bit_manipulation.h">
-      <SubType>compile</SubType>
-      <Link>bit_manipulation.h</Link>
-    </Compile>
     <Compile Include="..\..\..\communication_def.h">
       <SubType>compile</SubType>
       <Link>communication_def.h</Link>
@@ -183,6 +179,94 @@
     <Compile Include="..\..\..\c_ring_template.h">
       <SubType>compile</SubType>
       <Link>c_ring_template.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Motion\Core\c_block.cpp">
+      <SubType>compile</SubType>
+      <Link>Motion\Core\c_block.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\Motion\Core\c_block.h">
+      <SubType>compile</SubType>
+      <Link>Motion\Core\c_block.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Motion\Core\c_block_buffer.cpp">
+      <SubType>compile</SubType>
+      <Link>Motion\Core\c_block_buffer.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\Motion\Core\c_block_buffer.h">
+      <SubType>compile</SubType>
+      <Link>Motion\Core\c_block_buffer.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Motion\Core\c_gateway.cpp">
+      <SubType>compile</SubType>
+      <Link>Motion\Core\c_gateway.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\Motion\Core\c_gateway.h">
+      <SubType>compile</SubType>
+      <Link>Motion\Core\c_gateway.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Motion\Core\c_interpollation_hardware.cpp">
+      <SubType>compile</SubType>
+      <Link>Motion\Core\c_interpollation_hardware.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\Motion\Core\c_interpollation_hardware.h">
+      <SubType>compile</SubType>
+      <Link>Motion\Core\c_interpollation_hardware.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Motion\Core\c_interpollation_software.cpp">
+      <SubType>compile</SubType>
+      <Link>Motion\Core\c_interpollation_software.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\Motion\Core\c_interpollation_software.h">
+      <SubType>compile</SubType>
+      <Link>Motion\Core\c_interpollation_software.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Motion\Core\c_motion_core.cpp">
+      <SubType>compile</SubType>
+      <Link>Motion\Core\c_motion_core.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\Motion\Core\c_motion_core.h">
+      <SubType>compile</SubType>
+      <Link>Motion\Core\c_motion_core.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Motion\Core\c_planner_compute_block.cpp">
+      <SubType>compile</SubType>
+      <Link>Motion\Core\c_planner_compute_block.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\Motion\Core\c_planner_compute_block.h">
+      <SubType>compile</SubType>
+      <Link>Motion\Core\c_planner_compute_block.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Motion\Core\c_segment_arbitrator.cpp">
+      <SubType>compile</SubType>
+      <Link>Motion\Core\c_segment_arbitrator.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\Motion\Core\c_segment_arbitrator.h">
+      <SubType>compile</SubType>
+      <Link>Motion\Core\c_segment_arbitrator.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Motion\Core\c_segment_timer_bresenham.cpp">
+      <SubType>compile</SubType>
+      <Link>Motion\Core\c_segment_timer_bresenham.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\Motion\Core\c_segment_timer_bresenham.h">
+      <SubType>compile</SubType>
+      <Link>Motion\Core\c_segment_timer_bresenham.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Motion\Core\c_segment_timer_item.cpp">
+      <SubType>compile</SubType>
+      <Link>Motion\Core\c_segment_timer_item.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\Motion\Core\c_segment_timer_item.h">
+      <SubType>compile</SubType>
+      <Link>Motion\Core\c_segment_timer_item.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Motion\Core\c_system.cpp">
+      <SubType>compile</SubType>
+      <Link>Motion\Core\c_system.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\Motion\Core\c_system.h">
+      <SubType>compile</SubType>
+      <Link>Motion\Core\c_system.h</Link>
     </Compile>
     <Compile Include="..\..\..\Motion\motion_hardware_def.h">
       <SubType>compile</SubType>
@@ -192,6 +276,54 @@
       <SubType>compile</SubType>
       <Link>Motion\motion_main.cpp</Link>
     </Compile>
+    <Compile Include="..\..\..\Motion\Processing\Data\DataHandlers\c_binary_data_handler.cpp">
+      <SubType>compile</SubType>
+      <Link>Motion\Processing\Data\DataHandlers\c_binary_data_handler.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\Motion\Processing\Data\DataHandlers\c_binary_data_handler.h">
+      <SubType>compile</SubType>
+      <Link>Motion\Processing\Data\DataHandlers\c_binary_data_handler.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Motion\Processing\Events\EventHandlers\c_block_events.cpp">
+      <SubType>compile</SubType>
+      <Link>Motion\Processing\Events\EventHandlers\c_block_events.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\Motion\Processing\Events\EventHandlers\c_block_events.h">
+      <SubType>compile</SubType>
+      <Link>Motion\Processing\Events\EventHandlers\c_block_events.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Motion\Processing\Events\EventHandlers\c_events.cpp">
+      <SubType>compile</SubType>
+      <Link>Motion\Processing\Events\EventHandlers\c_events.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\Motion\Processing\Events\EventHandlers\c_events.h">
+      <SubType>compile</SubType>
+      <Link>Motion\Processing\Events\EventHandlers\c_events.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Motion\Processing\Events\EventHandlers\c_motion_control_event_handler.cpp">
+      <SubType>compile</SubType>
+      <Link>Motion\Processing\Events\EventHandlers\c_motion_control_event_handler.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\Motion\Processing\Events\EventHandlers\c_motion_control_event_handler.h">
+      <SubType>compile</SubType>
+      <Link>Motion\Processing\Events\EventHandlers\c_motion_control_event_handler.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Motion\Processing\Events\EventHandlers\c_motion_event_handler.cpp">
+      <SubType>compile</SubType>
+      <Link>Motion\Processing\Events\EventHandlers\c_motion_event_handler.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\Motion\Processing\Events\EventHandlers\c_motion_event_handler.h">
+      <SubType>compile</SubType>
+      <Link>Motion\Processing\Events\EventHandlers\c_motion_event_handler.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Motion\Processing\Events\EventHandlers\c_system_event_handler.cpp">
+      <SubType>compile</SubType>
+      <Link>Motion\Processing\Events\EventHandlers\c_system_event_handler.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\Motion\Processing\Events\EventHandlers\c_system_event_handler.h">
+      <SubType>compile</SubType>
+      <Link>Motion\Processing\Events\EventHandlers\c_system_event_handler.h</Link>
+    </Compile>
     <Compile Include="..\..\..\Motion\Processing\Main\Main_Process.cpp">
       <SubType>compile</SubType>
       <Link>Motion\Processing\Main\Main_Process.cpp</Link>
@@ -199,6 +331,34 @@
     <Compile Include="..\..\..\Motion\Processing\Main\Main_Process.h">
       <SubType>compile</SubType>
       <Link>Motion\Processing\Main\Main_Process.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Motion\Processing\Planner\c_event_control.cpp">
+      <SubType>compile</SubType>
+      <Link>Motion\Processing\Planner\c_event_control.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\Motion\Processing\Planner\c_event_control.h">
+      <SubType>compile</SubType>
+      <Link>Motion\Processing\Planner\c_event_control.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Motion\Processing\Planner\c_mirror.cpp">
+      <SubType>compile</SubType>
+      <Link>Motion\Processing\Planner\c_mirror.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\Motion\Processing\Planner\c_mirror.h">
+      <SubType>compile</SubType>
+      <Link>Motion\Processing\Planner\c_mirror.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Motion\Processing\Planner\c_stager.cpp">
+      <SubType>compile</SubType>
+      <Link>Motion\Processing\Planner\c_stager.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\Motion\Processing\Planner\c_stager.h">
+      <SubType>compile</SubType>
+      <Link>Motion\Processing\Planner\c_stager.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Motion\Processing\Planner\Stager_Errors.h">
+      <SubType>compile</SubType>
+      <Link>Motion\Processing\Planner\Stager_Errors.h</Link>
     </Compile>
     <Compile Include="..\..\..\Motion\Serial\c_Serial.cpp">
       <SubType>compile</SubType>
@@ -208,21 +368,150 @@
       <SubType>compile</SubType>
       <Link>Motion\Serial\c_Serial.h</Link>
     </Compile>
+    <Compile Include="..\..\..\NGC_RS274\_ngc_block_struct.h">
+      <SubType>compile</SubType>
+      <Link>Ngc_Rs274\_ngc_block_struct.h</Link>
+    </Compile>
     <Compile Include="..\..\..\physical_machine_parameters.h">
       <SubType>compile</SubType>
       <Link>physical_machine_parameters.h</Link>
     </Compile>
-    <Compile Include="..\..\..\records_def.h">
+    <Compile Include="..\..\..\Shared Data\Data\cache_data.cpp">
       <SubType>compile</SubType>
-      <Link>records_def.h</Link>
+      <Link>Shared Data\Data\cache_data.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\Shared Data\Data\cache_data.h">
+      <SubType>compile</SubType>
+      <Link>Shared Data\Data\cache_data.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Shared Data\Data\c_data_handler.cpp">
+      <SubType>compile</SubType>
+      <Link>Shared Data\Data\c_data_handler.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\Shared Data\Data\c_data_handler.h">
+      <SubType>compile</SubType>
+      <Link>Shared Data\Data\c_data_handler.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Shared Data\Event\c_data_events.cpp">
+      <SubType>compile</SubType>
+      <Link>Shared Data\Event\c_data_events.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\Shared Data\Event\c_data_events.h">
+      <SubType>compile</SubType>
+      <Link>Shared Data\Event\c_data_events.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Shared Data\Event\c_events.cpp">
+      <SubType>compile</SubType>
+      <Link>Shared Data\Event\c_events.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\Shared Data\Event\c_events.h">
+      <SubType>compile</SubType>
+      <Link>Shared Data\Event\c_events.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Shared Data\Event\c_serial_event_handler.cpp">
+      <SubType>compile</SubType>
+      <Link>Shared Data\Event\c_serial_event_handler.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\Shared Data\Event\c_serial_event_handler.h">
+      <SubType>compile</SubType>
+      <Link>Shared Data\Event\c_serial_event_handler.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Shared Data\Event\extern_events_types.h">
+      <SubType>compile</SubType>
+      <Link>Shared Data\Event\extern_events_types.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Shared Data\Settings\Motion\_s_motion_control_settings_encapsulation.h">
+      <SubType>compile</SubType>
+      <Link>Shared Data\Settings\Motion\_s_motion_control_settings_encapsulation.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Shared Data\Settings\Motion\_s_motion_hardware.h">
+      <SubType>compile</SubType>
+      <Link>Shared Data\Settings\Motion\_s_motion_hardware.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Shared Data\Settings\Motion\_s_motion_tolerance_struct.h">
+      <SubType>compile</SubType>
+      <Link>Shared Data\Settings\Motion\_s_motion_tolerance_struct.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Shared Data\_e_binary_comm_response.h">
+      <SubType>compile</SubType>
+      <Link>Shared Data\_e_binary_comm_response.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Shared Data\_e_block_state.h">
+      <SubType>compile</SubType>
+      <Link>Shared Data\_e_block_state.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Shared Data\_e_feed_modes.h">
+      <SubType>compile</SubType>
+      <Link>Shared Data\_e_feed_modes.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Shared Data\_e_feed_types.h">
+      <SubType>compile</SubType>
+      <Link>Shared Data\_e_feed_types.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Shared Data\_e_motion_state.h">
+      <SubType>compile</SubType>
+      <Link>Shared Data\_e_motion_state.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Shared Data\_e_motion_sub_state.h">
+      <SubType>compile</SubType>
+      <Link>Shared Data\_e_motion_sub_state.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Shared Data\_e_ramp_type.h">
+      <SubType>compile</SubType>
+      <Link>Shared Data\_e_ramp_type.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Shared Data\_e_record_types.h">
+      <SubType>compile</SubType>
+      <Link>Shared Data\_e_record_types.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Shared Data\_e_unit_types.h">
+      <SubType>compile</SubType>
+      <Link>Shared Data\_e_unit_types.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Shared Data\_peripheral_overide_enums.h">
+      <SubType>compile</SubType>
+      <Link>Shared Data\_peripheral_overide_enums.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Shared Data\_s_encoder_struct.h">
+      <SubType>compile</SubType>
+      <Link>Shared Data\_s_encoder_struct.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Shared Data\_s_framework_error.h">
+      <SubType>compile</SubType>
+      <Link>Shared Data\_s_framework_error.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Shared Data\_s_jog_data_struct.h">
+      <SubType>compile</SubType>
+      <Link>Shared Data\_s_jog_data_struct.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Shared Data\_s_motion_data_block.h">
+      <SubType>compile</SubType>
+      <Link>Shared Data\_s_motion_data_block.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Shared Data\_s_ngc_line_record.h">
+      <SubType>compile</SubType>
+      <Link>Shared Data\_s_ngc_line_record.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Shared Data\_s_peripheral_panel_struct.h">
+      <SubType>compile</SubType>
+      <Link>Shared Data\_s_peripheral_panel_struct.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Shared Data\_s_status_record.h">
+      <SubType>compile</SubType>
+      <Link>Shared Data\_s_status_record.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\_bit_flag_control.h">
+      <SubType>compile</SubType>
+      <Link>_bit_flag_control.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\_bit_manipulation.h">
+      <SubType>compile</SubType>
+      <Link>_bit_manipulation.h</Link>
     </Compile>
     <Compile Include="Device_Startup\startup_sam3xa.c">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="Device_Startup\system_sam3xa.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="main.cpp">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="PlatformSpecific\c_core_arm_3x8e.cpp">
@@ -274,12 +563,27 @@
   <ItemGroup>
     <Folder Include="Device_Startup\" />
     <Folder Include="Motion" />
+    <Folder Include="Motion\Core" />
+    <Folder Include="Motion\Processing\Data\DataHandlers" />
+    <Folder Include="Motion\Processing\Events\EventHandlers" />
     <Folder Include="Motion\Processing\Main" />
+    <Folder Include="Motion\Processing\Data" />
+    <Folder Include="Motion\Processing\Events" />
+    <Folder Include="Motion\Processing\Planner" />
+    <Folder Include="Motion\Processing\Planner\Canned Cycles" />
+    <Folder Include="Motion\Processing\Planner\CRC" />
     <Folder Include="Motion\Serial" />
     <Folder Include="Motion\Processing" />
+    <Folder Include="Configuration" />
+    <Folder Include="Coordinator" />
+    <Folder Include="Shared Data" />
     <Folder Include="PlatformSpecific" />
     <Folder Include="Ngc_Rs274" />
     <Folder Include="PlatformSpecific\disk_support\" />
+    <Folder Include="Shared Data\Data" />
+    <Folder Include="Shared Data\Event" />
+    <Folder Include="Shared Data\Settings" />
+    <Folder Include="Shared Data\Settings\Motion" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Device_Startup\sam3x8e_flash.ld">

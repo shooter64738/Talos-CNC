@@ -23,7 +23,7 @@ void Talos::Motion::Main_Process::initialize()
 
 	
 	__initialization_start("Interrupts", Hardware_Abstraction_Layer::Core::start_interrupts,STARTUP_CLASS_CRITICAL);//<--start interrupts on hardware
-	__initialization_start("Events", Events::initialize, STARTUP_CLASS_CRITICAL);//<--init events
+	__initialization_start("Events", Talos::Shared::Events::initialize, STARTUP_CLASS_CRITICAL);//<--init events
 	//__initialization_start("Ngc Buffer", Talos::Motion::NgcBuffer::initialize);//<--g code buffer
 	//__initialization_start("Ngc Interpreter", NGC_RS274::Interpreter::Processor::initialize);//<--g code interpreter
 	__initialization_start("Disk", Hardware_Abstraction_Layer::Disk::initialize,STARTUP_CLASS_CRITICAL);//<--drive/eprom storage
@@ -123,7 +123,33 @@ void Talos::Motion::Main_Process::run()
 	{
 		//This firmware is mostly event driven. This is the main entry point for checking
 		//which events have been set to execute, and then executing them.
-		Events::process();
+		//First check to make sure the system is healthy
+		//if (!extern_system_events.event_manager.get((int)s_system_events::e_event_type::SystemAllOk))
+		//	return;
+
+		//Execute the events having their bit flags set
+		/*
+		Need to consider handler priority. At the moment I propose this priority
+		0. system events. This could stop processing in its tracks so check this first
+		1. hardware input events. Not implemented but probably will be.
+		2. data events, such as incoming gcode, configuration records, disk or network data, etc..
+		3. ancillary events, events that spawn off because other events have taken place. (ngc data ready etc..)
+		*/
+		//0: Handle system events
+		//Talos::Coordinator::Events::system_event_handler.process();
+		//if there are any system critical events check them here and do not process further
+
+		//1: Handle hardware events
+		//Talos::Coordinator::Events::hardware_event_handler.process();
+
+		//2: Handle data events
+		Talos::Shared::Events::data_event_handler.process();
+
+		//3: Handle ancillary events
+		//Talos::Coordinator::Events::ancillary_event_handler.process();
+
+		//4:: Handle ngc processing events
+
 	}
 
 }
