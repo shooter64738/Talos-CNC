@@ -22,7 +22,7 @@
 #ifndef __C_SHARED_DATA_HANDLER_H__
 #define __C_SHARED_DATA_HANDLER_H__
 #include <stdint.h>
-#include "../Event/extern_events_types.h"
+#include "../FrameWork/extern_events_types.h"
 #include "../../c_ring_template.h"
 #include "../../communication_def.h"
 #include "../_e_record_types.h"

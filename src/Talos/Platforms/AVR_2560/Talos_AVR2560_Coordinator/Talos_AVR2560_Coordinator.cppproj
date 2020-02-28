@@ -550,9 +550,17 @@
       <SubType>compile</SubType>
       <Link>Shared Data\Event\c_serial_event_handler.h</Link>
     </Compile>
-    <Compile Include="..\..\..\Shared Data\Event\extern_events_types.h">
+    <Compile Include="..\..\..\Shared Data\FrameWork\extern_events_types.cpp">
       <SubType>compile</SubType>
-      <Link>Shared Data\Event\extern_events_types.h</Link>
+      <Link>Shared Data\FrameWork\extern_events_types.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\Shared Data\FrameWork\extern_events_types.h">
+      <SubType>compile</SubType>
+      <Link>Shared Data\FrameWork\extern_events_types.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Shared Data\Settings\Coordinator\_s_interp_config_struct.h">
+      <SubType>compile</SubType>
+      <Link>Shared Data\Settings\Coordinator\_s_interp_config_struct.h</Link>
     </Compile>
     <Compile Include="..\..\..\Shared Data\_e_binary_comm_response.h">
       <SubType>compile</SubType>
@@ -697,6 +705,9 @@
     <Folder Include="PlatformSpecific\disk_support" />
     <Folder Include="Shared Data\Data" />
     <Folder Include="Shared Data\Event" />
+    <Folder Include="Shared Data\FrameWork" />
+    <Folder Include="Shared Data\Settings" />
+    <Folder Include="Shared Data\Settings\Coordinator" />
   </ItemGroup>
   <Import Project="$(AVRSTUDIO_EXE_PATH)\\Vs\\Compiler.targets" />
 </Project>

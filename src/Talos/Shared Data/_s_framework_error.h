@@ -54,7 +54,7 @@ struct s_framework_error
 	e_error_process process;
 	e_record_types record_type;
 	e_error_behavior behavior;
-	e_error_code code;
+	uint16_t code;
 	uint8_t data_size;
 
 };

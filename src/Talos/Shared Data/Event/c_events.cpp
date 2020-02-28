@@ -19,8 +19,8 @@
 */
 
 #include "c_events.h"
-#define __EXTERN_EVENTS__
-#include "extern_events_types.h"
+//#define __EXTERN_EVENTS__
+#include "../FrameWork/extern_events_types.h"
 
 c_data_events Talos::Shared::Events::data_event_handler;
 //c_system_events Talos::Coordinator::Events::system_event_handler;

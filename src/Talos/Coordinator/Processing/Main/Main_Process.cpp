@@ -12,7 +12,7 @@ then move to their respective modules.
 
 #include "Main_Process.h"
 #include "../../../Shared Data/Event/c_events.h"
-#include "../../../Shared Data/Event/extern_events_types.h"
+#include "../../../Shared Data/FrameWork/extern_events_types.h"
 #include "../../../NGC_RS274/NGC_Line_Processor.h"
 #include "../../../NGC_RS274/NGC_Tool.h"
 #include "../../../NGC_RS274/NGC_Coordinates.h"
@@ -32,7 +32,8 @@ c_Serial Talos::Coordinator::Main_Process::host_serial;
 void Talos::Coordinator::Main_Process::initialize()
 {
 	//setup the error handler function pointer
-	extern_pntr_error_handler = Talos::Coordinator::Main_Process::error_handler;
+	Talos::Shared::FrameWork::Error::Handler::extern_pntr_error_handler = Talos::Coordinator::Main_Process::error_handler;
+	Talos::Shared::FrameWork::Error::Handler::extern_pntr_ngc_error_handler = Talos::Coordinator::Main_Process::ngc_error_handler;
 
 	Talos::Coordinator::Main_Process::host_serial = c_Serial(0, 250000); //<--Connect to host
 	Talos::Coordinator::Main_Process::host_serial.print_string("Coordinator initializing\r\n");
@@ -139,7 +140,7 @@ void Talos::Coordinator::Main_Process::run()
 #ifdef MSVC
 		//simulate serial data coming in 1 byte at a time. This is a text record test
 		char byte = 0;
-		if (test_byte < 5)
+		//if (test_byte < 5)
 		{
 			byte = test_line[test_byte++];
 			Hardware_Abstraction_Layer::Serial::add_to_buffer(0, byte);
@@ -170,11 +171,22 @@ void Talos::Coordinator::Main_Process::run()
 		//4:: Handle ngc processing events
 		Talos::Coordinator::Events::Ngc::process();
 	}
+
+	Talos::Coordinator::Main_Process::host_serial.print_string("\r\n** System halted **");
+	while (1) {}
 }
 
 void Talos::Coordinator::Main_Process::error_handler(c_ring_buffer<char> * released_buffer, s_framework_error error)
 {
 	Main_Process::host_serial.print_string("ERROR:");
+	if (error.behavior == e_error_behavior::Critical)
+	{
+		extern_system_events.event_manager.set((int)s_system_events::e_event_type::SystemCritical);
+		extern_system_events.event_manager.clear((int)s_system_events::e_event_type::SystemAllOk);
+		Main_Process::host_serial.print_string("{Critical}");
+	}
+
+
 
 	Main_Process::host_serial.print_string("\r\n\tsource:");
 	Main_Process::host_serial.print_int32((int)error.source);
@@ -191,5 +203,30 @@ void Talos::Coordinator::Main_Process::error_handler(c_ring_buffer<char> * relea
 	Main_Process::host_serial.print_string("\r\n\trecord_type:");
 	Main_Process::host_serial.print_int32((int)error.record_type);
 	Main_Process::host_serial.print_string("\r\n");
+
+}
+
+void Talos::Coordinator::Main_Process::ngc_error_handler(char * ngc_line, s_framework_error error)
+{
+	Main_Process::host_serial.print_string("ERROR:{Ngc}");
+
+	Main_Process::host_serial.print_string("\r\n\tsource:");
+	Main_Process::host_serial.print_int32((int)error.source);
+	Main_Process::host_serial.print_string("\r\n\tbehavior:");
+	Main_Process::host_serial.print_int32((int)error.behavior);
+	Main_Process::host_serial.print_string("\r\n\tcode:");
+	Main_Process::host_serial.print_int32((int)error.code);
+	Main_Process::host_serial.print_string("\r\n\tdata_size:");
+	Main_Process::host_serial.print_int32((int)error.data_size);
+	Main_Process::host_serial.print_string("\r\n\tgroup:");
+	Main_Process::host_serial.print_int32((int)error.group);
+	Main_Process::host_serial.print_string("\r\n\tprocess:");
+	Main_Process::host_serial.print_int32((int)error.process);
+	Main_Process::host_serial.print_string("\r\n\trecord_type:");
+	Main_Process::host_serial.print_int32((int)error.record_type);
+	Main_Process::host_serial.print_string("\r\n");
+	Main_Process::host_serial.Write(ngc_line);
+	Main_Process::host_serial.print_string("\r\n");
+
 
 }

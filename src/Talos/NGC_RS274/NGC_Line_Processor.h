@@ -42,7 +42,7 @@ namespace NGC_RS274
 	public:
 		static int last_read_position;
 		static uint8_t initialize();
-		static e_parsing_errors start(s_ngc_block * block);
+		static e_parsing_errors  _process_buffer(char * buffer, s_ngc_block * block, uint8_t buff_len);
 
 	private:
 
@@ -97,10 +97,7 @@ namespace NGC_RS274
 			Sqrt = 12,
 			Tan = 13
 		};
-
-		static uint8_t _set_buffer_to_upper(char * ring_buffer);
-		static e_parsing_errors  _process_buffer(char * buffer, s_ngc_block * block);
-
+	
 		static e_parsing_errors  _read_as_word(char * buffer, int * read_pos, char word, float * word_value, bool * has_decimal);
 		static e_parsing_errors  _read_as_class_type(char * buffer, int * read_pos, float * word_value, bool * has_decimal);
 		static e_parsing_errors  __read_class_numeric(char * buffer, int * read_pos, float * read_value, bool * has_decimal);

@@ -12,7 +12,7 @@
 #include "../../motion_hardware_def.h"
 #include "../../Serial/c_Serial.h"
 #include "../../../Shared Data/Event/c_events.h"
-#include "../../../Shared Data/Event/extern_events_types.h"
+#include "../../../Shared Data/FrameWork/extern_events_types.h"
 
 namespace Talos
 {

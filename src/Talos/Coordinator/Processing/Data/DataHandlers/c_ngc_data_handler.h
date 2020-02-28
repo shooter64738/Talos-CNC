@@ -22,11 +22,7 @@
 #ifndef __C_COORDINATOR_NGC_DATA_HANDLER_H__
 #define __C_COORDINATOR_NGC_DATA_HANDLER_H__
 #include <stdint.h>
-#include ".../../../../../../NGC_RS274/_ngc_block_struct.h"
-#include "../../../../NGC_RS274/_ngc_errors_interpreter.h"
-#include "../../../../Shared Data/Event/extern_events_types.h"
 #include "../../../../c_ring_template.h"
-#include "../../../../Shared Data/_e_record_types.h"
 
 typedef void(*ret_pointer)(c_ring_buffer <char> * buffer);
 namespace Talos
@@ -39,13 +35,14 @@ namespace Talos
 			{
 				//variables
 			public:
+				
 			protected:
 			private:
 
 
 				//functions
 			public:
-				static e_parsing_errors load_block_from_cache();
+				static void load_block_from_cache();
 
 			protected:
 			private:

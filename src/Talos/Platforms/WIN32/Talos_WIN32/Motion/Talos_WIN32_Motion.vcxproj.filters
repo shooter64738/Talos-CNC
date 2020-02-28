@@ -64,6 +64,9 @@
     <Filter Include="Shared data\Data">
       <UniqueIdentifier>{00c9a1fc-6294-4ddf-8a60-3e649d64db8c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shared data\FrameWork">
+      <UniqueIdentifier>{bf3749bb-df2c-448a-bdad-5af7eb759cfe}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\..\Motion\motion_main.cpp">
@@ -167,6 +170,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\..\Motion\Processing\Planner\Canned Cycles\x_c_canned_cycle.cpp">
       <Filter>Motion\Processing\Planner\Canned Cycles</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Shared Data\FrameWork\extern_events_types.cpp">
+      <Filter>Shared data\FrameWork</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -334,9 +340,6 @@
     <ClInclude Include="..\..\..\..\Shared Data\Event\c_events.h">
       <Filter>Shared data\Event</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Shared Data\Event\extern_events_types.h">
-      <Filter>Shared data\Event</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\..\Shared Data\Event\c_serial_event_handler.h">
       <Filter>Shared data\Event</Filter>
     </ClInclude>
@@ -348,6 +351,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\Shared Data\_s_framework_error.h">
       <Filter>Shared data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\extern_events_types.h">
+      <Filter>Shared data\FrameWork</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

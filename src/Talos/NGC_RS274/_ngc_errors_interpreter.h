@@ -22,15 +22,15 @@
 #ifndef NGC_INTERPTER_ERRORS_H
 #define NGC_INTERPTER_ERRORS_H
 
-//calls a method and returns the result of the call. if the call was an error, rturns out of the calling method completley
-#define CHK_CALL(method)\
-	do {e_parsing_errors ret_code = (method);} while(0)
-#define CHK_CALL_RTN_ERROR_CODE(method)\
-	do {e_parsing_errors ret_code = (method); if (ret_code != e_parsing_errors::OK) { return ret_code;}} while(0)
-#define GET_ERROR_STRING(error_code, error_buffer)\
-	do{error_buffer = "test\0";}while(0)
-#define CHK_CALL_RTN_ERROR_STRING(method, error_buffer) \
-	do {e_parsing_errors ret_code = (method); if (ret_code != e_parsing_errors::OK) {GET_ERROR_STRING(ret_code, error_buffer);return ret_code;}} while(0)
+////calls a method and returns the result of the call. if the call was an error, rturns out of the calling method completley
+//#define CHK_CALL(method)\
+//	do {e_parsing_errors ret_code = (method);} while(0)
+//#define CHK_CALL_RTN_ERROR_CODE(method)\
+//	do {e_parsing_errors ret_code = (method); if (ret_code != e_parsing_errors::OK) { return ret_code;}} while(0)
+//#define GET_ERROR_STRING(error_code, error_buffer)\
+//	do{error_buffer = "test\0";}while(0)
+//#define CHK_CALL_RTN_ERROR_STRING(method, error_buffer) \
+//	do {e_parsing_errors ret_code = (method); if (ret_code != e_parsing_errors::OK) {GET_ERROR_STRING(ret_code, error_buffer);return ret_code;}} while(0)
 
 #define ALLOC_BASE_ERROR_SIZE 50
 #define ALLOC_G_ERROR_SIZE 50

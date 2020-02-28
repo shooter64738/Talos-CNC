@@ -24,7 +24,7 @@
 
 #include <stdint.h>
 #include "../../c_ring_template.h"
-#include "extern_events_types.h"
+#include "../FrameWork/extern_events_types.h"
 #include "../_s_framework_error.h"
 
 

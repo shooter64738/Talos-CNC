@@ -8,7 +8,7 @@
 #include "../../../../../Motion/Core/c_motion_core.h"
 #include "../../../../../Motion/Core/c_interpollation_hardware.h"
 #ifdef MSVC
-#include <thread>
+
 #ifndef __C_MOTION_CORE_WIN_STEPPER_H__
 #define __C_MOTION_CORE_WIN_STEPPER_H__
 #define DDRB 1

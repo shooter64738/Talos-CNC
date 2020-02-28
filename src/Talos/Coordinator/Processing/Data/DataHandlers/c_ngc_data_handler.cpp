@@ -19,20 +19,21 @@
 */
 #include "c_ngc_data_handler.h"
 
-#include "../../../../NGC_RS274/NGC_Errors.h"
+#include "../../../../NGC_RS274/_ngc_errors_interpreter.h"
+#include "../../../../Shared Data/FrameWork/extern_events_types.h"
 #include "../../../../NGC_RS274/NGC_Block_View.h"
 #include "../../../../NGC_RS274/NGC_Error_Check.h"
-#include "../../../../NGC_RS274/NGC_System.h"
-#include "../../../../communication_def.h"
 #include "../../../../NGC_RS274/NGC_Line_Processor.h"
-#include "../../Main/Main_Process.h"
 #include "../../../../Shared Data/Data/cache_data.h"
-#include "../../../../Motion/Processing/GCode/xc_gcode_buffer.h"
 
-e_parsing_errors Talos::Coordinator::Data::Ngc::load_block_from_cache()
+//#include "../../../../Motion/Processing/GCode/xc_gcode_buffer.h"
+
+
+void Talos::Coordinator::Data::Ngc::load_block_from_cache()
 {
 
 	s_ngc_block new_block;
+	e_parsing_errors return_value;
 
 	//Forward copy the previous blocks values so they will persist. This also clears whats in the block now.
 	//If the values need changed during processing it will happen in the assignor
@@ -45,7 +46,22 @@ e_parsing_errors Talos::Coordinator::Data::Ngc::load_block_from_cache()
 	new_block.__station__ = Talos::Shared::c_cache_data::ngc_block_record.__station__ + 1;
 
 	//Now process the gcode text line, and give us back a block of data in binary format.
-	e_parsing_errors return_value = NGC_RS274::LineProcessor::start(&new_block);
+	if ((return_value = NGC_RS274::LineProcessor::_process_buffer(
+		Talos::Shared::c_cache_data::ngc_line_record.pntr_record, &new_block, Talos::Shared::c_cache_data::ngc_line_record.size))
+		!= e_parsing_errors::OK)
+	{
+		s_framework_error error;
+		error.behavior = e_error_behavior::Recoverable;
+		error.code = (int)return_value;
+		error.data_size = Talos::Shared::c_cache_data::ngc_line_record.size;
+		error.group = e_error_group::Interpreter;
+		error.process = e_error_process::NgcParsing;
+		error.record_type = e_record_types::NgcBlockRecord;
+		error.source = e_error_source::Disk;
+
+		Talos::Shared::FrameWork::Error::Handler::extern_pntr_ngc_error_handler(Talos::Shared::c_cache_data::ngc_line_record.record, error);
+		return;
+	}
 
 	//Now that the line parsing is complete we can run an error check on the line
 
@@ -60,13 +76,15 @@ e_parsing_errors Talos::Coordinator::Data::Ngc::load_block_from_cache()
 	if (return_value == e_parsing_errors::OK)
 	{
 		//Add this block to the buffer
-		Talos::Motion::NgcBuffer::pntr_buffer_block_write(&new_block);
-		//Now mvoe the data from the new block back to the init block. This keeps
+
+		//Talos::Motion::NgcBuffer::pntr_buffer_block_write(&new_block);
+
+		//Now move the data from the new block back to the init block. This keeps
 		//the block modal values in synch
 		NGC_RS274::Block_View::copy_persisted_data(&new_block, &Talos::Shared::c_cache_data::ngc_block_record);
 		//We dont copy station numbers so set this here.
 		Talos::Shared::c_cache_data::ngc_block_record.__station__ = new_block.__station__;
-
+		extern_data_events.ready.ngc_block_cache_count++;
 		//Clear the block event that was set when the line was loaded waaaaayyyy back int he dataevent handler
 		extern_data_events.ready.event_manager.clear((int)s_ready_data::e_event_type::NgcDataLine);
 	}
@@ -74,17 +92,15 @@ e_parsing_errors Talos::Coordinator::Data::Ngc::load_block_from_cache()
 	{
 		s_framework_error error;
 		error.behavior = e_error_behavior::Recoverable;
-		error.code = e_error_code::InterpreterError;
+		error.code = (int)e_error_code::InterpreterError;
 		error.data_size = 0;
 		error.group = e_error_group::Interpreter;
 		error.process = e_error_process::NgcParsing;
 		error.record_type = e_record_types::NgcBlockRecord;
 		error.source = e_error_source::Disk;
 
-		extern_pntr_error_handler(NULL, error);
+		Talos::Shared::FrameWork::Error::Handler::extern_pntr_ngc_error_handler(NULL, error);
 
 	}
-
-	return return_value;
 }
 

@@ -178,8 +178,8 @@ void c_serial_event_handler::__raise_error(c_ring_buffer <char> * buffer_source,
 	tracked_error.process = e_process;
 	tracked_error.record_type = e_rec_type;
 	tracked_error.source = e_source;
-	tracked_error.code = e_code;
-	extern_pntr_error_handler(buffer_source, tracked_error);
+	tracked_error.code = (int)e_code;
+	Talos::Shared::FrameWork::Error::Handler::extern_pntr_error_handler(buffer_source, tracked_error);
 }
 
 void c_serial_event_handler::read_data_handler_releaser(c_ring_buffer<char> * released_buffer)

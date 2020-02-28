@@ -14,7 +14,7 @@ static ofstream myfile;
 #include "c_segment_arbitrator.h"
 #include "../Processing/Events/EventHandlers/c_motion_control_event_handler.h"
 #include "../Processing/Events/EventHandlers/c_system_event_handler.h"
-#include "../../Shared Data/Event/extern_events_types.h"
+#include "../../Shared Data/FrameWork/extern_events_types.h"
 #include "../../Shared Data/_e_block_state.h"
 
 Motion_Core::Segment::Bresenham::Bresenham_Item *Motion_Core::Hardware::Interpolation::Change_Check_Exec_Timer_Bresenham; // Tracks the current st_block index. Change indicates new block.

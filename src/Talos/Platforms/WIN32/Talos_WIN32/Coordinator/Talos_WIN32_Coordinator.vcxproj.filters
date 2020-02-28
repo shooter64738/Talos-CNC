@@ -70,6 +70,9 @@
     <Filter Include="Shared Data\Data">
       <UniqueIdentifier>{8845c68a-65d5-454b-b6a9-4153a36bdcc7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shared Data\FrameWork">
+      <UniqueIdentifier>{7aaecb41-7a90-4a60-ab63-ecb9c20346f0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\communication_def.h" />
@@ -308,9 +311,6 @@
     <ClInclude Include="..\..\..\..\Shared Data\Event\c_serial_event_handler.h">
       <Filter>Shared Data\Event</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Shared Data\Event\extern_events_types.h">
-      <Filter>Shared Data\Event</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\..\Shared Data\Data\c_data_handler.h">
       <Filter>Shared Data\Data</Filter>
     </ClInclude>
@@ -322,6 +322,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\Coordinator\Processing\Events\EventHandlers\c_ngc_data_events.h">
       <Filter>Coordinator\Processing\Events\EventHandlers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\extern_events_types.h">
+      <Filter>Shared Data\FrameWork</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -447,6 +450,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\..\Coordinator\Processing\Events\EventHandlers\c_ngc_data_events.cpp">
       <Filter>Coordinator\Processing\Events\EventHandlers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Shared Data\FrameWork\extern_events_types.cpp">
+      <Filter>Shared Data\FrameWork</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

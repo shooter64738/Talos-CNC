@@ -28,7 +28,6 @@
 #include "NGC_Block_Assignor.h"
 #include "../Configuration/c_configuration.h"
 #include "Dialect/_ngc_dialect_validate.h"
-#include "../Shared Data/Data/cache_data.h"
 
 int NGC_RS274::LineProcessor::last_read_position = 0;
 static int max_numeric_parameter_count = 0;
@@ -39,23 +38,10 @@ uint8_t NGC_RS274::LineProcessor::initialize()
 	return 0;
 }
 
-e_parsing_errors NGC_RS274::LineProcessor::start(s_ngc_block * block)
+e_parsing_errors NGC_RS274::LineProcessor::_process_buffer(char * buffer, s_ngc_block * block, uint8_t buff_len)
 {
-	e_parsing_errors ret_code = e_parsing_errors::OK;
-
-	ret_code = _process_buffer(Talos::Shared::c_cache_data::ngc_line_record.pntr_record, block);
-
-	return ret_code;
-
-}
-
-e_parsing_errors NGC_RS274::LineProcessor::_process_buffer(char * buffer, s_ngc_block * block)
-{
-	int read_pos, buff_len = 0;
+	int read_pos = 0;
 	
-	buff_len = strlen(buffer);
-	read_pos = 0;
-
 	/*
 	Need to check parameters settings.
 	Because this code system (as in all of talos) is expected to run on a lightweight

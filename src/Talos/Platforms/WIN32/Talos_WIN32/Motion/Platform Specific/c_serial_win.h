@@ -9,6 +9,7 @@
 #define __C_SERIAL_WIN_H__
 
 #include "../../../../../c_ring_template.h"
+#include "c_core_win.h"
 
 namespace Hardware_Abstraction_Layer
 {

@@ -14,7 +14,7 @@ c_Serial Talos::Motion::Main_Process::host_serial;
 void Talos::Motion::Main_Process::initialize()
 {
 	//setup the error handler function pointer
-	extern_pntr_error_handler = Talos::Motion::Main_Process::error_handler;
+	Talos::Shared::FrameWork::Error::Handler::extern_pntr_error_handler = Talos::Motion::Main_Process::error_handler;
 	
 	Hardware_Abstraction_Layer::Core::initialize();
 	//__initialization_start("Core", Hardware_Abstraction_Layer::Core::initialize,1);//<--core start up

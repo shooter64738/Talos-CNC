@@ -107,6 +107,13 @@ ret_pointer c_data_handler::assign_handler(
 
 void c_data_handler::txt_read_handler(c_ring_buffer <char> * buffer)
 {
+	if (!extern_data_events.serial.inbound.ms_time_out)
+	{
+		__raise_error(buffer, e_error_behavior::Critical, 0, e_error_group::DataHandler, e_error_process::Read
+			, tracked_read_type, e_error_source::Serial, e_error_code::TimeoutOccuredWaitingForEndOfRecord);
+		return;
+	}
+
 	bool has_eol = false;
 	//do we need to check this? technically we shouldnt ever get called here if there isnt any data. 
 	while (buffer->has_data())
@@ -135,22 +142,26 @@ void c_data_handler::txt_read_handler(c_ring_buffer <char> * buffer)
 				tracked_read_object->event_manager.clear((int)tracked_read_event);
 
 			tracked_read_object = NULL;
-
+			Talos::Shared::c_cache_data::ngc_line_record.pntr_record = Talos::Shared::c_cache_data::ngc_line_record.record;
 			c_data_handler::__release(buffer);
 			break;
 		}
 		Talos::Shared::c_cache_data::ngc_line_record.pntr_record++;
 		read_count++;
 	}
-	if (!extern_data_events.serial.inbound.ms_time_out)
-	{
-		__raise_error(buffer, e_error_behavior::Critical, 0, e_error_group::DataHandler, e_error_process::Read
-			, tracked_read_type, e_error_source::Serial, e_error_code::TimeoutOccuredWaitingForEndOfRecord);
-	}
+	
 }
 
 void c_data_handler::bin_read_handler(c_ring_buffer <char> * buffer)
 {
+
+	if (!extern_data_events.serial.inbound.ms_time_out)
+	{
+		__raise_error(buffer, e_error_behavior::Critical, 0, e_error_group::DataHandler, e_error_process::Read
+			, tracked_read_type, e_error_source::Serial, e_error_code::TimeoutOccuredWaitingForEndOfRecord);
+		return;
+	}
+
 	if (buffer->has_data())
 	{
 		//we are actually just tossing this data away so the underlying storage pointer can fill.
@@ -192,11 +203,7 @@ void c_data_handler::bin_read_handler(c_ring_buffer <char> * buffer)
 		c_data_handler::__release(buffer);
 	}
 
-	if (!extern_data_events.serial.inbound.ms_time_out)
-	{
-		__raise_error(buffer, e_error_behavior::Critical, 0, e_error_group::DataHandler, e_error_process::Read
-			, tracked_read_type, e_error_source::Serial, e_error_code::TimeoutOccuredWaitingForEndOfRecord);
-	}
+	
 }
 
 void c_data_handler::write_handler(c_ring_buffer <char> * buffer)
@@ -248,8 +255,6 @@ void c_data_handler::__raise_error(c_ring_buffer <char> * buffer_source, e_error
 	tracked_error.process = e_process;
 	tracked_error.record_type = e_rec_type;
 	tracked_error.source = e_source;
-	tracked_error.code = e_code;
-	extern_pntr_error_handler(buffer_source, tracked_error);
-	//c_data_handler::pntr_error_handler(buffer_source, tracked_error);
-
+	tracked_error.code = (int)e_code;
+	Talos::Shared::FrameWork::Error::Handler::extern_pntr_error_handler(buffer_source, tracked_error);
 }
