@@ -27,22 +27,24 @@
 #include "../../../../communication_def.h"
 #include "../../../../NGC_RS274/NGC_Line_Processor.h"
 #include "../../Main/Main_Process.h"
+#include "../../../../Shared Data/Data/cache_data.h"
 
-e_parsing_errors c_ngc_data_handler::ngc_load_block()
+e_parsing_errors Talos::Coordinator::Data::Ngc::load_block_from_cache()
 {
 
 	s_ngc_block new_block;
 
 	//Forward copy the previous blocks values so they will persist. This also clears whats in the block now.
 	//If the values need changed during processing it will happen in the assignor
-	NGC_RS274::Block_View::copy_persisted_data(&NGC_RS274::System::system_block, &new_block);
+	NGC_RS274::Block_View::copy_persisted_data(&Talos::Shared::c_cache_data::ngc_block_record, &new_block);
 	/*
 	The __station__ value is an indexing value used to give each block a unique ID number in the collection
 	of binary converted data. It is currently an int type, but if it were converted to a float I think
 	it could also be used to locate and identify subroutines.
 	*/
-	new_block.__station__ = NGC_RS274::System::system_block.__station__ + 1;
+	new_block.__station__ = Talos::Shared::c_cache_data::ngc_block_record.__station__ + 1;
 
+	//Now process the gcode text line, and give us back a block of data in binary format.
 	e_parsing_errors return_value = NGC_RS274::LineProcessor::start(&new_block);
 
 	//Now that the line parsing is complete we can run an error check on the line
@@ -50,7 +52,7 @@ e_parsing_errors c_ngc_data_handler::ngc_load_block()
 	//Create a view of the old and new blocks. The view class is just a helper class
 	//to make the data easier to understand
 	NGC_RS274::Block_View v_new = NGC_RS274::Block_View(&new_block);
-	NGC_RS274::Block_View v_previous = NGC_RS274::Block_View(&NGC_RS274::System::system_block);
+	NGC_RS274::Block_View v_previous = NGC_RS274::Block_View(&Talos::Shared::c_cache_data::ngc_block_record);
 	return_value = NGC_RS274::Error_Check::error_check(&v_new, &v_previous);
 
 	//NGC_RS274::Set_Targets::adjust(&v_new, &v_previous);
@@ -61,9 +63,12 @@ e_parsing_errors c_ngc_data_handler::ngc_load_block()
 		Talos::Motion::NgcBuffer::pntr_buffer_block_write(&new_block);
 		//Now mvoe the data from the new block back to the init block. This keeps
 		//the block modal values in synch
-		NGC_RS274::Block_View::copy_persisted_data(&new_block, &NGC_RS274::System::system_block);
+		NGC_RS274::Block_View::copy_persisted_data(&new_block, &Talos::Shared::c_cache_data::ngc_block_record);
 		//We dont copy station numbers so set this here.
-		NGC_RS274::System::system_block.__station__ = new_block.__station__;
+		Talos::Shared::c_cache_data::ngc_block_record.__station__ = new_block.__station__;
+
+		//Clear the block event that was set when the line was loaded waaaaayyyy back int he dataevent handler
+		extern_data_events.ready.event_manager.clear((int)s_ready_data::e_event_type::NgcDataLine);
 	}
 	else
 	{

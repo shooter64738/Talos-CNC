@@ -19,8 +19,8 @@
 */
 
 
-#ifndef __C_COORDINATOR_SERIAL_DATA_EVENTS_H__
-#define __C_COORDINATOR_SERIAL_DATA_EVENTS_H__
+#ifndef __C_SHARED_SERIAL_DATA_EVENTS_H__
+#define __C_SHARED_SERIAL_DATA_EVENTS_H__
 
 #include <stdint.h>
 #include "../../c_ring_template.h"

@@ -202,14 +202,6 @@
       <SubType>compile</SubType>
       <Link>Coordinator\Processing\Data\DataHandlers\c_ngc_data_handler.h</Link>
     </Compile>
-    <Compile Include="..\..\..\Coordinator\Processing\Events\c_events.cpp">
-      <SubType>compile</SubType>
-      <Link>Coordinator\Processing\Events\c_events.cpp</Link>
-    </Compile>
-    <Compile Include="..\..\..\Coordinator\Processing\Events\c_events.h">
-      <SubType>compile</SubType>
-      <Link>Coordinator\Processing\Events\c_events.h</Link>
-    </Compile>
     <Compile Include="..\..\..\Coordinator\Processing\Events\EventHandlers\c_ancillary_event_handler.cpp">
       <SubType>compile</SubType>
       <Link>Coordinator\Processing\Events\EventHandlers\c_ancillary_event_handler.cpp</Link>
@@ -217,14 +209,6 @@
     <Compile Include="..\..\..\Coordinator\Processing\Events\EventHandlers\c_ancillary_event_handler.h">
       <SubType>compile</SubType>
       <Link>Coordinator\Processing\Events\EventHandlers\c_ancillary_event_handler.h</Link>
-    </Compile>
-    <Compile Include="..\..\..\Coordinator\Processing\Events\EventHandlers\c_data_events.cpp">
-      <SubType>compile</SubType>
-      <Link>Coordinator\Processing\Events\EventHandlers\c_data_events.cpp</Link>
-    </Compile>
-    <Compile Include="..\..\..\Coordinator\Processing\Events\EventHandlers\c_data_events.h">
-      <SubType>compile</SubType>
-      <Link>Coordinator\Processing\Events\EventHandlers\c_data_events.h</Link>
     </Compile>
     <Compile Include="..\..\..\Coordinator\Processing\Events\EventHandlers\c_network_data_events.cpp">
       <SubType>compile</SubType>
@@ -234,13 +218,13 @@
       <SubType>compile</SubType>
       <Link>Coordinator\Processing\Events\EventHandlers\c_network_data_events.h</Link>
     </Compile>
-    <Compile Include="..\..\..\Coordinator\Processing\Events\EventHandlers\c_serial_event_handler.cpp">
+    <Compile Include="..\..\..\Coordinator\Processing\Events\EventHandlers\c_ngc_data_events.cpp">
       <SubType>compile</SubType>
-      <Link>Coordinator\Processing\Events\EventHandlers\c_serial_event_handler.cpp</Link>
+      <Link>Coordinator\Processing\Events\EventHandlers\c_ngc_data_events.cpp</Link>
     </Compile>
-    <Compile Include="..\..\..\Coordinator\Processing\Events\EventHandlers\c_serial_event_handler.h">
+    <Compile Include="..\..\..\Coordinator\Processing\Events\EventHandlers\c_ngc_data_events.h">
       <SubType>compile</SubType>
-      <Link>Coordinator\Processing\Events\EventHandlers\c_serial_event_handler.h</Link>
+      <Link>Coordinator\Processing\Events\EventHandlers\c_ngc_data_events.h</Link>
     </Compile>
     <Compile Include="..\..\..\Coordinator\Processing\Events\EventHandlers\c_spi_data_events.cpp">
       <SubType>compile</SubType>
@@ -257,10 +241,6 @@
     <Compile Include="..\..\..\Coordinator\Processing\Events\EventHandlers\c_system_events.h">
       <SubType>compile</SubType>
       <Link>Coordinator\Processing\Events\EventHandlers\c_system_events.h</Link>
-    </Compile>
-    <Compile Include="..\..\..\Coordinator\Processing\Events\extern_events_types.h">
-      <SubType>compile</SubType>
-      <Link>Coordinator\Processing\Events\extern_events_types.h</Link>
     </Compile>
     <Compile Include="..\..\..\Coordinator\Processing\Main\Main_Process.cpp">
       <SubType>compile</SubType>
@@ -329,6 +309,14 @@
     <Compile Include="..\..\..\NGC_RS274\Dialect\_ngc_validate_2_plane_selection.h">
       <SubType>compile</SubType>
       <Link>Ngc_Rs274\Dialect\_ngc_validate_2_plane_selection.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\NGC_RS274\Dialect\_ngc_validate_3_distance_mode.cpp">
+      <SubType>compile</SubType>
+      <Link>Ngc_Rs274\Dialect\_ngc_validate_3_distance_mode.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\NGC_RS274\Dialect\_ngc_validate_3_distance_mode.h">
+      <SubType>compile</SubType>
+      <Link>Ngc_Rs274\Dialect\_ngc_validate_3_distance_mode.h</Link>
     </Compile>
     <Compile Include="..\..\..\NGC_RS274\Dialect\_ngc_validate_5_feed_rate_mode.cpp">
       <SubType>compile</SubType>
@@ -522,53 +510,117 @@
       <SubType>compile</SubType>
       <Link>physical_machine_parameters.h</Link>
     </Compile>
+    <Compile Include="..\..\..\Shared Data\Data\cache_data.cpp">
+      <SubType>compile</SubType>
+      <Link>Shared Data\Data\cache_data.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\Shared Data\Data\cache_data.h">
+      <SubType>compile</SubType>
+      <Link>Shared Data\Data\cache_data.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Shared Data\Data\c_data_handler.cpp">
+      <SubType>compile</SubType>
+      <Link>Shared Data\Data\c_data_handler.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\Shared Data\Data\c_data_handler.h">
+      <SubType>compile</SubType>
+      <Link>Shared Data\Data\c_data_handler.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Shared Data\Event\c_data_events.cpp">
+      <SubType>compile</SubType>
+      <Link>Shared Data\Event\c_data_events.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\Shared Data\Event\c_data_events.h">
+      <SubType>compile</SubType>
+      <Link>Shared Data\Event\c_data_events.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Shared Data\Event\c_events.cpp">
+      <SubType>compile</SubType>
+      <Link>Shared Data\Event\c_events.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\Shared Data\Event\c_events.h">
+      <SubType>compile</SubType>
+      <Link>Shared Data\Event\c_events.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Shared Data\Event\c_serial_event_handler.cpp">
+      <SubType>compile</SubType>
+      <Link>Shared Data\Event\c_serial_event_handler.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\Shared Data\Event\c_serial_event_handler.h">
+      <SubType>compile</SubType>
+      <Link>Shared Data\Event\c_serial_event_handler.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Shared Data\Event\extern_events_types.h">
+      <SubType>compile</SubType>
+      <Link>Shared Data\Event\extern_events_types.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Shared Data\_e_binary_comm_response.h">
+      <SubType>compile</SubType>
+      <Link>Shared Data\_e_binary_comm_response.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Shared Data\_e_block_state.h">
+      <SubType>compile</SubType>
+      <Link>Shared Data\_e_block_state.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Shared Data\_e_feed_modes.h">
+      <SubType>compile</SubType>
+      <Link>Shared Data\_e_feed_modes.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Shared Data\_e_feed_types.h">
+      <SubType>compile</SubType>
+      <Link>Shared Data\_e_feed_types.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Shared Data\_e_motion_state.h">
+      <SubType>compile</SubType>
+      <Link>Shared Data\_e_motion_state.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Shared Data\_e_motion_sub_state.h">
+      <SubType>compile</SubType>
+      <Link>Shared Data\_e_motion_sub_state.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Shared Data\_e_ramp_type.h">
+      <SubType>compile</SubType>
+      <Link>Shared Data\_e_ramp_type.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Shared Data\_e_record_types.h">
+      <SubType>compile</SubType>
+      <Link>Shared Data\_e_record_types.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Shared Data\_e_unit_types.h">
+      <SubType>compile</SubType>
+      <Link>Shared Data\_e_unit_types.h</Link>
+    </Compile>
     <Compile Include="..\..\..\Shared Data\_peripheral_overide_enums.h">
       <SubType>compile</SubType>
       <Link>Shared Data\_peripheral_overide_enums.h</Link>
-    </Compile>
-    <Compile Include="..\..\..\Shared Data\_peripheral_panel_control_enums.h">
-      <SubType>compile</SubType>
-      <Link>Shared Data\_peripheral_panel_control_enums.h</Link>
-    </Compile>
-    <Compile Include="..\..\..\Shared Data\_system_response_enums.h">
-      <SubType>compile</SubType>
-      <Link>Shared Data\_system_response_enums.h</Link>
-    </Compile>
-    <Compile Include="..\..\..\Shared Data\_system_sub_state_enums.h">
-      <SubType>compile</SubType>
-      <Link>Shared Data\_system_sub_state_enums.h</Link>
-    </Compile>
-    <Compile Include="..\..\..\Shared Data\_sytem_state_enums.h">
-      <SubType>compile</SubType>
-      <Link>Shared Data\_sytem_state_enums.h</Link>
     </Compile>
     <Compile Include="..\..\..\Shared Data\_s_encoder_struct.h">
       <SubType>compile</SubType>
       <Link>Shared Data\_s_encoder_struct.h</Link>
     </Compile>
-    <Compile Include="..\..\..\Shared Data\_s_interp_config_struct.h">
+    <Compile Include="..\..\..\Shared Data\_s_framework_error.h">
       <SubType>compile</SubType>
-      <Link>Shared Data\_s_interp_config_struct.h</Link>
+      <Link>Shared Data\_s_framework_error.h</Link>
     </Compile>
     <Compile Include="..\..\..\Shared Data\_s_jog_data_struct.h">
       <SubType>compile</SubType>
       <Link>Shared Data\_s_jog_data_struct.h</Link>
     </Compile>
-    <Compile Include="..\..\..\Shared Data\_s_motion_control_struct.h">
+    <Compile Include="..\..\..\Shared Data\_s_motion_data_block.h">
       <SubType>compile</SubType>
-      <Link>Shared Data\_s_motion_control_struct.h</Link>
+      <Link>Shared Data\_s_motion_data_block.h</Link>
     </Compile>
-    <Compile Include="..\..\..\Shared Data\_s_motion_hardware_struct.h">
+    <Compile Include="..\..\..\Shared Data\_s_ngc_line_record.h">
       <SubType>compile</SubType>
-      <Link>Shared Data\_s_motion_hardware_struct.h</Link>
+      <Link>Shared Data\_s_ngc_line_record.h</Link>
     </Compile>
     <Compile Include="..\..\..\Shared Data\_s_peripheral_panel_struct.h">
       <SubType>compile</SubType>
       <Link>Shared Data\_s_peripheral_panel_struct.h</Link>
     </Compile>
-    <Compile Include="..\..\..\Shared Data\_unit_type_enums.h">
+    <Compile Include="..\..\..\Shared Data\_s_status_record.h">
       <SubType>compile</SubType>
-      <Link>Shared Data\_unit_type_enums.h</Link>
+      <Link>Shared Data\_s_status_record.h</Link>
     </Compile>
     <Compile Include="..\..\..\_bit_flag_control.h">
       <SubType>compile</SubType>
@@ -643,6 +695,8 @@
     <Folder Include="Ngc_Rs274\MachineSpecific\Mill" />
     <Folder Include="PlatformSpecific" />
     <Folder Include="PlatformSpecific\disk_support" />
+    <Folder Include="Shared Data\Data" />
+    <Folder Include="Shared Data\Event" />
   </ItemGroup>
   <Import Project="$(AVRSTUDIO_EXE_PATH)\\Vs\\Compiler.targets" />
 </Project>

@@ -20,7 +20,7 @@
 
 
 #include "NGC_System.h"
-s_ngc_block NGC_RS274::System::system_block;
+//s_ngc_block NGC_RS274::System::system_block;
 
 NGC_RS274::System::s_system_position NGC_RS274::System::Position;
 NGC_RS274::System::s_ngc_system_events NGC_RS274::System::Events;

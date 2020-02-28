@@ -1,5 +1,5 @@
 /*
-*  c_events.h - NGC_RS274 controller.
+*  c_data_events.cpp - NGC_RS274 controller.
 *  A component of Talos
 *
 *  Copyright (c) 2016-2019 Jeff Dill
@@ -18,25 +18,18 @@
 *  along with Talos.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef __C_INTERPRETER_CONFIGURATION_STRUCT_H__
-#define __C_INTERPRETER_CONFIGURATION_STRUCT_H__
+#include "c_ngc_data_events.h"
+#include "../../Data/DataHandlers/c_ngc_data_handler.h"
+#include "../../../../Shared Data/Event/extern_events_types.h"
 
 
-#include "../../../NGC_RS274/_ngc_dialect_enum.h"
-#include "../../../_bit_flag_control.h"
 
-#define LEAST_INPUT_INCRIMET_MM 0.001
-#define LEAST_INPUT_INCRIMET_INCH 0.0001
-
-enum class e_config_bit_flags
+//Execute the events that have their flags set
+void Talos::Coordinator::Events::Ngc::process()
 {
-	DecimalPointInput = 0, //Fanuc parameter 3401 or 2400. 0 = least input, 1 = pocket calculator
-};
+	//See if there is an event set indicating we loaded text data into the ngc cache record.
+	if (extern_data_events.ready.event_manager.get((int)s_ready_data::e_event_type::NgcDataLine))
+		Talos::Coordinator::Data::Ngc::load_block_from_cache();
+		
+}
 
-struct s_interpreter_configuration
-{
-	s_bit_flag_controller<uint32_t> flags;
-	e_dialects dialect;
-
-};
-#endif //__C_EVENTS_H__

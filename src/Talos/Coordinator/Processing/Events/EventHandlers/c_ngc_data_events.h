@@ -19,29 +19,37 @@
 */
 
 
-#ifndef __C_COORDINATOR_DATA_EVENTS_H__
-#define __C_COORDINATOR_DATA_EVENTS_H__
+#ifndef __C_COORDINATOR_NGC_DATA_EVENTS_H__
+#define __C_COORDINATOR_NGC_DATA_EVENTS_H__
 
 #include <stdint.h>
-
-class c_data_events
+namespace Talos
 {
-	//variables
-	public:
-	protected:
-	private:
+	namespace Coordinator
+	{
+		namespace Events
+		{
+			class Ngc
+			{
+				//variables
+			public:
+			protected:
+			private:
 
 
-	//functions
-	public:
-		//c_data_events();
-		//~c_data_events();
-		//c_data_events(const c_data_events &c);
-		//c_data_events& operator=(const c_data_events &c);
-		
-		static void process();
+				//functions
+			public:
+				//c_data_events();
+				//~c_data_events();
+				//c_data_events(const c_data_events &c);
+				//c_data_events& operator=(const c_data_events &c);
 
-	protected:
-	private:
+				static void process();
+
+			protected:
+			private:
+			};
+		};
+	};
 }; //c_serial_events
 #endif //__C_DATA_EVENTS_H__

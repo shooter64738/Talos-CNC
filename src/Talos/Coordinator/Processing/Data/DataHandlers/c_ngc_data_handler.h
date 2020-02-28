@@ -24,35 +24,33 @@
 #include <stdint.h>
 #include ".../../../../../../NGC_RS274/_ngc_block_struct.h"
 #include "../../../../NGC_RS274/_ngc_errors_interpreter.h"
-#include "../../Events/extern_events_types.h"
+#include "../../../../Shared Data/Event/extern_events_types.h"
 #include "../../../../c_ring_template.h"
 #include "../../../../Shared Data/_e_record_types.h"
 
 typedef void(*ret_pointer)(c_ring_buffer <char> * buffer);
-
-class c_ngc_data_handler
+namespace Talos
 {
-	//variables
-public:
-	static void(*pntr_data_handler_release)(c_ring_buffer<char> * buffer);
-protected:
-private:
+	namespace Coordinator
+	{
+		namespace Data
+		{
+			class Ngc
+			{
+				//variables
+			public:
+			protected:
+			private:
 
 
-	//functions
-public:
-	static ret_pointer assign_handler(
-		c_ring_buffer <char> * buffer, s_outbound_data *event_object, s_outbound_data::e_event_type event_id, uint8_t size);
-	static ret_pointer assign_handler(
-		c_ring_buffer <char> * buffer, s_inbound_data * event_object, s_inbound_data::e_event_type event_id, e_record_types rec_type);
+				//functions
+			public:
+				static e_parsing_errors load_block_from_cache();
 
-	static void ngc_write_handler(c_ring_buffer <char> * buffer);
-	static void ngc_read_handler(c_ring_buffer <char> * buffer);
-	static e_parsing_errors ngc_load_block();
-	
-protected:
-private:
-	static void __release(c_ring_buffer <char> * buffer_source);
-	static void __assign_error_handler(c_ring_buffer <char> * buffer_source, uint16_t error_value);
+			protected:
+			private:
+			};
+		};
+	};
 }; //c_serial_events
 #endif //__C_DATA_EVENTS_H__

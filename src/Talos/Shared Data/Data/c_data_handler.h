@@ -19,8 +19,8 @@
 */
 
 
-#ifndef __C_MOTION_DATA_HANDLER_H__
-#define __C_MOTION_DATA_HANDLER_H__
+#ifndef __C_SHARED_DATA_HANDLER_H__
+#define __C_SHARED_DATA_HANDLER_H__
 #include <stdint.h>
 #include "../Event/extern_events_types.h"
 #include "../../c_ring_template.h"

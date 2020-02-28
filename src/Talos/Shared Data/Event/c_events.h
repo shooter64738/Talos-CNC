@@ -18,8 +18,8 @@
 *  along with Talos.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef __C_COORDINATOR_EVENTS_H__
-#define __C_COORDINATOR_EVENTS_H__
+#ifndef __C_SHARED_EVENTS_H__
+#define __C_SHARED_EVENTS_H__
 
 #include <stdint.h>
 #include "c_data_events.h"
@@ -28,10 +28,10 @@
 //#include "c_ancillary_event_handler.h"
 #include "../_s_framework_error.h"
 
-//namespace Talos
-//{
-//	namespace Coordinator
-//	{
+namespace Talos
+{
+	namespace Shared
+	{
 		class Events
 		{
 			//variables
@@ -62,7 +62,7 @@
 
 			static void handle_serial_events();
 
-		//};
-	//};
+		};
+	};
 };
 #endif //__C_EVENTS_H__

@@ -19,16 +19,14 @@
 */
 
 #include "c_events.h"
-//#include "../Main/Main_Process.h"
 #define __EXTERN_EVENTS__
 #include "extern_events_types.h"
-//#include "../../../NGC_RS274/NGC_System.h"
 
-c_data_events Events::data_event_handler;
+c_data_events Talos::Shared::Events::data_event_handler;
 //c_system_events Talos::Coordinator::Events::system_event_handler;
 //c_ancillary_event_handler Talos::Coordinator::Events::ancillary_event_handler;
 
-uint8_t Events::initialize()
+uint8_t Talos::Shared::Events::initialize()
 {
 	
 	extern_system_events.event_manager.set((int)s_system_events::e_event_type::SystemAllOk);
@@ -38,7 +36,7 @@ uint8_t Events::initialize()
 //This is the main entry point that checks to see if an event needs to
 //be set. Once an event is set, it will be executed immediately after,
 //or in some cases on the next loop iteration
-void Events::process()
+void Talos::Shared::Events::process()
 {
 	//First check to make sure the system is healthy
 	if (!extern_system_events.event_manager.get((int)s_system_events::e_event_type::SystemAllOk))

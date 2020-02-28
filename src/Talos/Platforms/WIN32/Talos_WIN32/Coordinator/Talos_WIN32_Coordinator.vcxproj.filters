@@ -317,6 +317,12 @@
     <ClInclude Include="..\..\..\..\Shared Data\Data\cache_data.h">
       <Filter>Shared Data\Data</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\..\Coordinator\Processing\Data\DataHandlers\c_ngc_data_handler.h">
+      <Filter>Coordinator\Processing\Data\DataHandlers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Coordinator\Processing\Events\EventHandlers\c_ngc_data_events.h">
+      <Filter>Coordinator\Processing\Events\EventHandlers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\..\Coordinator\coordinator_main.cpp">
@@ -435,6 +441,12 @@
     </ClCompile>
     <ClCompile Include="..\..\..\..\Shared Data\Data\cache_data.cpp">
       <Filter>Shared Data\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Coordinator\Processing\Data\DataHandlers\c_ngc_data_handler.cpp">
+      <Filter>Coordinator\Processing\Data\DataHandlers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Coordinator\Processing\Events\EventHandlers\c_ngc_data_events.cpp">
+      <Filter>Coordinator\Processing\Events\EventHandlers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

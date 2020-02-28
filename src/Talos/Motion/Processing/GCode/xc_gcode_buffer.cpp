@@ -34,7 +34,7 @@ uint8_t Talos::Motion::NgcBuffer::initialize()
 {
 
 	//clear the block of all values
-	memset(&NGC_RS274::System::system_block, 0, sizeof(s_ngc_block));
+	//memset(&NGC_RS274::System::system_block, 0, sizeof(s_ngc_block));
 
 	////default the motion state to canceled
 	//first_block->g_group[NGC_RS274::Groups::G::Motion] = NGC_RS274::G_codes::MOTION_CANCELED;

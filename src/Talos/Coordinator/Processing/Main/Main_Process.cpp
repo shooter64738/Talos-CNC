@@ -19,6 +19,8 @@ then move to their respective modules.
 #include "../../../NGC_RS274/NGC_Coordinates.h"
 #include "../../../NGC_RS274/NGC_System.h"
 #include "../../../Configuration/c_configuration.h"
+#include "../Events/EventHandlers/c_ngc_data_events.h"
+#include "../../../Shared Data/Data/cache_data.h"
 
 #ifdef MSVC
 static char test_line[256] = "g01y5x5g91g20\r\n";
@@ -35,28 +37,28 @@ void Talos::Coordinator::Main_Process::initialize()
 	Talos::Coordinator::Main_Process::host_serial = c_Serial(0, 250000); //<--Connect to host
 	Talos::Coordinator::Main_Process::host_serial.print_string("Coordinator initializing\r\n");
 
-	__critical_initialization("Core", Hardware_Abstraction_Layer::Core::initialize,STARTUP_CLASS_CRITICAL);//<--core start up
-	__critical_initialization("Interrupts", Hardware_Abstraction_Layer::Core::start_interrupts,STARTUP_CLASS_CRITICAL);//<--start interrupts on hardware
+	__critical_initialization("Core", Hardware_Abstraction_Layer::Core::initialize, STARTUP_CLASS_CRITICAL);//<--core start up
+	__critical_initialization("Interrupts", Hardware_Abstraction_Layer::Core::start_interrupts, STARTUP_CLASS_CRITICAL);//<--start interrupts on hardware
 	__critical_initialization("Disk", Hardware_Abstraction_Layer::Disk::initialize, STARTUP_CLASS_CRITICAL);//<--drive/eprom storage
 	__critical_initialization("\tSettings", Hardware_Abstraction_Layer::Disk::load_configuration, STARTUP_CLASS_WARNING);//<--drive/eprom storage
 	__critical_initialization("\tConfiguration", Talos::Confguration::initialize, STARTUP_CLASS_CRITICAL);//<--g code buffer
-	__critical_initialization("Events", Events::initialize,STARTUP_CLASS_CRITICAL);//<--init events
+	__critical_initialization("Events", Talos::Shared::Events::initialize, STARTUP_CLASS_CRITICAL);//<--init events
 	//__critical_initialization("Ngc Buffer", Talos::Motion::NgcBuffer::initialize,STARTUP_CLASS_CRITICAL);//<--g code buffer
 	//__critical_initialization("Ngc Startup", c_ngc_data_handler::initialize, STARTUP_CLASS_CRITICAL);//<--g code buffer
 	//__critical_initialization("Ngc Line", NGC_RS274::LineProcessor::initialize,STARTUP_CLASS_CRITICAL);//<--g code interpreter
-	__critical_initialization("Motion Control Comms", NULL,STARTUP_CLASS_WARNING);//<--motion controller card
-	__critical_initialization("Spindle Control Comms", NULL,STARTUP_CLASS_WARNING);//<--spindle controller card
+	__critical_initialization("Motion Control Comms", NULL, STARTUP_CLASS_WARNING);//<--motion controller card
+	__critical_initialization("Spindle Control Comms", NULL, STARTUP_CLASS_WARNING);//<--spindle controller card
 
 	//Load the initialize block from settings. These values are the 'initial' values of the gcode blocks
 	//that are processed. 
-	Hardware_Abstraction_Layer::Disk::load_initialize_block(&NGC_RS274::System::system_block);
+	Hardware_Abstraction_Layer::Disk::load_initialize_block(&Talos::Shared::c_cache_data::ngc_block_record);
 	//Assign the read,write function pointers. These assignments must take place outside the 
 	//block buffer control. The block buffer control system must not know anything about the HAL it
 	//is servicing.
 	Talos::Motion::NgcBuffer::pntr_buffer_block_write = Hardware_Abstraction_Layer::Disk::put_block;
 	Talos::Motion::NgcBuffer::pntr_buffer_block_read = Hardware_Abstraction_Layer::Disk::get_block;
 	//Write the start up block to cache
-	Talos::Motion::NgcBuffer::pntr_buffer_block_write(&NGC_RS274::System::system_block);
+	Talos::Motion::NgcBuffer::pntr_buffer_block_write(&Talos::Shared::c_cache_data::ngc_block_record);
 
 	//setup the tool table controller
 	NGC_RS274::Tool_Control::Table::pntr_tool_table_read = Hardware_Abstraction_Layer::Disk::get_tool;
@@ -67,7 +69,7 @@ void Talos::Coordinator::Main_Process::initialize()
 	NGC_RS274::Coordinate_Control::WCS::pntr_wcs_write = Hardware_Abstraction_Layer::Disk::put_wcs;
 
 
-	#ifdef MSVC
+#ifdef MSVC
 	//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "g68x5.y5.R28.\r\ng0x6\r\n f4g1y1.\r\nx5\r\n");
 	//cutter comp line 1 left comp test
 	//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "p.25 g1 f1 g41 x1 y0\r\n g2 x1.5y0.5 i1.5 j0\r\n g1 x1.5y1.5\r\ng1 x3.5 y1.5\r\n");
@@ -86,7 +88,7 @@ void Talos::Coordinator::Main_Process::initialize()
 	//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "g0y#525r#<test>[1.0-[5.0+10]]\r\ng1x3\r\n");
 	//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "g99 y [ #777 - [#<test> + #<_glob> +-sqrt[2]] ] \r\n\r\n\r\n\r\n");// /n/ng1x3\r\n");
 	//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "#<tool>=10\r\n");
-	#endif
+#endif
 
 
 }
@@ -97,7 +99,7 @@ void Talos::Coordinator::Main_Process::__critical_initialization(const char * me
 	Talos::Coordinator::Main_Process::host_serial.print_string("...");
 	if (initialization_pointer)
 	{
-		__initialization_response(initialization_pointer(),critical);
+		__initialization_response(initialization_pointer(), critical);
 	}
 	else
 	{
@@ -114,7 +116,7 @@ void Talos::Coordinator::Main_Process::__initialization_response(uint8_t respons
 		Talos::Coordinator::Main_Process::host_serial.print_string("FAILED! Err Cd:");
 		Talos::Coordinator::Main_Process::host_serial.print_int32(response_code);
 		Talos::Coordinator::Main_Process::host_serial.print_string("\r\n");
-		
+
 		if (critical)
 		{
 			Talos::Coordinator::Main_Process::host_serial.print_string("** System halted **");
@@ -140,17 +142,29 @@ void Talos::Coordinator::Main_Process::run()
 		Hardware_Abstraction_Layer::Serial::add_to_buffer(0, byte);
 
 
-//		Hardware_Abstraction_Layer::Serial::_usart0_read_buffer._head +=
-//			Hardware_Abstraction_Layer::Disk::read_file("c:\\jeff\\1001.txt", Hardware_Abstraction_Layer::Serial::_usart0_read_buffer._storage_pointer);
-//
-//		Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "");
+		//		Hardware_Abstraction_Layer::Serial::_usart0_read_buffer._head +=
+		//			Hardware_Abstraction_Layer::Disk::read_file("c:\\jeff\\1001.txt", Hardware_Abstraction_Layer::Serial::_usart0_read_buffer._storage_pointer);
+		//
+		//		Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "");
 #endif // MSVC
 //
-		
 
-		//This firmware is mostly event driven. This is the main entry point for checking
-		//which events have been set to execute, and then executing them.
-		Events::process();
+
+		//0: Handle system events
+		//Talos::Coordinator::Events::system_event_handler.process();
+		//if there are any system critical events check them here and do not process further
+
+		//1: Handle hardware events
+		//Talos::Coordinator::Events::hardware_event_handler.process();
+
+		//2: Handle data events
+		Talos::Shared::Events::data_event_handler.process();
+
+		//3: Handle ancillary events
+		//Talos::Coordinator::Events::ancillary_event_handler.process();
+
+		//4:: Handle ngc processing events
+		Talos::Coordinator::Events::Ngc::process();
 	}
 }
 

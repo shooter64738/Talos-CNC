@@ -40,7 +40,6 @@ namespace NGC_RS274
 	{
 
 	public:
-		static char line_buffer[];
 		static int last_read_position;
 		static uint8_t initialize();
 		static e_parsing_errors start(s_ngc_block * block);

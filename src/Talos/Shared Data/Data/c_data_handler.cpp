@@ -18,7 +18,7 @@
 *  along with Talos.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "c_data_handler.h"
-
+#include <ctype.h>
 
 static uint8_t write_count = 0;
 static uint8_t read_count = 0;
@@ -81,7 +81,7 @@ ret_pointer c_data_handler::assign_handler(
 			return NULL;
 		}
 
-		memset(c_cache_data::ngc_record.pntr_record, 0, 256);
+		memset(Talos::Shared::c_cache_data::ngc_line_record.pntr_record, 0, 256);
 		return c_data_handler::txt_read_handler;
 		break;
 	default:
@@ -108,21 +108,21 @@ void c_data_handler::txt_read_handler(c_ring_buffer <char> * buffer)
 	while (buffer->has_data())
 	{
 		//wait for the CR to come in so we know there is a complete line
-		*c_cache_data::ngc_record.pntr_record = buffer->get();
-		if (*c_cache_data::ngc_record.pntr_record == 0)
+		*Talos::Shared::c_cache_data::ngc_line_record.pntr_record = toupper(buffer->get());
+		if (*Talos::Shared::c_cache_data::ngc_line_record.pntr_record == 0)
 		{
 			__raise_error(buffer, e_error_behavior::Critical, 0, e_error_group::DataHandler, e_error_process::Read
 				, tracked_read_type, e_error_source::Serial, e_error_code::UnExpectedDataTypeForRecord);
 			break;
 		}
 
-		has_eol = (*c_cache_data::ngc_record.pntr_record == CR || *c_cache_data::ngc_record.pntr_record == LF);
+		has_eol = (*Talos::Shared::c_cache_data::ngc_line_record.pntr_record == CR || *Talos::Shared::c_cache_data::ngc_line_record.pntr_record == LF);
 		//How to handle just CR or just LF or CR+LF in a data string...... 
 		if (has_eol)
 		{
 			//we dont need the CR or LF at the end of the line so we can set it to zero
-			*c_cache_data::ngc_record.pntr_record = 0;
-			c_cache_data::ngc_record.size = read_count;
+			*Talos::Shared::c_cache_data::ngc_line_record.pntr_record = 0;
+			Talos::Shared::c_cache_data::ngc_line_record.size = read_count;
 			extern_data_events.ready.event_manager.set((int)s_ready_data::e_event_type::NgcDataLine);
 			//because we never know if the ISR fired and got all of the data (which may contains 1 or mroe records)
 			//we are going to check to see if the buffer still has data. If it does, leave the event set. If it does
@@ -135,7 +135,7 @@ void c_data_handler::txt_read_handler(c_ring_buffer <char> * buffer)
 			c_data_handler::__release(buffer);
 			break;
 		}
-		c_cache_data::ngc_record.pntr_record++;
+		Talos::Shared::c_cache_data::ngc_line_record.pntr_record++;
 		read_count++;
 	}
 
@@ -167,11 +167,11 @@ void c_data_handler::bin_read_handler(c_ring_buffer <char> * buffer)
 		case e_record_types::Peripheral_Control_Setting:
 			break;
 		case e_record_types::Status:
-			memcpy(&c_cache_data::status_record, buffer->_storage_pointer, c_cache_data::status_record._size);
+			memcpy(&Talos::Shared::c_cache_data::status_record, buffer->_storage_pointer, Talos::Shared::c_cache_data::status_record._size);
 			extern_data_events.ready.event_manager.set((int)s_ready_data::e_event_type::Status);
 			break;;
 		case e_record_types::MotionDataBlock:
-			memcpy(&c_cache_data::motion_block_record, buffer->_storage_pointer, c_cache_data::motion_block_record._size);
+			memcpy(&Talos::Shared::c_cache_data::motion_block_record, buffer->_storage_pointer, Talos::Shared::c_cache_data::motion_block_record._size);
 			extern_data_events.ready.event_manager.set((int)s_ready_data::e_event_type::MotionDataBlock);
 			break;
 		

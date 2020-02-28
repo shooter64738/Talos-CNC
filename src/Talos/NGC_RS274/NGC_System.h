@@ -81,7 +81,7 @@ namespace NGC_RS274
 
 	public:
 
-		static s_ngc_block system_block;
+		//static s_ngc_block system_block;
 
 		struct s_error_events
 		{

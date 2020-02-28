@@ -11,10 +11,14 @@
 #include <avr/interrupt.h>
 #include <avr/io.h>
 #include <stddef.h>
-#include "../../../../Coordinator/Processing/Events/extern_events_types.h"
+#include "../../../../Shared Data/Event/extern_events_types.h"
 
-c_ring_buffer<char> Hardware_Abstraction_Layer::Serial::_usart0_buffer;
-static char _usart0_data[256];
+c_ring_buffer<char> Hardware_Abstraction_Layer::Serial::_usart0_read_buffer;
+static char _usart0_read_data[256];
+c_ring_buffer<char> Hardware_Abstraction_Layer::Serial::_usart1_read_buffer;
+static char _usart1_read_data[256];
+c_ring_buffer<char> Hardware_Abstraction_Layer::Serial::_usart1_write_buffer;
+static char _usart1_write_data[256];
 
 void Hardware_Abstraction_Layer::Serial::initialize(uint8_t Port, uint32_t BaudRate)
 {
@@ -24,7 +28,9 @@ void Hardware_Abstraction_Layer::Serial::initialize(uint8_t Port, uint32_t BaudR
 	{
 		case 0:
 		{
-			_usart0_buffer.initialize(_usart0_data,256);
+			_usart0_read_buffer.initialize(_usart0_read_data,256);
+			extern_data_events.serial.inbound.device = &Hardware_Abstraction_Layer::Serial::_usart0_read_buffer;
+			_usart1_write_buffer.pntr_device_write = Hardware_Abstraction_Layer::Serial::send;
 			
 			if (BaudRate < 57600)
 			{
@@ -47,6 +53,8 @@ void Hardware_Abstraction_Layer::Serial::initialize(uint8_t Port, uint32_t BaudR
 
 		case 1:
 		{
+		_usart1_read_buffer.initialize(_usart1_read_data,256);
+		extern_data_events.serial.inbound.device = &Hardware_Abstraction_Layer::Serial::_usart1_read_buffer;
 			if (BaudRate < 57600)
 			{
 				UBRR_value = ((F_CPU / (8L * BaudRate)) - 1) / 2;
@@ -114,7 +122,7 @@ void Hardware_Abstraction_Layer::Serial::initialize(uint8_t Port, uint32_t BaudR
 	}
 }
 
-void Hardware_Abstraction_Layer::Serial::send(uint8_t Port, char byte)
+uint8_t Hardware_Abstraction_Layer::Serial::send(uint8_t Port, char byte)
 {
 	switch (Port)
 	{
@@ -166,7 +174,7 @@ void Hardware_Abstraction_Layer::Serial::enable_tx_isr()
 ISR(USART_RX_vect)
 {
 	char Byte = UDR0;
-	Hardware_Abstraction_Layer::Serial::_usart0_buffer.put(Byte);
+	Hardware_Abstraction_Layer::Serial::_usart0_read_buffer.put(Byte);
 }
 #endif
 
@@ -174,9 +182,9 @@ ISR(USART_RX_vect)
 ISR(USART0_RX_vect)
 {
 	char Byte = UDR0;
-	Hardware_Abstraction_Layer::Serial::_usart0_buffer.put(Byte);
+	Hardware_Abstraction_Layer::Serial::_usart0_read_buffer.put(Byte);
 		
-	extern_data_events.event_manager.set((int)s_data_events::e_event_type::Usart0DataArrival);
+	extern_data_events.serial.inbound.event_manager.set((int)s_inbound_data::e_event_type::Usart0DataArrival);
 }
 #endif
 

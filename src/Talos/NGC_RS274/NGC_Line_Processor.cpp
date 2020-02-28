@@ -28,12 +28,10 @@
 #include "NGC_Block_Assignor.h"
 #include "../Configuration/c_configuration.h"
 #include "Dialect/_ngc_dialect_validate.h"
+#include "../Shared Data/Data/cache_data.h"
 
 int NGC_RS274::LineProcessor::last_read_position = 0;
 static int max_numeric_parameter_count = 0;
-char NGC_RS274::LineProcessor::line_buffer[256];
-
-char * error_pointer = NGC_RS274::LineProcessor::line_buffer;
 
 uint8_t NGC_RS274::LineProcessor::initialize()
 {
@@ -45,42 +43,16 @@ e_parsing_errors NGC_RS274::LineProcessor::start(s_ngc_block * block)
 {
 	e_parsing_errors ret_code = e_parsing_errors::OK;
 
-	//set line data to all upper case
-	if (!_set_buffer_to_upper(line_buffer))
-	{/*return bad data in the buffer*/
-		return e_parsing_errors::BadDataInBuffer;
-	}
-
-	ret_code = _process_buffer(line_buffer, block);
+	ret_code = _process_buffer(Talos::Shared::c_cache_data::ngc_line_record.pntr_record, block);
 
 	return ret_code;
 
 }
 
-uint8_t NGC_RS274::LineProcessor::_set_buffer_to_upper(char * buffer)
-{
-	int count = 0;
-
-	for (int i = 0; buffer[i]; i++)
-	{
-		//remove all spaces, tabs, and line feeds
-		if (buffer[i] != ' ' && buffer[i] != '\t' && buffer[i] != '\n')
-		{
-			//clean up any multiple carriage return sequences
-			if (buffer[i] == '\r')
-				while (buffer[i + 1] == '\r') { i++; }
-
-			buffer[count++] = toupper(buffer[i]);
-		}
-	}
-	buffer[count] = '\0';
-	return 1;
-}
-
 e_parsing_errors NGC_RS274::LineProcessor::_process_buffer(char * buffer, s_ngc_block * block)
 {
 	int read_pos, buff_len = 0;
-
+	
 	buff_len = strlen(buffer);
 	read_pos = 0;
 
