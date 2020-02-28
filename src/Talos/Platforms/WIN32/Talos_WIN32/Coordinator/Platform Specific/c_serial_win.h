@@ -9,7 +9,7 @@
 #define __C_SERIAL_WIN_H__
 
 #include "../../../../../c_ring_template.h"
-
+#include "c_core_win.h"
 namespace Hardware_Abstraction_Layer
 {
 	class Serial
@@ -35,6 +35,8 @@ namespace Hardware_Abstraction_Layer
 		static void enable_tx_isr();
 		protected:
 		private:
+			static void __timer1_overflow_thread();
+			static std::thread __timer1_overflow;
 	}; 
 };
 #endif //__C_SERIAL_WIN_H__

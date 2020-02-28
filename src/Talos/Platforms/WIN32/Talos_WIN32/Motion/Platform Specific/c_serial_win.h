@@ -33,6 +33,8 @@ namespace Hardware_Abstraction_Layer
 		static void enable_tx_isr();
 	protected:
 	private:
+		static void __timer1_overflow_thread();
+		static std::thread __timer1_overflow;
 	};
 };
 #endif //__C_SERIAL_WIN_H__

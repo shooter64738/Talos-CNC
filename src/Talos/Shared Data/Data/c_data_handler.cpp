@@ -38,6 +38,7 @@ ret_pointer c_data_handler::assign_handler(
 	tracked_read_event = event_id;
 	tracked_read_object = event_object;
 	tracked_read_type = rec_type;
+	extern_data_events.serial.inbound.set_time_out(1000);
 
 	switch (tracked_read_type)
 	{
@@ -66,6 +67,7 @@ ret_pointer c_data_handler::assign_handler(
 			return NULL;
 		}
 		read_count = s_motion_data_block::_size;
+
 		return c_data_handler::bin_read_handler;
 		break;
 	case e_record_types::NgcBlockRecord:
@@ -81,7 +83,8 @@ ret_pointer c_data_handler::assign_handler(
 			return NULL;
 		}
 
-		memset(Talos::Shared::c_cache_data::ngc_line_record.pntr_record, 0, 256);
+		memset(Talos::Shared::c_cache_data::ngc_line_record.record, 0, 256);
+		
 		return c_data_handler::txt_read_handler;
 		break;
 	default:
@@ -98,6 +101,7 @@ ret_pointer c_data_handler::assign_handler(
 	tracked_write_event = event_id;
 	tracked_write_object = event_object;
 	write_count = size;
+	extern_data_events.serial.inbound.set_time_out(1000);
 	return c_data_handler::write_handler;
 }
 
@@ -138,7 +142,11 @@ void c_data_handler::txt_read_handler(c_ring_buffer <char> * buffer)
 		Talos::Shared::c_cache_data::ngc_line_record.pntr_record++;
 		read_count++;
 	}
-
+	if (!extern_data_events.serial.inbound.ms_time_out)
+	{
+		__raise_error(buffer, e_error_behavior::Critical, 0, e_error_group::DataHandler, e_error_process::Read
+			, tracked_read_type, e_error_source::Serial, e_error_code::TimeoutOccuredWaitingForEndOfRecord);
+	}
 }
 
 void c_data_handler::bin_read_handler(c_ring_buffer <char> * buffer)
@@ -182,6 +190,12 @@ void c_data_handler::bin_read_handler(c_ring_buffer <char> * buffer)
 		tracked_read_object = NULL;
 
 		c_data_handler::__release(buffer);
+	}
+
+	if (!extern_data_events.serial.inbound.ms_time_out)
+	{
+		__raise_error(buffer, e_error_behavior::Critical, 0, e_error_group::DataHandler, e_error_process::Read
+			, tracked_read_type, e_error_source::Serial, e_error_code::TimeoutOccuredWaitingForEndOfRecord);
 	}
 }
 

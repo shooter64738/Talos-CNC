@@ -138,8 +138,12 @@ void Talos::Coordinator::Main_Process::run()
 
 #ifdef MSVC
 		//simulate serial data coming in 1 byte at a time. This is a text record test
-		char byte = test_line[test_byte++];
-		Hardware_Abstraction_Layer::Serial::add_to_buffer(0, byte);
+		char byte = 0;
+		if (test_byte < 5)
+		{
+			byte = test_line[test_byte++];
+			Hardware_Abstraction_Layer::Serial::add_to_buffer(0, byte);
+		}
 
 
 		//		Hardware_Abstraction_Layer::Serial::_usart0_read_buffer._head +=

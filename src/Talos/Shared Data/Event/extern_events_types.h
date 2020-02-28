@@ -34,12 +34,31 @@ struct s_ngc_error_events
 struct s_inbound_data
 {
 	c_ring_buffer<char> * device;
+	uint16_t ms_time_out = 0;
+	void set_time_out(uint16_t millisecond_time_out)
+	{
+		ms_time_out = millisecond_time_out;
+		event_manager.clear((int)e_event_type::TimeOutError);
+	};
+
+	bool check_time_out()
+	{
+		if (!ms_time_out)
+		{
+			event_manager.set((int)e_event_type::TimeOutError);
+			return true;
+		}
+		else
+			ms_time_out--;
+	};
+
 	enum class e_event_type : uint8_t
 	{
 		MotionDataBlock = 0,
 		StatusUpdate = 1,
 		DiskDataArrival = 2,
-		Usart0DataArrival = 3
+		Usart0DataArrival = 3,
+		TimeOutError = 31,
 	};
 	s_bit_flag_controller<uint32_t> event_manager;
 };

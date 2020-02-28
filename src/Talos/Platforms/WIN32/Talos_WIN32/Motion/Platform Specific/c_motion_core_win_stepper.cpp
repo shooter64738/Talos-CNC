@@ -8,12 +8,7 @@
 //#include <avr/io.h>
 //#include <avr/interrupt.h>
 #include "c_motion_core_win_stepper.h"
-//#include "../../../helpers.h"
-//#include "../../../GRBL/c_settings.h"
-//#include "../../../MotionDriver/c_motion_core.h"
-//#include "../../../GRBL/c_stepper.h"
 #include "c_core_win.h"
-//#include "../../../MotionDriver/c_interpollation_hardware.h"
 
 
 uint8_t Hardware_Abstraction_Layer::MotionCore::Stepper::step_port_invert_mask;

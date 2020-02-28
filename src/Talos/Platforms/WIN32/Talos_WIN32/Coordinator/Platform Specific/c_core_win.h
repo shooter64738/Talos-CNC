@@ -22,6 +22,7 @@
 #ifndef __C_CORE_WIN_H__
 #define __C_CORE_WIN_H__
 #include <stdint.h>
+#include <thread>
 
 #define Hardware_Abstraction_Layer_Core_pgm_read_byte_near(x) ((int)x)
 #define Hardware_Abstraction_Layer_Core_PSTR(x) ((const char*)x) //PSTR

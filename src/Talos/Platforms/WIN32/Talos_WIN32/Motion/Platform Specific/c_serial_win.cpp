@@ -18,9 +18,12 @@ static char _usart1_read_data[256];
 c_ring_buffer<char> Hardware_Abstraction_Layer::Serial::_usart1_write_buffer;
 static char _usart1_write_data[256];
 
+std::thread Hardware_Abstraction_Layer::Serial::__timer1_overflow(Hardware_Abstraction_Layer::Serial::__timer1_overflow_thread);
 
 void Hardware_Abstraction_Layer::Serial::initialize(uint8_t Port, uint32_t BaudRate)
 {
+	Hardware_Abstraction_Layer::Serial::__timer1_overflow.detach();
+
 	_usart0_read_buffer.initialize(_usart0_read_data, 256);
 	_usart1_write_buffer.initialize(_usart1_write_data, 256);
 	_usart1_write_buffer.pntr_device_write = Hardware_Abstraction_Layer::Serial::send;
@@ -47,3 +50,8 @@ void Hardware_Abstraction_Layer::Serial::add_to_buffer(uint8_t port, const char 
 	rxBuffer[port].EOL++;*/
 }
 
+void Hardware_Abstraction_Layer::Serial::__timer1_overflow_thread()
+{
+	std::this_thread::sleep_for(std::chrono::milliseconds(1));
+	extern_data_events.serial.inbound.check_time_out();
+}
