@@ -14,8 +14,17 @@
 #define STARTUP_CLASS_CRITICAL 1
 #define STARTUP_CLASS_OPTIONAL 2
 
-#ifndef HARDWARE_DEF_H_
-#define HARDWARE_DEF_H_
+#ifndef MOTION_HARDWARE_DEF_H_
+#define MOTION_HARDWARE_DEF_H_
+
+#ifdef __AVR_ATmega2560__
+#define F_CPU 16000000UL
+#include "../Platforms/AVR_2560/Talos_AVR2560_Motion/PlatformSpecific/c_serial_avr_2560.h"
+#include "../Platforms/AVR_2560/Talos_AVR2560_Motion/PlatformSpecific/c_core_avr_2560.h"
+#include "../Platforms/AVR_2560/Talos_AVR2560_Motion/PlatformSpecific/c_spi_avr_2560.h"
+#include "../Platforms/AVR_2560/Talos_AVR2560_Motion/PlatformSpecific/c_disk_avr_2560.h"
+#include "../Platforms/AVR_2560/Talos_AVR2560_Motion/PlatformSpecific/c_motion_core_avr_2560_stepper.h"
+#endif
 
 #ifdef __SAM3X8E__
 #define F_CPU 84000000UL
