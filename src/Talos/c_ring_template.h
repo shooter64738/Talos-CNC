@@ -240,11 +240,11 @@ public:
 		return 1;
 	}
 
-	uint8_t(*pntr_write)(uint8_t port,char byte);
-	uint8_t(*pntr_read)(uint8_t port, char byte);
+	uint8_t(*pntr_device_write)(uint8_t port,char byte);
+	uint8_t(*pntr_device_read)(uint8_t port, char byte);
 
-	//uint8_t(*pntr_write)(uint8_t port, char byte);
-	//uint8_t(*pntr_read)(uint8_t port, char byte);
+	//uint8_t(*pntr_device_write)(uint8_t port, char byte);
+	//uint8_t(*pntr_device_read)(uint8_t port, char byte);
 
 public:
 

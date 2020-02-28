@@ -11,15 +11,14 @@ then move to their respective modules.
 
 
 #include "Main_Process.h"
-#include "../Events/c_events.h"
-#include "../Events/extern_events_types.h"
+#include "../../../Shared Data/Event/c_events.h"
+#include "../../../Shared Data/Event/extern_events_types.h"
 #include "../../../Motion/Processing/GCode/xc_gcode_buffer.h"
 #include "../../../NGC_RS274/NGC_Line_Processor.h"
 #include "../../../NGC_RS274/NGC_Tool.h"
 #include "../../../NGC_RS274/NGC_Coordinates.h"
 #include "../../../NGC_RS274/NGC_System.h"
 #include "../../../Configuration/c_configuration.h"
-#include "../Data/DataHandlers/c_ngc_data_handler.h";
 
 #ifdef MSVC
 static char test_line[256] = "g01y5x5g91g20\r\n";
@@ -30,6 +29,9 @@ c_Serial Talos::Coordinator::Main_Process::host_serial;
 
 void Talos::Coordinator::Main_Process::initialize()
 {
+	//setup the error handler function pointer
+	extern_pntr_error_handler = Talos::Coordinator::Main_Process::error_handler;
+
 	Talos::Coordinator::Main_Process::host_serial = c_Serial(0, 250000); //<--Connect to host
 	Talos::Coordinator::Main_Process::host_serial.print_string("Coordinator initializing\r\n");
 
@@ -38,7 +40,7 @@ void Talos::Coordinator::Main_Process::initialize()
 	__critical_initialization("Disk", Hardware_Abstraction_Layer::Disk::initialize, STARTUP_CLASS_CRITICAL);//<--drive/eprom storage
 	__critical_initialization("\tSettings", Hardware_Abstraction_Layer::Disk::load_configuration, STARTUP_CLASS_WARNING);//<--drive/eprom storage
 	__critical_initialization("\tConfiguration", Talos::Confguration::initialize, STARTUP_CLASS_CRITICAL);//<--g code buffer
-	__critical_initialization("Events", Talos::Coordinator::Events::initialize,STARTUP_CLASS_CRITICAL);//<--init events
+	__critical_initialization("Events", Events::initialize,STARTUP_CLASS_CRITICAL);//<--init events
 	//__critical_initialization("Ngc Buffer", Talos::Motion::NgcBuffer::initialize,STARTUP_CLASS_CRITICAL);//<--g code buffer
 	//__critical_initialization("Ngc Startup", c_ngc_data_handler::initialize, STARTUP_CLASS_CRITICAL);//<--g code buffer
 	//__critical_initialization("Ngc Line", NGC_RS274::LineProcessor::initialize,STARTUP_CLASS_CRITICAL);//<--g code interpreter
@@ -148,6 +150,28 @@ void Talos::Coordinator::Main_Process::run()
 
 		//This firmware is mostly event driven. This is the main entry point for checking
 		//which events have been set to execute, and then executing them.
-		Talos::Coordinator::Events::process();
+		Events::process();
 	}
+}
+
+void Talos::Coordinator::Main_Process::error_handler(c_ring_buffer<char> * released_buffer, s_framework_error error)
+{
+	Main_Process::host_serial.print_string("ERROR:");
+
+	Main_Process::host_serial.print_string("\r\n\tsource:");
+	Main_Process::host_serial.print_int32((int)error.source);
+	Main_Process::host_serial.print_string("\r\n\tbehavior:");
+	Main_Process::host_serial.print_int32((int)error.behavior);
+	Main_Process::host_serial.print_string("\r\n\tcode:");
+	Main_Process::host_serial.print_int32((int)error.code);
+	Main_Process::host_serial.print_string("\r\n\tdata_size:");
+	Main_Process::host_serial.print_int32((int)error.data_size);
+	Main_Process::host_serial.print_string("\r\n\tgroup:");
+	Main_Process::host_serial.print_int32((int)error.group);
+	Main_Process::host_serial.print_string("\r\n\tprocess:");
+	Main_Process::host_serial.print_int32((int)error.process);
+	Main_Process::host_serial.print_string("\r\n\trecord_type:");
+	Main_Process::host_serial.print_int32((int)error.record_type);
+	Main_Process::host_serial.print_string("\r\n");
+
 }

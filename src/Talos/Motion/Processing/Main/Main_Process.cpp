@@ -7,14 +7,15 @@
 
 
 #include "Main_Process.h"
-#include "../Events/c_events.h"
-#include "../Events/extern_events_types.h"
+
 c_Serial Talos::Motion::Main_Process::host_serial;
 
 
 void Talos::Motion::Main_Process::initialize()
 {
-
+	//setup the error handler function pointer
+	extern_pntr_error_handler = Talos::Motion::Main_Process::error_handler;
+	
 	Hardware_Abstraction_Layer::Core::initialize();
 	//__initialization_start("Core", Hardware_Abstraction_Layer::Core::initialize,1);//<--core start up
 	Talos::Motion::Main_Process::host_serial = c_Serial(0, 250000); //<--Connect to host
@@ -22,7 +23,7 @@ void Talos::Motion::Main_Process::initialize()
 
 	
 	__initialization_start("Interrupts", Hardware_Abstraction_Layer::Core::start_interrupts,STARTUP_CLASS_CRITICAL);//<--start interrupts on hardware
-	__initialization_start("Events", Talos::Motion::Events::initialize, STARTUP_CLASS_CRITICAL);//<--init events
+	__initialization_start("Events", Events::initialize, STARTUP_CLASS_CRITICAL);//<--init events
 	//__initialization_start("Ngc Buffer", Talos::Motion::NgcBuffer::initialize);//<--g code buffer
 	//__initialization_start("Ngc Interpreter", NGC_RS274::Interpreter::Processor::initialize);//<--g code interpreter
 	__initialization_start("Disk", Hardware_Abstraction_Layer::Disk::initialize,STARTUP_CLASS_CRITICAL);//<--drive/eprom storage
@@ -122,11 +123,32 @@ void Talos::Motion::Main_Process::run()
 	{
 		//This firmware is mostly event driven. This is the main entry point for checking
 		//which events have been set to execute, and then executing them.
-		Talos::Motion::Events::process();
+		Events::process();
 	}
 
 }
 
+void Talos::Motion::Main_Process::error_handler(c_ring_buffer<char> * released_buffer, s_framework_error error)
+{
+	Main_Process::host_serial.print_string("ERROR:");
+
+	Main_Process::host_serial.print_string("\r\n\tsource:");
+	Main_Process::host_serial.print_int32((int)error.source);
+	Main_Process::host_serial.print_string("\r\n\tbehavior:");
+	Main_Process::host_serial.print_int32((int)error.behavior);
+	Main_Process::host_serial.print_string("\r\n\tcode:");
+	Main_Process::host_serial.print_int32((int)error.code);
+	Main_Process::host_serial.print_string("\r\n\tdata_size:");
+	Main_Process::host_serial.print_int32((int)error.data_size);
+	Main_Process::host_serial.print_string("\r\n\tgroup:");
+	Main_Process::host_serial.print_int32((int)error.group);
+	Main_Process::host_serial.print_string("\r\n\tprocess:");
+	Main_Process::host_serial.print_int32((int)error.process);
+	Main_Process::host_serial.print_string("\r\n\trecord_type:");
+	Main_Process::host_serial.print_int32((int)error.record_type);
+	Main_Process::host_serial.print_string("\r\n");
+
+}
 /*
 Flow
 Main->eventss->data_events_handler->serial_event_handler->assign_handler->request_block

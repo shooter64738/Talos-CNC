@@ -42,7 +42,8 @@ enum class e_error_code :uint8_t
 	AttemptToHandleNewEventWhilePreviousIsPending = 0,
 	UnExpectedDataTypeForRecord = 1,
 	UnHandledRecordType = 2,
-	InterpreterError = 3
+	InterpreterError = 3,
+	TimeoutOccuredWaitingForEndOfRecord = 4
 	
 };
 

@@ -11,6 +11,8 @@
 
 #include "../../coordinator_hardware_def.h"
 #include "../../Serial/c_Serial.h"
+#include "../../../Shared Data/Event/c_events.h"
+#include "../../../Shared Data/Event/extern_events_types.h"
 
 
 //remove after testing
@@ -30,9 +32,8 @@ namespace Talos
 			//functions
 			public:
 			static void initialize();
-			
 			static void run();
-
+			static void error_handler(c_ring_buffer<char> * released_buffer, s_framework_error error);
 
 			//Main_Process();
 			//~Main_Process();

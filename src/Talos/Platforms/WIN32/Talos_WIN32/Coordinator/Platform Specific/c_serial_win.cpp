@@ -10,7 +10,7 @@
 #include "c_core_win.h"
 #include <iostream>
 #include "../../../../../c_ring_template.h"
-#include "../../../../../Coordinator/Processing/Events/extern_events_types.h"
+#include "../../../../../Shared Data/Event/extern_events_types.h"
 c_ring_buffer<char> Hardware_Abstraction_Layer::Serial::_usart0_read_buffer;
 static char _usart0_read_data[256];
 c_ring_buffer<char> Hardware_Abstraction_Layer::Serial::_usart1_read_buffer;
@@ -23,7 +23,10 @@ void Hardware_Abstraction_Layer::Serial::initialize(uint8_t Port, uint32_t BaudR
 {
 	_usart0_read_buffer.initialize(_usart0_read_data, 256);
 	_usart1_write_buffer.initialize(_usart1_write_data, 256);
-	_usart1_write_buffer.pntr_write = Hardware_Abstraction_Layer::Serial::send;
+	_usart1_write_buffer.pntr_device_write = Hardware_Abstraction_Layer::Serial::send;
+	
+	extern_data_events.serial.inbound.device = &Hardware_Abstraction_Layer::Serial::_usart0_read_buffer;
+	extern_data_events.serial.outbound.device = &Hardware_Abstraction_Layer::Serial::_usart1_write_buffer;
 }
 
 uint8_t Hardware_Abstraction_Layer::Serial::send(uint8_t Port, char byte)

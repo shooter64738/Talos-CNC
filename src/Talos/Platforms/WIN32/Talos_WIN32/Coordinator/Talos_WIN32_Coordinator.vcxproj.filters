@@ -64,6 +64,12 @@
     <Filter Include="Shared Data\Settings\Coordinator">
       <UniqueIdentifier>{04a6e8a7-8ed7-4783-b20e-3202dbe3dbeb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shared Data\Event">
+      <UniqueIdentifier>{3ab55604-d1de-4673-8de0-554c47371a49}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shared Data\Data">
+      <UniqueIdentifier>{8845c68a-65d5-454b-b6a9-4153a36bdcc7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\communication_def.h" />
@@ -73,9 +79,6 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\Coordinator\Processing\Main\Main_Process.h">
       <Filter>Coordinator\Processing\Main</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Coordinator\Processing\Events\c_events.h">
-      <Filter>Coordinator\Processing\Events</Filter>
     </ClInclude>
     <ClInclude Include="Platform Specific\c_core_win.h">
       <Filter>Platform Specific</Filter>
@@ -93,19 +96,7 @@
     <ClInclude Include="..\..\..\..\Coordinator\Processing\Data\DataHandlers\c_binary_data_handler.h">
       <Filter>Coordinator\Processing\Data\DataHandlers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Coordinator\Processing\Data\DataHandlers\c_ngc_data_handler.h">
-      <Filter>Coordinator\Processing\Data\DataHandlers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Coordinator\Processing\Events\extern_events_types.h">
-      <Filter>Coordinator\Processing\Events</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Coordinator\Processing\Events\EventHandlers\c_data_events.h">
-      <Filter>Coordinator\Processing\Events\EventHandlers</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\..\Coordinator\Processing\Events\EventHandlers\c_network_data_events.h">
-      <Filter>Coordinator\Processing\Events\EventHandlers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Coordinator\Processing\Events\EventHandlers\c_serial_event_handler.h">
       <Filter>Coordinator\Processing\Events\EventHandlers</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\Coordinator\Processing\Events\EventHandlers\c_spi_data_events.h">
@@ -302,17 +293,29 @@
     <ClInclude Include="..\..\..\..\Shared Data\_s_status_record.h">
       <Filter>Shared Data</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Coordinator\Processing\Data\cache_data.h">
-      <Filter>Coordinator\Processing\Data</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Coordinator\Processing\Data\c_data_handler.h">
-      <Filter>Coordinator\Processing\Data</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\..\Shared Data\_s_ngc_line_record.h">
       <Filter>Shared Data</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\Shared Data\_s_framework_error.h">
       <Filter>Shared Data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared Data\Event\c_data_events.h">
+      <Filter>Shared Data\Event</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared Data\Event\c_events.h">
+      <Filter>Shared Data\Event</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared Data\Event\c_serial_event_handler.h">
+      <Filter>Shared Data\Event</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared Data\Event\extern_events_types.h">
+      <Filter>Shared Data\Event</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared Data\Data\c_data_handler.h">
+      <Filter>Shared Data\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared Data\Data\cache_data.h">
+      <Filter>Shared Data\Data</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -321,9 +324,6 @@
     </ClCompile>
     <ClCompile Include="..\..\..\..\Coordinator\Processing\Main\Main_Process.cpp">
       <Filter>Coordinator\Processing\Main</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\Coordinator\Processing\Events\c_events.cpp">
-      <Filter>Coordinator\Processing\Events</Filter>
     </ClCompile>
     <ClCompile Include="Platform Specific\c_core_win.cpp">
       <Filter>Platform Specific</Filter>
@@ -340,16 +340,7 @@
     <ClCompile Include="..\..\..\..\Coordinator\Processing\Data\DataHandlers\c_binary_data_handler.cpp">
       <Filter>Coordinator\Processing\Data\DataHandlers</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\Coordinator\Processing\Data\DataHandlers\c_ngc_data_handler.cpp">
-      <Filter>Coordinator\Processing\Data\DataHandlers</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\Coordinator\Processing\Events\EventHandlers\c_data_events.cpp">
-      <Filter>Coordinator\Processing\Events\EventHandlers</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\..\Coordinator\Processing\Events\EventHandlers\c_network_data_events.cpp">
-      <Filter>Coordinator\Processing\Events\EventHandlers</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\Coordinator\Processing\Events\EventHandlers\c_serial_event_handler.cpp">
       <Filter>Coordinator\Processing\Events\EventHandlers</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\..\Coordinator\Processing\Events\EventHandlers\c_spi_data_events.cpp">
@@ -430,11 +421,20 @@
     <ClCompile Include="..\..\..\..\NGC_RS274\Dialect\_ngc_validate_3_distance_mode.cpp">
       <Filter>Ngc_Rs274\Dialect</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\Coordinator\Processing\Data\cache_data.cpp">
-      <Filter>Coordinator\Processing\Data</Filter>
+    <ClCompile Include="..\..\..\..\Shared Data\Event\c_data_events.cpp">
+      <Filter>Shared Data\Event</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\Coordinator\Processing\Data\c_data_handler.cpp">
-      <Filter>Coordinator\Processing\Data</Filter>
+    <ClCompile Include="..\..\..\..\Shared Data\Event\c_events.cpp">
+      <Filter>Shared Data\Event</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Shared Data\Event\c_serial_event_handler.cpp">
+      <Filter>Shared Data\Event</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Shared Data\Data\c_data_handler.cpp">
+      <Filter>Shared Data\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Shared Data\Data\cache_data.cpp">
+      <Filter>Shared Data\Data</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
