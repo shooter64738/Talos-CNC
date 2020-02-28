@@ -8,78 +8,14 @@
 //#include <avr/io.h>
 //#include <avr/interrupt.h>
 #include "c_motion_core_avr_2560_stepper.h"
-#include "../../../helpers.h"
 #include "c_core_avr_2560.h"
-#include "../../../MotionDriver/c_interpollation_hardware.h"
-#include "../../../MotionDriver/c_motion_core.h"
-
+#include "../../../../Motion\Core/c_interpollation_hardware.h"
+#include "../../../../Motion\Core/c_motion_core.h"
 
 
 uint8_t Hardware_Abstraction_Layer::MotionCore::Stepper::step_port_invert_mask;
 uint8_t Hardware_Abstraction_Layer::MotionCore::Stepper::dir_port_invert_mask;
 uint8_t Hardware_Abstraction_Layer::MotionCore::Stepper::step_mask = STEP_MASK;
-
-void Hardware_Abstraction_Layer::MotionCore::Stepper::initialize()
-{
-	// Configure step and direction interface pins
-	STEP_DDR |= STEP_MASK;
-	STEPPERS_DISABLE_DDR |= 1 << STEPPERS_DISABLE_BIT;
-	DIRECTION_DDR |= DIRECTION_MASK;
-
-	// Configure Timer 1: Stepper Driver Interrupt
-	TCCR1B &= ~(1 << WGM13); // waveform generation = 0100 = CTC
-	TCCR1B |= (1 << WGM12);
-	TCCR1A &= ~((1 << WGM11) | (1 << WGM10));
-	TCCR1A &= ~((1 << COM1A1) | (1 << COM1A0) | (1 << COM1B1) | (1 << COM1B0)); // Disconnect OC1 output
-	// TCCR1B = (TCCR1B & ~((1<<CS12) | (1<<CS11))) | (1<<CS10); // Set in st_go_idle().
-	// TIMSK1 &= ~(1<<OCIE1A);  // Set in st_go_idle().
-
-	// Configure Timer 0: Stepper Port Reset Interrupt
-	TIMSK0 &= ~((1 << OCIE0B) | (1 << OCIE0A) | (1 << TOIE0)); // Disconnect OC0 outputs and OVF interrupt.
-	TCCR0A = 0; // Normal operation
-	TCCR0B = 0; // Disable Timer0 until needed
-	TIMSK0 |= (1 << TOIE0); // Enable Timer0 overflow interrupt
-	#ifdef STEP_PULSE_DELAY
-	TIMSK0 |= (1<<OCIE0A); // Enable Timer0 Compare Match A interrupt
-	#endif
-	
-	Hardware_Abstraction_Layer::MotionCore::Stepper::st_go_idle();
-	
-}
-
-void Hardware_Abstraction_Layer::MotionCore::Stepper::wake_up()
-{
-	// Enable stepper drivers.
-	//if (bit_istrue(0, BITFLAG_INVERT_ST_ENABLE))
-//	{
-		STEPPERS_DISABLE_PORT |= (1 << STEPPERS_DISABLE_BIT);
-//	}
-//	else
-//	{
-		//STEPPERS_DISABLE_PORT &= ~(1 << STEPPERS_DISABLE_BIT);
-	//}
-
-	// Initialize step pulse timing from settings. Here to ensure updating after re-writing.
-	#ifdef STEP_PULSE_DELAY
-	// Set total step pulse time after direction pin set. Ad hoc computation from oscilloscope.
-	Motion_Core::Hardware::Interpollation::Step_Pulse_Length = -(((Motion_Core::Settings::_Settings.pulse_length+STEP_PULSE_DELAY-2)*TICKS_PER_MICROSECOND) >> 3);
-	// Set delay between direction pin write and step command.
-	OCR0A = -(((10)*TICKS_PER_MICROSECOND) >> 3);
-	#else // Normal operation
-	// Set step pulse time. Ad hoc computation from oscilloscope. Uses two's complement.
-	Motion_Core::Hardware::Interpollation::Step_Pulse_Length = -(((Motion_Core::Settings::_Settings.pulse_length - 2) * TICKS_PER_MICROSECOND) >> 3);
-	#endif
-
-	// Enable Stepper Driver Interrupt
-	TIMSK1 |= (1 << OCIE1A);
-}
-
-void Hardware_Abstraction_Layer::MotionCore::Stepper::st_go_idle()
-{
-	// Disable Stepper Driver Interrupt. Allow Stepper Port Reset Interrupt to finish, if active.
-	TIMSK1 &= ~(1 << OCIE1A); // Disable Timer1 interrupt
-	TCCR1B = (TCCR1B & ~((1 << CS12) | (1 << CS11))) | (1 << CS10); // Reset clock to no prescaling.
-}
 
 uint16_t Hardware_Abstraction_Layer::MotionCore::Stepper::set_delay_from_hardware(uint32_t calculated_delay, uint32_t * delay, uint8_t * prescale)
 {
@@ -109,7 +45,66 @@ uint16_t Hardware_Abstraction_Layer::MotionCore::Stepper::set_delay_from_hardwar
 	}
 	return 0;
 }
+void Hardware_Abstraction_Layer::MotionCore::Stepper::initialize()
+{
+	// Configure step and direction interface pins
+	STEP_DDR |= STEP_MASK;
+	STEPPERS_DISABLE_DDR |= 1 << STEPPERS_DISABLE_BIT;
+	DIRECTION_DDR |= DIRECTION_MASK;
 
+	// Configure Timer 1: Stepper Driver Interrupt
+	TCCR1B &= ~(1 << WGM13); // waveform generation = 0100 = CTC
+	TCCR1B |= (1 << WGM12);
+	TCCR1A &= ~((1 << WGM11) | (1 << WGM10));
+	TCCR1A &= ~((1 << COM1A1) | (1 << COM1A0) | (1 << COM1B1) | (1 << COM1B0)); // Disconnect OC1 output
+	// TCCR1B = (TCCR1B & ~((1<<CS12) | (1<<CS11))) | (1<<CS10); // Set in st_go_idle().
+	// TIMSK1 &= ~(1<<OCIE1A);  // Set in st_go_idle().
+
+	// Configure Timer 0: Stepper Port Reset Interrupt
+	TIMSK0 &= ~((1 << OCIE0B) | (1 << OCIE0A) | (1 << TOIE0)); // Disconnect OC0 outputs and OVF interrupt.
+	TCCR0A = 0; // Normal operation
+	TCCR0B = 0; // Disable Timer0 until needed
+	TIMSK0 |= (1 << TOIE0); // Enable Timer0 overflow interrupt
+	#ifdef STEP_PULSE_DELAY
+	TIMSK0 |= (1<<OCIE0A); // Enable Timer0 Compare Match A interrupt
+	#endif
+	
+	Hardware_Abstraction_Layer::MotionCore::Stepper::st_go_idle();
+}
+
+void Hardware_Abstraction_Layer::MotionCore::Stepper::wake_up()
+{
+	// Enable stepper drivers.
+	//if (bit_istrue(0, BITFLAG_INVERT_ST_ENABLE))
+	//	{
+	STEPPERS_DISABLE_PORT |= (1 << STEPPERS_DISABLE_BIT);
+	//	}
+	//	else
+	//	{
+	//STEPPERS_DISABLE_PORT &= ~(1 << STEPPERS_DISABLE_BIT);
+	//}
+
+	// Initialize step pulse timing from settings. Here to ensure updating after re-writing.
+	#ifdef STEP_PULSE_DELAY
+	// Set total step pulse time after direction pin set. Ad hoc computation from oscilloscope.
+	Motion_Core::Hardware::Interpolation::Step_Pulse_Length = -(((Motion_Core::Settings::_Settings.Hardware_Settings.pulse_length+STEP_PULSE_DELAY-2)*_TICKS_PER_MICROSECOND) >> 3);
+	// Set delay between direction pin write and step command.
+	OCR0A = -(((10)*_TICKS_PER_MICROSECOND) >> 3);
+	#else // Normal operation
+	// Set step pulse time. Ad hoc computation from oscilloscope. Uses two's complement.
+	Motion_Core::Hardware::Interpolation::Step_Pulse_Length = -(((Motion_Core::Settings::_Settings.Hardware_Settings.pulse_length - 2) * _TICKS_PER_MICROSECOND) >> 3);
+	#endif
+
+	// Enable Stepper Driver Interrupt
+	TIMSK1 |= (1 << OCIE1A);
+}
+
+void Hardware_Abstraction_Layer::MotionCore::Stepper::st_go_idle()
+{
+	// Disable Stepper Driver Interrupt. Allow Stepper Port Reset Interrupt to finish, if active.
+	TIMSK1 &= ~(1 << OCIE1A); // Disable Timer1 interrupt
+	TCCR1B = (TCCR1B & ~((1 << CS12) | (1 << CS11))) | (1 << CS10); // Reset clock to no prescaling.
+}
 
 void Hardware_Abstraction_Layer::MotionCore::Stepper::port_disable(uint8_t inverted)
 {
@@ -137,15 +132,14 @@ void Hardware_Abstraction_Layer::MotionCore::Stepper::pulse_reset_timer()
 {
 	// Enable step pulse reset timer so that The Stepper Port Reset Interrupt can reset the signal after
 	// exactly settings.pulse_microseconds microseconds, independent of the main Timer1 prescaler.
-	TCNT0 = Motion_Core::Hardware::Interpollation::Step_Pulse_Length; // Reload Timer0 counter
+	TCNT0 = Motion_Core::Hardware::Interpolation::Step_Pulse_Length; // Reload Timer0 counter
 	TCCR0B = (1 << CS01); // Begin Timer0. Full speed, 1/8 prescaler
-
-	
 }
 
 void Hardware_Abstraction_Layer::MotionCore::Stepper::TCCR1B_set(uint8_t prescaler)
 {
 	TCCR1B = (TCCR1B & ~(0x07<<CS10)) | (prescaler<<CS10);
+
 }
 
 void Hardware_Abstraction_Layer::MotionCore::Stepper::OCR1A_set(uint16_t delay)
@@ -153,9 +147,11 @@ void Hardware_Abstraction_Layer::MotionCore::Stepper::OCR1A_set(uint16_t delay)
 	OCR1A = delay;
 }
 
+
+
 ISR(TIMER1_COMPA_vect)
 {
-	Motion_Core::Hardware::Interpollation::step_tick();
+	Motion_Core::Hardware::Interpolation::step_tick();
 }
 /* The Stepper Port Reset Interrupt: Timer0 OVF interrupt handles the falling edge of the step
 pulse. This should always trigger before the next Timer1 COMPA interrupt and independently

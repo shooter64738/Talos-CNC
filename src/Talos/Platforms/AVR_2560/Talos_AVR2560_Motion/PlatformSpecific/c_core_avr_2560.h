@@ -12,7 +12,7 @@
 #include <stdint.h>
 #include <avr/pgmspace.h>
 #include <util/delay.h>
-
+#include "../../../../Motion/motion_hardware_def.h"
 #define Hardware_Abstraction_Layer_Core_pgm_read_byte_near pgm_read_byte_near
 #define Hardware_Abstraction_Layer_Core_PSTR PSTR
 

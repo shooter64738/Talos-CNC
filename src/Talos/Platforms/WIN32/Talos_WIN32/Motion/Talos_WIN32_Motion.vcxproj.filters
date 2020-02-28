@@ -132,9 +132,6 @@
     <ClCompile Include="Platform Specific\c_serial_win.cpp">
       <Filter>Platform Specific</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\Motion\Processing\Planner\Canned Cycles\x_c_canned_cycle.cpp">
-      <Filter>Motion\Processing\Planner\Canned Cycles</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\..\Motion\Processing\Data\DataHandlers\c_binary_data_handler.cpp">
       <Filter>Motion\Processing\Data\DataHandlers</Filter>
     </ClCompile>
@@ -167,6 +164,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\..\Shared Data\Event\c_data_events.cpp">
       <Filter>Shared data\Event</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Motion\Processing\Planner\Canned Cycles\x_c_canned_cycle.cpp">
+      <Filter>Motion\Processing\Planner\Canned Cycles</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -258,9 +258,6 @@
     <ClInclude Include="..\..\..\..\communication_def.h" />
     <ClInclude Include="..\..\..\..\physical_machine_parameters.h" />
     <ClInclude Include="..\..\..\..\_bit_flag_control.h" />
-    <ClInclude Include="..\..\..\..\Motion\Processing\Planner\Canned Cycles\x_c_canned_cycle.h">
-      <Filter>Motion\Processing\Planner\Canned Cycles</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\..\Motion\Processing\Data\DataHandlers\c_binary_data_handler.h">
       <Filter>Motion\Processing\Data\DataHandlers</Filter>
     </ClInclude>
@@ -345,6 +342,12 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\Shared Data\Event\c_data_events.h">
       <Filter>Shared data\Event</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Motion\Processing\Planner\Canned Cycles\x_c_canned_cycle.h">
+      <Filter>Motion\Processing\Planner\Canned Cycles</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared Data\_s_framework_error.h">
+      <Filter>Shared data</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

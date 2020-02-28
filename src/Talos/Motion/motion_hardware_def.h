@@ -19,11 +19,14 @@
 
 #ifdef __AVR_ATmega2560__
 #define F_CPU 16000000UL
+#define _TICKS_PER_MICROSECOND (F_CPU/1000000)
 #include "../Platforms/AVR_2560/Talos_AVR2560_Motion/PlatformSpecific/c_serial_avr_2560.h"
 #include "../Platforms/AVR_2560/Talos_AVR2560_Motion/PlatformSpecific/c_core_avr_2560.h"
 #include "../Platforms/AVR_2560/Talos_AVR2560_Motion/PlatformSpecific/c_spi_avr_2560.h"
 #include "../Platforms/AVR_2560/Talos_AVR2560_Motion/PlatformSpecific/c_disk_avr_2560.h"
 #include "../Platforms/AVR_2560/Talos_AVR2560_Motion/PlatformSpecific/c_motion_core_avr_2560_stepper.h"
+#include "../Platforms/AVR_2560/Talos_AVR2560_Motion/PlatformSpecific/c_coordinator_avr2560_inputs.h"
+#include "../Platforms/AVR_2560/Talos_AVR2560_Motion/PlatformSpecific/c_coordinator_avr2560_spindle.h"
 #endif
 
 #ifdef __SAM3X8E__
@@ -38,7 +41,6 @@
 //mhz clock speed I am able to get a reliable 172khz pulse rate from the processor.
 #define _TICKS_PER_MICROSECOND ((F_CPU/2)/1000000)
 #define F_CPU_2 F_CPU/2
-#define _TICKS_PER_MICROSECOND (F_CPU_2/1000000)
 
 //#include "../Platforms/ARM_3X8E/Talos_ARM3X8E_Motion/PlatformSpecific/c_motion_core_arm_3x8e_stepper.h"
 //#include "../Platforms\ARM_3X8E\Talos_ARM3X8E\Platform Specific\c_motion_core_arm_3x8e_inputs.h"

@@ -95,6 +95,7 @@
     <ClInclude Include="..\..\..\..\Shared Data\_e_motion_sub_state.h" />
     <ClInclude Include="..\..\..\..\Shared Data\_e_motion_state.h" />
     <ClInclude Include="..\..\..\..\Shared Data\_s_encoder_struct.h" />
+    <ClInclude Include="..\..\..\..\Shared Data\_s_framework_error.h" />
     <ClInclude Include="..\..\..\..\Shared Data\_s_interp_config_struct.h" />
     <ClInclude Include="..\..\..\..\Shared Data\_s_jog_data_struct.h" />
     <ClInclude Include="..\..\..\..\Shared Data\_s_motion_data_block.h" />

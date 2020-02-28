@@ -9,9 +9,9 @@
 #include "c_disk_avr_2560.h"
 
 #include <avr/interrupt.h>
-#include "../../../../Coordinator/coordinator_hardware_def.h"
-#include "../../../../Coordinator/Processing/Main/Main_Process.h"
-#include "disk_support/ff.h"
+#include "../../../../Motion/motion_hardware_def.h"
+#include "../../../../Motion/Processing/Main/Main_Process.h"
+#include "Disk Support/ff.h"
 #include "../../../../NGC_RS274/_ngc_g_Groups.h"
 #include "../../../../NGC_RS274/_ngc_m_Groups.h"
 
@@ -67,17 +67,17 @@ uint8_t Hardware_Abstraction_Layer::Disk::load_configuration()
 	if (FatResult == FR_NO_FILE)
 	{
 		FatResult = f_open(&file,"m_setup.cfg", FA_WRITE|FA_CREATE_ALWAYS);
-		Talos::Coordinator::Main_Process::host_serial.print_string("f_open =  ");
-		Talos::Coordinator::Main_Process::host_serial.print_int32(FatResult);
-		Talos::Coordinator::Main_Process::host_serial.print_string("\r\n");
+		Talos::Motion::Main_Process::host_serial.print_string("f_open =  ");
+		Talos::Motion::Main_Process::host_serial.print_int32(FatResult);
+		Talos::Motion::Main_Process::host_serial.print_string("\r\n");
 		FatResult = f_write(&file,"(machine)",9,&bw);
-		Talos::Coordinator::Main_Process::host_serial.print_string("f_write =  ");
-		Talos::Coordinator::Main_Process::host_serial.print_int32(FatResult);
-		Talos::Coordinator::Main_Process::host_serial.print_string("\r\n");
+		Talos::Motion::Main_Process::host_serial.print_string("f_write =  ");
+		Talos::Motion::Main_Process::host_serial.print_int32(FatResult);
+		Talos::Motion::Main_Process::host_serial.print_string("\r\n");
 		FatResult = f_close(&file);
-		Talos::Coordinator::Main_Process::host_serial.print_string("f_close =  ");
-		Talos::Coordinator::Main_Process::host_serial.print_int32(FatResult);
-		Talos::Coordinator::Main_Process::host_serial.print_string("\r\n");
+		Talos::Motion::Main_Process::host_serial.print_string("f_close =  ");
+		Talos::Motion::Main_Process::host_serial.print_int32(FatResult);
+		Talos::Motion::Main_Process::host_serial.print_string("\r\n");
 		return 1;
 	}
 	

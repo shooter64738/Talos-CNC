@@ -13,7 +13,7 @@
 #include "../../../../NGC_RS274/_ngc_block_struct.h"
 #include "../../../../NGC_RS274/_ngc_tool_struct.h"
 #include "../../../../NGC_RS274/_ngc_coordinate_struct.h"
-#include "disk_support/ff.h"
+#include "Disk Support/ff.h"
 
 namespace Hardware_Abstraction_Layer
 {
