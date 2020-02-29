@@ -50,16 +50,8 @@ void Talos::Coordinator::Data::Ngc::load_block_from_cache()
 		Talos::Shared::c_cache_data::ngc_line_record.pntr_record, &new_block, Talos::Shared::c_cache_data::ngc_line_record.size))
 		!= e_parsing_errors::OK)
 	{
-		s_framework_error error;
-		error.behavior = e_error_behavior::Recoverable;
-		error.code = (int)return_value;
-		error.data_size = Talos::Shared::c_cache_data::ngc_line_record.size;
-		error.group = e_error_group::Interpreter;
-		error.process = e_error_process::NgcParsing;
-		error.record_type = e_record_types::NgcBlockRecord;
-		error.source = e_error_source::Disk;
-
-		Talos::Shared::FrameWork::Error::Handler::extern_pntr_ngc_error_handler(Talos::Shared::c_cache_data::ngc_line_record.record, error);
+		__raise_error(Talos::Shared::c_cache_data::ngc_line_record.record, e_error_behavior::Recoverable, Talos::Shared::c_cache_data::ngc_line_record.size
+			, e_error_group::Interpreter, e_error_process::NgcParsing, e_record_types::NgcBlockRecord, e_error_source::Disk, (int)return_value);
 		return;
 	}
 
@@ -69,38 +61,40 @@ void Talos::Coordinator::Data::Ngc::load_block_from_cache()
 	//to make the data easier to understand
 	NGC_RS274::Block_View v_new = NGC_RS274::Block_View(&new_block);
 	NGC_RS274::Block_View v_previous = NGC_RS274::Block_View(&Talos::Shared::c_cache_data::ngc_block_record);
-	return_value = NGC_RS274::Error_Check::error_check(&v_new, &v_previous);
-
-	//NGC_RS274::Set_Targets::adjust(&v_new, &v_previous);
-
-	if (return_value == e_parsing_errors::OK)
+	if ((return_value = NGC_RS274::Error_Check::error_check(&v_new, &v_previous))
+		!= e_parsing_errors::OK)
 	{
-		//Add this block to the buffer
-
-		//Talos::Motion::NgcBuffer::pntr_buffer_block_write(&new_block);
-
-		//Now move the data from the new block back to the init block. This keeps
-		//the block modal values in synch
-		NGC_RS274::Block_View::copy_persisted_data(&new_block, &Talos::Shared::c_cache_data::ngc_block_record);
-		//We dont copy station numbers so set this here.
-		Talos::Shared::c_cache_data::ngc_block_record.__station__ = new_block.__station__;
-		extern_data_events.ready.ngc_block_cache_count++;
-		//Clear the block event that was set when the line was loaded waaaaayyyy back int he dataevent handler
-		extern_data_events.ready.event_manager.clear((int)s_ready_data::e_event_type::NgcDataLine);
+		__raise_error(Talos::Shared::c_cache_data::ngc_line_record.record, e_error_behavior::Recoverable, Talos::Shared::c_cache_data::ngc_line_record.size
+			, e_error_group::Interpreter, e_error_process::NgcParsing, e_record_types::NgcBlockRecord, e_error_source::Disk, (int)return_value);
+		return;
 	}
-	else
-	{
-		s_framework_error error;
-		error.behavior = e_error_behavior::Recoverable;
-		error.code = (int)e_error_code::InterpreterError;
-		error.data_size = 0;
-		error.group = e_error_group::Interpreter;
-		error.process = e_error_process::NgcParsing;
-		error.record_type = e_record_types::NgcBlockRecord;
-		error.source = e_error_source::Disk;
 
-		Talos::Shared::FrameWork::Error::Handler::extern_pntr_ngc_error_handler(NULL, error);
 
-	}
+	//Add this block to the buffer
+	//Talos::Motion::NgcBuffer::pntr_buffer_block_write(&new_block);
+
+	//Now move the data from the new block back to the init block. This keeps
+	//the block modal values in synch
+	NGC_RS274::Block_View::copy_persisted_data(&new_block, &Talos::Shared::c_cache_data::ngc_block_record);
+	//We dont copy station numbers so set this here.
+	Talos::Shared::c_cache_data::ngc_block_record.__station__ = new_block.__station__;
+	extern_data_events.ready.ngc_block_cache_count++;
+	//Clear the block event that was set when the line was loaded waaaaayyyy back in the dataevent handler
+	extern_data_events.ready.event_manager.clear((int)s_ready_data::e_event_type::NgcDataLine);
 }
 
+void  Talos::Coordinator::Data::Ngc::__raise_error(char * ngc_line, e_error_behavior e_behavior
+	, uint8_t data_size, e_error_group e_group, e_error_process e_process, e_record_types e_rec_type
+	, e_error_source e_source, uint16_t e_code)
+{
+	s_framework_error error;
+	error.behavior = e_error_behavior::Recoverable;
+	error.code = e_code;
+	error.data_size = Talos::Shared::c_cache_data::ngc_line_record.size;
+	error.group = e_error_group::Interpreter;
+	error.process = e_error_process::NgcParsing;
+	error.record_type = e_record_types::NgcBlockRecord;
+	error.source = e_error_source::Disk;
+
+	Talos::Shared::FrameWork::Error::Handler::extern_pntr_ngc_error_handler(Talos::Shared::c_cache_data::ngc_line_record.record, error);
+}

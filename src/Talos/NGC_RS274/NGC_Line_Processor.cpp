@@ -95,15 +95,9 @@ e_parsing_errors NGC_RS274::LineProcessor::_process_buffer(char * buffer, s_ngc_
 		//get current word, and advance reader
 		current_word = buffer[read_pos];
 		//process this data but do it on the new block
-		CHK_CALL(_read_as_word(buffer, &read_pos, current_word, &word_value, &word_has_decimal));
-
+		if ((ret_code = (_read_as_word(buffer, &read_pos, current_word, &word_value, &word_has_decimal)))!= e_parsing_errors::OK) return ret_code;
 		//This will be useful to the end user to determine where the gcode data had an error
 		NGC_RS274::LineProcessor::last_read_position = read_pos;
-		if (ret_code != e_parsing_errors::OK)
-		{
-			//Return the error to the caller
-			return ret_code;
-		}
 
 		//This will assign the value to the appropriate place in the block.
 		//If an error occurs because there have been multiple definitions of
@@ -119,7 +113,7 @@ e_parsing_errors NGC_RS274::LineProcessor::_process_buffer(char * buffer, s_ngc_
 
 		}
 		//assign the word value. return an error if there is one.
-		CHK_CALL_RTN_ERROR_CODE(NGC_RS274::Block_Assignor::group_word(current_word, word_value, block));
+		if ((ret_code = (NGC_RS274::Block_Assignor::group_word(current_word, word_value, block)))!=e_parsing_errors::OK) return ret_code;
 	}
 	return ret_code;
 }

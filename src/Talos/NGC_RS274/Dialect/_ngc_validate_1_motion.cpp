@@ -7,6 +7,7 @@
 
 e_parsing_errors NGC_RS274::Dialect::Group1::motion_validate(NGC_RS274::Block_View * v_block, e_dialects dialect)
 {
+	e_parsing_errors ret_code;
 	/*
 	Check to make sure this would be a valid motion command.
 	We need to either have just set a motion mode, or already have set
@@ -22,13 +23,13 @@ e_parsing_errors NGC_RS274::Dialect::Group1::motion_validate(NGC_RS274::Block_Vi
 	//First check to see if a non modal command, requiring an axis was specified
 	if (v_block->non_modal_with_axis_in_block(v_block->active_view_block))
 	{
-			//If a motion command was explicitly set here, its an error
-			if (v_block->active_view_block->g_code_defined_in_block.get((int)NGC_RS274::Groups::G::Motion))
-			{
-				return e_parsing_errors::G_CODE_GROUP_NON_MODAL_AXIS_CANNOT_BE_SPECIFIED_WITH_MOTION;
-			}
-			//Return here. This is a non motion command, we are just updating a parameter.
-			return e_parsing_errors::OK;
+		//If a motion command was explicitly set here, its an error
+		if (v_block->active_view_block->g_code_defined_in_block.get((int)NGC_RS274::Groups::G::Motion))
+		{
+			return e_parsing_errors::G_CODE_GROUP_NON_MODAL_AXIS_CANNOT_BE_SPECIFIED_WITH_MOTION;
+		}
+		//Return here. This is a non motion command, we are just updating a parameter.
+		return e_parsing_errors::OK;
 	}
 	else if (v_block->axis_rotation_in_block(v_block->active_view_block))
 	{
@@ -66,53 +67,53 @@ e_parsing_errors NGC_RS274::Dialect::Group1::motion_validate(NGC_RS274::Block_Vi
 	switch (*v_block->current_g_codes.Motion)
 	{
 	case NGC_RS274::G_codes::RAPID_POSITIONING:
-		_G000(v_block, dialect);
+		if ((ret_code = _G000(v_block, dialect)) != e_parsing_errors::OK)return ret_code;
 		break;
 	case NGC_RS274::G_codes::LINEAR_INTERPOLATION:
-		_G001(v_block, dialect);
+		if ((ret_code = _G001(v_block, dialect)) != e_parsing_errors::OK)return ret_code;
 		break;
 	case NGC_RS274::G_codes::CIRCULAR_INTERPOLATION_CW:
-		_G002_G003(v_block, dialect,1);
+		if ((ret_code = _G002_G003(v_block, dialect, 1)) != e_parsing_errors::OK)return ret_code;
 		break;
 	case NGC_RS274::G_codes::CIRCULAR_INTERPOLATION_CCW:
-		_G002_G003(v_block, dialect, -1);
+		if ((ret_code = _G002_G003(v_block, dialect, -1)) != e_parsing_errors::OK)return ret_code;
 		break;
 	case NGC_RS274::G_codes::MOTION_CANCELED:
-		_G080(v_block, dialect);;
+		if ((ret_code = _G080(v_block, dialect)) != e_parsing_errors::OK)return ret_code;
 		break;
 	case NGC_RS274::G_codes::CANNED_CYCLE_DRILLING: //<--G81 drilling cycle
-		_G081(v_block, dialect);;
+		if ((ret_code = _G081(v_block, dialect)) != e_parsing_errors::OK)return ret_code;
 		break;
 	case NGC_RS274::G_codes::CANNED_CYCLE_DRILLING_WITH_DWELL: //<--G82
-		_G082(v_block, dialect);;
+		if ((ret_code = _G082(v_block, dialect)) != e_parsing_errors::OK)return ret_code;
 		break;
 	case NGC_RS274::G_codes::CANNED_CYCLE_PECK_DRILLING: //<--G83
-		_G083(v_block, dialect);;
+		if ((ret_code = _G083(v_block, dialect)) != e_parsing_errors::OK)return ret_code;
 		break;
 	case NGC_RS274::G_codes::CANNED_CYCLE_RIGHT_HAND_TAPPING: //<--G84
-		_G084(v_block, dialect);;
+		if ((ret_code = _G084(v_block, dialect)) != e_parsing_errors::OK)return ret_code;
 		break;
 	case NGC_RS274::G_codes::CANNED_CYCLE_BORING_NO_DWELL_FEED_OUT: //<--G85
-		_G085(v_block, dialect);;
+		if ((ret_code = _G085(v_block, dialect)) != e_parsing_errors::OK)return ret_code;
 		break;
 	case NGC_RS274::G_codes::CANNED_CYCLE_BORING_SPINDLE_STOP_RAPID_OUT: //<--G86
-		_G086(v_block, dialect);;
+		if ((ret_code = _G086(v_block, dialect)) != e_parsing_errors::OK)return ret_code;
 		break;
 	case NGC_RS274::G_codes::CANNED_CYCLE_BACK_BORING: //<--G87
-		_G087(v_block, dialect);;
+		if ((ret_code = _G087(v_block, dialect)) != e_parsing_errors::OK)return ret_code;
 		break;
 	case NGC_RS274::G_codes::CANNED_CYCLE_BORING_SPINDLE_STOP_MANUAL_OUT: //<--G88
-		_G088(v_block, dialect);;
+		if ((ret_code = _G088(v_block, dialect)) != e_parsing_errors::OK)return ret_code;
 		break;
 	case NGC_RS274::G_codes::CANNED_CYCLE_BORING_DWELL_FEED_OUT: //<--G89
-		_G089(v_block, dialect);;
+		if ((ret_code = _G089(v_block, dialect)) != e_parsing_errors::OK)return ret_code;
 		break;
 	default:
 		break;
 	}
 
 
-	CHK_CALL_RTN_ERROR_CODE(NGC_RS274::Dialect::Group3::distance_mode_validate(v_block, dialect));
+	if ((ret_code = (NGC_RS274::Dialect::Group3::distance_mode_validate(v_block, dialect))) != e_parsing_errors::OK) return ret_code;
 
 	v_block->active_view_block->target_motion_position[HORIZONTAL_MOTION_AXIS] = *v_block->active_plane.horizontal_axis.value;
 	v_block->active_view_block->target_motion_position[HORIZONTAL_ROTARY_AXIS] = *v_block->active_plane.rotary_horizontal_axis.value;
@@ -125,8 +126,8 @@ e_parsing_errors NGC_RS274::Dialect::Group1::motion_validate(NGC_RS274::Block_Vi
 	v_block->active_view_block->target_motion_position[NORMAL_MOTION_AXIS] = *v_block->active_plane.normal_axis.value;
 	v_block->active_view_block->target_motion_position[NORMAL_ROTARY_AXIS] = *v_block->active_plane.rotary_normal_axis.value;
 	v_block->active_view_block->target_motion_position[NORMAL_INCRIMENTAL_AXIS] = *v_block->active_plane.inc_normal_axis.value;
-	
-	
+
+
 
 	return e_parsing_errors::OK;
 }
@@ -138,76 +139,61 @@ e_parsing_errors NGC_RS274::Dialect::Group1::_G000(NGC_RS274::Block_View * v_blo
 }
 e_parsing_errors NGC_RS274::Dialect::Group1::_G001(NGC_RS274::Block_View * v_block, e_dialects dialect)
 {
-	CHK_CALL_RTN_ERROR_CODE(NGC_RS274::Dialect::Group5::feed_rate_mode_validate(v_block, dialect));
-	
-	return e_parsing_errors::OK;
+	return (NGC_RS274::Dialect::Group5::feed_rate_mode_validate(v_block, dialect));
 }
 e_parsing_errors NGC_RS274::Dialect::Group1::_G002_G003(NGC_RS274::Block_View * v_block, e_dialects dialect, int8_t direction)
 {
-	CHK_CALL_RTN_ERROR_CODE(NGC_RS274::Dialect::Group5::feed_rate_mode_validate(v_block, dialect));
+	return(NGC_RS274::Dialect::Group5::feed_rate_mode_validate(v_block, dialect));
 	__error_check_arc(v_block);
-
-	return e_parsing_errors::OK;
 }
 e_parsing_errors NGC_RS274::Dialect::Group1::_G382(NGC_RS274::Block_View * v_block, e_dialects dialect)
 {
-	CHK_CALL_RTN_ERROR_CODE(NGC_RS274::Dialect::Group5::feed_rate_mode_validate(v_block, dialect));
-	return e_parsing_errors::OK;
+	return(NGC_RS274::Dialect::Group5::feed_rate_mode_validate(v_block, dialect));
 }
 e_parsing_errors NGC_RS274::Dialect::Group1::_G080(NGC_RS274::Block_View * v_block, e_dialects dialect)
 {
-	CHK_CALL_RTN_ERROR_CODE(NGC_RS274::Dialect::Group5::feed_rate_mode_validate(v_block, dialect));
-	return e_parsing_errors::OK;
+	return(NGC_RS274::Dialect::Group5::feed_rate_mode_validate(v_block, dialect));
 }
 e_parsing_errors NGC_RS274::Dialect::Group1::_G081(NGC_RS274::Block_View * v_block, e_dialects dialect)
 {
-	CHK_CALL_RTN_ERROR_CODE(NGC_RS274::Dialect::Group5::feed_rate_mode_validate(v_block, dialect));
-	return e_parsing_errors::OK;
+	return(NGC_RS274::Dialect::Group5::feed_rate_mode_validate(v_block, dialect));
 }
 e_parsing_errors NGC_RS274::Dialect::Group1::_G082(NGC_RS274::Block_View * v_block, e_dialects dialect)
 {
-	CHK_CALL_RTN_ERROR_CODE(NGC_RS274::Dialect::Group5::feed_rate_mode_validate(v_block, dialect));
-	return e_parsing_errors::OK;
+	return(NGC_RS274::Dialect::Group5::feed_rate_mode_validate(v_block, dialect));
 }
 e_parsing_errors NGC_RS274::Dialect::Group1::_G083(NGC_RS274::Block_View * v_block, e_dialects dialect)
 {
-	CHK_CALL_RTN_ERROR_CODE(NGC_RS274::Dialect::Group5::feed_rate_mode_validate(v_block, dialect));
-	return e_parsing_errors::OK;
+	return(NGC_RS274::Dialect::Group5::feed_rate_mode_validate(v_block, dialect));
 }
 e_parsing_errors NGC_RS274::Dialect::Group1::_G084(NGC_RS274::Block_View * v_block, e_dialects dialect)
 {
-	CHK_CALL_RTN_ERROR_CODE(NGC_RS274::Dialect::Group5::feed_rate_mode_validate(v_block, dialect));
-	return e_parsing_errors::OK;
+	return(NGC_RS274::Dialect::Group5::feed_rate_mode_validate(v_block, dialect));
 }
 e_parsing_errors NGC_RS274::Dialect::Group1::_G085(NGC_RS274::Block_View * v_block, e_dialects dialect)
 {
-	CHK_CALL_RTN_ERROR_CODE(NGC_RS274::Dialect::Group5::feed_rate_mode_validate(v_block, dialect));
-	return e_parsing_errors::OK;
+	return(NGC_RS274::Dialect::Group5::feed_rate_mode_validate(v_block, dialect));
 }
 e_parsing_errors NGC_RS274::Dialect::Group1::_G086(NGC_RS274::Block_View * v_block, e_dialects dialect)
 {
-	CHK_CALL_RTN_ERROR_CODE(NGC_RS274::Dialect::Group5::feed_rate_mode_validate(v_block, dialect));
-	return e_parsing_errors::OK;
+	return(NGC_RS274::Dialect::Group5::feed_rate_mode_validate(v_block, dialect));
 }
 e_parsing_errors NGC_RS274::Dialect::Group1::_G087(NGC_RS274::Block_View * v_block, e_dialects dialect)
 {
-	CHK_CALL_RTN_ERROR_CODE(NGC_RS274::Dialect::Group5::feed_rate_mode_validate(v_block, dialect));
-	return e_parsing_errors::OK;
+	return (NGC_RS274::Dialect::Group5::feed_rate_mode_validate(v_block, dialect));
 }
 e_parsing_errors NGC_RS274::Dialect::Group1::_G088(NGC_RS274::Block_View * v_block, e_dialects dialect)
 {
-	CHK_CALL_RTN_ERROR_CODE(NGC_RS274::Dialect::Group5::feed_rate_mode_validate(v_block, dialect));
-	return e_parsing_errors::OK;
+	return(NGC_RS274::Dialect::Group5::feed_rate_mode_validate(v_block, dialect));
 }
 e_parsing_errors NGC_RS274::Dialect::Group1::_G089(NGC_RS274::Block_View * v_block, e_dialects dialect)
 {
-	CHK_CALL_RTN_ERROR_CODE(NGC_RS274::Dialect::Group5::feed_rate_mode_validate(v_block, dialect));
-	return e_parsing_errors::OK;
+	return(NGC_RS274::Dialect::Group5::feed_rate_mode_validate(v_block, dialect));
 }
 
 e_parsing_errors NGC_RS274::Dialect::Group1::__error_check_arc(NGC_RS274::Block_View *v_new_block)
 {
-	
+
 	/*The rules :
 	1. Center format arcs should not be more than 180 degrees.
 	2. Center format arcs CAN have an end point the same as the begin point

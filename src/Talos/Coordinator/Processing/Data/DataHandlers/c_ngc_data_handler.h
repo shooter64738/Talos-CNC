@@ -23,6 +23,7 @@
 #define __C_COORDINATOR_NGC_DATA_HANDLER_H__
 #include <stdint.h>
 #include "../../../../c_ring_template.h"
+#include "../../../../Shared Data/FrameWork/extern_events_types.h"
 
 typedef void(*ret_pointer)(c_ring_buffer <char> * buffer);
 namespace Talos
@@ -46,6 +47,9 @@ namespace Talos
 
 			protected:
 			private:
+				static void __raise_error(char * ngc_line, e_error_behavior e_behavior
+					, uint8_t data_size, e_error_group e_group, e_error_process e_process, e_record_types e_rec_type
+					, e_error_source e_source, uint16_t e_code);
 			};
 		};
 	};

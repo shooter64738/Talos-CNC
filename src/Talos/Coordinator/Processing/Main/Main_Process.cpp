@@ -23,7 +23,7 @@ then move to their respective modules.
 #include "../../../Shared Data/Data/cache_data.h"
 
 #ifdef MSVC
-static char test_line[256] = "g01y5x5g91g20\r\ng0";
+static char test_line[256] = "g01y5x5g91g20f100\r\ng0";
 static int test_byte = 0;
 #endif
 
