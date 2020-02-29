@@ -25,7 +25,7 @@ then move to their respective modules.
 #include "../../../Shared Data/Data/cache_data.h"
 
 #ifdef MSVC
-static char test_line[256] = "?B\r\ng1x1\r\nf500\r\n";
+static char test_line[256] = "?G\r\n?M\r\n?W\r\ng1x1\r\nf500\r\n";
 static int test_byte = 0;
 #endif
 
@@ -58,6 +58,7 @@ void Talos::Coordinator::Main_Process::initialize()
 	//Load the initialize block from settings. These values are the 'initial' values of the gcode blocks
 	//that are processed.
 	Hardware_Abstraction_Layer::Disk::load_initialize_block(&Talos::Shared::c_cache_data::ngc_block_record);
+		
 	//Assign the read,write function pointers. These assignments must take place outside the
 	//block buffer control. The block buffer control system must not know anything about the HAL it
 	//is servicing.

@@ -110,9 +110,9 @@ uint8_t Hardware_Abstraction_Layer::Disk::load_initialize_block(s_ngc_block * in
 	//default canned cycle return mode
 	initial_block->g_group[NGC_RS274::Groups::G::RETURN_MODE_CANNED_CYCLE] = NGC_RS274::G_codes::CANNED_CYCLE_RETURN_TO_R;
 	//default spindle mode
-	initial_block->g_group[NGC_RS274::Groups::M::SPINDLE] = NGC_RS274::M_codes::SPINDLE_STOP;
+	initial_block->m_group[NGC_RS274::Groups::M::SPINDLE] = NGC_RS274::M_codes::SPINDLE_STOP;
 	//default coolant mode
-	initial_block->g_group[NGC_RS274::Groups::M::COOLANT] = NGC_RS274::M_codes::COOLANT_OFF;
+	initial_block->m_group[NGC_RS274::Groups::M::COOLANT] = NGC_RS274::M_codes::COOLANT_OFF;
 }
 
 uint8_t Hardware_Abstraction_Layer::Disk::put_block(s_ngc_block * write_block)

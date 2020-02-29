@@ -101,7 +101,9 @@ struct s_inquiry_data
 {
 	enum class e_event_type : uint8_t
 	{
-		IntialBlockStatus = 0,
+		ActiveBlockGGroupStatus = 0,
+		ActiveBlockMGroupStatus = 1,
+		ActiveBlockWordStatus = 2,
 	};
 	s_bit_flag_controller<uint32_t> event_manager;
 	bool any()

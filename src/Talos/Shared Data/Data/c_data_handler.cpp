@@ -32,7 +32,7 @@ static s_framework_error tracked_error;
 void(*c_data_handler::pntr_data_handler_release)(c_ring_buffer<char> * buffer);
 
 ret_pointer c_data_handler::assign_handler(
-	c_ring_buffer <char> * buffer, s_inbound_data * event_object, s_inbound_data::e_event_type event_id, e_record_types rec_type)
+c_ring_buffer <char> * buffer, s_inbound_data * event_object, s_inbound_data::e_event_type event_id, e_record_types rec_type)
 {
 	//hold this event id. We will need it when we release the reader
 	tracked_read_event = event_id;
@@ -43,44 +43,44 @@ ret_pointer c_data_handler::assign_handler(
 
 	switch (tracked_read_type)
 	{
-	case e_record_types::Unknown:
+		case e_record_types::Unknown:
 		break;
-	case e_record_types::Motion:
+		case e_record_types::Motion:
 		break;
-	case e_record_types::Motion_Control_Setting:
+		case e_record_types::Motion_Control_Setting:
 		break;
-	case e_record_types::Spindle_Control_Setting:
+		case e_record_types::Spindle_Control_Setting:
 		break;
-	case e_record_types::Jog:
+		case e_record_types::Jog:
 		break;
-	case e_record_types::Peripheral_Control_Setting:
+		case e_record_types::Peripheral_Control_Setting:
 		break;
-	case e_record_types::Status:
+		case e_record_types::Status:
 		break;
-	case e_record_types::MotionDataBlock:
-		//If we already have an un processed motion block record. We cannot process another one right now. 
+		case e_record_types::MotionDataBlock:
+		//If we already have an un processed motion block record. We cannot process another one right now.
 		//But since we got in here because we thought there was a new record to process, there was
-		//some kind of eventing error. This is probably a code bug. 
+		//some kind of eventing error. This is probably a code bug.
 		if (extern_data_events.ready.event_manager.get((int)s_ready_data::e_event_type::MotionDataBlock))
 		{
 			__raise_error(buffer, e_error_behavior::Critical, 0, e_error_group::DataHandler, e_error_process::EventHandle
-				, tracked_read_type, e_error_source::Serial, e_error_code::AttemptToHandleNewEventWhilePreviousIsPending);
+			, tracked_read_type, e_error_source::Serial, e_error_code::AttemptToHandleNewEventWhilePreviousIsPending);
 			return NULL;
 		}
 		read_count = s_motion_data_block::_size;
 
 		return c_data_handler::bin_read_handler;
 		break;
-	case e_record_types::NgcBlockRecord:
+		case e_record_types::NgcBlockRecord:
 
-		//If we already have an un processed ngc data record. We cannot process another one right now. 
+		//If we already have an un processed ngc data record. We cannot process another one right now.
 		//But since we got in here because we thought there was a new record to process, there was
-		//some kind of eventing error. This is probably a code bug. 
+		//some kind of eventing error. This is probably a code bug.
 
 		if (extern_data_events.ready.event_manager.get((int)s_ready_data::e_event_type::NgcDataLine))
 		{
 			__raise_error(buffer, e_error_behavior::Critical, 0, e_error_group::DataHandler, e_error_process::EventHandle
-				, tracked_read_type, e_error_source::Serial, e_error_code::AttemptToHandleNewEventWhilePreviousIsPending);
+			, tracked_read_type, e_error_source::Serial, e_error_code::AttemptToHandleNewEventWhilePreviousIsPending);
 			return NULL;
 		}
 		Talos::Shared::c_cache_data::ngc_line_record.size = 0;
@@ -88,15 +88,15 @@ ret_pointer c_data_handler::assign_handler(
 		Talos::Shared::c_cache_data::ngc_line_record.pntr_record = Talos::Shared::c_cache_data::ngc_line_record.record;
 		return c_data_handler::txt_read_handler;
 		break;
-	default:
+		default:
 		__raise_error(buffer, e_error_behavior::Critical, 0, e_error_group::DataHandler, e_error_process::EventHandle
-			, tracked_read_type, e_error_source::Serial, e_error_code::UnHandledRecordType);
+		, tracked_read_type, e_error_source::Serial, e_error_code::UnHandledRecordType);
 		break;
 	}
 }
 
 ret_pointer c_data_handler::assign_handler(
-	c_ring_buffer <char> * buffer, s_outbound_data * event_object, s_outbound_data::e_event_type event_id, uint8_t size)
+c_ring_buffer <char> * buffer, s_outbound_data * event_object, s_outbound_data::e_event_type event_id, uint8_t size)
 {
 	//hold this event id. We will need it when we release the writer
 	tracked_write_event = event_id;
@@ -111,12 +111,12 @@ void c_data_handler::txt_read_handler(c_ring_buffer <char> * buffer)
 	if (!extern_data_events.serial.inbound.ms_time_out)
 	{
 		__raise_error(buffer, e_error_behavior::Critical, 0, e_error_group::DataHandler, e_error_process::Read
-			, tracked_read_type, e_error_source::Serial, e_error_code::TimeoutOccuredWaitingForEndOfRecord);
+		, tracked_read_type, e_error_source::Serial, e_error_code::TimeoutOccuredWaitingForEndOfRecord);
 		return;
 	}
 
 	bool has_eol = false;
-	//do we need to check this? technically we shouldnt ever get called here if there isnt any data. 
+	//do we need to check this? technically we shouldnt ever get called here if there isnt any data.
 	while (buffer->has_data())
 	{
 		//wait for the CR to come in so we know there is a complete line
@@ -124,28 +124,28 @@ void c_data_handler::txt_read_handler(c_ring_buffer <char> * buffer)
 		if (*Talos::Shared::c_cache_data::ngc_line_record.pntr_record == 0)
 		{
 			__raise_error(buffer, e_error_behavior::Critical, 0, e_error_group::DataHandler, e_error_process::Read
-				, tracked_read_type, e_error_source::Serial, e_error_code::UnExpectedDataTypeForRecord);
+			, tracked_read_type, e_error_source::Serial, e_error_code::UnExpectedDataTypeForRecord);
 			break;
 		}
 
 		has_eol = (*Talos::Shared::c_cache_data::ngc_line_record.pntr_record == CR || *Talos::Shared::c_cache_data::ngc_line_record.pntr_record == LF);
-		//How to handle just CR or just LF or CR+LF in a data string...... 
+		//How to handle just CR or just LF or CR+LF in a data string......
 		if (has_eol)
 		{
 			//we dont need the CR or LF at the end of the line so we can set it to zero
 			*Talos::Shared::c_cache_data::ngc_line_record.pntr_record = 0;
 			Talos::Shared::c_cache_data::ngc_line_record.size = read_count;
 
-			//This might be ngc data, or it might be an inquiry. This will decide. 
+			//This might be ngc data, or it might be an inquiry. This will decide.
 			__set_entry_mode(Talos::Shared::c_cache_data::ngc_line_record.record[0], Talos::Shared::c_cache_data::ngc_line_record.record[1]);
 			
 			//because we never know if the ISR fired and got all of the data (which may contains 1 or mroe records)
 			//we are going to check to see if the buffer still has data. If it does, leave the event set. If it does
 			//not, clear the event.
 			if (!buffer->has_data())
-				tracked_read_object->event_manager.clear((int)tracked_read_event);
+			tracked_read_object->event_manager.clear((int)tracked_read_event);
 
-			tracked_read_object = NULL;			
+			tracked_read_object = NULL;
 			c_data_handler::__release(buffer);
 			break;
 		}
@@ -161,7 +161,7 @@ void c_data_handler::bin_read_handler(c_ring_buffer <char> * buffer)
 	if (!extern_data_events.serial.inbound.ms_time_out)
 	{
 		__raise_error(buffer, e_error_behavior::Critical, 0, e_error_group::DataHandler, e_error_process::Read
-			, tracked_read_type, e_error_source::Serial, e_error_code::TimeoutOccuredWaitingForEndOfRecord);
+		, tracked_read_type, e_error_source::Serial, e_error_code::TimeoutOccuredWaitingForEndOfRecord);
 		return;
 	}
 
@@ -176,27 +176,27 @@ void c_data_handler::bin_read_handler(c_ring_buffer <char> * buffer)
 	{
 		switch (tracked_read_type)
 		{
-		case e_record_types::Unknown:
+			case e_record_types::Unknown:
 			break;
-		case e_record_types::Motion:
+			case e_record_types::Motion:
 			break;
-		case e_record_types::Motion_Control_Setting:
+			case e_record_types::Motion_Control_Setting:
 			break;
-		case e_record_types::Spindle_Control_Setting:
+			case e_record_types::Spindle_Control_Setting:
 			break;
-		case e_record_types::Jog:
+			case e_record_types::Jog:
 			break;
-		case e_record_types::Peripheral_Control_Setting:
+			case e_record_types::Peripheral_Control_Setting:
 			break;
-		case e_record_types::Status:
+			case e_record_types::Status:
 			memcpy(&Talos::Shared::c_cache_data::status_record, buffer->_storage_pointer, Talos::Shared::c_cache_data::status_record._size);
 			extern_data_events.ready.event_manager.set((int)s_ready_data::e_event_type::Status);
 			break;;
-		case e_record_types::MotionDataBlock:
+			case e_record_types::MotionDataBlock:
 			memcpy(&Talos::Shared::c_cache_data::motion_block_record, buffer->_storage_pointer, Talos::Shared::c_cache_data::motion_block_record._size);
 			extern_data_events.ready.event_manager.set((int)s_ready_data::e_event_type::MotionDataBlock);
 			break;
-		
+			
 		}
 
 		buffer->reset();
@@ -221,7 +221,7 @@ void c_data_handler::write_handler(c_ring_buffer <char> * buffer)
 		//At this point we have sent all the block data. The receiver will look at the first byte of the data and
 		//determine that it is a binary record requesting an 's_motion_block'. it will laod one from storage and
 		//send the block data back to us. When that occurs a usart0 event will occure and we will read that block
-		//then store it in this class in the 'loaded_block' variable. then we can execute that motion. 
+		//then store it in this class in the 'loaded_block' variable. then we can execute that motion.
 		//for good measure, lets reset the buffer
 		buffer->reset();
 		//call the release method.. Remember back in the serial handler we assigned a call back function to release?
@@ -242,8 +242,8 @@ void c_data_handler::__release(c_ring_buffer <char> * buffer_source)
 }
 
 void c_data_handler::__raise_error(c_ring_buffer <char> * buffer_source, e_error_behavior e_behavior
-	, uint8_t data_size, e_error_group e_group, e_error_process e_process, e_record_types e_rec_type
-	, e_error_source e_source, e_error_code e_code)
+, uint8_t data_size, e_error_group e_group, e_error_process e_process, e_record_types e_rec_type
+, e_error_source e_source, e_error_code e_code)
 {
 	//release the handler because we should be done with it now, but pass a flag in indicating if
 	//there is more data to read from this buffer
@@ -267,10 +267,10 @@ void c_data_handler::__set_entry_mode(char first_byte, char second_byte)
 
 	switch (first_byte)
 	{
-	case '?': //inquiry mode
+		case '?': //inquiry mode
 		__set_sub_entry_mode(second_byte);
 		break;
-	default:
+		default:
 		//assume its plain ngc g code data
 		extern_data_events.ready.event_manager.set((int)s_ready_data::e_event_type::NgcDataLine);
 	}
@@ -280,12 +280,18 @@ void c_data_handler::__set_sub_entry_mode(char byte)
 {
 	switch (byte)
 	{
-	case 'B': //inquiry mode
-		extern_data_events.inquire.event_manager.set((int)s_inquiry_data::e_event_type::IntialBlockStatus);
+		case 'G': //block g group status
+		extern_data_events.inquire.event_manager.set((int)s_inquiry_data::e_event_type::ActiveBlockGGroupStatus);
 		break;
-	default:
+		case 'M': //block m group status
+		extern_data_events.inquire.event_manager.set((int)s_inquiry_data::e_event_type::ActiveBlockMGroupStatus);
+		break;
+		case 'W': //word value status
+		extern_data_events.inquire.event_manager.set((int)s_inquiry_data::e_event_type::ActiveBlockWordStatus);
+		break;
+		default:
 		__raise_error(NULL, e_error_behavior::Informal, 0, e_error_group::DataHandler, e_error_process::Process
-			, tracked_read_type, e_error_source::Serial, e_error_code::UnExpectedDataTypeForRecord);
+		, tracked_read_type, e_error_source::Serial, e_error_code::UnExpectedDataTypeForRecord);
 	}
 	
 }
