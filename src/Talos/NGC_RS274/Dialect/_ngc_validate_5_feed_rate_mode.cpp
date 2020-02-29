@@ -7,7 +7,7 @@ static float feed_rate_value;
 
 e_parsing_errors NGC_RS274::Dialect::Group5::feed_rate_mode_validate(NGC_RS274::Block_View * v_block, e_dialects dialect)
 {
-	e_parsing_errors ret_code;
+	e_parsing_errors ret_code = e_parsing_errors::OK;
 	//Common feed mode types are checked here. Most feed mode checks
 	//test for F value on the line and/or a valid value being set
 	feed_rate_defined = v_block->get_word_value( 'F', &feed_rate_value);
@@ -20,6 +20,7 @@ e_parsing_errors NGC_RS274::Dialect::Group5::feed_rate_mode_validate(NGC_RS274::
 		if ((ret_code = (__common_feed_define_check(v_block, dialect))) != e_parsing_errors::OK) return ret_code;
 		//fall through to check set value
 	case NGC_RS274::G_codes::FEED_RATE_UNITS_PER_MINUTE_MODE:
+		//if ((ret_code = (__common_feed_define_check(v_block, dialect))) != e_parsing_errors::OK) return ret_code;
 		//G94 requires F word to be specified at any point, but the value must not be <=zero.
 		if ((ret_code = (__common_feed_rate_check(v_block, dialect))) != e_parsing_errors::OK) return ret_code;
 		break;
@@ -42,7 +43,7 @@ e_parsing_errors NGC_RS274::Dialect::Group5::feed_rate_mode_validate(NGC_RS274::
 //95 FEED_RATE_UNITS_PER_ROTATION
 e_parsing_errors NGC_RS274::Dialect::Group5::_G095(NGC_RS274::Block_View * v_block, e_dialects dialect)
 {
-	e_parsing_errors ret_code;
+	e_parsing_errors ret_code = e_parsing_errors::OK;
 	//Is the spindle on, or coming on at this line?
 	if (*v_block->current_m_codes.SPINDLE == NGC_RS274::M_codes::SPINDLE_STOP)
 		return  e_parsing_errors::NO_SPINDLE_MODE_FOR_UNIT_PER_ROTATION;

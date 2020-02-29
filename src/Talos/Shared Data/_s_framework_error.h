@@ -27,7 +27,8 @@ enum class e_error_process :uint8_t
 	Store = 4,
 	Delete = 5,
 	Read = 6,
-	NgcParsing = 7
+	NgcParsing = 7,
+	NgcErrorCheck = 8
 };
 
 enum class e_error_behavior :uint8_t

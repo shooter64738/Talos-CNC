@@ -50,6 +50,7 @@ namespace Talos
 				static void __raise_error(char * ngc_line, e_error_behavior e_behavior
 					, uint8_t data_size, e_error_group e_group, e_error_process e_process, e_record_types e_rec_type
 					, e_error_source e_source, uint16_t e_code);
+				static void __reset();
 			};
 		};
 	};

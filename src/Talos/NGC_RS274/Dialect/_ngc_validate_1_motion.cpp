@@ -7,7 +7,7 @@
 
 e_parsing_errors NGC_RS274::Dialect::Group1::motion_validate(NGC_RS274::Block_View * v_block, e_dialects dialect)
 {
-	e_parsing_errors ret_code;
+	e_parsing_errors ret_code = e_parsing_errors::OK;
 	/*
 	Check to make sure this would be a valid motion command.
 	We need to either have just set a motion mode, or already have set

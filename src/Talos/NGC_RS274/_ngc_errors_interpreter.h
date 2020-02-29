@@ -57,7 +57,7 @@
 #define  BASE_PLANE_SELECT_ERROR   (BASE_FEED_MODE_ERROR + ALLOC_FEED_MODE_ERROR_SIZE)//550-600
 #define  BASE_NOT_UNDERSTOOD       1000 //1000+
 
-enum class e_parsing_errors :int
+enum class e_parsing_errors :uint16_t
 {
 	/*
 	Errors for interpreter failure are all negative values, and are not used more than once!

@@ -35,6 +35,7 @@ namespace Talos
 			static void run();
 			static void error_handler(c_ring_buffer<char> * released_buffer, s_framework_error error);
 			static void ngc_error_handler(char * ngc_line, s_framework_error error);
+			static void ngc_block_report(s_ngc_block block);
 
 			//Main_Process();
 			//~Main_Process();

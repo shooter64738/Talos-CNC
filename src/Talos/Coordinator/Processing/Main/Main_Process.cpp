@@ -23,7 +23,7 @@ then move to their respective modules.
 #include "../../../Shared Data/Data/cache_data.h"
 
 #ifdef MSVC
-static char test_line[256] = "g01y5x5g91g20f100\r\ng0";
+static char test_line[256] = "g1x1\r\nf500\r\n";
 static int test_byte = 0;
 #endif
 
@@ -40,7 +40,7 @@ void Talos::Coordinator::Main_Process::initialize()
 
 	__critical_initialization("Core", Hardware_Abstraction_Layer::Core::initialize, STARTUP_CLASS_CRITICAL);//<--core start up
 	__critical_initialization("Interrupts", Hardware_Abstraction_Layer::Core::start_interrupts, STARTUP_CLASS_CRITICAL);//<--start interrupts on hardware
-	__critical_initialization("Disk", Hardware_Abstraction_Layer::Disk::initialize, STARTUP_CLASS_CRITICAL);//<--drive/eprom storage
+	//__critical_initialization("Disk", Hardware_Abstraction_Layer::Disk::initialize, STARTUP_CLASS_CRITICAL);//<--drive/eprom storage
 	__critical_initialization("\tSettings", Hardware_Abstraction_Layer::Disk::load_configuration, STARTUP_CLASS_WARNING);//<--drive/eprom storage
 	__critical_initialization("\tConfiguration", Talos::Confguration::initialize, STARTUP_CLASS_CRITICAL);//<--g code buffer
 	__critical_initialization("Events", Talos::Shared::Events::initialize, STARTUP_CLASS_CRITICAL);//<--init events
@@ -51,9 +51,9 @@ void Talos::Coordinator::Main_Process::initialize()
 	__critical_initialization("Spindle Control Comms", NULL, STARTUP_CLASS_WARNING);//<--spindle controller card
 
 	//Load the initialize block from settings. These values are the 'initial' values of the gcode blocks
-	//that are processed. 
+	//that are processed.
 	Hardware_Abstraction_Layer::Disk::load_initialize_block(&Talos::Shared::c_cache_data::ngc_block_record);
-	//Assign the read,write function pointers. These assignments must take place outside the 
+	//Assign the read,write function pointers. These assignments must take place outside the
 	//block buffer control. The block buffer control system must not know anything about the HAL it
 	//is servicing.
 	Talos::Motion::NgcBuffer::pntr_buffer_block_write = Hardware_Abstraction_Layer::Disk::put_block;
@@ -70,7 +70,7 @@ void Talos::Coordinator::Main_Process::initialize()
 	NGC_RS274::Coordinate_Control::WCS::pntr_wcs_write = Hardware_Abstraction_Layer::Disk::put_wcs;
 
 
-#ifdef MSVC
+	#ifdef MSVC
 	//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "g68x5.y5.R28.\r\ng0x6\r\n f4g1y1.\r\nx5\r\n");
 	//cutter comp line 1 left comp test
 	//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "p.25 g1 f1 g41 x1 y0\r\n g2 x1.5y0.5 i1.5 j0\r\n g1 x1.5y1.5\r\ng1 x3.5 y1.5\r\n");
@@ -89,7 +89,7 @@ void Talos::Coordinator::Main_Process::initialize()
 	//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "g0y#525r#<test>[1.0-[5.0+10]]\r\ng1x3\r\n");
 	//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "g99 y [ #777 - [#<test> + #<_glob> +-sqrt[2]] ] \r\n\r\n\r\n\r\n");// /n/ng1x3\r\n");
 	//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "#<tool>=10\r\n");
-#endif
+	#endif
 
 
 }
@@ -133,14 +133,16 @@ void Talos::Coordinator::Main_Process::__initialization_response(uint8_t respons
 
 void Talos::Coordinator::Main_Process::run()
 {
+	Talos::Coordinator::Main_Process::host_serial.print_string("\r\n** System ready **\r\n");
 	//Start the eventing loop, stop loop if a critical system error occurs
 	while (extern_system_events.event_manager.get((int)s_system_events::e_event_type::SystemAllOk))
 	{
 
-#ifdef MSVC
+		#ifdef MSVC
 		//simulate serial data coming in 1 byte at a time. This is a text record test
 		char byte = 0;
 		//if (test_byte < 5)
+		if (!extern_system_events.event_manager.get((int)s_system_events::e_event_type::NgcReset))
 		{
 			byte = test_line[test_byte++];
 			Hardware_Abstraction_Layer::Serial::add_to_buffer(0, byte);
@@ -151,8 +153,8 @@ void Talos::Coordinator::Main_Process::run()
 		//			Hardware_Abstraction_Layer::Disk::read_file("c:\\jeff\\1001.txt", Hardware_Abstraction_Layer::Serial::_usart0_read_buffer._storage_pointer);
 		//
 		//		Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "");
-#endif // MSVC
-//
+		#endif // MSVC
+		//
 
 
 		//0: Handle system events
@@ -170,6 +172,9 @@ void Talos::Coordinator::Main_Process::run()
 
 		//4:: Handle ngc processing events
 		Talos::Coordinator::Events::Ngc::process();
+
+		if (extern_data_events.inquire.event_manager.get((int)s_inquiry_data::e_event_type::IntialBlockStatus))
+		ngc_block_report(Talos::Shared::c_cache_data::ngc_block_record);
 	}
 
 	Talos::Coordinator::Main_Process::host_serial.print_string("\r\n** System halted **");
@@ -210,23 +215,58 @@ void Talos::Coordinator::Main_Process::ngc_error_handler(char * ngc_line, s_fram
 {
 	Main_Process::host_serial.print_string("ERROR:{Ngc}");
 
+	extern_system_events.event_manager.set((int)s_system_events::e_event_type::NgcReset);
+
 	Main_Process::host_serial.print_string("\r\n\tsource:");
-	Main_Process::host_serial.print_int32((int)error.source);
+	Main_Process::host_serial.print_int32((uint32_t)error.source);
 	Main_Process::host_serial.print_string("\r\n\tbehavior:");
-	Main_Process::host_serial.print_int32((int)error.behavior);
+	Main_Process::host_serial.print_int32((uint32_t)error.behavior);
 	Main_Process::host_serial.print_string("\r\n\tcode:");
-	Main_Process::host_serial.print_int32((int)error.code);
+	Main_Process::host_serial.print_int32((uint32_t)error.code);
 	Main_Process::host_serial.print_string("\r\n\tdata_size:");
-	Main_Process::host_serial.print_int32((int)error.data_size);
+	Main_Process::host_serial.print_int32((uint32_t)error.data_size);
 	Main_Process::host_serial.print_string("\r\n\tgroup:");
-	Main_Process::host_serial.print_int32((int)error.group);
+	Main_Process::host_serial.print_int32((uint32_t)error.group);
 	Main_Process::host_serial.print_string("\r\n\tprocess:");
-	Main_Process::host_serial.print_int32((int)error.process);
+	Main_Process::host_serial.print_int32((uint32_t)error.process);
 	Main_Process::host_serial.print_string("\r\n\trecord_type:");
-	Main_Process::host_serial.print_int32((int)error.record_type);
+	Main_Process::host_serial.print_int32((uint32_t)error.record_type);
 	Main_Process::host_serial.print_string("\r\n");
 	Main_Process::host_serial.Write(ngc_line);
 	Main_Process::host_serial.print_string("\r\n");
+	Talos::Coordinator::Main_Process::host_serial.print_string("\r\n** Ngc Reset **\r\n");
 
+}
 
+void Talos::Coordinator::Main_Process::ngc_block_report(s_ngc_block block)
+{
+	Main_Process::host_serial.print_string("Start up block:{Ngc}\r\n");
+
+	extern_data_events.inquire.event_manager.clear((int)s_inquiry_data::e_event_type::IntialBlockStatus);
+	for (int i = 0; i < COUNT_OF_G_CODE_GROUPS_ARRAY; i++)
+	{
+		Main_Process::host_serial.print_string("G");
+		if (i < 10)
+		Main_Process::host_serial.print_string("00");
+		else
+		Main_Process::host_serial.print_string("0");
+
+		Main_Process::host_serial.print_int32(i);
+		Main_Process::host_serial.print_string(" ");
+	}
+	Main_Process::host_serial.print_string("\r\n");
+	
+	for (int i = 0; i < COUNT_OF_G_CODE_GROUPS_ARRAY; i++)
+	{
+		uint8_t val = block.g_group[i]/G_CODE_MULTIPLIER;
+		Main_Process::host_serial.print_string(" ");
+		if (val < 10)
+		Main_Process::host_serial.print_string("00");
+		else
+		Main_Process::host_serial.print_string("0");
+
+		Main_Process::host_serial.print_int32(val);
+		Main_Process::host_serial.print_string(" ");
+	}
+	Main_Process::host_serial.print_string("\r\n");
 }

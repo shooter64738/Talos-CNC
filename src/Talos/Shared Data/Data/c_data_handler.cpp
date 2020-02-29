@@ -38,7 +38,8 @@ ret_pointer c_data_handler::assign_handler(
 	tracked_read_event = event_id;
 	tracked_read_object = event_object;
 	tracked_read_type = rec_type;
-	extern_data_events.serial.inbound.set_time_out(1000);
+	extern_data_events.serial.inbound.set_time_out(__FRAMEWORK_COM_READ_TIMEOUT_MS);
+	read_count = 0;
 
 	switch (tracked_read_type)
 	{
@@ -82,9 +83,9 @@ ret_pointer c_data_handler::assign_handler(
 				, tracked_read_type, e_error_source::Serial, e_error_code::AttemptToHandleNewEventWhilePreviousIsPending);
 			return NULL;
 		}
-
+		Talos::Shared::c_cache_data::ngc_line_record.size = 0;
 		memset(Talos::Shared::c_cache_data::ngc_line_record.record, 0, 256);
-		
+		Talos::Shared::c_cache_data::ngc_line_record.pntr_record = Talos::Shared::c_cache_data::ngc_line_record.record;
 		return c_data_handler::txt_read_handler;
 		break;
 	default:
@@ -101,7 +102,7 @@ ret_pointer c_data_handler::assign_handler(
 	tracked_write_event = event_id;
 	tracked_write_object = event_object;
 	write_count = size;
-	extern_data_events.serial.inbound.set_time_out(1000);
+	extern_data_events.serial.inbound.set_time_out(__FRAMEWORK_COM_READ_TIMEOUT_MS);
 	return c_data_handler::write_handler;
 }
 
@@ -134,15 +135,17 @@ void c_data_handler::txt_read_handler(c_ring_buffer <char> * buffer)
 			//we dont need the CR or LF at the end of the line so we can set it to zero
 			*Talos::Shared::c_cache_data::ngc_line_record.pntr_record = 0;
 			Talos::Shared::c_cache_data::ngc_line_record.size = read_count;
-			extern_data_events.ready.event_manager.set((int)s_ready_data::e_event_type::NgcDataLine);
+
+			//This might be ngc data, or it might be an inquiry. This will decide. 
+			__set_entry_mode(Talos::Shared::c_cache_data::ngc_line_record.record[0], Talos::Shared::c_cache_data::ngc_line_record.record[1]);
+			
 			//because we never know if the ISR fired and got all of the data (which may contains 1 or mroe records)
 			//we are going to check to see if the buffer still has data. If it does, leave the event set. If it does
 			//not, clear the event.
 			if (!buffer->has_data())
 				tracked_read_object->event_manager.clear((int)tracked_read_event);
 
-			tracked_read_object = NULL;
-			Talos::Shared::c_cache_data::ngc_line_record.pntr_record = Talos::Shared::c_cache_data::ngc_line_record.record;
+			tracked_read_object = NULL;			
 			c_data_handler::__release(buffer);
 			break;
 		}
@@ -257,4 +260,32 @@ void c_data_handler::__raise_error(c_ring_buffer <char> * buffer_source, e_error
 	tracked_error.source = e_source;
 	tracked_error.code = (int)e_code;
 	Talos::Shared::FrameWork::Error::Handler::extern_pntr_error_handler(buffer_source, tracked_error);
+}
+
+void c_data_handler::__set_entry_mode(char first_byte, char second_byte)
+{
+
+	switch (first_byte)
+	{
+	case '?': //inquiry mode
+		__set_sub_entry_mode(second_byte);
+		break;
+	default:
+		//assume its plain ngc g code data
+		extern_data_events.ready.event_manager.set((int)s_ready_data::e_event_type::NgcDataLine);
+	}
+}
+
+void c_data_handler::__set_sub_entry_mode(char byte)
+{
+	switch (byte)
+	{
+	case 'B': //inquiry mode
+		extern_data_events.inquire.event_manager.set((int)s_inquiry_data::e_event_type::IntialBlockStatus);
+		break;
+	default:
+		__raise_error(NULL, e_error_behavior::Informal, 0, e_error_group::DataHandler, e_error_process::Process
+			, tracked_read_type, e_error_source::Serial, e_error_code::UnExpectedDataTypeForRecord);
+	}
+	
 }

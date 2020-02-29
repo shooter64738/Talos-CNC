@@ -9,6 +9,8 @@
 #ifndef __EXTERN_DATA_EVENTS
 #define __EXTERN_DATA_EVENTS
 
+#define __FRAMEWORK_COM_READ_TIMEOUT_MS 5000
+
 struct s_ancillary_events
 {
 	enum class e_event_type : uint8_t
@@ -95,6 +97,23 @@ struct s_ready_data
 	uint32_t ngc_block_cache_count = 0;
 };
 
+struct s_inquiry_data
+{
+	enum class e_event_type : uint8_t
+	{
+		IntialBlockStatus = 0,
+	};
+	s_bit_flag_controller<uint32_t> event_manager;
+	bool any()
+	{
+		if (event_manager._flag > 0)
+			return true;
+		else
+			return false;
+	}
+	uint32_t ngc_block_cache_count = 0;
+};
+
 struct s_serial
 {
 	s_inbound_data inbound;
@@ -154,9 +173,10 @@ struct s_data_events
 	s_serial serial;
 	s_disk disk;
 	s_ready_data ready;
+	s_inquiry_data inquire;
 	bool any()
 	{
-		if (serial.any() || disk.any() || ready.any())
+		if (serial.any() || disk.any() || ready.any() || inquire.any())
 		return true;
 		else
 		return false;
@@ -197,6 +217,7 @@ struct s_system_events
 		SystemAllOk = 0,
 		MotionConfigurationLoaded = 1,
 		SpindleConfigurationLoaded = 2,
+		NgcReset = 4,
 		SystemCritical = 31
 	};
 	s_bit_flag_controller<uint32_t> event_manager;
