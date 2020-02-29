@@ -20,6 +20,8 @@ then move to their respective modules.
 #include "../../../Motion/Processing/GCode/xc_gcode_buffer.h"
 #include "../../../Configuration/c_configuration.h"
 #include "../Events/EventHandlers/c_ngc_data_events.h"
+#include "../Events/EventHandlers/c_report_events.h"
+#include "../Error/c_error.h"
 #include "../../../Shared Data/Data/cache_data.h"
 
 #ifdef MSVC
@@ -32,8 +34,11 @@ c_Serial Talos::Coordinator::Main_Process::host_serial;
 void Talos::Coordinator::Main_Process::initialize()
 {
 	//setup the error handler function pointer
-	Talos::Shared::FrameWork::Error::Handler::extern_pntr_error_handler = Talos::Coordinator::Main_Process::error_handler;
-	Talos::Shared::FrameWork::Error::Handler::extern_pntr_ngc_error_handler = Talos::Coordinator::Main_Process::ngc_error_handler;
+	Talos::Coordinator::Error::initialize(&Talos::Coordinator::Main_Process::host_serial);
+	Talos::Coordinator::Events::Report::initialize(&Talos::Coordinator::Main_Process::host_serial);
+
+	Talos::Shared::FrameWork::Error::Handler::extern_pntr_error_handler = Talos::Coordinator::Error::general_error;
+	Talos::Shared::FrameWork::Error::Handler::extern_pntr_ngc_error_handler = Talos::Coordinator::Error::ngc_error;
 
 	Talos::Coordinator::Main_Process::host_serial = c_Serial(0, 250000); //<--Connect to host
 	Talos::Coordinator::Main_Process::host_serial.print_string("Coordinator initializing\r\n");
@@ -173,100 +178,13 @@ void Talos::Coordinator::Main_Process::run()
 		//4:: Handle ngc processing events
 		Talos::Coordinator::Events::Ngc::process();
 
-		if (extern_data_events.inquire.event_manager.get((int)s_inquiry_data::e_event_type::IntialBlockStatus))
-		ngc_block_report(Talos::Shared::c_cache_data::ngc_block_record);
+		//5: Process reporting events
+		Talos::Coordinator::Events::Report::process();
+
+		/*if (extern_data_events.inquire.event_manager.get((int)s_inquiry_data::e_event_type::IntialBlockStatus))
+		ngc_block_report(Talos::Shared::c_cache_data::ngc_block_record);*/
 	}
 
 	Talos::Coordinator::Main_Process::host_serial.print_string("\r\n** System halted **");
 	while (1) {}
-}
-
-void Talos::Coordinator::Main_Process::error_handler(c_ring_buffer<char> * released_buffer, s_framework_error error)
-{
-	Main_Process::host_serial.print_string("ERROR:");
-	if (error.behavior == e_error_behavior::Critical)
-	{
-		extern_system_events.event_manager.set((int)s_system_events::e_event_type::SystemCritical);
-		extern_system_events.event_manager.clear((int)s_system_events::e_event_type::SystemAllOk);
-		Main_Process::host_serial.print_string("{Critical}");
-	}
-
-
-
-	Main_Process::host_serial.print_string("\r\n\tsource:");
-	Main_Process::host_serial.print_int32((int)error.source);
-	Main_Process::host_serial.print_string("\r\n\tbehavior:");
-	Main_Process::host_serial.print_int32((int)error.behavior);
-	Main_Process::host_serial.print_string("\r\n\tcode:");
-	Main_Process::host_serial.print_int32((int)error.code);
-	Main_Process::host_serial.print_string("\r\n\tdata_size:");
-	Main_Process::host_serial.print_int32((int)error.data_size);
-	Main_Process::host_serial.print_string("\r\n\tgroup:");
-	Main_Process::host_serial.print_int32((int)error.group);
-	Main_Process::host_serial.print_string("\r\n\tprocess:");
-	Main_Process::host_serial.print_int32((int)error.process);
-	Main_Process::host_serial.print_string("\r\n\trecord_type:");
-	Main_Process::host_serial.print_int32((int)error.record_type);
-	Main_Process::host_serial.print_string("\r\n");
-
-}
-
-void Talos::Coordinator::Main_Process::ngc_error_handler(char * ngc_line, s_framework_error error)
-{
-	Main_Process::host_serial.print_string("ERROR:{Ngc}");
-
-	extern_system_events.event_manager.set((int)s_system_events::e_event_type::NgcReset);
-
-	Main_Process::host_serial.print_string("\r\n\tsource:");
-	Main_Process::host_serial.print_int32((uint32_t)error.source);
-	Main_Process::host_serial.print_string("\r\n\tbehavior:");
-	Main_Process::host_serial.print_int32((uint32_t)error.behavior);
-	Main_Process::host_serial.print_string("\r\n\tcode:");
-	Main_Process::host_serial.print_int32((uint32_t)error.code);
-	Main_Process::host_serial.print_string("\r\n\tdata_size:");
-	Main_Process::host_serial.print_int32((uint32_t)error.data_size);
-	Main_Process::host_serial.print_string("\r\n\tgroup:");
-	Main_Process::host_serial.print_int32((uint32_t)error.group);
-	Main_Process::host_serial.print_string("\r\n\tprocess:");
-	Main_Process::host_serial.print_int32((uint32_t)error.process);
-	Main_Process::host_serial.print_string("\r\n\trecord_type:");
-	Main_Process::host_serial.print_int32((uint32_t)error.record_type);
-	Main_Process::host_serial.print_string("\r\n");
-	Main_Process::host_serial.Write(ngc_line);
-	Main_Process::host_serial.print_string("\r\n");
-	Talos::Coordinator::Main_Process::host_serial.print_string("\r\n** Ngc Reset **\r\n");
-
-}
-
-void Talos::Coordinator::Main_Process::ngc_block_report(s_ngc_block block)
-{
-	Main_Process::host_serial.print_string("Start up block:{Ngc}\r\n");
-
-	extern_data_events.inquire.event_manager.clear((int)s_inquiry_data::e_event_type::IntialBlockStatus);
-	for (int i = 0; i < COUNT_OF_G_CODE_GROUPS_ARRAY; i++)
-	{
-		Main_Process::host_serial.print_string("G");
-		if (i < 10)
-		Main_Process::host_serial.print_string("00");
-		else
-		Main_Process::host_serial.print_string("0");
-
-		Main_Process::host_serial.print_int32(i);
-		Main_Process::host_serial.print_string(" ");
-	}
-	Main_Process::host_serial.print_string("\r\n");
-	
-	for (int i = 0; i < COUNT_OF_G_CODE_GROUPS_ARRAY; i++)
-	{
-		uint8_t val = block.g_group[i]/G_CODE_MULTIPLIER;
-		Main_Process::host_serial.print_string(" ");
-		if (val < 10)
-		Main_Process::host_serial.print_string("00");
-		else
-		Main_Process::host_serial.print_string("0");
-
-		Main_Process::host_serial.print_int32(val);
-		Main_Process::host_serial.print_string(" ");
-	}
-	Main_Process::host_serial.print_string("\r\n");
 }

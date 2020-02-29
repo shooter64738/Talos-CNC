@@ -65,6 +65,7 @@ void Talos::Coordinator::Data::Ngc::load_block_from_cache()
 	if ((return_value = NGC_RS274::Error_Check::error_check(&v_new, &v_previous))
 	!= e_parsing_errors::OK)
 	{
+	
 		__raise_error(Talos::Shared::c_cache_data::ngc_line_record.record, e_error_behavior::Recoverable, Talos::Shared::c_cache_data::ngc_line_record.size
 		, e_error_group::Interpreter, e_error_process::NgcErrorCheck, e_record_types::NgcBlockRecord, e_error_source::Disk, (uint16_t)return_value);
 		return;
@@ -96,8 +97,9 @@ void  Talos::Coordinator::Data::Ngc::__raise_error(char * ngc_line, e_error_beha
 	error.process = e_process;
 	error.record_type = e_rec_type;
 	error.source = e_source;
-
+	
 	Talos::Shared::FrameWork::Error::Handler::extern_pntr_ngc_error_handler(Talos::Shared::c_cache_data::ngc_line_record.record, error);
+	
 	__reset();
 }
 

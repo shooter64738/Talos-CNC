@@ -13,7 +13,9 @@
   <ItemGroup>
     <ClInclude Include="..\..\..\..\Configuration\c_configuration.h" />
     <ClInclude Include="..\..\..\..\Coordinator\Processing\Data\DataHandlers\c_ngc_data_handler.h" />
+    <ClInclude Include="..\..\..\..\Coordinator\Processing\Error\c_error.h" />
     <ClInclude Include="..\..\..\..\Coordinator\Processing\Events\EventHandlers\c_ngc_data_events.h" />
+    <ClInclude Include="..\..\..\..\Coordinator\Processing\Events\EventHandlers\c_report_events.h" />
     <ClInclude Include="..\..\..\..\NGC_RS274\Dialect\_ngc_dialect_validate.h" />
     <ClInclude Include="..\..\..\..\NGC_RS274\Dialect\_ngc_validate_0_nonmodal.h" />
     <ClInclude Include="..\..\..\..\NGC_RS274\Dialect\_ngc_validate_16_plane_rotation.h" />
@@ -104,9 +106,11 @@
     <ClCompile Include="..\..\..\..\Coordinator\coordinator_main.cpp" />
     <ClCompile Include="..\..\..\..\Coordinator\Processing\Data\DataHandlers\c_binary_data_handler.cpp" />
     <ClCompile Include="..\..\..\..\Coordinator\Processing\Data\DataHandlers\c_ngc_data_handler.cpp" />
+    <ClCompile Include="..\..\..\..\Coordinator\Processing\Error\c_error.cpp" />
     <ClCompile Include="..\..\..\..\Coordinator\Processing\Events\EventHandlers\c_ancillary_event_handler.cpp" />
     <ClCompile Include="..\..\..\..\Coordinator\Processing\Events\EventHandlers\c_network_data_events.cpp" />
     <ClCompile Include="..\..\..\..\Coordinator\Processing\Events\EventHandlers\c_ngc_data_events.cpp" />
+    <ClCompile Include="..\..\..\..\Coordinator\Processing\Events\EventHandlers\c_report_events.cpp" />
     <ClCompile Include="..\..\..\..\Coordinator\Processing\Events\EventHandlers\c_spi_data_events.cpp" />
     <ClCompile Include="..\..\..\..\Coordinator\Processing\Events\EventHandlers\c_system_events.cpp" />
     <ClCompile Include="..\..\..\..\Coordinator\Processing\Main\Main_Process.cpp" />

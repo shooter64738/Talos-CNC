@@ -119,7 +119,7 @@ void Talos::Shared::Events::process()
 
 }
 
-//void Events::error_handler(c_ring_buffer<char> * released_buffer, s_framework_error error)
+//void Events::general_error(c_ring_buffer<char> * released_buffer, s_framework_error error)
 //{
 	/*Talos::Coordinator::Main_Process::host_serial.print_string("ERROR:");
 	

@@ -73,6 +73,9 @@
     <Filter Include="Shared Data\FrameWork">
       <UniqueIdentifier>{7aaecb41-7a90-4a60-ab63-ecb9c20346f0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Coordinator\Processing\Error">
+      <UniqueIdentifier>{fda74141-4b56-4e3f-bd36-7f041ee800b7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\communication_def.h" />
@@ -326,6 +329,12 @@
     <ClInclude Include="..\..\..\..\Shared Data\FrameWork\extern_events_types.h">
       <Filter>Shared Data\FrameWork</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\..\Coordinator\Processing\Error\c_error.h">
+      <Filter>Coordinator\Processing\Error</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Coordinator\Processing\Events\EventHandlers\c_report_events.h">
+      <Filter>Coordinator\Processing\Events\EventHandlers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\..\Coordinator\coordinator_main.cpp">
@@ -453,6 +462,12 @@
     </ClCompile>
     <ClCompile Include="..\..\..\..\Shared Data\FrameWork\extern_events_types.cpp">
       <Filter>Shared Data\FrameWork</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Coordinator\Processing\Error\c_error.cpp">
+      <Filter>Coordinator\Processing\Error</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Coordinator\Processing\Events\EventHandlers\c_report_events.cpp">
+      <Filter>Coordinator\Processing\Events\EventHandlers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

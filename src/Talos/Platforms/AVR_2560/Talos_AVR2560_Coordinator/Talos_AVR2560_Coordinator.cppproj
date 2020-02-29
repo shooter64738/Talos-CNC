@@ -202,6 +202,14 @@
       <SubType>compile</SubType>
       <Link>Coordinator\Processing\Data\DataHandlers\c_ngc_data_handler.h</Link>
     </Compile>
+    <Compile Include="..\..\..\Coordinator\Processing\Error\c_error.cpp">
+      <SubType>compile</SubType>
+      <Link>Coordinator\Processing\Error\c_error.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\Coordinator\Processing\Error\c_error.h">
+      <SubType>compile</SubType>
+      <Link>Coordinator\Processing\Error\c_error.h</Link>
+    </Compile>
     <Compile Include="..\..\..\Coordinator\Processing\Events\EventHandlers\c_ancillary_event_handler.cpp">
       <SubType>compile</SubType>
       <Link>Coordinator\Processing\Events\EventHandlers\c_ancillary_event_handler.cpp</Link>
@@ -225,6 +233,14 @@
     <Compile Include="..\..\..\Coordinator\Processing\Events\EventHandlers\c_ngc_data_events.h">
       <SubType>compile</SubType>
       <Link>Coordinator\Processing\Events\EventHandlers\c_ngc_data_events.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Coordinator\Processing\Events\EventHandlers\c_report_events.cpp">
+      <SubType>compile</SubType>
+      <Link>Coordinator\Processing\Events\EventHandlers\c_report_events.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\Coordinator\Processing\Events\EventHandlers\c_report_events.h">
+      <SubType>compile</SubType>
+      <Link>Coordinator\Processing\Events\EventHandlers\c_report_events.h</Link>
     </Compile>
     <Compile Include="..\..\..\Coordinator\Processing\Events\EventHandlers\c_spi_data_events.cpp">
       <SubType>compile</SubType>
@@ -686,6 +702,7 @@
     <Folder Include="Coordinator\Processing\Data\" />
     <Folder Include="Coordinator\Processing\Data\DataHandlers\" />
     <Folder Include="Coordinator\Processing\Events\EventHandlers" />
+    <Folder Include="Coordinator\Processing\Error" />
     <Folder Include="Coordinator\Serial" />
     <Folder Include="Coordinator\Processing\" />
     <Folder Include="Coordinator\Processing\GCode\" />

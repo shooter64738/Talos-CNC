@@ -18,50 +18,39 @@
 *  along with Talos.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef __C_SHARED_EVENTS_H__
-#define __C_SHARED_EVENTS_H__
+#ifndef __C_REPORT_EVENT_HANDLING_H__
+#define __C_REPORT_EVENT_HANDLING_H__
 
 #include <stdint.h>
-#include "c_data_events.h"
-#include "../../c_ring_template.h"
-//#include "c_system_events.h"
-//#include "c_ancillary_event_handler.h"
-#include "../_s_framework_error.h"
+#include "../../../Serial/c_Serial.h"
+#include "../../../../Shared Data/FrameWork/extern_events_types.h"
+#include "../../../../NGC_RS274/_ngc_block_struct.h"
 
 namespace Talos
 {
-	namespace Shared
+	namespace Coordinator
 	{
-		class Events
+		namespace Events
 		{
-			//variables
+			class Report
+			{
+				//variables
 			public:
-				//static c_system_events system_event_handler;
-				static c_data_events data_event_handler;
-				//static c_ancillary_event_handler ancillary_event_handler;
+
 			protected:
 			private:
 
 
-			//functions
+				//functions
 			public:
-				/*Events();
-				~Events();
-				Events(const Events &c);
-				Events& operator=(const Events &c);*/
-
-			static uint8_t initialize();
-			static void process();
-			//static void general_error(c_ring_buffer<char> * released_buffer, s_framework_error error);
-			
-
-			protected:
+				static void process();
+				static uint8_t initialize(c_Serial *serial);
 			private:
-			static void collect();
-			static void execute_data();
+				static void __report_block_groups(s_ngc_block block);
+				static void ____group(uint8_t count, uint16_t * pointer, char group_name);
+				static void __print_base();
 
-			static void handle_serial_events();
-
+			};
 		};
 	};
 };
