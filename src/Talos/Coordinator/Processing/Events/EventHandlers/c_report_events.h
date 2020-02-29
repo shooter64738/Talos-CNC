@@ -35,20 +35,23 @@ namespace Talos
 			class Report
 			{
 				//variables
-			public:
+				public:
 
-			protected:
-			private:
+				protected:
+				private:
 
 
 				//functions
-			public:
+				public:
 				static void process();
 				static uint8_t initialize(c_Serial *serial);
-			private:
+				private:
 				static void __report_block_groups(s_ngc_block block);
 				static void ____group(uint8_t count, uint16_t * pointer, char group_name);
+				
+				static void __pad_left(float value, uint8_t padcount, uint8_t decimals);
 				static void __print_base();
+				static void __write_eol();
 
 			};
 		};

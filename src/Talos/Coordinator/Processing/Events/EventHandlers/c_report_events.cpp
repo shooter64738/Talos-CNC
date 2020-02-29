@@ -20,6 +20,7 @@
 
 #include "c_report_events.h"
 #include "../../../../Shared Data/Data/cache_data.h"
+#include <math.h>
 
 static c_Serial *rpt_serial;
 
@@ -37,7 +38,7 @@ void Talos::Coordinator::Events::Report::process()
 
 void Talos::Coordinator::Events::Report::__report_block_groups(s_ngc_block block)
 {
-	rpt_serial->print_string("Block:{Ngc}");
+	rpt_serial->print_string("Blk:{Ngc}");
 	rpt_serial->print_string(" Sta:");
 	rpt_serial->print_int32(block.__station__);
 	rpt_serial->print_string("\r\n");
@@ -54,28 +55,42 @@ void Talos::Coordinator::Events::Report::____group(uint8_t count, uint16_t * poi
 	for (int i = 0; i < count; i++)
 	{
 		rpt_serial->Write(group_name);
-		if (i < 10)
-			rpt_serial->print_string("00");
-		else
-			rpt_serial->print_string("0");
-
-		rpt_serial->print_int32(i);
+		__pad_left(i, 4,0);
 		rpt_serial->print_string(" ");
 	}
-	rpt_serial->print_string("\r\n");
+	__write_eol();
 
-//write the values
+	//write the values
 	for (int i = 0; i < count; i++)
 	{
-		uint8_t val = *(pointer+i) / G_CODE_MULTIPLIER;
-		rpt_serial->print_string(" ");
-		if (val < 10)
-			rpt_serial->print_string("00");
-		else
-			rpt_serial->print_string("0");
-
-		rpt_serial->print_int32(val);
+		float val = (*(pointer + i));
+		val = val / G_CODE_MULTIPLIER;
+		__pad_left(val, 3,1);
 		rpt_serial->print_string(" ");
 	}
+	__write_eol();
+}
+
+void Talos::Coordinator::Events::Report::__pad_left(float value, uint8_t padcount, uint8_t decimals)
+{
+	uint32_t dec_count = ((pow(10.0, padcount))/(int)(value>0?value:1));
+	
+	while (padcount-1 > 0)
+	{
+		rpt_serial->print_string("0");
+		dec_count = dec_count / 10;
+		if (dec_count < 10 && value > 0)
+			break;
+		padcount--;
+	}
+
+	if (decimals == 0)
+		rpt_serial->print_int32((int)value);
+	else
+		rpt_serial->print_float(value,decimals);
+}
+
+void Talos::Coordinator::Events::Report::__write_eol()
+{
 	rpt_serial->print_string("\r\n");
 }

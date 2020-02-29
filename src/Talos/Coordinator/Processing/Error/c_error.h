@@ -47,6 +47,7 @@ namespace Talos
 			static uint8_t initialize(c_Serial *serial);
 		private:
 			static void __print_base(s_framework_error error);
+			static void __write_eol();
 
 
 		};

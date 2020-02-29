@@ -30,7 +30,7 @@ uint8_t Talos::Coordinator::Error::initialize(c_Serial *serial)
 
 void Talos::Coordinator::Error::general_error(c_ring_buffer<char> * released_buffer, s_framework_error error)
 {
-	err_serial->print_string("ERR:");
+	err_serial->print_string("Err:");
 	if (error.behavior == e_error_behavior::Critical)
 	{
 		extern_system_events.event_manager.set((int)s_system_events::e_event_type::SystemCritical);
@@ -42,33 +42,38 @@ void Talos::Coordinator::Error::general_error(c_ring_buffer<char> * released_buf
 
 void Talos::Coordinator::Error::ngc_error(char * ngc_line, s_framework_error error)
 {
-	err_serial->print_string("ERR:{Ngc}");
+	err_serial->print_string("Err:{Ngc}");
+	__write_eol();
 
 	extern_system_events.event_manager.set((int)s_system_events::e_event_type::NgcReset);
 	
 	__print_base(error);
 
-	err_serial->Write(ngc_line);
-	err_serial->print_string("\r\n");
-	err_serial->print_string("\r\n** Ngc Reset **\r\n");
+	err_serial->Write(ngc_line);	
+	__write_eol();err_serial->print_string("** Ngc Reset **");
+	__write_eol();
 }
 
 void Talos::Coordinator::Error::__print_base(s_framework_error error)
 {
-	
-	err_serial->print_string("\r\n\tsource:");
+	__write_eol();err_serial->print_string("\tSrc:");
 	err_serial->print_int32((int)error.source);
-	err_serial->print_string("\r\n\tbehavior:");
+	__write_eol();err_serial->print_string("\tBhr:");
 	err_serial->print_int32((int)error.behavior);
-	err_serial->print_string("\r\n\tdata_size:");
+	__write_eol();err_serial->print_string("\tDsz:");
 	err_serial->print_int32((int)error.data_size);
-	err_serial->print_string("\r\n\tgroup:");
+	__write_eol();err_serial->print_string("\tGrp:");
 	err_serial->print_int32((int)error.group);
-	err_serial->print_string("\r\n\tprocess:");
+	__write_eol();err_serial->print_string("\tPrs:");
 	err_serial->print_int32((int)error.process);
-	err_serial->print_string("\r\n\trecord_type:");
+	__write_eol();err_serial->print_string("\tRtp:");
 	err_serial->print_int32((int)error.record_type);
-	err_serial->print_string("\r\n\tcode:");
+	__write_eol();err_serial->print_string("\tCde:");
 	err_serial->print_int32((int)error.code);
+	__write_eol();
+}
+
+void Talos::Coordinator::Error::__write_eol()
+{
 	err_serial->print_string("\r\n");
 }
