@@ -36,6 +36,11 @@ e_parsing_errors NGC_RS274::Dialect::Group1::motion_validate(NGC_RS274::Block_Vi
 		//Return here. We are setting up axis rotation. The axis words are not for motion
 		return e_parsing_errors::OK;
 	}
+	else if (!axis_word_defined && !v_block->active_view_block->g_code_defined_in_block.get((int)NGC_RS274::Groups::G::Motion))
+	{
+		//Return here. Motion mode is active, but no axis was defined. possibly changing a feed rate here. 
+		return e_parsing_errors::OK;
+	}
 
 	//If motion mode is 80 (canceled) and:
 	//1.an axis was defined
