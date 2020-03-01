@@ -24,25 +24,27 @@
 #define __C_SYSTEM_EVENTS_H__
 
 #include <stdint.h>
-
-class c_system_event_handler
+namespace Talos
 {
-	//variables
-public:
-protected:
-private:
+	namespace Motion
+	{
+		namespace Events
+		{
+			class System
+			{
+				//variables
+			public:
+			protected:
+			private:
 
-
-	//functions
-public:
-	/*c_system_event_handler();
-	~c_system_event_handler();
-	c_system_event_handler(const c_system_event_handler &c);
-	c_system_event_handler& operator=(const c_system_event_handler &c);*/
-
-	static void process();
-
-protected:
-private:
+				//functions
+			public:
+				static void process();
+			protected:
+			private:
+				
+			};
+		};
+	};
 };
 #endif //__C_SYSTEM_EVENTS_H__

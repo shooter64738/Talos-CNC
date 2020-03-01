@@ -518,45 +518,37 @@
       <SubType>compile</SubType>
       <Link>physical_machine_parameters.h</Link>
     </Compile>
-    <Compile Include="..\..\..\Shared Data\Data\cache_data.cpp">
+    <Compile Include="..\..\..\Shared Data\FrameWork\Data\cache_data.cpp">
       <SubType>compile</SubType>
-      <Link>Shared Data\Data\cache_data.cpp</Link>
+      <Link>Shared Data\FrameWork\Data\cache_data.cpp</Link>
     </Compile>
-    <Compile Include="..\..\..\Shared Data\Data\cache_data.h">
+    <Compile Include="..\..\..\Shared Data\FrameWork\Data\cache_data.h">
       <SubType>compile</SubType>
-      <Link>Shared Data\Data\cache_data.h</Link>
+      <Link>Shared Data\FrameWork\Data\cache_data.h</Link>
     </Compile>
-    <Compile Include="..\..\..\Shared Data\Data\c_data_handler.cpp">
+    <Compile Include="..\..\..\Shared Data\FrameWork\Data\c_new_data_handler.cpp">
       <SubType>compile</SubType>
-      <Link>Shared Data\Data\c_data_handler.cpp</Link>
+      <Link>Shared Data\FrameWork\Data\c_new_data_handler.cpp</Link>
     </Compile>
-    <Compile Include="..\..\..\Shared Data\Data\c_data_handler.h">
+    <Compile Include="..\..\..\Shared Data\FrameWork\Data\c_new_data_handler.h">
       <SubType>compile</SubType>
-      <Link>Shared Data\Data\c_data_handler.h</Link>
+      <Link>Shared Data\FrameWork\Data\c_new_data_handler.h</Link>
     </Compile>
-    <Compile Include="..\..\..\Shared Data\Event\c_data_events.cpp">
+    <Compile Include="..\..\..\Shared Data\FrameWork\Event\c_event_router.cpp">
       <SubType>compile</SubType>
-      <Link>Shared Data\Event\c_data_events.cpp</Link>
+      <Link>Shared Data\FrameWork\Event\c_event_router.cpp</Link>
     </Compile>
-    <Compile Include="..\..\..\Shared Data\Event\c_data_events.h">
+    <Compile Include="..\..\..\Shared Data\FrameWork\Event\c_event_router.h">
       <SubType>compile</SubType>
-      <Link>Shared Data\Event\c_data_events.h</Link>
+      <Link>Shared Data\FrameWork\Event\c_event_router.h</Link>
     </Compile>
-    <Compile Include="..\..\..\Shared Data\Event\c_events.cpp">
+    <Compile Include="..\..\..\Shared Data\FrameWork\Event\Serial\c_new_serial_event_handler.cpp">
       <SubType>compile</SubType>
-      <Link>Shared Data\Event\c_events.cpp</Link>
+      <Link>Shared Data\FrameWork\Event\Serial\c_new_serial_event_handler.cpp</Link>
     </Compile>
-    <Compile Include="..\..\..\Shared Data\Event\c_events.h">
+    <Compile Include="..\..\..\Shared Data\FrameWork\Event\Serial\c_new_serial_event_handler.h">
       <SubType>compile</SubType>
-      <Link>Shared Data\Event\c_events.h</Link>
-    </Compile>
-    <Compile Include="..\..\..\Shared Data\Event\c_serial_event_handler.cpp">
-      <SubType>compile</SubType>
-      <Link>Shared Data\Event\c_serial_event_handler.cpp</Link>
-    </Compile>
-    <Compile Include="..\..\..\Shared Data\Event\c_serial_event_handler.h">
-      <SubType>compile</SubType>
-      <Link>Shared Data\Event\c_serial_event_handler.h</Link>
+      <Link>Shared Data\FrameWork\Event\Serial\c_new_serial_event_handler.h</Link>
     </Compile>
     <Compile Include="..\..\..\Shared Data\FrameWork\extern_events_types.cpp">
       <SubType>compile</SubType>
@@ -712,9 +704,10 @@
     <Folder Include="Ngc_Rs274\MachineSpecific\Mill" />
     <Folder Include="PlatformSpecific" />
     <Folder Include="PlatformSpecific\disk_support" />
-    <Folder Include="Shared Data\Data" />
-    <Folder Include="Shared Data\Event" />
     <Folder Include="Shared Data\FrameWork" />
+    <Folder Include="Shared Data\FrameWork\Data" />
+    <Folder Include="Shared Data\FrameWork\Event" />
+    <Folder Include="Shared Data\FrameWork\Event\Serial" />
     <Folder Include="Shared Data\Settings" />
     <Folder Include="Shared Data\Settings\Coordinator" />
   </ItemGroup>

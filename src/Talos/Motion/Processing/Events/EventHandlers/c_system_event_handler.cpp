@@ -19,6 +19,11 @@
 */
 
 #include "c_system_event_handler.h"
-void c_system_event_handler::process()
+#include "../../Data/DataHandlers/c_system_data_handler.h"
+#include "../../../../Shared Data/FrameWork/extern_events_types.h"
+void Talos::Motion::Events::System::process()
 {
+	//See if there is an event set indicating we loaded text data into the ngc cache record.
+	if (Talos::Shared::FrameWork::Events::Router.ready.event_manager.get((int)c_event_router::ss_ready_data::e_event_type::Status))
+		Talos::Motion::Data::System::process_status();
 }

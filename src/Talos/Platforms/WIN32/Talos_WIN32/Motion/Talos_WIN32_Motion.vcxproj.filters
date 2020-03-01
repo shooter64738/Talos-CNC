@@ -76,6 +76,12 @@
     <Filter Include="Shared data\FrameWork\Data">
       <UniqueIdentifier>{2aefea15-392f-4535-a23b-3ae71bd1bec9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shared data\FrameWork\Enumerations">
+      <UniqueIdentifier>{feda060b-a695-4f75-9ff8-f9b46664913d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shared data\FrameWork\Enumerations\Status">
+      <UniqueIdentifier>{84376f92-f37a-491a-bc66-fcd0b1dd973b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\..\Motion\motion_main.cpp">
@@ -144,9 +150,6 @@
     <ClCompile Include="Platform Specific\c_serial_win.cpp">
       <Filter>Platform Specific</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\Motion\Processing\Data\DataHandlers\c_binary_data_handler.cpp">
-      <Filter>Motion\Processing\Data\DataHandlers</Filter>
-    </ClCompile>
     <ClCompile Include="Platform Specific\c_disk_win.cpp">
       <Filter>Platform Specific</Filter>
     </ClCompile>
@@ -184,6 +187,12 @@
       <Filter>Shared data\FrameWork\Data</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Data\cache_data.cpp">
+      <Filter>Shared data\FrameWork\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Motion\Processing\Data\DataHandlers\c_system_data_handler.cpp">
+      <Filter>Motion\Processing\Data\DataHandlers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Data\c_system_data_handler.cpp">
       <Filter>Shared data\FrameWork\Data</Filter>
     </ClCompile>
   </ItemGroup>
@@ -276,9 +285,6 @@
     <ClInclude Include="..\..\..\..\communication_def.h" />
     <ClInclude Include="..\..\..\..\physical_machine_parameters.h" />
     <ClInclude Include="..\..\..\..\_bit_flag_control.h" />
-    <ClInclude Include="..\..\..\..\Motion\Processing\Data\DataHandlers\c_binary_data_handler.h">
-      <Filter>Motion\Processing\Data\DataHandlers</Filter>
-    </ClInclude>
     <ClInclude Include="Platform Specific\c_disk_win.h">
       <Filter>Platform Specific</Filter>
     </ClInclude>
@@ -372,6 +378,21 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Data\cache_data.h">
       <Filter>Shared data\FrameWork\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Motion\Processing\Data\DataHandlers\c_system_data_handler.h">
+      <Filter>Motion\Processing\Data\DataHandlers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Data\c_system_data_handler.h">
+      <Filter>Shared data\FrameWork\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Enumerations\Status\_e_status_classes.h">
+      <Filter>Shared data\FrameWork\Enumerations\Status</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Enumerations\Status\_e_status_messages.h">
+      <Filter>Shared data\FrameWork\Enumerations\Status</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Enumerations\Status\_e_status_origins.h">
+      <Filter>Shared data\FrameWork\Enumerations\Status</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

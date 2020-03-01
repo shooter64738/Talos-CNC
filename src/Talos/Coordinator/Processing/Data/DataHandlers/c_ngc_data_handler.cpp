@@ -81,9 +81,9 @@ void Talos::Coordinator::Data::Ngc::load_block_from_cache()
 	NGC_RS274::Block_View::copy_persisted_data(&new_block, &Talos::Shared::c_cache_data::ngc_block_record);
 	//We dont copy station numbers so set this here.
 	Talos::Shared::c_cache_data::ngc_block_record.__station__ = new_block.__station__;
-	Talos::Shared::FrameWork::Events::Data_Router.ready.ngc_block_cache_count++;
+	Talos::Shared::FrameWork::Events::Router.ready.ngc_block_cache_count++;
 	//Clear the block event that was set when the line was loaded waaaaayyyy back in the dataevent handler
-	Talos::Shared::FrameWork::Events::Data_Router.ready.event_manager.clear((int)s_ready_data::e_event_type::NgcDataLine);
+	Talos::Shared::FrameWork::Events::Router.ready.event_manager.clear((int)c_event_router::ss_ready_data::e_event_type::NgcDataLine);
 }
 
 void  Talos::Coordinator::Data::Ngc::__raise_error(char * ngc_line, e_error_behavior e_behavior
@@ -106,7 +106,7 @@ void  Talos::Coordinator::Data::Ngc::__raise_error(char * ngc_line, e_error_beha
 
 void Talos::Coordinator::Data::Ngc::__reset()
 {
-	Talos::Shared::FrameWork::Events::Data_Router.ready.event_manager.clear((int)s_ready_data::e_event_type::NgcDataLine);
+	Talos::Shared::FrameWork::Events::Router.ready.event_manager.clear((int)c_event_router::ss_ready_data::e_event_type::NgcDataLine);
 	Talos::Shared::c_cache_data::ngc_block_record.__station__ = 0;
 
 

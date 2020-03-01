@@ -33,20 +33,20 @@ uint8_t Talos::Coordinator::Events::Report::initialize(c_Serial *serial)
 void Talos::Coordinator::Events::Report::process()
 {
 
-	if (!Talos::Shared::FrameWork::Events::Data_Router.inquire.any())
+	if (!Talos::Shared::FrameWork::Events::Router.inquire.any())
 		return;
 
 	//If there are ANY block reporting events we will need a block header
 	__write_header(Talos::Shared::c_cache_data::ngc_block_record);
 
-	if (Talos::Shared::FrameWork::Events::Data_Router.inquire.event_manager.get_clr((int)s_inquiry_data::e_event_type::ActiveBlockGGroupStatus))
+	if (Talos::Shared::FrameWork::Events::Router.inquire.event_manager.get_clr((int)c_event_router::ss_inquiry_data::e_event_type::ActiveBlockGGroupStatus))
 		____group(COUNT_OF_G_CODE_GROUPS_ARRAY, Talos::Shared::c_cache_data::ngc_block_record.g_group, 'G');
 
-	if (Talos::Shared::FrameWork::Events::Data_Router.inquire.event_manager.get_clr((int)s_inquiry_data::e_event_type::ActiveBlockMGroupStatus))
+	if (Talos::Shared::FrameWork::Events::Router.inquire.event_manager.get_clr((int)c_event_router::ss_inquiry_data::e_event_type::ActiveBlockMGroupStatus))
 		____group(COUNT_OF_M_CODE_GROUPS_ARRAY, Talos::Shared::c_cache_data::ngc_block_record.m_group, 'M');
 
 
-	if (Talos::Shared::FrameWork::Events::Data_Router.inquire.event_manager.get_clr((int)s_inquiry_data::e_event_type::ActiveBlockWordStatus))
+	if (Talos::Shared::FrameWork::Events::Router.inquire.event_manager.get_clr((int)c_event_router::ss_inquiry_data::e_event_type::ActiveBlockWordStatus))
 		____word(COUNT_OF_BLOCK_WORDS_ARRAY, Talos::Shared::c_cache_data::ngc_block_record.word_values);
 }
 

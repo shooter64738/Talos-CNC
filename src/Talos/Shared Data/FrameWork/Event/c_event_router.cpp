@@ -39,7 +39,7 @@ void c_event_router::process()
 		//Check serial for in bound events
 		if (c_event_router::serial.in_events())
 		{
-			for (int i = 0; i < sizeof(s_inbound_data) * 8; i++)
+			for (int i = 0; i < sizeof(c_event_router::ss_inbound_data) * 8; i++)
 			{
 				if (c_event_router::serial.inbound.event_manager.get(i))
 				{
@@ -58,7 +58,7 @@ void c_event_router::process()
 		//Check serial for out bound events
 		if (c_event_router::serial.out_events())
 		{
-			for (int i = 0; i < sizeof(s_outbound_data) * 8; i++)
+			for (int i = 0; i < sizeof(c_event_router::ss_outbound_data) * 8; i++)
 			{
 				if (c_event_router::serial.outbound.event_manager.get(i))
 				{

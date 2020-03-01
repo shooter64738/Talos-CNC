@@ -138,7 +138,7 @@ void Talos::Motion::Main_Process::run()
 		//Talos::Coordinator::Events::hardware_event_handler.process();
 
 		//2: Handle data events
-		Talos::Shared::FrameWork::Events::Data_Router.process();
+		Talos::Shared::FrameWork::Events::Router.process();
 
 		//3: Handle ancillary events
 		//Talos::Coordinator::Events::ancillary_event_handler.process();

@@ -29,7 +29,7 @@ void Hardware_Abstraction_Layer::Serial::initialize(uint8_t Port, uint32_t BaudR
 		case 0:
 		{
 			_usart0_read_buffer.initialize(_usart0_read_data,256);
-			extern_data_events.serial.inbound.device = &Hardware_Abstraction_Layer::Serial::_usart0_read_buffer;
+			Talos::Shared::FrameWork::Events::Router.serial.inbound.device = &Hardware_Abstraction_Layer::Serial::_usart0_read_buffer;
 			_usart1_write_buffer.pntr_device_write = Hardware_Abstraction_Layer::Serial::send;
 			
 			if (BaudRate < 57600)
@@ -54,7 +54,7 @@ void Hardware_Abstraction_Layer::Serial::initialize(uint8_t Port, uint32_t BaudR
 		case 1:
 		{
 		_usart1_read_buffer.initialize(_usart1_read_data,256);
-		extern_data_events.serial.inbound.device = &Hardware_Abstraction_Layer::Serial::_usart1_read_buffer;
+		Talos::Shared::FrameWork::Events::Router.serial.inbound.device = &Hardware_Abstraction_Layer::Serial::_usart1_read_buffer;
 			if (BaudRate < 57600)
 			{
 				UBRR_value = ((F_CPU / (8L * BaudRate)) - 1) / 2;
@@ -184,7 +184,7 @@ ISR(USART0_RX_vect)
 	char Byte = UDR0;
 	Hardware_Abstraction_Layer::Serial::_usart0_read_buffer.put(Byte);
 		
-	extern_data_events.serial.inbound.event_manager.set((int)s_inbound_data::e_event_type::Usart0DataArrival);
+	Talos::Shared::FrameWork::Events::Router.serial.inbound.event_manager.set((int)c_event_router::ss_inbound_data::e_event_type::Usart0DataArrival);
 }
 #endif
 

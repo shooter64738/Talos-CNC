@@ -170,8 +170,8 @@ void Talos::Coordinator::Main_Process::run()
 		//Talos::Coordinator::Events::hardware_event_handler.process();
 
 		//2: Handle data events
-		//Talos::Shared::Events::data_event_handler.process();
-		Talos::Shared::FrameWork::Events::Data_Router.process();
+		//The router determines which event handler needs to process the message
+		Talos::Shared::FrameWork::Events::Router.process();
 		
 		//3: Handle ancillary events
 		//Talos::Coordinator::Events::ancillary_event_handler.process();

@@ -19,35 +19,43 @@
 */
 
 
-#ifndef __C_COORDINATOR_BINARY_DATA_HANDLER_H__
-#define __C_COORDINATOR_BINARY_DATA_HANDLER_H__
+#ifndef __C_MOTION_BINARY_DATA_HANDLER_H__
+#define __C_MOTION_BINARY_DATA_HANDLER_H__
 
 #include <stdint.h>
 #include "../../../../c_ring_template.h"
-#include "../../../../Shared Data/_e_record_types.h"
+#include "../../../../Shared Data/FrameWork/extern_events_types.h"
 
-typedef void (*xret_pointer)(c_ring_buffer <char> * buffer);
-
-class c_binary_data_handler
+typedef void(*xret_pointer)(c_ring_buffer <char> * buffer);
+namespace Talos
 {
-	//variables
-	public:
-	static void(*pntr_data_handler_release)();
-	
-	protected:
-	private:
+	namespace Motion
+	{
+		namespace Data
+		{
+			class System
+			{
+				//variables
+			public:
+				static void process_status();
+
+			protected:
+			private:
 
 
-	//functions
-	public:
-	static xret_pointer assign_handler(c_ring_buffer <char> * buffer);
-	static void motion_control_setting_handler(c_ring_buffer <char> * buffer);
-	static void unkown_data_handler(c_ring_buffer <char> * buffer);
-	
-	protected:
-	private:
-	static void __release();
-	
-	
-}; //c_serial_events
+				//functions
+			public:
+				static xret_pointer assign_handler(c_ring_buffer <char> * buffer);
+				static void motion_control_setting_handler(c_ring_buffer <char> * buffer);
+				static void unkown_data_handler(c_ring_buffer <char> * buffer);
+
+			protected:
+			private:
+				static void __release();
+
+
+			}; //c_serial_events
+		};
+	};
+};
 #endif //__C_DATA_EVENTS_H__

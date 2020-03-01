@@ -1,5 +1,5 @@
 /*
-*  c_events.cpp - NGC_RS274 controller.
+*  c_data_events.cpp - NGC_RS274 controller.
 *  A component of Talos
 *
 *  Copyright (c) 2016-2019 Jeff Dill
@@ -18,35 +18,10 @@
 *  along with Talos.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "c_report_events.h"
+#include "c_system_data_handler.h"
 #include "../../../../Shared Data/FrameWork/Data/cache_data.h"
-#include "../../../Record Defines/e_all_event_data_types.h"
-#include <math.h>
 
-static c_Serial *rpt_serial;
-
-uint8_t Talos::Motion::Events::Report::initialize(c_Serial *serial)
+void process_status()
 {
-	rpt_serial = serial;
-	return 0;
-}
-
-void Talos::Motion::Events::Report::process()
-{
-
-	if (!Talos::Shared::FrameWork::Events::Router.inquire.any())
-		return;
-}
-
-void Talos::Motion::Events::Report::__write_header(s_ngc_block block)
-{
-
-}
-
-void Talos::Motion::Events::Report::____group(uint8_t count, uint16_t * pointer, char group_name)
-{
-}
-
-void Talos::Motion::Events::Report::____word(uint8_t count, float * pointer)
-{
+	Talos::Shared::c_cache_data::status_record.system_state == e_motion_state::System_Error
 }
