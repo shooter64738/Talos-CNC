@@ -24,7 +24,7 @@
 #include "../../../../NGC_RS274/NGC_Block_View.h"
 #include "../../../../NGC_RS274/NGC_Error_Check.h"
 #include "../../../../NGC_RS274/NGC_Line_Processor.h"
-#include "../../../../Shared Data/Data/cache_data.h"
+#include "../../../../Shared Data/FrameWork/Data/cache_data.h"
 
 //#include "../../../../Motion/Processing/GCode/xc_gcode_buffer.h"
 
@@ -73,16 +73,17 @@ void Talos::Coordinator::Data::Ngc::load_block_from_cache()
 
 
 	//Add this block to the buffer
-	//Talos::Motion::NgcBuffer::pntr_buffer_block_write(&new_block);
+
+	Talos::Shared::c_cache_data::pntr_write_ngc_block_record(&new_block);
 
 	//Now move the data from the new block back to the init block. This keeps
 	//the block modal values in synch
 	NGC_RS274::Block_View::copy_persisted_data(&new_block, &Talos::Shared::c_cache_data::ngc_block_record);
 	//We dont copy station numbers so set this here.
 	Talos::Shared::c_cache_data::ngc_block_record.__station__ = new_block.__station__;
-	extern_data_events.ready.ngc_block_cache_count++;
+	Talos::Shared::FrameWork::Events::extern_data_events.ready.ngc_block_cache_count++;
 	//Clear the block event that was set when the line was loaded waaaaayyyy back in the dataevent handler
-	extern_data_events.ready.event_manager.clear((int)s_ready_data::e_event_type::NgcDataLine);
+	Talos::Shared::FrameWork::Events::extern_data_events.ready.event_manager.clear((int)s_ready_data::e_event_type::NgcDataLine);
 }
 
 void  Talos::Coordinator::Data::Ngc::__raise_error(char * ngc_line, e_error_behavior e_behavior
@@ -105,7 +106,7 @@ void  Talos::Coordinator::Data::Ngc::__raise_error(char * ngc_line, e_error_beha
 
 void Talos::Coordinator::Data::Ngc::__reset()
 {
-	extern_data_events.ready.event_manager.clear((int)s_ready_data::e_event_type::NgcDataLine);
+	Talos::Shared::FrameWork::Events::extern_data_events.ready.event_manager.clear((int)s_ready_data::e_event_type::NgcDataLine);
 	Talos::Shared::c_cache_data::ngc_block_record.__station__ = 0;
 
 

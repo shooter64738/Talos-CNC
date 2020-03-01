@@ -19,16 +19,17 @@
 */
 
 
-#ifndef __C_SHARED_SERIAL_DATA_EVENTS_H__
-#define __C_SHARED_SERIAL_DATA_EVENTS_H__
+#ifndef __C_NEW_SHARED_SERIAL_DATA_EVENTS_H__
+#define __C_NEW_SHARED_SERIAL_DATA_EVENTS_H__
 
 #include <stdint.h>
-#include "../../c_ring_template.h"
-#include "../FrameWork/extern_events_types.h"
-#include "../_s_framework_error.h"
+#include "../../../../c_ring_template.h"
+#include "../../../FrameWork/extern_events_types.h"
+#include "../../../_s_framework_error.h"
+#include "../../../FrameWork/event/c_event_router.h"
 
 
-class c_serial_event_handler
+class c_new_serial_event_handler
 {
 	//variables
 public:
@@ -41,8 +42,8 @@ private:
 
 	//functions
 public:
-	static void process(c_ring_buffer<char> * buffer, s_outbound_data * event_object, s_outbound_data::e_event_type event_id);
-	static void process(c_ring_buffer<char> * buffer, s_inbound_data * event_object, s_inbound_data::e_event_type event_id);
+	static void process(c_ring_buffer<char> * buffer, c_event_router::ss_outbound_data * event_object, c_event_router::ss_outbound_data::e_event_type event_id);
+	static void process(c_ring_buffer<char> * buffer, c_event_router::ss_inbound_data * event_object, c_event_router::ss_inbound_data::e_event_type event_id);
 	
 	static void read_data_handler_releaser(c_ring_buffer<char> * has_data);
 	static void write_data_handler_releaser(c_ring_buffer<char> * has_data);
@@ -53,8 +54,8 @@ private:
 		, uint8_t data_size, e_error_group e_group, e_error_process e_process, e_record_types e_rec_type
 		, e_error_source e_source, e_error_code e_code);
 
-	static void __assign_handler(c_ring_buffer<char> *buffer, s_inbound_data * event_object, s_inbound_data::e_event_type event_id);
-	static void __assign_handler(c_ring_buffer<char> *buffer, s_outbound_data * event_object, s_outbound_data::e_event_type event_id);
+	static void __assign_handler(c_ring_buffer<char> *buffer, c_event_router::ss_inbound_data * event_object, c_event_router::ss_inbound_data::e_event_type event_id);
+	static void __assign_handler(c_ring_buffer<char> *buffer, c_event_router::ss_outbound_data * event_object, c_event_router::ss_outbound_data::e_event_type event_id);
 
 }; //c_serial_events
 #endif //__C_DATA_EVENTS_H__

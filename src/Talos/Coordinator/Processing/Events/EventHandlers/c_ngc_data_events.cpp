@@ -28,7 +28,7 @@
 void Talos::Coordinator::Events::Ngc::process()
 {
 	//See if there is an event set indicating we loaded text data into the ngc cache record.
-	if (extern_data_events.ready.event_manager.get((int)s_ready_data::e_event_type::NgcDataLine))
+	if (Talos::Shared::FrameWork::Events::extern_data_events.ready.event_manager.get((int)s_ready_data::e_event_type::NgcDataLine))
 		Talos::Coordinator::Data::Ngc::load_block_from_cache();
 		
 }

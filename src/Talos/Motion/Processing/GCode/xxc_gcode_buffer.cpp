@@ -18,7 +18,7 @@
 *  along with Talos.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "xc_gcode_buffer.h"
+#include "xxc_gcode_buffer.h"
 #include <string.h>
 //#include "../../../NGC_RS274/_ngc_g_groups.h"
 //#include "../../../NGC_RS274/_ngc_m_groups.h"

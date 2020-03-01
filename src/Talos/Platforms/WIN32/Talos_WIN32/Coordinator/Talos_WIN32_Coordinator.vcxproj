@@ -16,6 +16,7 @@
     <ClInclude Include="..\..\..\..\Coordinator\Processing\Error\c_error.h" />
     <ClInclude Include="..\..\..\..\Coordinator\Processing\Events\EventHandlers\c_ngc_data_events.h" />
     <ClInclude Include="..\..\..\..\Coordinator\Processing\Events\EventHandlers\c_report_events.h" />
+    <ClInclude Include="..\..\..\..\Coordinator\Record Defines\xe_all_event_data_types.h" />
     <ClInclude Include="..\..\..\..\NGC_RS274\Dialect\_ngc_dialect_validate.h" />
     <ClInclude Include="..\..\..\..\NGC_RS274\Dialect\_ngc_validate_0_nonmodal.h" />
     <ClInclude Include="..\..\..\..\NGC_RS274\Dialect\_ngc_validate_16_plane_rotation.h" />
@@ -38,11 +39,10 @@
     <ClInclude Include="..\..\..\..\NGC_RS274\_ngc_plane_struct.h" />
     <ClInclude Include="..\..\..\..\NGC_RS274\_ngc_point_definition.h" />
     <ClInclude Include="..\..\..\..\NGC_RS274\_ngc_tool_struct.h" />
-    <ClInclude Include="..\..\..\..\Shared Data\Data\cache_data.h" />
-    <ClInclude Include="..\..\..\..\Shared Data\Data\c_data_handler.h" />
-    <ClInclude Include="..\..\..\..\Shared Data\Event\c_data_events.h" />
-    <ClInclude Include="..\..\..\..\Shared Data\Event\c_events.h" />
-    <ClInclude Include="..\..\..\..\Shared Data\Event\c_serial_event_handler.h" />
+    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Data\cache_data.h" />
+    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Data\c_new_data_handler.h" />
+    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Event\c_event_router.h" />
+    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Event\Serial\c_new_serial_event_handler.h" />
     <ClInclude Include="..\..\..\..\Shared Data\FrameWork\extern_events_types.h" />
     <ClInclude Include="..\..\..\..\Shared Data\Settings\Coordinator\_s_interp_config_struct.h" />
     <ClInclude Include="..\..\..\..\Shared Data\_e_binary_comm_response.h" />
@@ -73,7 +73,6 @@
     <ClInclude Include="..\..\..\..\Coordinator\Processing\Main\Main_Process.h" />
     <ClInclude Include="..\..\..\..\Coordinator\Serial\c_Serial.h" />
     <ClInclude Include="..\..\..\..\c_ring_template.h" />
-    <ClInclude Include="..\..\..\..\Motion\Processing\GCode\xc_gcode_buffer.h" />
     <ClInclude Include="..\..\..\..\NGC_RS274\Machine Specific\Lathe\NGC_G_Codes.h" />
     <ClInclude Include="..\..\..\..\NGC_RS274\Machine Specific\Lathe\NGC_Lathe.h" />
     <ClInclude Include="..\..\..\..\NGC_RS274\Machine Specific\Lathe\NGC_M_Codes.h" />
@@ -115,7 +114,6 @@
     <ClCompile Include="..\..\..\..\Coordinator\Processing\Events\EventHandlers\c_system_events.cpp" />
     <ClCompile Include="..\..\..\..\Coordinator\Processing\Main\Main_Process.cpp" />
     <ClCompile Include="..\..\..\..\Coordinator\Serial\c_Serial.cpp" />
-    <ClCompile Include="..\..\..\..\Motion\Processing\GCode\xc_gcode_buffer.cpp" />
     <ClCompile Include="..\..\..\..\NGC_RS274\Dialect\_ngc_dialect_validate.cpp" />
     <ClCompile Include="..\..\..\..\NGC_RS274\Dialect\_ngc_validate_0_nonmodal.cpp" />
     <ClCompile Include="..\..\..\..\NGC_RS274\Dialect\_ngc_validate_16_plane_rotation.cpp" />
@@ -136,11 +134,10 @@
     <ClCompile Include="..\..\..\..\NGC_RS274\NGC_Set_Targets.cpp" />
     <ClCompile Include="..\..\..\..\NGC_RS274\NGC_System.cpp" />
     <ClCompile Include="..\..\..\..\NGC_RS274\NGC_Tool.cpp" />
-    <ClCompile Include="..\..\..\..\Shared Data\Data\cache_data.cpp" />
-    <ClCompile Include="..\..\..\..\Shared Data\Data\c_data_handler.cpp" />
-    <ClCompile Include="..\..\..\..\Shared Data\Event\c_data_events.cpp" />
-    <ClCompile Include="..\..\..\..\Shared Data\Event\c_events.cpp" />
-    <ClCompile Include="..\..\..\..\Shared Data\Event\c_serial_event_handler.cpp" />
+    <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Data\cache_data.cpp" />
+    <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Data\c_new_data_handler.cpp" />
+    <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Event\c_event_router.cpp" />
+    <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Event\Serial\c_new_serial_event_handler.cpp" />
     <ClCompile Include="..\..\..\..\Shared Data\FrameWork\extern_events_types.cpp" />
     <ClCompile Include="Platform Specific\c_core_win.cpp" />
     <ClCompile Include="Platform Specific\c_disk_win.cpp" />

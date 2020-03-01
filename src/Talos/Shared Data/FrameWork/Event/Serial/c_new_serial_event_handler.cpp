@@ -18,17 +18,18 @@
 *  along with Talos.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "c_serial_event_handler.h"
-#include "../Data/c_data_handler.h"
-#include "../../communication_def.h"
+#include "c_new_serial_event_handler.h"
+#include "../../Data/c_new_data_handler.h"
+#include "../../../../communication_def.h"
 
 
 
-void(*c_serial_event_handler::pntr_data_read_handler)(c_ring_buffer<char> * buffer);
-void(*c_serial_event_handler::pntr_data_write_handler)(c_ring_buffer<char> * buffer);
+void(*c_new_serial_event_handler::pntr_data_read_handler)(c_ring_buffer<char> * buffer);
+void(*c_new_serial_event_handler::pntr_data_write_handler)(c_ring_buffer<char> * buffer);
 static s_framework_error tracked_error;
 
-void c_serial_event_handler::process(c_ring_buffer<char> * buffer, s_inbound_data * event_object, s_inbound_data::e_event_type event_id)
+void c_new_serial_event_handler::process(c_ring_buffer<char> * buffer,
+	c_event_router::ss_inbound_data * event_object, c_event_router::ss_inbound_data::e_event_type event_id)
 {
 	/*
 	When we receive the first bye of data, we determine which handler to use.
@@ -41,38 +42,40 @@ void c_serial_event_handler::process(c_ring_buffer<char> * buffer, s_inbound_dat
 
 	//Is there a handler assigned for this data class already? If a handler is assigned
 	//keep using it until all the data is consumed. Otherwise assign a new handler. 
-	if (c_serial_event_handler::pntr_data_read_handler == NULL)
+	if (c_new_serial_event_handler::pntr_data_read_handler == NULL)
 	{
-		c_serial_event_handler::__assign_handler(buffer, event_object, event_id);
+		c_new_serial_event_handler::__assign_handler(buffer, event_object, event_id);
 	}
 
-	if (c_serial_event_handler::pntr_data_read_handler != NULL)
+	if (c_new_serial_event_handler::pntr_data_read_handler != NULL)
 	{
 		//The handler will release its self when it determines that all of the data for
 		//that particular handler has been consumed. 
-		c_serial_event_handler::pntr_data_read_handler(buffer);
+		c_new_serial_event_handler::pntr_data_read_handler(buffer);
 	}
 }
 
-void c_serial_event_handler::process(c_ring_buffer<char> * buffer, s_outbound_data * event_object, s_outbound_data::e_event_type event_id)
+void c_new_serial_event_handler::process(c_ring_buffer<char> * buffer,
+	c_event_router::ss_outbound_data * event_object, c_event_router::ss_outbound_data::e_event_type event_id)
 {
 
 	//Is there is a handler assigned for this data class already? If a handler is assigned
 	//keep using it until all the data is consumed. Otherwise assign a new handler. 
-	if (c_serial_event_handler::pntr_data_write_handler == NULL)
+	if (c_new_serial_event_handler::pntr_data_write_handler == NULL)
 	{
-		c_serial_event_handler::__assign_handler(buffer, event_object, event_id);
+		c_new_serial_event_handler::__assign_handler(buffer, event_object, event_id);
 	}
 
-	if (c_serial_event_handler::pntr_data_write_handler != NULL)
+	if (c_new_serial_event_handler::pntr_data_write_handler != NULL)
 	{
 		//The handler will release its self when it determines that all of the data for
 		//that particular handler has been consumed. 
-		c_serial_event_handler::pntr_data_write_handler(buffer);
+		c_new_serial_event_handler::pntr_data_write_handler(buffer);
 	}
 }
 
-void c_serial_event_handler::__assign_handler(c_ring_buffer <char> * buffer, s_inbound_data * event_object, s_inbound_data::e_event_type event_id)
+void c_new_serial_event_handler::__assign_handler(c_ring_buffer <char> * buffer,
+	c_event_router::ss_inbound_data * event_object, c_event_router::ss_inbound_data::e_event_type event_id)
 {
 	//Tail is always assumed to be at the 'start' of data
 
@@ -97,27 +100,27 @@ void c_serial_event_handler::__assign_handler(c_ring_buffer <char> * buffer, s_i
 		}
 
 		//Assign a specific handler for this data type
-		c_serial_event_handler::pntr_data_read_handler = c_data_handler::assign_handler(buffer, event_object, event_id, e_record_types::NgcBlockRecord);
+		c_new_serial_event_handler::pntr_data_read_handler = c_new_data_handler::assign_handler(buffer, event_object, event_id, e_record_types::NgcBlockRecord);
 		//Assign a release call back function. The handler knows nothing about serial events
 		//and we want to keep it that way.
-		c_data_handler::pntr_data_handler_release = c_serial_event_handler::read_data_handler_releaser;
+		c_new_data_handler::pntr_data_handler_release = c_new_serial_event_handler::read_data_handler_releaser;
 
 	}
 	else if (peek_tail > 0 && peek_tail < 32) //non-printable and below 32 is a binary record
 	{
 		//Assign a specific handler for this data type
-		c_serial_event_handler::pntr_data_read_handler = c_data_handler::assign_handler(buffer, event_object, event_id, (e_record_types)peek_tail);
+		c_new_serial_event_handler::pntr_data_read_handler = c_new_data_handler::assign_handler(buffer, event_object, event_id, (e_record_types)peek_tail);
 		//Assign a release call back function. The handler knows nothing about serial events
 		//and we want to keep it that way.
-		c_data_handler::pntr_data_handler_release = c_serial_event_handler::read_data_handler_releaser;
+		c_new_data_handler::pntr_data_handler_release = c_new_serial_event_handler::read_data_handler_releaser;
 	}
 	else if (peek_tail > 127) //non-printable and above 127 is a control code
 	{
 		//Assign a specific handler for this data type
-		c_serial_event_handler::pntr_data_read_handler = c_data_handler::assign_handler(buffer, event_object, event_id, (e_record_types)peek_tail);
+		c_new_serial_event_handler::pntr_data_read_handler = c_new_data_handler::assign_handler(buffer, event_object, event_id, (e_record_types)peek_tail);
 		//Assign a release call back function. The handler knows nothing about serial events
 		//and we want to keep it that way.
-		c_data_handler::pntr_data_handler_release = c_serial_event_handler::read_data_handler_releaser;
+		c_new_data_handler::pntr_data_handler_release = c_new_serial_event_handler::read_data_handler_releaser;
 	}
 	else //we dont know what kind of data it is
 	{
@@ -128,13 +131,14 @@ void c_serial_event_handler::__assign_handler(c_ring_buffer <char> * buffer, s_i
 	}
 }
 
-void c_serial_event_handler::__assign_handler(c_ring_buffer <char> * buffer, s_outbound_data * event_object, s_outbound_data::e_event_type event_id)
+void c_new_serial_event_handler::__assign_handler(c_ring_buffer <char> * buffer,
+	c_event_router::ss_outbound_data * event_object, c_event_router::ss_outbound_data::e_event_type event_id)
 {
 	uint8_t write_count = 0;
 
 	switch (event_id)
 	{
-	case s_outbound_data::e_event_type::MotionDataBlock:
+	case c_event_router::ss_outbound_data::e_event_type::MotionDataBlock:
 
 		//changed the way this is handled a little bit. Now pulling a record from the cache class
 		//theres no need to do the record type checking twice this way. 
@@ -143,7 +147,7 @@ void c_serial_event_handler::__assign_handler(c_ring_buffer <char> * buffer, s_o
 		//memcpy(buffer->_storage_pointer, &c_cache_data::motion_block_record, write_count);
 		break;
 
-	case s_outbound_data::e_event_type::StatusUpdate:
+	case c_event_router::ss_outbound_data::e_event_type::StatusUpdate:
 		//write_count = c_cache_data::status_record._size;
 		//memcpy(buffer->_storage_pointer, &c_cache_data::status_record, write_count);
 		break;
@@ -156,12 +160,12 @@ void c_serial_event_handler::__assign_handler(c_ring_buffer <char> * buffer, s_o
 	//I could hard code a function pointer here, but this gives me more flexability. I let the 
 	//data handler decide how this data gets processed
 	//c_serial_event_handler::pntr_data_write_handler = c_ngc_data_handler::assign_handler(buffer, event_object, event_id, write_count);
-	c_serial_event_handler::pntr_data_write_handler = c_data_handler::assign_handler(buffer, event_object, event_id, write_count);
+	c_new_serial_event_handler::pntr_data_write_handler = c_new_data_handler::assign_handler(buffer, event_object, event_id, write_count);
 	//This is function point that gets 'called back' when all the data is done processing. 
-	c_data_handler::pntr_data_handler_release = c_serial_event_handler::write_data_handler_releaser;
+	c_new_data_handler::pntr_data_handler_release = c_new_serial_event_handler::write_data_handler_releaser;
 }
 
-void c_serial_event_handler::__raise_error(c_ring_buffer <char> * buffer_source, e_error_behavior e_behavior
+void c_new_serial_event_handler::__raise_error(c_ring_buffer <char> * buffer_source, e_error_behavior e_behavior
 	, uint8_t data_size, e_error_group e_group, e_error_process e_process, e_record_types e_rec_type
 	, e_error_source e_source, e_error_code e_code)
 {
@@ -169,7 +173,7 @@ void c_serial_event_handler::__raise_error(c_ring_buffer <char> * buffer_source,
 	//there is more data to read from this buffer
 	//c_data_handler::pntr_data_handler_release(buffer_source);
 	//set the handler release to null now. we dont need it
-	c_data_handler::pntr_data_handler_release = NULL;
+	c_new_data_handler::pntr_data_handler_release = NULL;
 
 
 	tracked_error.behavior = e_behavior;
@@ -182,9 +186,9 @@ void c_serial_event_handler::__raise_error(c_ring_buffer <char> * buffer_source,
 	Talos::Shared::FrameWork::Error::Handler::extern_pntr_error_handler(buffer_source, tracked_error);
 }
 
-void c_serial_event_handler::read_data_handler_releaser(c_ring_buffer<char> * released_buffer)
+void c_new_serial_event_handler::read_data_handler_releaser(c_ring_buffer<char> * released_buffer)
 {
-	c_serial_event_handler::pntr_data_read_handler = NULL;
+	c_new_serial_event_handler::pntr_data_read_handler = NULL;
 	//We may have read SOME data, but that doesnt mean we read all the data in the buffer
 	//if (released_buffer->has_data())
 	//{
@@ -194,9 +198,9 @@ void c_serial_event_handler::read_data_handler_releaser(c_ring_buffer<char> * re
 	//}
 }
 
-void c_serial_event_handler::write_data_handler_releaser(c_ring_buffer<char> * released_buffer)
+void c_new_serial_event_handler::write_data_handler_releaser(c_ring_buffer<char> * released_buffer)
 {
-	c_serial_event_handler::pntr_data_write_handler = NULL;
+	c_new_serial_event_handler::pntr_data_write_handler = NULL;
 	//We may have read SOME data, but that doesnt mean we read all the data in the buffer
 	//if (released_buffer->has_data())
 	//{

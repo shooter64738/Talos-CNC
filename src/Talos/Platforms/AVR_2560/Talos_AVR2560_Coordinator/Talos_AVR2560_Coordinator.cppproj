@@ -278,14 +278,6 @@
       <SubType>compile</SubType>
       <Link>c_ring_template.h</Link>
     </Compile>
-    <Compile Include="..\..\..\Motion\Processing\GCode\xc_gcode_buffer.cpp">
-      <SubType>compile</SubType>
-      <Link>Motion\Processing\GCode\xc_gcode_buffer.cpp</Link>
-    </Compile>
-    <Compile Include="..\..\..\Motion\Processing\GCode\xc_gcode_buffer.h">
-      <SubType>compile</SubType>
-      <Link>Motion\Processing\GCode\xc_gcode_buffer.h</Link>
-    </Compile>
     <Compile Include="..\..\..\NGC_RS274\Dialect\_ngc_dialect_validate.cpp">
       <SubType>compile</SubType>
       <Link>Ngc_Rs274\Dialect\_ngc_dialect_validate.cpp</Link>

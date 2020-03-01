@@ -1,9 +1,9 @@
 #ifndef __C_CACHE_DATA__
 #define __C_CACHE_DATA__
 
-#include "../_s_motion_data_block.h"
-#include "../_s_status_record.h"
-#include "../_s_ngc_line_record.h"
+#include "../../_s_status_record.h"
+#include "../../_s_ngc_line_record.h"
+#include "../../../NGC_RS274/_ngc_block_struct.h"
 
 //typedef void(*ret_pointer)(c_ring_buffer <char> * buffer);
 namespace Talos
@@ -15,10 +15,11 @@ namespace Talos
 			//variables
 		public:
 			//static void(*pntr_data_handler_release)(c_ring_buffer<char> * buffer);
-			static s_motion_data_block motion_block_record;
 			static s_status_message status_record;
 			static s_ngc_line_record ngc_line_record;
 			static s_ngc_block ngc_block_record;
+			static uint8_t(*pntr_write_ngc_block_record)(s_ngc_block * ngc_block_record);
+			static uint8_t(*pntr_read_ngc_block_record)(s_ngc_block * ngc_block_record);
 		protected:
 		private:
 

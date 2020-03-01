@@ -22,13 +22,13 @@
 
 static c_Serial *err_serial;
 
-uint8_t Talos::Coordinator::Error::initialize(c_Serial *serial)
+uint8_t Talos::Motion::Error::initialize(c_Serial *serial)
 {
 	err_serial = serial;
 	return 0;
 }
 
-void Talos::Coordinator::Error::general_error(c_ring_buffer<char> * released_buffer, s_framework_error error)
+void Talos::Motion::Error::general_error(c_ring_buffer<char> * released_buffer, s_framework_error error)
 {
 	err_serial->print_string("Err:");
 	if (error.behavior == e_error_behavior::Critical)
@@ -40,7 +40,7 @@ void Talos::Coordinator::Error::general_error(c_ring_buffer<char> * released_buf
 	__print_base(error);
 }
 
-void Talos::Coordinator::Error::ngc_error(char * ngc_line, s_framework_error error)
+void Talos::Motion::Error::ngc_error(char * ngc_line, s_framework_error error)
 {
 	err_serial->print_string("Err:{Ngc}");
 	__write_eol();
@@ -54,7 +54,7 @@ void Talos::Coordinator::Error::ngc_error(char * ngc_line, s_framework_error err
 	__write_eol();
 }
 
-void Talos::Coordinator::Error::__print_base(s_framework_error error)
+void Talos::Motion::Error::__print_base(s_framework_error error)
 {
 	__write_eol();err_serial->print_string("\tSrc:");
 	err_serial->print_int32((int)error.source);
@@ -73,7 +73,7 @@ void Talos::Coordinator::Error::__print_base(s_framework_error error)
 	__write_eol();
 }
 
-void Talos::Coordinator::Error::__write_eol()
+void Talos::Motion::Error::__write_eol()
 {
 	err_serial->print_string("\r\n");
 }

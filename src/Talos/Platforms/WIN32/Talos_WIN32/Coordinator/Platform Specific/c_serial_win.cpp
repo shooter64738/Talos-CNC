@@ -11,6 +11,7 @@
 #include <iostream>
 #include "../../../../../c_ring_template.h"
 #include "../../../../../Shared Data/FrameWork/extern_events_types.h"
+
 c_ring_buffer<char> Hardware_Abstraction_Layer::Serial::_usart0_read_buffer;
 static char _usart0_read_data[256];
 c_ring_buffer<char> Hardware_Abstraction_Layer::Serial::_usart1_read_buffer;
@@ -28,8 +29,12 @@ void Hardware_Abstraction_Layer::Serial::initialize(uint8_t Port, uint32_t BaudR
 	_usart1_write_buffer.initialize(_usart1_write_data, 256);
 	_usart1_write_buffer.pntr_device_write = Hardware_Abstraction_Layer::Serial::send;
 	
-	extern_data_events.serial.inbound.device = &Hardware_Abstraction_Layer::Serial::_usart0_read_buffer;
-	extern_data_events.serial.outbound.device = &Hardware_Abstraction_Layer::Serial::_usart1_write_buffer;
+	//Talos::Shared::FrameWork::Events::extern_data_events.serial.inbound.device = &Hardware_Abstraction_Layer::Serial::_usart0_read_buffer;
+	//Talos::Shared::FrameWork::Events::extern_data_events.serial.outbound.device = &Hardware_Abstraction_Layer::Serial::_usart1_write_buffer;
+	
+	Talos::Shared::FrameWork::Events::Data_Router.serial.inbound.device = &Hardware_Abstraction_Layer::Serial::_usart0_read_buffer;
+	Talos::Shared::FrameWork::Events::Data_Router.serial.outbound.device = &Hardware_Abstraction_Layer::Serial::_usart1_write_buffer;
+	
 }
 
 uint8_t Hardware_Abstraction_Layer::Serial::send(uint8_t Port, char byte)
@@ -45,14 +50,17 @@ void Hardware_Abstraction_Layer::Serial::add_to_buffer(uint8_t port, const char 
 		Hardware_Abstraction_Layer::Serial::_usart0_read_buffer.put(*data);
 		data++;
 	}
-	extern_data_events.serial.inbound.event_manager.set((int)s_inbound_data::e_event_type::Usart0DataArrival);
+	//Talos::Shared::FrameWork::Events::extern_data_events.serial.inbound.event_manager.set((int)s_inbound_data::e_event_type::Usart0DataArrival);
+	Talos::Shared::FrameWork::Events::Data_Router.serial.inbound.event_manager.set((int)s_inbound_data::e_event_type::Usart0DataArrival);
 	/*rxBuffer[port].Buffer[rxBuffer[port].Head++] = 13;
 	rxBuffer[port].EOL++;*/
 }
 void Hardware_Abstraction_Layer::Serial::add_to_buffer(uint8_t port, const char data)
 {
 	Hardware_Abstraction_Layer::Serial::_usart0_read_buffer.put(data);
-	extern_data_events.serial.inbound.event_manager.set((int)s_inbound_data::e_event_type::Usart0DataArrival);
+	//Talos::Shared::FrameWork::Events::extern_data_events.serial.inbound.event_manager.set((int)s_inbound_data::e_event_type::Usart0DataArrival);
+	Talos::Shared::FrameWork::Events::Data_Router.serial.inbound.event_manager.set((int)s_inbound_data::e_event_type::Usart0DataArrival);
+
 	/*rxBuffer[port].Buffer[rxBuffer[port].Head++] = 13;
 	rxBuffer[port].EOL++;*/
 }
@@ -62,7 +70,7 @@ void Hardware_Abstraction_Layer::Serial::__timer1_overflow_thread()
 	while (1)
 	{
 		std::this_thread::sleep_for(std::chrono::milliseconds(1));
-		extern_data_events.serial.inbound.check_time_out();
+		Talos::Shared::FrameWork::Events::extern_data_events.serial.inbound.check_time_out();
 	}
 }
 

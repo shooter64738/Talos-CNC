@@ -13,6 +13,7 @@
 #include "../../../../../NGC_RS274/_ngc_block_struct.h"
 #include "../../../../../NGC_RS274/_ngc_tool_struct.h"
 #include "../../../../../NGC_RS274/_ngc_coordinate_struct.h"
+#include "c_core_win.h"
 #include<iostream>
 #include<fstream>
 

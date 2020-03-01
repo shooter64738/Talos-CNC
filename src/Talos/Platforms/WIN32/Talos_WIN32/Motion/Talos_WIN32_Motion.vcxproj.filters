@@ -58,14 +58,23 @@
     <Filter Include="Shared data\Settings\Motion">
       <UniqueIdentifier>{fdc3f069-7f5c-46e9-af9c-e87dd1364df2}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Shared data\Event">
-      <UniqueIdentifier>{42e392b5-044c-4681-a2c6-334ba2d62ce9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Shared data\Data">
-      <UniqueIdentifier>{00c9a1fc-6294-4ddf-8a60-3e649d64db8c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Shared data\FrameWork">
       <UniqueIdentifier>{bf3749bb-df2c-448a-bdad-5af7eb759cfe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Motion\Processing\Error">
+      <UniqueIdentifier>{0f2bbf67-ce26-46ad-820f-e9e37c1b6afc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Motion\Record Defines">
+      <UniqueIdentifier>{10b27a37-1f08-49b9-86c7-70874d55367f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shared data\FrameWork\Event">
+      <UniqueIdentifier>{fdb15ec8-667d-4cee-a265-8fee164675a4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shared data\FrameWork\Event\Serial">
+      <UniqueIdentifier>{6727b467-42e2-4ee1-ab24-a82b5722335d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shared data\FrameWork\Data">
+      <UniqueIdentifier>{2aefea15-392f-4535-a23b-3ae71bd1bec9}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -153,26 +162,29 @@
     <ClCompile Include="..\..\..\..\Motion\Processing\Events\EventHandlers\c_system_event_handler.cpp">
       <Filter>Motion\Processing\Events\EventHandlers</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\Shared Data\Data\c_data_handler.cpp">
-      <Filter>Shared data\Data</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\Shared Data\Data\cache_data.cpp">
-      <Filter>Shared data\Data</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\Shared Data\Event\c_events.cpp">
-      <Filter>Shared data\Event</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\Shared Data\Event\c_serial_event_handler.cpp">
-      <Filter>Shared data\Event</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\Shared Data\Event\c_data_events.cpp">
-      <Filter>Shared data\Event</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\..\Motion\Processing\Planner\Canned Cycles\x_c_canned_cycle.cpp">
       <Filter>Motion\Processing\Planner\Canned Cycles</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\..\Shared Data\FrameWork\extern_events_types.cpp">
       <Filter>Shared data\FrameWork</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Motion\Processing\Error\c_error.cpp">
+      <Filter>Motion\Processing\Error</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Motion\Processing\Events\EventHandlers\c_report_events.cpp">
+      <Filter>Motion\Processing\Events\EventHandlers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Event\c_event_router.cpp">
+      <Filter>Shared data\FrameWork\Event</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Event\Serial\c_new_serial_event_handler.cpp">
+      <Filter>Shared data\FrameWork\Event\Serial</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Data\c_new_data_handler.cpp">
+      <Filter>Shared data\FrameWork\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Data\cache_data.cpp">
+      <Filter>Shared data\FrameWork\Data</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -331,21 +343,6 @@
     <ClInclude Include="..\..\..\..\Shared Data\x_peripheral_panel_control_enums.h">
       <Filter>Shared data</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Shared Data\Data\c_data_handler.h">
-      <Filter>Shared data\Data</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Shared Data\Data\cache_data.h">
-      <Filter>Shared data\Data</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Shared Data\Event\c_events.h">
-      <Filter>Shared data\Event</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Shared Data\Event\c_serial_event_handler.h">
-      <Filter>Shared data\Event</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Shared Data\Event\c_data_events.h">
-      <Filter>Shared data\Event</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\..\Motion\Processing\Planner\Canned Cycles\x_c_canned_cycle.h">
       <Filter>Motion\Processing\Planner\Canned Cycles</Filter>
     </ClInclude>
@@ -354,6 +351,27 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\Shared Data\FrameWork\extern_events_types.h">
       <Filter>Shared data\FrameWork</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Motion\Processing\Error\c_error.h">
+      <Filter>Motion\Processing\Error</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Motion\Processing\Events\EventHandlers\c_report_events.h">
+      <Filter>Motion\Processing\Events\EventHandlers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Motion\Record Defines\e_all_event_data_types.h">
+      <Filter>Motion\Record Defines</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Event\c_event_router.h">
+      <Filter>Shared data\FrameWork\Event</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Event\Serial\c_new_serial_event_handler.h">
+      <Filter>Shared data\FrameWork\Event\Serial</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Data\c_new_data_handler.h">
+      <Filter>Shared data\FrameWork\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Data\cache_data.h">
+      <Filter>Shared data\FrameWork\Data</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

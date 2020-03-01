@@ -103,7 +103,7 @@ void Motion_Core::Hardware::Interpolation::interpolation_begin()
 			//set the waiting event for spindle synch. the event manager will handle when/if
 			//interpolation can start.
 			
-			extern_motion_control_events.event_manager.set((int)s_motion_controller_events::e_event_type::SpindleToSpeedWait);
+			Talos::Shared::FrameWork::Events::extern_motion_control_events.event_manager.set((int)s_motion_controller_events::e_event_type::SpindleToSpeedWait);
 			
 			//This is driven externally by the encoder input from the spindle
 			//If feedmode is spindle synch, what for spindle to get to speed if
@@ -120,8 +120,8 @@ void Motion_Core::Hardware::Interpolation::interpolation_begin()
 
 void Motion_Core::Hardware::Interpolation::spindle_at_speed_timeout(uint32_t parameter)
 {
-	extern_motion_control_events.event_manager.set((int)s_motion_controller_events::e_event_type::SpindleToSpeedTimeOut);
-	extern_system_events.event_manager.set((int)s_system_events::e_event_type::SystemCritical);
+	Talos::Shared::FrameWork::Events::extern_motion_control_events.event_manager.set((int)s_motion_controller_events::e_event_type::SpindleToSpeedTimeOut);
+	Talos::Shared::FrameWork::Events::extern_system_events.event_manager.set((int)s_system_events::e_event_type::SystemCritical);
 
 	Motion_Core::Hardware::Interpolation::Shutdown();
 	Motion_Core::Hardware::Interpolation::Exec_Timer_Item = NULL;
@@ -185,7 +185,7 @@ uint8_t Motion_Core::Hardware::Interpolation::check_spindle_at_speed()
 	The speed is only adjusted AFTER acceleration has completed, and BEFORE deceleration begins
 	*/
 	//set the at speed event
-	extern_motion_control_events.event_manager.set((int)s_motion_controller_events::e_event_type::SpindleAtSpeed);
+	Talos::Shared::FrameWork::Events::extern_motion_control_events.event_manager.set((int)s_motion_controller_events::e_event_type::SpindleAtSpeed);
 
 	return true;
 }

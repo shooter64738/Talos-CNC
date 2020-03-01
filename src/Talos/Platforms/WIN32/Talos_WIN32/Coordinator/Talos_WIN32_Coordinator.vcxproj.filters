@@ -67,14 +67,23 @@
     <Filter Include="Shared Data\Event">
       <UniqueIdentifier>{3ab55604-d1de-4673-8de0-554c47371a49}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Shared Data\Data">
-      <UniqueIdentifier>{8845c68a-65d5-454b-b6a9-4153a36bdcc7}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Shared Data\FrameWork">
       <UniqueIdentifier>{7aaecb41-7a90-4a60-ab63-ecb9c20346f0}</UniqueIdentifier>
     </Filter>
     <Filter Include="Coordinator\Processing\Error">
       <UniqueIdentifier>{fda74141-4b56-4e3f-bd36-7f041ee800b7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Coordinator\Record Defines">
+      <UniqueIdentifier>{453b7057-d8ac-495c-96d1-3b4f4984eb55}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shared Data\FrameWork\Event">
+      <UniqueIdentifier>{d87cb87c-98f6-4b31-a7f3-f2e1ab078db5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shared Data\FrameWork\Data">
+      <UniqueIdentifier>{cb7e5dc6-1339-493f-9ee1-34b1d7076820}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shared Data\FrameWork\Event\Serial">
+      <UniqueIdentifier>{22c6105e-b607-49bf-8880-71e95a367573}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -221,9 +230,6 @@
     <ClInclude Include="..\..\..\..\NGC_RS274\Dialect\_ngc_validate_5_feed_rate_mode.h">
       <Filter>Ngc_Rs274\Dialect</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Motion\Processing\GCode\xc_gcode_buffer.h">
-      <Filter>Motion\Processing\GCode</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\..\Configuration\c_configuration.h">
       <Filter>Configuration</Filter>
     </ClInclude>
@@ -305,21 +311,6 @@
     <ClInclude Include="..\..\..\..\Shared Data\_s_framework_error.h">
       <Filter>Shared Data</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Shared Data\Event\c_data_events.h">
-      <Filter>Shared Data\Event</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Shared Data\Event\c_events.h">
-      <Filter>Shared Data\Event</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Shared Data\Event\c_serial_event_handler.h">
-      <Filter>Shared Data\Event</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Shared Data\Data\c_data_handler.h">
-      <Filter>Shared Data\Data</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Shared Data\Data\cache_data.h">
-      <Filter>Shared Data\Data</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\..\Coordinator\Processing\Data\DataHandlers\c_ngc_data_handler.h">
       <Filter>Coordinator\Processing\Data\DataHandlers</Filter>
     </ClInclude>
@@ -334,6 +325,21 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\Coordinator\Processing\Events\EventHandlers\c_report_events.h">
       <Filter>Coordinator\Processing\Events\EventHandlers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Coordinator\Record Defines\xe_all_event_data_types.h">
+      <Filter>Coordinator\Record Defines</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Event\Serial\c_new_serial_event_handler.h">
+      <Filter>Shared Data\FrameWork\Event\Serial</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Data\c_new_data_handler.h">
+      <Filter>Shared Data\FrameWork\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Event\c_event_router.h">
+      <Filter>Shared Data\FrameWork\Event</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Data\cache_data.h">
+      <Filter>Shared Data\FrameWork\Data</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -418,9 +424,6 @@
     <ClCompile Include="..\..\..\..\NGC_RS274\Dialect\_ngc_validate_0_nonmodal.cpp">
       <Filter>Ngc_Rs274\Dialect</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\Motion\Processing\GCode\xc_gcode_buffer.cpp">
-      <Filter>Motion\Processing\GCode</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\..\Configuration\c_configuration.cpp">
       <Filter>Configuration</Filter>
     </ClCompile>
@@ -439,21 +442,6 @@
     <ClCompile Include="..\..\..\..\NGC_RS274\Dialect\_ngc_validate_3_distance_mode.cpp">
       <Filter>Ngc_Rs274\Dialect</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\Shared Data\Event\c_data_events.cpp">
-      <Filter>Shared Data\Event</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\Shared Data\Event\c_events.cpp">
-      <Filter>Shared Data\Event</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\Shared Data\Event\c_serial_event_handler.cpp">
-      <Filter>Shared Data\Event</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\Shared Data\Data\c_data_handler.cpp">
-      <Filter>Shared Data\Data</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\Shared Data\Data\cache_data.cpp">
-      <Filter>Shared Data\Data</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\..\Coordinator\Processing\Data\DataHandlers\c_ngc_data_handler.cpp">
       <Filter>Coordinator\Processing\Data\DataHandlers</Filter>
     </ClCompile>
@@ -468,6 +456,18 @@
     </ClCompile>
     <ClCompile Include="..\..\..\..\Coordinator\Processing\Events\EventHandlers\c_report_events.cpp">
       <Filter>Coordinator\Processing\Events\EventHandlers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Event\Serial\c_new_serial_event_handler.cpp">
+      <Filter>Shared Data\FrameWork\Event\Serial</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Data\c_new_data_handler.cpp">
+      <Filter>Shared Data\FrameWork\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Event\c_event_router.cpp">
+      <Filter>Shared Data\FrameWork\Event</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Data\cache_data.cpp">
+      <Filter>Shared Data\FrameWork\Data</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -11,18 +11,17 @@ then move to their respective modules.
 
 
 #include "Main_Process.h"
-#include "../../../Shared Data/Event/c_events.h"
+//#include "../../../Shared Data/Event/c_events.h"
 #include "../../../Shared Data/FrameWork/extern_events_types.h"
 #include "../../../NGC_RS274/NGC_Line_Processor.h"
 #include "../../../NGC_RS274/NGC_Tool.h"
 #include "../../../NGC_RS274/NGC_Coordinates.h"
 #include "../../../NGC_RS274/NGC_System.h"
-#include "../../../Motion/Processing/GCode/xc_gcode_buffer.h"
 #include "../../../Configuration/c_configuration.h"
 #include "../Events/EventHandlers/c_ngc_data_events.h"
 #include "../Events/EventHandlers/c_report_events.h"
 #include "../Error/c_error.h"
-#include "../../../Shared Data/Data/cache_data.h"
+#include "../../../Shared Data/FrameWork/Data/cache_data.h"
 
 #ifdef MSVC
 static char test_line[256] = "G1x1f500\r\nF33.3\r\n";
@@ -45,10 +44,10 @@ void Talos::Coordinator::Main_Process::initialize()
 
 	__critical_initialization("Core", Hardware_Abstraction_Layer::Core::initialize, STARTUP_CLASS_CRITICAL);//<--core start up
 	__critical_initialization("Interrupts", Hardware_Abstraction_Layer::Core::start_interrupts, STARTUP_CLASS_CRITICAL);//<--start interrupts on hardware
-	//__critical_initialization("Disk", Hardware_Abstraction_Layer::Disk::initialize, STARTUP_CLASS_CRITICAL);//<--drive/eprom storage
+	__critical_initialization("Disk", Hardware_Abstraction_Layer::Disk::initialize, STARTUP_CLASS_CRITICAL);//<--drive/eprom storage
 	__critical_initialization("\tSettings", Hardware_Abstraction_Layer::Disk::load_configuration, STARTUP_CLASS_WARNING);//<--drive/eprom storage
 	__critical_initialization("\tConfiguration", Talos::Confguration::initialize, STARTUP_CLASS_CRITICAL);//<--g code buffer
-	__critical_initialization("Events", Talos::Shared::Events::initialize, STARTUP_CLASS_CRITICAL);//<--init events
+	//__critical_initialization("Events", Talos::Shared::Events::initialize, STARTUP_CLASS_CRITICAL);//<--init events
 	//__critical_initialization("Ngc Buffer", Talos::Motion::NgcBuffer::initialize,STARTUP_CLASS_CRITICAL);//<--g code buffer
 	//__critical_initialization("Ngc Startup", c_ngc_data_handler::initialize, STARTUP_CLASS_CRITICAL);//<--g code buffer
 	//__critical_initialization("Ngc Line", NGC_RS274::LineProcessor::initialize,STARTUP_CLASS_CRITICAL);//<--g code interpreter
@@ -62,10 +61,10 @@ void Talos::Coordinator::Main_Process::initialize()
 	//Assign the read,write function pointers. These assignments must take place outside the
 	//block buffer control. The block buffer control system must not know anything about the HAL it
 	//is servicing.
-	Talos::Motion::NgcBuffer::pntr_buffer_block_write = Hardware_Abstraction_Layer::Disk::put_block;
-	Talos::Motion::NgcBuffer::pntr_buffer_block_read = Hardware_Abstraction_Layer::Disk::get_block;
+	Talos::Shared::c_cache_data::pntr_write_ngc_block_record = Hardware_Abstraction_Layer::Disk::put_block;
+	Talos::Shared::c_cache_data::pntr_read_ngc_block_record = Hardware_Abstraction_Layer::Disk::get_block;
 	//Write the start up block to cache
-	Talos::Motion::NgcBuffer::pntr_buffer_block_write(&Talos::Shared::c_cache_data::ngc_block_record);
+	Talos::Shared::c_cache_data::pntr_write_ngc_block_record(&Talos::Shared::c_cache_data::ngc_block_record);
 
 	//setup the tool table controller
 	NGC_RS274::Tool_Control::Table::pntr_tool_table_read = Hardware_Abstraction_Layer::Disk::get_tool;
@@ -141,14 +140,14 @@ void Talos::Coordinator::Main_Process::run()
 {
 	Talos::Coordinator::Main_Process::host_serial.print_string("\r\n** System ready **\r\n");
 	//Start the eventing loop, stop loop if a critical system error occurs
-	while (extern_system_events.event_manager.get((int)s_system_events::e_event_type::SystemAllOk))
+	while (Talos::Shared::FrameWork::Events::extern_system_events.event_manager.get((int)s_system_events::e_event_type::SystemAllOk))
 	{
 
 		#ifdef MSVC
 		//simulate serial data coming in 1 byte at a time. This is a text record test
 		char byte = 0;
 		//if (test_byte < 5)
-		if (!extern_system_events.event_manager.get((int)s_system_events::e_event_type::NgcReset))
+		if (!Talos::Shared::FrameWork::Events::extern_system_events.event_manager.get((int)s_system_events::e_event_type::NgcReset))
 		{
 			byte = test_line[test_byte++];
 			Hardware_Abstraction_Layer::Serial::add_to_buffer(0, byte);
@@ -171,8 +170,9 @@ void Talos::Coordinator::Main_Process::run()
 		//Talos::Coordinator::Events::hardware_event_handler.process();
 
 		//2: Handle data events
-		Talos::Shared::Events::data_event_handler.process();
-
+		//Talos::Shared::Events::data_event_handler.process();
+		Talos::Shared::FrameWork::Events::Data_Router.process();
+		
 		//3: Handle ancillary events
 		//Talos::Coordinator::Events::ancillary_event_handler.process();
 

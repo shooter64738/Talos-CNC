@@ -7,6 +7,10 @@
 
 
 #include "Main_Process.h"
+#include "../Error/c_error.h"
+#include "../../../Shared Data/FrameWork/Data/cache_data.h"
+#include "../../../Shared Data/FrameWork/extern_events_types.h"
+//#include "../../Record Defines/e_all_event_data_types.h"
 
 c_Serial Talos::Motion::Main_Process::host_serial;
 
@@ -14,7 +18,8 @@ c_Serial Talos::Motion::Main_Process::host_serial;
 void Talos::Motion::Main_Process::initialize()
 {
 	//setup the error handler function pointer
-	Talos::Shared::FrameWork::Error::Handler::extern_pntr_error_handler = Talos::Motion::Main_Process::error_handler;
+	Talos::Shared::FrameWork::Error::Handler::extern_pntr_error_handler = Talos::Motion::Error::general_error;
+	Talos::Shared::FrameWork::Error::Handler::extern_pntr_ngc_error_handler = Talos::Motion::Error::ngc_error;
 	
 	Hardware_Abstraction_Layer::Core::initialize();
 	//__initialization_start("Core", Hardware_Abstraction_Layer::Core::initialize,1);//<--core start up
@@ -23,12 +28,17 @@ void Talos::Motion::Main_Process::initialize()
 
 	
 	__initialization_start("Interrupts", Hardware_Abstraction_Layer::Core::start_interrupts,STARTUP_CLASS_CRITICAL);//<--start interrupts on hardware
-	__initialization_start("Events", Talos::Shared::Events::initialize, STARTUP_CLASS_CRITICAL);//<--init events
+	//__initialization_start("Events", Talos::Shared::Events::initialize, STARTUP_CLASS_CRITICAL);//<--init events
 	//__initialization_start("Ngc Buffer", Talos::Motion::NgcBuffer::initialize);//<--g code buffer
 	//__initialization_start("Ngc Interpreter", NGC_RS274::Interpreter::Processor::initialize);//<--g code interpreter
 	__initialization_start("Disk", Hardware_Abstraction_Layer::Disk::initialize,STARTUP_CLASS_CRITICAL);//<--drive/eprom storage
 	__initialization_start("Coordinator Comms", NULL,STARTUP_CLASS_CRITICAL);//<--coordinator controller card
 	__initialization_start("Spindle Control Comms", NULL,STARTUP_CLASS_CRITICAL);//<--spindle controller card
+
+	Talos::Shared::c_cache_data::pntr_read_ngc_block_record = Hardware_Abstraction_Layer::Disk::get_block;
+	s_ngc_block block;
+	block.__station__ = 1;
+	Talos::Shared::c_cache_data::pntr_read_ngc_block_record(&block);
 
 }
 
@@ -114,27 +124,12 @@ void Talos::Motion::Main_Process::run()
 	*/
 	
 	//setup a fake event indicating we want an ngc block record
-	extern_data_events.serial.outbound.event_manager.set((int)s_outbound_data::e_event_type::NgcBlockRequest);
-	//setup a fake event indicating we want to update position on the host
-	extern_data_events.serial.outbound.event_manager.set((int)s_outbound_data::e_event_type::StatusUpdate);
-
+	//extern_data_events.serial.outbound.event_manager.set((int)e_outbound_data_type::MotionDataBlock);
+	
 	//Start the eventing loop, stop loop if a critical system error occurs
-	while (extern_system_events.event_manager.get((int)s_system_events::e_event_type::SystemAllOk))
+	while (Talos::Shared::FrameWork::Events::extern_system_events.event_manager.get((int)s_system_events::e_event_type::SystemAllOk))
 	{
-		//This firmware is mostly event driven. This is the main entry point for checking
-		//which events have been set to execute, and then executing them.
-		//First check to make sure the system is healthy
-		//if (!extern_system_events.event_manager.get((int)s_system_events::e_event_type::SystemAllOk))
-		//	return;
-
-		//Execute the events having their bit flags set
-		/*
-		Need to consider handler priority. At the moment I propose this priority
-		0. system events. This could stop processing in its tracks so check this first
-		1. hardware input events. Not implemented but probably will be.
-		2. data events, such as incoming gcode, configuration records, disk or network data, etc..
-		3. ancillary events, events that spawn off because other events have taken place. (ngc data ready etc..)
-		*/
+		
 		//0: Handle system events
 		//Talos::Coordinator::Events::system_event_handler.process();
 		//if there are any system critical events check them here and do not process further
@@ -143,39 +138,9 @@ void Talos::Motion::Main_Process::run()
 		//Talos::Coordinator::Events::hardware_event_handler.process();
 
 		//2: Handle data events
-		Talos::Shared::Events::data_event_handler.process();
+		Talos::Shared::FrameWork::Events::Data_Router.process();
 
 		//3: Handle ancillary events
 		//Talos::Coordinator::Events::ancillary_event_handler.process();
-
-		//4:: Handle ngc processing events
-
 	}
-
 }
-
-void Talos::Motion::Main_Process::error_handler(c_ring_buffer<char> * released_buffer, s_framework_error error)
-{
-	Main_Process::host_serial.print_string("ERROR:");
-
-	Main_Process::host_serial.print_string("\r\n\tsource:");
-	Main_Process::host_serial.print_int32((int)error.source);
-	Main_Process::host_serial.print_string("\r\n\tbehavior:");
-	Main_Process::host_serial.print_int32((int)error.behavior);
-	Main_Process::host_serial.print_string("\r\n\tcode:");
-	Main_Process::host_serial.print_int32((int)error.code);
-	Main_Process::host_serial.print_string("\r\n\tdata_size:");
-	Main_Process::host_serial.print_int32((int)error.data_size);
-	Main_Process::host_serial.print_string("\r\n\tgroup:");
-	Main_Process::host_serial.print_int32((int)error.group);
-	Main_Process::host_serial.print_string("\r\n\tprocess:");
-	Main_Process::host_serial.print_int32((int)error.process);
-	Main_Process::host_serial.print_string("\r\n\trecord_type:");
-	Main_Process::host_serial.print_int32((int)error.record_type);
-	Main_Process::host_serial.print_string("\r\n");
-
-}
-/*
-Flow
-Main->eventss->data_events_handler->serial_event_handler->assign_handler->request_block
-*/

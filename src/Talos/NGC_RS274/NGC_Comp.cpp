@@ -19,7 +19,7 @@
 */
 
 #include "NGC_Comp.h"
-#include "..\Motion\Processing\GCode\xc_gcode_buffer.h"
+//#include "..\Motion\Processing\GCode\xc_gcode_buffer.h"
 #include <math.h>
 #include "_ngc_math_constants.h"
 #include "NGC_System.h"
@@ -47,7 +47,7 @@ e_compensation_errors NGC_RS274::Compensation::process(NGC_RS274::Block_View * v
 	{
 		//We have a block being held that we shoudl be able to release now. Load it up.
 		releasing_block.__station__ = held_block_station_id;
-		Talos::Motion::NgcBuffer::pntr_buffer_block_read(&releasing_block);
+//Talos::Motion::NgcBuffer::pntr_buffer_block_read(&releasing_block);
 		v_held_block.load(&releasing_block);
 		__continuous_motion(v_new_block);
 		//Set this block to a held state. We cant execute it until we have the next motion block
@@ -158,7 +158,7 @@ e_compensation_errors NGC_RS274::Compensation::__continuous_motion(NGC_RS274::Bl
 		//insert arc block using the v_new_block_station id.
 		//incriment v_new_block_station_id so it has a new unique value.
 		arc_block.__station__ = v_new_block->active_view_block->__station__++;
-		Talos::Motion::NgcBuffer::pntr_buffer_block_write(&arc_block);
+//Talos::Motion::NgcBuffer::pntr_buffer_block_write(&arc_block);
 		//since we are inserting an arc, int2 is actually the new end point for current path.
 		int1 = int2;
 		//update the systems position
@@ -234,7 +234,7 @@ uint8_t NGC_RS274::Compensation::__update_locked_block(s_point new_target, uint3
 	v_held_block.active_view_block->target_motion_position[VERTICAL_MOTION_AXIS] = new_target.Y;
 	
 	//put block back in cache.
-	Talos::Motion::NgcBuffer::pntr_buffer_block_write(v_held_block.active_view_block);
+//Talos::Motion::NgcBuffer::pntr_buffer_block_write(v_held_block.active_view_block);
 
 	return 0;
 }

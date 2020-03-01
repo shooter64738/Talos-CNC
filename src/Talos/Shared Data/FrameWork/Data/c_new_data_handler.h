@@ -22,16 +22,16 @@
 #ifndef __C_SHARED_DATA_HANDLER_H__
 #define __C_SHARED_DATA_HANDLER_H__
 #include <stdint.h>
-#include "../FrameWork/extern_events_types.h"
-#include "../../c_ring_template.h"
-#include "../../communication_def.h"
-#include "../_e_record_types.h"
-#include "../_s_framework_error.h"
-#include "cache_data.h"
+#include "../../FrameWork/extern_events_types.h"
+#include "../../../c_ring_template.h"
+#include "../../../communication_def.h"
+#include "../../_e_record_types.h"
+#include "../../_s_framework_error.h"
+#include "../Data/cache_data.h"
 
 typedef void(*ret_pointer)(c_ring_buffer <char> * buffer);
 
-class c_data_handler
+class c_new_data_handler
 {
 	//variables
 public:
@@ -44,9 +44,9 @@ private:
 	//functions
 public:
 	static ret_pointer assign_handler(
-		c_ring_buffer <char> * buffer, s_outbound_data *event_object, s_outbound_data::e_event_type event_id, uint8_t size);
+		c_ring_buffer <char> * buffer, c_event_router::ss_outbound_data *event_object, c_event_router::ss_outbound_data::e_event_type event_id, uint8_t size);
 	static ret_pointer assign_handler(
-		c_ring_buffer <char> * buffer, s_inbound_data * event_object, s_inbound_data::e_event_type event_id, e_record_types rec_type);
+		c_ring_buffer <char> * buffer, c_event_router::ss_inbound_data * event_object, c_event_router::ss_inbound_data::e_event_type event_id, e_record_types rec_type);
 
 	static void write_handler(c_ring_buffer <char> * buffer);
 	static void txt_read_handler(c_ring_buffer <char> * buffer);

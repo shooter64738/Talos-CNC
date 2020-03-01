@@ -4,6 +4,7 @@
 #include "../_e_motion_state.h"
 #include "../_s_framework_error.h"
 #include "../../c_ring_template.h"
+#include "Event/c_event_router.h"
 
 
 #ifndef __EXTERN_DATA_EVENTS
@@ -51,7 +52,7 @@ struct s_inbound_data
 			return true;
 		}
 		else
-		ms_time_out--;
+			ms_time_out--;
 	};
 
 	enum class e_event_type : uint8_t
@@ -90,9 +91,9 @@ struct s_ready_data
 	bool any()
 	{
 		if (event_manager._flag > 0)
-		return true;
+			return true;
 		else
-		return false;
+			return false;
 	}
 	uint32_t ngc_block_cache_count = 0;
 };
@@ -123,23 +124,23 @@ struct s_serial
 	bool any()
 	{
 		if ((inbound.event_manager._flag + outbound.event_manager._flag) > 0)
-		return true;
+			return true;
 		else
-		return false;
+			return false;
 	}
 	bool in_events()
 	{
 		if ((inbound.event_manager._flag) > 0)
-		return true;
+			return true;
 		else
-		return false;
+			return false;
 	}
 	bool out_events()
 	{
 		if ((outbound.event_manager._flag) > 0)
-		return true;
+			return true;
 		else
-		return false;
+			return false;
 	}
 };
 
@@ -150,23 +151,23 @@ struct s_disk
 	bool any()
 	{
 		if ((inbound.event_manager._flag + outbound.event_manager._flag) > 0)
-		return true;
+			return true;
 		else
-		return false;
+			return false;
 	}
 	bool in_events()
 	{
 		if ((inbound.event_manager._flag) > 0)
-		return true;
+			return true;
 		else
-		return false;
+			return false;
 	}
 	bool out_events()
 	{
 		if ((outbound.event_manager._flag) > 0)
-		return true;
+			return true;
 		else
-		return false;
+			return false;
 	}
 };
 
@@ -179,9 +180,9 @@ struct s_data_events
 	bool any()
 	{
 		if (serial.any() || disk.any() || ready.any() || inquire.any())
-		return true;
+			return true;
 		else
-		return false;
+			return false;
 	}
 };
 #pragma endregion
@@ -225,26 +226,30 @@ struct s_system_events
 	s_bit_flag_controller<uint32_t> event_manager;
 };
 
-#ifdef __EXTERN_EVENTS__
-//s_data_events extern_data_events;
-//s_data_events extern_data_events;
-//s_ancillary_events extern_ancillary_events;
-//s_system_events extern_system_events;
-//s_motion_controller_events extern_motion_control_events;
-//void(*Talos::Shared::FrameWork::Error::Handler::extern_pntr_error_handler)(c_ring_buffer<char> * buffer, s_framework_error error);
-//void(*Talos::Shared::FrameWork::Error::Handler::extern_test)();
-#else
+//#ifdef __EXTERN_EVENTS__
+////s_data_events extern_data_events;
+////s_data_events extern_data_events;
+////s_ancillary_events extern_ancillary_events;
+////s_system_events extern_system_events;
+////s_motion_controller_events extern_motion_control_events;
+////void(*Talos::Shared::FrameWork::Error::Handler::extern_pntr_error_handler)(c_ring_buffer<char> * buffer, s_framework_error error);
+////void(*Talos::Shared::FrameWork::Error::Handler::extern_test)();
+//#else
 //extern s_data_events extern_data_events;
-extern s_data_events extern_data_events;
-extern s_ancillary_events extern_ancillary_events;
-extern s_system_events extern_system_events;
-extern s_motion_controller_events extern_motion_control_events;
 namespace Talos
 {
 	namespace Shared
 	{
 		namespace FrameWork
 		{
+			namespace Events
+			{
+				extern c_event_router Data_Router;
+				extern s_data_events extern_data_events;
+				extern s_ancillary_events extern_ancillary_events;
+				extern s_system_events extern_system_events;
+				extern s_motion_controller_events extern_motion_control_events;
+			};
 			namespace Error
 			{
 				namespace Handler
@@ -253,9 +258,8 @@ namespace Talos
 					extern void(*extern_pntr_ngc_error_handler)(char * ngc_line, s_framework_error error);
 				};
 			};
-
 		};
 	};
 };
-#endif
+//#endif
 #endif // !__EXTERN_DATA_EVENTS

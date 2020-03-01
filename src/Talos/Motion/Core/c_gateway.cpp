@@ -37,7 +37,7 @@ void Motion_Core::Gateway::add_motion(s_motion_data_block new_blk)
 	
 
 	//If the buffer is full we cant add a new motion yet
-	if (extern_motion_control_events.event_manager.get((int)s_motion_controller_events::e_event_type::MotionBufferFull))
+	if (Talos::Shared::FrameWork::Events::extern_motion_control_events.event_manager.get((int)s_motion_controller_events::e_event_type::MotionBufferFull))
 	{
 		return; //<--no space for a new item right now
 	}
@@ -51,12 +51,12 @@ void Motion_Core::Gateway::add_motion(s_motion_data_block new_blk)
 	}
 	if (motion_buffer_head == motion_buffer_tail)
 	{
-		extern_motion_control_events.event_manager.set((int)s_motion_controller_events::e_event_type::MotionBufferFull);
+		Talos::Shared::FrameWork::Events::extern_motion_control_events.event_manager.set((int)s_motion_controller_events::e_event_type::MotionBufferFull);
 	}
 	//the buffer defaults to empty, but since we jsut added an item, its not empty anymore
-	extern_motion_control_events.event_manager.clear((int)s_motion_controller_events::e_event_type::MotionBufferEmpty);
+	Talos::Shared::FrameWork::Events::extern_motion_control_events.event_manager.clear((int)s_motion_controller_events::e_event_type::MotionBufferEmpty);
 
-	extern_motion_control_events.event_manager.set((int)s_motion_controller_events::e_event_type::MotionBufferAdd);
+	Talos::Shared::FrameWork::Events::extern_motion_control_events.event_manager.set((int)s_motion_controller_events::e_event_type::MotionBufferAdd);
 	
 	//Motion_Core::Gateway::process_motion(&_blk);
 }
@@ -101,7 +101,7 @@ void Motion_Core::Gateway::process_motion()
 {
 	//If head and tail are equal, and the empty flag is set, nothing has been put in the buffer.
 	if ((motion_buffer_head == motion_buffer_tail)
-		&& extern_motion_control_events.event_manager.get((int)s_motion_controller_events::e_event_type::MotionBufferEmpty))
+		&& Talos::Shared::FrameWork::Events::extern_motion_control_events.event_manager.get((int)s_motion_controller_events::e_event_type::MotionBufferEmpty))
 	{
 		return; //<--nothing in the buffer, just return
 	}
@@ -113,7 +113,7 @@ void Motion_Core::Gateway::process_motion()
 	
 	
 	//since we processed a block, we have freed a space in the buffer, so its no longer 'full'
-	extern_motion_control_events.event_manager.clear((int)s_motion_controller_events::e_event_type::MotionBufferFull);
+	Talos::Shared::FrameWork::Events::extern_motion_control_events.event_manager.clear((int)s_motion_controller_events::e_event_type::MotionBufferFull);
 
 	//See if we are wrapping the buffer
 	if (motion_buffer_tail == MOTION_BUFFER_SIZE)
@@ -124,7 +124,7 @@ void Motion_Core::Gateway::process_motion()
 	//If head and tail are equal we have nothing left to consume so set the buffer to empty
 	if (motion_buffer_head == motion_buffer_tail)
 	{
-		extern_motion_control_events.event_manager.set((int)s_motion_controller_events::e_event_type::MotionBufferEmpty);
+		Talos::Shared::FrameWork::Events::extern_motion_control_events.event_manager.set((int)s_motion_controller_events::e_event_type::MotionBufferEmpty);
 	}
 	
 }
@@ -161,13 +161,13 @@ void Motion_Core::Gateway::process_motion(s_motion_data_block *mot)
 		uint16_t return_code = Motion_Core::Software::Interpolation::load_block(mot);
 		if (return_code)
 		{
-			extern_motion_control_events.event_manager.set((int)s_motion_controller_events::e_event_type::BlockExecuting);
+			Talos::Shared::FrameWork::Events::extern_motion_control_events.event_manager.set((int)s_motion_controller_events::e_event_type::BlockExecuting);
 			Motion_Core::System::state_mode.control_modes.set((int)Motion_Core::System::e_control_event_type::Control_motion_interpolation);
 		}
 		else if (return_code == 0)
 		{
 			//Events::Motion_Controller::events_statistics.num_message = mot->sequence;
-			extern_motion_control_events.event_manager.set((int)s_motion_controller_events::e_event_type::BlockDiscarded);
+			Talos::Shared::FrameWork::Events::extern_motion_control_events.event_manager.set((int)s_motion_controller_events::e_event_type::BlockDiscarded);
 		}
 	}
 	
@@ -234,7 +234,7 @@ void Motion_Core::Gateway::check_sequence_complete()
 		Motion_Core::Hardware::Interpolation::Last_Completed_Sequence = 0;
 		
 		//flag an event so that Main_Processing can pick it up.
-		extern_motion_control_events.event_manager.set((int)s_motion_controller_events::e_event_type::BlockComplete);
+		Talos::Shared::FrameWork::Events::extern_motion_control_events.event_manager.set((int)s_motion_controller_events::e_event_type::BlockComplete);
 
 	}
 }
