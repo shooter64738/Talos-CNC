@@ -34,7 +34,7 @@ uint8_t Talos::Motion::Events::Report::initialize(c_Serial *serial)
 void Talos::Motion::Events::Report::process()
 {
 
-	if (!Talos::Shared::FrameWork::Events::extern_data_events.inquire.any())
+	if (!Talos::Shared::FrameWork::Events::Data_Router.inquire.any())
 		return;
 }
 

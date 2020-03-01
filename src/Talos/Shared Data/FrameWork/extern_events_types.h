@@ -245,7 +245,7 @@ namespace Talos
 			namespace Events
 			{
 				extern c_event_router Data_Router;
-				extern s_data_events extern_data_events;
+				//extern s_data_events extern_data_events;
 				extern s_ancillary_events extern_ancillary_events;
 				extern s_system_events extern_system_events;
 				extern s_motion_controller_events extern_motion_control_events;

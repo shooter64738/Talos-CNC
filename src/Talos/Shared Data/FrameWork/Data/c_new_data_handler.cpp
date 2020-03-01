@@ -39,7 +39,7 @@ c_event_router::ss_inbound_data::e_event_type event_id, e_record_types rec_type)
 	tracked_read_event = event_id;
 	tracked_read_object = event_object;
 	tracked_read_type = rec_type;
-	Talos::Shared::FrameWork::Events::extern_data_events.serial.inbound.set_time_out(__FRAMEWORK_COM_READ_TIMEOUT_MS);
+	Talos::Shared::FrameWork::Events::Data_Router.serial.inbound.set_time_out(__FRAMEWORK_COM_READ_TIMEOUT_MS);
 	read_count = 0;
 
 	switch (tracked_read_type)
@@ -62,7 +62,7 @@ c_event_router::ss_inbound_data::e_event_type event_id, e_record_types rec_type)
 		//If we already have an un processed motion block record. We cannot process another one right now.
 		//But since we got in here because we thought there was a new record to process, there was
 		//some kind of eventing error. This is probably a code bug.
-		if (Talos::Shared::FrameWork::Events::extern_data_events.ready.event_manager.get((int)s_ready_data::e_event_type::MotionDataBlock))
+		if (Talos::Shared::FrameWork::Events::Data_Router.ready.event_manager.get((int)s_ready_data::e_event_type::MotionDataBlock))
 		{
 			__raise_error(buffer, e_error_behavior::Critical, 0, e_error_group::DataHandler, e_error_process::EventHandle
 			, tracked_read_type, e_error_source::Serial, e_error_code::AttemptToHandleNewEventWhilePreviousIsPending);
@@ -78,7 +78,7 @@ c_event_router::ss_inbound_data::e_event_type event_id, e_record_types rec_type)
 		//But since we got in here because we thought there was a new record to process, there was
 		//some kind of eventing error. This is probably a code bug.
 
-		if (Talos::Shared::FrameWork::Events::extern_data_events.ready.event_manager.get((int)s_ready_data::e_event_type::NgcDataLine))
+		if (Talos::Shared::FrameWork::Events::Data_Router.ready.event_manager.get((int)s_ready_data::e_event_type::NgcDataLine))
 		{
 			__raise_error(buffer, e_error_behavior::Critical, 0, e_error_group::DataHandler, e_error_process::EventHandle
 			, tracked_read_type, e_error_source::Serial, e_error_code::AttemptToHandleNewEventWhilePreviousIsPending);
@@ -103,13 +103,13 @@ c_ring_buffer <char> * buffer, c_event_router::ss_outbound_data * event_object, 
 	tracked_write_event = event_id;
 	tracked_write_object = event_object;
 	write_count = size;
-	Talos::Shared::FrameWork::Events::extern_data_events.serial.inbound.set_time_out(__FRAMEWORK_COM_READ_TIMEOUT_MS);
+	Talos::Shared::FrameWork::Events::Data_Router.serial.inbound.set_time_out(__FRAMEWORK_COM_READ_TIMEOUT_MS);
 	return c_new_data_handler::write_handler;
 }
 
 void c_new_data_handler::txt_read_handler(c_ring_buffer <char> * buffer)
 {
-	if (!Talos::Shared::FrameWork::Events::extern_data_events.serial.inbound.ms_time_out)
+	if (!Talos::Shared::FrameWork::Events::Data_Router.serial.inbound.ms_time_out)
 	{
 		__raise_error(buffer, e_error_behavior::Critical, 0, e_error_group::DataHandler, e_error_process::Read
 		, tracked_read_type, e_error_source::Serial, e_error_code::TimeoutOccuredWaitingForEndOfRecord);
@@ -159,7 +159,7 @@ void c_new_data_handler::txt_read_handler(c_ring_buffer <char> * buffer)
 void c_new_data_handler::bin_read_handler(c_ring_buffer <char> * buffer)
 {
 
-	if (!Talos::Shared::FrameWork::Events::extern_data_events.serial.inbound.ms_time_out)
+	if (!Talos::Shared::FrameWork::Events::Data_Router.serial.inbound.ms_time_out)
 	{
 		__raise_error(buffer, e_error_behavior::Critical, 0, e_error_group::DataHandler, e_error_process::Read
 		, tracked_read_type, e_error_source::Serial, e_error_code::TimeoutOccuredWaitingForEndOfRecord);
@@ -191,7 +191,7 @@ void c_new_data_handler::bin_read_handler(c_ring_buffer <char> * buffer)
 			break;
 			case e_record_types::Status:
 			memcpy(&Talos::Shared::c_cache_data::status_record, buffer->_storage_pointer, Talos::Shared::c_cache_data::status_record._size);
-			Talos::Shared::FrameWork::Events::extern_data_events.ready.event_manager.set((int)s_ready_data::e_event_type::Status);
+			Talos::Shared::FrameWork::Events::Data_Router.ready.event_manager.set((int)s_ready_data::e_event_type::Status);
 			break;;
 			case e_record_types::MotionDataBlock:
 			//memcpy(&Talos::Shared::c_cache_data::motion_block_record, buffer->_storage_pointer, Talos::Shared::c_cache_data::motion_block_record._size);
@@ -273,7 +273,7 @@ void c_new_data_handler::__set_entry_mode(char first_byte, char second_byte)
 		break;
 		default:
 		//assume its plain ngc g code data
-			Talos::Shared::FrameWork::Events::extern_data_events.ready.event_manager.set((int)s_ready_data::e_event_type::NgcDataLine);
+			Talos::Shared::FrameWork::Events::Data_Router.ready.event_manager.set((int)s_ready_data::e_event_type::NgcDataLine);
 	}
 }
 
@@ -282,13 +282,13 @@ void c_new_data_handler::__set_sub_entry_mode(char byte)
 	switch (byte)
 	{
 		case 'G': //block g group status
-			Talos::Shared::FrameWork::Events::extern_data_events.inquire.event_manager.set((int)s_inquiry_data::e_event_type::ActiveBlockGGroupStatus);
+			Talos::Shared::FrameWork::Events::Data_Router.inquire.event_manager.set((int)s_inquiry_data::e_event_type::ActiveBlockGGroupStatus);
 		break;
 		case 'M': //block m group status
-			Talos::Shared::FrameWork::Events::extern_data_events.inquire.event_manager.set((int)s_inquiry_data::e_event_type::ActiveBlockMGroupStatus);
+			Talos::Shared::FrameWork::Events::Data_Router.inquire.event_manager.set((int)s_inquiry_data::e_event_type::ActiveBlockMGroupStatus);
 		break;
 		case 'W': //word value status
-			Talos::Shared::FrameWork::Events::extern_data_events.inquire.event_manager.set((int)s_inquiry_data::e_event_type::ActiveBlockWordStatus);
+			Talos::Shared::FrameWork::Events::Data_Router.inquire.event_manager.set((int)s_inquiry_data::e_event_type::ActiveBlockWordStatus);
 		break;
 		default:
 		__raise_error(NULL, e_error_behavior::Informal, 0, e_error_group::DataHandler, e_error_process::Process

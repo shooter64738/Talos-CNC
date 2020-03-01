@@ -28,8 +28,8 @@ void Hardware_Abstraction_Layer::Serial::initialize(uint8_t Port, uint32_t BaudR
 	_usart1_write_buffer.initialize(_usart1_write_data, 256);
 	_usart1_write_buffer.pntr_device_write = Hardware_Abstraction_Layer::Serial::send;
 
-	Talos::Shared::FrameWork::Events::extern_data_events.serial.inbound.device = &Hardware_Abstraction_Layer::Serial::_usart0_read_buffer;
-	Talos::Shared::FrameWork::Events::extern_data_events.serial.outbound.device = &Hardware_Abstraction_Layer::Serial::_usart1_write_buffer;
+	Talos::Shared::FrameWork::Events::Data_Router.serial.inbound.device = &Hardware_Abstraction_Layer::Serial::_usart0_read_buffer;
+	Talos::Shared::FrameWork::Events::Data_Router.serial.outbound.device = &Hardware_Abstraction_Layer::Serial::_usart1_write_buffer;
 }
 
 uint8_t Hardware_Abstraction_Layer::Serial::send(uint8_t Port, char byte)
@@ -53,5 +53,5 @@ void Hardware_Abstraction_Layer::Serial::add_to_buffer(uint8_t port, const char 
 void Hardware_Abstraction_Layer::Serial::__timer1_overflow_thread()
 {
 	std::this_thread::sleep_for(std::chrono::milliseconds(1));
-	Talos::Shared::FrameWork::Events::extern_data_events.serial.inbound.check_time_out();
+	Talos::Shared::FrameWork::Events::Data_Router.serial.inbound.check_time_out();
 }
