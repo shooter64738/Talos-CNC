@@ -25,6 +25,7 @@
 #include <stdint.h>
 #include "../../../../c_ring_template.h"
 #include "../../../../Shared Data/FrameWork/extern_events_types.h"
+#include "../../../../Shared Data/_s_status_record.h"
 
 typedef void(*xret_pointer)(c_ring_buffer <char> * buffer);
 namespace Talos
@@ -33,11 +34,11 @@ namespace Talos
 	{
 		namespace Data
 		{
-			class System
+			class Status
 			{
 				//variables
 			public:
-				static void process_status();
+
 
 			protected:
 			private:
@@ -45,16 +46,33 @@ namespace Talos
 
 				//functions
 			public:
-				static xret_pointer assign_handler(c_ring_buffer <char> * buffer);
+				/*static xret_pointer assign_handler(c_ring_buffer <char> * buffer);
 				static void motion_control_setting_handler(c_ring_buffer <char> * buffer);
-				static void unkown_data_handler(c_ring_buffer <char> * buffer);
+				static void unkown_data_handler(c_ring_buffer <char> * buffer);*/
+				static void process_status_eventing();
 
 			protected:
 			private:
-				static void __release();
+				class Type
+				{
+				public:
+					static void __process(s_status_message *status);
+					static void __critical(s_status_message *status, e_status_message::e_critical message);
+					static void __data(s_status_message *status, e_status_message::e_data message);
+					static void __informal(s_status_message *status, e_status_message::e_informal message);
+					static void __warning(s_status_message *status, e_status_message::e_warning message);
+				};
+				class Origin
+				{
+				public:
+					static void __host(s_status_message *status, e_status_message::e_warning message);
+					static void __coordinator(s_status_message *status, e_status_message::e_warning message);
+					static void __motion(s_status_message *status, e_status_message::e_warning message);
+					static void __spindle(s_status_message *status, e_status_message::e_warning message);
+					static void __peripheral(s_status_message *status, e_status_message::e_warning message);
+				};
 
-
-			}; //c_serial_events
+			};
 		};
 	};
 };

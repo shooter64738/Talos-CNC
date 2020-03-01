@@ -7,24 +7,24 @@ public:
 
 	enum class e_critical :uint8_t
 	{
-		testinformal = 0
+		testcritical = 0
 
 	};
 
 	enum class e_data :uint8_t
 	{
-		testinformal = 0
+		testdata = 0
 
 	};
 
 	enum class e_informal :uint8_t
 	{
-		testinformal = 0
+		ReadyToProcess = 0
 
 	};
 	enum class e_warning :uint8_t
 	{
-		testinformal = 0
+		testwarning = 0
 
 	};
 };

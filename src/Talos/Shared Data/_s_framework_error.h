@@ -7,7 +7,8 @@ enum class e_error_group :uint8_t
 {
 	EventHandler = 0,
 	DataHandler = 1,
-	Interpreter = 2
+	Interpreter = 2,
+	SystemHandler = 3
 };
 
 enum class e_error_source :uint8_t

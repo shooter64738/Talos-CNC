@@ -19,7 +19,7 @@
 */
 #include "c_new_data_handler.h"
 #include <ctype.h>
-#include "c_system_data_handler.h"
+
 
 static uint8_t write_count = 0;
 static uint8_t read_count = 0;
@@ -200,11 +200,12 @@ void c_new_data_handler::bin_read_handler(c_ring_buffer <char> * buffer)
 			memcpy(&Talos::Shared::c_cache_data::status_record, buffer->_storage_pointer, Talos::Shared::c_cache_data::status_record._size);
 			Talos::Shared::FrameWork::Events::Router.ready.event_manager.set((int)c_event_router::ss_ready_data::e_event_type::Status);
 
-			//Status messages are how the different cpu;s talk to each other. These message could be extremley important. 
-			//We will immediately call the system data prodcessor to take set any events from this status update
-			c_system::process_status(&Talos::Shared::c_cache_data::status_record)
+			//Status messages are how the different cpu;s talk to each other. These messages could be extremley important. 
+			//We will immediately call the system data processor to set any events from this status update
+			//c_system_d::process_status(&Talos::Shared::c_cache_data::status_record);
+			
 
-			break;;
+			break;
 		case e_record_types::MotionDataBlock:
 			//memcpy(&Talos::Shared::c_cache_data::motion_block_record, buffer->_storage_pointer, Talos::Shared::c_cache_data::motion_block_record._size);
 			//Talos::Shared::FrameWork::Events::extern_data_events.ready.event_manager.set((int)s_ready_data::e_event_type::MotionDataBlock);

@@ -30,7 +30,7 @@ namespace Talos
 	{
 		namespace Events
 		{
-			class System
+			class Status
 			{
 				//variables
 			public:

@@ -22,7 +22,7 @@
 
 namespace Motion_Core
 {
-	class System
+	class Status
 	{
 	public:
 			enum class e_control_event_type : uint8_t

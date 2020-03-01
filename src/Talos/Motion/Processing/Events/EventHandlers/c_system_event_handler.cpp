@@ -19,11 +19,14 @@
 */
 
 #include "c_system_event_handler.h"
-#include "../../Data/DataHandlers/c_system_data_handler.h"
+#include "../../Data/DataHandlers/c_status_data_handler.h"
 #include "../../../../Shared Data/FrameWork/extern_events_types.h"
-void Talos::Motion::Events::System::process()
+void Talos::Motion::Events::Status::process()
 {
-	//See if there is an event set indicating we loaded text data into the ngc cache record.
+	//See if there is an event set indicating we have a status record
 	if (Talos::Shared::FrameWork::Events::Router.ready.event_manager.get((int)c_event_router::ss_ready_data::e_event_type::Status))
-		Talos::Motion::Data::System::process_status();
+		//This will process the status record and may set several or no system events.
+		Talos::Motion::Data::Status::process_status_eventing();
+
+	//Now we can ready through the system event flags and act on whatever is there.
 }

@@ -81,10 +81,10 @@ void Motion_Core::Gateway::process_loop()
 void Motion_Core::Gateway::check_control_states()
 {
 	if (!Motion_Core::Hardware::Interpolation::Interpolation_Active)
-	Motion_Core::System::state_mode.control_modes.clear((int) Motion_Core::System::e_control_event_type::Control_motion_interpolation);
+	Motion_Core::Status::state_mode.control_modes.clear((int) Motion_Core::Status::e_control_event_type::Control_motion_interpolation);
 	
 	//Were we running a jog interpolation?
-	if (Motion_Core::System::state_mode.control_modes.get((int)Motion_Core::System::e_control_event_type::Control_jog_motion))
+	if (Motion_Core::Status::state_mode.control_modes.get((int)Motion_Core::Status::e_control_event_type::Control_jog_motion))
 	{
 		//Is interpolation complete?
 		if (!Motion_Core::Hardware::Interpolation::Interpolation_Active)
@@ -131,7 +131,7 @@ void Motion_Core::Gateway::process_motion()
 
 void Motion_Core::Gateway::process_motion(s_motion_data_block *mot)
 {
-	Motion_Core::System::new_sequence = mot->station;
+	Motion_Core::Status::new_sequence = mot->station;
 	
 	//mot->axis_values[0]=50;
 	#ifdef DEBUG_REPORTING
@@ -156,13 +156,13 @@ void Motion_Core::Gateway::process_motion(s_motion_data_block *mot)
 	Motion_Core::Gateway::local_serial->print_string("\ttest.line_number = "); Motion_Core::Gateway::local_serial->print_int32(mot->line_number); Motion_Core::Gateway::local_serial->Write(CR);
 	#endif
 	//If cycle start is set then start executing the motion. Otherwise jsut hold it while the buffer fills. 
-	if (Motion_Core::System::state_mode.control_modes.get((int)Motion_Core::System::e_control_event_type::Control_auto_cycle_start))
+	if (Motion_Core::Status::state_mode.control_modes.get((int)Motion_Core::Status::e_control_event_type::Control_auto_cycle_start))
 	{
 		uint16_t return_code = Motion_Core::Software::Interpolation::load_block(mot);
 		if (return_code)
 		{
 			Talos::Shared::FrameWork::Events::extern_motion_control_events.event_manager.set((int)s_motion_controller_events::e_event_type::BlockExecuting);
-			Motion_Core::System::state_mode.control_modes.set((int)Motion_Core::System::e_control_event_type::Control_motion_interpolation);
+			Motion_Core::Status::state_mode.control_modes.set((int)Motion_Core::Status::e_control_event_type::Control_motion_interpolation);
 		}
 		else if (return_code == 0)
 		{
@@ -180,7 +180,7 @@ void Motion_Core::Gateway::check_hardware_faults()
 	//See if there is a hardware alarm from a stepper/servo driver
 	if (Hardware_Abstraction_Layer::MotionCore::Inputs::Driver_Alarms >0)
 	{
-		Motion_Core::System::state_mode.control_modes.set((int)Motion_Core::System::e_control_event_type::Control_axis_drive_fault);
+		Motion_Core::Status::state_mode.control_modes.set((int)Motion_Core::Status::e_control_event_type::Control_axis_drive_fault);
 		//Hardware faults but not interpolating... Very strange..
 		if (Motion_Core::Hardware::Interpolation::Interpolation_Active)
 		{
@@ -189,8 +189,8 @@ void Motion_Core::Gateway::check_hardware_faults()
 		}
 		
 		
-		status->system_state = e_motion_state::System_Error;
-		
+		status->state = (int)e_motion_state::System_Error;
+		status->origin = e_origins::Motion;
 		for (int i=0;i<MACHINE_AXIS_COUNT;i++)
 		{
 			//Which axis has faulted?
@@ -198,8 +198,7 @@ void Motion_Core::Gateway::check_hardware_faults()
 			{
 				uint8_t axis_id = (uint8_t) e_motion_sub_state::Error_Axis_Drive_Fault_X
 				+ i;
-				status->system_sub_state =
-				(e_motion_sub_state)axis_id;
+				status->sub_state = axis_id;
 				
 				//Motion_Core::Gateway::local_serial->print_string("Drive on Axis ");
 				//Motion_Core::Gateway::local_serial->print_int32(i);
@@ -216,8 +215,8 @@ void Motion_Core::Gateway::check_sequence_complete()
 {
 	//If we are holding, or resuming then we cant be complete can we...
 	if (Motion_Core::Hardware::Interpolation::Last_Completed_Sequence != 0
-	&& !Motion_Core::System::state_mode.control_modes.get((int)Motion_Core::System::e_control_event_type::Control_hold_motion))
-	//&& !Motion_Core::System::get_control_state_mode(STATE_MOTION_CONTROL_RESUME))
+	&& !Motion_Core::Status::state_mode.control_modes.get((int)Motion_Core::Status::e_control_event_type::Control_hold_motion))
+	//&& !Motion_Core::Status::get_control_state_mode(STATE_MOTION_CONTROL_RESUME))
 	{
 		if (Motion_Core::Hardware::Interpolation::Interpolation_Active)
 		{

@@ -207,13 +207,13 @@
       <SubType>compile</SubType>
       <Link>Motion\motion_main.cpp</Link>
     </Compile>
-    <Compile Include="..\..\..\Motion\Processing\Data\DataHandlers\c_binary_data_handler.cpp">
+    <Compile Include="..\..\..\Motion\Processing\Data\DataHandlers\c_status_data_handler.cpp">
       <SubType>compile</SubType>
-      <Link>Motion\Processing\Data\DataHandlers\c_binary_data_handler.cpp</Link>
+      <Link>Motion\Processing\Data\DataHandlers\c_status_data_handler.cpp</Link>
     </Compile>
-    <Compile Include="..\..\..\Motion\Processing\Data\DataHandlers\c_binary_data_handler.h">
+    <Compile Include="..\..\..\Motion\Processing\Data\DataHandlers\c_status_data_handler.h">
       <SubType>compile</SubType>
-      <Link>Motion\Processing\Data\DataHandlers\c_binary_data_handler.h</Link>
+      <Link>Motion\Processing\Data\DataHandlers\c_status_data_handler.h</Link>
     </Compile>
     <Compile Include="..\..\..\Motion\Processing\Error\c_error.cpp">
       <SubType>compile</SubType>
@@ -246,6 +246,14 @@
     <Compile Include="..\..\..\Motion\Processing\Events\EventHandlers\c_motion_event_handler.h">
       <SubType>compile</SubType>
       <Link>Motion\Processing\Events\EventHandlers\c_motion_event_handler.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Motion\Processing\Events\EventHandlers\c_report_events.cpp">
+      <SubType>compile</SubType>
+      <Link>Motion\Processing\Events\EventHandlers\c_report_events.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\Motion\Processing\Events\EventHandlers\c_report_events.h">
+      <SubType>compile</SubType>
+      <Link>Motion\Processing\Events\EventHandlers\c_report_events.h</Link>
     </Compile>
     <Compile Include="..\..\..\Motion\Processing\Events\EventHandlers\c_system_event_handler.cpp">
       <SubType>compile</SubType>
