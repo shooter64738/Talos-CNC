@@ -13,9 +13,11 @@
   <ItemGroup>
     <ClInclude Include="..\..\..\..\Configuration\c_configuration.h" />
     <ClInclude Include="..\..\..\..\Coordinator\Processing\Data\DataHandlers\c_ngc_data_handler.h" />
+    <ClInclude Include="..\..\..\..\Coordinator\Processing\Data\DataHandlers\c_status_data_handler.h" />
     <ClInclude Include="..\..\..\..\Coordinator\Processing\Error\c_error.h" />
     <ClInclude Include="..\..\..\..\Coordinator\Processing\Events\EventHandlers\c_ngc_data_events.h" />
     <ClInclude Include="..\..\..\..\Coordinator\Processing\Events\EventHandlers\c_report_events.h" />
+    <ClInclude Include="..\..\..\..\Coordinator\Processing\Events\EventHandlers\c_system_event_handler.h" />
     <ClInclude Include="..\..\..\..\Coordinator\Record Defines\xe_all_event_data_types.h" />
     <ClInclude Include="..\..\..\..\NGC_RS274\Dialect\_ngc_dialect_validate.h" />
     <ClInclude Include="..\..\..\..\NGC_RS274\Dialect\_ngc_validate_0_nonmodal.h" />
@@ -41,6 +43,9 @@
     <ClInclude Include="..\..\..\..\NGC_RS274\_ngc_tool_struct.h" />
     <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Data\cache_data.h" />
     <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Data\c_new_data_handler.h" />
+    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Enumerations\Status\_e_status_types.h" />
+    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Enumerations\Status\_e_status_messages.h" />
+    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Enumerations\Status\_e_status_origins.h" />
     <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Event\c_event_router.h" />
     <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Event\Serial\c_new_serial_event_handler.h" />
     <ClInclude Include="..\..\..\..\Shared Data\FrameWork\extern_events_types.h" />
@@ -49,8 +54,6 @@
     <ClInclude Include="..\..\..\..\Shared Data\_e_block_state.h" />
     <ClInclude Include="..\..\..\..\Shared Data\_e_feed_modes.h" />
     <ClInclude Include="..\..\..\..\Shared Data\_e_feed_types.h" />
-    <ClInclude Include="..\..\..\..\Shared Data\_e_motion_state.h" />
-    <ClInclude Include="..\..\..\..\Shared Data\_e_motion_sub_state.h" />
     <ClInclude Include="..\..\..\..\Shared Data\_e_ramp_type.h" />
     <ClInclude Include="..\..\..\..\Shared Data\_e_record_types.h" />
     <ClInclude Include="..\..\..\..\Shared Data\_e_unit_types.h" />
@@ -69,7 +72,6 @@
     <ClInclude Include="..\..\..\..\Coordinator\Processing\Events\EventHandlers\c_ancillary_event_handler.h" />
     <ClInclude Include="..\..\..\..\Coordinator\Processing\Events\EventHandlers\c_network_data_events.h" />
     <ClInclude Include="..\..\..\..\Coordinator\Processing\Events\EventHandlers\c_spi_data_events.h" />
-    <ClInclude Include="..\..\..\..\Coordinator\Processing\Events\EventHandlers\c_system_events.h" />
     <ClInclude Include="..\..\..\..\Coordinator\Processing\Main\Main_Process.h" />
     <ClInclude Include="..\..\..\..\Coordinator\Serial\c_Serial.h" />
     <ClInclude Include="..\..\..\..\c_ring_template.h" />
@@ -105,13 +107,14 @@
     <ClCompile Include="..\..\..\..\Coordinator\coordinator_main.cpp" />
     <ClCompile Include="..\..\..\..\Coordinator\Processing\Data\DataHandlers\c_binary_data_handler.cpp" />
     <ClCompile Include="..\..\..\..\Coordinator\Processing\Data\DataHandlers\c_ngc_data_handler.cpp" />
+    <ClCompile Include="..\..\..\..\Coordinator\Processing\Data\DataHandlers\c_status_data_handler.cpp" />
     <ClCompile Include="..\..\..\..\Coordinator\Processing\Error\c_error.cpp" />
     <ClCompile Include="..\..\..\..\Coordinator\Processing\Events\EventHandlers\c_ancillary_event_handler.cpp" />
     <ClCompile Include="..\..\..\..\Coordinator\Processing\Events\EventHandlers\c_network_data_events.cpp" />
     <ClCompile Include="..\..\..\..\Coordinator\Processing\Events\EventHandlers\c_ngc_data_events.cpp" />
     <ClCompile Include="..\..\..\..\Coordinator\Processing\Events\EventHandlers\c_report_events.cpp" />
     <ClCompile Include="..\..\..\..\Coordinator\Processing\Events\EventHandlers\c_spi_data_events.cpp" />
-    <ClCompile Include="..\..\..\..\Coordinator\Processing\Events\EventHandlers\c_system_events.cpp" />
+    <ClCompile Include="..\..\..\..\Coordinator\Processing\Events\EventHandlers\c_system_event_handler.cpp" />
     <ClCompile Include="..\..\..\..\Coordinator\Processing\Main\Main_Process.cpp" />
     <ClCompile Include="..\..\..\..\Coordinator\Serial\c_Serial.cpp" />
     <ClCompile Include="..\..\..\..\NGC_RS274\Dialect\_ngc_dialect_validate.cpp" />

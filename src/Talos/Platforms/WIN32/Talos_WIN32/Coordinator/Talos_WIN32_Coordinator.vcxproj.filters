@@ -82,6 +82,12 @@
     <Filter Include="Shared Data\FrameWork\Event\Serial">
       <UniqueIdentifier>{22c6105e-b607-49bf-8880-71e95a367573}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shared Data\FrameWork\Enumerations">
+      <UniqueIdentifier>{f21087f7-1302-498e-9d06-bd938bbaf2ea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shared Data\FrameWork\Enumerations\Status">
+      <UniqueIdentifier>{df4f8830-b35a-4562-9b72-547fc302efad}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\communication_def.h" />
@@ -112,9 +118,6 @@
       <Filter>Coordinator\Processing\Events\EventHandlers</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\Coordinator\Processing\Events\EventHandlers\c_spi_data_events.h">
-      <Filter>Coordinator\Processing\Events\EventHandlers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Coordinator\Processing\Events\EventHandlers\c_system_events.h">
       <Filter>Coordinator\Processing\Events\EventHandlers</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\NGC_RS274\Machine Specific\Lathe\NGC_G_Codes.h">
@@ -269,12 +272,6 @@
     <ClInclude Include="..\..\..\..\Shared Data\_e_feed_types.h">
       <Filter>Shared Data</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Shared Data\_e_motion_state.h">
-      <Filter>Shared Data</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Shared Data\_e_motion_sub_state.h">
-      <Filter>Shared Data</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\..\Shared Data\_e_ramp_type.h">
       <Filter>Shared Data</Filter>
     </ClInclude>
@@ -338,6 +335,21 @@
     <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Data\cache_data.h">
       <Filter>Shared Data\FrameWork\Data</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\..\Coordinator\Processing\Data\DataHandlers\c_status_data_handler.h">
+      <Filter>Coordinator\Processing\Data\DataHandlers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Coordinator\Processing\Events\EventHandlers\c_system_event_handler.h">
+      <Filter>Coordinator\Processing\Events\EventHandlers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Enumerations\Status\_e_status_messages.h">
+      <Filter>Shared Data\FrameWork\Enumerations\Status</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Enumerations\Status\_e_status_origins.h">
+      <Filter>Shared Data\FrameWork\Enumerations\Status</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Enumerations\Status\_e_status_types.h">
+      <Filter>Shared Data\FrameWork\Enumerations\Status</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\..\Coordinator\coordinator_main.cpp">
@@ -365,9 +377,6 @@
       <Filter>Coordinator\Processing\Events\EventHandlers</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\..\Coordinator\Processing\Events\EventHandlers\c_spi_data_events.cpp">
-      <Filter>Coordinator\Processing\Events\EventHandlers</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\Coordinator\Processing\Events\EventHandlers\c_system_events.cpp">
       <Filter>Coordinator\Processing\Events\EventHandlers</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\..\NGC_RS274\Machine Specific\Lathe\NGC_Lathe.cpp">
@@ -465,6 +474,12 @@
     </ClCompile>
     <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Data\cache_data.cpp">
       <Filter>Shared Data\FrameWork\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Coordinator\Processing\Data\DataHandlers\c_status_data_handler.cpp">
+      <Filter>Coordinator\Processing\Data\DataHandlers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Coordinator\Processing\Events\EventHandlers\c_system_event_handler.cpp">
+      <Filter>Coordinator\Processing\Events\EventHandlers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

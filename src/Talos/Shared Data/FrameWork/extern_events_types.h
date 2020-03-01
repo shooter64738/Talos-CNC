@@ -1,7 +1,7 @@
 
 #include <stdint.h>
 #include "../../_bit_flag_control.h"
-#include "../_e_motion_state.h"
+#include "Enumerations/Status/_e_status_states.h"
 #include "../_s_framework_error.h"
 #include "../../c_ring_template.h"
 #include "Event/c_event_router.h"
@@ -16,7 +16,7 @@
 //They are specific to a controller type (motion)
 struct s_motion_events
 {
-	e_motion_state e_event_type;
+	e_status_state::motion::e_state e_event_type;
 	s_bit_flag_controller<uint32_t> event_manager;
 };
 

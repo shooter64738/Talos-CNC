@@ -376,9 +376,6 @@
     <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Data\cache_data.h">
       <Filter>Shared data\FrameWork\Data</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Enumerations\Status\_e_status_classes.h">
-      <Filter>Shared data\FrameWork\Enumerations\Status</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Enumerations\Status\_e_status_messages.h">
       <Filter>Shared data\FrameWork\Enumerations\Status</Filter>
     </ClInclude>
@@ -387,6 +384,18 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\Motion\Processing\Data\DataHandlers\c_status_data_handler.h">
       <Filter>Motion\Processing\Data\DataHandlers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Enumerations\Status\_e_status_types.h">
+      <Filter>Shared data\FrameWork\Enumerations\Status</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Enumerations\Status\_e_status_states.h">
+      <Filter>Shared data\FrameWork\Enumerations\Status</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Enumerations\Status\x_e_motion_state.h">
+      <Filter>Shared data\FrameWork\Enumerations\Status</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Enumerations\Status\x_e_motion_sub_state.h">
+      <Filter>Shared data\FrameWork\Enumerations\Status</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

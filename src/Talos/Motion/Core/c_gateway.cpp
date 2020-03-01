@@ -18,6 +18,7 @@
 #include "../Processing/Events/EventHandlers/c_motion_control_event_handler.h"
 #include "../../Shared Data/FrameWork/extern_events_types.h"
 #include "../../Shared Data/_s_status_record.h"
+#include "../../Shared Data/FrameWork/Enumerations/Status/_e_status_states.h"
 
 #define MOTION_BUFFER_SIZE 2
 
@@ -189,14 +190,14 @@ void Motion_Core::Gateway::check_hardware_faults()
 		}
 		
 		
-		status->state = (int)e_motion_state::System_Error;
+		status->state = (int)e_status_state::motion::e_state::System_Error;
 		status->origin = e_origins::Motion;
 		for (int i=0;i<MACHINE_AXIS_COUNT;i++)
 		{
 			//Which axis has faulted?
 			if (Hardware_Abstraction_Layer::MotionCore::Inputs::Driver_Alarms & (1<<i))
 			{
-				uint8_t axis_id = (uint8_t) e_motion_sub_state::Error_Axis_Drive_Fault_X
+				uint8_t axis_id = (uint8_t)e_status_state::motion::e_sub_state::Error_Axis_Drive_Fault_X
 				+ i;
 				status->sub_state = axis_id;
 				

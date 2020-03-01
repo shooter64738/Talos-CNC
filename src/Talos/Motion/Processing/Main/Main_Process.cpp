@@ -10,7 +10,7 @@
 #include "../Error/c_error.h"
 #include "../../../Shared Data/FrameWork/Data/cache_data.h"
 #include "../../../Shared Data/FrameWork/extern_events_types.h"
-//#include "../../Record Defines/e_all_event_data_types.h"
+
 
 c_Serial Talos::Motion::Main_Process::host_serial;
 
@@ -82,65 +82,26 @@ void Talos::Motion::Main_Process::__initialization_response(uint8_t response_cod
 
 void Talos::Motion::Main_Process::run()
 {
-	/*
-	design thoughts.... 
-	need to determine what data is required in the binary record. 
-	These are the ones I know of at this time
-	1. feed type
-	2. feed mode
-	3. feed rate
-	4. spindle speed
-	5. spindle mode
-	6. origin position
-	7. target position
-	8. arc center
-	9. arc offset
-	10. arc radius
-	??others??
-	*/
+//setup a fake status message so the mc thinks its ready to run
+	Talos::Shared::c_cache_data::status_record.type = (int)e_status_type::Informal;
+	Talos::Shared::c_cache_data::status_record.message = (int)e_status_message::e_informal::ReadyToProcess;
+	Talos::Shared::c_cache_data::status_record.state = (int)e_status_state::motion::e_state::Idle;
+	Talos::Shared::c_cache_data::status_record.sub_state = (int)e_status_state::motion::e_sub_state::OK;
 
-	//descriptive pseudo code
-	/*
-	The initialize routine will determine if the system is healthy and ready to run. If initialize fails we will not
-	make it to the run function. 
-	*/
-
-	/*
-	Check for healthy system. Anything that would stop us from processing motion except for an intended feed hold is
-	considered unhealthy.
-	1. lost comms
-	2. hardware fauilt detected
-	3. spindle error
-	etc... 
-	If the system is not healthy we need to shut down, and it will either be a hard fail or a soft fail. soft fails
-	can be recovered, hard fails cannot. 
-	*/
-
-	/*
-	Determine if motion control is configured to auto start, or start only on command
-	If auto start, then motion may begin executing when the coordiantor has processed
-	data and it is ready to send to the motion controller.
-	check for auto start command
-	*/
-	
-	//setup a fake event indicating we want an ngc block record
-	//extern_data_events.serial.outbound.event_manager.set((int)e_outbound_data_type::MotionDataBlock);
-	
-	//Start the eventing loop, stop loop if a critical system error occurs
 	while (Talos::Shared::FrameWork::Events::extern_system_events.event_manager.get((int)s_system_events::e_event_type::SystemAllOk))
 	{
 		
 		//0: Handle system events
-		//Talos::Coordinator::Events::system_event_handler.process();
+		//Talos::Motion::Events::system_event_handler.process();
 		//if there are any system critical events check them here and do not process further
 
 		//1: Handle hardware events
-		//Talos::Coordinator::Events::hardware_event_handler.process();
+		//Talos::Motion::Events::hardware_event_handler.process();
 
 		//2: Handle data events
 		Talos::Shared::FrameWork::Events::Router.process();
 
 		//3: Handle ancillary events
-		//Talos::Coordinator::Events::ancillary_event_handler.process();
+		//Talos::Motion::Events::ancillary_event_handler.process();
 	}
 }

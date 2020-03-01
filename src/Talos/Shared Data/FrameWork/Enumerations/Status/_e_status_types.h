@@ -1,5 +1,5 @@
 #include<stdint.h>
-	enum class e_type :uint8_t
+	enum class e_status_type :uint8_t
 	{
 		Critical = 0,
 		Warning = 1,
