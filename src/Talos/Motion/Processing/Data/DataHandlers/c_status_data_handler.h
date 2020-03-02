@@ -50,26 +50,30 @@ namespace Talos
 				static void motion_control_setting_handler(c_ring_buffer <char> * buffer);
 				static void unkown_data_handler(c_ring_buffer <char> * buffer);*/
 				static void process_system_eventing();
+				static void process();
+				static bool send(uint8_t message, e_status_message::e_origins origin, uint8_t state, uint8_t sub_state, uint8_t type);
+				
 
 			protected:
 			private:
 				class Type
 				{
 				public:
+					
 					static void __process(s_system_message *status);
-					static void __critical(s_system_message *status, e_status_message::e_critical message);
-					static void __data(s_system_message *status, e_status_message::e_data message);
-					static void __informal(s_system_message *status, e_status_message::e_informal message);
-					static void __warning(s_system_message *status, e_status_message::e_warning message);
+					static void __critical(s_system_message *status, e_status_message::messages::e_critical message);
+					static void __data(s_system_message *status, e_status_message::messages::e_data message);
+					static void __informal(s_system_message *status, e_status_message::messages::e_informal message);
+					static void __warning(s_system_message *status, e_status_message::messages::e_warning message);
 				};
 				class Origin
 				{
 				public:
-					static void __host(s_system_message *status, e_status_message::e_warning message);
-					static void __coordinator(s_system_message *status, e_status_message::e_warning message);
-					static void __motion(s_system_message *status, e_status_message::e_warning message);
-					static void __spindle(s_system_message *status, e_status_message::e_warning message);
-					static void __peripheral(s_system_message *status, e_status_message::e_warning message);
+					static void __host(s_system_message *status, e_status_message::messages::e_warning message);
+					static void __coordinator(s_system_message *status, e_status_message::messages::e_warning message);
+					static void __motion(s_system_message *status, e_status_message::messages::e_warning message);
+					static void __spindle(s_system_message *status, e_status_message::messages::e_warning message);
+					static void __peripheral(s_system_message *status, e_status_message::messages::e_warning message);
 				};
 
 			};

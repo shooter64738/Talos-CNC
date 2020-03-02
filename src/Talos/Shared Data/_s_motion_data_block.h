@@ -10,7 +10,7 @@
 
 struct s_motion_data_block
 {
-	const e_record_types record_type = e_record_types::Motion;
+	const e_record_types __rec_type__ = e_record_types::Motion;
 	e_feed_modes feed_rate_mode;
 	e_motion_type motion_type;
 	s_arc_values arc_values;
@@ -21,6 +21,6 @@ struct s_motion_data_block
 	uint32_t flag;
 	uint32_t line_number;
 	uint32_t station;
-	static const uint8_t _size = 5; // speify size here.. 'sizeof()' will not work across differing platforms (8bit/32bit)
+	static const uint8_t __size__ = 5; // speify size here.. 'sizeof()' will not work across differing platforms (8bit/32bit)
 };
 #endif // _C_MOTION_DATA_BLOCK

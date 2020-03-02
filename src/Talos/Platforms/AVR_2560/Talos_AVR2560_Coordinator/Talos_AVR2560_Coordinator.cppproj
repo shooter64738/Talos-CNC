@@ -202,6 +202,14 @@
       <SubType>compile</SubType>
       <Link>Coordinator\Processing\Data\DataHandlers\c_ngc_data_handler.h</Link>
     </Compile>
+    <Compile Include="..\..\..\Coordinator\Processing\Data\DataHandlers\c_status_data_handler.cpp">
+      <SubType>compile</SubType>
+      <Link>Coordinator\Processing\Data\DataHandlers\c_status_data_handler.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\Coordinator\Processing\Data\DataHandlers\c_status_data_handler.h">
+      <SubType>compile</SubType>
+      <Link>Coordinator\Processing\Data\DataHandlers\c_status_data_handler.h</Link>
+    </Compile>
     <Compile Include="..\..\..\Coordinator\Processing\Error\c_error.cpp">
       <SubType>compile</SubType>
       <Link>Coordinator\Processing\Error\c_error.cpp</Link>
@@ -250,13 +258,13 @@
       <SubType>compile</SubType>
       <Link>Coordinator\Processing\Events\EventHandlers\c_spi_data_events.h</Link>
     </Compile>
-    <Compile Include="..\..\..\Coordinator\Processing\Events\EventHandlers\c_system_events.cpp">
+    <Compile Include="..\..\..\Coordinator\Processing\Events\EventHandlers\c_system_event_handler.cpp">
       <SubType>compile</SubType>
-      <Link>Coordinator\Processing\Events\EventHandlers\c_system_events.cpp</Link>
+      <Link>Coordinator\Processing\Events\EventHandlers\c_system_event_handler.cpp</Link>
     </Compile>
-    <Compile Include="..\..\..\Coordinator\Processing\Events\EventHandlers\c_system_events.h">
+    <Compile Include="..\..\..\Coordinator\Processing\Events\EventHandlers\c_system_event_handler.h">
       <SubType>compile</SubType>
-      <Link>Coordinator\Processing\Events\EventHandlers\c_system_events.h</Link>
+      <Link>Coordinator\Processing\Events\EventHandlers\c_system_event_handler.h</Link>
     </Compile>
     <Compile Include="..\..\..\Coordinator\Processing\Main\Main_Process.cpp">
       <SubType>compile</SubType>

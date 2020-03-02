@@ -36,7 +36,7 @@ class c_new_data_handler
 	//variables
 public:
 	static void(*pntr_data_handler_release)(c_ring_buffer<char> * buffer);
-	
+	static void(*pntr_bin_data_copy)(c_ring_buffer<char> * buffer);
 protected:
 private:
 
@@ -60,5 +60,6 @@ private:
 		, e_error_source e_source, e_error_code e_code);
 	static void __set_entry_mode(char first_byte, char second_byte);
 	static void __set_sub_entry_mode(char byte);
+	static void __bin_data_copy(c_ring_buffer <char> * buffer);
 }; //c_serial_events
 #endif //__C_DATA_EVENTS_H__

@@ -344,15 +344,6 @@
     <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Enumerations\Status\_e_system_messages.h">
       <Filter>Shared Data\FrameWork\Enumerations\Status</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Enumerations\Status\_e_system_origins.h">
-      <Filter>Shared Data\FrameWork\Enumerations\Status</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Enumerations\Status\_e_system_states.h">
-      <Filter>Shared Data\FrameWork\Enumerations\Status</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Enumerations\Status\_e_system_types.h">
-      <Filter>Shared Data\FrameWork\Enumerations\Status</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\..\Coordinator\coordinator_main.cpp">

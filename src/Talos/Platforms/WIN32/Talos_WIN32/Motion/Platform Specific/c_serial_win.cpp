@@ -50,6 +50,21 @@ void Hardware_Abstraction_Layer::Serial::add_to_buffer(uint8_t port, const char 
 	/*rxBuffer[port].Buffer[rxBuffer[port].Head++] = 13;
 	rxBuffer[port].EOL++;*/
 }
+
+void Hardware_Abstraction_Layer::Serial::add_to_buffer(uint8_t port, const char * data, uint8_t size)
+{
+	while (size)
+	{
+		size--;
+		Hardware_Abstraction_Layer::Serial::_usart0_read_buffer.put(*data);
+		data++;
+	}
+	//Talos::Shared::FrameWork::Events::extern_data_events.serial.inbound.event_manager.set((int)s_inbound_data::e_event_type::Usart0DataArrival);
+	Talos::Shared::FrameWork::Events::Router.serial.inbound.event_manager.set((int)c_event_router::ss_inbound_data::e_event_type::Usart0DataArrival);
+	/*rxBuffer[port].Buffer[rxBuffer[port].Head++] = 13;
+	rxBuffer[port].EOL++;*/
+}
+
 void Hardware_Abstraction_Layer::Serial::add_to_buffer(uint8_t port, const char data)
 {
 	Hardware_Abstraction_Layer::Serial::_usart0_read_buffer.put(data);

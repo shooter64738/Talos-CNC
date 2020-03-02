@@ -3,6 +3,7 @@
 #include "c_segment_arbitrator.h"
 #include "c_interpollation_hardware.h"
 #include "c_gateway.h"
+#include "../Processing/Events/EventHandlers/c_motion_control_event_handler.h"
 
 
 #define M_PI 3.14159265358979323846
@@ -15,52 +16,10 @@ int32_t Motion_Core::Software::Interpolation::system_position[MACHINE_AXIS_COUNT
 uint16_t Motion_Core::Software::Interpolation::load_block(s_motion_data_block *block)
 {
 	uint8_t return_value = 0;
-	
-	////We must determine what directions this motion is moving each axis
-	////and if the directions are different than the previous motion.
-	//int8_t changing_axis[MACHINE_AXIS_COUNT]{0};
-	//for (uint8_t idx = 0; idx < MACHINE_AXIS_COUNT; idx++)
-	//{
-	////Determine if there is motion
-	//if (block.axis_values[idx] !=0)
-	//{
-	//int8_t axis_direction = 0;
-	//axis_direction = block.axis_values[idx]>0.0?1:-1;
-	////If the last motion of this axis is opposite of the new motion comp is needed
-	////If last motion is zero, then this axis has not been moved yet.
-	//if (Motion_Core::Software::Interpollation::back_comp.last_directions[idx]!=0
-	//&& Motion_Core::Software::Interpollation::back_comp.last_directions[idx] !=	axis_direction)
-	//{
-	////Set the direction this axis will move in the new motion
-	//changing_axis[idx] = axis_direction;
-	////Set comp to active so we know we need to execute it.
-	//Motion_Core::Software::Interpollation::back_comp.needs_comp = 1;
-	//}
-	//}
-	//}
-	////If we need backlash comp, we must compensate before we begin interpolation of a line or arc.
-	////so add the compensation motion now to take up the mechanical slack in our feed
-	//if (Motion_Core::Software::Interpollation::back_comp.needs_comp == 1)
-	//{
-	////create a rapid motion to take up the compensation distance
-	//BinaryRecords::s_motion_data_block comp_block;
-	//comp_block.feed_rate_mode = BinaryRecords::e_feed_modes::FEED_RATE_UNITS_PER_MINUTE_MODE;
-	//comp_block.motion_type = BinaryRecords::e_motion_type::rapid_linear;
-	//comp_block.flag = BinaryRecords::e_block_flag::compensation;
-	//for (uint8_t idx = 0; idx < MACHINE_AXIS_COUNT; idx++)
-	//{
-	////We can loop through all of them. If the changing_axis value is zero due to no change in direction
-	////then there will be no motion computed for it.
-	//comp_block.axis_values[idx] = Motion_Core::Settings::_Settings.back_lash_comp_distance[idx]
-	//* changing_axis[idx];
-	//}
-	//return_value = Motion_Core::Software::Interpollation::_mc_line(comp_block);
-	//Motion_Core::Software::Interpollation::back_comp.needs_comp = 0;
-	//}
-	
+		
 	//if we are switching feed modes, we must wait until current interpolation stops before we can proceed
 	if (Motion_Core::Hardware::Interpolation::drive_mode != block->feed_rate_mode
-	&& Motion_Core::Hardware::Interpolation::Interpolation_Active)
+	&& Talos::Motion::Events::MotionControl::event_manager.get((int)Talos::Motion::Events::MotionControl::e_event_type::Interpollation))
 	{
 		//Store this block but do nothing with it. We should probably add a layer between the
 		//processor and here, in order to handle these types of conditions.

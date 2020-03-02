@@ -87,9 +87,6 @@
     <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Data\cache_data.h" />
     <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Data\c_new_data_handler.h" />
     <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Enumerations\Status\_e_system_messages.h" />
-    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Enumerations\Status\_e_system_origins.h" />
-    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Enumerations\Status\_e_system_states.h" />
-    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Enumerations\Status\_e_system_types.h" />
     <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Event\c_event_router.h" />
     <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Event\Serial\c_new_serial_event_handler.h" />
     <ClInclude Include="..\..\..\..\Shared Data\FrameWork\extern_events_types.h" />

@@ -12,15 +12,15 @@
 
 namespace Motion_Core
 {
-	
+
 	namespace Segment
 	{
-		
-		#ifndef __C_ARBITRATOR
-		#define __C_ARBITRATOR
+
+#ifndef __C_ARBITRATOR
+#define __C_ARBITRATOR
 		class Arbitrator
 		{
-			public:
+		public:
 
 			//static uint8_t st_block_index_4_bresenham;  // Index of stepper common data block being prepped
 			//static Motion_Core::Segment::Bresenham::Bresenham_Item *bresenham_item_pointer;
@@ -58,13 +58,22 @@ namespace Motion_Core
 			static void Set_Segment_Delay(Motion_Core::Segment::Timer::Timer_Item *segment_item, uint32_t cycles);
 			static float mm_remaining;
 
-			private:
+			enum class e_step_control_type : uint8_t
+			{
+				Step_motion_terminate = 0,
+				Step_motion_hold = 1,
+			};
+			static s_bit_flag_controller<uint8_t> step_event_control;
 
-			public:
+			
+
+		private:
+
+		public:
 			static void Reset();
 
 
 		};
-		#endif
+#endif
 	};
 };

@@ -22,6 +22,7 @@ then move to their respective modules.
 #include "../Events/EventHandlers/c_report_events.h"
 #include "../Error/c_error.h"
 #include "../../../Shared Data/FrameWork/Data/cache_data.h"
+#include "../Events/EventHandlers/c_system_event_handler.h"
 
 #ifdef MSVC
 static char test_line[256] = "G1x1f500\r\nF33.3\r\n";
@@ -171,17 +172,17 @@ void Talos::Coordinator::Main_Process::run()
 		//1: Handle hardware events
 		//Talos::Coordinator::Events::hardware_event_handler.process();
 
-		//2: Handle data events
-		//The router determines which event handler needs to process the message
-		Talos::Shared::FrameWork::Events::Router.process();
 		
-		//3: Handle ancillary events
+		//3: System event handler (should always follow the router events)
+		Talos::Coordinator::Events::System::process();
+		
+		//4: Handle ancillary events
 		//Talos::Coordinator::Events::ancillary_event_handler.process();
 
-		//4:: Handle ngc processing events
+		//5:: Handle ngc processing events
 		Talos::Coordinator::Events::Ngc::process();
 
-		//5: Process reporting events
+		//6: Process reporting events
 		Talos::Coordinator::Events::Report::process();
 
 		/*if (extern_data_events.inquire.event_manager.get((int)s_inquiry_data::e_event_type::IntialBlockStatus))

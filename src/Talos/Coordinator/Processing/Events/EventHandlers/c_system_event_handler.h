@@ -26,11 +26,11 @@
 #include <stdint.h>
 namespace Talos
 {
-	namespace Motion
+	namespace Coordinator
 	{
 		namespace Events
 		{
-			class Status
+			class System
 			{
 				//variables
 			public:

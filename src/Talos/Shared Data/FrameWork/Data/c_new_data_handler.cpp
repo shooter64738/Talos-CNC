@@ -31,6 +31,7 @@ static e_record_types tracked_read_type;
 static s_framework_error tracked_error;
 
 void(*c_new_data_handler::pntr_data_handler_release)(c_ring_buffer<char> * buffer);
+void(*c_new_data_handler::pntr_bin_data_copy)(c_ring_buffer<char> * buffer);
 
 ret_pointer c_new_data_handler::assign_handler(
 	c_ring_buffer <char> * buffer, c_event_router::ss_inbound_data * event_object,
@@ -69,13 +70,13 @@ ret_pointer c_new_data_handler::assign_handler(
 	case e_record_types::Peripheral_Control_Setting:
 		break;
 	case e_record_types::System:
-
-		read_count = sizeof(s_system_message);
+		Talos::Shared::c_cache_data::pntr_binary_buffer_array = Talos::Shared::c_cache_data::binary_buffer_array;
+		memset(Talos::Shared::c_cache_data::binary_buffer_array, 0, __FRAMEWORK_BINARY_BUFFER_SIZE);
+		read_count = Talos::Shared::c_cache_data::status_record.__size__;
 
 		return c_new_data_handler::bin_read_handler;
 		break;
 	case e_record_types::MotionDataBlock:
-
 		read_count = sizeof(s_ngc_block);
 
 		return c_new_data_handler::bin_read_handler;
@@ -165,6 +166,9 @@ void c_new_data_handler::txt_read_handler(c_ring_buffer <char> * buffer)
 
 void c_new_data_handler::bin_read_handler(c_ring_buffer <char> * buffer)
 {
+	//if a copier is assigned, wait until it is done before we read data from the buffer again
+	if (pntr_bin_data_copy != NULL)
+		return pntr_bin_data_copy(buffer);
 
 	if (!Talos::Shared::FrameWork::Events::Router.serial.inbound.ms_time_out)
 	{
@@ -176,51 +180,72 @@ void c_new_data_handler::bin_read_handler(c_ring_buffer <char> * buffer)
 	if (buffer->has_data())
 	{
 		//we are actually just tossing this data away so the underlying storage pointer can fill.
-		buffer->get();
+		*Talos::Shared::c_cache_data::pntr_binary_buffer_array = buffer->get();
+		Talos::Shared::c_cache_data::pntr_binary_buffer_array++;
 		read_count--;
 	}
 
 	if (!read_count) //<--if count reaches zero we have all the bytes.
 	{
-		switch (tracked_read_type)
-		{
-		case e_record_types::Unknown:
-			break;
-		case e_record_types::Motion:
-			break;
-		case e_record_types::Motion_Control_Setting:
-			break;
-		case e_record_types::Spindle_Control_Setting:
-			break;
-		case e_record_types::Jog:
-			break;
-		case e_record_types::Peripheral_Control_Setting:
-			break;
-		case e_record_types::System:
-			memcpy(&Talos::Shared::c_cache_data::status_record, buffer->_storage_pointer, Talos::Shared::c_cache_data::status_record._size);
-			Talos::Shared::FrameWork::Events::Router.ready.event_manager.set((int)c_event_router::ss_ready_data::e_event_type::System);
-
-			//System messages are how the different cpu;s talk to each other. These messages could be extremley important. 
-			//We will immediately call the system data processor to set any events from this status update
-			//c_system_d::process_status(&Talos::Shared::c_cache_data::status_record);
-			
-
-			break;
-		case e_record_types::NgcBlockRecord:
-			memcpy(&Talos::Shared::c_cache_data::ngc_block_record, buffer->_storage_pointer, Talos::Shared::c_cache_data::ngc_block_record._size);
-			Talos::Shared::FrameWork::Events::Router.ready.event_manager.set((int)c_event_router::ss_ready_data::e_event_type::NgcDataBlock);
-			break;
-
-		}
-
-		buffer->reset();
-		tracked_read_object->event_manager.clear((int)tracked_read_event);
-		tracked_read_object = NULL;
-
-		c_new_data_handler::__release(buffer);
+		//We cannot jsut copy this buffered serial data to the cache data structure.
+		//I realized that if the cache record is being used for an outbound send at
+		//the same time an inbound recieve is happening they will cross talk.
+		//The data_copy will check to see if the cache record is in use before copying
+		//data to it. If its in use the copy will occur as soon as the record is
+		//released.
+		pntr_bin_data_copy = __bin_data_copy;
+		//Lets go ahead and try and copy it. it may not be in use. 
+		__bin_data_copy(buffer);
 	}
 
 
+}
+
+void c_new_data_handler::__bin_data_copy(c_ring_buffer <char> * buffer)
+{
+	switch (tracked_read_type)
+	{
+	case e_record_types::Unknown:
+		break;
+	case e_record_types::Motion:
+		break;
+	case e_record_types::Motion_Control_Setting:
+		break;
+	case e_record_types::Spindle_Control_Setting:
+		break;
+	case e_record_types::Jog:
+		break;
+	case e_record_types::Peripheral_Control_Setting:
+		break;
+	case e_record_types::System:
+
+		//If the cache record is in use return.. its being used for something at the moment.
+		if (Talos::Shared::c_cache_data::pntr_status_record != NULL)
+			return;
+		memcpy(&Talos::Shared::c_cache_data::status_record, buffer->_storage_pointer, Talos::Shared::c_cache_data::status_record.__size__);
+		Talos::Shared::FrameWork::Events::Router.ready.event_manager.set((int)c_event_router::ss_ready_data::e_event_type::System);
+
+		//System messages are how the different cpu;s talk to each other. These messages could be extremley important. 
+		//We will immediately call the system data processor to set any events from this status update
+		//c_system_d::process_status(&Talos::Shared::c_cache_data::status_record);
+
+
+		break;
+	case e_record_types::NgcBlockRecord:
+		memcpy(&Talos::Shared::c_cache_data::ngc_block_record, buffer->_storage_pointer, Talos::Shared::c_cache_data::ngc_block_record.__size__);
+		Talos::Shared::FrameWork::Events::Router.ready.event_manager.set((int)c_event_router::ss_ready_data::e_event_type::NgcDataBlock);
+		break;
+
+	}
+
+	Talos::Shared::c_cache_data::pntr_binary_buffer_array = NULL;
+
+	if (!buffer->has_data())
+	tracked_read_object->event_manager.clear((int)tracked_read_event);
+
+	tracked_read_object = NULL;
+
+	c_new_data_handler::__release(buffer);
 }
 
 void c_new_data_handler::write_handler(c_ring_buffer <char> * buffer)
@@ -253,6 +278,7 @@ void c_new_data_handler::__release(c_ring_buffer <char> * buffer_source)
 	c_new_data_handler::pntr_data_handler_release(buffer_source);
 	//set the handler release to null now. we dont need it
 	c_new_data_handler::pntr_data_handler_release = NULL;
+	c_new_data_handler::pntr_bin_data_copy = NULL;
 }
 
 void c_new_data_handler::__raise_error(c_ring_buffer <char> * buffer_source, e_error_behavior e_behavior
@@ -270,7 +296,7 @@ void c_new_data_handler::__raise_error(c_ring_buffer <char> * buffer_source, e_e
 	tracked_error.data_size = data_size;
 	tracked_error.group = e_group;
 	tracked_error.process = e_process;
-	tracked_error.record_type = e_rec_type;
+	tracked_error.__rec_type__ = e_rec_type;
 	tracked_error.source = e_source;
 	tracked_error.code = (int)e_code;
 	Talos::Shared::FrameWork::Error::Handler::extern_pntr_error_handler(buffer_source, tracked_error);

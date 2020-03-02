@@ -17,7 +17,7 @@
 	enum class e_ready_data_type : uint8_t
 	{
 		NgcDataLine = 0,
-		Status = 1,
+		System = 1,
 		MotionDataBlock = 2,
 	};
 

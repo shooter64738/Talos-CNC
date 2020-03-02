@@ -25,40 +25,7 @@ namespace Motion_Core
 	class System
 	{
 	public:
-			enum class e_control_event_type : uint8_t
-			{
-				Control_motion_complete = 0,
-				Control_hold_motion = 1,
-				//x_STATE_MOTION_CONTROL_RESUME = 2,
-				Control_jog_motion = 3,
-				Control_motion_interpolation = 4,
-				Control_axis_drive_fault = 5,
-				Control_auto_cycle_start = 6,
-				//STATE_CRITICAL_FAILURE = 31
-
-			};
-		
-			enum class e_step_event_type : uint8_t
-			{
-				Step_motion_terminate = 0,
-				Step_motion_hold = 1,
-			};
-
-			enum class e_spindle_event_type : uint8_t
-			{
-				//Step_motion_terminate = 0,
-				//STEP_CONTROL_EXECUTE_HOLD = 1,
-			};
-
-		struct s_state_modes
-		{
-			s_bit_flag_controller<uint8_t> spindle_modes;
-			s_bit_flag_controller<uint8_t> step_modes;
-			s_bit_flag_controller<uint8_t> control_modes;
-		};
-		
-		static s_state_modes state_mode;
-		static uint32_t new_sequence;
+		//static uint32_t new_sequence;
 		struct s_travel
 		{
 			float session_travel [MACHINE_AXIS_COUNT];

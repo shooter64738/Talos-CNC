@@ -12,6 +12,10 @@
 #include "../../../Shared Data/FrameWork/extern_events_types.h"
 #include "../Events/EventHandlers/c_system_event_handler.h"
 #include "../Events/EventHandlers/c_motion_control_event_handler.h"
+#include "../Events/EventHandlers/c_motion_controller_event_handler.h"
+#include "../Events/EventHandlers/c_report_events.h"
+
+#include "../../../Shared Data/FrameWork/Enumerations/Status/_e_system_messages.h"
 
 
 c_Serial Talos::Motion::Main_Process::host_serial;
@@ -22,6 +26,10 @@ void Talos::Motion::Main_Process::initialize()
 	//setup the error handler function pointer
 	Talos::Shared::FrameWork::Error::Handler::extern_pntr_error_handler = Talos::Motion::Error::general_error;
 	Talos::Shared::FrameWork::Error::Handler::extern_pntr_ngc_error_handler = Talos::Motion::Error::ngc_error;
+
+	//setup the error handler function pointer
+	Talos::Motion::Error::initialize(&Talos::Motion::Main_Process::host_serial);
+	Talos::Motion::Events::Report::initialize(&Talos::Motion::Main_Process::host_serial);
 	
 	Hardware_Abstraction_Layer::Core::initialize();
 	//__initialization_start("Core", Hardware_Abstraction_Layer::Core::initialize,1);//<--core start up
@@ -86,20 +94,39 @@ void Talos::Motion::Main_Process::run()
 {
 
 	Talos::Shared::FrameWork::Events::extern_system_events.event_manager.set((int)s_system_events::e_event_type::SystemAllOk);
-	bool set_once = false;
+	
+	uint8_t set_once = false;
+	
 	while (Talos::Shared::FrameWork::Events::extern_system_events.event_manager.get((int)s_system_events::e_event_type::SystemAllOk))
 	{
 #ifdef MSVC
-		if (!set_once)
-		{
-			test_coord_msg();
+			//simulate data coming in from coordiantor AFTER it was ran through the event router
+			/*test_coord_msg();
 			Talos::Motion::Events::System::process();
 			test_spindle_msg();
 			Talos::Motion::Events::System::process();
-			test_ngc_block();
-			set_once = true;
-		}
-
+			test_ngc_block();*/
+			
+			//simulate data coming in via serial from coordinator.. (closest to a raw test we can do)
+			char data[256];
+			
+			if (set_once == 0)
+			{
+				set_once++;
+				test_coord_msg();
+				memcpy(data, &Talos::Shared::c_cache_data::status_record, Talos::Shared::c_cache_data::status_record.__size__);
+				Hardware_Abstraction_Layer::Serial::add_to_buffer(0, data, Talos::Shared::c_cache_data::status_record.__size__);
+				//Talos::Shared::FrameWork::Events::Router.serial.inbound.event_manager.set((int)c_event_router::ss_inbound_data::e_event_type::Usart0DataArrival);
+			}
+			else if (set_once == 1)
+			{
+				set_once++;
+				test_spindle_msg();
+				memcpy(data, &Talos::Shared::c_cache_data::status_record, Talos::Shared::c_cache_data::status_record.__size__);
+				Hardware_Abstraction_Layer::Serial::add_to_buffer(0, data, Talos::Shared::c_cache_data::status_record.__size__);
+				//Talos::Shared::FrameWork::Events::Router.serial.inbound.event_manager.set((int)c_event_router::ss_inbound_data::e_event_type::Usart0DataArrival);
+			}
+			
 #else
 		//0: Handle system events
 		Talos::Motion::Events::System::process();
@@ -112,10 +139,13 @@ void Talos::Motion::Main_Process::run()
 		//1: Handle motion controller events
 		Talos::Motion::Events::MotionController::process();
 
-		//2: Handle data events
-		Talos::Shared::FrameWork::Events::Router.process();
+		//2: Handle motion control events
+		Talos::Motion::Events::MotionControl::process();
 
 		
+
+		//4: Handle system events (should always follow the router events)
+		Talos::Motion::Events::System::process();
 
 		//3: Handle ancillary events
 		//Talos::Motion::Events::ancillary_event_handler.process();
@@ -126,21 +156,22 @@ void Talos::Motion::Main_Process::test_coord_msg()
 {
 	//setup a fake status message from coordinator so the mc thinks its ready to run
 	Talos::Shared::FrameWork::Events::Router.ready.event_manager.set((int)c_event_router::ss_ready_data::e_event_type::System);
-	Talos::Shared::c_cache_data::status_record.type = (int)e_status_type::Informal;
-	Talos::Shared::c_cache_data::status_record.message = (int)e_status_message::e_informal::ReadyToProcess;
-	Talos::Shared::c_cache_data::status_record.state = (int)e_status_state::motion::e_state::Idle;
-	Talos::Shared::c_cache_data::status_record.sub_state = (int)e_status_state::motion::e_sub_state::OK;
-	Talos::Shared::c_cache_data::status_record.origin = e_origins::Coordinator;
+	Talos::Shared::c_cache_data::status_record.type = (int)e_status_message::e_status_type::Informal;
+	Talos::Shared::c_cache_data::status_record.message = (int)e_status_message::messages::e_informal::ReadyToProcess;
+	Talos::Shared::c_cache_data::status_record.state = (int)e_status_message::e_status_state::motion::e_state::Idle;
+	Talos::Shared::c_cache_data::status_record.sub_state = (int)e_status_message::e_status_state::motion::e_sub_state::OK;
+	Talos::Shared::c_cache_data::status_record.origin =e_status_message::e_origins::Coordinator;
 }
+
 void Talos::Motion::Main_Process::test_spindle_msg()
 {
 	//setup a fake status message from spindle so the mc thinks its ready to run
 	Talos::Shared::FrameWork::Events::Router.ready.event_manager.set((int)c_event_router::ss_ready_data::e_event_type::System);
-	Talos::Shared::c_cache_data::status_record.type = (int)e_status_type::Informal;
-	Talos::Shared::c_cache_data::status_record.message = (int)e_status_message::e_informal::ReadyToProcess;
-	Talos::Shared::c_cache_data::status_record.state = (int)e_status_state::motion::e_state::Idle;
-	Talos::Shared::c_cache_data::status_record.sub_state = (int)e_status_state::motion::e_sub_state::OK;
-	Talos::Shared::c_cache_data::status_record.origin = e_origins::Spindle;
+	Talos::Shared::c_cache_data::status_record.type = (int)e_status_message::e_status_type::Informal;
+	Talos::Shared::c_cache_data::status_record.message = (int)e_status_message::messages::e_informal::ReadyToProcess;
+	Talos::Shared::c_cache_data::status_record.state = (int)e_status_message::e_status_state::motion::e_state::Idle;
+	Talos::Shared::c_cache_data::status_record.sub_state = (int)e_status_message::e_status_state::motion::e_sub_state::OK;
+	Talos::Shared::c_cache_data::status_record.origin = e_status_message::e_origins::Spindle;
 }
 
 void Talos::Motion::Main_Process::test_ngc_block()

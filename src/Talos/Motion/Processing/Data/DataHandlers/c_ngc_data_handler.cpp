@@ -21,12 +21,12 @@
 #include "../../../../Shared Data/FrameWork/Data/cache_data.h"
 #include "../../../Core/c_gateway.h"
 #include "../../../../NGC_RS274/ngc_block_view.h"
+#include "../../../Core/c_motion_core.h"
 
 void Talos::Motion::Data::Ngc::load_block_from_cache()
 {
 	s_ngc_block * ngc_blk = &Talos::Shared::c_cache_data::ngc_block_record;
 	NGC_RS274::Block_View blk_view = NGC_RS274::Block_View(ngc_blk);
-	
 
 	Motion_Core::initialize();
 
@@ -46,13 +46,13 @@ void Talos::Motion::Data::Ngc::load_block_from_cache()
 
 	Motion_Core::Gateway::add_motion(mot_blk);
 	Motion_Core::Gateway::process_motion();
-	while (1)
-	{
-		Motion_Core::Gateway::process_loop();
-	}
+	//while (1)
+	//{
+	//	Motion_Core::Gateway::process_loop();
+	//}
 
 	//Clear the block event that was set when the line was loaded waaaaayyyy back in the dataevent handler
-	Talos::Shared::FrameWork::Events::Router.ready.event_manager.clear((int)c_event_router::ss_ready_data::e_event_type::NgcDataLine);
+	Talos::Shared::FrameWork::Events::Router.ready.event_manager.clear((int)c_event_router::ss_ready_data::e_event_type::NgcDataBlock);
 
 	//create an oubound request for ngc block data. 
 	Talos::Shared::FrameWork::Events::Router.serial.outbound.event_manager.set((int)c_event_router::ss_outbound_data::e_event_type::NgcBlockRequest);
@@ -68,11 +68,11 @@ void  Talos::Motion::Data::Ngc::__raise_error(char * ngc_line, e_error_behavior 
 	error.data_size = data_size;
 	error.group = e_group;
 	error.process = e_process;
-	error.record_type = e_rec_type;
+	error.__rec_type__ = e_rec_type;
 	error.source = e_source;
-	
+
 	Talos::Shared::FrameWork::Error::Handler::extern_pntr_ngc_error_handler(Talos::Shared::c_cache_data::ngc_line_record.record, error);
-	
+
 	__reset();
 }
 

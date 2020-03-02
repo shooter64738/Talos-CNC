@@ -19,19 +19,14 @@
 */
 
 #include "c_motion_controller_event_handler.h"
-#include "../../Data/DataHandlers/c_ngc_data_handler.h"
 //#include "../../../../Shared Data/FrameWork/extern_events_types.h"
 
 s_bit_flag_controller<uint32_t> Talos::Motion::Events::MotionController::event_manager;
 
 void Talos::Motion::Events::MotionController::process()
 {
-	//If the cycle start flag is set, we are ok to procede with motions.
-	if (MotionController::event_manager.get((int)MotionController::e_event_type::CycleStart))
-	{
-		//Cycle start is set, lets see if we have an ngc record in cache
-		if (Talos::Shared::FrameWork::Events::Router.ready.event_manager.get((int)c_event_router::ss_ready_data::e_event_type::NgcDataBlock))
-			Talos::Motion::Data::Ngc::load_block_from_cache();
-
-	}
+	
+	
+	//I think this is a hard error.. we shoudl probably send otu an error message for this to the debugger. 
+	//if (SpindleToSpeedTimeOut)
 }

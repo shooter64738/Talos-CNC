@@ -17,8 +17,8 @@ c_ring_buffer<char> Hardware_Abstraction_Layer::Serial::_usart0_read_buffer;
 static char _usart0_read_data[256];
 c_ring_buffer<char> Hardware_Abstraction_Layer::Serial::_usart1_read_buffer;
 static char _usart1_read_data[256];
-c_ring_buffer<char> Hardware_Abstraction_Layer::Serial::_usart1_write_buffer;
-static char _usart1_write_data[256];
+//c_ring_buffer<char> Hardware_Abstraction_Layer::Serial::_usart1_write_buffer;
+//static char _usart1_write_data[256];
 
 void Hardware_Abstraction_Layer::Serial::initialize(uint8_t Port, uint32_t BaudRate)
 {
@@ -30,7 +30,7 @@ void Hardware_Abstraction_Layer::Serial::initialize(uint8_t Port, uint32_t BaudR
 		{
 			_usart0_read_buffer.initialize(_usart0_read_data,256);
 			Talos::Shared::FrameWork::Events::Router.serial.inbound.device = &Hardware_Abstraction_Layer::Serial::_usart0_read_buffer;
-			_usart1_write_buffer.pntr_device_write = Hardware_Abstraction_Layer::Serial::send;
+			_usart0_read_buffer.pntr_device_write = Hardware_Abstraction_Layer::Serial::send;
 			
 			if (BaudRate < 57600)
 			{
@@ -54,6 +54,7 @@ void Hardware_Abstraction_Layer::Serial::initialize(uint8_t Port, uint32_t BaudR
 		case 1:
 		{
 		_usart1_read_buffer.initialize(_usart1_read_data,256);
+		_usart1_read_buffer.pntr_device_write = Hardware_Abstraction_Layer::Serial::send;
 		Talos::Shared::FrameWork::Events::Router.serial.inbound.device = &Hardware_Abstraction_Layer::Serial::_usart1_read_buffer;
 			if (BaudRate < 57600)
 			{

@@ -42,9 +42,9 @@ void(*c_binary_data_handler::pntr_data_handler_release)();
 //Determine which handler to use and return it to the caller.
 xret_pointer c_binary_data_handler::assign_handler(c_ring_buffer <char> * buffer)
 {
-	e_record_types record_type = (e_record_types)buffer->peek(buffer->_tail);
+	e_record_types __rec_type__ = (e_record_types)buffer->peek(buffer->_tail);
 	
-	switch (record_type)
+	switch (__rec_type__)
 	{
 		case e_record_types::Motion_Control_Setting :
 		{

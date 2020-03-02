@@ -52,6 +52,7 @@ void c_new_serial_event_handler::process(c_ring_buffer<char> * buffer,
 		//The handler will release its self when it determines that all of the data for
 		//that particular handler has been consumed. 
 		c_new_serial_event_handler::pntr_data_read_handler(buffer);
+		
 	}
 }
 
@@ -143,7 +144,7 @@ void c_new_serial_event_handler::__assign_handler(c_ring_buffer <char> * buffer,
 		//changed the way this is handled a little bit. Now pulling a record from the cache class
 		//theres no need to do the record type checking twice this way. 
 		//c_cache_data::motion_block_record.station++;
-		//write_count = c_cache_data::motion_block_record._size;
+		//write_count = c_cache_data::motion_block_record.__size__;
 		//memcpy(buffer->_storage_pointer, &c_cache_data::motion_block_record, write_count);
 		break;
 
@@ -153,14 +154,17 @@ void c_new_serial_event_handler::__assign_handler(c_ring_buffer <char> * buffer,
 		//Request the record immediately following this one. Makes sense I suppose?
 		Talos::Shared::c_cache_data::ngc_block_record.__station__++;
 		//covert the record to a byte stream
-		write_count = Talos::Shared::c_cache_data::ngc_block_record._size;
-		write_count = Talos::Shared::c_cache_data::status_record._size;
+		write_count = Talos::Shared::c_cache_data::ngc_block_record.__size__;
+		write_count = Talos::Shared::c_cache_data::status_record.__size__;
 		memcpy(buffer->_storage_pointer, &Talos::Shared::c_cache_data::ngc_block_record, write_count);
 		break;
 
 	case c_event_router::ss_outbound_data::e_event_type::StatusUpdate:
-		//write_count = c_cache_data::status_record._size;
-		//memcpy(buffer->_storage_pointer, &c_cache_data::status_record, write_count);
+		//pntr_status_record should be pointing to the status record we need to write
+		//copy it to the outbound buffer, then release the pntr (set to null)
+		write_count = Talos::Shared::c_cache_data::status_record.__size__;
+		memcpy(buffer->_storage_pointer, Talos::Shared::c_cache_data::pntr_status_record, write_count);
+		Talos::Shared::c_cache_data::pntr_status_record = NULL;
 		break;
 	default:
 		__raise_error(buffer, e_error_behavior::Critical, 0, e_error_group::EventHandler, e_error_process::EventAssign
@@ -191,7 +195,7 @@ void c_new_serial_event_handler::__raise_error(c_ring_buffer <char> * buffer_sou
 	tracked_error.data_size = data_size;
 	tracked_error.group = e_group;
 	tracked_error.process = e_process;
-	tracked_error.record_type = e_rec_type;
+	tracked_error.__rec_type__ = e_rec_type;
 	tracked_error.source = e_source;
 	tracked_error.code = (int)e_code;
 	Talos::Shared::FrameWork::Error::Handler::extern_pntr_error_handler(buffer_source, tracked_error);

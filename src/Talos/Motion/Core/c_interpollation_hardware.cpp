@@ -13,6 +13,7 @@ static ofstream myfile;
 #include "c_gateway.h"
 #include "c_segment_arbitrator.h"
 #include "../Processing/Events/EventHandlers/c_motion_control_event_handler.h"
+#include "../Processing/Events/EventHandlers/c_motion_controller_event_handler.h"
 #include "../Processing/Events/EventHandlers/c_system_event_handler.h"
 #include "../../Shared Data/FrameWork/extern_events_types.h"
 #include "../../Shared Data/_e_block_state.h"
@@ -40,7 +41,7 @@ uint8_t Motion_Core::Hardware::Interpolation::step_port_invert_mask;
 uint8_t Motion_Core::Hardware::Interpolation::dir_port_invert_mask;
 
 uint8_t Motion_Core::Hardware::Interpolation::Step_Active = 0;
-uint8_t Motion_Core::Hardware::Interpolation::Interpolation_Active = 0;
+//uint8_t Motion_Core::Hardware::Interpolation::Interpolation_Active = 0;
 uint32_t Motion_Core::Hardware::Interpolation::Current_Sequence = 0;
 uint32_t Motion_Core::Hardware::Interpolation::Last_Completed_Sequence = 0;
 
@@ -64,9 +65,9 @@ void Motion_Core::Hardware::Interpolation::interpolation_begin_new_block(s_motio
 	
 
 	//If we are already active, there isnt anything we need to do here.
-	if (!Motion_Core::Hardware::Interpolation::Interpolation_Active)
+	if (!Talos::Motion::Events::MotionControl::event_manager.get((int)Talos::Motion::Events::MotionControl::e_event_type::Interpollation))
 	{
-		Motion_Core::Hardware::Interpolation::Interpolation_Active = 1;
+		Talos::Motion::Events::MotionControl::event_manager.set((int)Talos::Motion::Events::MotionControl::e_event_type::Interpollation);
 		Motion_Core::Hardware::Interpolation::step_outbits = step_port_invert_mask;
 		//Motion_Core::Hardware::Interpolation::spindle_encoder->target_rpm = block.spindle_state;
 		Motion_Core::Hardware::Interpolation::drive_mode = block.feed_rate_mode;
@@ -104,10 +105,10 @@ void Motion_Core::Hardware::Interpolation::interpolation_begin()
 			//interpolation can start.
 			Talos::Motion::Events::MotionController::event_manager.set((int)Talos::Motion::Events::MotionController::e_event_type::SpindleToSpeedWait);
 			
-			//This is driven externally by the encoder input from the spindle
-			//If feedmode is spindle synch, what for spindle to get to speed if
-			//spindle wait is configured
-			Motion_Core::Hardware::Interpolation::check_spindle_at_speed();
+			////This is driven externally by the encoder input from the spindle
+			////If feedmode is spindle synch, what for spindle to get to speed if
+			////spindle wait is configured
+			//Motion_Core::Hardware::Interpolation::check_spindle_at_speed();
 			
 			break;
 		}
@@ -135,9 +136,15 @@ void Motion_Core::Hardware::Interpolation::Shutdown()
 	#endif // MSVC
 
 	Hardware_Abstraction_Layer::MotionCore::Stepper::st_go_idle();
-
-	Motion_Core::Hardware::Interpolation::Interpolation_Active = 0; // Flag main program for cycle end
+	Talos::Motion::Events::MotionControl::event_manager.clear((int)Talos::Motion::Events::MotionControl::e_event_type::Interpollation);
 	Motion_Core::Hardware::Interpolation::Last_Completed_Sequence = Motion_Core::Hardware::Interpolation::Current_Sequence;
+
+	//if interpolation is done, then the block shoudl be done?
+	Talos::Motion::Events::MotionControl::completed_sequence = Motion_Core::Hardware::Interpolation::Last_Completed_Sequence;
+	Motion_Core::Hardware::Interpolation::Last_Completed_Sequence = 0;
+	Talos::Motion::Events::MotionControl::event_manager.set((int)Talos::Motion::Events::MotionControl::e_event_type::BlockComplete);
+
+
 	Motion_Core::Hardware::Interpolation::Current_Sequence = 0;
 	Motion_Core::Hardware::Interpolation::direction_set = 0;
 	Motion_Core::Hardware::Interpolation::step_outbits = 0;

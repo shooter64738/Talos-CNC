@@ -28,6 +28,7 @@ namespace Hardware_Abstraction_Layer
 		static void initialize(uint8_t Port, uint32_t BaudRate);
 		static uint8_t send(uint8_t Port, char byte);
 		static void add_to_buffer(uint8_t port, const char * data);
+		static void add_to_buffer(uint8_t port, const char * data, uint8_t size);
 		static void add_to_buffer(uint8_t port, const char data);
 		static bool hasdata(uint8_t port);
 

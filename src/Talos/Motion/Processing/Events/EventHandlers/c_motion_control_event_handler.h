@@ -42,9 +42,13 @@ namespace Talos
 					BlockExecuting = 0,
 					BlockDiscarded = 1,
 					BlockComplete = 2,
+					Interpollation = 3,
+					CycleHold = 4,
+					CycleStart = 5,
 					
 				};
 				static s_bit_flag_controller<uint32_t> event_manager;
+				static uint32_t completed_sequence;
 			protected:
 			private:
 

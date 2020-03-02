@@ -96,7 +96,7 @@ void  Talos::Coordinator::Data::Ngc::__raise_error(char * ngc_line, e_error_beha
 	error.data_size = data_size;
 	error.group = e_group;
 	error.process = e_process;
-	error.record_type = e_rec_type;
+	error.__rec_type__ = e_rec_type;
 	error.source = e_source;
 	
 	Talos::Shared::FrameWork::Error::Handler::extern_pntr_ngc_error_handler(Talos::Shared::c_cache_data::ngc_line_record.record, error);

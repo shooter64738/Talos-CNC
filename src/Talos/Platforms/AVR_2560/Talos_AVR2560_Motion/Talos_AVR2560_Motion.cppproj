@@ -207,6 +207,14 @@
       <SubType>compile</SubType>
       <Link>Motion\motion_main.cpp</Link>
     </Compile>
+    <Compile Include="..\..\..\Motion\Processing\Data\DataHandlers\c_ngc_data_handler.cpp">
+      <SubType>compile</SubType>
+      <Link>Motion\Processing\Data\DataHandlers\c_ngc_data_handler.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\Motion\Processing\Data\DataHandlers\c_ngc_data_handler.h">
+      <SubType>compile</SubType>
+      <Link>Motion\Processing\Data\DataHandlers\c_ngc_data_handler.h</Link>
+    </Compile>
     <Compile Include="..\..\..\Motion\Processing\Data\DataHandlers\c_status_data_handler.cpp">
       <SubType>compile</SubType>
       <Link>Motion\Processing\Data\DataHandlers\c_status_data_handler.cpp</Link>
@@ -231,6 +239,14 @@
       <SubType>compile</SubType>
       <Link>Motion\Processing\Events\EventHandlers\c_block_events.h</Link>
     </Compile>
+    <Compile Include="..\..\..\Motion\Processing\Events\EventHandlers\c_motion_controller_event_handler.cpp">
+      <SubType>compile</SubType>
+      <Link>Motion\Processing\Events\EventHandlers\c_motion_controller_event_handler.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\Motion\Processing\Events\EventHandlers\c_motion_controller_event_handler.h">
+      <SubType>compile</SubType>
+      <Link>Motion\Processing\Events\EventHandlers\c_motion_controller_event_handler.h</Link>
+    </Compile>
     <Compile Include="..\..\..\Motion\Processing\Events\EventHandlers\c_motion_control_event_handler.cpp">
       <SubType>compile</SubType>
       <Link>Motion\Processing\Events\EventHandlers\c_motion_control_event_handler.cpp</Link>
@@ -238,14 +254,6 @@
     <Compile Include="..\..\..\Motion\Processing\Events\EventHandlers\c_motion_control_event_handler.h">
       <SubType>compile</SubType>
       <Link>Motion\Processing\Events\EventHandlers\c_motion_control_event_handler.h</Link>
-    </Compile>
-    <Compile Include="..\..\..\Motion\Processing\Events\EventHandlers\c_motion_event_handler.cpp">
-      <SubType>compile</SubType>
-      <Link>Motion\Processing\Events\EventHandlers\c_motion_event_handler.cpp</Link>
-    </Compile>
-    <Compile Include="..\..\..\Motion\Processing\Events\EventHandlers\c_motion_event_handler.h">
-      <SubType>compile</SubType>
-      <Link>Motion\Processing\Events\EventHandlers\c_motion_event_handler.h</Link>
     </Compile>
     <Compile Include="..\..\..\Motion\Processing\Events\EventHandlers\c_report_events.cpp">
       <SubType>compile</SubType>
@@ -307,6 +315,14 @@
       <SubType>compile</SubType>
       <Link>Motion\Serial\c_Serial.h</Link>
     </Compile>
+    <Compile Include="..\..\..\NGC_RS274\NGC_Block_View.cpp">
+      <SubType>compile</SubType>
+      <Link>Ngc_Rs274\NGC_Block_View.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\NGC_RS274\ngc_block_view.h">
+      <SubType>compile</SubType>
+      <Link>Ngc_Rs274\ngc_block_view.h</Link>
+    </Compile>
     <Compile Include="..\..\..\NGC_RS274\_ngc_block_struct.h">
       <SubType>compile</SubType>
       <Link>Ngc_Rs274\_ngc_block_struct.h</Link>
@@ -330,6 +346,22 @@
     <Compile Include="..\..\..\Shared Data\FrameWork\Data\c_new_data_handler.h">
       <SubType>compile</SubType>
       <Link>Shared Data\FrameWork\Data\c_new_data_handler.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Shared Data\FrameWork\Enumerations\Status\_e_system_messages.h">
+      <SubType>compile</SubType>
+      <Link>Shared Data\FrameWork\Enumerations\Status\_e_system_messages.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Shared Data\FrameWork\Enumerations\Status\_e_system_origins.h">
+      <SubType>compile</SubType>
+      <Link>Shared Data\FrameWork\Enumerations\Status\_e_system_origins.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Shared Data\FrameWork\Enumerations\Status\_e_system_states.h">
+      <SubType>compile</SubType>
+      <Link>Shared Data\FrameWork\Enumerations\Status\_e_system_states.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Shared Data\FrameWork\Enumerations\Status\_e_system_types.h">
+      <SubType>compile</SubType>
+      <Link>Shared Data\FrameWork\Enumerations\Status\_e_system_types.h</Link>
     </Compile>
     <Compile Include="..\..\..\Shared Data\FrameWork\Event\c_event_router.cpp">
       <SubType>compile</SubType>
@@ -526,8 +558,10 @@
     <Folder Include="Ngc_Rs274" />
     <Folder Include="Shared Data\FrameWork" />
     <Folder Include="Shared Data\FrameWork\Data" />
+    <Folder Include="Shared Data\FrameWork\Enumerations\Status" />
     <Folder Include="Shared Data\FrameWork\Event" />
     <Folder Include="Shared Data\FrameWork\Event\Serial" />
+    <Folder Include="Shared Data\FrameWork\Enumerations" />
     <Folder Include="Shared Data\Settings" />
     <Folder Include="Shared Data\Settings\Motion" />
   </ItemGroup>

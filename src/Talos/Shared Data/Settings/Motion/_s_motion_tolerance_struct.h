@@ -7,7 +7,7 @@
 #include <stdint.h>
 struct s_motion_tolerance_settings
 {
-	const e_record_types record_type = e_record_types::Motion_Control_Setting;
+	const e_record_types __rec_type__ = e_record_types::Motion_Control_Setting;
 	float junction_deviation = 0;//43
 	float arc_tolerance = 0;//47
 	uint16_t arc_angular_correction = 12;//59

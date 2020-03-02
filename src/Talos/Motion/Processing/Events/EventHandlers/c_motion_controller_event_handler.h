@@ -38,10 +38,13 @@ namespace Talos
 			public:
 				enum class e_event_type
 				{
-					CycleStart = 0,
-					SpindleToSpeedWait = 1,
-					SpindleToSpeedTimeOut = 2,
-					SpindleAtSpeed = 3,
+					
+					SpindleToSpeedWait = 0,
+					SpindleToSpeedTimeOut = 1,
+					SpindleAtSpeed = 2,
+					Jog = 3,
+					AxisDriveFault = 4,
+
 				};
 				static s_bit_flag_controller<uint32_t> event_manager;
 			protected:

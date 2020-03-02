@@ -376,15 +376,6 @@
     <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Enumerations\Status\_e_system_messages.h">
       <Filter>Shared data\FrameWork\Enumerations\Status</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Enumerations\Status\_e_system_origins.h">
-      <Filter>Shared data\FrameWork\Enumerations\Status</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Enumerations\Status\_e_system_types.h">
-      <Filter>Shared data\FrameWork\Enumerations\Status</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Enumerations\Status\_e_system_states.h">
-      <Filter>Shared data\FrameWork\Enumerations\Status</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\..\Motion\Processing\Data\DataHandlers\c_ngc_data_handler.h">
       <Filter>Motion\Processing\Data\DataHandlers</Filter>
     </ClInclude>

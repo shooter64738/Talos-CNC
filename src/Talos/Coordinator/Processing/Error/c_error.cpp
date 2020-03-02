@@ -67,7 +67,7 @@ void Talos::Coordinator::Error::__print_base(s_framework_error error)
 	__write_eol();err_serial->print_string("\tPrs:");
 	err_serial->print_int32((int)error.process);
 	__write_eol();err_serial->print_string("\tRtp:");
-	err_serial->print_int32((int)error.record_type);
+	err_serial->print_int32((int)error.__rec_type__);
 	__write_eol();err_serial->print_string("\tCde:");
 	err_serial->print_int32((int)error.code);
 	__write_eol();

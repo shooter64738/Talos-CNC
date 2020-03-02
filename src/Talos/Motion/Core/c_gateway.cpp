@@ -18,7 +18,7 @@
 #include "../Processing/Events/EventHandlers/c_motion_controller_event_handler.h"
 #include "../../Shared Data/FrameWork/extern_events_types.h"
 #include "../../Shared Data/_s_status_record.h"
-#include "../../Shared Data/FrameWork/Enumerations/Status/_e_system_states.h"
+#include "../../Shared Data/FrameWork/Enumerations/Status/_e_system_messages.h"
 
 #define MOTION_BUFFER_SIZE 2
 
@@ -36,7 +36,7 @@ static uint16_t motion_buffer_tail = 0;
 bool Motion_Core::Gateway::add_motion(s_motion_data_block new_blk)
 {
 	s_motion_data_block *_blk = &mots[motion_buffer_head++];
-	memcpy(_blk,&new_blk,sizeof(s_motion_data_block));
+	memcpy(_blk, &new_blk, sizeof(s_motion_data_block));
 
 	if (motion_buffer_head == MOTION_BUFFER_SIZE)
 	{
@@ -45,7 +45,7 @@ bool Motion_Core::Gateway::add_motion(s_motion_data_block new_blk)
 	if (motion_buffer_head == motion_buffer_tail)
 		//buffer is full
 		return false;
-	
+
 	return true;
 }
 
@@ -58,30 +58,30 @@ void Motion_Core::Gateway::process_loop()
 
 	//See if there is a record in the serial buffer. If there is load it.
 	//Motion_Core::c_processor::check_process_record();
-	
+
 	//Let this continuously try to fill the segment buffer. If theres no data to process nothing should happen
 	Motion_Core::Segment::Arbitrator::Fill_Step_Segment_Buffer();
-	
+
 	//If a segment has completed, we should report it.
 	Motion_Core::Gateway::check_sequence_complete();
 }
 
 void Motion_Core::Gateway::check_control_states()
 {
-	if (!Motion_Core::Hardware::Interpolation::Interpolation_Active)
-	Motion_Core::System::state_mode.control_modes.clear((int) Motion_Core::System::e_control_event_type::Control_motion_interpolation);
-	
+//	if (!Motion_Core::Hardware::Interpolation::Interpolation_Active)
+//		Talos::Motion::Events::MotionController::event_manager.clear((int)Talos::Motion::Events::MotionController::e_event_type::Interpollation);
+
 	//Were we running a jog interpolation?
-	if (Motion_Core::System::state_mode.control_modes.get((int)Motion_Core::System::e_control_event_type::Control_jog_motion))
+	if (Talos::Motion::Events::MotionController::event_manager.get((int)Talos::Motion::Events::MotionController::e_event_type::Jog))
 	{
 		//Is interpolation complete?
-		if (!Motion_Core::Hardware::Interpolation::Interpolation_Active)
+		if (!Talos::Motion::Events::MotionControl::event_manager.get((int)Talos::Motion::Events::MotionControl::e_event_type::Interpollation))
 		{
 			//Motion_Core::Gateway::send_status(BinaryRecords::e_system_state_record_types::Motion_Complete
 			//,BinaryRecords::e_system_sub_state_record_types::Jog_Complete
 			//,0,NULL,STATE_STATUS_IGNORE,STATE_EXEC_MOTION_JOG);
 		}
-		
+
 	}
 }
 
@@ -91,8 +91,8 @@ void Motion_Core::Gateway::process_motion()
 	s_motion_data_block *_blk = &mots[motion_buffer_tail++];
 	//process the block at tail position
 	Motion_Core::Gateway::process_motion(_blk);
-	
-	
+
+
 	//See if we are wrapping the buffer
 	if (motion_buffer_tail == MOTION_BUFFER_SIZE)
 	{
@@ -102,15 +102,12 @@ void Motion_Core::Gateway::process_motion()
 
 void Motion_Core::Gateway::process_motion(s_motion_data_block *mot)
 {
-	Motion_Core::System::new_sequence = mot->station;
-	
-	//mot->axis_values[0]=50;
-	#ifdef DEBUG_REPORTING
+#ifdef DEBUG_REPORTING
 	Motion_Core::Gateway::local_serial->print_string("\ttest.motion_type = "); Motion_Core::Gateway::local_serial->print_int32((uint32_t)mot->motion_type); Motion_Core::Gateway::local_serial->Write(CR);
 	Motion_Core::Gateway::local_serial->print_string("\ttest.feed_rate_mode = "); Motion_Core::Gateway::local_serial->print_int32((uint32_t)mot->feed_rate_mode); Motion_Core::Gateway::local_serial->Write(CR);
 	Motion_Core::Gateway::local_serial->print_string("\ttest.feed_rate = "); Motion_Core::Gateway::local_serial->print_int32(mot->feed_rate); Motion_Core::Gateway::local_serial->Write(CR);
 	Motion_Core::Gateway::local_serial->print_string("\t***axis_data_begin***\r");
-	for(uint8_t i=0;i<MACHINE_AXIS_COUNT;i++)
+	for (uint8_t i = 0; i < MACHINE_AXIS_COUNT; i++)
 	{
 		Motion_Core::Gateway::local_serial->print_string("\t\ttest.axis_values[");
 		Motion_Core::Gateway::local_serial->print_int32(i);
@@ -120,63 +117,63 @@ void Motion_Core::Gateway::process_motion(s_motion_data_block *mot)
 	}
 	Motion_Core::Gateway::local_serial->print_string("\t***axis_data_end***\r");
 	Motion_Core::Gateway::local_serial->print_string("\t***arc_data_begin***\r");
-	Motion_Core::Gateway::local_serial->print_string("\t\ttest.arc_values.horizontal_center = ");Motion_Core::Gateway::local_serial->print_float(mot->arc_values.horizontal_offset, 3); Motion_Core::Gateway::local_serial->Write(CR);
-	Motion_Core::Gateway::local_serial->print_string("\t\ttest.arc_values.vertical_center = ");Motion_Core::Gateway::local_serial->print_float(mot->arc_values.vertical_offset, 3); Motion_Core::Gateway::local_serial->Write(CR);
-	Motion_Core::Gateway::local_serial->print_string("\t\ttest.arc_values.radius = ");Motion_Core::Gateway::local_serial->print_float(mot->arc_values.Radius, 3); Motion_Core::Gateway::local_serial->Write(CR);
+	Motion_Core::Gateway::local_serial->print_string("\t\ttest.arc_values.horizontal_center = "); Motion_Core::Gateway::local_serial->print_float(mot->arc_values.horizontal_offset, 3); Motion_Core::Gateway::local_serial->Write(CR);
+	Motion_Core::Gateway::local_serial->print_string("\t\ttest.arc_values.vertical_center = "); Motion_Core::Gateway::local_serial->print_float(mot->arc_values.vertical_offset, 3); Motion_Core::Gateway::local_serial->Write(CR);
+	Motion_Core::Gateway::local_serial->print_string("\t\ttest.arc_values.radius = "); Motion_Core::Gateway::local_serial->print_float(mot->arc_values.Radius, 3); Motion_Core::Gateway::local_serial->Write(CR);
 	Motion_Core::Gateway::local_serial->print_string("\t***arc_data_end***\r");
 	Motion_Core::Gateway::local_serial->print_string("\ttest.line_number = "); Motion_Core::Gateway::local_serial->print_int32(mot->line_number); Motion_Core::Gateway::local_serial->Write(CR);
-	#endif
+#endif
 	//If cycle start is set then start executing the motion. Otherwise jsut hold it while the buffer fills. 
 	//if (Motion_Core::System::state_mode.control_modes.get((int)Motion_Core::System::e_control_event_type::Control_auto_cycle_start))
 	//{
-		uint16_t return_code = Motion_Core::Software::Interpolation::load_block(mot);
-		if (return_code)
-		{
-			Talos::Motion::Events::MotionControl::event_manager.set((int)Talos::Motion::Events::MotionControl::e_event_type::BlockExecuting);
-			
-			Motion_Core::System::state_mode.control_modes.set((int)Motion_Core::System::e_control_event_type::Control_motion_interpolation);
-		}
-		else if (return_code == 0)
-		{
-			//Events::Motion_Controller::events_statistics.num_message = mot->sequence;
-			Talos::Motion::Events::MotionControl::event_manager.set((int)Talos::Motion::Events::MotionControl::e_event_type::BlockDiscarded);
-		}
+	uint16_t return_code = Motion_Core::Software::Interpolation::load_block(mot);
+	if (return_code)
+	{
+		Talos::Motion::Events::MotionControl::event_manager.set((int)Talos::Motion::Events::MotionControl::e_event_type::BlockExecuting);
+		Talos::Motion::Events::MotionControl::event_manager.set((int)Talos::Motion::Events::MotionControl::e_event_type::Interpollation);
+	}
+	else if (return_code == 0)
+	{
+		//Events::Motion_Controller::events_statistics.num_message = mot->sequence;
+		Talos::Motion::Events::MotionControl::event_manager.set((int)Talos::Motion::Events::MotionControl::e_event_type::BlockDiscarded);
+	}
 	//}
-	
+
 }
 
 void Motion_Core::Gateway::check_hardware_faults()
 {
 	s_system_message *status;
-	
+
 	//See if there is a hardware alarm from a stepper/servo driver
-	if (Hardware_Abstraction_Layer::MotionCore::Inputs::Driver_Alarms >0)
+	if (Hardware_Abstraction_Layer::MotionCore::Inputs::Driver_Alarms > 0)
 	{
-		Motion_Core::System::state_mode.control_modes.set((int)Motion_Core::System::e_control_event_type::Control_axis_drive_fault);
+		Talos::Motion::Events::MotionController::event_manager.set((int)Talos::Motion::Events::MotionController::e_event_type::AxisDriveFault);
+		
 		//Hardware faults but not interpolating... Very strange..
-		if (Motion_Core::Hardware::Interpolation::Interpolation_Active)
+		if (Talos::Motion::Events::MotionControl::event_manager.get((int)Talos::Motion::Events::MotionControl::e_event_type::Interpollation))
 		{
 			//Immediately stop motion
 			Motion_Core::Segment::Arbitrator::cycle_hold(); //<--decelerate to a soft stop
 		}
-		
-		
-		status->state = (int)e_status_state::motion::e_state::System_Error;
-		status->origin = e_origins::Motion;
-		for (int i=0;i<MACHINE_AXIS_COUNT;i++)
+
+
+		status->state = (int)e_status_message::e_status_state::motion::e_state::System_Error;
+		status->origin = e_status_message::e_origins::Motion;
+		for (int i = 0; i < MACHINE_AXIS_COUNT; i++)
 		{
 			//Which axis has faulted?
-			if (Hardware_Abstraction_Layer::MotionCore::Inputs::Driver_Alarms & (1<<i))
+			if (Hardware_Abstraction_Layer::MotionCore::Inputs::Driver_Alarms & (1 << i))
 			{
-				uint8_t axis_id = (uint8_t)e_status_state::motion::e_sub_state::Error_Axis_Drive_Fault_X
-				+ i;
+				uint8_t axis_id = (uint8_t)e_status_message::e_status_state::motion::e_sub_state::Error_Axis_Drive_Fault_X
+					+ i;
 				status->sub_state = axis_id;
-				
+
 				//Motion_Core::Gateway::local_serial->print_string("Drive on Axis ");
 				//Motion_Core::Gateway::local_serial->print_int32(i);
 				//Motion_Core::Gateway::local_serial->print_string(" reported a motion fault\r");
 			}
-			
+
 		}
 		//		c_record_handler::handle_outbound_record(status,Motion_Core::c_processor::coordinator_serial);
 		Hardware_Abstraction_Layer::MotionCore::Inputs::Driver_Alarms = 0;
@@ -185,12 +182,21 @@ void Motion_Core::Gateway::check_hardware_faults()
 
 void Motion_Core::Gateway::check_sequence_complete()
 {
+	if (Motion_Core::Hardware::Interpolation::Last_Completed_Sequence>0)
+	{
+		Talos::Motion::Events::MotionControl::completed_sequence = Motion_Core::Hardware::Interpolation::Last_Completed_Sequence;
+		Motion_Core::Hardware::Interpolation::Last_Completed_Sequence = 0;
+
+		//flag an event so that Main_Processing can pick it up.
+		Talos::Motion::Events::MotionControl::event_manager.set((int)Talos::Motion::Events::MotionControl::e_event_type::BlockComplete);
+	}
+
 	//If we are holding, or resuming then we cant be complete can we...
 	if (Motion_Core::Hardware::Interpolation::Last_Completed_Sequence != 0
-	&& !Motion_Core::System::state_mode.control_modes.get((int)Motion_Core::System::e_control_event_type::Control_hold_motion))
-	//&& !Motion_Core::System::get_control_state_mode(STATE_MOTION_CONTROL_RESUME))
+		&& !Talos::Motion::Events::MotionControl::event_manager.get((int)Talos::Motion::Events::MotionControl::e_event_type::CycleHold))
+		//&& !Motion_Core::System::get_control_state_mode(STATE_MOTION_CONTROL_RESUME))
 	{
-		if (Motion_Core::Hardware::Interpolation::Interpolation_Active)
+		if (Talos::Motion::Events::MotionControl::event_manager.get((int)Talos::Motion::Events::MotionControl::e_event_type::Interpollation))
 		{
 			int x = 0;
 			//Events::Motion_Controller::events_statistics.system_state = BinaryRecords::e_system_state_record_types::Motion_Active;
@@ -202,12 +208,9 @@ void Motion_Core::Gateway::check_sequence_complete()
 		}
 
 		//Events::Motion_Controller::events_statistics.system_sub_state = BinaryRecords::e_system_sub_state_record_types::Block_Complete;
-		
+
 		//Events::Motion_Controller::events_statistics.num_message = Motion_Core::Hardware::Interpolation::Last_Completed_Sequence;
-		Motion_Core::Hardware::Interpolation::Last_Completed_Sequence = 0;
 		
-		//flag an event so that Main_Processing can pick it up.
-		Talos::Motion::Events::MotionControl::event_manager.set((int)Talos::Motion::Events::MotionControl::e_event_type::BlockComplete);
 	}
 }
 

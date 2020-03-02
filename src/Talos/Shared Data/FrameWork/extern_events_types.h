@@ -1,7 +1,7 @@
 
 #include <stdint.h>
 #include "../../_bit_flag_control.h"
-#include "Enumerations/Status/_e_system_states.h"
+//#include "Enumerations/System/_e_system_states.h"
 #include "../_s_framework_error.h"
 #include "../../c_ring_template.h"
 #include "Event/c_event_router.h"
@@ -11,14 +11,15 @@
 #define __EXTERN_DATA_EVENTS
 
 #define __FRAMEWORK_COM_READ_TIMEOUT_MS 5000
+#define __FRAMEWORK_BINARY_BUFFER_SIZE 256
 
 //These need to be removed from here because they are not part of the framework.
 //They are specific to a controller type (motion)
-struct s_motion_events
-{
-	e_status_state::motion::e_state e_event_type;
-	s_bit_flag_controller<uint32_t> event_manager;
-};
+//struct s_motion_events
+//{
+//	e_status_state::motion::e_state e_event_type;
+//	s_bit_flag_controller<uint32_t> event_manager;
+//};
 
 struct s_ancillary_events
 {
