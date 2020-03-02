@@ -341,13 +341,16 @@
     <ClInclude Include="..\..\..\..\Coordinator\Processing\Events\EventHandlers\c_system_event_handler.h">
       <Filter>Coordinator\Processing\Events\EventHandlers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Enumerations\Status\_e_status_messages.h">
+    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Enumerations\Status\_e_system_messages.h">
       <Filter>Shared Data\FrameWork\Enumerations\Status</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Enumerations\Status\_e_status_origins.h">
+    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Enumerations\Status\_e_system_origins.h">
       <Filter>Shared Data\FrameWork\Enumerations\Status</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Enumerations\Status\_e_status_types.h">
+    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Enumerations\Status\_e_system_states.h">
+      <Filter>Shared Data\FrameWork\Enumerations\Status</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Enumerations\Status\_e_system_types.h">
       <Filter>Shared Data\FrameWork\Enumerations\Status</Filter>
     </ClInclude>
   </ItemGroup>

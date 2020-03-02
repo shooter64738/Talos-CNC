@@ -11,7 +11,7 @@
 		Spindle_Control_Setting = 3,
 		Jog = 4,
 		Peripheral_Control_Setting = 5,
-		Status = 6,
+		System = 6,
 		MotionDataBlock = 7,
 		NgcBlockRecord = 8
 	};

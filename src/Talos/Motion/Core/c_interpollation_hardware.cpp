@@ -68,7 +68,7 @@ void Motion_Core::Hardware::Interpolation::interpolation_begin_new_block(s_motio
 	{
 		Motion_Core::Hardware::Interpolation::Interpolation_Active = 1;
 		Motion_Core::Hardware::Interpolation::step_outbits = step_port_invert_mask;
-		Motion_Core::Hardware::Interpolation::spindle_encoder->target_rpm = block.spindle_state;
+		//Motion_Core::Hardware::Interpolation::spindle_encoder->target_rpm = block.spindle_state;
 		Motion_Core::Hardware::Interpolation::drive_mode = block.feed_rate_mode;
 		
 		Motion_Core::Hardware::Interpolation::interpolation_begin();
@@ -102,8 +102,7 @@ void Motion_Core::Hardware::Interpolation::interpolation_begin()
 			
 			//set the waiting event for spindle synch. the event manager will handle when/if
 			//interpolation can start.
-			
-			Talos::Shared::FrameWork::Events::extern_motion_control_events.event_manager.set((int)s_motion_controller_events::e_event_type::SpindleToSpeedWait);
+			Talos::Motion::Events::MotionController::event_manager.set((int)Talos::Motion::Events::MotionController::e_event_type::SpindleToSpeedWait);
 			
 			//This is driven externally by the encoder input from the spindle
 			//If feedmode is spindle synch, what for spindle to get to speed if
@@ -120,9 +119,9 @@ void Motion_Core::Hardware::Interpolation::interpolation_begin()
 
 void Motion_Core::Hardware::Interpolation::spindle_at_speed_timeout(uint32_t parameter)
 {
-	Talos::Shared::FrameWork::Events::extern_motion_control_events.event_manager.set((int)s_motion_controller_events::e_event_type::SpindleToSpeedTimeOut);
-	Talos::Shared::FrameWork::Events::extern_system_events.event_manager.set((int)s_system_events::e_event_type::SystemCritical);
-
+	Talos::Motion::Events::MotionController::event_manager.set((int)Talos::Motion::Events::MotionController::e_event_type::SpindleToSpeedTimeOut);
+	Talos::Motion::Events::System::event_manager.set((int)Talos::Motion::Events::System::e_event_type::do_we_need_this);
+	
 	Motion_Core::Hardware::Interpolation::Shutdown();
 	Motion_Core::Hardware::Interpolation::Exec_Timer_Item = NULL;
 	Motion_Core::Segment::Timer::Buffer::Reset();
@@ -185,7 +184,7 @@ uint8_t Motion_Core::Hardware::Interpolation::check_spindle_at_speed()
 	The speed is only adjusted AFTER acceleration has completed, and BEFORE deceleration begins
 	*/
 	//set the at speed event
-	Talos::Shared::FrameWork::Events::extern_motion_control_events.event_manager.set((int)s_motion_controller_events::e_event_type::SpindleAtSpeed);
+	Talos::Motion::Events::MotionController::event_manager.set((int)Talos::Motion::Events::MotionController::e_event_type::SpindleAtSpeed);
 
 	return true;
 }
@@ -218,7 +217,7 @@ void Motion_Core::Hardware::Interpolation::step_tick()
 			myfile << Motion_Core::Hardware::Interpolation::Exec_Timer_Item->timer_delay_value << ",";
 			myfile << '0' + Motion_Core::Hardware::Interpolation::Exec_Timer_Item->timer_prescaler << ",";
 			myfile << '0' + Motion_Core::Hardware::Interpolation::Exec_Timer_Item->line_number;
-			myfile << "\r";
+			myfile << "\r\n";
 			myfile.flush();
 			#endif
 

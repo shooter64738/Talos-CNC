@@ -19,6 +19,9 @@
 */
 
 #include "c_motion_control_event_handler.h"
-void c_motion_control_event_handler::process()
+
+s_bit_flag_controller<uint32_t> Talos::Motion::Events::MotionControl::event_manager;
+void Talos::Motion::Events::MotionControl::process()
 {
+
 }

@@ -29,6 +29,9 @@ namespace Talos
 			public:
 			static void initialize();
 			static void run();
+			static void test_coord_msg();
+			static void test_spindle_msg();
+			static void test_ngc_block();
 			static void error_handler(c_ring_buffer<char> * released_buffer, s_framework_error error);
 			//Main_Process();
 			//~Main_Process();

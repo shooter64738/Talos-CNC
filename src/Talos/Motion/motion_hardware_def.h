@@ -56,9 +56,9 @@
 
 #ifdef MSVC
 #define MAX_STEP_RATE 172000 //<--This doe not limit anything. It is only for a safety check.
-#define F_CPU 84000000
+#define F_CPU 16000000
 #define F_CPU_2 F_CPU/2
-#define _TICKS_PER_MICROSECOND (F_CPU_2/1000000)
+#define _TICKS_PER_MICROSECOND (F_CPU/1000000)
 #include "../Platforms/WIN32/Talos_WIN32/Motion/Platform Specific/c_disk_win.h"
 #include "../Platforms/WIN32/Talos_WIN32/Motion/Platform Specific/c_core_win.h"
 #include "../Platforms/WIN32/Talos_WIN32/Motion/Platform Specific/c_motion_core_win_stepper.h"

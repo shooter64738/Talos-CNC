@@ -1,6 +1,5 @@
-
 /*
-*  c_system_events.h - NGC_RS274 controller.
+*  c_data_events.h - NGC_RS274 controller.
 *  A component of Talos
 *
 *  Copyright (c) 2016-2019 Jeff Dill
@@ -20,43 +19,40 @@
 */
 
 
-#ifndef __C_SYSTEM_EVENTS_H__
-#define __C_SYSTEM_EVENTS_H__
-
+#ifndef __C_COORDINATOR_NGC_DATA_HANDLER_H__
+#define __C_COORDINATOR_NGC_DATA_HANDLER_H__
 #include <stdint.h>
-#include "../../../../_bit_flag_control.h"
+#include "../../../../c_ring_template.h"
+#include "../../../../Shared Data/FrameWork/extern_events_types.h"
+
+typedef void(*ret_pointer)(c_ring_buffer <char> * buffer);
 namespace Talos
 {
 	namespace Motion
 	{
-		namespace Events
+		namespace Data
 		{
-			class System
+			class Ngc
 			{
 				//variables
 			public:
-				enum class e_event_type
-				{
-					CoordinatorReady = 0,
-					HostReady = 1,
-					MotionReady = 2,
-					SpindleReady = 3,
-					PeripheralReady = 4,
-					do_we_need_this=31
-				};
-				static s_bit_flag_controller<uint32_t> event_manager;
-
+				
 			protected:
 			private:
+
 
 				//functions
 			public:
-				static void process();
+				static void load_block_from_cache();
+
 			protected:
 			private:
-
+				static void __raise_error(char * ngc_line, e_error_behavior e_behavior
+					, uint8_t data_size, e_error_group e_group, e_error_process e_process, e_record_types e_rec_type
+					, e_error_source e_source, uint16_t e_code);
+				static void __reset();
 			};
 		};
 	};
-};
-#endif //__C_SYSTEM_EVENTS_H__
+}; //c_serial_events
+#endif //__C_DATA_EVENTS_H__

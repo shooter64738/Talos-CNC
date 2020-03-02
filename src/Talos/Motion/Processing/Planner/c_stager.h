@@ -24,7 +24,7 @@
 //#include <stdint.h>
 //#include "..\NGC_RS274\NGC_Block.h"
 //#include "..\Common\Serial\c_Serial.h"
-//#include "..\Status\tool_table.h"
+//#include "..\System\tool_table.h"
 ////namespace ns_planner
 ////{
 //class c_stager

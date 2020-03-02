@@ -34,12 +34,13 @@ void c_event_router::process()
 		return;
 
 	//see if there are any serial events pending
-	if (c_event_router::serial.in_events())
+	if (c_event_router::serial.any())
 	{
 		//Check serial for in bound events
 		if (c_event_router::serial.in_events())
 		{
-			for (int i = 0; i < sizeof(c_event_router::ss_inbound_data) * 8; i++)
+			//We are skipping bit 31 in the flag list because it is a timeout flag. 
+			for (int i = 0; i < (sizeof(c_event_router::ss_inbound_data) * 8) - 0; i++)
 			{
 				if (c_event_router::serial.inbound.event_manager.get(i))
 				{

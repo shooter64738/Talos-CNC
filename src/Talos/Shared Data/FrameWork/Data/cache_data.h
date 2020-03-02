@@ -15,7 +15,7 @@ namespace Talos
 			//variables
 		public:
 			//static void(*pntr_data_handler_release)(c_ring_buffer<char> * buffer);
-			static s_status_message status_record;
+			static s_system_message status_record;
 			static s_ngc_line_record ngc_line_record;
 			static s_ngc_block ngc_block_record;
 			static uint8_t(*pntr_write_ngc_block_record)(s_ngc_block * ngc_block_record);

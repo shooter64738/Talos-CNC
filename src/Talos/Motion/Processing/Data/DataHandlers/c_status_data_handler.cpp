@@ -20,15 +20,18 @@
 
 #include "c_status_data_handler.h"
 #include "../../../../Shared Data/FrameWork/Data/cache_data.h"
-void Talos::Motion::Data::Status::process_status_eventing()
+#include "../../../../Shared Data/FrameWork/extern_events_types.h"
+#include "../../Events/EventHandlers/c_system_event_handler.h"
+
+void Talos::Motion::Data::Status::process_system_eventing()
 {
 	Type::__process(&Talos::Shared::c_cache_data::status_record);
 	//Now that the status record is processed any event expansion has taken place
 	//We can clear the status record ready event
-	Talos::Shared::FrameWork::Events::Router.ready.event_manager.clear((int)c_event_router::ss_ready_data::e_event_type::Status);
+	Talos::Shared::FrameWork::Events::Router.ready.event_manager.clear((int)c_event_router::ss_ready_data::e_event_type::System);
 }
 
-void Talos::Motion::Data::Status::Type::__process(s_status_message *status)
+void Talos::Motion::Data::Status::Type::__process(s_system_message *status)
 {
 	switch ((e_status_type)status->type)
 	{
@@ -49,7 +52,7 @@ void Talos::Motion::Data::Status::Type::__process(s_status_message *status)
 	}
 }
 
-void Talos::Motion::Data::Status::Type::__critical(s_status_message *status, e_status_message::e_critical message)
+void Talos::Motion::Data::Status::Type::__critical(s_system_message *status, e_status_message::e_critical message)
 {
 	s_framework_error error;
 	error.behavior = e_error_behavior::Critical;
@@ -57,7 +60,7 @@ void Talos::Motion::Data::Status::Type::__critical(s_status_message *status, e_s
 	error.data_size = 0;
 	error.group = e_error_group::SystemHandler;
 	error.process = e_error_process::Process;
-	error.record_type = e_record_types::Status;
+	error.record_type = e_record_types::System;
 	error.source = e_error_source::None;
 	//This is a critical status. Something has failed and the entire system needs to hault. Perhaps a limit switch was hit
 	//or communication (heartbeat) has been lost. 
@@ -70,49 +73,60 @@ void Talos::Motion::Data::Status::Type::__critical(s_status_message *status, e_s
 	}
 }
 
-void Talos::Motion::Data::Status::Type::__data(s_status_message *status, e_status_message::e_data message)
+void Talos::Motion::Data::Status::Type::__data(s_system_message *status, e_status_message::e_data message)
 {
 	//This status message contains data of some type. it could be spindle speed/direction, motion planning, etc.. 
 
 	//check message value
 }
 
-void Talos::Motion::Data::Status::Type::__informal(s_status_message *status, e_status_message::e_informal message)
+void Talos::Motion::Data::Status::Type::__informal(s_system_message *status, e_status_message::e_informal message)
 {
-	//Status message contains information that we need to present to the user. 
+	//System message contains information that we need to present to the user. 
 
-	//We got a status message from 
+	//We got a system message from someone
 	if (message == e_status_message::e_informal::ReadyToProcess)
 	{
-
+		if (status->origin == e_origins::Coordinator)
+		Talos::Motion::Events::System::event_manager.set((int)Talos::Motion::Events::System::e_event_type::CoordinatorReady);
+		if (status->origin == e_origins::Host)
+			Talos::Motion::Events::System::event_manager.set((int)Talos::Motion::Events::System::e_event_type::HostReady);
+		if (status->origin == e_origins::Motion)
+			Talos::Motion::Events::System::event_manager.set((int)Talos::Motion::Events::System::e_event_type::MotionReady);
+		if (status->origin == e_origins::Peripheral)
+			Talos::Motion::Events::System::event_manager.set((int)Talos::Motion::Events::System::e_event_type::PeripheralReady);
+		if (status->origin == e_origins::Spindle)
+			Talos::Motion::Events::System::event_manager.set((int)Talos::Motion::Events::System::e_event_type::SpindleReady);
 	}
+
+	
 }
 
-void Talos::Motion::Data::Status::Type::__warning(s_status_message *status, e_status_message::e_warning message)
+void Talos::Motion::Data::Status::Type::__warning(s_system_message *status, e_status_message::e_warning message)
 {
 	//This is a warnign status from somewhere. We jsut need to inform the user of it, but its not somethign that will cause a fault
 
 	//check message value
 }
 
-void Talos::Motion::Data::Status::Origin::__coordinator(s_status_message *status, e_status_message::e_warning message)
+void Talos::Motion::Data::Status::Origin::__coordinator(s_system_message *status, e_status_message::e_warning message)
 {
 	Talos::Shared::FrameWork::Events::extern_system_events.event_manager.set((int)s_system_events::e_event_type::SystemCritical);
 	//Talos::Shared::FrameWork::Error::Handler::extern_pntr_error_handler(NULL, error);
 }
-void Talos::Motion::Data::Status::Origin::__host(s_status_message *status, e_status_message::e_warning message)
+void Talos::Motion::Data::Status::Origin::__host(s_system_message *status, e_status_message::e_warning message)
 {
 
 }
-void Talos::Motion::Data::Status::Origin::__motion(s_status_message *status, e_status_message::e_warning message)
+void Talos::Motion::Data::Status::Origin::__motion(s_system_message *status, e_status_message::e_warning message)
 {
 
 }
-void Talos::Motion::Data::Status::Origin::__spindle(s_status_message *status, e_status_message::e_warning message)
+void Talos::Motion::Data::Status::Origin::__spindle(s_system_message *status, e_status_message::e_warning message)
 {
 
 }
-void Talos::Motion::Data::Status::Origin::__peripheral(s_status_message *status, e_status_message::e_warning message)
+void Talos::Motion::Data::Status::Origin::__peripheral(s_system_message *status, e_status_message::e_warning message)
 {
 
 }

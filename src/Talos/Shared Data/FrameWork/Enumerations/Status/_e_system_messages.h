@@ -3,7 +3,6 @@
 class e_status_message
 {
 public:
-	uint8_t value;
 
 	enum class e_critical :uint8_t
 	{

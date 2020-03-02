@@ -21,12 +21,33 @@
 #include "c_system_event_handler.h"
 #include "../../Data/DataHandlers/c_status_data_handler.h"
 #include "../../../../Shared Data/FrameWork/extern_events_types.h"
-void Talos::Motion::Events::Status::process()
-{
-	//See if there is an event set indicating we have a status record
-	if (Talos::Shared::FrameWork::Events::Router.ready.event_manager.get((int)c_event_router::ss_ready_data::e_event_type::Status))
-		//This will process the status record and may set several or no system events.
-		Talos::Motion::Data::Status::process_status_eventing();
+#include "c_motion_control_event_handler.h"
 
-	//Now we can ready through the system event flags and act on whatever is there.
+s_bit_flag_controller<uint32_t> Talos::Motion::Events::System::event_manager;
+
+void Talos::Motion::Events::System::process()
+{
+	/*
+	System records are potential events that came from something else (off board)
+	They could trigger system events if another processor indicated an error. 
+	See if there is an event set indicating we have a system record
+	*/
+	
+	if (Talos::Shared::FrameWork::Events::Router.ready.event_manager.get((int)c_event_router::ss_ready_data::e_event_type::System))
+		//This will process the status record and may set several or no system events.
+		Talos::Motion::Data::Status::process_system_eventing();
+
+	//Now we can read through the system event flags and act on whatever is there.
+
+	//This code is running in the motion controller, so we need to see if the coordinator and spindle is ready
+	if (System::event_manager.get((int)System::e_event_type::CoordinatorReady)
+		&& System::event_manager.get((int)System::e_event_type::SpindleReady))
+	{
+		//prepare to run a program
+		//1.Set drive system to lock
+		//2.Enable drive motors
+		//3.Set cycle start flag
+		MotionController::event_manager.set((int)MotionController::e_event_type::CycleStart);
+		
+	}
 }

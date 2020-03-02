@@ -138,6 +138,8 @@ void Talos::Coordinator::Main_Process::__initialization_response(uint8_t respons
 
 void Talos::Coordinator::Main_Process::run()
 {
+	Talos::Shared::FrameWork::Events::extern_system_events.event_manager.set((int)s_system_events::e_event_type::SystemAllOk);
+
 	Talos::Coordinator::Main_Process::host_serial.print_string("\r\n** System ready **\r\n");
 	//Start the eventing loop, stop loop if a critical system error occurs
 	while (Talos::Shared::FrameWork::Events::extern_system_events.event_manager.get((int)s_system_events::e_event_type::SystemAllOk))

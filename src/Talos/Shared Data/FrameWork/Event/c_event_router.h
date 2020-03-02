@@ -42,10 +42,15 @@ class c_event_router
 
 			bool check_time_out()
 			{
+				
 				if (!ms_time_out)
 				{
-					event_manager.set((int)e_event_type::TimeOutError);
-					return true;
+					//only set the timeout if events are pending. 
+					if (event_manager._flag > 0)
+					{
+						event_manager.set((int)e_event_type::TimeOutError);
+						return true;
+					}
 				}
 				else
 					ms_time_out--;
@@ -80,8 +85,9 @@ class c_event_router
 			enum class e_event_type : uint8_t
 			{
 				NgcDataLine = 0,
-				Status = 1,
+				System = 1,
 				MotionDataBlock = 2,
+				NgcDataBlock = 2,
 			};
 			s_bit_flag_controller<uint32_t> event_manager;
 			bool any()

@@ -68,9 +68,9 @@ ret_pointer c_new_data_handler::assign_handler(
 		break;
 	case e_record_types::Peripheral_Control_Setting:
 		break;
-	case e_record_types::Status:
+	case e_record_types::System:
 
-		read_count = sizeof(s_status_message);
+		read_count = sizeof(s_system_message);
 
 		return c_new_data_handler::bin_read_handler;
 		break;
@@ -196,19 +196,19 @@ void c_new_data_handler::bin_read_handler(c_ring_buffer <char> * buffer)
 			break;
 		case e_record_types::Peripheral_Control_Setting:
 			break;
-		case e_record_types::Status:
+		case e_record_types::System:
 			memcpy(&Talos::Shared::c_cache_data::status_record, buffer->_storage_pointer, Talos::Shared::c_cache_data::status_record._size);
-			Talos::Shared::FrameWork::Events::Router.ready.event_manager.set((int)c_event_router::ss_ready_data::e_event_type::Status);
+			Talos::Shared::FrameWork::Events::Router.ready.event_manager.set((int)c_event_router::ss_ready_data::e_event_type::System);
 
-			//Status messages are how the different cpu;s talk to each other. These messages could be extremley important. 
+			//System messages are how the different cpu;s talk to each other. These messages could be extremley important. 
 			//We will immediately call the system data processor to set any events from this status update
 			//c_system_d::process_status(&Talos::Shared::c_cache_data::status_record);
 			
 
 			break;
-		case e_record_types::MotionDataBlock:
-			//memcpy(&Talos::Shared::c_cache_data::motion_block_record, buffer->_storage_pointer, Talos::Shared::c_cache_data::motion_block_record._size);
-			//Talos::Shared::FrameWork::Events::extern_data_events.ready.event_manager.set((int)s_ready_data::e_event_type::MotionDataBlock);
+		case e_record_types::NgcBlockRecord:
+			memcpy(&Talos::Shared::c_cache_data::ngc_block_record, buffer->_storage_pointer, Talos::Shared::c_cache_data::ngc_block_record._size);
+			Talos::Shared::FrameWork::Events::Router.ready.event_manager.set((int)c_event_router::ss_ready_data::e_event_type::NgcDataBlock);
 			break;
 
 		}

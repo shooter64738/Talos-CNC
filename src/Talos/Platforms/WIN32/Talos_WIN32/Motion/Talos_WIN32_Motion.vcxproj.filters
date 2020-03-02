@@ -156,12 +156,6 @@
     <ClCompile Include="..\..\..\..\Motion\Processing\Events\EventHandlers\c_block_events.cpp">
       <Filter>Motion\Processing\Events\EventHandlers</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\Motion\Processing\Events\EventHandlers\c_motion_control_event_handler.cpp">
-      <Filter>Motion\Processing\Events\EventHandlers</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\Motion\Processing\Events\EventHandlers\c_motion_event_handler.cpp">
-      <Filter>Motion\Processing\Events\EventHandlers</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\..\Motion\Processing\Events\EventHandlers\c_system_event_handler.cpp">
       <Filter>Motion\Processing\Events\EventHandlers</Filter>
     </ClCompile>
@@ -191,6 +185,18 @@
     </ClCompile>
     <ClCompile Include="..\..\..\..\Motion\Processing\Data\DataHandlers\c_status_data_handler.cpp">
       <Filter>Motion\Processing\Data\DataHandlers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Motion\Processing\Data\DataHandlers\c_ngc_data_handler.cpp">
+      <Filter>Motion\Processing\Data\DataHandlers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\NGC_RS274\NGC_Block_View.cpp">
+      <Filter>Ngc_Rs274</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Motion\Processing\Events\EventHandlers\c_motion_controller_event_handler.cpp">
+      <Filter>Motion\Processing\Events\EventHandlers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Motion\Processing\Events\EventHandlers\c_motion_control_event_handler.cpp">
+      <Filter>Motion\Processing\Events\EventHandlers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -288,12 +294,6 @@
     <ClInclude Include="..\..\..\..\Motion\Processing\Events\EventHandlers\c_block_events.h">
       <Filter>Motion\Processing\Events\EventHandlers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Motion\Processing\Events\EventHandlers\c_motion_control_event_handler.h">
-      <Filter>Motion\Processing\Events\EventHandlers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Motion\Processing\Events\EventHandlers\c_motion_event_handler.h">
-      <Filter>Motion\Processing\Events\EventHandlers</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\..\Motion\Processing\Events\EventHandlers\c_system_event_handler.h">
       <Filter>Motion\Processing\Events\EventHandlers</Filter>
     </ClInclude>
@@ -326,12 +326,6 @@
       <Filter>Shared data\Settings\Motion</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\Shared Data\_e_binary_comm_response.h">
-      <Filter>Shared data</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Shared Data\_e_motion_state.h">
-      <Filter>Shared data</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Shared Data\_e_motion_sub_state.h">
       <Filter>Shared data</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\Shared Data\_e_ramp_type.h">
@@ -376,26 +370,32 @@
     <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Data\cache_data.h">
       <Filter>Shared data\FrameWork\Data</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Enumerations\Status\_e_status_messages.h">
-      <Filter>Shared data\FrameWork\Enumerations\Status</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Enumerations\Status\_e_status_origins.h">
-      <Filter>Shared data\FrameWork\Enumerations\Status</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\..\Motion\Processing\Data\DataHandlers\c_status_data_handler.h">
       <Filter>Motion\Processing\Data\DataHandlers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Enumerations\Status\_e_status_types.h">
+    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Enumerations\Status\_e_system_messages.h">
       <Filter>Shared data\FrameWork\Enumerations\Status</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Enumerations\Status\_e_status_states.h">
+    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Enumerations\Status\_e_system_origins.h">
       <Filter>Shared data\FrameWork\Enumerations\Status</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Enumerations\Status\x_e_motion_state.h">
+    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Enumerations\Status\_e_system_types.h">
       <Filter>Shared data\FrameWork\Enumerations\Status</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Enumerations\Status\x_e_motion_sub_state.h">
+    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Enumerations\Status\_e_system_states.h">
       <Filter>Shared data\FrameWork\Enumerations\Status</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Motion\Processing\Data\DataHandlers\c_ngc_data_handler.h">
+      <Filter>Motion\Processing\Data\DataHandlers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\NGC_RS274\ngc_block_view.h">
+      <Filter>Ngc_Rs274</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Motion\Processing\Events\EventHandlers\c_motion_controller_event_handler.h">
+      <Filter>Motion\Processing\Events\EventHandlers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Motion\Processing\Events\EventHandlers\c_motion_control_event_handler.h">
+      <Filter>Motion\Processing\Events\EventHandlers</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

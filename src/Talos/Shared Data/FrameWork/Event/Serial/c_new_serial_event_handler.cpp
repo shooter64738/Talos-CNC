@@ -147,6 +147,17 @@ void c_new_serial_event_handler::__assign_handler(c_ring_buffer <char> * buffer,
 		//memcpy(buffer->_storage_pointer, &c_cache_data::motion_block_record, write_count);
 		break;
 
+	case c_event_router::ss_outbound_data::e_event_type::NgcBlockRequest:
+		//we are requesting an ngc block. This is probably a route from teh motion control to the coordinator
+		
+		//Request the record immediately following this one. Makes sense I suppose?
+		Talos::Shared::c_cache_data::ngc_block_record.__station__++;
+		//covert the record to a byte stream
+		write_count = Talos::Shared::c_cache_data::ngc_block_record._size;
+		write_count = Talos::Shared::c_cache_data::status_record._size;
+		memcpy(buffer->_storage_pointer, &Talos::Shared::c_cache_data::ngc_block_record, write_count);
+		break;
+
 	case c_event_router::ss_outbound_data::e_event_type::StatusUpdate:
 		//write_count = c_cache_data::status_record._size;
 		//memcpy(buffer->_storage_pointer, &c_cache_data::status_record, write_count);

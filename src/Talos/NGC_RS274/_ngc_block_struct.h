@@ -22,7 +22,7 @@ struct s_ngc_block
 														//is processed and cached. We rely on the order of
 														//the array
 	float __station__; //making this a float. I think I can use this for subroutines as a float.
-
+	static const uint16_t _size = 224;
 	//not sure what I would use these for yet.
 	//int radius_flag;
 	//double radius;

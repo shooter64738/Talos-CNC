@@ -20,29 +20,49 @@
 */
 
 
-#ifndef __C_MOTION_CONTROL_EVENTS_H__
-#define __C_MOTION_CONTROL_EVENTS_H__
+#ifndef __C_MOTION_EVENTS_H__
+#define __C_MOTION_EVENTS_H__
 
 #include <stdint.h>
-#include "../../../Serial/c_Serial.h"
-class c_motion_control_event_handler
+#include "../../../../_bit_flag_control.h"
+
+namespace Talos
 {
-	//variables
-public:
-protected:
-private:
+	namespace Motion
+	{
+		namespace Events
+		{
+
+			class MotionControl
+			{
+				//variables
+			public:
+				enum class e_event_type
+				{
+					BlockExecuting = 0,
+					BlockDiscarded = 1,
+					BlockComplete = 2,
+					
+				};
+				static s_bit_flag_controller<uint32_t> event_manager;
+			protected:
+			private:
 
 
-	//functions
-public:
-	//c_data_events();
-	//~c_data_events();
-	//c_data_events(const c_data_events &c);
-	//c_data_events& operator=(const c_data_events &c);
+				//functions
+			public:
+				//c_data_events();
+				//~c_data_events();
+				//c_data_events(const c_data_events &c);
+				//c_data_events& operator=(const c_data_events &c);
 
-	static void process();
+				static void process();
 
-protected:
-private:
-}; //c_serial_events
-#endif //__C_MOTION_CONTROL_EVENTS_H__
+			protected:
+			private:
+			}; //c_serial_events
+		};
+	};
+};
+
+#endif //__C_MOTION_EVENTS_H__
