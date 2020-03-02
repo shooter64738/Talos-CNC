@@ -4,7 +4,7 @@
 class e_status_message
 {
 public:
-	enum class e_origins :uint8_t
+	enum class e_cpu_type :uint8_t //these doubel as port address for the send
 	{
 		Host = 0,
 		Coordinator = 1,
@@ -13,7 +13,7 @@ public:
 		Peripheral = 4
 
 	};
-
+	
 	enum class e_status_type :uint8_t
 	{
 		Critical = 0,

@@ -44,7 +44,7 @@ private:
 	//functions
 public:
 	static ret_pointer assign_handler(
-		c_ring_buffer <char> * buffer, c_event_router::ss_outbound_data *event_object, c_event_router::ss_outbound_data::e_event_type event_id, uint8_t size);
+		c_ring_buffer <char> * buffer, c_event_router::ss_outbound_data *event_object, c_event_router::ss_outbound_data::e_event_type event_id, uint8_t size, uint8_t write_destination);
 	static ret_pointer assign_handler(
 		c_ring_buffer <char> * buffer, c_event_router::ss_inbound_data * event_object, c_event_router::ss_inbound_data::e_event_type event_id, e_record_types rec_type);
 

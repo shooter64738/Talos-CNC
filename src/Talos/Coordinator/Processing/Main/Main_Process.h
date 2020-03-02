@@ -15,6 +15,7 @@
 #include "../../../Shared Data/FrameWork/extern_events_types.h"
 
 
+
 //remove after testing
 
 namespace Talos
@@ -24,13 +25,13 @@ namespace Talos
 		class Main_Process
 		{
 			//variables
-			public:
+		public:
 			static c_Serial host_serial;
-			protected:
-			private:
+		protected:
+		private:
 
 			//functions
-			public:
+		public:
 			static void initialize();
 			static void run();
 			static void general_error(c_ring_buffer<char> * released_buffer, s_framework_error error);
@@ -39,9 +40,10 @@ namespace Talos
 
 			//Main_Process();
 			//~Main_Process();
-			protected:
-			private:
-			typedef uint8_t (*init_function)(void); // type for conciseness
+		protected:
+		private:
+			static void __configure_ports();
+			typedef uint8_t(*init_function)(void); // type for conciseness
 			static void __critical_initialization(const char * message, init_function initialization_pointer, uint8_t critical);
 			static void __initialization_response(uint8_t response_code, uint8_t critical);
 			//Main_Process( const Main_Process &c );

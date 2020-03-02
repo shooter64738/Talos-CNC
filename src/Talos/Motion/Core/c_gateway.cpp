@@ -19,6 +19,7 @@
 #include "../../Shared Data/FrameWork/extern_events_types.h"
 #include "../../Shared Data/_s_status_record.h"
 #include "../../Shared Data/FrameWork/Enumerations/Status/_e_system_messages.h"
+#include "../Processing/Data/DataHandlers/c_status_data_handler.h"
 
 #define MOTION_BUFFER_SIZE 2
 
@@ -68,10 +69,10 @@ void Motion_Core::Gateway::process_loop()
 
 void Motion_Core::Gateway::check_control_states()
 {
-//	if (!Motion_Core::Hardware::Interpolation::Interpolation_Active)
-//		Talos::Motion::Events::MotionController::event_manager.clear((int)Talos::Motion::Events::MotionController::e_event_type::Interpollation);
+	//	if (!Motion_Core::Hardware::Interpolation::Interpolation_Active)
+	//		Talos::Motion::Events::MotionController::event_manager.clear((int)Talos::Motion::Events::MotionController::e_event_type::Interpollation);
 
-	//Were we running a jog interpolation?
+		//Were we running a jog interpolation?
 	if (Talos::Motion::Events::MotionController::event_manager.get((int)Talos::Motion::Events::MotionController::e_event_type::Jog))
 	{
 		//Is interpolation complete?
@@ -143,13 +144,11 @@ void Motion_Core::Gateway::process_motion(s_motion_data_block *mot)
 
 void Motion_Core::Gateway::check_hardware_faults()
 {
-	s_system_message *status;
-
 	//See if there is a hardware alarm from a stepper/servo driver
 	if (Hardware_Abstraction_Layer::MotionCore::Inputs::Driver_Alarms > 0)
 	{
 		Talos::Motion::Events::MotionController::event_manager.set((int)Talos::Motion::Events::MotionController::e_event_type::AxisDriveFault);
-		
+
 		//Hardware faults but not interpolating... Very strange..
 		if (Talos::Motion::Events::MotionControl::event_manager.get((int)Talos::Motion::Events::MotionControl::e_event_type::Interpollation))
 		{
@@ -157,24 +156,21 @@ void Motion_Core::Gateway::check_hardware_faults()
 			Motion_Core::Segment::Arbitrator::cycle_hold(); //<--decelerate to a soft stop
 		}
 
-
-		status->state = (int)e_status_message::e_status_state::motion::e_state::System_Error;
-		status->origin = e_status_message::e_origins::Motion;
-		for (int i = 0; i < MACHINE_AXIS_COUNT; i++)
+		uint8_t i = 0;
+		for (i = 0; i < MACHINE_AXIS_COUNT; i++)
 		{
 			//Which axis has faulted?
 			if (Hardware_Abstraction_Layer::MotionCore::Inputs::Driver_Alarms & (1 << i))
 			{
-				uint8_t axis_id = (uint8_t)e_status_message::e_status_state::motion::e_sub_state::Error_Axis_Drive_Fault_X
-					+ i;
-				status->sub_state = axis_id;
-
-				//Motion_Core::Gateway::local_serial->print_string("Drive on Axis ");
-				//Motion_Core::Gateway::local_serial->print_int32(i);
-				//Motion_Core::Gateway::local_serial->print_string(" reported a motion fault\r");
+				break;
 			}
-
 		}
+		Talos::Motion::Data::Status::send((int)e_status_message::messages::e_warning::testwarning
+			, Talos::Shared::FrameWork::StartUp::cpu_type.Motion
+			, Talos::Shared::FrameWork::StartUp::cpu_type.Coordinator
+			, (int)e_status_message::e_status_state::motion::e_state::System_Error
+			, ((int)e_status_message::e_status_state::motion::e_sub_state::Error_Axis_Drive_Fault_X + i)
+			, (int)e_status_message::e_status_type::Warning);
 		//		c_record_handler::handle_outbound_record(status,Motion_Core::c_processor::coordinator_serial);
 		Hardware_Abstraction_Layer::MotionCore::Inputs::Driver_Alarms = 0;
 	}
@@ -182,7 +178,7 @@ void Motion_Core::Gateway::check_hardware_faults()
 
 void Motion_Core::Gateway::check_sequence_complete()
 {
-	if (Motion_Core::Hardware::Interpolation::Last_Completed_Sequence>0)
+	if (Motion_Core::Hardware::Interpolation::Last_Completed_Sequence > 0)
 	{
 		Talos::Motion::Events::MotionControl::completed_sequence = Motion_Core::Hardware::Interpolation::Last_Completed_Sequence;
 		Motion_Core::Hardware::Interpolation::Last_Completed_Sequence = 0;
@@ -210,7 +206,7 @@ void Motion_Core::Gateway::check_sequence_complete()
 		//Events::Motion_Controller::events_statistics.system_sub_state = BinaryRecords::e_system_sub_state_record_types::Block_Complete;
 
 		//Events::Motion_Controller::events_statistics.num_message = Motion_Core::Hardware::Interpolation::Last_Completed_Sequence;
-		
+
 	}
 }
 

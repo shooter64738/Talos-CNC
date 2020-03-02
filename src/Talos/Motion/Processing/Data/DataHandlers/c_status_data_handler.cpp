@@ -24,7 +24,8 @@
 #include "../../Events/EventHandlers/c_system_event_handler.h"
 #include "../../../Core/c_interpollation_hardware.h"
 
-bool Talos::Motion::Data::Status::send(uint8_t message, e_status_message::e_origins origin, uint8_t state, uint8_t sub_state, uint8_t type)
+bool Talos::Motion::Data::Status::send(uint8_t message, uint8_t origin, uint8_t target
+	, uint8_t state, uint8_t sub_state, uint8_t type)
 {
 	//if the cache data system rec pointer is null we are free to use it. if its not, we must
 	//leave the events set and keep checking on each loop. it should send after only 1 processor loop
@@ -116,15 +117,15 @@ void Talos::Motion::Data::Status::Type::__informal(s_system_message *status, e_s
 	//We got a system message from someone
 	if (message == e_status_message::messages::e_informal::ReadyToProcess)
 	{//TODO Make this a switch case
-		if (status->origin == e_status_message::e_origins::Coordinator)
+		if (status->origin == Shared::FrameWork::StartUp::cpu_type.Coordinator)
 			Talos::Motion::Events::System::event_manager.set((int)Talos::Motion::Events::System::e_event_type::CoordinatorReady);
-		if (status->origin == e_status_message::e_origins::Host)
+		if (status->origin == Shared::FrameWork::StartUp::cpu_type.Host)
 			Talos::Motion::Events::System::event_manager.set((int)Talos::Motion::Events::System::e_event_type::HostReady);
-		if (status->origin == e_status_message::e_origins::Motion)
+		if (status->origin == Shared::FrameWork::StartUp::cpu_type.Motion)
 			Talos::Motion::Events::System::event_manager.set((int)Talos::Motion::Events::System::e_event_type::MotionReady);
-		if (status->origin == e_status_message::e_origins::Peripheral)
+		if (status->origin == Shared::FrameWork::StartUp::cpu_type.Peripheral)
 			Talos::Motion::Events::System::event_manager.set((int)Talos::Motion::Events::System::e_event_type::PeripheralReady);
-		if (status->origin == e_status_message::e_origins::Spindle)
+		if (status->origin == Shared::FrameWork::StartUp::cpu_type.Spindle)
 			Talos::Motion::Events::System::event_manager.set((int)Talos::Motion::Events::System::e_event_type::SpindleReady);
 	}
 

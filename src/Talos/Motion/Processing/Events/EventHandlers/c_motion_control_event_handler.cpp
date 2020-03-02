@@ -49,7 +49,8 @@ void Talos::Motion::Events::MotionControl::process()
 		//see if we can send a system message. If not leave the events in place and it will keep trying
 		if (Talos::Motion::Data::Status::send(
 			(int)e_status_message::messages::e_informal::BlockCompleted
-			, e_status_message::e_origins::Motion
+			, Shared::FrameWork::StartUp::cpu_type.Motion
+			, Shared::FrameWork::StartUp::cpu_type.Coordinator
 			, (int)e_status_message::e_status_state::motion::e_state::Complete
 			, (int)e_status_message::e_status_state::motion::e_sub_state::Block_Complete
 			, (int)e_status_message::e_status_type::Informal))
@@ -66,25 +67,3 @@ void Talos::Motion::Events::MotionControl::process()
 	}
 
 }
-
-//bool Talos::Motion::Events::MotionControl::__send_status()
-//{
-//	//if the cache data system rec pointer is null we are free to use it. if its not, we must
-//	//leave the events set and keep checking on each loop. it should send after only 1 processor loop
-//	if (Talos::Shared::c_cache_data::pntr_status_record != NULL)
-//		return false;
-//	//set the pointer to the cache record
-//	Talos::Shared::c_cache_data::pntr_status_record = &Talos::Shared::c_cache_data::status_record;
-//	//clear the record
-//	memset(Talos::Shared::c_cache_data::pntr_status_record, 0, sizeof(Talos::Shared::c_cache_data::status_record));
-//
-//	
-//	Talos::Shared::c_cache_data::pntr_status_record->message = (int)e_status_message::messages::e_informal::BlockCompleted;
-//	Talos::Shared::c_cache_data::pntr_status_record->origin = e_status_message::e_origins::Motion;
-//	//msg.position = ;
-//	Talos::Shared::c_cache_data::pntr_status_record->state = (int) e_status_message::e_status_state::motion::e_state::Complete;
-//	Talos::Shared::c_cache_data::pntr_status_record->sub_state = (int)e_status_message::e_status_state::motion::e_sub_state::Block_Complete;
-//	Talos::Shared::c_cache_data::pntr_status_record->type = (int)e_status_message::e_status_type::Informal ;
-//	Talos::Shared::FrameWork::Events::Router.serial.outbound.event_manager.set((int)c_event_router::ss_outbound_data::e_event_type::StatusUpdate);
-//	return true;
-//}

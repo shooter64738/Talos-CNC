@@ -387,6 +387,14 @@
       <SubType>compile</SubType>
       <Link>Shared Data\FrameWork\extern_events_types.h</Link>
     </Compile>
+    <Compile Include="..\..\..\Shared Data\FrameWork\Startup\c_framework_start.cpp">
+      <SubType>compile</SubType>
+      <Link>Shared Data\FrameWork\Startup\c_framework_start.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\Shared Data\FrameWork\Startup\c_framework_start.h">
+      <SubType>compile</SubType>
+      <Link>Shared Data\FrameWork\Startup\c_framework_start.h</Link>
+    </Compile>
     <Compile Include="..\..\..\Shared Data\Settings\Motion\_s_motion_control_settings_encapsulation.h">
       <SubType>compile</SubType>
       <Link>Shared Data\Settings\Motion\_s_motion_control_settings_encapsulation.h</Link>
@@ -562,6 +570,7 @@
     <Folder Include="Shared Data\FrameWork\Event" />
     <Folder Include="Shared Data\FrameWork\Event\Serial" />
     <Folder Include="Shared Data\FrameWork\Enumerations" />
+    <Folder Include="Shared Data\FrameWork\Startup" />
     <Folder Include="Shared Data\Settings" />
     <Folder Include="Shared Data\Settings\Motion" />
   </ItemGroup>

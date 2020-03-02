@@ -23,6 +23,8 @@ then move to their respective modules.
 #include "../Error/c_error.h"
 #include "../../../Shared Data/FrameWork/Data/cache_data.h"
 #include "../Events/EventHandlers/c_system_event_handler.h"
+#include "../../../Shared Data/FrameWork/Startup/c_framework_start.h"
+
 
 #ifdef MSVC
 static char test_line[256] = "G1x1f500\r\nF33.3\r\n";
@@ -31,8 +33,19 @@ static int test_byte = 0;
 
 c_Serial Talos::Coordinator::Main_Process::host_serial;
 
+void Talos::Coordinator::Main_Process::__configure_ports()
+{
+	Talos::Shared::FrameWork::StartUp::cpu_type.Coordinator = 0;
+	Talos::Shared::FrameWork::StartUp::cpu_type.Host = 0;
+	Talos::Shared::FrameWork::StartUp::cpu_type.Motion = 1;
+	Talos::Shared::FrameWork::StartUp::cpu_type.Spindle = 2;
+	Talos::Shared::FrameWork::StartUp::cpu_type.Peripheral = 3;
+	
+}
+
 void Talos::Coordinator::Main_Process::initialize()
 {
+
 	//setup the error handler function pointer
 	Talos::Coordinator::Error::initialize(&Talos::Coordinator::Main_Process::host_serial);
 	Talos::Coordinator::Events::Report::initialize(&Talos::Coordinator::Main_Process::host_serial);
@@ -40,7 +53,7 @@ void Talos::Coordinator::Main_Process::initialize()
 	Talos::Shared::FrameWork::Error::Handler::extern_pntr_error_handler = Talos::Coordinator::Error::general_error;
 	Talos::Shared::FrameWork::Error::Handler::extern_pntr_ngc_error_handler = Talos::Coordinator::Error::ngc_error;
 
-	Talos::Coordinator::Main_Process::host_serial = c_Serial(0, 250000); //<--Connect to host
+	Talos::Coordinator::Main_Process::host_serial = c_Serial(Talos::Shared::FrameWork::StartUp::cpu_type.Host, 250000); //<--Connect to host
 	Talos::Coordinator::Main_Process::host_serial.print_string("Coordinator initializing\r\n");
 
 	__critical_initialization("Core", Hardware_Abstraction_Layer::Core::initialize, STARTUP_CLASS_CRITICAL);//<--core start up

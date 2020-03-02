@@ -25,6 +25,7 @@ static uint8_t write_count = 0;
 static uint8_t read_count = 0;
 static c_event_router::ss_outbound_data::e_event_type tracked_write_event;
 static c_event_router::ss_outbound_data * tracked_write_object;
+static uint8_t tracked_destination;
 static c_event_router::ss_inbound_data::e_event_type tracked_read_event;
 static c_event_router::ss_inbound_data * tracked_read_object;
 static e_record_types tracked_read_type;
@@ -95,7 +96,8 @@ ret_pointer c_new_data_handler::assign_handler(
 }
 
 ret_pointer c_new_data_handler::assign_handler(
-	c_ring_buffer <char> * buffer, c_event_router::ss_outbound_data * event_object, c_event_router::ss_outbound_data::e_event_type event_id, uint8_t size)
+	c_ring_buffer <char> * buffer, c_event_router::ss_outbound_data * event_object
+	, c_event_router::ss_outbound_data::e_event_type event_id, uint8_t size, uint8_t destination)
 {
 	//If we already have an un processed motion block record. We cannot process another one right now.
 	//But since we got in here because we thought there was a new record to process, there was
@@ -252,7 +254,7 @@ void c_new_data_handler::write_handler(c_ring_buffer <char> * buffer)
 {
 	//this only writes 1 byte at a time.. one byte per proram loop. We could change it to write all of it at once here
 	//but then while its writing this data out it will not process other events, it will only service ISRs
-	buffer->pntr_device_write(1, *buffer->_storage_pointer++);
+	buffer->pntr_device_write(tracked_destination, *buffer->_storage_pointer++);
 	write_count--;
 	//when write count reaches zero we have written all data for the record
 	if (!write_count)

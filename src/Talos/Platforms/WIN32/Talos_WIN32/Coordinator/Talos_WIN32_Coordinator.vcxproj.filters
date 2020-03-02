@@ -88,6 +88,9 @@
     <Filter Include="Shared Data\FrameWork\Enumerations\Status">
       <UniqueIdentifier>{df4f8830-b35a-4562-9b72-547fc302efad}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shared Data\FrameWork\Startup">
+      <UniqueIdentifier>{6d358183-7ac0-4253-929b-51de9395bccc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\communication_def.h" />
@@ -344,6 +347,9 @@
     <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Enumerations\Status\_e_system_messages.h">
       <Filter>Shared Data\FrameWork\Enumerations\Status</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Startup\c_framework_start.h">
+      <Filter>Shared Data\FrameWork\Startup</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\..\Coordinator\coordinator_main.cpp">
@@ -474,6 +480,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\..\Coordinator\Processing\Events\EventHandlers\c_system_event_handler.cpp">
       <Filter>Coordinator\Processing\Events\EventHandlers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Startup\c_framework_start.cpp">
+      <Filter>Shared Data\FrameWork\Startup</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

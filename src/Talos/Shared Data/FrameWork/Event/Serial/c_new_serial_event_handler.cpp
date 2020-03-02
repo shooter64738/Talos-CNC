@@ -136,6 +136,7 @@ void c_new_serial_event_handler::__assign_handler(c_ring_buffer <char> * buffer,
 	c_event_router::ss_outbound_data * event_object, c_event_router::ss_outbound_data::e_event_type event_id)
 {
 	uint8_t write_count = 0;
+	uint8_t write_destination = 0;
 
 	switch (event_id)
 	{
@@ -154,6 +155,8 @@ void c_new_serial_event_handler::__assign_handler(c_ring_buffer <char> * buffer,
 		//Request the record immediately following this one. Makes sense I suppose?
 		Talos::Shared::c_cache_data::ngc_block_record.__station__++;
 		//covert the record to a byte stream
+		//ngc requests always go to the coordinator
+		write_destination = Talos::Shared::FrameWork::StartUp::cpu_type.Coordinator;
 		write_count = Talos::Shared::c_cache_data::ngc_block_record.__size__;
 		write_count = Talos::Shared::c_cache_data::status_record.__size__;
 		memcpy(buffer->_storage_pointer, &Talos::Shared::c_cache_data::ngc_block_record, write_count);
@@ -163,6 +166,7 @@ void c_new_serial_event_handler::__assign_handler(c_ring_buffer <char> * buffer,
 		//pntr_status_record should be pointing to the status record we need to write
 		//copy it to the outbound buffer, then release the pntr (set to null)
 		write_count = Talos::Shared::c_cache_data::status_record.__size__;
+		write_destination = Talos::Shared::c_cache_data::status_record.target;
 		memcpy(buffer->_storage_pointer, Talos::Shared::c_cache_data::pntr_status_record, write_count);
 		Talos::Shared::c_cache_data::pntr_status_record = NULL;
 		break;
@@ -175,7 +179,7 @@ void c_new_serial_event_handler::__assign_handler(c_ring_buffer <char> * buffer,
 	//I could hard code a function pointer here, but this gives me more flexability. I let the 
 	//data handler decide how this data gets processed
 	//c_serial_event_handler::pntr_data_write_handler = c_ngc_data_handler::assign_handler(buffer, event_object, event_id, write_count);
-	c_new_serial_event_handler::pntr_data_write_handler = c_new_data_handler::assign_handler(buffer, event_object, event_id, write_count);
+	c_new_serial_event_handler::pntr_data_write_handler = c_new_data_handler::assign_handler(buffer, event_object, event_id, write_count, write_destination);
 	//This is function point that gets 'called back' when all the data is done processing. 
 	c_new_data_handler::pntr_data_handler_release = c_new_serial_event_handler::write_data_handler_releaser;
 }

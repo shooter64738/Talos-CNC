@@ -21,7 +21,10 @@
 #include "c_status_data_handler.h"
 #include "../../../../Shared Data/FrameWork/Data/cache_data.h"
 
-bool Talos::Coordinator::Data::System::send(uint8_t message, e_status_message::e_origins origin, uint8_t state, uint8_t sub_state, uint8_t type)
+bool Talos::Coordinator::Data::System::_send(uint8_t message
+	, uint8_t origin
+	, uint8_t target
+	, uint8_t state, uint8_t sub_state, uint8_t type)
 {
 	//if the cache data system rec pointer is null we are free to use it. if its not, we must
 	//leave the events set and keep checking on each loop. it should send after only 1 processor loop
@@ -36,6 +39,7 @@ bool Talos::Coordinator::Data::System::send(uint8_t message, e_status_message::e
 
 	Talos::Shared::c_cache_data::pntr_status_record->message = message;
 	Talos::Shared::c_cache_data::pntr_status_record->origin = origin;
+	Talos::Shared::c_cache_data::pntr_status_record->target = target;
 	//copy position data from the interpolation hardware
 	//memcpy(Talos::Shared::c_cache_data::pntr_status_record->position
 	//	, Motion_Core::Hardware::Interpolation::system_position

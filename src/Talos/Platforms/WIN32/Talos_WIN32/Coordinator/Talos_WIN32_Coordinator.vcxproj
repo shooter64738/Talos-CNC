@@ -47,6 +47,7 @@
     <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Event\c_event_router.h" />
     <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Event\Serial\c_new_serial_event_handler.h" />
     <ClInclude Include="..\..\..\..\Shared Data\FrameWork\extern_events_types.h" />
+    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Startup\c_framework_start.h" />
     <ClInclude Include="..\..\..\..\Shared Data\Settings\Coordinator\_s_interp_config_struct.h" />
     <ClInclude Include="..\..\..\..\Shared Data\_e_binary_comm_response.h" />
     <ClInclude Include="..\..\..\..\Shared Data\_e_block_state.h" />
@@ -140,6 +141,7 @@
     <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Event\c_event_router.cpp" />
     <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Event\Serial\c_new_serial_event_handler.cpp" />
     <ClCompile Include="..\..\..\..\Shared Data\FrameWork\extern_events_types.cpp" />
+    <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Startup\c_framework_start.cpp" />
     <ClCompile Include="Platform Specific\c_core_win.cpp" />
     <ClCompile Include="Platform Specific\c_disk_win.cpp" />
     <ClCompile Include="Platform Specific\c_serial_win.cpp" />

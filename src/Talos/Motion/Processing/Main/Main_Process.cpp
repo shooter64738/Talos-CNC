@@ -14,12 +14,22 @@
 #include "../Events/EventHandlers/c_motion_control_event_handler.h"
 #include "../Events/EventHandlers/c_motion_controller_event_handler.h"
 #include "../Events/EventHandlers/c_report_events.h"
+#include "../../../Shared Data/FrameWork/Startup/c_framework_start.h"
 
 #include "../../../Shared Data/FrameWork/Enumerations/Status/_e_system_messages.h"
 
 
 c_Serial Talos::Motion::Main_Process::host_serial;
 
+void Talos::Motion::Main_Process::__configure_ports()
+{
+	Talos::Shared::FrameWork::StartUp::cpu_type.Coordinator = 1;
+	Talos::Shared::FrameWork::StartUp::cpu_type.Host = 0;
+	Talos::Shared::FrameWork::StartUp::cpu_type.Motion = 0;
+	Talos::Shared::FrameWork::StartUp::cpu_type.Spindle = 2;
+	Talos::Shared::FrameWork::StartUp::cpu_type.Peripheral = 3;
+
+}
 
 void Talos::Motion::Main_Process::initialize()
 {
@@ -33,7 +43,7 @@ void Talos::Motion::Main_Process::initialize()
 	
 	Hardware_Abstraction_Layer::Core::initialize();
 	//__initialization_start("Core", Hardware_Abstraction_Layer::Core::initialize,1);//<--core start up
-	Talos::Motion::Main_Process::host_serial = c_Serial(0, 250000); //<--Connect to host
+	Talos::Motion::Main_Process::host_serial = c_Serial(Talos::Shared::FrameWork::StartUp::cpu_type.Coordinator, 250000); //<--Connect to host
 	Talos::Motion::Main_Process::host_serial.print_string("Motion Core initializing\r\n");
 
 	
@@ -160,7 +170,8 @@ void Talos::Motion::Main_Process::test_coord_msg()
 	Talos::Shared::c_cache_data::status_record.message = (int)e_status_message::messages::e_informal::ReadyToProcess;
 	Talos::Shared::c_cache_data::status_record.state = (int)e_status_message::e_status_state::motion::e_state::Idle;
 	Talos::Shared::c_cache_data::status_record.sub_state = (int)e_status_message::e_status_state::motion::e_sub_state::OK;
-	Talos::Shared::c_cache_data::status_record.origin =e_status_message::e_origins::Coordinator;
+	Talos::Shared::c_cache_data::status_record.origin = Talos::Shared::FrameWork::StartUp::cpu_type.Coordinator;
+	Talos::Shared::c_cache_data::status_record.target = Talos::Shared::FrameWork::StartUp::cpu_type.Motion;
 }
 
 void Talos::Motion::Main_Process::test_spindle_msg()
@@ -171,7 +182,8 @@ void Talos::Motion::Main_Process::test_spindle_msg()
 	Talos::Shared::c_cache_data::status_record.message = (int)e_status_message::messages::e_informal::ReadyToProcess;
 	Talos::Shared::c_cache_data::status_record.state = (int)e_status_message::e_status_state::motion::e_state::Idle;
 	Talos::Shared::c_cache_data::status_record.sub_state = (int)e_status_message::e_status_state::motion::e_sub_state::OK;
-	Talos::Shared::c_cache_data::status_record.origin = e_status_message::e_origins::Spindle;
+	Talos::Shared::c_cache_data::status_record.origin = Talos::Shared::FrameWork::StartUp::cpu_type.Coordinator;
+	Talos::Shared::c_cache_data::status_record.target = Talos::Shared::FrameWork::StartUp::cpu_type.Spindle;
 }
 
 void Talos::Motion::Main_Process::test_ngc_block()

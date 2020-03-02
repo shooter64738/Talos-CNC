@@ -82,6 +82,9 @@
     <Filter Include="Shared data\FrameWork\Enumerations\Status">
       <UniqueIdentifier>{84376f92-f37a-491a-bc66-fcd0b1dd973b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shared data\FrameWork\Startup">
+      <UniqueIdentifier>{d192251f-8597-44ee-92dc-4d9d454357af}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\..\Motion\motion_main.cpp">
@@ -197,6 +200,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\..\Motion\Processing\Events\EventHandlers\c_motion_control_event_handler.cpp">
       <Filter>Motion\Processing\Events\EventHandlers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Startup\c_framework_start.cpp">
+      <Filter>Shared data\FrameWork\Startup</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -387,6 +393,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\Motion\Processing\Events\EventHandlers\c_motion_control_event_handler.h">
       <Filter>Motion\Processing\Events\EventHandlers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Startup\c_framework_start.h">
+      <Filter>Shared data\FrameWork\Startup</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
