@@ -22,6 +22,7 @@
 #include "../coordinator_hardware_def.h"
 #include "../../communication_def.h"
 #include "../../c_ring_template.h"
+#include "../Processing/Data/c_data_buffers.h"
 
 static c_ring_buffer<char> rxBuffer[2];
 //s_Buffer c_Serial::rxBuffer;
@@ -41,7 +42,7 @@ c_Serial::c_Serial(uint8_t Port, uint32_t BaudRate)
 
 bool c_Serial::HasData()
 {
-	return Hardware_Abstraction_Layer::Serial::_usart0_read_buffer.has_data();
+	return Talos::Coordinator::Data::Buffer::buffers[this->_port].ring_buffer.has_data();
 }
 
 /*This sends the specified string. It will not return until transmission is complete*/

@@ -34,12 +34,10 @@ bool Talos::Motion::Data::Status::send(uint8_t message, uint8_t origin, uint8_t 
 	
 	//set the pointer to the cache record
 	Talos::Shared::c_cache_data::pntr_status_record = &Talos::Shared::c_cache_data::status_record;
-	//clear the record
-	memset(Talos::Shared::c_cache_data::pntr_status_record, 0, Talos::Shared::c_cache_data::status_record.__size__);
-
-
+	
 	Talos::Shared::c_cache_data::pntr_status_record->message = message;
 	Talos::Shared::c_cache_data::pntr_status_record->origin = origin;
+	Talos::Shared::c_cache_data::pntr_status_record->target = target;
 	//copy position data from the interpolation hardware
 	memcpy(Talos::Shared::c_cache_data::pntr_status_record->position
 		, Motion_Core::Hardware::Interpolation::system_position

@@ -24,12 +24,12 @@ static uint32_t _cache_read_position = 0;
 static uint32_t _cache_write_position = 0;
 
 static FIL _tool_file_object;
-static char _tool_file_name[11] ="cache.dat\0";
+static char _tool_file_name[10] ="tool.dat\0";
 static uint32_t _tool_read_position = 0;
 static uint32_t _tool_write_position = 0;
 
 static FIL _wcs_file_object;
-static char _wcs_file_name[11] ="cache.dat\0";
+static char _wcs_file_name[9] ="wcs.dat\0";
 static uint32_t _wcs_read_position = 0;
 static uint32_t _wcs_write_position = 0;
 

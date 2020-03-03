@@ -36,7 +36,11 @@ namespace Talos
 			{
 				//variables
 				public:
-
+					enum class e_event_type
+					{
+						StatusMessage = 0,
+					};
+					static s_bit_flag_controller<uint32_t> event_manager;
 				protected:
 				private:
 

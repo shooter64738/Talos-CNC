@@ -12,6 +12,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\Configuration\c_configuration.h" />
+    <ClInclude Include="..\..\..\..\Coordinator\Processing\Data\c_data_buffers.h" />
     <ClInclude Include="..\..\..\..\Coordinator\Processing\Data\DataHandlers\c_ngc_data_handler.h" />
     <ClInclude Include="..\..\..\..\Coordinator\Processing\Data\DataHandlers\c_status_data_handler.h" />
     <ClInclude Include="..\..\..\..\Coordinator\Processing\Error\c_error.h" />
@@ -42,6 +43,7 @@
     <ClInclude Include="..\..\..\..\NGC_RS274\_ngc_point_definition.h" />
     <ClInclude Include="..\..\..\..\NGC_RS274\_ngc_tool_struct.h" />
     <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Data\cache_data.h" />
+    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Data\c_data_buffer.h" />
     <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Data\c_new_data_handler.h" />
     <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Enumerations\Status\_e_system_messages.h" />
     <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Event\c_event_router.h" />
@@ -104,6 +106,7 @@
   <ItemGroup>
     <ClCompile Include="..\..\..\..\Configuration\c_configuration.cpp" />
     <ClCompile Include="..\..\..\..\Coordinator\coordinator_main.cpp" />
+    <ClCompile Include="..\..\..\..\Coordinator\Processing\Data\c_data_buffers.cpp" />
     <ClCompile Include="..\..\..\..\Coordinator\Processing\Data\DataHandlers\c_binary_data_handler.cpp" />
     <ClCompile Include="..\..\..\..\Coordinator\Processing\Data\DataHandlers\c_ngc_data_handler.cpp" />
     <ClCompile Include="..\..\..\..\Coordinator\Processing\Data\DataHandlers\c_status_data_handler.cpp" />
@@ -137,6 +140,7 @@
     <ClCompile Include="..\..\..\..\NGC_RS274\NGC_System.cpp" />
     <ClCompile Include="..\..\..\..\NGC_RS274\NGC_Tool.cpp" />
     <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Data\cache_data.cpp" />
+    <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Data\c_data_buffer.cpp" />
     <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Data\c_new_data_handler.cpp" />
     <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Event\c_event_router.cpp" />
     <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Event\Serial\c_new_serial_event_handler.cpp" />

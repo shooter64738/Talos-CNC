@@ -331,7 +331,7 @@ pinMode(SPI_SCK_PIN, OUTPUT); //make SCK output
 #ifndef USE_SPI_LIB
 // SS must be in output mode even it is not chip select
 pinMode(SS_PIN, OUTPUT);
-digitalWrite(SS_PIN, HIGH); // disable any SPI device using hardware SS pin
+digitalWrite(SS_PIN, HIGH); // disable any SPI pntr_ring_buffer using hardware SS pin
 // Enable SPI, Master, clock rate f_osc/128
 SPCR = (1 << SPE) | (1 << MSTR) | (1 << SPR1) | (1 << SPR0);
 // clear double speed

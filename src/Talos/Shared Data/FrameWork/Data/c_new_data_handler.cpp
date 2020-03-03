@@ -95,8 +95,8 @@ ret_pointer c_new_data_handler::assign_handler(
 	}
 }
 
-ret_pointer c_new_data_handler::assign_handler(
-	c_ring_buffer <char> * buffer, c_event_router::ss_outbound_data * event_object
+ret_write_pointer c_new_data_handler::assign_handler(
+	char * buffer, c_event_router::ss_outbound_data * event_object
 	, c_event_router::ss_outbound_data::e_event_type event_id, uint8_t size, uint8_t destination)
 {
 	//If we already have an un processed motion block record. We cannot process another one right now.
@@ -104,7 +104,7 @@ ret_pointer c_new_data_handler::assign_handler(
 	//some kind of eventing error. This is probably a code bug.
 	if (tracked_write_object != NULL)
 	{
-		__raise_error(buffer, e_error_behavior::Critical, 0, e_error_group::DataHandler, e_error_process::EventHandle
+		__raise_error(NULL, e_error_behavior::Critical, 0, e_error_group::DataHandler, e_error_process::EventHandle
 			, tracked_read_type, e_error_source::Serial, e_error_code::AttemptToHandleNewEventWhilePreviousIsPending);
 		return NULL;
 	}
@@ -112,6 +112,7 @@ ret_pointer c_new_data_handler::assign_handler(
 	//hold this event id. We will need it when we release the writer
 	tracked_write_event = event_id;
 	tracked_write_object = event_object;
+	tracked_destination = destination;
 	write_count = size;
 	Talos::Shared::FrameWork::Events::Router.serial.inbound.set_time_out(__FRAMEWORK_COM_READ_TIMEOUT_MS);
 	return c_new_data_handler::write_handler;
@@ -250,11 +251,15 @@ void c_new_data_handler::__bin_data_copy(c_ring_buffer <char> * buffer)
 	c_new_data_handler::__release(buffer);
 }
 
-void c_new_data_handler::write_handler(c_ring_buffer <char> * buffer)
+//void c_new_data_handler::write_handler(char * buffer, uint8_t(*pntr_hw_write)(uint8_t port, char byte))
+void c_new_data_handler::write_handler(char ** buffer, uint8_t(*pntr_hw_write)(uint8_t port, char byte))
+
 {
 	//this only writes 1 byte at a time.. one byte per proram loop. We could change it to write all of it at once here
 	//but then while its writing this data out it will not process other events, it will only service ISRs
-	buffer->pntr_device_write(tracked_destination, *buffer->_storage_pointer++);
+	pntr_hw_write(tracked_destination, **buffer);
+	*(*buffer)++;
+	//buffer++;
 	write_count--;
 	//when write count reaches zero we have written all data for the record
 	if (!write_count)
@@ -264,12 +269,13 @@ void c_new_data_handler::write_handler(c_ring_buffer <char> * buffer)
 		//send the block data back to us. When that occurs a usart0 event will occure and we will read that block
 		//then store it in this class in the 'loaded_block' variable. then we can execute that motion.
 		//for good measure, lets reset the buffer
-		buffer->reset();
+		//buffer->reset();
+
 		//call the release method.. Remember back in the serial handler we assigned a call back function to release?
 		tracked_write_object->event_manager.clear((int)tracked_write_event);
 		tracked_write_object = NULL;
 
-		c_new_data_handler::__release(buffer);
+		c_new_data_handler::__release(NULL);
 	}
 }
 

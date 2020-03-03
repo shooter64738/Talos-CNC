@@ -17,7 +17,7 @@ struct s_system_message
 	uint8_t state;
 	uint8_t sub_state;
 	int32_t position[MACHINE_AXIS_COUNT];
-	const uint8_t __size__ = 33; // speify size here.. 'sizeof()' will not work across differing platforms (8bit/32bit)
+	const uint8_t __size__ = 32; // speify size here.. 'sizeof()' will not work across differing platforms (8bit/32bit)
 };
 
 #endif // !_C_STATUS_MESSAGE

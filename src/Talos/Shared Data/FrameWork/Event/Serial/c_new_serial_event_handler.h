@@ -28,13 +28,14 @@
 #include "../../../_s_framework_error.h"
 #include "../../../FrameWork/event/c_event_router.h"
 
-
+typedef void(*write_pointer)(uint8_t port, char byte);
 class c_new_serial_event_handler
 {
 	//variables
 public:
 	static void(*pntr_data_read_handler)(c_ring_buffer<char> * buffer);
-	static void(*pntr_data_write_handler)(c_ring_buffer<char> * buffer);
+	static void(*pntr_data_write_handler)(char **buffer, uint8_t(*pntr_hw_write)(uint8_t port, char byte));
+	
 
 protected:
 private:
@@ -42,7 +43,7 @@ private:
 
 	//functions
 public:
-	static void process(c_ring_buffer<char> * buffer, c_event_router::ss_outbound_data * event_object, c_event_router::ss_outbound_data::e_event_type event_id);
+	static void process(char **buffer, c_event_router::ss_outbound_data * event_object, c_event_router::ss_outbound_data::e_event_type event_id);
 	static void process(c_ring_buffer<char> * buffer, c_event_router::ss_inbound_data * event_object, c_event_router::ss_inbound_data::e_event_type event_id);
 	
 	static void read_data_handler_releaser(c_ring_buffer<char> * has_data);
@@ -55,7 +56,7 @@ private:
 		, e_error_source e_source, e_error_code e_code);
 
 	static void __assign_handler(c_ring_buffer<char> *buffer, c_event_router::ss_inbound_data * event_object, c_event_router::ss_inbound_data::e_event_type event_id);
-	static void __assign_handler(c_ring_buffer<char> *buffer, c_event_router::ss_outbound_data * event_object, c_event_router::ss_outbound_data::e_event_type event_id);
+	static void __assign_handler(char * buffer, c_event_router::ss_outbound_data * event_object, c_event_router::ss_outbound_data::e_event_type event_id);
 
 }; //c_serial_events
 #endif //__C_DATA_EVENTS_H__

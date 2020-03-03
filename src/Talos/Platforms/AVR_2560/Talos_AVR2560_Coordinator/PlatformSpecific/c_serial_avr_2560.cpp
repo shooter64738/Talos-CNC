@@ -11,24 +11,21 @@
 #include <avr/interrupt.h>
 #include <avr/io.h>
 #include <stddef.h>
+#include "../../../../Coordinator/Processing/Data/c_data_buffers.h"
 #include "../../../../Shared Data/FrameWork/extern_events_types.h"
 
-c_ring_buffer<char> Hardware_Abstraction_Layer::Serial::_usart0_read_buffer;
-static char _usart0_read_data[256];
-c_ring_buffer<char> Hardware_Abstraction_Layer::Serial::_usart1_read_buffer;
-static char _usart1_read_data[256];
 
 void Hardware_Abstraction_Layer::Serial::initialize(uint8_t Port, uint32_t BaudRate)
 {
-	
+	Talos::Coordinator::Data::Buffer::buffers[Port].ring_buffer.initialize(Talos::Coordinator::Data::Buffer::buffers[Port].storage, 256);
+	Talos::Shared::FrameWork::Events::Router.serial.inbound.pntr_ring_buffer = Talos::Coordinator::Data::Buffer::buffers;
+	Talos::Shared::FrameWork::Events::Router.serial.outbound.pntr_hw_write = Hardware_Abstraction_Layer::Serial::send;
+
 	uint16_t UBRR_value =0;
 	switch (Port)
 	{
 		case 0:
 		{
-			_usart0_read_buffer.initialize(_usart0_read_data,256);
-			Talos::Shared::FrameWork::Events::Router.serial.inbound.device = &Hardware_Abstraction_Layer::Serial::_usart0_read_buffer;
-			_usart0_read_buffer.pntr_device_write = Hardware_Abstraction_Layer::Serial::send;
 			
 			if (BaudRate < 57600)
 			{
@@ -51,8 +48,6 @@ void Hardware_Abstraction_Layer::Serial::initialize(uint8_t Port, uint32_t BaudR
 
 		case 1:
 		{
-		_usart1_read_buffer.initialize(_usart1_read_data,256);
-		Talos::Shared::FrameWork::Events::Router.serial.inbound.device = &Hardware_Abstraction_Layer::Serial::_usart1_read_buffer;
 			if (BaudRate < 57600)
 			{
 				UBRR_value = ((F_CPU / (8L * BaudRate)) - 1) / 2;
@@ -172,7 +167,8 @@ void Hardware_Abstraction_Layer::Serial::enable_tx_isr()
 ISR(USART_RX_vect)
 {
 	char Byte = UDR0;
-	Hardware_Abstraction_Layer::Serial::_usart0_read_buffer.put(Byte);
+	Talos::Coordinator::Data::Buffer::buffers[0].ring_buffer.put(Byte);
+	Talos::Shared::FrameWork::Events::Router.serial.inbound.event_manager.set((int)c_event_router::ss_inbound_data::e_event_type::Usart0DataArrival);
 }
 #endif
 
@@ -180,8 +176,7 @@ ISR(USART_RX_vect)
 ISR(USART0_RX_vect)
 {
 	char Byte = UDR0;
-	Hardware_Abstraction_Layer::Serial::_usart0_read_buffer.put(Byte);
-		
+	Talos::Coordinator::Data::Buffer::buffers[0].ring_buffer.put(Byte);
 	Talos::Shared::FrameWork::Events::Router.serial.inbound.event_manager.set((int)c_event_router::ss_inbound_data::e_event_type::Usart0DataArrival);
 }
 #endif
@@ -191,7 +186,9 @@ ISR(USART1_RX_vect)
 {
 	char Byte = UDR1;
 
-	//Hardware_Abstraction_Layer::Serial._usart1_buffer.put(Byte,13);
+	Talos::Coordinator::Data::Buffer::buffers[1].ring_buffer.put(Byte);
+	Talos::Shared::FrameWork::Events::Router.serial.inbound.event_manager.set((int)c_event_router::ss_inbound_data::e_event_type::Usart1DataArrival);
+	UDR1='Q';
 }
 #endif
 
@@ -200,7 +197,8 @@ ISR(USART2_RX_vect)
 {
 	char Byte = UDR2;
 
-	//Hardware_Abstraction_Layer::Serial._usart2_buffer.put(Byte,13);
+	Talos::Coordinator::Data::Buffer::buffers[2].ring_buffer.put(Byte);
+	Talos::Shared::FrameWork::Events::Router.serial.inbound.event_manager.set((int)c_event_router::ss_inbound_data::e_event_type::Usart2DataArrival);
 }
 #endif
 
@@ -209,7 +207,8 @@ ISR(USART3_RX_vect)
 {
 	char Byte = UDR3;
 
-	//Hardware_Abstraction_Layer::Serial._usart3_buffer.put(Byte,13);
+	Talos::Coordinator::Data::Buffer::buffers[3].ring_buffer.put(Byte);
+	Talos::Shared::FrameWork::Events::Router.serial.inbound.event_manager.set((int)c_event_router::ss_inbound_data::e_event_type::Usart3DataArrival);
 }
 #endif
 

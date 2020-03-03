@@ -21,7 +21,7 @@ namespace Talos
 		{
 			//variables
 			public:
-			static c_Serial host_serial;
+			static c_Serial host_serial, coordinator_serial;
 			protected:
 			private:
 
@@ -31,6 +31,7 @@ namespace Talos
 			static void run();
 			static void test_coord_msg();
 			static void test_spindle_msg();
+			static void test_motion_msg();
 			static void test_ngc_block();
 			static void error_handler(c_ring_buffer<char> * released_buffer, s_framework_error error);
 			//Main_Process();

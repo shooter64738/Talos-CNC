@@ -26,7 +26,7 @@ namespace Talos
 		{
 			//variables
 		public:
-			static c_Serial host_serial;
+			static c_Serial host_serial, motion_serial;
 		protected:
 		private:
 

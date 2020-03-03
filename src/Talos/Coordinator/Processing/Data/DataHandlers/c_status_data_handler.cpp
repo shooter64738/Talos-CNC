@@ -20,8 +20,9 @@
 
 #include "c_status_data_handler.h"
 #include "../../../../Shared Data/FrameWork/Data/cache_data.h"
+#include "../../Events/EventHandlers/c_report_events.h"
 
-bool Talos::Coordinator::Data::System::_send(uint8_t message
+bool Talos::Coordinator::Data::System::send(uint8_t message
 	, uint8_t origin
 	, uint8_t target
 	, uint8_t state, uint8_t sub_state, uint8_t type)
@@ -114,10 +115,11 @@ void Talos::Coordinator::Data::System::Type::__informal(s_system_message *status
 {
 	//System message contains information that we need to present to the user. 
 
-	//We got a status message from 
+	//We got a status message from some where
 	if (message == e_status_message::messages::e_informal::ReadyToProcess)
 	{
-
+		
+		Talos::Coordinator::Events::Report::event_manager.set((int)Events::Report::e_event_type::StatusMessage);
 	}
 }
 

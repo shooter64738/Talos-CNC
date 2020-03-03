@@ -19,7 +19,7 @@
 #include "../../Shared Data/FrameWork/extern_events_types.h"
 #include "../../Shared Data/_s_status_record.h"
 #include "../../Shared Data/FrameWork/Enumerations/Status/_e_system_messages.h"
-#include "../Processing/Data/DataHandlers/c_status_data_handler.h"
+
 
 #define MOTION_BUFFER_SIZE 2
 
@@ -162,15 +162,11 @@ void Motion_Core::Gateway::check_hardware_faults()
 			//Which axis has faulted?
 			if (Hardware_Abstraction_Layer::MotionCore::Inputs::Driver_Alarms & (1 << i))
 			{
+				Talos::Motion::Events::MotionController::faulting_axis_id = i;
 				break;
 			}
 		}
-		Talos::Motion::Data::Status::send((int)e_status_message::messages::e_warning::testwarning
-			, Talos::Shared::FrameWork::StartUp::cpu_type.Motion
-			, Talos::Shared::FrameWork::StartUp::cpu_type.Coordinator
-			, (int)e_status_message::e_status_state::motion::e_state::System_Error
-			, ((int)e_status_message::e_status_state::motion::e_sub_state::Error_Axis_Drive_Fault_X + i)
-			, (int)e_status_message::e_status_type::Warning);
+		
 		//		c_record_handler::handle_outbound_record(status,Motion_Core::c_processor::coordinator_serial);
 		Hardware_Abstraction_Layer::MotionCore::Inputs::Driver_Alarms = 0;
 	}

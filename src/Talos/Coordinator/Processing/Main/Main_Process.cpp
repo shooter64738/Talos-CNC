@@ -32,6 +32,7 @@ static int test_byte = 0;
 #endif
 
 c_Serial Talos::Coordinator::Main_Process::host_serial;
+c_Serial Talos::Coordinator::Main_Process::motion_serial;
 
 void Talos::Coordinator::Main_Process::__configure_ports()
 {
@@ -45,6 +46,7 @@ void Talos::Coordinator::Main_Process::__configure_ports()
 
 void Talos::Coordinator::Main_Process::initialize()
 {
+	Talos::Coordinator::Main_Process::__configure_ports();
 
 	//setup the error handler function pointer
 	Talos::Coordinator::Error::initialize(&Talos::Coordinator::Main_Process::host_serial);
@@ -54,6 +56,7 @@ void Talos::Coordinator::Main_Process::initialize()
 	Talos::Shared::FrameWork::Error::Handler::extern_pntr_ngc_error_handler = Talos::Coordinator::Error::ngc_error;
 
 	Talos::Coordinator::Main_Process::host_serial = c_Serial(Talos::Shared::FrameWork::StartUp::cpu_type.Host, 250000); //<--Connect to host
+	Talos::Coordinator::Main_Process::motion_serial = c_Serial(Talos::Shared::FrameWork::StartUp::cpu_type.Motion, 250000); //<--Connect to host
 	Talos::Coordinator::Main_Process::host_serial.print_string("Coordinator initializing\r\n");
 
 	__critical_initialization("Core", Hardware_Abstraction_Layer::Core::initialize, STARTUP_CLASS_CRITICAL);//<--core start up
@@ -71,7 +74,7 @@ void Talos::Coordinator::Main_Process::initialize()
 	//Load the initialize block from settings. These values are the 'initial' values of the gcode blocks
 	//that are processed.
 	Hardware_Abstraction_Layer::Disk::load_initialize_block(&Talos::Shared::c_cache_data::ngc_block_record);
-		
+	
 	//Assign the read,write function pointers. These assignments must take place outside the
 	//block buffer control. The block buffer control system must not know anything about the HAL it
 	//is servicing.
@@ -150,6 +153,7 @@ void Talos::Coordinator::Main_Process::__initialization_response(uint8_t respons
 	}
 }
 
+static uint32_t tic_count = 0;
 void Talos::Coordinator::Main_Process::run()
 {
 	Talos::Shared::FrameWork::Events::extern_system_events.event_manager.set((int)s_system_events::e_event_type::SystemAllOk);
@@ -158,6 +162,13 @@ void Talos::Coordinator::Main_Process::run()
 	//Start the eventing loop, stop loop if a critical system error occurs
 	while (Talos::Shared::FrameWork::Events::extern_system_events.event_manager.get((int)s_system_events::e_event_type::SystemAllOk))
 	{
+		while(1)
+		{
+			if(Talos::Shared::FrameWork::Events::Router.serial.inbound.event_manager.get_clr((int)c_event_router::ss_inbound_data::e_event_type::Usart1DataArrival))
+			{
+				Talos::Coordinator::Main_Process::host_serial.print_string("\r\n** byte **\r\n");
+			}
+		}
 
 		#ifdef MSVC
 		//simulate serial data coming in 1 byte at a time. This is a text record test
@@ -176,26 +187,31 @@ void Talos::Coordinator::Main_Process::run()
 		//		Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "");
 		#endif // MSVC
 		//
-
+		tic_count++;
+		if (tic_count > 120000)
+		{
+			//Talos::Shared::FrameWork::Events::Router.ready.event_manager.set((int)c_event_router::ss_ready_data::e_event_type::Testsignal);
+			
+			Talos::Coordinator::Main_Process::host_serial.print_string("alive\r\n");
+			tic_count = 0;
+		}
 
 		//0: Handle system events
 		//Talos::Coordinator::Events::system_event_handler.process();
-		//if there are any system critical events check them here and do not process further
 
 		//1: Handle hardware events
 		//Talos::Coordinator::Events::hardware_event_handler.process();
-
 		
-		//3: System event handler (should always follow the router events)
+		//2: System event handler (should always follow the router events)
 		Talos::Coordinator::Events::System::process();
 		
-		//4: Handle ancillary events
+		//3: Handle ancillary events
 		//Talos::Coordinator::Events::ancillary_event_handler.process();
 
-		//5:: Handle ngc processing events
+		//4:: Handle ngc processing events
 		Talos::Coordinator::Events::Ngc::process();
 
-		//6: Process reporting events
+		//5: Process reporting events
 		Talos::Coordinator::Events::Report::process();
 
 		/*if (extern_data_events.inquire.event_manager.get((int)s_inquiry_data::e_event_type::IntialBlockStatus))

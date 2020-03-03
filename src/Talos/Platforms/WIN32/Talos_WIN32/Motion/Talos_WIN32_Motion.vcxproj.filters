@@ -204,6 +204,9 @@
     <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Startup\c_framework_start.cpp">
       <Filter>Shared data\FrameWork\Startup</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\..\Motion\Processing\Data\c_data_buffers.cpp">
+      <Filter>Motion\Processing\Data</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\Shared Data\_peripheral_overide_enums.h">
@@ -396,6 +399,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Startup\c_framework_start.h">
       <Filter>Shared data\FrameWork\Startup</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Motion\Processing\Data\c_data_buffers.h">
+      <Filter>Motion\Processing\Data</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

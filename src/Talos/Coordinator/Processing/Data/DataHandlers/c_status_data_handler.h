@@ -51,7 +51,7 @@ namespace Talos
 				static void unkown_data_handler(c_ring_buffer <char> * buffer);*/
 				static void process_system_eventing();
 				static void process();
-				static bool _send(uint8_t message, uint8_t origin, uint8_t target, uint8_t state, uint8_t sub_state, uint8_t type);
+				static bool send(uint8_t message, uint8_t origin, uint8_t target, uint8_t state, uint8_t sub_state, uint8_t type);
 
 			protected:
 			private:

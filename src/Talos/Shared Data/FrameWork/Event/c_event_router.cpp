@@ -40,14 +40,14 @@ void c_event_router::process()
 		if (c_event_router::serial.in_events())
 		{
 			//We are skipping bit 31 in the flag list because it is a timeout flag. 
-			for (int i = 0; i < (sizeof(c_event_router::ss_inbound_data) * 8) - 0; i++)
+			for (int i = 0; i < 31; i++)
 			{
 				if (c_event_router::serial.inbound.event_manager.get(i))
 				{
-					//c_serial_event_handler::process(
-					//	&Hardware_Abstraction_Layer::Serial::_usart0_read_buffer, &extern_data_events.serial.inbound, (s_inbound_data::e_event_type)i);
+					
 					c_new_serial_event_handler::process(
-						c_event_router::serial.inbound.device, &c_event_router::serial.inbound, (c_event_router::ss_inbound_data::e_event_type)i);
+						&Talos::Shared::FrameWork::Events::Router.serial.inbound.pntr_ring_buffer[i].ring_buffer
+						, &c_event_router::serial.inbound, (c_event_router::ss_inbound_data::e_event_type)i);
 					//return here because we have processed an event, and we arent stacking them.
 					//one event gets assigned a handler and no other handler will be assigned
 					//until that event is finished.
@@ -59,12 +59,12 @@ void c_event_router::process()
 		//Check serial for out bound events
 		if (c_event_router::serial.out_events())
 		{
-			for (int i = 0; i < sizeof(c_event_router::ss_outbound_data) * 8; i++)
+			for (int i = 0; i < 31; i++)
 			{
 				if (c_event_router::serial.outbound.event_manager.get(i))
 				{
 					c_new_serial_event_handler::process(
-						c_event_router::serial.outbound.device, &c_event_router::serial.outbound
+						&Talos::Shared::FrameWork::Events::Router.serial.outbound.pntr_buffer, &c_event_router::serial.outbound
 						, (ss_outbound_data::e_event_type)i);
 					//return here because we have processed an event, and we arent stacking them.
 					//one event gets assigned a handler and no other handler will be assigned

@@ -11,6 +11,8 @@
 #include <iostream>
 #include "../../../../../c_ring_template.h"
 #include "../../../../../Shared Data/FrameWork/extern_events_types.h"
+#include "../../../../../Motion/Processing/Data/c_data_buffers.h"
+
 c_ring_buffer<char> Hardware_Abstraction_Layer::Serial::_usart0_read_buffer;
 static char _usart0_read_data[256];
 c_ring_buffer<char> Hardware_Abstraction_Layer::Serial::_usart1_read_buffer;
@@ -19,17 +21,17 @@ c_ring_buffer<char> Hardware_Abstraction_Layer::Serial::_usart1_write_buffer;
 static char _usart1_write_data[256];
 
 std::thread Hardware_Abstraction_Layer::Serial::__timer1_overflow(Hardware_Abstraction_Layer::Serial::__timer1_overflow_thread);
-
+static bool init = false;
 void Hardware_Abstraction_Layer::Serial::initialize(uint8_t Port, uint32_t BaudRate)
 {
-	Hardware_Abstraction_Layer::Serial::__timer1_overflow.detach();
+	if (!init)
+		Hardware_Abstraction_Layer::Serial::__timer1_overflow.detach();
+	init = true;
 
-	_usart0_read_buffer.initialize(_usart0_read_data, 256);
-	_usart1_write_buffer.initialize(_usart1_write_data, 256);
-	_usart1_write_buffer.pntr_device_write = Hardware_Abstraction_Layer::Serial::send;
+	Talos::Motion::Data::Buffer::buffers[Port].ring_buffer.initialize(Talos::Motion::Data::Buffer::buffers[Port].storage, 256);
+	Talos::Shared::FrameWork::Events::Router.serial.inbound.pntr_ring_buffer = Talos::Motion::Data::Buffer::buffers;
+	Talos::Shared::FrameWork::Events::Router.serial.outbound.pntr_hw_write = Hardware_Abstraction_Layer::Serial::send;
 
-	Talos::Shared::FrameWork::Events::Router.serial.inbound.device = &Hardware_Abstraction_Layer::Serial::_usart0_read_buffer;
-	Talos::Shared::FrameWork::Events::Router.serial.outbound.device = &Hardware_Abstraction_Layer::Serial::_usart1_write_buffer;
 }
 
 uint8_t Hardware_Abstraction_Layer::Serial::send(uint8_t Port, char byte)

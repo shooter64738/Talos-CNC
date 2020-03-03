@@ -25,7 +25,8 @@
 
 
 void(*c_new_serial_event_handler::pntr_data_read_handler)(c_ring_buffer<char> * buffer);
-void(*c_new_serial_event_handler::pntr_data_write_handler)(c_ring_buffer<char> * buffer);
+void(*c_new_serial_event_handler::pntr_data_write_handler)(char **buffer, uint8_t(*pntr_hw_write)(uint8_t port, char byte));
+
 static s_framework_error tracked_error;
 
 void c_new_serial_event_handler::process(c_ring_buffer<char> * buffer,
@@ -56,7 +57,7 @@ void c_new_serial_event_handler::process(c_ring_buffer<char> * buffer,
 	}
 }
 
-void c_new_serial_event_handler::process(c_ring_buffer<char> * buffer,
+void c_new_serial_event_handler::process(char ** buffer,
 	c_event_router::ss_outbound_data * event_object, c_event_router::ss_outbound_data::e_event_type event_id)
 {
 
@@ -64,14 +65,14 @@ void c_new_serial_event_handler::process(c_ring_buffer<char> * buffer,
 	//keep using it until all the data is consumed. Otherwise assign a new handler. 
 	if (c_new_serial_event_handler::pntr_data_write_handler == NULL)
 	{
-		c_new_serial_event_handler::__assign_handler(buffer, event_object, event_id);
+		c_new_serial_event_handler::__assign_handler(*buffer, event_object, event_id);
 	}
 
 	if (c_new_serial_event_handler::pntr_data_write_handler != NULL)
 	{
 		//The handler will release its self when it determines that all of the data for
 		//that particular handler has been consumed. 
-		c_new_serial_event_handler::pntr_data_write_handler(buffer);
+		c_new_serial_event_handler::pntr_data_write_handler(buffer, event_object->pntr_hw_write);
 	}
 }
 
@@ -132,7 +133,7 @@ void c_new_serial_event_handler::__assign_handler(c_ring_buffer <char> * buffer,
 	}
 }
 
-void c_new_serial_event_handler::__assign_handler(c_ring_buffer <char> * buffer,
+void c_new_serial_event_handler::__assign_handler(char * buffer,
 	c_event_router::ss_outbound_data * event_object, c_event_router::ss_outbound_data::e_event_type event_id)
 {
 	uint8_t write_count = 0;
@@ -158,8 +159,7 @@ void c_new_serial_event_handler::__assign_handler(c_ring_buffer <char> * buffer,
 		//ngc requests always go to the coordinator
 		write_destination = Talos::Shared::FrameWork::StartUp::cpu_type.Coordinator;
 		write_count = Talos::Shared::c_cache_data::ngc_block_record.__size__;
-		write_count = Talos::Shared::c_cache_data::status_record.__size__;
-		memcpy(buffer->_storage_pointer, &Talos::Shared::c_cache_data::ngc_block_record, write_count);
+		memcpy(buffer, &Talos::Shared::c_cache_data::ngc_block_record, write_count);
 		break;
 
 	case c_event_router::ss_outbound_data::e_event_type::StatusUpdate:
@@ -167,15 +167,17 @@ void c_new_serial_event_handler::__assign_handler(c_ring_buffer <char> * buffer,
 		//copy it to the outbound buffer, then release the pntr (set to null)
 		write_count = Talos::Shared::c_cache_data::status_record.__size__;
 		write_destination = Talos::Shared::c_cache_data::status_record.target;
-		memcpy(buffer->_storage_pointer, Talos::Shared::c_cache_data::pntr_status_record, write_count);
+		memset(event_object->_buffer,0,256);
+		event_object->pntr_buffer = event_object->_buffer;
+		memcpy(event_object->pntr_buffer, Talos::Shared::c_cache_data::pntr_status_record, write_count);
 		Talos::Shared::c_cache_data::pntr_status_record = NULL;
 		break;
 	default:
-		__raise_error(buffer, e_error_behavior::Critical, 0, e_error_group::EventHandler, e_error_process::EventAssign
+		__raise_error(NULL, e_error_behavior::Critical, 0, e_error_group::EventHandler, e_error_process::EventAssign
 			, e_record_types::Unknown, e_error_source::Serial, e_error_code::UnHandledRecordType);
 		return;
 	}
-
+	
 	//I could hard code a function pointer here, but this gives me more flexability. I let the 
 	//data handler decide how this data gets processed
 	//c_serial_event_handler::pntr_data_write_handler = c_ngc_data_handler::assign_handler(buffer, event_object, event_id, write_count);

@@ -186,6 +186,14 @@
       <SubType>compile</SubType>
       <Link>Coordinator\coordinator_main.cpp</Link>
     </Compile>
+    <Compile Include="..\..\..\Coordinator\Processing\Data\c_data_buffers.cpp">
+      <SubType>compile</SubType>
+      <Link>Coordinator\Processing\Data\c_data_buffers.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\Coordinator\Processing\Data\c_data_buffers.h">
+      <SubType>compile</SubType>
+      <Link>Coordinator\Processing\Data\c_data_buffers.h</Link>
+    </Compile>
     <Compile Include="..\..\..\Coordinator\Processing\Data\DataHandlers\c_binary_data_handler.cpp">
       <SubType>compile</SubType>
       <Link>Coordinator\Processing\Data\DataHandlers\c_binary_data_handler.cpp</Link>
@@ -534,6 +542,14 @@
       <SubType>compile</SubType>
       <Link>Shared Data\FrameWork\Data\cache_data.h</Link>
     </Compile>
+    <Compile Include="..\..\..\Shared Data\FrameWork\Data\c_data_buffer.cpp">
+      <SubType>compile</SubType>
+      <Link>Shared Data\FrameWork\Data\c_data_buffer.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\Shared Data\FrameWork\Data\c_data_buffer.h">
+      <SubType>compile</SubType>
+      <Link>Shared Data\FrameWork\Data\c_data_buffer.h</Link>
+    </Compile>
     <Compile Include="..\..\..\Shared Data\FrameWork\Data\c_new_data_handler.cpp">
       <SubType>compile</SubType>
       <Link>Shared Data\FrameWork\Data\c_new_data_handler.cpp</Link>
@@ -597,14 +613,6 @@
     <Compile Include="..\..\..\Shared Data\_e_feed_types.h">
       <SubType>compile</SubType>
       <Link>Shared Data\_e_feed_types.h</Link>
-    </Compile>
-    <Compile Include="..\..\..\Shared Data\_e_motion_state.h">
-      <SubType>compile</SubType>
-      <Link>Shared Data\_e_motion_state.h</Link>
-    </Compile>
-    <Compile Include="..\..\..\Shared Data\_e_motion_sub_state.h">
-      <SubType>compile</SubType>
-      <Link>Shared Data\_e_motion_sub_state.h</Link>
     </Compile>
     <Compile Include="..\..\..\Shared Data\_e_ramp_type.h">
       <SubType>compile</SubType>

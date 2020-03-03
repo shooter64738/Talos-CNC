@@ -1,6 +1,5 @@
-
 /*
-*  c_motion_events.h - NGC_RS274 controller.
+*  c_data_events.h - NGC_RS274 controller.
 *  A component of Talos
 *
 *  Copyright (c) 2016-2019 Jeff Dill
@@ -20,49 +19,50 @@
 */
 
 
-#ifndef __C_MOTION_CONTROL_EVENTS_H__
-#define __C_MOTION_CONTROL_EVENTS_H__
+#ifndef __C_COORDINATOR_DATA_BUFFER_H__
+#define __C_COORDINATOR_DATA_BUFFER_H__
+
 #include <stdint.h>
-#include "../../../../_bit_flag_control.h"
+//#include "../../../c_ring_template.h"
+#include "../../../Shared Data/FrameWork/Data/c_data_buffer.h"
+
+
+//typedef void(*xret_pointer)(c_ring_buffer <char> * buffer);
 
 namespace Talos
 {
-	namespace Motion
+	namespace Coordinator
 	{
-		namespace Events
+		namespace Data
 		{
-
-			class MotionController
+			class Buffer
 			{
-				//variables
 			public:
-				static uint8_t faulting_axis_id;
-				enum class e_event_type
+				//variables
+				/*struct s_device_buffer
 				{
-					SpindleToSpeedWait = 0,
-					SpindleToSpeedTimeOut = 1,
-					SpindleAtSpeed = 2,
-					Jog = 3,
-					AxisDriveFault = 4,
-				};
-				static s_bit_flag_controller<uint32_t> event_manager;
+					c_ring_buffer<char> ring_buffer;
+					char _usart0_read_data[256];
+					uint8_t(*pntr_hw_write)(uint8_t port, char byte);
+				};*/
+
+				static s_device_buffer buffers[];
+
+
+				//static void(*pntr_data_handler_release)();
+
 			protected:
 			private:
 
 
 				//functions
 			public:
-				//c_data_events();
-				//~c_data_events();
-				//c_data_events(const c_data_events &c);
-				//c_data_events& operator=(const c_data_events &c);
-
-				static void process();
+				//static xret_pointer assign_handler(c_ring_buffer <char> * buffer);
 
 			protected:
 			private:
-			}; //c_serial_events
+			};
 		};
 	};
 };
-#endif //__C_MOTION_CONTROL_EVENTS_H__
+#endif 

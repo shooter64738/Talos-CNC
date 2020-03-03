@@ -36,5 +36,10 @@ void Talos::Coordinator::Events::System::process()
 		//This will process the status record and may set several or no system events.
 		Talos::Coordinator::Data::System::process_system_eventing();
 
+	if (Talos::Shared::FrameWork::Events::Router.ready.event_manager.get((int)c_event_router::ss_ready_data::e_event_type::Testsignal))
+	{
+
+	}
+
 	//Now we can read through the system event flags and act on whatever is there.
 }
