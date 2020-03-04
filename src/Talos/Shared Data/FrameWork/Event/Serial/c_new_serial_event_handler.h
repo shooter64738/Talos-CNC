@@ -53,7 +53,7 @@ protected:
 private:
 	static void __raise_error(c_ring_buffer <char> * buffer_source, e_error_behavior e_behavior
 		, uint8_t data_size, e_error_group e_group, e_error_process e_process, e_record_types e_rec_type
-		, e_error_source e_source, e_error_code e_code);
+		, e_error_source e_source, e_error_code e_code, uint8_t e_origin);
 
 	static void __assign_handler(c_ring_buffer<char> *buffer, c_event_router::ss_inbound_data * event_object, c_event_router::ss_inbound_data::e_event_type event_id);
 	static void __assign_handler(char * buffer, c_event_router::ss_outbound_data * event_object, c_event_router::ss_outbound_data::e_event_type event_id);

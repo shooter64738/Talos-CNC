@@ -35,13 +35,20 @@ void Talos::Coordinator::Events::Report::process()
 {
 	if (Talos::Coordinator::Events::Report::event_manager.get_clr((int) Events::Report::e_event_type::StatusMessage))
 	{
-		rpt_serial->print_string("Sta:{Mot}");
+		rpt_serial->print_string("Sta:{Mot}");; __write_eol();
 		rpt_serial->print_string(" Rtp:"); rpt_serial->print_int32((int)Talos::Shared::c_cache_data::pntr_status_record->__rec_type__); __write_eol();
 		rpt_serial->print_string(" Org:"); rpt_serial->print_int32(Talos::Shared::c_cache_data::pntr_status_record->origin); __write_eol();
 		rpt_serial->print_string(" Trg:"); rpt_serial->print_int32(Talos::Shared::c_cache_data::pntr_status_record->target); __write_eol();
 		rpt_serial->print_string(" Msg:"); rpt_serial->print_int32(Talos::Shared::c_cache_data::pntr_status_record->message); __write_eol();
 		rpt_serial->print_string(" Ste:"); rpt_serial->print_int32(Talos::Shared::c_cache_data::pntr_status_record->state); __write_eol();
 		rpt_serial->print_string(" Sst:"); rpt_serial->print_int32(Talos::Shared::c_cache_data::pntr_status_record->sub_state); __write_eol();
+		rpt_serial->print_string(" Pos:");  __write_eol();
+		for (uint8_t i=0 ;i<MACHINE_AXIS_COUNT;i++)
+		{
+			rpt_serial->Write('\t');
+			rpt_serial->print_float(Talos::Shared::c_cache_data::pntr_status_record->position[i]);
+			__write_eol();
+		}
 		
 	}
 
@@ -51,14 +58,14 @@ void Talos::Coordinator::Events::Report::process()
 		__write_header(Talos::Shared::c_cache_data::ngc_block_record);
 
 		if (Talos::Shared::FrameWork::Events::Router.inquire.event_manager.get_clr((int)c_event_router::ss_inquiry_data::e_event_type::ActiveBlockGGroupStatus))
-			____group(COUNT_OF_G_CODE_GROUPS_ARRAY, Talos::Shared::c_cache_data::ngc_block_record.g_group, 'G');
+		____group(COUNT_OF_G_CODE_GROUPS_ARRAY, Talos::Shared::c_cache_data::ngc_block_record.g_group, 'G');
 
 		if (Talos::Shared::FrameWork::Events::Router.inquire.event_manager.get_clr((int)c_event_router::ss_inquiry_data::e_event_type::ActiveBlockMGroupStatus))
-			____group(COUNT_OF_M_CODE_GROUPS_ARRAY, Talos::Shared::c_cache_data::ngc_block_record.m_group, 'M');
+		____group(COUNT_OF_M_CODE_GROUPS_ARRAY, Talos::Shared::c_cache_data::ngc_block_record.m_group, 'M');
 
 
 		if (Talos::Shared::FrameWork::Events::Router.inquire.event_manager.get_clr((int)c_event_router::ss_inquiry_data::e_event_type::ActiveBlockWordStatus))
-			____word(COUNT_OF_BLOCK_WORDS_ARRAY, Talos::Shared::c_cache_data::ngc_block_record.word_values);
+		____word(COUNT_OF_BLOCK_WORDS_ARRAY, Talos::Shared::c_cache_data::ngc_block_record.word_values);
 	}
 }
 
@@ -124,7 +131,7 @@ void Talos::Coordinator::Events::Report::__pad_left(float value, uint8_t padcoun
 		rpt_serial->Write(pad_char);
 		dec_count = dec_count / 10;
 		if (dec_count <= 10 && value > 0)
-			break;
+		break;
 		padcount--;
 	}
 
@@ -132,9 +139,9 @@ void Talos::Coordinator::Events::Report::__pad_left(float value, uint8_t padcoun
 	if (pad_char >= '0' && pad_char <= '0')
 	{
 		if (decimals == 0)
-			rpt_serial->print_int32((int)value);
+		rpt_serial->print_int32((int)value);
 		else
-			rpt_serial->print_float(value, decimals);
+		rpt_serial->print_float(value, decimals);
 	}
 	else
 	{

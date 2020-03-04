@@ -39,11 +39,11 @@ void Talos::Motion::Events::System::process()
 
 	if (Talos::Shared::FrameWork::Events::Router.ready.event_manager.get((int)c_event_router::ss_ready_data::e_event_type::System))
 		//This will process the status record and may set several or no system events.
-		Talos::Motion::Data::Status::process_system_eventing();
+		Talos::Motion::Data::System::process_system_eventing();
 
 	if (Talos::Shared::FrameWork::Events::Router.ready.event_manager.get((int)c_event_router::ss_ready_data::e_event_type::Testsignal))
 		//this send a test message back to its host. 
-		if (Talos::Motion::Data::Status::send((int)e_status_message::messages::e_informal::ReadyToProcess
+		if (Talos::Motion::Data::System::send((int)e_status_message::messages::e_informal::ReadyToProcess
 			, Talos::Shared::FrameWork::StartUp::cpu_type.Motion
 			, Talos::Shared::FrameWork::StartUp::cpu_type.Coordinator
 			, (int)e_status_message::e_status_state::motion::e_state::Idle

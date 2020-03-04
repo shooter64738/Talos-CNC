@@ -45,6 +45,7 @@
     <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Data\cache_data.h" />
     <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Data\c_data_buffer.h" />
     <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Data\c_new_data_handler.h" />
+    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Data\c_system_data_handler.h" />
     <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Enumerations\Status\_e_system_messages.h" />
     <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Event\c_event_router.h" />
     <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Event\Serial\c_new_serial_event_handler.h" />
@@ -142,6 +143,7 @@
     <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Data\cache_data.cpp" />
     <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Data\c_data_buffer.cpp" />
     <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Data\c_new_data_handler.cpp" />
+    <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Data\c_system_data_handler.cpp" />
     <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Event\c_event_router.cpp" />
     <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Event\Serial\c_new_serial_event_handler.cpp" />
     <ClCompile Include="..\..\..\..\Shared Data\FrameWork\extern_events_types.cpp" />

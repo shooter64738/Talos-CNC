@@ -3,20 +3,27 @@
 #include <stdint.h>
 #include "_e_record_types.h"
 
-enum class e_error_group :uint8_t
-{
-	EventHandler = 0,
-	DataHandler = 1,
-	Interpreter = 2,
-	SystemHandler = 3
-};
-
 enum class e_error_source :uint8_t
 {
 	None = 0,
 	Serial = 1,
 	Disk = 2,
 	Network = 3
+};
+
+enum class e_error_behavior :uint8_t
+{
+	Critical = 0,
+	Recoverable = 1,
+	Informal = 2
+};
+
+enum class e_error_group :uint8_t
+{
+	EventHandler = 0,
+	DataHandler = 1,
+	Interpreter = 2,
+	SystemHandler = 3
 };
 
 enum class e_error_process :uint8_t
@@ -32,12 +39,6 @@ enum class e_error_process :uint8_t
 	NgcErrorCheck = 8
 };
 
-enum class e_error_behavior :uint8_t
-{
-	Critical = 0,
-	Recoverable = 1,
-	Informal = 2
-};
 
 enum class e_error_code :uint8_t
 {
@@ -57,6 +58,7 @@ struct s_framework_error
 	e_record_types __rec_type__;
 	e_error_behavior behavior;
 	uint16_t code;
+	uint8_t origin;
 	uint8_t data_size;
 
 };

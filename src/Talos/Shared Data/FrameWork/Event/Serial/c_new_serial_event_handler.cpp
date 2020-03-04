@@ -21,6 +21,7 @@
 #include "c_new_serial_event_handler.h"
 #include "../../Data/c_new_data_handler.h"
 #include "../../../../communication_def.h"
+#include "../../Data/c_system_data_handler.h"
 
 
 
@@ -105,16 +106,22 @@ void c_new_serial_event_handler::__assign_handler(c_ring_buffer <char> * buffer,
 		c_new_serial_event_handler::pntr_data_read_handler = c_new_data_handler::assign_handler(buffer, event_object, event_id, e_record_types::NgcBlockRecord);
 		//Assign a release call back function. The handler knows nothing about serial events
 		//and we want to keep it that way.
-		c_new_data_handler::pntr_data_handler_release = c_new_serial_event_handler::read_data_handler_releaser;
+		c_new_data_handler::pntr_read_data_handler_release = c_new_serial_event_handler::read_data_handler_releaser;
 
 	}
 	else if (peek_tail > 0 && peek_tail < 32) //non-printable and below 32 is a binary record
 	{
 		//Assign a specific handler for this data type
-		c_new_serial_event_handler::pntr_data_read_handler = c_new_data_handler::assign_handler(buffer, event_object, event_id, (e_record_types)peek_tail);
+		//c_new_serial_event_handler::pntr_data_read_handler = c_new_data_handler::assign_handler(buffer, event_object, event_id, (e_record_types)peek_tail);
+		if (peek_tail == (int)e_record_types::System)
+		{
+			Talos::Shared::FrameWork::Data::System::route_read(buffer,(int)event_id, &event_object->event_manager);
+			c_new_serial_event_handler::pntr_data_read_handler = Talos::Shared::FrameWork::Data::System::reader;
+		}
+		
 		//Assign a release call back function. The handler knows nothing about serial events
 		//and we want to keep it that way.
-		c_new_data_handler::pntr_data_handler_release = c_new_serial_event_handler::read_data_handler_releaser;
+		Talos::Shared::FrameWork::Data::System::pntr_read_release = c_new_serial_event_handler::read_data_handler_releaser;
 	}
 	else if (peek_tail > 127) //non-printable and above 127 is a control code
 	{
@@ -122,14 +129,14 @@ void c_new_serial_event_handler::__assign_handler(c_ring_buffer <char> * buffer,
 		c_new_serial_event_handler::pntr_data_read_handler = c_new_data_handler::assign_handler(buffer, event_object, event_id, (e_record_types)peek_tail);
 		//Assign a release call back function. The handler knows nothing about serial events
 		//and we want to keep it that way.
-		c_new_data_handler::pntr_data_handler_release = c_new_serial_event_handler::read_data_handler_releaser;
+		c_new_data_handler::pntr_read_data_handler_release = c_new_serial_event_handler::read_data_handler_releaser;
 	}
 	else //we dont know what kind of data it is
 	{
 		//since there is data here and we do not know what kind it is, we cannot determine which assigner it needs.
 		//i feel like this is probably a critical error. 
 		__raise_error(buffer, e_error_behavior::Critical, 0, e_error_group::EventHandler, e_error_process::EventAssign
-			, e_record_types::Unknown, e_error_source::Serial, e_error_code::UnHandledRecordType);
+			, e_record_types::Unknown, e_error_source::Serial, e_error_code::UnHandledRecordType, (int) event_id);
 	}
 }
 
@@ -163,38 +170,30 @@ void c_new_serial_event_handler::__assign_handler(char * buffer,
 		break;
 
 	case c_event_router::ss_outbound_data::e_event_type::StatusUpdate:
-		//pntr_status_record should be pointing to the status record we need to write
-		//copy it to the outbound buffer, then release the pntr (set to null)
-		write_count = Talos::Shared::c_cache_data::status_record.__size__;
-		write_destination = Talos::Shared::c_cache_data::status_record.target;
-		memset(event_object->_buffer,0,256);
-		event_object->pntr_buffer = event_object->_buffer;
-		memcpy(event_object->pntr_buffer, Talos::Shared::c_cache_data::pntr_status_record, write_count);
-		Talos::Shared::c_cache_data::pntr_status_record = NULL;
+		Talos::Shared::FrameWork::Data::System::route_write(event_object->pntr_hw_write
+			, (int)event_id, &event_object->event_manager);
+		c_new_serial_event_handler::pntr_data_write_handler = Talos::Shared::FrameWork::Data::System::writer;
+		//This is function point that gets 'called back' when all the data is done processing. 
+		Talos::Shared::FrameWork::Data::System::pntr_write_release = c_new_serial_event_handler::write_data_handler_releaser;
 		break;
 	default:
 		__raise_error(NULL, e_error_behavior::Critical, 0, e_error_group::EventHandler, e_error_process::EventAssign
-			, e_record_types::Unknown, e_error_source::Serial, e_error_code::UnHandledRecordType);
+			, e_record_types::Unknown, e_error_source::Serial, e_error_code::UnHandledRecordType, (int)event_id);
 		return;
 	}
 	
-	//I could hard code a function pointer here, but this gives me more flexability. I let the 
-	//data handler decide how this data gets processed
-	//c_serial_event_handler::pntr_data_write_handler = c_ngc_data_handler::assign_handler(buffer, event_object, event_id, write_count);
-	c_new_serial_event_handler::pntr_data_write_handler = c_new_data_handler::assign_handler(buffer, event_object, event_id, write_count, write_destination);
-	//This is function point that gets 'called back' when all the data is done processing. 
-	c_new_data_handler::pntr_data_handler_release = c_new_serial_event_handler::write_data_handler_releaser;
+	
 }
 
 void c_new_serial_event_handler::__raise_error(c_ring_buffer <char> * buffer_source, e_error_behavior e_behavior
 	, uint8_t data_size, e_error_group e_group, e_error_process e_process, e_record_types e_rec_type
-	, e_error_source e_source, e_error_code e_code)
+	, e_error_source e_source, e_error_code e_code, uint8_t e_origin)
 {
 	//release the handler because we should be done with it now, but pass a flag in indicating if
 	//there is more data to read from this buffer
 	//c_data_handler::pntr_data_handler_release(buffer_source);
 	//set the handler release to null now. we dont need it
-	c_new_data_handler::pntr_data_handler_release = NULL;
+	c_new_data_handler::pntr_read_data_handler_release = NULL;
 
 
 	tracked_error.behavior = e_behavior;
@@ -204,6 +203,7 @@ void c_new_serial_event_handler::__raise_error(c_ring_buffer <char> * buffer_sou
 	tracked_error.__rec_type__ = e_rec_type;
 	tracked_error.source = e_source;
 	tracked_error.code = (int)e_code;
+	tracked_error.origin = e_origin;
 	Talos::Shared::FrameWork::Error::Handler::extern_pntr_error_handler(buffer_source, tracked_error);
 }
 

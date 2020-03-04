@@ -31,13 +31,10 @@ bool Talos::Coordinator::Data::System::send(uint8_t message
 	//leave the events set and keep checking on each loop. it should send after only 1 processor loop
 	if (Talos::Shared::c_cache_data::pntr_status_record != NULL)
 		return false;
-
+	int x = sizeof(Talos::Shared::c_cache_data::status_record);
 	//set the pointer to the cache record
 	Talos::Shared::c_cache_data::pntr_status_record = &Talos::Shared::c_cache_data::status_record;
-	//clear the record
-	memset(Talos::Shared::c_cache_data::pntr_status_record, 0, sizeof(Talos::Shared::c_cache_data::status_record));
-
-
+	
 	Talos::Shared::c_cache_data::pntr_status_record->message = message;
 	Talos::Shared::c_cache_data::pntr_status_record->origin = origin;
 	Talos::Shared::c_cache_data::pntr_status_record->target = target;
@@ -116,7 +113,7 @@ void Talos::Coordinator::Data::System::Type::__informal(s_system_message *status
 	//System message contains information that we need to present to the user. 
 
 	//We got a status message from some where
-	if (message == e_status_message::messages::e_informal::ReadyToProcess)
+	//if (message == e_status_message::messages::e_informal::ReadyToProcess)
 	{
 		
 		Talos::Coordinator::Events::Report::event_manager.set((int)Events::Report::e_event_type::StatusMessage);

@@ -23,8 +23,9 @@
 #include "../../../../Shared Data/FrameWork/extern_events_types.h"
 #include "../../Events/EventHandlers/c_system_event_handler.h"
 #include "../../../Core/c_interpollation_hardware.h"
+#include "../../Main/Main_Process.h"
 
-bool Talos::Motion::Data::Status::send(uint8_t message, uint8_t origin, uint8_t target
+bool Talos::Motion::Data::System::send(uint8_t message, uint8_t origin, uint8_t target
 	, uint8_t state, uint8_t sub_state, uint8_t type)
 {
 	//if the cache data system rec pointer is null we are free to use it. if its not, we must
@@ -45,13 +46,19 @@ bool Talos::Motion::Data::Status::send(uint8_t message, uint8_t origin, uint8_t 
 	Talos::Shared::c_cache_data::pntr_status_record->state = state;
 	Talos::Shared::c_cache_data::pntr_status_record->sub_state = sub_state;
 	Talos::Shared::c_cache_data::pntr_status_record->type = type;
+	Talos::Shared::c_cache_data::pntr_status_record->position[0]=123;
+	Talos::Shared::c_cache_data::pntr_status_record->position[1]=456;
+	Talos::Shared::c_cache_data::pntr_status_record->position[2]=789;
+	Talos::Shared::c_cache_data::pntr_status_record->position[3]=102;
+	Talos::Shared::c_cache_data::pntr_status_record->position[4]=345;
+	Talos::Shared::c_cache_data::pntr_status_record->position[5]=678;
 
 	Talos::Shared::FrameWork::Events::Router.serial.outbound.event_manager.set((int)c_event_router::ss_outbound_data::e_event_type::StatusUpdate);
-	
+Talos::Motion::Main_Process::host_serial.print_string("sent\r\n");
 	return true;
 }
 
-void Talos::Motion::Data::Status::process_system_eventing()
+void Talos::Motion::Data::System::process_system_eventing()
 {
 	Type::__process(&Talos::Shared::c_cache_data::status_record);
 	//Now that the status record is processed any event expansion has taken place
@@ -59,7 +66,7 @@ void Talos::Motion::Data::Status::process_system_eventing()
 	Talos::Shared::FrameWork::Events::Router.ready.event_manager.clear((int)c_event_router::ss_ready_data::e_event_type::System);
 }
 
-void Talos::Motion::Data::Status::Type::__process(s_system_message *status)
+void Talos::Motion::Data::System::Type::__process(s_system_message *status)
 {
 	switch ((e_status_message::e_status_type)status->type)
 	{
@@ -80,7 +87,7 @@ void Talos::Motion::Data::Status::Type::__process(s_system_message *status)
 	}
 }
 
-void Talos::Motion::Data::Status::Type::__critical(s_system_message *status, e_status_message::messages::e_critical message)
+void Talos::Motion::Data::System::Type::__critical(s_system_message *status, e_status_message::messages::e_critical message)
 {
 	s_framework_error error;
 	error.behavior = e_error_behavior::Critical;
@@ -101,14 +108,14 @@ void Talos::Motion::Data::Status::Type::__critical(s_system_message *status, e_s
 	}
 }
 
-void Talos::Motion::Data::Status::Type::__data(s_system_message *status, e_status_message::messages::e_data message)
+void Talos::Motion::Data::System::Type::__data(s_system_message *status, e_status_message::messages::e_data message)
 {
 	//This status message contains data of some type. it could be spindle speed/direction, motion planning, etc.. 
 
 	//check message value
 }
 
-void Talos::Motion::Data::Status::Type::__informal(s_system_message *status, e_status_message::messages::e_informal message)
+void Talos::Motion::Data::System::Type::__informal(s_system_message *status, e_status_message::messages::e_informal message)
 {
 	//System message contains information that we need to present to the user. 
 
@@ -130,31 +137,31 @@ void Talos::Motion::Data::Status::Type::__informal(s_system_message *status, e_s
 
 }
 
-void Talos::Motion::Data::Status::Type::__warning(s_system_message *status, e_status_message::messages::e_warning message)
+void Talos::Motion::Data::System::Type::__warning(s_system_message *status, e_status_message::messages::e_warning message)
 {
 	//This is a warnign status from somewhere. We jsut need to inform the user of it, but its not somethign that will cause a fault
 
 	//check message value
 }
 
-void Talos::Motion::Data::Status::Origin::__coordinator(s_system_message *status, e_status_message::messages::e_warning message)
+void Talos::Motion::Data::System::Origin::__coordinator(s_system_message *status, e_status_message::messages::e_warning message)
 {
 	Talos::Shared::FrameWork::Events::extern_system_events.event_manager.set((int)s_system_events::e_event_type::SystemCritical);
 	//Talos::Shared::FrameWork::Error::Handler::extern_pntr_error_handler(NULL, error);
 }
-void Talos::Motion::Data::Status::Origin::__host(s_system_message *status, e_status_message::messages::e_warning message)
+void Talos::Motion::Data::System::Origin::__host(s_system_message *status, e_status_message::messages::e_warning message)
 {
 
 }
-void Talos::Motion::Data::Status::Origin::__motion(s_system_message *status, e_status_message::messages::e_warning message)
+void Talos::Motion::Data::System::Origin::__motion(s_system_message *status, e_status_message::messages::e_warning message)
 {
 
 }
-void Talos::Motion::Data::Status::Origin::__spindle(s_system_message *status, e_status_message::messages::e_warning message)
+void Talos::Motion::Data::System::Origin::__spindle(s_system_message *status, e_status_message::messages::e_warning message)
 {
 
 }
-void Talos::Motion::Data::Status::Origin::__peripheral(s_system_message *status, e_status_message::messages::e_warning message)
+void Talos::Motion::Data::System::Origin::__peripheral(s_system_message *status, e_status_message::messages::e_warning message)
 {
 
 }

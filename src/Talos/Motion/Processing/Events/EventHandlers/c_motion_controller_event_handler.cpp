@@ -30,7 +30,7 @@ void Talos::Motion::Events::MotionController::process()
 {
 	if (Talos::Motion::Events::MotionController::event_manager.get((int)Talos::Motion::Events::MotionController::e_event_type::AxisDriveFault))
 	{
-		if (Talos::Motion::Data::Status::send((int)e_status_message::messages::e_warning::testwarning
+		if (Talos::Motion::Data::System::send((int)e_status_message::messages::e_warning::testwarning
 			, Talos::Shared::FrameWork::StartUp::cpu_type.Motion
 			, Talos::Shared::FrameWork::StartUp::cpu_type.Coordinator
 			, (int)e_status_message::e_status_state::motion::e_state::System_Error

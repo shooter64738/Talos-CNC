@@ -36,8 +36,9 @@ class c_new_data_handler
 {
 	//variables
 public:
-	static void(*pntr_data_handler_release)(c_ring_buffer<char> * buffer);
-	static void(*pntr_bin_data_copy)(c_ring_buffer<char> * buffer);
+	static void(*pntr_read_data_handler_release)(c_ring_buffer<char> * buffer);
+	static void(*pntr_write_data_handler_release)(c_ring_buffer<char> * buffer);
+	static void(*pntr_bin_data_copy)(char * buffer);
 protected:
 private:
 
@@ -61,12 +62,13 @@ public:
 	
 protected:
 private:
-	static void __release(c_ring_buffer <char> * buffer_source);
+	static void __release_read(c_ring_buffer <char> * buffer_source);
+	static void __release_write(c_ring_buffer <char> * buffer_source);
 	static void __raise_error(c_ring_buffer <char> * buffer_source, e_error_behavior e_behavior
 		, uint8_t data_size, e_error_group e_group, e_error_process e_process, e_record_types e_rec_type
 		, e_error_source e_source, e_error_code e_code);
 	static void __set_entry_mode(char first_byte, char second_byte);
 	static void __set_sub_entry_mode(char byte);
-	static void __bin_data_copy(c_ring_buffer <char> * buffer);
+	static void __bin_data_copy(char * buffer);
 }; //c_serial_events
 #endif //__C_DATA_EVENTS_H__

@@ -49,7 +49,7 @@ void Talos::Coordinator::Error::ngc_error(char * ngc_line, s_framework_error err
 	
 	__print_base(error);
 
-	err_serial->Write(ngc_line);	
+	err_serial->Write(ngc_line);
 	__write_eol();err_serial->print_string("** Ngc Reset **");
 	__write_eol();
 }
@@ -70,6 +70,9 @@ void Talos::Coordinator::Error::__print_base(s_framework_error error)
 	err_serial->print_int32((int)error.__rec_type__);
 	__write_eol();err_serial->print_string("\tCde:");
 	err_serial->print_int32((int)error.code);
+	__write_eol();err_serial->print_string("\tOrg:");
+	err_serial->print_int32((int)error.origin);
+
 	__write_eol();
 }
 

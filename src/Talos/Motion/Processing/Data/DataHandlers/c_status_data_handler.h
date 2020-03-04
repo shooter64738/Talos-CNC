@@ -34,7 +34,7 @@ namespace Talos
 	{
 		namespace Data
 		{
-			class Status
+			class System
 			{
 				//variables
 			public:

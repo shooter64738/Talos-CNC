@@ -56,7 +56,7 @@ void Talos::Coordinator::Main_Process::initialize()
 	Talos::Shared::FrameWork::Error::Handler::extern_pntr_ngc_error_handler = Talos::Coordinator::Error::ngc_error;
 
 	Talos::Coordinator::Main_Process::host_serial = c_Serial(Talos::Shared::FrameWork::StartUp::cpu_type.Host, 250000); //<--Connect to host
-	Talos::Coordinator::Main_Process::motion_serial = c_Serial(Talos::Shared::FrameWork::StartUp::cpu_type.Motion, 250000); //<--Connect to host
+	Talos::Coordinator::Main_Process::motion_serial = c_Serial(1, 250000); //<--Connect to host
 	Talos::Coordinator::Main_Process::host_serial.print_string("Coordinator initializing\r\n");
 
 	__critical_initialization("Core", Hardware_Abstraction_Layer::Core::initialize, STARTUP_CLASS_CRITICAL);//<--core start up
@@ -153,6 +153,7 @@ void Talos::Coordinator::Main_Process::__initialization_response(uint8_t respons
 	}
 }
 
+
 static uint32_t tic_count = 0;
 void Talos::Coordinator::Main_Process::run()
 {
@@ -162,13 +163,14 @@ void Talos::Coordinator::Main_Process::run()
 	//Start the eventing loop, stop loop if a critical system error occurs
 	while (Talos::Shared::FrameWork::Events::extern_system_events.event_manager.get((int)s_system_events::e_event_type::SystemAllOk))
 	{
-		while(1)
-		{
-			if(Talos::Shared::FrameWork::Events::Router.serial.inbound.event_manager.get_clr((int)c_event_router::ss_inbound_data::e_event_type::Usart1DataArrival))
-			{
-				Talos::Coordinator::Main_Process::host_serial.print_string("\r\n** byte **\r\n");
-			}
-		}
+		//while(1)
+		//{
+			//if(Talos::Shared::FrameWork::Events::Router.serial.inbound.event_manager.get_clr((int)c_event_router::ss_inbound_data::e_event_type::Usart1DataArrival))
+			//{
+				//
+				//Talos::Coordinator::Main_Process::host_serial.print_string("\r\n** byte **\r\n");
+			//}
+		//}
 
 		#ifdef MSVC
 		//simulate serial data coming in 1 byte at a time. This is a text record test
@@ -176,8 +178,8 @@ void Talos::Coordinator::Main_Process::run()
 		//if (test_byte < 5)
 		if (!Talos::Shared::FrameWork::Events::extern_system_events.event_manager.get((int)s_system_events::e_event_type::NgcReset))
 		{
-			byte = test_line[test_byte++];
-			Hardware_Abstraction_Layer::Serial::add_to_buffer(0, byte);
+			//byte = test_line[test_byte++];
+			//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, byte);
 		}
 
 
@@ -220,4 +222,16 @@ void Talos::Coordinator::Main_Process::run()
 
 	Talos::Coordinator::Main_Process::host_serial.print_string("\r\n** System halted **");
 	while (1) {}
+}
+
+void Talos::Coordinator::Main_Process::test_motion_msg()
+{
+	//setup a fake status message from spindle so the mc thinks its ready to run
+	Talos::Shared::FrameWork::Events::Router.ready.event_manager.set((int)c_event_router::ss_ready_data::e_event_type::System);
+	Talos::Shared::c_cache_data::status_record.type = (int)e_status_message::e_status_type::Informal;
+	Talos::Shared::c_cache_data::status_record.message = (int)e_status_message::messages::e_informal::ReadyToProcess;
+	Talos::Shared::c_cache_data::status_record.state = (int)e_status_message::e_status_state::motion::e_state::Idle;
+	Talos::Shared::c_cache_data::status_record.sub_state = (int)e_status_message::e_status_state::motion::e_sub_state::OK;
+	Talos::Shared::c_cache_data::status_record.origin = Talos::Shared::FrameWork::StartUp::cpu_type.Motion;
+	Talos::Shared::c_cache_data::status_record.target = Talos::Shared::FrameWork::StartUp::cpu_type.Coordinator;
 }

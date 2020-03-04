@@ -356,6 +356,9 @@
     <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Data\c_data_buffer.h">
       <Filter>Shared Data\FrameWork\Data</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Data\c_system_data_handler.h">
+      <Filter>Shared Data\FrameWork\Data</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\..\Coordinator\coordinator_main.cpp">
@@ -494,6 +497,9 @@
       <Filter>Coordinator\Processing\Data</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Data\c_data_buffer.cpp">
+      <Filter>Shared Data\FrameWork\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Data\c_system_data_handler.cpp">
       <Filter>Shared Data\FrameWork\Data</Filter>
     </ClCompile>
   </ItemGroup>

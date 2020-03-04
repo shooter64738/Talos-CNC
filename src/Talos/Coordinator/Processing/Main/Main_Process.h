@@ -34,6 +34,7 @@ namespace Talos
 		public:
 			static void initialize();
 			static void run();
+			static void test_motion_msg();
 			static void general_error(c_ring_buffer<char> * released_buffer, s_framework_error error);
 			static void ngc_error_handler(char * ngc_line, s_framework_error error);
 			static void ngc_block_report(s_ngc_block block);

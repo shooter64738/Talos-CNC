@@ -42,7 +42,7 @@ struct s_device_buffer
 {
 	c_ring_buffer<char> ring_buffer;
 	char storage[256];
-	uint8_t(*pntr_hw_write)(uint8_t port, char byte);
+	//uint8_t(*pntr_hw_write)(uint8_t port, char byte);
 };
 
 //				static s_device_buffer buffers[];

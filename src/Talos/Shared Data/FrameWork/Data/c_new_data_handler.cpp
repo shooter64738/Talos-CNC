@@ -31,8 +31,9 @@ static c_event_router::ss_inbound_data * tracked_read_object;
 static e_record_types tracked_read_type;
 static s_framework_error tracked_error;
 
-void(*c_new_data_handler::pntr_data_handler_release)(c_ring_buffer<char> * buffer);
-void(*c_new_data_handler::pntr_bin_data_copy)(c_ring_buffer<char> * buffer);
+void(*c_new_data_handler::pntr_read_data_handler_release)(c_ring_buffer<char> * buffer);
+void(*c_new_data_handler::pntr_write_data_handler_release)(c_ring_buffer<char> * buffer);
+void(*c_new_data_handler::pntr_bin_data_copy)(char * buffer);
 
 ret_pointer c_new_data_handler::assign_handler(
 	c_ring_buffer <char> * buffer, c_event_router::ss_inbound_data * event_object,
@@ -158,7 +159,7 @@ void c_new_data_handler::txt_read_handler(c_ring_buffer <char> * buffer)
 				tracked_read_object->event_manager.clear((int)tracked_read_event);
 
 			tracked_read_object = NULL;
-			c_new_data_handler::__release(buffer);
+			c_new_data_handler::__release_read(buffer);
 			break;
 		}
 		Talos::Shared::c_cache_data::ngc_line_record.pntr_record++;
@@ -171,7 +172,12 @@ void c_new_data_handler::bin_read_handler(c_ring_buffer <char> * buffer)
 {
 	//if a copier is assigned, wait until it is done before we read data from the buffer again
 	if (pntr_bin_data_copy != NULL)
-		return pntr_bin_data_copy(buffer);
+	{
+		pntr_bin_data_copy(Talos::Shared::c_cache_data::binary_buffer_array);
+		if (!buffer->has_data())
+			tracked_read_object->event_manager.clear((int)tracked_read_event);
+		return;
+	}
 
 	if (!Talos::Shared::FrameWork::Events::Router.serial.inbound.ms_time_out)
 	{
@@ -198,13 +204,13 @@ void c_new_data_handler::bin_read_handler(c_ring_buffer <char> * buffer)
 		//released.
 		pntr_bin_data_copy = __bin_data_copy;
 		//Lets go ahead and try and copy it. it may not be in use. 
-		__bin_data_copy(buffer);
+		__bin_data_copy(Talos::Shared::c_cache_data::binary_buffer_array);
 	}
 
 
 }
 
-void c_new_data_handler::__bin_data_copy(c_ring_buffer <char> * buffer)
+void c_new_data_handler::__bin_data_copy(char * buffer)
 {
 	switch (tracked_read_type)
 	{
@@ -225,7 +231,8 @@ void c_new_data_handler::__bin_data_copy(c_ring_buffer <char> * buffer)
 		//If the cache record is in use return.. its being used for something at the moment.
 		if (Talos::Shared::c_cache_data::pntr_status_record != NULL)
 			return;
-		memcpy(&Talos::Shared::c_cache_data::status_record, buffer->_storage_pointer, Talos::Shared::c_cache_data::status_record.__size__);
+		Talos::Shared::c_cache_data::pntr_status_record = &Talos::Shared::c_cache_data::status_record;
+		memcpy(Talos::Shared::c_cache_data::pntr_status_record, buffer, Talos::Shared::c_cache_data::status_record.__size__);
 		Talos::Shared::FrameWork::Events::Router.ready.event_manager.set((int)c_event_router::ss_ready_data::e_event_type::System);
 
 		//System messages are how the different cpu;s talk to each other. These messages could be extremley important. 
@@ -234,21 +241,17 @@ void c_new_data_handler::__bin_data_copy(c_ring_buffer <char> * buffer)
 
 
 		break;
-	case e_record_types::NgcBlockRecord:
+	/*case e_record_types::NgcBlockRecord:
 		memcpy(&Talos::Shared::c_cache_data::ngc_block_record, buffer->_storage_pointer, Talos::Shared::c_cache_data::ngc_block_record.__size__);
 		Talos::Shared::FrameWork::Events::Router.ready.event_manager.set((int)c_event_router::ss_ready_data::e_event_type::NgcDataBlock);
-		break;
+		break;*/
 
 	}
 
 	Talos::Shared::c_cache_data::pntr_binary_buffer_array = NULL;
-
-	if (!buffer->has_data())
-	tracked_read_object->event_manager.clear((int)tracked_read_event);
-
 	tracked_read_object = NULL;
 
-	c_new_data_handler::__release(buffer);
+	c_new_data_handler::__release_read(NULL);
 }
 
 //void c_new_data_handler::write_handler(char * buffer, uint8_t(*pntr_hw_write)(uint8_t port, char byte))
@@ -275,18 +278,27 @@ void c_new_data_handler::write_handler(char ** buffer, uint8_t(*pntr_hw_write)(u
 		tracked_write_object->event_manager.clear((int)tracked_write_event);
 		tracked_write_object = NULL;
 
-		c_new_data_handler::__release(NULL);
+		c_new_data_handler::__release_write(NULL);
 	}
 }
 
-void c_new_data_handler::__release(c_ring_buffer <char> * buffer_source)
+void c_new_data_handler::__release_read(c_ring_buffer <char> * buffer_source)
 {
 	//release the handler because we should be done with it now, but pass a flag in indicating if
 	//there is more data to read from this buffer
-	c_new_data_handler::pntr_data_handler_release(buffer_source);
+	c_new_data_handler::pntr_read_data_handler_release(buffer_source);
 	//set the handler release to null now. we dont need it
-	c_new_data_handler::pntr_data_handler_release = NULL;
+	c_new_data_handler::pntr_read_data_handler_release = NULL;
 	c_new_data_handler::pntr_bin_data_copy = NULL;
+}
+
+void c_new_data_handler::__release_write(c_ring_buffer <char> * buffer_source)
+{
+	//release the handler because we should be done with it now, but pass a flag in indicating if
+	//there is more data to read from this buffer
+	c_new_data_handler::pntr_write_data_handler_release(buffer_source);
+	//set the handler release to null now. we dont need it
+	c_new_data_handler::pntr_write_data_handler_release = NULL;
 }
 
 void c_new_data_handler::__raise_error(c_ring_buffer <char> * buffer_source, e_error_behavior e_behavior
@@ -297,7 +309,7 @@ void c_new_data_handler::__raise_error(c_ring_buffer <char> * buffer_source, e_e
 	//there is more data to read from this buffer
 	//c_data_handler::pntr_data_handler_release(buffer_source);
 	//set the handler release to null now. we dont need it
-	c_new_data_handler::pntr_data_handler_release = NULL;
+	c_new_data_handler::pntr_read_data_handler_release = NULL;
 
 
 	tracked_error.behavior = e_behavior;

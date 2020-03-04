@@ -40,6 +40,17 @@ void Talos::Coordinator::Events::System::process()
 	{
 
 	}
+	if (Talos::Shared::FrameWork::Events::Router.ready.event_manager.get((int)c_event_router::ss_ready_data::e_event_type::Testsignal))
+		//this send a test message back to its host. 
+	if (Talos::Coordinator::Data::System::send((int)e_status_message::messages::e_informal::ReadyToProcess
+		, Talos::Shared::FrameWork::StartUp::cpu_type.Coordinator
+		, Talos::Shared::FrameWork::StartUp::cpu_type.Motion
+		, (int)e_status_message::e_status_state::motion::e_state::Idle
+		, (int)e_status_message::e_status_state::motion::e_sub_state::OK
+		, (int)e_status_message::e_status_type::Informal))
+	{
+		Talos::Shared::FrameWork::Events::Router.ready.event_manager.clear((int)c_event_router::ss_ready_data::e_event_type::Testsignal);
+	}
 
 	//Now we can read through the system event flags and act on whatever is there.
 }

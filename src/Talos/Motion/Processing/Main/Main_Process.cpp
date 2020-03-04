@@ -115,13 +115,13 @@ void Talos::Motion::Main_Process::run()
 
 	while (Talos::Shared::FrameWork::Events::extern_system_events.event_manager.get((int)s_system_events::e_event_type::SystemAllOk))
 	{
-		while(1)
-		{
-			if(Talos::Shared::FrameWork::Events::Router.serial.inbound.event_manager.get_clr((int)c_event_router::ss_inbound_data::e_event_type::Usart1DataArrival))
-			{
-				Talos::Motion::Main_Process::coordinator_serial.print_string("hey\r\n");
-			}
-		}
+		//while(1)
+		//{
+			//if(Talos::Shared::FrameWork::Events::Router.serial.inbound.event_manager.get_clr((int)c_event_router::ss_inbound_data::e_event_type::Usart1DataArrival))
+			//{
+				//Talos::Motion::Main_Process::coordinator_serial.print_string("hey\r\n");
+			//}
+		//}
 
 		#ifdef MSVC
 		//simulate data coming in from coordiantor AFTER it was ran through the event router
@@ -162,7 +162,7 @@ void Talos::Motion::Main_Process::run()
 		}
 
 		//0: Handle system events
-		Talos::Motion::Events::System::process();
+		//Talos::Motion::Events::System::process();
 
 		//1: Handle motion controller events
 		Talos::Motion::Events::MotionController::process();

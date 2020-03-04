@@ -47,7 +47,7 @@ void Talos::Motion::Events::MotionControl::process()
 	if (MotionControl::event_manager.get((int)MotionControl::e_event_type::BlockComplete))
 	{
 		//see if we can send a system message. If not leave the events in place and it will keep trying
-		if (Talos::Motion::Data::Status::send(
+		if (Talos::Motion::Data::System::send(
 			(int)e_status_message::messages::e_informal::BlockCompleted
 			, Shared::FrameWork::StartUp::cpu_type.Motion
 			, Shared::FrameWork::StartUp::cpu_type.Coordinator
