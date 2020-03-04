@@ -42,11 +42,20 @@ namespace Talos
 
 			//functions
 		public:
-			static void general_error(c_ring_buffer<char> * released_buffer, s_framework_error error);
-			static void ngc_error(char * ngc_line, s_framework_error error);
+			static void general_error(e_error_behavior e_behavior
+				, uint8_t data_size, e_error_group e_group, e_error_process e_process, e_record_types e_rec_type
+				, e_error_source e_source, e_error_code e_code, uint8_t e_origin, e_error_stack e_stack);
+			
+			static void ngc_error(char * ngc_line, e_error_behavior e_behavior
+				, uint8_t data_size, e_error_group e_group, e_error_process e_process, e_record_types e_rec_type
+				, e_error_source e_source, e_error_code e_code, uint8_t e_origin, e_error_stack e_stack);
+			
 			static uint8_t initialize(c_Serial *serial);
 		private:
-			static void __print_base(s_framework_error error);
+			static void __print_base(e_error_behavior e_behavior
+				, uint8_t data_size, e_error_group e_group, e_error_process e_process, e_record_types e_rec_type
+				, e_error_source e_source, e_error_code e_code, uint8_t e_origin, uint16_t e_stack);
+
 			static void __write_eol();
 
 

@@ -38,7 +38,7 @@ void Talos::Coordinator::Main_Process::__configure_ports()
 {
 	Talos::Shared::FrameWork::StartUp::cpu_type.Coordinator = 0;
 	Talos::Shared::FrameWork::StartUp::cpu_type.Host = 0;
-	Talos::Shared::FrameWork::StartUp::cpu_type.Motion = 1;
+	Talos::Shared::FrameWork::StartUp::cpu_type.Motion = 0;
 	Talos::Shared::FrameWork::StartUp::cpu_type.Spindle = 2;
 	Talos::Shared::FrameWork::StartUp::cpu_type.Peripheral = 3;
 	
@@ -65,9 +65,9 @@ void Talos::Coordinator::Main_Process::initialize()
 	__critical_initialization("\tSettings", Hardware_Abstraction_Layer::Disk::load_configuration, STARTUP_CLASS_WARNING);//<--drive/eprom storage
 	__critical_initialization("\tConfiguration", Talos::Confguration::initialize, STARTUP_CLASS_CRITICAL);//<--g code buffer
 	//__critical_initialization("Events", Talos::Shared::Events::initialize, STARTUP_CLASS_CRITICAL);//<--init events
-	//__critical_initialization("Ngc Buffer", Talos::Motion::NgcBuffer::initialize,STARTUP_CLASS_CRITICAL);//<--g code buffer
-	//__critical_initialization("Ngc Startup", c_ngc_data_handler::initialize, STARTUP_CLASS_CRITICAL);//<--g code buffer
-	//__critical_initialization("Ngc Line", NGC_RS274::LineProcessor::initialize,STARTUP_CLASS_CRITICAL);//<--g code interpreter
+	//__critical_initialization("Data Buffer", Talos::Motion::NgcBuffer::initialize,STARTUP_CLASS_CRITICAL);//<--g code buffer
+	//__critical_initialization("Data Startup", c_ngc_data_handler::initialize, STARTUP_CLASS_CRITICAL);//<--g code buffer
+	//__critical_initialization("Data Line", NGC_RS274::LineProcessor::initialize,STARTUP_CLASS_CRITICAL);//<--g code interpreter
 	__critical_initialization("Motion Control Comms", NULL, STARTUP_CLASS_WARNING);//<--motion controller card
 	__critical_initialization("Spindle Control Comms", NULL, STARTUP_CLASS_WARNING);//<--spindle controller card
 
@@ -211,7 +211,7 @@ void Talos::Coordinator::Main_Process::run()
 		//Talos::Coordinator::Events::ancillary_event_handler.process();
 
 		//4:: Handle ngc processing events
-		Talos::Coordinator::Events::Ngc::process();
+		Talos::Coordinator::Events::Data::process();
 
 		//5: Process reporting events
 		Talos::Coordinator::Events::Report::process();

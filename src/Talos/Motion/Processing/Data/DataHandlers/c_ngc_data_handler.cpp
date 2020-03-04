@@ -60,18 +60,11 @@ void Talos::Motion::Data::Ngc::load_block_from_cache()
 
 void  Talos::Motion::Data::Ngc::__raise_error(char * ngc_line, e_error_behavior e_behavior
 	, uint8_t data_size, e_error_group e_group, e_error_process e_process, e_record_types e_rec_type
-	, e_error_source e_source, uint16_t e_code)
+	, e_error_source e_source, e_error_code e_code, e_error_stack e_stack)
 {
-	s_framework_error error;
-	error.behavior = e_behavior;
-	error.code = e_code;
-	error.data_size = data_size;
-	error.group = e_group;
-	error.process = e_process;
-	error.__rec_type__ = e_rec_type;
-	error.source = e_source;
 
-	Talos::Shared::FrameWork::Error::Handler::extern_pntr_ngc_error_handler(Talos::Shared::c_cache_data::ngc_line_record.record, error);
+	Talos::Shared::FrameWork::Error::Handler::extern_pntr_ngc_error_handler(Talos::Shared::c_cache_data::txt_record.record
+	,e_behavior,data_size,e_group,e_process,e_rec_type,e_source,e_code, 0, e_stack );
 
 	__reset();
 }

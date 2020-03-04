@@ -1,9 +1,9 @@
-#include "c_system_data_handler.h"
+#include "c_framework_system_data_handler.h"
 #include "../../_s_status_record.h"
 #include "cache_data.h"
 
-void(*Talos::Shared::FrameWork::Data::System::pntr_read_release)(c_ring_buffer<char> * buffer);
-void(*Talos::Shared::FrameWork::Data::System::pntr_write_release)(c_ring_buffer<char> * buffer);
+void(*Talos::Shared::FrameWork::Data::System::pntr_read_release)();
+void(*Talos::Shared::FrameWork::Data::System::pntr_write_release)();
 
 struct s_packet
 {
@@ -36,22 +36,26 @@ void Talos::Shared::FrameWork::Data::System::reader()
 	//This reader will keep getting called even after all the data for the record is loaded.
 	//When all the bytes for this record are loaded we assign a copier function to be called
 	//each time the reader is called. The copy will not happen until the reacord space is
-	//available in the program. The allows us to 'buffer' 3 records without allocating specific
+	//available in the program. This allows us to 'buffer' 3 records without allocating specific
 	//buffer space for it. 1st record is in the ring buffer, 2nd record is in the cache buffer
 	//and 3rd record is in the ready data cache
 
 	if (read.pntr_data_copy != NULL)
 	return read.pntr_data_copy();
 
-	//If no copier function assigned jsut rad the data.
-	//Should we put this in a loop to read all of it at once?
-	*read.pntr_cache = (c_event_router::inputs.pntr_ring_buffer + (int)read.event_id)->ring_buffer.get();
-	read.pntr_cache++;
-	read.counter--;
-	if (!read.counter)
+	while ((c_event_router::inputs.pntr_ring_buffer + (int)read.event_id)->ring_buffer.has_data())
 	{
-		read.pntr_data_copy = __data_copy;
-		read.pntr_data_copy();
+		//If no copier function assigned jsut rad the data.
+		//Should we put this in a loop to read all of it at once?
+		*read.pntr_cache = (c_event_router::inputs.pntr_ring_buffer + (int)read.event_id)->ring_buffer.get();
+		read.pntr_cache++;
+		read.counter--;
+		if (!read.counter)
+		{
+			read.pntr_data_copy = __data_copy;
+			read.pntr_data_copy();
+			return;
+		}
 	}
 }
 
@@ -70,7 +74,7 @@ void Talos::Shared::FrameWork::Data::System::__data_copy()
 	Talos::Shared::FrameWork::Events::Router.ready.event_manager.set((int)c_event_router::ss_ready_data::e_event_type::System);
 
 	//The reader that has been calling into here must now be released
-	pntr_read_release(NULL);
+	pntr_read_release();
 
 	//Clear the event so this will stop firing
 	read.event_object->clear(read.event_id);
@@ -99,30 +103,32 @@ void Talos::Shared::FrameWork::Data::System::route_write(uint8_t event_id, s_bit
 
 }
 
-//c_new_data_handler::write_handler(char ** buffer, uint8_t(*pntr_hw_write)(uint8_t port, char byte)
+//Txt::write_handler(char ** buffer, uint8_t(*pntr_hw_write)(uint8_t port, char byte)
 void Talos::Shared::FrameWork::Data::System::writer()
 {
-	//target value <10 is a serial route
-	if (write.target < 10)
+	while (write.counter)
 	{
-		c_event_router::outputs.pntr_serial_write(0, '0' + *(write.pntr_cache));
-		c_event_router::outputs.pntr_serial_write(write.target, *(write.pntr_cache));
-	}
-	write.pntr_cache++;
-	write.counter--;
-	if (!write.counter)
-	{
-		//The writer that has been calling into here must now be released
-		pntr_write_release(NULL);
-		//Clear the event so this will stop firing
-		write.event_object->clear(write.event_id);
+		//target value <10 is a serial route
+		if (write.target < 10)
+		{
+			c_event_router::outputs.pntr_serial_write(write.target, *(write.pntr_cache));
+		}
+		write.pntr_cache++;
+		write.counter--;
+		if (!write.counter)
+		{
+			//The writer that has been calling into here must now be released
+			pntr_write_release();
+			//Clear the event so this will stop firing
+			write.event_object->clear(write.event_id);
 
-		//These need to be null again. If this code gets called by mistake we can check for nulls and throw an error.
-		write.counter = 0;
-		write.event_id = 0;
-		write.event_object = NULL;
-		write.pntr_cache = NULL;
-		write.pntr_data_copy = NULL;
-		write.target = 0;
+			//These need to be null again. If this code gets called by mistake we can check for nulls and throw an error.
+			write.counter = 0;
+			write.event_id = 0;
+			write.event_object = NULL;
+			write.pntr_cache = NULL;
+			write.pntr_data_copy = NULL;
+			write.target = 0;
+		}
 	}
 }

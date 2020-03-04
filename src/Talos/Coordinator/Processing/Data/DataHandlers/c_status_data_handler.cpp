@@ -82,14 +82,6 @@ void Talos::Coordinator::Data::System::Type::__process(s_system_message *status)
 
 void Talos::Coordinator::Data::System::Type::__critical(s_system_message *status, e_status_message::messages::e_critical message)
 {
-	s_framework_error error;
-	error.behavior = e_error_behavior::Critical;
-	error.code = (int)message;
-	error.data_size = 0;
-	error.group = e_error_group::SystemHandler;
-	error.process = e_error_process::Process;
-	error.__rec_type__ = e_record_types::System;
-	error.source = e_error_source::None;
 	//This is a critical status. Something has failed and the entire system needs to hault. Perhaps a limit switch was hit
 	//or communication (heartbeat) has been lost. 
 
@@ -97,7 +89,9 @@ void Talos::Coordinator::Data::System::Type::__critical(s_system_message *status
 	if (status->message >= 25)
 	{
 		Talos::Shared::FrameWork::Events::extern_system_events.event_manager.set((int)s_system_events::e_event_type::SystemCritical);
-		Talos::Shared::FrameWork::Error::Handler::extern_pntr_error_handler(NULL, error);
+		Talos::Shared::FrameWork::Error::Handler::extern_pntr_error_handler(
+			e_error_behavior::Critical, 0, e_error_group::SystemHandler
+			, e_error_process::Process, e_record_types::System, e_error_source::None,(e_error_code)message,0, e_error_stack::CoordinatorProcessingDataDataHandlersBinaryDataHandler);
 	}
 }
 

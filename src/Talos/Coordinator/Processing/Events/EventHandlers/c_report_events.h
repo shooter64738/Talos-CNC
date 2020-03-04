@@ -52,8 +52,8 @@ namespace Talos
 				
 				private:
 				
-				static void ____group(uint8_t count, uint16_t * pointer, char group_name);
-				static void ____word(uint8_t count, float * pointer);
+				static void ____group(uint8_t counter, uint16_t * pointer, char group_name);
+				static void ____word(uint8_t counter, float * pointer);
 				static void __write_header(s_ngc_block block);
 				static void __pad_left(float value, uint8_t padcount, uint8_t decimals, char pad_char);
 				static void __write_eol();

@@ -26,12 +26,12 @@
 #include "../../Main/Main_Process.h"
 
 bool Talos::Motion::Data::System::send(uint8_t message, uint8_t origin, uint8_t target
-	, uint8_t state, uint8_t sub_state, uint8_t type)
+, uint8_t state, uint8_t sub_state, uint8_t type)
 {
 	//if the cache data system rec pointer is null we are free to use it. if its not, we must
 	//leave the events set and keep checking on each loop. it should send after only 1 processor loop
 	if (Talos::Shared::c_cache_data::pntr_status_record != NULL)
-		return false;
+	return false;
 	
 	//set the pointer to the cache record
 	Talos::Shared::c_cache_data::pntr_status_record = &Talos::Shared::c_cache_data::status_record;
@@ -41,8 +41,8 @@ bool Talos::Motion::Data::System::send(uint8_t message, uint8_t origin, uint8_t 
 	Talos::Shared::c_cache_data::pntr_status_record->target = target;
 	//copy position data from the interpolation hardware
 	memcpy(Talos::Shared::c_cache_data::pntr_status_record->position
-		, Motion_Core::Hardware::Interpolation::system_position
-		, sizeof(int32_t)*MACHINE_AXIS_COUNT);
+	, Motion_Core::Hardware::Interpolation::system_position
+	, sizeof(int32_t)*MACHINE_AXIS_COUNT);
 	Talos::Shared::c_cache_data::pntr_status_record->state = state;
 	Talos::Shared::c_cache_data::pntr_status_record->sub_state = sub_state;
 	Talos::Shared::c_cache_data::pntr_status_record->type = type;
@@ -54,7 +54,7 @@ bool Talos::Motion::Data::System::send(uint8_t message, uint8_t origin, uint8_t 
 	Talos::Shared::c_cache_data::pntr_status_record->position[5]=678;
 
 	Talos::Shared::FrameWork::Events::Router.outputs.event_manager.set((int)c_event_router::s_out_events::e_event_type::StatusUpdate);
-Talos::Motion::Main_Process::host_serial.print_string("sent\r\n");
+	Talos::Motion::Main_Process::host_serial.print_string("sent\r\n");
 	return true;
 }
 
@@ -70,68 +70,62 @@ void Talos::Motion::Data::System::Type::__process(s_system_message *status)
 {
 	switch ((e_status_message::e_status_type)status->type)
 	{
-	case e_status_message::e_status_type::Critical:
+		case e_status_message::e_status_type::Critical:
 		Type::__critical(status, (e_status_message::messages::e_critical) status->message);
 		break;
-	case e_status_message::e_status_type::Data:
+		case e_status_message::e_status_type::Data:
 		Type::__data(status, (e_status_message::messages::e_data) status->message);
 		break;
-	case e_status_message::e_status_type::Informal:
+		case e_status_message::e_status_type::Informal:
 		Type::__informal(status, (e_status_message::messages::e_informal) status->message);
 		break;
-	case e_status_message::e_status_type::Warning:
+		case e_status_message::e_status_type::Warning:
 		Type::__warning(status, (e_status_message::messages::e_warning) status->message);
 		break;
-	default:
+		default:
 		break;
 	}
 }
 
 void Talos::Motion::Data::System::Type::__critical(s_system_message *status, e_status_message::messages::e_critical message)
 {
-	s_framework_error error;
-	error.behavior = e_error_behavior::Critical;
-	error.code = (int)message;
-	error.data_size = 0;
-	error.group = e_error_group::SystemHandler;
-	error.process = e_error_process::Process;
-	error.__rec_type__ = e_record_types::System;
-	error.source = e_error_source::None;
 	//This is a critical status. Something has failed and the entire system needs to hault. Perhaps a limit switch was hit
-	//or communication (heartbeat) has been lost. 
+	//or communication (heartbeat) has been lost.
 
 	//check message value
 	if (status->message >= 25)
 	{
 		Talos::Shared::FrameWork::Events::extern_system_events.event_manager.set((int)s_system_events::e_event_type::SystemCritical);
-		Talos::Shared::FrameWork::Error::Handler::extern_pntr_error_handler(NULL, error);
+		Talos::Shared::FrameWork::Error::Handler::extern_pntr_error_handler(
+		e_error_behavior::Critical,0,e_error_group::SystemHandler,e_error_process::Process
+		,e_record_types::System,e_error_source::None, (e_error_code) message,0,e_error_stack::CoordinatorProcessingDataDataHandlersBinaryDataHandler);
 	}
 }
 
 void Talos::Motion::Data::System::Type::__data(s_system_message *status, e_status_message::messages::e_data message)
 {
-	//This status message contains data of some type. it could be spindle speed/direction, motion planning, etc.. 
+	//This status message contains data of some type. it could be spindle speed/direction, motion planning, etc..
 
 	//check message value
 }
 
 void Talos::Motion::Data::System::Type::__informal(s_system_message *status, e_status_message::messages::e_informal message)
 {
-	//System message contains information that we need to present to the user. 
+	//System message contains information that we need to present to the user.
 
 	//We got a system message from someone
 	if (message == e_status_message::messages::e_informal::ReadyToProcess)
 	{//TODO Make this a switch case
 		if (status->origin == Shared::FrameWork::StartUp::cpu_type.Coordinator)
-			Talos::Motion::Events::System::event_manager.set((int)Talos::Motion::Events::System::e_event_type::CoordinatorReady);
+		Talos::Motion::Events::System::event_manager.set((int)Talos::Motion::Events::System::e_event_type::CoordinatorReady);
 		if (status->origin == Shared::FrameWork::StartUp::cpu_type.Host)
-			Talos::Motion::Events::System::event_manager.set((int)Talos::Motion::Events::System::e_event_type::HostReady);
+		Talos::Motion::Events::System::event_manager.set((int)Talos::Motion::Events::System::e_event_type::HostReady);
 		if (status->origin == Shared::FrameWork::StartUp::cpu_type.Motion)
-			Talos::Motion::Events::System::event_manager.set((int)Talos::Motion::Events::System::e_event_type::MotionReady);
+		Talos::Motion::Events::System::event_manager.set((int)Talos::Motion::Events::System::e_event_type::MotionReady);
 		if (status->origin == Shared::FrameWork::StartUp::cpu_type.Peripheral)
-			Talos::Motion::Events::System::event_manager.set((int)Talos::Motion::Events::System::e_event_type::PeripheralReady);
+		Talos::Motion::Events::System::event_manager.set((int)Talos::Motion::Events::System::e_event_type::PeripheralReady);
 		if (status->origin == Shared::FrameWork::StartUp::cpu_type.Spindle)
-			Talos::Motion::Events::System::event_manager.set((int)Talos::Motion::Events::System::e_event_type::SpindleReady);
+		Talos::Motion::Events::System::event_manager.set((int)Talos::Motion::Events::System::e_event_type::SpindleReady);
 	}
 
 

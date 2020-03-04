@@ -315,7 +315,7 @@ e_parsing_errors NGC_RS274::LineProcessor::__read_class_numeric(char * buffer, i
 		//this may need further work to impliment dot safety
 		*has_decimal = true;
 	}
-	//convert the string portion to a number, &end gets updated to the byte count converted
+	//convert the string portion to a number, &end gets updated to the byte counter converted
 	*read_value = strtod((buffer + (*read_pos)), &end);
 	//put the saved byte back so the null isnt there anymore
 	(buffer + (*read_pos))[_size] = restore_byte;
@@ -421,7 +421,7 @@ e_parsing_errors NGC_RS274::LineProcessor::__read_class_parameter(char * buffer,
 	else
 	{
 
-		if (!max_numeric_parameter_count)//<--if we dont have max_numeric params count, get it
+		if (!max_numeric_parameter_count)//<--if we dont have max_numeric params counter, get it
 			max_numeric_parameter_count = NGC_RS274::Parameters::__get_numeric_parameter_max();
 
 		NGC_RS274::LineProcessor::___read_integer_value(buffer, read_pos, &index, has_decimal);

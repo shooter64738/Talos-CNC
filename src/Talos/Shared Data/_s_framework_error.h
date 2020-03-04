@@ -50,6 +50,12 @@ enum class e_error_code :uint8_t
 	
 };
 
+enum class e_error_stack :uint16_t
+{
+	//values here should point to a specific location in the code that produced the error. 
+	CoordinatorProcessingDataDataHandlersBinaryDataHandler = 0,
+
+};
 struct s_framework_error
 {
 	e_error_group group;

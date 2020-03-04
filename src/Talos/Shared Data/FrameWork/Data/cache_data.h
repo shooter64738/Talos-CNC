@@ -22,7 +22,7 @@ namespace Talos
 			static s_system_message status_record;
 			static s_system_message *pntr_status_record;
 
-			static s_ngc_line_record ngc_line_record;
+			static s_txt_line_record txt_record;
 			static s_ngc_block ngc_block_record;
 			static uint8_t(*pntr_write_ngc_block_record)(s_ngc_block * ngc_block_record);
 			static uint8_t(*pntr_read_ngc_block_record)(s_ngc_block * ngc_block_record);

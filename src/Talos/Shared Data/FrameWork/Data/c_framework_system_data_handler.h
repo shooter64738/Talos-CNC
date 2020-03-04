@@ -17,8 +17,8 @@ namespace Talos
 				{
 					//variables
 				public:
-					static void(*pntr_read_release)(c_ring_buffer<char> * buffer);
-					static void(*pntr_write_release)(c_ring_buffer<char> * buffer);
+					static void(*pntr_read_release)();
+					static void(*pntr_write_release)();
 				protected:
 				private:
 

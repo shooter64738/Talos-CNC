@@ -28,10 +28,9 @@
 
 //#include "../../../../Motion/Processing/GCode/xc_gcode_buffer.h"
 
-
 void Talos::Coordinator::Data::Ngc::load_block_from_cache()
 {
-	Talos::Shared::c_cache_data::ngc_line_record.pntr_record = Talos::Shared::c_cache_data::ngc_line_record.record;
+	Talos::Shared::c_cache_data::txt_record.pntr_record = Talos::Shared::c_cache_data::txt_record.record;
 
 	s_ngc_block new_block;
 	e_parsing_errors return_value = e_parsing_errors::OK;
@@ -48,10 +47,10 @@ void Talos::Coordinator::Data::Ngc::load_block_from_cache()
 
 	//Now process the gcode text line, and give us back a block of data in binary format.
 	if ((return_value = NGC_RS274::LineProcessor::_process_buffer(
-		Talos::Shared::c_cache_data::ngc_line_record.record, &new_block, Talos::Shared::c_cache_data::ngc_line_record.size))
+		Talos::Shared::c_cache_data::txt_record.record, &new_block, Talos::Shared::c_cache_data::txt_record.size))
 		!= e_parsing_errors::OK)
 	{
-		__raise_error(Talos::Shared::c_cache_data::ngc_line_record.record, e_error_behavior::Recoverable, Talos::Shared::c_cache_data::ngc_line_record.size
+		__raise_error(Talos::Shared::c_cache_data::txt_record.record, e_error_behavior::Recoverable, Talos::Shared::c_cache_data::txt_record.size
 			, e_error_group::Interpreter, e_error_process::NgcParsing, e_record_types::NgcBlockRecord, e_error_source::Disk, (uint16_t)return_value);
 		return;
 	}
@@ -66,7 +65,7 @@ void Talos::Coordinator::Data::Ngc::load_block_from_cache()
 	!= e_parsing_errors::OK)
 	{
 	
-		__raise_error(Talos::Shared::c_cache_data::ngc_line_record.record, e_error_behavior::Recoverable, Talos::Shared::c_cache_data::ngc_line_record.size
+		__raise_error(Talos::Shared::c_cache_data::txt_record.record, e_error_behavior::Recoverable, Talos::Shared::c_cache_data::txt_record.size
 		, e_error_group::Interpreter, e_error_process::NgcErrorCheck, e_record_types::NgcBlockRecord, e_error_source::Disk, (uint16_t)return_value);
 		return;
 	}
@@ -84,6 +83,7 @@ void Talos::Coordinator::Data::Ngc::load_block_from_cache()
 	Talos::Shared::FrameWork::Events::Router.ready.ngc_block_cache_count++;
 	//Clear the block event that was set when the line was loaded waaaaayyyy back in the dataevent handler
 	Talos::Shared::FrameWork::Events::Router.ready.event_manager.clear((int)c_event_router::ss_ready_data::e_event_type::NgcDataLine);
+	Talos::Shared::c_cache_data::txt_record.pntr_record = NULL;
 }
 
 void  Talos::Coordinator::Data::Ngc::__raise_error(char * ngc_line, e_error_behavior e_behavior
@@ -99,7 +99,8 @@ void  Talos::Coordinator::Data::Ngc::__raise_error(char * ngc_line, e_error_beha
 	error.__rec_type__ = e_rec_type;
 	error.source = e_source;
 	
-	Talos::Shared::FrameWork::Error::Handler::extern_pntr_ngc_error_handler(Talos::Shared::c_cache_data::ngc_line_record.record, error);
+	Talos::Shared::FrameWork::Error::Handler::extern_pntr_ngc_error_handler(
+		ngc_line, e_behavior,data_size,e_group,e_process,e_rec_type,e_source,(e_error_code)e_code,0, e_error_stack::CoordinatorProcessingDataDataHandlersBinaryDataHandler );
 	
 	__reset();
 }

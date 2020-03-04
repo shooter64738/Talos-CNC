@@ -64,7 +64,7 @@ namespace NGC_RS274
 		{
 			float *Q_peck_step_depth; //<--Depth increase per peck
 			float *R_retract_position; //<--Retract. Z to R at rapid speed. R to bottom is feed speed
-			float *L_repeat_count; //<--Repeat count
+			float *L_repeat_count; //<--Repeat counter
 			float *P_dwell_time_at_bottom; //<--Dwell time at bottom of hole.
 			float *Z_depth_of_hole; //<--Hole Bottom
 			//void(*PNTR_RECALLS)(NGC_Binary_Block*);

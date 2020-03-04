@@ -30,15 +30,15 @@
     <EraseKey />
     <AsfFrameworkConfig>
       <framework-data>
-  <options />
-  <configurations />
-  <files />
-  <documentation help="" />
-  <offline-documentation help="" />
-  <dependencies>
-    <content-extension eid="atmel.asf" uuidref="Atmel.ASF" version="3.37" />
-  </dependencies>
-</framework-data>
+        <options />
+        <configurations />
+        <files />
+        <documentation help="" />
+        <offline-documentation help="" />
+        <dependencies>
+          <content-extension eid="atmel.asf" uuidref="Atmel.ASF" version="3.37" />
+        </dependencies>
+      </framework-data>
     </AsfFrameworkConfig>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -355,21 +355,21 @@
       <SubType>compile</SubType>
       <Link>Shared Data\FrameWork\Data\c_data_buffer.h</Link>
     </Compile>
-    <Compile Include="..\..\..\Shared Data\FrameWork\Data\c_new_data_handler.cpp">
+    <Compile Include="..\..\..\Shared Data\FrameWork\Data\c_framework_ngc_data_handler.cpp">
       <SubType>compile</SubType>
-      <Link>Shared Data\FrameWork\Data\c_new_data_handler.cpp</Link>
+      <Link>Shared Data\FrameWork\Data\c_framework_ngc_data_handler.cpp</Link>
     </Compile>
-    <Compile Include="..\..\..\Shared Data\FrameWork\Data\c_new_data_handler.h">
+    <Compile Include="..\..\..\Shared Data\FrameWork\Data\c_framework_ngc_data_handler.h">
       <SubType>compile</SubType>
-      <Link>Shared Data\FrameWork\Data\c_new_data_handler.h</Link>
+      <Link>Shared Data\FrameWork\Data\c_framework_ngc_data_handler.h</Link>
     </Compile>
-    <Compile Include="..\..\..\Shared Data\FrameWork\Data\c_system_data_handler.cpp">
+    <Compile Include="..\..\..\Shared Data\FrameWork\Data\c_framework_system_data_handler.cpp">
       <SubType>compile</SubType>
-      <Link>Shared Data\FrameWork\Data\c_system_data_handler.cpp</Link>
+      <Link>Shared Data\FrameWork\Data\c_framework_system_data_handler.cpp</Link>
     </Compile>
-    <Compile Include="..\..\..\Shared Data\FrameWork\Data\c_system_data_handler.h">
+    <Compile Include="..\..\..\Shared Data\FrameWork\Data\c_framework_system_data_handler.h">
       <SubType>compile</SubType>
-      <Link>Shared Data\FrameWork\Data\c_system_data_handler.h</Link>
+      <Link>Shared Data\FrameWork\Data\c_framework_system_data_handler.h</Link>
     </Compile>
     <Compile Include="..\..\..\Shared Data\FrameWork\Enumerations\Status\_e_system_messages.h">
       <SubType>compile</SubType>

@@ -29,7 +29,7 @@ namespace Talos
 	{
 		namespace Events
 		{
-			class Ngc
+			class Data
 			{
 				//variables
 			public:

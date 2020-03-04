@@ -32,10 +32,8 @@ static bool loop = false;
 uint8_t Hardware_Abstraction_Layer::Serial::send(uint8_t Port, char byte)
 {
 	if (loop)
-	{
-		//for a loop back test add to the internal buffer
-		Hardware_Abstraction_Layer::Serial::add_to_buffer(Port, byte);
-	}
+	Hardware_Abstraction_Layer::Serial::add_to_buffer(Port, byte);
+
 	std::cout << byte << std::flush;// rxBuffer[0].Buffer;
 	return 0;
 }

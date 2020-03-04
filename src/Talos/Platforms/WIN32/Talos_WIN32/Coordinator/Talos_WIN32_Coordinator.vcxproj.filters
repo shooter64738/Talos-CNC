@@ -329,9 +329,6 @@
     <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Event\Serial\c_new_serial_event_handler.h">
       <Filter>Shared Data\FrameWork\Event\Serial</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Data\c_new_data_handler.h">
-      <Filter>Shared Data\FrameWork\Data</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Event\c_event_router.h">
       <Filter>Shared Data\FrameWork\Event</Filter>
     </ClInclude>
@@ -356,7 +353,10 @@
     <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Data\c_data_buffer.h">
       <Filter>Shared Data\FrameWork\Data</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Data\c_system_data_handler.h">
+    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Data\c_framework_ngc_data_handler.h">
+      <Filter>Shared Data\FrameWork\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Data\c_framework_system_data_handler.h">
       <Filter>Shared Data\FrameWork\Data</Filter>
     </ClInclude>
   </ItemGroup>
@@ -475,9 +475,6 @@
     <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Event\Serial\c_new_serial_event_handler.cpp">
       <Filter>Shared Data\FrameWork\Event\Serial</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Data\c_new_data_handler.cpp">
-      <Filter>Shared Data\FrameWork\Data</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Event\c_event_router.cpp">
       <Filter>Shared Data\FrameWork\Event</Filter>
     </ClCompile>
@@ -499,7 +496,10 @@
     <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Data\c_data_buffer.cpp">
       <Filter>Shared Data\FrameWork\Data</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Data\c_system_data_handler.cpp">
+    <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Data\c_framework_ngc_data_handler.cpp">
+      <Filter>Shared Data\FrameWork\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Data\c_framework_system_data_handler.cpp">
       <Filter>Shared Data\FrameWork\Data</Filter>
     </ClCompile>
   </ItemGroup>

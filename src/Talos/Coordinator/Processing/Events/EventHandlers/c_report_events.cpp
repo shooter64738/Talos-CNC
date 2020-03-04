@@ -78,11 +78,11 @@ void Talos::Coordinator::Events::Report::__write_header(s_ngc_block block)
 
 }
 
-void Talos::Coordinator::Events::Report::____group(uint8_t count, uint16_t * pointer, char group_name)
+void Talos::Coordinator::Events::Report::____group(uint8_t counter, uint16_t * pointer, char group_name)
 {
 
 	//write the name tags
-	for (int i = 0; i < count; i++)
+	for (int i = 0; i < counter; i++)
 	{
 		rpt_serial->Write(group_name);
 		__pad_left(i, 4, 0, '0');
@@ -91,7 +91,7 @@ void Talos::Coordinator::Events::Report::____group(uint8_t count, uint16_t * poi
 	__write_eol();
 
 	//write the values
-	for (int i = 0; i < count; i++)
+	for (int i = 0; i < counter; i++)
 	{
 		float val = (*(pointer + i));
 		val = val / G_CODE_MULTIPLIER;
@@ -101,11 +101,11 @@ void Talos::Coordinator::Events::Report::____group(uint8_t count, uint16_t * poi
 	__write_eol();
 }
 
-void Talos::Coordinator::Events::Report::____word(uint8_t count, float * pointer)
+void Talos::Coordinator::Events::Report::____word(uint8_t counter, float * pointer)
 {
 	uint8_t columns = 4;
 	//write the name tags
-	for (int i = 0; i < count; i++)
+	for (int i = 0; i < counter; i++)
 	{
 		columns--;
 		rpt_serial->Write(i + 'A');
