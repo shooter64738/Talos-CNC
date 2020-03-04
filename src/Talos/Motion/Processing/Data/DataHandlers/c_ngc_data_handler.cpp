@@ -55,7 +55,7 @@ void Talos::Motion::Data::Ngc::load_block_from_cache()
 	Talos::Shared::FrameWork::Events::Router.ready.event_manager.clear((int)c_event_router::ss_ready_data::e_event_type::NgcDataBlock);
 
 	//create an oubound request for ngc block data. 
-	Talos::Shared::FrameWork::Events::Router.serial.outbound.event_manager.set((int)c_event_router::ss_outbound_data::e_event_type::NgcBlockRequest);
+	Talos::Shared::FrameWork::Events::Router.outputs.event_manager.set((int)c_event_router::s_out_events::e_event_type::NgcBlockRequest);
 }
 
 void  Talos::Motion::Data::Ngc::__raise_error(char * ngc_line, e_error_behavior e_behavior

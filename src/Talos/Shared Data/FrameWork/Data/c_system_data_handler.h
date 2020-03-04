@@ -25,17 +25,17 @@ namespace Talos
 
 					//functions
 				public:
-					static void route_read(c_ring_buffer<char> * buffer, uint8_t event_id, s_bit_flag_controller<uint32_t> *event_object);
+					static void route_read(uint8_t event_id, s_bit_flag_controller<uint32_t> *event_object);
 
-					static void route_write(uint8_t(*pntr_hw_write)(uint8_t port, char byte)
-						, uint8_t event_id, s_bit_flag_controller<uint32_t> *event_object);
+					static void route_write(uint8_t event_id, s_bit_flag_controller<uint32_t>* event_object);
 
-					static void reader(c_ring_buffer<char> *buffer);
-					static void writer(char ** buffer, uint8_t(*pntr_hw_write)(uint8_t port, char byte));
+					static void reader();
+					static void writer();
 					
 				protected:
 				private:
 					static void __data_copy();
+					
 				};
 			};
 		};

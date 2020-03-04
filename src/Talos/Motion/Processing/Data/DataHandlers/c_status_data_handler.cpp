@@ -53,7 +53,7 @@ bool Talos::Motion::Data::System::send(uint8_t message, uint8_t origin, uint8_t 
 	Talos::Shared::c_cache_data::pntr_status_record->position[4]=345;
 	Talos::Shared::c_cache_data::pntr_status_record->position[5]=678;
 
-	Talos::Shared::FrameWork::Events::Router.serial.outbound.event_manager.set((int)c_event_router::ss_outbound_data::e_event_type::StatusUpdate);
+	Talos::Shared::FrameWork::Events::Router.outputs.event_manager.set((int)c_event_router::s_out_events::e_event_type::StatusUpdate);
 Talos::Motion::Main_Process::host_serial.print_string("sent\r\n");
 	return true;
 }

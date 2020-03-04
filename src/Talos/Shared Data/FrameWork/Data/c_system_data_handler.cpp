@@ -7,12 +7,11 @@ void(*Talos::Shared::FrameWork::Data::System::pntr_write_release)(c_ring_buffer<
 
 struct s_packet
 {
-	c_ring_buffer<char> *source; //pointer to a ring buffer to read from
+	//c_ring_buffer<char> *source; //pointer to a ring buffer to read from
 	char cache[s_system_message::__size__]; //linear cache buffer
 	char *pntr_cache = cache; //pointer to linear cache buffer
 	uint8_t counter; //byte counter (counts down)
 	void(*pntr_data_copy)();
-	uint8_t(*pntr_writer)(uint8_t port, char byte);
 	uint8_t event_id;
 	s_bit_flag_controller<uint32_t> * event_object;
 	uint8_t target;
@@ -21,20 +20,18 @@ struct s_packet
 static s_packet read;
 static s_packet write;
 
-void Talos::Shared::FrameWork::Data::System::route_read(c_ring_buffer<char> * buffer, uint8_t event_id, s_bit_flag_controller<uint32_t> *event_object)
+void Talos::Shared::FrameWork::Data::System::route_read(uint8_t event_id, s_bit_flag_controller<uint32_t> *event_object)
 {
 	//read.cache = cache;
 	read.counter = s_system_message::__size__;
 	read.event_id = event_id;
 	read.pntr_cache = read.cache;
 	read.pntr_data_copy = NULL;
-	read.pntr_writer = NULL;
-	read.source = buffer;
 	read.event_object = event_object;
 	read.target = 0;
 }
 
-void Talos::Shared::FrameWork::Data::System::reader(c_ring_buffer<char> * buffer)
+void Talos::Shared::FrameWork::Data::System::reader()
 {
 	//This reader will keep getting called even after all the data for the record is loaded.
 	//When all the bytes for this record are loaded we assign a copier function to be called
@@ -48,7 +45,7 @@ void Talos::Shared::FrameWork::Data::System::reader(c_ring_buffer<char> * buffer
 
 	//If no copier function assigned jsut rad the data.
 	//Should we put this in a loop to read all of it at once?
-	*read.pntr_cache = read.source->get();
+	*read.pntr_cache = (c_event_router::inputs.pntr_ring_buffer + (int)read.event_id)->ring_buffer.get();
 	read.pntr_cache++;
 	read.counter--;
 	if (!read.counter)
@@ -82,16 +79,13 @@ void Talos::Shared::FrameWork::Data::System::__data_copy()
 	read.counter = 0;
 	read.event_id = 0;
 	read.pntr_data_copy = NULL;
-	read.pntr_writer = NULL;
-	read.source = NULL;
 	read.event_object = NULL;
 	read.pntr_cache = read.cache;
 
 }
 
 
-void Talos::Shared::FrameWork::Data::System::route_write(uint8_t(*pntr_hw_write)(uint8_t port, char byte)
-, uint8_t event_id, s_bit_flag_controller<uint32_t> *event_object)
+void Talos::Shared::FrameWork::Data::System::route_write(uint8_t event_id, s_bit_flag_controller<uint32_t> *event_object)
 {
 	write.counter = 31;//s_system_message::__size__;
 	write.event_id = event_id;
@@ -99,8 +93,6 @@ void Talos::Shared::FrameWork::Data::System::route_write(uint8_t(*pntr_hw_write)
 	memcpy(write.cache, Talos::Shared::c_cache_data::pntr_status_record, s_system_message::__size__);
 	write.pntr_cache = write.cache;
 	write.pntr_data_copy = NULL;
-	write.pntr_writer = pntr_hw_write;
-	write.source = NULL;
 	write.target = Talos::Shared::c_cache_data::status_record.target;
 	//record has been copied to the liner write buffer. it can now be release
 	Talos::Shared::c_cache_data::pntr_status_record = NULL;
@@ -108,11 +100,14 @@ void Talos::Shared::FrameWork::Data::System::route_write(uint8_t(*pntr_hw_write)
 }
 
 //c_new_data_handler::write_handler(char ** buffer, uint8_t(*pntr_hw_write)(uint8_t port, char byte)
-void Talos::Shared::FrameWork::Data::System::writer(char ** buffer, uint8_t(*pntr_hw_write)(uint8_t port, char byte))
+void Talos::Shared::FrameWork::Data::System::writer()
 {
-	
-	write.pntr_writer(0, '0'+*(write.pntr_cache));
-	write.pntr_writer(write.target, *(write.pntr_cache));
+	//target value <10 is a serial route
+	if (write.target < 10)
+	{
+		c_event_router::outputs.pntr_serial_write(0, '0' + *(write.pntr_cache));
+		c_event_router::outputs.pntr_serial_write(write.target, *(write.pntr_cache));
+	}
 	write.pntr_cache++;
 	write.counter--;
 	if (!write.counter)
@@ -128,8 +123,6 @@ void Talos::Shared::FrameWork::Data::System::writer(char ** buffer, uint8_t(*pnt
 		write.event_object = NULL;
 		write.pntr_cache = NULL;
 		write.pntr_data_copy = NULL;
-		write.pntr_writer = NULL;
-		write.source = NULL;
 		write.target = 0;
 	}
 }

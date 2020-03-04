@@ -25,13 +25,12 @@
 
 
 
-void(*c_new_serial_event_handler::pntr_data_read_handler)(c_ring_buffer<char> * buffer);
-void(*c_new_serial_event_handler::pntr_data_write_handler)(char **buffer, uint8_t(*pntr_hw_write)(uint8_t port, char byte));
+void(*c_new_serial_event_handler::pntr_data_read_handler)();
+void(*c_new_serial_event_handler::pntr_data_write_handler)();
 
 static s_framework_error tracked_error;
 
-void c_new_serial_event_handler::process(c_ring_buffer<char> * buffer,
-	c_event_router::ss_inbound_data * event_object, c_event_router::ss_inbound_data::e_event_type event_id)
+void c_new_serial_event_handler::process(c_event_router::s_in_events * event_object, c_event_router::s_in_events::e_event_type event_id)
 {
 	/*
 	When we receive the first bye of data, we determine which handler to use.
@@ -46,43 +45,42 @@ void c_new_serial_event_handler::process(c_ring_buffer<char> * buffer,
 	//keep using it until all the data is consumed. Otherwise assign a new handler. 
 	if (c_new_serial_event_handler::pntr_data_read_handler == NULL)
 	{
-		c_new_serial_event_handler::__assign_handler(buffer, event_object, event_id);
+		c_new_serial_event_handler::__assign_handler(event_object, event_id);
 	}
 
 	if (c_new_serial_event_handler::pntr_data_read_handler != NULL)
 	{
 		//The handler will release its self when it determines that all of the data for
 		//that particular handler has been consumed. 
-		c_new_serial_event_handler::pntr_data_read_handler(buffer);
+		c_new_serial_event_handler::pntr_data_read_handler();
 		
 	}
 }
 
-void c_new_serial_event_handler::process(char ** buffer,
-	c_event_router::ss_outbound_data * event_object, c_event_router::ss_outbound_data::e_event_type event_id)
+void c_new_serial_event_handler::process(c_event_router::s_out_events * event_object, c_event_router::s_out_events::e_event_type event_id)
 {
 
 	//Is there is a handler assigned for this data class already? If a handler is assigned
 	//keep using it until all the data is consumed. Otherwise assign a new handler. 
 	if (c_new_serial_event_handler::pntr_data_write_handler == NULL)
 	{
-		c_new_serial_event_handler::__assign_handler(*buffer, event_object, event_id);
+		c_new_serial_event_handler::__assign_handler(event_object, event_id);
 	}
 
 	if (c_new_serial_event_handler::pntr_data_write_handler != NULL)
 	{
 		//The handler will release its self when it determines that all of the data for
 		//that particular handler has been consumed. 
-		c_new_serial_event_handler::pntr_data_write_handler(buffer, event_object->pntr_hw_write);
+		c_new_serial_event_handler::pntr_data_write_handler();
 	}
 }
 
-void c_new_serial_event_handler::__assign_handler(c_ring_buffer <char> * buffer,
-	c_event_router::ss_inbound_data * event_object, c_event_router::ss_inbound_data::e_event_type event_id)
+void c_new_serial_event_handler::__assign_handler(c_event_router::s_in_events * event_object, c_event_router::s_in_events::e_event_type event_id)
 {
 	//Tail is always assumed to be at the 'start' of data
-
-	char peek_tail = buffer->peek(buffer->_tail);
+	//event id for serial is the port the data came from or is going to. We can use that to access the buffer array pointer.
+	char peek_tail = (c_event_router::inputs.pntr_ring_buffer+(int)event_id)->
+		ring_buffer.peek((c_event_router::inputs.pntr_ring_buffer + (int)event_id)->ring_buffer._tail);
 
 	//Printable data is ngc line data. We need to check cr or lf because those are
 	//special line ending characters for ngc data. We will NEVER use 10 or 13 as a
@@ -96,17 +94,18 @@ void c_new_serial_event_handler::__assign_handler(c_ring_buffer <char> * buffer,
 		//We can throw those characters away. 
 		if (peek_tail == CR || peek_tail == LF)
 		{
-			buffer->get();
-			if (!buffer->has_data())
+			(c_event_router::inputs.pntr_ring_buffer + (int)event_id)->ring_buffer.get();
+			if (!(c_event_router::inputs.pntr_ring_buffer + (int)event_id)->ring_buffer.has_data())
 				event_object->event_manager.clear((int)event_id);
 			return;
 		}
 
 		//Assign a specific handler for this data type
-		c_new_serial_event_handler::pntr_data_read_handler = c_new_data_handler::assign_handler(buffer, event_object, event_id, e_record_types::NgcBlockRecord);
+		//c_new_serial_event_handler::pntr_data_read_handler = c_new_data_handler::assign_handler(event_object, event_id, e_record_types::NgcBlockRecord);
+		
 		//Assign a release call back function. The handler knows nothing about serial events
 		//and we want to keep it that way.
-		c_new_data_handler::pntr_read_data_handler_release = c_new_serial_event_handler::read_data_handler_releaser;
+		//c_new_data_handler::pntr_read_data_handler_release = c_new_serial_event_handler::read_data_handler_releaser;
 
 	}
 	else if (peek_tail > 0 && peek_tail < 32) //non-printable and below 32 is a binary record
@@ -115,63 +114,45 @@ void c_new_serial_event_handler::__assign_handler(c_ring_buffer <char> * buffer,
 		//c_new_serial_event_handler::pntr_data_read_handler = c_new_data_handler::assign_handler(buffer, event_object, event_id, (e_record_types)peek_tail);
 		if (peek_tail == (int)e_record_types::System)
 		{
-			Talos::Shared::FrameWork::Data::System::route_read(buffer,(int)event_id, &event_object->event_manager);
+			Talos::Shared::FrameWork::Data::System::route_read((int)event_id, &event_object->event_manager);
 			c_new_serial_event_handler::pntr_data_read_handler = Talos::Shared::FrameWork::Data::System::reader;
+			Talos::Shared::FrameWork::Data::System::pntr_read_release = c_new_serial_event_handler::read_data_handler_releaser;
 		}
 		
 		//Assign a release call back function. The handler knows nothing about serial events
 		//and we want to keep it that way.
-		Talos::Shared::FrameWork::Data::System::pntr_read_release = c_new_serial_event_handler::read_data_handler_releaser;
+		
 	}
 	else if (peek_tail > 127) //non-printable and above 127 is a control code
 	{
 		//Assign a specific handler for this data type
-		c_new_serial_event_handler::pntr_data_read_handler = c_new_data_handler::assign_handler(buffer, event_object, event_id, (e_record_types)peek_tail);
+		//c_new_serial_event_handler::pntr_data_read_handler = c_new_data_handler::assign_handler(event_object, event_id, (e_record_types)peek_tail);
+
 		//Assign a release call back function. The handler knows nothing about serial events
 		//and we want to keep it that way.
-		c_new_data_handler::pntr_read_data_handler_release = c_new_serial_event_handler::read_data_handler_releaser;
+		//c_new_data_handler::pntr_read_data_handler_release = c_new_serial_event_handler::read_data_handler_releaser;
 	}
 	else //we dont know what kind of data it is
 	{
 		//since there is data here and we do not know what kind it is, we cannot determine which assigner it needs.
 		//i feel like this is probably a critical error. 
-		__raise_error(buffer, e_error_behavior::Critical, 0, e_error_group::EventHandler, e_error_process::EventAssign
+		__raise_error(NULL,e_error_behavior::Critical, 0, e_error_group::EventHandler, e_error_process::EventAssign
 			, e_record_types::Unknown, e_error_source::Serial, e_error_code::UnHandledRecordType, (int) event_id);
 	}
 }
 
-void c_new_serial_event_handler::__assign_handler(char * buffer,
-	c_event_router::ss_outbound_data * event_object, c_event_router::ss_outbound_data::e_event_type event_id)
+void c_new_serial_event_handler::__assign_handler(c_event_router::s_out_events * event_object, c_event_router::s_out_events::e_event_type event_id)
 {
 	uint8_t write_count = 0;
 	uint8_t write_destination = 0;
 
 	switch (event_id)
 	{
-	case c_event_router::ss_outbound_data::e_event_type::MotionDataBlock:
-
-		//changed the way this is handled a little bit. Now pulling a record from the cache class
-		//theres no need to do the record type checking twice this way. 
-		//c_cache_data::motion_block_record.station++;
-		//write_count = c_cache_data::motion_block_record.__size__;
-		//memcpy(buffer->_storage_pointer, &c_cache_data::motion_block_record, write_count);
+	case c_event_router::s_out_events::e_event_type::NgcBlockRequest:
 		break;
 
-	case c_event_router::ss_outbound_data::e_event_type::NgcBlockRequest:
-		//we are requesting an ngc block. This is probably a route from teh motion control to the coordinator
-		
-		//Request the record immediately following this one. Makes sense I suppose?
-		Talos::Shared::c_cache_data::ngc_block_record.__station__++;
-		//covert the record to a byte stream
-		//ngc requests always go to the coordinator
-		write_destination = Talos::Shared::FrameWork::StartUp::cpu_type.Coordinator;
-		write_count = Talos::Shared::c_cache_data::ngc_block_record.__size__;
-		memcpy(buffer, &Talos::Shared::c_cache_data::ngc_block_record, write_count);
-		break;
-
-	case c_event_router::ss_outbound_data::e_event_type::StatusUpdate:
-		Talos::Shared::FrameWork::Data::System::route_write(event_object->pntr_hw_write
-			, (int)event_id, &event_object->event_manager);
+	case c_event_router::s_out_events::e_event_type::StatusUpdate:
+		Talos::Shared::FrameWork::Data::System::route_write((int)event_id, &event_object->event_manager);
 		c_new_serial_event_handler::pntr_data_write_handler = Talos::Shared::FrameWork::Data::System::writer;
 		//This is function point that gets 'called back' when all the data is done processing. 
 		Talos::Shared::FrameWork::Data::System::pntr_write_release = c_new_serial_event_handler::write_data_handler_releaser;

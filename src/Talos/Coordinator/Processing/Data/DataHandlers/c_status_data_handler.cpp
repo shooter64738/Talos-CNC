@@ -46,7 +46,7 @@ bool Talos::Coordinator::Data::System::send(uint8_t message
 	Talos::Shared::c_cache_data::pntr_status_record->sub_state = sub_state;
 	Talos::Shared::c_cache_data::pntr_status_record->type = type;
 
-	Talos::Shared::FrameWork::Events::Router.serial.outbound.event_manager.set((int)c_event_router::ss_outbound_data::e_event_type::StatusUpdate);
+	Talos::Shared::FrameWork::Events::Router.outputs.event_manager.set((int)c_event_router::s_out_events::e_event_type::StatusUpdate);
 
 	return true;
 }

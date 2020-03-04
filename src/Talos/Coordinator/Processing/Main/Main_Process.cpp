@@ -192,7 +192,7 @@ void Talos::Coordinator::Main_Process::run()
 		tic_count++;
 		if (tic_count > 120000)
 		{
-			//Talos::Shared::FrameWork::Events::Router.ready.event_manager.set((int)c_event_router::ss_ready_data::e_event_type::Testsignal);
+			Talos::Shared::FrameWork::Events::Router.ready.event_manager.set((int)c_event_router::ss_ready_data::e_event_type::Testsignal);
 			
 			Talos::Coordinator::Main_Process::host_serial.print_string("alive\r\n");
 			tic_count = 0;

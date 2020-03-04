@@ -31,62 +31,6 @@ class c_event_router
 {
 	//variables
 public:
-	struct ss_inbound_data
-	{
-		//c_ring_buffer<char> * pntr_ring_buffer;
-		s_device_buffer * pntr_ring_buffer;
-		uint16_t ms_time_out = 0;
-		void set_time_out(uint16_t millisecond_time_out)
-		{
-			ms_time_out = millisecond_time_out;
-			event_manager.clear((int)e_event_type::TimeOutError);
-		};
-
-		bool check_time_out()
-		{
-
-			if (!ms_time_out)
-			{
-				//only set the timeout if events are pending. 
-				if (event_manager._flag > 0)
-				{
-					event_manager.set((int)e_event_type::TimeOutError);
-					return true;
-				}
-			}
-			else
-				ms_time_out--;
-		};
-
-		enum class e_event_type : uint8_t
-		{
-			Usart0DataArrival = 0,
-			Usart1DataArrival = 1,
-			Usart2DataArrival = 2,
-			Usart3DataArrival = 3,
-			MotionDataBlock = 4,
-			StatusUpdate = 5,
-			DiskDataArrival = 6,
-			
-			TimeOutError = 31,
-		};
-		s_bit_flag_controller<uint32_t> event_manager;
-	};
-
-	struct ss_outbound_data
-	{
-		uint8_t(*pntr_hw_write)(uint8_t port, char byte);
-		char _buffer[256];
-		char * pntr_buffer = _buffer;
-		enum class e_event_type : uint8_t
-		{
-			MotionDataBlock = 0,
-			StatusUpdate = 1,
-			DiskDataArrival = 2,
-			NgcBlockRequest = 3
-		};
-		s_bit_flag_controller<uint32_t> event_manager;
-	};
 
 	struct ss_ready_data
 	{
@@ -128,74 +72,50 @@ public:
 		uint32_t ngc_block_cache_count = 0;
 	};
 
-	struct ss_serial
-	{
-		ss_inbound_data inbound;
-		ss_outbound_data outbound;
-		bool any()
-		{
-			if ((inbound.event_manager._flag + outbound.event_manager._flag) > 0)
-				return true;
-			else
-				return false;
-		}
-		bool in_events()
-		{
-			if ((inbound.event_manager._flag) > 0)
-				return true;
-			else
-				return false;
-		}
-		bool out_events()
-		{
-			if ((outbound.event_manager._flag) > 0)
-				return true;
-			else
-				return false;
-		}
-	};
+	
 
 	struct ss_disk
 	{
-		ss_inbound_data inbound;
-		ss_outbound_data outbound;
-		bool any()
-		{
-			if ((inbound.event_manager._flag + outbound.event_manager._flag) > 0)
-				return true;
-			else
-				return false;
-		}
-		bool in_events()
-		{
-			if ((inbound.event_manager._flag) > 0)
-				return true;
-			else
-				return false;
-		}
-		bool out_events()
-		{
-			if ((outbound.event_manager._flag) > 0)
-				return true;
-			else
-				return false;
-		}
 	};
 
+	struct s_out_events
+	{
+		uint8_t(*pntr_serial_write)(uint8_t port, char byte);
+		enum class e_event_type : uint8_t
+		{
+			StatusUpdate = 0,
+			NgcBlockRequest = 1,
+			
+		};
+		s_bit_flag_controller<uint32_t> event_manager;
+	};
+
+	struct s_in_events
+	{
+		enum class e_event_type : uint8_t
+		{
+			Usart0DataArrival = 0,
+			Usart1DataArrival = 1,
+			Usart2DataArrival = 2,
+			Usart3DataArrival = 3,
+			MotionDataBlock = 4,
+			StatusUpdate = 5,
+			DiskDataArrival = 6,
+
+			TimeOutError = 31,
+		};
+		s_bit_flag_controller<uint32_t> event_manager;
+		s_device_buffer * pntr_ring_buffer;
+		uint8_t ms_time_out;
+	};
+	static s_out_events outputs;
+	static s_in_events inputs;
 	//struct s_data_events
 	//{
-	static ss_serial serial;
+	//static ss_serial serial;
 	static ss_disk disk;
 	static ss_ready_data ready;
 	static ss_inquiry_data inquire;
-	static bool any()
-	{
-		if (serial.any() || disk.any() || ready.any() || inquire.any())
-			return true;
-		else
-			return false;
-	}
-	//};
 
 protected:
 private:

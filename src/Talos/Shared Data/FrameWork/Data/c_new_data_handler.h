@@ -29,8 +29,8 @@
 #include "../../_s_framework_error.h"
 #include "../Data/cache_data.h"
 
-typedef void(*ret_pointer)(c_ring_buffer <char> * buffer);
-typedef void(*ret_write_pointer)(char **buffer, uint8_t(*pntr_hw_write)(uint8_t port, char byte));
+typedef void(*ret_pointer)();
+typedef void(*ret_write_pointer)();
 
 class c_new_data_handler
 {
@@ -50,11 +50,7 @@ public:
 	static ret_pointer assign_handler(
 		c_ring_buffer <char> * buffer, c_event_router::ss_inbound_data * event_object, c_event_router::ss_inbound_data::e_event_type event_id, e_record_types rec_type);
 */
-	static ret_write_pointer assign_handler(
-		char * buffer, c_event_router::ss_outbound_data *event_object, c_event_router::ss_outbound_data::e_event_type event_id, uint8_t size, uint8_t write_destination);
-	static ret_pointer assign_handler(
-		c_ring_buffer <char> * buffer, c_event_router::ss_inbound_data * event_object, c_event_router::ss_inbound_data::e_event_type event_id, e_record_types rec_type);
-
+	
 	//static void write_handler(char * buffer, uint8_t(*pntr_hw_write)(uint8_t port, char byte));
 	static void write_handler(char **buffer, uint8_t(*pntr_hw_write)(uint8_t port, char byte));
 	static void txt_read_handler(c_ring_buffer <char> * buffer);
