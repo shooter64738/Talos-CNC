@@ -25,6 +25,7 @@
 #include "../../../../NGC_RS274/NGC_Error_Check.h"
 #include "../../../../NGC_RS274/NGC_Line_Processor.h"
 #include "../../../../Shared Data/FrameWork/Data/cache_data.h"
+#include "../../../../Shared Data/FrameWork/Error/c_framework_error.h"
 
 //#include "../../../../Motion/Processing/GCode/xc_gcode_buffer.h"
 
@@ -87,7 +88,7 @@ void Talos::Coordinator::Data::Ngc::load_block_from_cache()
 void  Talos::Coordinator::Data::Ngc::__raise_error(char * ngc_line)
 {
 	
-	Talos::Shared::FrameWork::Error::Handler::extern_pntr_ngc_error_handler(ngc_line);
+	Talos::Shared::FrameWork::Error::extern_pntr_ngc_error_handler(ngc_line);
 	
 	__reset();
 }

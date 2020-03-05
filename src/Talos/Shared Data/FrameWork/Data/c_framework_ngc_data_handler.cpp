@@ -77,8 +77,7 @@ void Talos::Shared::FrameWork::Data::Txt::reader()
 
 		if (*read.pntr_cache == 0)
 		{
-			__raise_error(e_error_behavior::Critical, 0, e_error_group::DataHandler, e_error_process::Read
-				, e_record_types::NgcBlockRecord, e_error_source::Serial, e_error_code::UnExpectedDataTypeForRecord);
+			__raise_error(read.pntr_cache);
 			break;
 		}
 
@@ -188,9 +187,7 @@ void Talos::Shared::FrameWork::Data::Txt::writer()
 
 
 
-void Talos::Shared::FrameWork::Data::Txt::__raise_error(e_error_behavior e_behavior
-	, uint8_t data_size, e_error_group e_group, e_error_process e_process, e_record_types e_rec_type
-	, e_error_source e_source, e_error_code e_code)
+void Talos::Shared::FrameWork::Data::Txt::__raise_error(char * txt_data)
 {
 	//release the handler because we should be done with it now, but pass a flag in indicating if
 	//there is more data to read from this buffer

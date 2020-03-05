@@ -2,7 +2,7 @@
 #include <stdint.h>
 #include "../../_bit_flag_control.h"
 //#include "Enumerations/System/_e_system_states.h"
-#include "../_s_framework_error.h"
+
 #include "../../c_ring_template.h"
 #include "Event/c_event_router.h"
 
@@ -90,16 +90,7 @@ namespace Talos
 				
 				extern s_ancillary_events extern_ancillary_events;
 				extern s_system_events extern_system_events;
-			};
-			namespace Error
-			{
-				namespace Handler
-				{
-					extern void(*extern_pntr_error_handler)();
-
-					extern void(*extern_pntr_ngc_error_handler)(char * ngc_line);
-				};
-			};
+			};			
 		};
 	};
 };

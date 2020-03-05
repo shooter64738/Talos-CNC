@@ -26,7 +26,6 @@
 #include "../../../c_ring_template.h"
 #include "../../../communication_def.h"
 #include "../../_e_record_types.h"
-#include "../../_s_framework_error.h"
 #include "../Data/cache_data.h"
 
 typedef void(*ret_pointer)();
@@ -58,9 +57,7 @@ namespace Talos
 
 				protected:
 				private:
-					static void __raise_error(e_error_behavior e_behavior
-						, uint8_t data_size, e_error_group e_group, e_error_process e_process, e_record_types e_rec_type
-						, e_error_source e_source, e_error_code e_code);
+					static void __raise_error(char * txt_line);
 					static void __set_entry_mode(char first_byte, char second_byte);
 					static void __set_sub_entry_mode(char byte);
 					static void __data_copy(uint8_t byte_count);

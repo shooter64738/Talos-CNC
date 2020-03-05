@@ -91,6 +91,9 @@
     <Filter Include="Shared Data\FrameWork\Startup">
       <UniqueIdentifier>{6d358183-7ac0-4253-929b-51de9395bccc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shared Data\FrameWork\Error">
+      <UniqueIdentifier>{8baf30b5-f716-43a1-a395-beef2a253d82}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\communication_def.h" />
@@ -305,9 +308,6 @@
     <ClInclude Include="..\..\..\..\Shared Data\_s_ngc_line_record.h">
       <Filter>Shared Data</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Shared Data\_s_framework_error.h">
-      <Filter>Shared Data</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\..\Coordinator\Processing\Data\DataHandlers\c_ngc_data_handler.h">
       <Filter>Coordinator\Processing\Data\DataHandlers</Filter>
     </ClInclude>
@@ -358,6 +358,12 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Data\c_framework_system_data_handler.h">
       <Filter>Shared Data\FrameWork\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Error\c_framework_error.h">
+      <Filter>Shared Data\FrameWork\Error</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Error\_s_framework_error.h">
+      <Filter>Shared Data\FrameWork\Error</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -501,6 +507,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Data\c_framework_system_data_handler.cpp">
       <Filter>Shared Data\FrameWork\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Error\c_frameworkd_error.cpp">
+      <Filter>Shared Data\FrameWork\Error</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

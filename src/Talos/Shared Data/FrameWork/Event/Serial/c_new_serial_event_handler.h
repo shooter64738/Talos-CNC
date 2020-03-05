@@ -25,7 +25,6 @@
 #include <stdint.h>
 #include "../../../../c_ring_template.h"
 #include "../../../FrameWork/extern_events_types.h"
-#include "../../../_s_framework_error.h"
 #include "../../../FrameWork/event/c_event_router.h"
 
 typedef void(*write_pointer)(uint8_t port, char byte);

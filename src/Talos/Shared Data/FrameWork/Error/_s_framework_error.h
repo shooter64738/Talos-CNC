@@ -1,7 +1,7 @@
 #ifndef _C_FRAMEWORK_ERROR_STRUCT
 #define _C_FRAMEWORK_ERROR_STRUCT
 #include <stdint.h>
-#include "_e_record_types.h"
+#include "../../_e_record_types.h"
 
 enum class e_error_source :uint8_t
 {
@@ -66,6 +66,7 @@ struct s_framework_error
 	uint16_t code;
 	uint8_t origin;
 	uint8_t data_size;
+	uint16_t stack;
 
 };
 #endif

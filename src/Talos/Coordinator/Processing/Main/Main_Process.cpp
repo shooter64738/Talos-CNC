@@ -24,6 +24,7 @@ then move to their respective modules.
 #include "../../../Shared Data/FrameWork/Data/cache_data.h"
 #include "../Events/EventHandlers/c_system_event_handler.h"
 #include "../../../Shared Data/FrameWork/Startup/c_framework_start.h"
+#include "../../../Shared Data/FrameWork/Error/c_framework_error.h"
 
 //#include <avr/io.h>
 //#include <avr/interrupt.h>
@@ -55,8 +56,8 @@ void Talos::Coordinator::Main_Process::initialize()
 	Talos::Coordinator::Error::initialize(&Talos::Coordinator::Main_Process::host_serial);
 	Talos::Coordinator::Events::Report::initialize(&Talos::Coordinator::Main_Process::host_serial);
 
-	Talos::Shared::FrameWork::Error::Handler::extern_pntr_error_handler = Talos::Coordinator::Error::general_error;
-	Talos::Shared::FrameWork::Error::Handler::extern_pntr_ngc_error_handler = Talos::Coordinator::Error::ngc_error;
+	Talos::Shared::FrameWork::Error::extern_pntr_error_handler = Talos::Coordinator::Error::general_error;
+	Talos::Shared::FrameWork::Error::extern_pntr_ngc_error_handler = Talos::Coordinator::Error::ngc_error;
 
 	Talos::Coordinator::Main_Process::host_serial = c_Serial(Talos::Shared::FrameWork::StartUp::cpu_type.Host, 1000000); //<--Connect to host
 	Talos::Coordinator::Main_Process::motion_serial = c_Serial(Talos::Shared::FrameWork::StartUp::cpu_type.Motion, 1000000); //<--Connect to host

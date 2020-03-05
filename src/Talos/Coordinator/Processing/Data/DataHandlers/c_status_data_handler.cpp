@@ -21,6 +21,7 @@
 #include "c_status_data_handler.h"
 #include "../../../../Shared Data/FrameWork/Data/cache_data.h"
 #include "../../Events/EventHandlers/c_report_events.h"
+#include "../../../../Shared Data/FrameWork/Error/c_framework_error.h"
 
 bool Talos::Coordinator::Data::System::send(uint8_t message
 	, uint8_t origin
@@ -92,7 +93,7 @@ void Talos::Coordinator::Data::System::Type::__critical(s_system_message *status
 	if (status->message >= 25)
 	{
 		Talos::Shared::FrameWork::Events::extern_system_events.event_manager.set((int)s_system_events::e_event_type::SystemCritical);
-		Talos::Shared::FrameWork::Error::Handler::extern_pntr_error_handler();
+		Talos::Shared::FrameWork::Error::extern_pntr_error_handler();
 	}
 }
 

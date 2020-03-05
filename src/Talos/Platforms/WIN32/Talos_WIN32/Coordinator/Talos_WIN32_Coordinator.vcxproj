@@ -47,6 +47,8 @@
     <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Data\c_framework_ngc_data_handler.h" />
     <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Data\c_framework_system_data_handler.h" />
     <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Enumerations\Status\_e_system_messages.h" />
+    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Error\c_framework_error.h" />
+    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Error\_s_framework_error.h" />
     <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Event\c_event_router.h" />
     <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Event\Serial\c_new_serial_event_handler.h" />
     <ClInclude Include="..\..\..\..\Shared Data\FrameWork\extern_events_types.h" />
@@ -61,7 +63,6 @@
     <ClInclude Include="..\..\..\..\Shared Data\_e_unit_types.h" />
     <ClInclude Include="..\..\..\..\Shared Data\_peripheral_overide_enums.h" />
     <ClInclude Include="..\..\..\..\Shared Data\_s_encoder_struct.h" />
-    <ClInclude Include="..\..\..\..\Shared Data\_s_framework_error.h" />
     <ClInclude Include="..\..\..\..\Shared Data\_s_jog_data_struct.h" />
     <ClInclude Include="..\..\..\..\Shared Data\_s_motion_data_block.h" />
     <ClInclude Include="..\..\..\..\Shared Data\_s_ngc_line_record.h" />
@@ -144,6 +145,7 @@
     <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Data\c_data_buffer.cpp" />
     <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Data\c_framework_ngc_data_handler.cpp" />
     <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Data\c_framework_system_data_handler.cpp" />
+    <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Error\c_frameworkd_error.cpp" />
     <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Event\c_event_router.cpp" />
     <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Event\Serial\c_new_serial_event_handler.cpp" />
     <ClCompile Include="..\..\..\..\Shared Data\FrameWork\extern_events_types.cpp" />

@@ -23,6 +23,7 @@
 #include "../../../../communication_def.h"
 #include "../../Data/c_framework_system_data_handler.h"
 #include "../../Data/c_framework_ngc_data_handler.h"
+#include "../../Error/c_framework_error.h"
 
 static uint8_t assign_tries = 0;
 
@@ -176,7 +177,7 @@ void c_new_serial_event_handler::__raise_error()
 	//set the handler release to null now. we dont need it
 	Talos::Shared::FrameWork::Data::Txt::pntr_read_release = NULL;
 
-	Talos::Shared::FrameWork::Error::Handler::extern_pntr_error_handler();
+	Talos::Shared::FrameWork::Error::extern_pntr_error_handler();
 }
 
 void c_new_serial_event_handler::read_data_handler_releaser()
