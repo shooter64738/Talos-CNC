@@ -8,14 +8,15 @@
 struct s_system_message
 {
 	e_record_types __rec_type__ = e_record_types::System;
-	uint8_t origin; //message origin
-	uint8_t target; //message target
+	uint8_t origin; //message origin relative to sender
+	uint8_t target; //message target relative to sender
+	uint8_t rx_from; //message target relative to receiver
 	uint8_t type; //status type
 	uint8_t message; //corresponding message value
 	uint8_t state; //state value
 	uint8_t sub_state; //substate value
 	int32_t position[MACHINE_AXIS_COUNT];
-	static const uint8_t __size__ = 31; // speify size here.. 'sizeof()' will not work across differing platforms (8bit/32bit)
+	static const uint8_t __size__ = 32; // speify size here.. 'sizeof()' will not work across differing platforms (8bit/32bit)
 };
 
 #endif // !_C_STATUS_MESSAGE

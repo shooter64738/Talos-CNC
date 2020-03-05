@@ -33,14 +33,27 @@ c_event_router::s_in_events c_event_router::inputs;
 void c_event_router::process()
 {
 	//see if there are any events at all pending
-	//if (!c_event_router::any())
+	if (c_event_router::inputs.event_manager._flag == 0 && c_event_router::outputs.event_manager._flag == 0)
+		return;
+
+	////if readers and writers have been assigned lets let thos run and finish
+	//if (c_new_serial_event_handler::pntr_data_read_handler || c_new_serial_event_handler::pntr_data_write_handler )
+	//{
+	//	if (c_new_serial_event_handler::pntr_data_read_handler)
+	//		c_new_serial_event_handler::pntr_data_read_handler();
+
+	//	if (c_new_serial_event_handler::pntr_data_write_handler)
+	//		c_new_serial_event_handler::pntr_data_read_handler();
 	//	return;
+
+	//}
+
 
 	//see if there are any serial events pending
 	//if (c_event_router::serial.any())
 	{
 		//Check serial for in bound events
-			//We are skipping bit 31 in the flag list because it is a timeout flag. 
+		//We are skipping bit 31 in the flag list because it is a timeout flag. 
 		for (int i = 0; i < 31; i++)
 		{
 			if (c_event_router::inputs.event_manager.get(i))

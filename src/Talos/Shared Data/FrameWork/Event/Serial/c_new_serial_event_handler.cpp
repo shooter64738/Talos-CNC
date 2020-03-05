@@ -132,8 +132,8 @@ void c_new_serial_event_handler::__assign_handler(c_event_router::s_in_events * 
 	{
 		//since there is data here and we do not know what kind it is, we cannot determine which assigner it needs.
 		//i feel like this is probably a critical error. 
-		__raise_error(NULL,e_error_behavior::Critical, 0, e_error_group::EventHandler, e_error_process::EventAssign
-			, e_record_types::Unknown, e_error_source::Serial, e_error_code::UnHandledRecordType, (int) event_id, e_error_stack::CoordinatorProcessingDataDataHandlersBinaryDataHandler);
+		//__raise_error(NULL,e_error_behavior::Critical, 0, e_error_group::EventHandler, e_error_process::EventAssign
+		//	, e_record_types::Unknown, e_error_source::Serial, e_error_code::UnHandledRecordType, (int) event_id, e_error_stack::CoordinatorProcessingDataDataHandlersBinaryDataHandler);
 	}
 }
 

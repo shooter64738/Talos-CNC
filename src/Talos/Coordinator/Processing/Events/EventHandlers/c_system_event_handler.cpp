@@ -23,6 +23,8 @@
 #include "../../../../Shared Data/FrameWork/extern_events_types.h"
 void Talos::Coordinator::Events::System::process()
 {
+	
+
 	/*
 	System records are potential events that came from something else (off board)
 	They could trigger system events if another processor indicated an error.
@@ -31,26 +33,29 @@ void Talos::Coordinator::Events::System::process()
 	//The router determines which event handler needs to process the message
 	Talos::Shared::FrameWork::Events::Router.process();
 
-	//See if there is an event set indicating we have a status record
-	if (Talos::Shared::FrameWork::Events::Router.ready.event_manager.get((int)c_event_router::ss_ready_data::e_event_type::System))
+	if (Talos::Shared::FrameWork::Events::Router.ready.event_manager._flag > 0)
+	{
+
+		//See if there is an event set indicating we have a status record
+		if (Talos::Shared::FrameWork::Events::Router.ready.event_manager.get((int)c_event_router::ss_ready_data::e_event_type::System))
 		//This will process the status record and may set several or no system events.
 		Talos::Coordinator::Data::System::process_system_eventing();
 
-	if (Talos::Shared::FrameWork::Events::Router.ready.event_manager.get((int)c_event_router::ss_ready_data::e_event_type::Testsignal))
-	{
+		if (Talos::Shared::FrameWork::Events::Router.ready.event_manager.get((int)c_event_router::ss_ready_data::e_event_type::Testsignal))
+		{
 
-	}
-	if (Talos::Shared::FrameWork::Events::Router.ready.event_manager.get((int)c_event_router::ss_ready_data::e_event_type::Testsignal))
-		//this send a test message back to its host. 
-	if (Talos::Coordinator::Data::System::send((int)e_status_message::messages::e_informal::ReadyToProcess
+		}
+		if (Talos::Shared::FrameWork::Events::Router.ready.event_manager.get((int)c_event_router::ss_ready_data::e_event_type::Testsignal))
+		//this send a test message back to its host.
+		if (Talos::Coordinator::Data::System::send((int)e_status_message::messages::e_informal::ReadyToProcess
 		, Talos::Shared::FrameWork::StartUp::cpu_type.Coordinator
 		, Talos::Shared::FrameWork::StartUp::cpu_type.Motion
 		, (int)e_status_message::e_status_state::motion::e_state::Idle
 		, (int)e_status_message::e_status_state::motion::e_sub_state::OK
 		, (int)e_status_message::e_status_type::Informal))
-	{
-		Talos::Shared::FrameWork::Events::Router.ready.event_manager.clear((int)c_event_router::ss_ready_data::e_event_type::Testsignal);
+		{
+			Talos::Shared::FrameWork::Events::Router.ready.event_manager.clear((int)c_event_router::ss_ready_data::e_event_type::Testsignal);
+		}
 	}
-
-	//Now we can read through the system event flags and act on whatever is there.
+	
 }

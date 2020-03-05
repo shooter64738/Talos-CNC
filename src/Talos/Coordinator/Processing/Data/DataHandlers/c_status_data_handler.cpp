@@ -54,6 +54,9 @@ bool Talos::Coordinator::Data::System::send(uint8_t message
 void Talos::Coordinator::Data::System::process_system_eventing()
 {
 	Type::__process(&Talos::Shared::c_cache_data::status_record);
+	
+	
+	
 	//Now that the status record is processed any event expansion has taken place
 	//We can clear the status record ready event
 	Talos::Shared::FrameWork::Events::Router.ready.event_manager.clear((int)c_event_router::ss_ready_data::e_event_type::System);

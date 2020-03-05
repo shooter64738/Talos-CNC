@@ -46,8 +46,8 @@ void Talos::Motion::Main_Process::initialize()
 
 	Hardware_Abstraction_Layer::Core::initialize();
 	//__initialization_start("Core", Hardware_Abstraction_Layer::Core::initialize,1);//<--core start up
-	Talos::Motion::Main_Process::host_serial = c_Serial(Talos::Shared::FrameWork::StartUp::cpu_type.Host, 250000); //<--Connect to host
-	Talos::Motion::Main_Process::coordinator_serial = c_Serial(Talos::Shared::FrameWork::StartUp::cpu_type.Coordinator, 250000); //<--Connect to host
+	Talos::Motion::Main_Process::host_serial = c_Serial(Talos::Shared::FrameWork::StartUp::cpu_type.Host, 1000000); //<--Connect to host
+	Talos::Motion::Main_Process::coordinator_serial = c_Serial(Talos::Shared::FrameWork::StartUp::cpu_type.Coordinator, 1000000); //<--Connect to host
 	Talos::Motion::Main_Process::host_serial.print_string("Motion Core initializing\r\n");
 
 
@@ -154,15 +154,15 @@ void Talos::Motion::Main_Process::run()
 		#endif // MSVC
 
 		tic_count++;
-		if (tic_count > 60000)
+		//if (tic_count > 100)
 		{
-			Talos::Motion::Main_Process::host_serial.print_string("** PING **");
+			//Talos::Motion::Main_Process::host_serial.print_string("** PING **");
 			Talos::Shared::FrameWork::Events::Router.ready.event_manager.set((int)c_event_router::ss_ready_data::e_event_type::Testsignal);
 			tic_count = 0;
 		}
 
-		//0: Handle system events
-		//Talos::Motion::Events::System::process();
+		//0: Handle system events (should always follow the router events)
+		Talos::Motion::Events::System::process();
 
 		//1: Handle motion controller events
 		Talos::Motion::Events::MotionController::process();
@@ -170,10 +170,7 @@ void Talos::Motion::Main_Process::run()
 		//2: Handle motion control events
 		Talos::Motion::Events::MotionControl::process();
 
-		//4: Handle system events (should always follow the router events)
-		Talos::Motion::Events::System::process();
-
-		//3: Handle ancillary events
+		//4: Handle ancillary events
 		//Talos::Motion::Events::ancillary_event_handler.process();
 	}
 }

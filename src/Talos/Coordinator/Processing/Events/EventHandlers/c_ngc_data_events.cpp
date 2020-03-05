@@ -27,9 +27,13 @@
 //Execute the events that have their flags set
 void Talos::Coordinator::Events::Data::process()
 {
+	
+	if (Talos::Shared::FrameWork::Events::Router.ready.event_manager._flag == 0)
+	return;
+	
 	//See if there is an event set indicating we loaded text data into the ngc cache record.
 	if (Talos::Shared::FrameWork::Events::Router.ready.event_manager.get((int)c_event_router::ss_ready_data::e_event_type::NgcDataLine))
-		Talos::Coordinator::Data::Ngc::load_block_from_cache();
-		
+	Talos::Coordinator::Data::Ngc::load_block_from_cache();
+	
 }
 

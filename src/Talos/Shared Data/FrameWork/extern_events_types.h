@@ -13,6 +13,7 @@
 #define __FRAMEWORK_COM_READ_TIMEOUT_MS 5000
 #define __FRAMEWORK_BINARY_BUFFER_SIZE 256
 
+
 //These need to be removed from here because they are not part of the framework.
 //They are specific to a controller type (motion)
 //struct s_motion_events

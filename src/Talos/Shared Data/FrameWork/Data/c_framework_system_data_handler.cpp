@@ -2,6 +2,8 @@
 #include "../../_s_status_record.h"
 #include "cache_data.h"
 
+#include <avr/io.h>
+
 void(*Talos::Shared::FrameWork::Data::System::pntr_read_release)();
 void(*Talos::Shared::FrameWork::Data::System::pntr_write_release)();
 
@@ -70,28 +72,32 @@ void Talos::Shared::FrameWork::Data::System::__data_copy()
 	Talos::Shared::c_cache_data::pntr_status_record = &Talos::Shared::c_cache_data::status_record;
 	//Copy our binry data from local cache to the ready buffer cache
 	memcpy(Talos::Shared::c_cache_data::pntr_status_record, read.cache, s_system_message::__size__);
+	Talos::Shared::c_cache_data::status_record.rx_from = read.event_id;
+	//Clear the event so this will stop firing
+	read.event_object->clear(read.event_id);
+	
 	//Set a ready event. Program eventing will pick this up and process it.
 	Talos::Shared::FrameWork::Events::Router.ready.event_manager.set((int)c_event_router::ss_ready_data::e_event_type::System);
 
 	//The reader that has been calling into here must now be released
 	pntr_read_release();
 
-	//Clear the event so this will stop firing
-	read.event_object->clear(read.event_id);
-
+	
+	
 	//These need to be null again. If this code gets called by mistake we can check for nulls and throw an error.
 	read.counter = 0;
 	read.event_id = 0;
 	read.pntr_data_copy = NULL;
 	read.event_object = NULL;
 	read.pntr_cache = read.cache;
+	
 
 }
 
 
 void Talos::Shared::FrameWork::Data::System::route_write(uint8_t event_id, s_bit_flag_controller<uint32_t> *event_object)
 {
-	write.counter = 31;//s_system_message::__size__;
+	write.counter = s_system_message::__size__;
 	write.event_id = event_id;
 	write.event_object = event_object;
 	memcpy(write.cache, Talos::Shared::c_cache_data::pntr_status_record, s_system_message::__size__);

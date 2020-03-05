@@ -26,6 +26,7 @@ namespace Talos
 			static s_ngc_block ngc_block_record;
 			static uint8_t(*pntr_write_ngc_block_record)(s_ngc_block * ngc_block_record);
 			static uint8_t(*pntr_read_ngc_block_record)(s_ngc_block * ngc_block_record);
+			static uint32_t tic_count;
 		protected:
 		private:
 

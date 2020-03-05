@@ -175,7 +175,6 @@ ISR(USART_RX_vect)
 #ifdef USART0_RX_vect
 ISR(USART0_RX_vect)
 {
-	UDR0='a';
 	char Byte = UDR0;
 	Talos::Motion::Data::Buffer::buffers[0].ring_buffer.put(Byte);
 	Talos::Shared::FrameWork::Events::Router.inputs.event_manager.set((int)c_event_router::s_in_events::e_event_type::Usart0DataArrival);
@@ -186,7 +185,6 @@ ISR(USART0_RX_vect)
 ISR(USART1_RX_vect)
 {
 	char Byte = UDR1;
-
 	Talos::Motion::Data::Buffer::buffers[1].ring_buffer.put(Byte);
 	Talos::Shared::FrameWork::Events::Router.inputs.event_manager.set((int)c_event_router::s_in_events::e_event_type::Usart1DataArrival);
 }
@@ -196,7 +194,6 @@ ISR(USART1_RX_vect)
 ISR(USART2_RX_vect)
 {
 	char Byte = UDR2;
-	UDR0='c';
 	Talos::Motion::Data::Buffer::buffers[2].ring_buffer.put(Byte);
 	Talos::Shared::FrameWork::Events::Router.inputs.event_manager.set((int)c_event_router::s_in_events::e_event_type::Usart2DataArrival);
 }
@@ -206,7 +203,6 @@ ISR(USART2_RX_vect)
 ISR(USART3_RX_vect)
 {
 	char Byte = UDR3;
-	UDR0='d';
 	Talos::Motion::Data::Buffer::buffers[3].ring_buffer.put(Byte);
 	Talos::Shared::FrameWork::Events::Router.inputs.event_manager.set((int)c_event_router::s_in_events::e_event_type::Usart3DataArrival);
 }

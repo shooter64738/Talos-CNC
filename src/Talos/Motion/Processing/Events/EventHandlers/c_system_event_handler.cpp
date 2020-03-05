@@ -36,30 +36,31 @@ void Talos::Motion::Events::System::process()
 	//The router determines which event handler needs to process the message
 	Talos::Shared::FrameWork::Events::Router.process();
 
-
-	if (Talos::Shared::FrameWork::Events::Router.ready.event_manager.get((int)c_event_router::ss_ready_data::e_event_type::System))
+	if (Talos::Shared::FrameWork::Events::Router.ready.event_manager._flag >0)
+	{
+		if (Talos::Shared::FrameWork::Events::Router.ready.event_manager.get((int)c_event_router::ss_ready_data::e_event_type::System))
 		//This will process the status record and may set several or no system events.
 		Talos::Motion::Data::System::process_system_eventing();
 
-	if (Talos::Shared::FrameWork::Events::Router.ready.event_manager.get((int)c_event_router::ss_ready_data::e_event_type::Testsignal))
-		//this send a test message back to its host. 
+		if (Talos::Shared::FrameWork::Events::Router.ready.event_manager.get((int)c_event_router::ss_ready_data::e_event_type::Testsignal))
+		//this send a test message back to its host.
 		if (Talos::Motion::Data::System::send((int)e_status_message::messages::e_informal::ReadyToProcess
-			, Talos::Shared::FrameWork::StartUp::cpu_type.Motion
-			, Talos::Shared::FrameWork::StartUp::cpu_type.Coordinator
-			, (int)e_status_message::e_status_state::motion::e_state::Idle
-			, (int)e_status_message::e_status_state::motion::e_sub_state::OK
-			, (int)e_status_message::e_status_type::Informal))
+		, Talos::Shared::FrameWork::StartUp::cpu_type.Motion
+		, Talos::Shared::FrameWork::StartUp::cpu_type.Coordinator
+		, (int)e_status_message::e_status_state::motion::e_state::Idle
+		, (int)e_status_message::e_status_state::motion::e_sub_state::OK
+		, (int)e_status_message::e_status_type::Informal))
 		{
 			Talos::Shared::FrameWork::Events::Router.ready.event_manager.clear((int)c_event_router::ss_ready_data::e_event_type::Testsignal);
 		}
 
-		
+	}
 
 	//This code is running in the motion controller, so we need to see if the coordinator and spindle are ready
 	if (!MotionControl::event_manager.get((int)MotionControl::e_event_type::CycleStart))
 	{
 		if (System::event_manager.get((int)System::e_event_type::CoordinatorReady)
-			&& System::event_manager.get((int)System::e_event_type::SpindleReady))
+		&& System::event_manager.get((int)System::e_event_type::SpindleReady))
 		{
 			//prepare to run a program
 			//1.Set drive system to lock
