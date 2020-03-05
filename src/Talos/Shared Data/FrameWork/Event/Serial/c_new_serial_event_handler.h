@@ -51,9 +51,7 @@ public:
 
 protected:
 private:
-	static void __raise_error(c_ring_buffer <char> * buffer_source, e_error_behavior e_behavior
-		, uint8_t data_size, e_error_group e_group, e_error_process e_process, e_record_types e_rec_type
-		, e_error_source e_source, e_error_code e_code, uint8_t e_origin, e_error_stack e_stack);
+	static void __raise_error();
 
 	static void __assign_handler(c_event_router::s_in_events * event_object, c_event_router::s_in_events::e_event_type event_id);
 	static void __assign_handler(c_event_router::s_out_events * event_object, c_event_router::s_out_events::e_event_type event_id);

@@ -50,8 +50,7 @@ void Talos::Coordinator::Data::Ngc::load_block_from_cache()
 		Talos::Shared::c_cache_data::txt_record.record, &new_block, Talos::Shared::c_cache_data::txt_record.size))
 		!= e_parsing_errors::OK)
 	{
-		__raise_error(Talos::Shared::c_cache_data::txt_record.record, e_error_behavior::Recoverable, Talos::Shared::c_cache_data::txt_record.size
-			, e_error_group::Interpreter, e_error_process::NgcParsing, e_record_types::NgcBlockRecord, e_error_source::Disk, (uint16_t)return_value);
+		__raise_error(Talos::Shared::c_cache_data::txt_record.record);
 		return;
 	}
 
@@ -65,8 +64,7 @@ void Talos::Coordinator::Data::Ngc::load_block_from_cache()
 	!= e_parsing_errors::OK)
 	{
 	
-		__raise_error(Talos::Shared::c_cache_data::txt_record.record, e_error_behavior::Recoverable, Talos::Shared::c_cache_data::txt_record.size
-		, e_error_group::Interpreter, e_error_process::NgcErrorCheck, e_record_types::NgcBlockRecord, e_error_source::Disk, (uint16_t)return_value);
+		__raise_error(Talos::Shared::c_cache_data::txt_record.record);
 		return;
 	}
 
@@ -86,21 +84,10 @@ void Talos::Coordinator::Data::Ngc::load_block_from_cache()
 	Talos::Shared::c_cache_data::txt_record.pntr_record = NULL;
 }
 
-void  Talos::Coordinator::Data::Ngc::__raise_error(char * ngc_line, e_error_behavior e_behavior
-	, uint8_t data_size, e_error_group e_group, e_error_process e_process, e_record_types e_rec_type
-	, e_error_source e_source, uint16_t e_code)
+void  Talos::Coordinator::Data::Ngc::__raise_error(char * ngc_line)
 {
-	s_framework_error error;
-	error.behavior = e_behavior;
-	error.code = e_code;
-	error.data_size = data_size;
-	error.group = e_group;
-	error.process = e_process;
-	error.__rec_type__ = e_rec_type;
-	error.source = e_source;
 	
-	Talos::Shared::FrameWork::Error::Handler::extern_pntr_ngc_error_handler(
-		ngc_line, e_behavior,data_size,e_group,e_process,e_rec_type,e_source,(e_error_code)e_code,0, e_error_stack::CoordinatorProcessingDataDataHandlersBinaryDataHandler );
+	Talos::Shared::FrameWork::Error::Handler::extern_pntr_ngc_error_handler(ngc_line);
 	
 	__reset();
 }

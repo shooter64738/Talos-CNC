@@ -92,9 +92,7 @@ void Talos::Coordinator::Data::System::Type::__critical(s_system_message *status
 	if (status->message >= 25)
 	{
 		Talos::Shared::FrameWork::Events::extern_system_events.event_manager.set((int)s_system_events::e_event_type::SystemCritical);
-		Talos::Shared::FrameWork::Error::Handler::extern_pntr_error_handler(
-			e_error_behavior::Critical, 0, e_error_group::SystemHandler
-			, e_error_process::Process, e_record_types::System, e_error_source::None,(e_error_code)message,0, e_error_stack::CoordinatorProcessingDataDataHandlersBinaryDataHandler);
+		Talos::Shared::FrameWork::Error::Handler::extern_pntr_error_handler();
 	}
 }
 

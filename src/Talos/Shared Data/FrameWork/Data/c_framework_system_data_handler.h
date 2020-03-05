@@ -31,10 +31,13 @@ namespace Talos
 
 					static void reader();
 					static void writer();
+
+					
 					
 				protected:
 				private:
 					static void __data_copy();
+					static void __raise_error(uint16_t e_stack);
 					
 				};
 			};

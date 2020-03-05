@@ -24,8 +24,9 @@ then move to their respective modules.
 #include "../../../Shared Data/FrameWork/Data/cache_data.h"
 #include "../Events/EventHandlers/c_system_event_handler.h"
 #include "../../../Shared Data/FrameWork/Startup/c_framework_start.h"
-#include <avr/io.h>
-#include <avr/interrupt.h>
+
+//#include <avr/io.h>
+//#include <avr/interrupt.h>
 
 
 #ifdef MSVC
@@ -155,32 +156,32 @@ void Talos::Coordinator::Main_Process::__initialization_response(uint8_t respons
 	}
 }
 volatile uint32_t tick_at_time = 0;
-ISR (TIMER1_COMPA_vect)
-{
-	//UDR0='Z';
-	tick_at_time = Talos::Shared::c_cache_data::tic_count+1;
-	Talos::Shared::c_cache_data::tic_count = 0;
-}
+//ISR (TIMER1_COMPA_vect)
+//{
+//	//UDR0='Z';
+//	tick_at_time = Talos::Shared::c_cache_data::tic_count+1;
+//	Talos::Shared::c_cache_data::tic_count = 0;
+//}
 
 void Talos::Coordinator::Main_Process::run()
 {
-	OCR1A = 0x3D08;
+	//OCR1A = 0x3D08;
 
-	TCCR1B |= (1 << WGM12);
-	// Mode 4, CTC on OCR1A
+	//TCCR1B |= (1 << WGM12);
+	//// Mode 4, CTC on OCR1A
 
-	TIMSK1 |= (1 << OCIE1A);
-	//Set interrupt on compare match
+	//TIMSK1 |= (1 << OCIE1A);
+	////Set interrupt on compare match
 
-	TCCR1B |= (1 << CS12) | (1 << CS10);
-	// set prescaler to 1024 and start the timer
+	//TCCR1B |= (1 << CS12) | (1 << CS10);
+	//// set prescaler to 1024 and start the timer
 
 
 	Talos::Shared::FrameWork::Events::extern_system_events.event_manager.set((int)s_system_events::e_event_type::SystemAllOk);
 
 	Talos::Coordinator::Main_Process::host_serial.print_string("\r\n** System ready **\r\n");
 	#ifdef MSVC
-	Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "?G\r\n?M\r\n");
+	//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "?G\r\n?M\r\n");
 	#endif
 	//Start the eventing loop, stop loop if a critical system error occurs
 	while (Talos::Shared::FrameWork::Events::extern_system_events.event_manager.get((int)s_system_events::e_event_type::SystemAllOk))
@@ -194,7 +195,7 @@ void Talos::Coordinator::Main_Process::run()
 		
 		//if (tic_count > 60000)
 		//{
-		////Talos::Shared::FrameWork::Events::Router.ready.event_manager.set((int)c_event_router::ss_ready_data::e_event_type::Testsignal);
+//		Talos::Shared::FrameWork::Events::Router.ready.event_manager.set((int)c_event_router::ss_ready_data::e_event_type::Testsignal);
 		//
 		////Talos::Coordinator::Main_Process::host_serial.print_string("alive\r\n");
 		//tic_count = 0;

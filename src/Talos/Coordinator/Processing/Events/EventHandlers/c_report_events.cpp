@@ -56,6 +56,8 @@ void Talos::Coordinator::Events::Report::process()
 				//__write_eol();
 			//}
 			
+			//Clear the status record or it cant get used again!
+			Talos::Shared::c_cache_data::pntr_status_record = NULL;
 			
 		}
 	}
@@ -76,8 +78,7 @@ void Talos::Coordinator::Events::Report::process()
 		____word(COUNT_OF_BLOCK_WORDS_ARRAY, Talos::Shared::c_cache_data::ngc_block_record.word_values);
 	}
 	
-	//Clear the status record or it cant get used again!
-	Talos::Shared::c_cache_data::pntr_status_record = NULL;
+	
 }
 
 void Talos::Coordinator::Events::Report::__write_header(s_ngc_block block)
