@@ -38,26 +38,29 @@ void Talos::Coordinator::Events::Report::process()
 		if (Talos::Coordinator::Events::Report::event_manager.get_clr((int) Events::Report::e_event_type::StatusMessage))
 		{
 			Talos::Shared::c_cache_data::tic_count++;
-			//stead of reporting shit loads of data, we should jsut store off the state of the different processors
+			//instead of reporting shit loads of data, we should jsut store off the state of the different processors
+			if (Talos::Shared::c_cache_data::pntr_status_record != NULL)
+			{
+				//rpt_serial->print_string("Sta:{Mot}");; __write_eol();
+				//rpt_serial->print_string(" Rtp:"); rpt_serial->print_int32((int)Talos::Shared::c_cache_data::pntr_status_record->__rec_type__); __write_eol();
+				//rpt_serial->print_string(" Org:"); rpt_serial->print_int32(Talos::Shared::c_cache_data::pntr_status_record->origin); __write_eol();
+				//rpt_serial->print_string(" Trg:"); rpt_serial->print_int32(Talos::Shared::c_cache_data::pntr_status_record->target); __write_eol();
+				//rpt_serial->print_string(" Msg:"); rpt_serial->print_int32(Talos::Shared::c_cache_data::pntr_status_record->message); __write_eol();
+				//rpt_serial->print_string(" Ste:"); rpt_serial->print_int32(Talos::Shared::c_cache_data::pntr_status_record->state); __write_eol();
+				//rpt_serial->print_string(" Sst:"); rpt_serial->print_int32(Talos::Shared::c_cache_data::pntr_status_record->sub_state); __write_eol();
+				//rpt_serial->print_string(" RxF:"); rpt_serial->print_int32(Talos::Shared::c_cache_data::pntr_status_record->rx_from); __write_eol();
+				//rpt_serial->print_string(" Pos:");  __write_eol();
+				//for (uint8_t i=0 ;i<MACHINE_AXIS_COUNT;i++)
+				//{
+					//rpt_serial->Write('\t');
+					//rpt_serial->print_float(Talos::Shared::c_cache_data::pntr_status_record->position[i]);
+					//__write_eol();
+				//}
+				//Clear the status record or it cant get used again!
+				Talos::Shared::c_cache_data::pntr_status_record = NULL;
+			}
 			
-			//rpt_serial->print_string("Sta:{Mot}");; __write_eol();
-			//rpt_serial->print_string(" Rtp:"); rpt_serial->print_int32((int)Talos::Shared::c_cache_data::pntr_status_record->__rec_type__); __write_eol();
-			//rpt_serial->print_string(" Org:"); rpt_serial->print_int32(Talos::Shared::c_cache_data::pntr_status_record->origin); __write_eol();
-			//rpt_serial->print_string(" Trg:"); rpt_serial->print_int32(Talos::Shared::c_cache_data::pntr_status_record->target); __write_eol();
-			//rpt_serial->print_string(" Msg:"); rpt_serial->print_int32(Talos::Shared::c_cache_data::pntr_status_record->message); __write_eol();
-			//rpt_serial->print_string(" Ste:"); rpt_serial->print_int32(Talos::Shared::c_cache_data::pntr_status_record->state); __write_eol();
-			//rpt_serial->print_string(" Sst:"); rpt_serial->print_int32(Talos::Shared::c_cache_data::pntr_status_record->sub_state); __write_eol();
-			//rpt_serial->print_string(" RxF:"); rpt_serial->print_int32(Talos::Shared::c_cache_data::pntr_status_record->rx_from); __write_eol();
-			//rpt_serial->print_string(" Pos:");  __write_eol();
-			//for (uint8_t i=0 ;i<MACHINE_AXIS_COUNT;i++)
-			//{
-				//rpt_serial->Write('\t');
-				//rpt_serial->print_float(Talos::Shared::c_cache_data::pntr_status_record->position[i]);
-				//__write_eol();
-			//}
 			
-			//Clear the status record or it cant get used again!
-			Talos::Shared::c_cache_data::pntr_status_record = NULL;
 			
 		}
 	}

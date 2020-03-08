@@ -33,7 +33,7 @@ namespace Talos
 			static void test_spindle_msg();
 			static void test_motion_msg();
 			static void test_ngc_block();
-			static void error_handler(c_ring_buffer<char> * released_buffer, s_framework_error error);
+			static void error_handler();
 			//Main_Process();
 			//~Main_Process();
 			protected:

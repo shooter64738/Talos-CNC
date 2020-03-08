@@ -24,6 +24,7 @@
 #include "../../Events/EventHandlers/c_system_event_handler.h"
 #include "../../../Core/c_interpollation_hardware.h"
 #include "../../Main/Main_Process.h"
+#include "../../../../Shared Data/FrameWork/Error/c_framework_error.h"
 
 bool Talos::Motion::Data::System::send(uint8_t message, uint8_t origin, uint8_t target
 , uint8_t state, uint8_t sub_state, uint8_t type)
@@ -96,9 +97,7 @@ void Talos::Motion::Data::System::Type::__critical(s_system_message *status, e_s
 	if (status->message >= 25)
 	{
 		Talos::Shared::FrameWork::Events::extern_system_events.event_manager.set((int)s_system_events::e_event_type::SystemCritical);
-		Talos::Shared::FrameWork::Error::Handler::extern_pntr_error_handler(
-		e_error_behavior::Critical,0,e_error_group::SystemHandler,e_error_process::Process
-		,e_record_types::System,e_error_source::None, (e_error_code) message,0,e_error_stack::CoordinatorProcessingDataDataHandlersBinaryDataHandler);
+		Talos::Shared::FrameWork::extern_pntr_error_handler();
 	}
 }
 

@@ -28,58 +28,54 @@ uint8_t Talos::Motion::Error::initialize(c_Serial *serial)
 	return 0;
 }
 
-void Talos::Motion::Error::general_error(e_error_behavior e_behavior
-, uint8_t data_size, e_error_group e_group, e_error_process e_process, e_record_types e_rec_type
-, e_error_source e_source, e_error_code e_code, uint8_t e_origin,e_error_stack e_stack)
+void Talos::Motion::Error::general_error()
 {
-	err_serial->print_string("Err:");
-	if (e_behavior == e_error_behavior::Critical)
-	{
-		Talos::Shared::FrameWork::Events::extern_system_events.event_manager.set((int)s_system_events::e_event_type::SystemCritical);
-		Talos::Shared::FrameWork::Events::extern_system_events.event_manager.clear((int)s_system_events::e_event_type::SystemAllOk);
-		err_serial->print_string("{Critical}");
-	}
-	__print_base(e_behavior,data_size,e_group,e_process,e_rec_type, e_source,e_code,e_origin,e_stack);
+		err_serial->print_string("Err:");
+		if (Talos::Shared::FrameWork::Error::framework_error.behavior == e_error_behavior::Critical)
+		{
+			Talos::Shared::FrameWork::Events::extern_system_events.event_manager.set((int)s_system_events::e_event_type::SystemCritical);
+			Talos::Shared::FrameWork::Events::extern_system_events.event_manager.clear((int)s_system_events::e_event_type::SystemAllOk);
+			err_serial->print_string("{Critical}");
+		}
+		__print_base();
 }
 
-void Talos::Motion::Error::ngc_error(char * ngc_line, e_error_behavior e_behavior
-, uint8_t data_size, e_error_group e_group, e_error_process e_process, e_record_types e_rec_type
-, e_error_source e_source, e_error_code e_code, uint8_t e_origin,e_error_stack e_stack)
+
+void Talos::Motion::Error::ngc_error(char * ngc_line)
 {
 	err_serial->print_string("Err:{Ngc}");
 	__write_eol();
 
 	Talos::Shared::FrameWork::Events::extern_system_events.event_manager.set((int)s_system_events::e_event_type::NgcReset);
 	
-	__print_base(e_behavior,data_size,e_group,e_process,e_rec_type, e_source,e_code,e_origin,e_stack);
+	__print_base();
 
-	err_serial->Write(ngc_line);	
+	err_serial->Write(ngc_line);
 	__write_eol();err_serial->print_string("** Ngc Reset **");
 	__write_eol();
 }
 
-void Talos::Motion::Error::__print_base(e_error_behavior e_behavior
-, uint8_t data_size, e_error_group e_group, e_error_process e_process, e_record_types e_rec_type
-, e_error_source e_source, e_error_code e_code, uint8_t e_origin,e_error_stack e_stack)
+void Talos::Motion::Error::__print_base()
 {
 	__write_eol();err_serial->print_string("\tSrc:");
-	err_serial->print_int32((int)e_source);
+	err_serial->print_int32((int)Talos::Shared::FrameWork::Error::framework_error.source);
 	__write_eol();err_serial->print_string("\tBhr:");
-	err_serial->print_int32((int)e_behavior);
+	err_serial->print_int32((int)Talos::Shared::FrameWork::Error::framework_error.behavior);
 	__write_eol();err_serial->print_string("\tDsz:");
-	err_serial->print_int32((int)data_size);
+	err_serial->print_int32((int)Talos::Shared::FrameWork::Error::framework_error.data_size);
 	__write_eol();err_serial->print_string("\tGrp:");
-	err_serial->print_int32((int)e_group);
+	err_serial->print_int32((int)Talos::Shared::FrameWork::Error::framework_error.group);
 	__write_eol();err_serial->print_string("\tPrs:");
-	err_serial->print_int32((int)e_process);
+	err_serial->print_int32((int)Talos::Shared::FrameWork::Error::framework_error.process);
 	__write_eol();err_serial->print_string("\tRtp:");
-	err_serial->print_int32((int)e_rec_type);
+	err_serial->print_int32((int)Talos::Shared::FrameWork::Error::framework_error.__rec_type__);
 	__write_eol();err_serial->print_string("\tCde:");
-	err_serial->print_int32((int)e_code);
+	err_serial->print_int32((int)Talos::Shared::FrameWork::Error::framework_error.code);
 	__write_eol();err_serial->print_string("\tOrg:");
-	err_serial->print_int32((int)e_origin);
-	__write_eol();err_serial->print_string("\tStk:");
-	err_serial->print_int32((int)e_stack);
+	err_serial->print_int32((int)Talos::Shared::FrameWork::Error::framework_error.origin);
+	__write_eol(); err_serial->print_string("\tStk:");
+	err_serial->print_int32((int)Talos::Shared::FrameWork::Error::framework_error.stack);
+
 	__write_eol();
 }
 

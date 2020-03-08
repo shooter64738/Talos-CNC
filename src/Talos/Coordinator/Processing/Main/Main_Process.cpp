@@ -25,7 +25,8 @@ then move to their respective modules.
 #include "../Events/EventHandlers/c_system_event_handler.h"
 #include "../../../Shared Data/FrameWork/Startup/c_framework_start.h"
 #include "../../../Shared Data/FrameWork/Error/c_framework_error.h"
-
+#include "../../../Shared Data/FrameWork/Event/Serial/c_new_serial_event_handler.h"
+//
 //#include <avr/io.h>
 //#include <avr/interrupt.h>
 
@@ -56,11 +57,11 @@ void Talos::Coordinator::Main_Process::initialize()
 	Talos::Coordinator::Error::initialize(&Talos::Coordinator::Main_Process::host_serial);
 	Talos::Coordinator::Events::Report::initialize(&Talos::Coordinator::Main_Process::host_serial);
 
-	Talos::Shared::FrameWork::Error::extern_pntr_error_handler = Talos::Coordinator::Error::general_error;
+	Talos::Shared::FrameWork::extern_pntr_error_handler = Talos::Coordinator::Error::general_error;
 	Talos::Shared::FrameWork::Error::extern_pntr_ngc_error_handler = Talos::Coordinator::Error::ngc_error;
 
-	Talos::Coordinator::Main_Process::host_serial = c_Serial(Talos::Shared::FrameWork::StartUp::cpu_type.Host, 1000000); //<--Connect to host
-	Talos::Coordinator::Main_Process::motion_serial = c_Serial(Talos::Shared::FrameWork::StartUp::cpu_type.Motion, 1000000); //<--Connect to host
+	Talos::Coordinator::Main_Process::host_serial = c_Serial(Talos::Shared::FrameWork::StartUp::cpu_type.Host, 250000); //<--Connect to host
+	Talos::Coordinator::Main_Process::motion_serial = c_Serial(Talos::Shared::FrameWork::StartUp::cpu_type.Motion, 250000); //<--Connect to host
 	Talos::Coordinator::Main_Process::host_serial.print_string("Coordinator initializing\r\n");
 
 	__critical_initialization("Core", Hardware_Abstraction_Layer::Core::initialize, STARTUP_CLASS_CRITICAL);//<--core start up
@@ -157,33 +158,40 @@ void Talos::Coordinator::Main_Process::__initialization_response(uint8_t respons
 	}
 }
 volatile uint32_t tick_at_time = 0;
-//ISR (TIMER1_COMPA_vect)
+
+//ISR (TIMER5_COMPA_vect)
 //{
-//	//UDR0='Z';
-//	tick_at_time = Talos::Shared::c_cache_data::tic_count+1;
-//	Talos::Shared::c_cache_data::tic_count = 0;
+	//UDR0='A';
+	//Talos::Shared::FrameWork::Events::Router.ready.event_manager.set((int)c_event_router::ss_ready_data::e_event_type::Testsignal);
 //}
 
 void Talos::Coordinator::Main_Process::run()
 {
-	//OCR1A = 0x3D08;
-
-	//TCCR1B |= (1 << WGM12);
+	//OCR5A = 15624;
+	//TCCR5B |= (1 << WGM52);
 	//// Mode 4, CTC on OCR1A
-
-	//TIMSK1 |= (1 << OCIE1A);
+	//TIMSK5 |= (1 << OCIE5A);
 	////Set interrupt on compare match
-
-	//TCCR1B |= (1 << CS12) | (1 << CS10);
-	//// set prescaler to 1024 and start the timer
-
-
-	Talos::Shared::FrameWork::Events::extern_system_events.event_manager.set((int)s_system_events::e_event_type::SystemAllOk);
+	//TCCR5B |= (1 << CS52) | (1 << CS50);
+	////TCCR5B |= (1 << CS52);// | (1 << CS50);
+//
+	//Talos::Shared::FrameWork::Events::extern_system_events.event_manager.set((int)s_system_events::e_event_type::SystemAllOk);
+	//Talos::Coordinator::Main_Process::host_serial.print_string("\r\n** System holding **\r\n");
+	//while(tick_at_time == 0)
+	//{
+		//Talos::Coordinator::Events::System::process();
+		//if (Talos::Coordinator::Events::Report::event_manager.get_clr((int) Events::Report::e_event_type::StatusMessage))
+		//break;
+	//
+	//}
+	//TIMSK5 = 0;
+	
 
 	Talos::Coordinator::Main_Process::host_serial.print_string("\r\n** System ready **\r\n");
-	#ifdef MSVC
-	//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "?G\r\n?M\r\n");
-	#endif
+	
+	//tell motion control we are ready
+	Talos::Shared::FrameWork::Events::Router.ready.event_manager.set((int)c_event_router::ss_ready_data::e_event_type::Testsignal);
+	
 	//Start the eventing loop, stop loop if a critical system error occurs
 	while (Talos::Shared::FrameWork::Events::extern_system_events.event_manager.get((int)s_system_events::e_event_type::SystemAllOk))
 	{
@@ -193,14 +201,6 @@ void Talos::Coordinator::Main_Process::run()
 			Talos::Coordinator::Main_Process::host_serial.print_string("\r\n");
 			tick_at_time=0;
 		}
-		
-		//if (tic_count > 60000)
-		//{
-//		Talos::Shared::FrameWork::Events::Router.ready.event_manager.set((int)c_event_router::ss_ready_data::e_event_type::Testsignal);
-		//
-		////Talos::Coordinator::Main_Process::host_serial.print_string("alive\r\n");
-		//tic_count = 0;
-		//}
 
 		//0: Handle system events
 		//Talos::Coordinator::Events::system_event_handler.process();
@@ -236,6 +236,8 @@ void Talos::Coordinator::Main_Process::test_motion_msg()
 	Talos::Shared::c_cache_data::status_record.message = (int)e_status_message::messages::e_informal::ReadyToProcess;
 	Talos::Shared::c_cache_data::status_record.state = (int)e_status_message::e_status_state::motion::e_state::Idle;
 	Talos::Shared::c_cache_data::status_record.sub_state = (int)e_status_message::e_status_state::motion::e_sub_state::OK;
-	Talos::Shared::c_cache_data::status_record.origin = Talos::Shared::FrameWork::StartUp::cpu_type.Motion;
+	Talos::Shared::c_cache_data::status_record.origin = Talos::Shared::FrameWork::StartUp::cpu_type.Coordinator;
 	Talos::Shared::c_cache_data::status_record.target = Talos::Shared::FrameWork::StartUp::cpu_type.Coordinator;
+	
+	Talos::Shared::c_cache_data::pntr_status_record = &Talos::Shared::c_cache_data::status_record;
 }

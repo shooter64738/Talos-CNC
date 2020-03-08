@@ -508,7 +508,7 @@
     <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Data\c_framework_system_data_handler.cpp">
       <Filter>Shared Data\FrameWork\Data</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Error\c_frameworkd_error.cpp">
+    <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Error\c_framework_error.cpp">
       <Filter>Shared Data\FrameWork\Error</Filter>
     </ClCompile>
   </ItemGroup>

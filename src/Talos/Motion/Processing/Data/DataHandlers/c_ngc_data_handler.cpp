@@ -22,6 +22,7 @@
 #include "../../../Core/c_gateway.h"
 #include "../../../../NGC_RS274/ngc_block_view.h"
 #include "../../../Core/c_motion_core.h"
+#include "../../../../Shared Data/FrameWork/Error/c_framework_error.h"
 
 void Talos::Motion::Data::Ngc::load_block_from_cache()
 {
@@ -58,13 +59,10 @@ void Talos::Motion::Data::Ngc::load_block_from_cache()
 	Talos::Shared::FrameWork::Events::Router.outputs.event_manager.set((int)c_event_router::s_out_events::e_event_type::NgcBlockRequest);
 }
 
-void  Talos::Motion::Data::Ngc::__raise_error(char * ngc_line, e_error_behavior e_behavior
-	, uint8_t data_size, e_error_group e_group, e_error_process e_process, e_record_types e_rec_type
-	, e_error_source e_source, e_error_code e_code, e_error_stack e_stack)
+void  Talos::Motion::Data::Ngc::__raise_error(char * ngc_line)
 {
 
-	Talos::Shared::FrameWork::Error::Handler::extern_pntr_ngc_error_handler(Talos::Shared::c_cache_data::txt_record.record
-	,e_behavior,data_size,e_group,e_process,e_rec_type,e_source,e_code, 0, e_stack );
+	Talos::Shared::FrameWork::Error::extern_pntr_ngc_error_handler(Talos::Shared::c_cache_data::txt_record.record);
 
 	__reset();
 }

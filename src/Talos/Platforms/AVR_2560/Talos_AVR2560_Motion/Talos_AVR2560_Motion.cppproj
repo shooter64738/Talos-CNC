@@ -30,15 +30,15 @@
     <EraseKey />
     <AsfFrameworkConfig>
       <framework-data>
-  <options />
-  <configurations />
-  <files />
-  <documentation help="" />
-  <offline-documentation help="" />
-  <dependencies>
-    <content-extension eid="atmel.asf" uuidref="Atmel.ASF" version="3.26.0" />
-  </dependencies>
-</framework-data>
+        <options />
+        <configurations />
+        <files />
+        <documentation help="" />
+        <offline-documentation help="" />
+        <dependencies>
+          <content-extension eid="atmel.asf" uuidref="Atmel.ASF" version="3.26.0" />
+        </dependencies>
+      </framework-data>
     </AsfFrameworkConfig>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -387,6 +387,18 @@
       <SubType>compile</SubType>
       <Link>Shared Data\FrameWork\Enumerations\Status\_e_system_types.h</Link>
     </Compile>
+    <Compile Include="..\..\..\Shared Data\FrameWork\Error\c_framework_error.cpp">
+      <SubType>compile</SubType>
+      <Link>Shared Data\FrameWork\Error\c_framework_error.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\Shared Data\FrameWork\Error\c_framework_error.h">
+      <SubType>compile</SubType>
+      <Link>Shared Data\FrameWork\Error\c_framework_error.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Shared Data\FrameWork\Error\_s_framework_error.h">
+      <SubType>compile</SubType>
+      <Link>Shared Data\FrameWork\Error\_s_framework_error.h</Link>
+    </Compile>
     <Compile Include="..\..\..\Shared Data\FrameWork\Event\c_event_router.cpp">
       <SubType>compile</SubType>
       <Link>Shared Data\FrameWork\Event\c_event_router.cpp</Link>
@@ -466,10 +478,6 @@
     <Compile Include="..\..\..\Shared Data\_s_encoder_struct.h">
       <SubType>compile</SubType>
       <Link>Shared Data\_s_encoder_struct.h</Link>
-    </Compile>
-    <Compile Include="..\..\..\Shared Data\_s_framework_error.h">
-      <SubType>compile</SubType>
-      <Link>Shared Data\_s_framework_error.h</Link>
     </Compile>
     <Compile Include="..\..\..\Shared Data\_s_jog_data_struct.h">
       <SubType>compile</SubType>
@@ -586,6 +594,7 @@
     <Folder Include="Shared Data\FrameWork\Event" />
     <Folder Include="Shared Data\FrameWork\Event\Serial" />
     <Folder Include="Shared Data\FrameWork\Enumerations" />
+    <Folder Include="Shared Data\FrameWork\Error" />
     <Folder Include="Shared Data\FrameWork\Startup" />
     <Folder Include="Shared Data\Settings" />
     <Folder Include="Shared Data\Settings\Motion" />

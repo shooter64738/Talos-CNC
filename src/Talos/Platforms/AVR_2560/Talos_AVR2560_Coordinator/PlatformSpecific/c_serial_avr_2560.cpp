@@ -13,10 +13,12 @@
 #include <stddef.h>
 #include "../../../../Coordinator/Processing/Data/c_data_buffers.h"
 #include "../../../../Shared Data/FrameWork/extern_events_types.h"
+#include "../../../../Shared Data/FrameWork/Data/cache_data.h"
 
 
 void Hardware_Abstraction_Layer::Serial::initialize(uint8_t Port, uint32_t BaudRate)
 {
+	memset(Talos::Coordinator::Data::Buffer::buffers[Port].storage, 0,256);
 	Talos::Coordinator::Data::Buffer::buffers[Port].ring_buffer.initialize(Talos::Coordinator::Data::Buffer::buffers[Port].storage, 256);
 	Talos::Shared::FrameWork::Events::Router.inputs.pntr_ring_buffer = Talos::Coordinator::Data::Buffer::buffers;
 	Talos::Shared::FrameWork::Events::Router.outputs.pntr_serial_write = Hardware_Abstraction_Layer::Serial::send;
@@ -185,6 +187,7 @@ ISR(USART0_RX_vect)
 ISR(USART1_RX_vect)
 {
 	char Byte = UDR1;
+
 
 	Talos::Coordinator::Data::Buffer::buffers[1].ring_buffer.put(Byte);
 	Talos::Shared::FrameWork::Events::Router.inputs.event_manager.set((int)c_event_router::s_in_events::e_event_type::Usart1DataArrival);

@@ -145,7 +145,7 @@
     <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Data\c_data_buffer.cpp" />
     <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Data\c_framework_ngc_data_handler.cpp" />
     <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Data\c_framework_system_data_handler.cpp" />
-    <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Error\c_frameworkd_error.cpp" />
+    <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Error\c_framework_error.cpp" />
     <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Event\c_event_router.cpp" />
     <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Event\Serial\c_new_serial_event_handler.cpp" />
     <ClCompile Include="..\..\..\..\Shared Data\FrameWork\extern_events_types.cpp" />

@@ -25,6 +25,7 @@
 #include "../../../Serial/c_Serial.h"
 #include "../../../../Shared Data/FrameWork/extern_events_types.h"
 #include "../../../../NGC_RS274/_ngc_block_struct.h"
+#include "../../../../_bit_flag_control.h"
 
 namespace Talos
 {
@@ -36,6 +37,11 @@ namespace Talos
 			{
 				//variables
 				public:
+				enum class e_event_type
+				{
+					StatusMessage = 0,
+				};
+				static s_bit_flag_controller<uint32_t> event_manager;
 
 				protected:
 				private:

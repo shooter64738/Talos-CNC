@@ -50,9 +50,9 @@ public:
 
 protected:
 private:
-	static void __raise_error();
+	static void __raise_error(uint16_t stack);
 
-	static void __assign_handler(c_event_router::s_in_events * event_object, c_event_router::s_in_events::e_event_type event_id);
+	static uint8_t __assign_handler(c_event_router::s_in_events * event_object, c_event_router::s_in_events::e_event_type event_id);
 	static void __assign_handler(c_event_router::s_out_events * event_object, c_event_router::s_out_events::e_event_type event_id);
 
 }; //c_serial_events

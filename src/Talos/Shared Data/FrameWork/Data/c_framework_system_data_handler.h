@@ -19,6 +19,7 @@ namespace Talos
 				public:
 					static void(*pntr_read_release)();
 					static void(*pntr_write_release)();
+					
 				protected:
 				private:
 
@@ -37,8 +38,8 @@ namespace Talos
 				protected:
 				private:
 					static void __data_copy();
-					static void __raise_error(uint16_t e_stack);
 					
+					static void __raise_error(uint16_t e_stack, uint8_t event_id);
 				};
 			};
 		};

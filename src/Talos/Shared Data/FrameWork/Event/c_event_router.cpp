@@ -34,7 +34,7 @@ void c_event_router::process()
 {
 	//see if there are any events at all pending
 	if (c_event_router::inputs.event_manager._flag == 0 && c_event_router::outputs.event_manager._flag == 0)
-		return;
+	return;
 
 	////if readers and writers have been assigned lets let thos run and finish
 	//if (c_new_serial_event_handler::pntr_data_read_handler || c_new_serial_event_handler::pntr_data_write_handler )
@@ -52,21 +52,23 @@ void c_event_router::process()
 	//see if there are any serial events pending
 	//if (c_event_router::serial.any())
 	{
-		//Check serial for in bound events
-		//We are skipping bit 31 in the flag list because it is a timeout flag. 
-		for (int i = 0; i < 31; i++)
+		if (c_event_router::inputs.event_manager._flag > 0)
 		{
-			if (c_event_router::inputs.event_manager.get(i))
+			//Check serial for in bound events
+			
+			for (int i = 0; i < 31; i++)
 			{
+				if (c_event_router::inputs.event_manager.get(i))
+				{
 
-				c_new_serial_event_handler::process(&c_event_router::inputs, (c_event_router::s_in_events::e_event_type)i);
-				//return here because we have processed an event, and we arent stacking them.
-				//one event gets assigned a handler and no other handler will be assigned
-				//until that event is finished.
-				break;
+					c_new_serial_event_handler::process(&c_event_router::inputs, (c_event_router::s_in_events::e_event_type)i);
+					//return here because we have processed an event, and we arent stacking them.
+					//one event gets assigned a handler and no other handler will be assigned
+					//until that event is finished.
+					break;
+				}
 			}
 		}
-
 		//Check serial for out bound events
 		if (c_event_router::outputs.event_manager._flag > 0)
 		{

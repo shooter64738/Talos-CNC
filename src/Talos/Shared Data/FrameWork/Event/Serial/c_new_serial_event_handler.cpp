@@ -24,12 +24,15 @@
 #include "../../Data/c_framework_system_data_handler.h"
 #include "../../Data/c_framework_ngc_data_handler.h"
 #include "../../Error/c_framework_error.h"
+//#include <avr/io.h>
 
+#define Base_Error 100
 static uint8_t assign_tries = 0;
 
 void(*c_new_serial_event_handler::pntr_data_read_handler)();
 void(*c_new_serial_event_handler::pntr_data_write_handler)();
 
+#define Err_1 1
 void c_new_serial_event_handler::process(c_event_router::s_in_events * event_object, c_event_router::s_in_events::e_event_type event_id)
 {
 	/*
@@ -42,26 +45,27 @@ void c_new_serial_event_handler::process(c_event_router::s_in_events * event_obj
 	*/
 
 	//Is there a handler assigned for this data class already? If a handler is assigned
-	//keep using it until all the data is consumed. Otherwise assign a new handler. 
+	//keep using it until all the data is consumed. Otherwise assign a new handler.
 	if (c_new_serial_event_handler::pntr_data_read_handler == NULL)
 	{
-		c_new_serial_event_handler::__assign_handler(event_object, event_id);
+		while(c_new_serial_event_handler::__assign_handler(event_object, event_id) ==1);
 	}
 
 	if (c_new_serial_event_handler::pntr_data_read_handler != NULL)
 	{
 		//The handler will release its self when it determines that all of the data for
-		//that particular handler has been consumed. 
+		//that particular handler has been consumed.
 		c_new_serial_event_handler::pntr_data_read_handler();
 
 	}
 }
 
+#define Err_2 2
 void c_new_serial_event_handler::process(c_event_router::s_out_events * event_object, c_event_router::s_out_events::e_event_type event_id)
 {
 
 	//Is there is a handler assigned for this data class already? If a handler is assigned
-	//keep using it until all the data is consumed. Otherwise assign a new handler. 
+	//keep using it until all the data is consumed. Otherwise assign a new handler.
 	if (c_new_serial_event_handler::pntr_data_write_handler == NULL)
 	{
 		c_new_serial_event_handler::__assign_handler(event_object, event_id);
@@ -70,17 +74,19 @@ void c_new_serial_event_handler::process(c_event_router::s_out_events * event_ob
 	if (c_new_serial_event_handler::pntr_data_write_handler != NULL)
 	{
 		//The handler will release its self when it determines that all of the data for
-		//that particular handler has been consumed. 
+		//that particular handler has been consumed.
 		c_new_serial_event_handler::pntr_data_write_handler();
 	}
 }
 
-void c_new_serial_event_handler::__assign_handler(c_event_router::s_in_events * event_object, c_event_router::s_in_events::e_event_type event_id)
+#define Err_3 3
+uint8_t c_new_serial_event_handler::__assign_handler(c_event_router::s_in_events * event_object, c_event_router::s_in_events::e_event_type event_id)
 {
+	
 	//Tail is always assumed to be at the 'start' of data
 	//event id for serial is the port the data came from or is going to. We can use that to access the buffer array pointer.
 	char peek_tail = (c_event_router::inputs.pntr_ring_buffer + (int)event_id)->
-		ring_buffer.peek((c_event_router::inputs.pntr_ring_buffer + (int)event_id)->ring_buffer._tail);
+	ring_buffer.peek((c_event_router::inputs.pntr_ring_buffer + (int)event_id)->ring_buffer._tail);
 
 	//Printable data is ngc line data. We need to check cr or lf because those are
 	//special line ending characters for ngc data. We will NEVER use 10 or 13 as a
@@ -89,16 +95,16 @@ void c_new_serial_event_handler::__assign_handler(c_event_router::s_in_events * 
 	{
 		assign_tries = 0;
 		//TODO:: What if a program is running and the MDI interface sends serial data??
-		//I think we should ignore/lockout MDI input when a program is running. 
+		//I think we should ignore/lockout MDI input when a program is running.
 
 		//If CR and LF are the termination for an ngc line, we wont see those unless we jsut processed a record
-		//We can throw those characters away. 
+		//We can throw those characters away.
 		if (peek_tail == CR || peek_tail == LF)
 		{
 			(c_event_router::inputs.pntr_ring_buffer + (int)event_id)->ring_buffer.get();
 			if (!(c_event_router::inputs.pntr_ring_buffer + (int)event_id)->ring_buffer.has_data())
-				event_object->event_manager.clear((int)event_id);
-			return;
+			event_object->event_manager.clear((int)event_id);
+			return 0;
 		}
 
 		Talos::Shared::FrameWork::Data::Txt::route_read((int)event_id, &event_object->event_manager);
@@ -108,11 +114,13 @@ void c_new_serial_event_handler::__assign_handler(c_event_router::s_in_events * 
 	}
 	else if (peek_tail > 0 && peek_tail < 32) //non-printable and below 32 is a binary record
 	{
+		
 		assign_tries = 0;
 		//Assign a specific handler for this data type
 		//c_new_serial_event_handler::pntr_data_read_handler = Txt::assign_handler(buffer, event_object, event_id, (e_record_types)peek_tail);
 		if (peek_tail == (int)e_record_types::System)
 		{
+				
 			Talos::Shared::FrameWork::Data::System::route_read((int)event_id, &event_object->event_manager);
 			c_new_serial_event_handler::pntr_data_read_handler = Talos::Shared::FrameWork::Data::System::reader;
 			Talos::Shared::FrameWork::Data::System::pntr_read_release = c_new_serial_event_handler::read_data_handler_releaser;
@@ -124,6 +132,7 @@ void c_new_serial_event_handler::__assign_handler(c_event_router::s_in_events * 
 	}
 	else if (peek_tail > 127) //non-printable and above 127 is a control code
 	{
+		//UDR0='C';
 		//Assign a specific handler for this data type
 		//c_new_serial_event_handler::pntr_data_read_handler = Txt::assign_handler(event_object, event_id, (e_record_types)peek_tail);
 
@@ -133,53 +142,67 @@ void c_new_serial_event_handler::__assign_handler(c_event_router::s_in_events * 
 	}
 	else //we dont know what kind of data it is
 	{
+		//UDR0='D';
+		(c_event_router::inputs.pntr_ring_buffer + (int)event_id)->ring_buffer.get();
+		assign_tries++;
+		return 1;
 		//Struggling here to come up with a solid solution. We got some unexpected data in the buffer.
 		//pull 1 byte off the buffer and call again
-		if ((c_event_router::inputs.pntr_ring_buffer + (int)event_id)->ring_buffer.has_data() && assign_tries < 10)
+		if (assign_tries < 10)
 		{
 			assign_tries++;
 			(c_event_router::inputs.pntr_ring_buffer + (int)event_id)->ring_buffer.get();
 			__assign_handler(event_object, event_id);
 		}
 		//since there is data here and we do not know what kind it is, we cannot determine which assigner it needs.
-		//i feel like this is probably a critical error. 
-		__raise_error();
+		//i feel like this is probably a critical error.
+		Talos::Shared::FrameWork::Error::framework_error.origin = (int)event_object->event_manager._flag;
+		Talos::Shared::FrameWork::Error::framework_error.code = (int)event_id;
+		Talos::Shared::FrameWork::Error::framework_error.buffer_head = ((c_event_router::inputs.pntr_ring_buffer + (int)event_id)->ring_buffer._head);
+		Talos::Shared::FrameWork::Error::framework_error.buffer_tail = ((c_event_router::inputs.pntr_ring_buffer + (int)event_id)->ring_buffer._tail);
+		Talos::Shared::FrameWork::Error::framework_error.origin = (int)event_id;
+		Talos::Shared::FrameWork::Error::framework_error.data = ((c_event_router::inputs.pntr_ring_buffer + (int)event_id)->storage);
+		__raise_error(Err_3 +Base_Error);
 	}
+	return 0;
 }
 
+#define Err_4 4
 void c_new_serial_event_handler::__assign_handler(c_event_router::s_out_events * event_object, c_event_router::s_out_events::e_event_type event_id)
 {
 
 	switch (event_id)
 	{
-	case c_event_router::s_out_events::e_event_type::NgcBlockRequest:
+		case c_event_router::s_out_events::e_event_type::NgcBlockRequest:
 		break;
 
-	case c_event_router::s_out_events::e_event_type::StatusUpdate:
+		case c_event_router::s_out_events::e_event_type::StatusUpdate:
 		Talos::Shared::FrameWork::Data::System::route_write((int)event_id, &event_object->event_manager);
 		c_new_serial_event_handler::pntr_data_write_handler = Talos::Shared::FrameWork::Data::System::writer;
-		//This is function point that gets 'called back' when all the data is done processing. 
+		//This is function point that gets 'called back' when all the data is done processing.
 		Talos::Shared::FrameWork::Data::System::pntr_write_release = c_new_serial_event_handler::write_data_handler_releaser;
 		break;
-	default:
-		__raise_error();
+		default:
+		__raise_error(Err_4);
 		return;
 	}
 
 
 }
 
-void c_new_serial_event_handler::__raise_error()
+#define Err_5 5
+void c_new_serial_event_handler::__raise_error(uint16_t stack)
 {
 	//release the handler because we should be done with it now, but pass a flag in indicating if
 	//there is more data to read from this buffer
 	//c_data_handler::pntr_data_handler_release(buffer_source);
 	//set the handler release to null now. we dont need it
 	Talos::Shared::FrameWork::Data::Txt::pntr_read_release = NULL;
-
-	Talos::Shared::FrameWork::Error::extern_pntr_error_handler();
+	Talos::Shared::FrameWork::Error::framework_error.stack = stack;
+	Talos::Shared::FrameWork::extern_pntr_error_handler();
 }
 
+#define Err_6 6
 void c_new_serial_event_handler::read_data_handler_releaser()
 {
 	c_new_serial_event_handler::pntr_data_read_handler = NULL;
@@ -192,6 +215,7 @@ void c_new_serial_event_handler::read_data_handler_releaser()
 	//}
 }
 
+#define Err_7 7
 void c_new_serial_event_handler::write_data_handler_releaser()
 {
 	c_new_serial_event_handler::pntr_data_write_handler = NULL;

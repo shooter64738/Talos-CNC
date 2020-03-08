@@ -93,7 +93,7 @@ void Talos::Coordinator::Data::System::Type::__critical(s_system_message *status
 	if (status->message >= 25)
 	{
 		Talos::Shared::FrameWork::Events::extern_system_events.event_manager.set((int)s_system_events::e_event_type::SystemCritical);
-		Talos::Shared::FrameWork::Error::extern_pntr_error_handler();
+		Talos::Shared::FrameWork::extern_pntr_error_handler();
 	}
 }
 
@@ -109,7 +109,7 @@ void Talos::Coordinator::Data::System::Type::__informal(s_system_message *status
 	//System message contains information that we need to present to the user. 
 
 	//We got a status message from some where
-	//if (message == e_status_message::messages::e_informal::ReadyToProcess)
+	if (message == e_status_message::messages::e_informal::ReadyToProcess)
 	{
 		
 		Talos::Coordinator::Events::Report::event_manager.set((int)Events::Report::e_event_type::StatusMessage);

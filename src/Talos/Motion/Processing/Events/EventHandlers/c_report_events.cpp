@@ -23,6 +23,7 @@
 #include <math.h>
 
 static c_Serial *rpt_serial;
+s_bit_flag_controller<uint32_t> Talos::Motion::Events::Report::event_manager;
 
 uint8_t Talos::Motion::Events::Report::initialize(c_Serial *serial)
 {
@@ -33,21 +34,53 @@ uint8_t Talos::Motion::Events::Report::initialize(c_Serial *serial)
 void Talos::Motion::Events::Report::process()
 {
 
-	if (!Talos::Shared::FrameWork::Events::Router.inquire.any())
-		return;
+	if (Talos::Motion::Events::Report::event_manager._flag>0)
+	{
+		if (Talos::Motion::Events::Report::event_manager.get_clr((int) Events::Report::e_event_type::StatusMessage))
+		{
+			Talos::Shared::c_cache_data::tic_count++;
+			//instead of reporting shit loads of data, we should jsut store off the state of the different processors
+			if (Talos::Shared::c_cache_data::pntr_status_record != NULL)
+			{
+				//rpt_serial->print_string("Sta:{Mot}");; __write_eol();
+				//rpt_serial->print_string(" Rtp:"); rpt_serial->print_int32((int)Talos::Shared::c_cache_data::pntr_status_record->__rec_type__); __write_eol();
+				//rpt_serial->print_string(" Org:"); rpt_serial->print_int32(Talos::Shared::c_cache_data::pntr_status_record->origin); __write_eol();
+				//rpt_serial->print_string(" Trg:"); rpt_serial->print_int32(Talos::Shared::c_cache_data::pntr_status_record->target); __write_eol();
+				//rpt_serial->print_string(" Msg:"); rpt_serial->print_int32(Talos::Shared::c_cache_data::pntr_status_record->message); __write_eol();
+				//rpt_serial->print_string(" Ste:"); rpt_serial->print_int32(Talos::Shared::c_cache_data::pntr_status_record->state); __write_eol();
+				//rpt_serial->print_string(" Sst:"); rpt_serial->print_int32(Talos::Shared::c_cache_data::pntr_status_record->sub_state); __write_eol();
+				//rpt_serial->print_string(" RxF:"); rpt_serial->print_int32(Talos::Shared::c_cache_data::pntr_status_record->rx_from); __write_eol();
+				//rpt_serial->print_string(" Pos:");  __write_eol();
+				//for (uint8_t i=0 ;i<MACHINE_AXIS_COUNT;i++)
+				//{
+				//rpt_serial->Write('\t');
+				//rpt_serial->print_float(Talos::Shared::c_cache_data::pntr_status_record->position[i]);
+				//__write_eol();
+				//}
+				//Clear the status record or it cant get used again!
+				Talos::Shared::c_cache_data::pntr_status_record = NULL;
+			}
+			
+			
+			
+		}
+	}
+	
+	if (Talos::Shared::FrameWork::Events::Router.inquire.event_manager._flag>0)
+	{
+		//If there are ANY block reporting events we will need a block header
+		__write_header(Talos::Shared::c_cache_data::ngc_block_record);
 
-	//If there are ANY block reporting events we will need a block header
-	__write_header(Talos::Shared::c_cache_data::ngc_block_record);
-
-	if (Talos::Shared::FrameWork::Events::Router.inquire.event_manager.get_clr((int)c_event_router::ss_inquiry_data::e_event_type::ActiveBlockGGroupStatus))
+		if (Talos::Shared::FrameWork::Events::Router.inquire.event_manager.get_clr((int)c_event_router::ss_inquiry_data::e_event_type::ActiveBlockGGroupStatus))
 		____group(COUNT_OF_G_CODE_GROUPS_ARRAY, Talos::Shared::c_cache_data::ngc_block_record.g_group, 'G');
 
-	if (Talos::Shared::FrameWork::Events::Router.inquire.event_manager.get_clr((int)c_event_router::ss_inquiry_data::e_event_type::ActiveBlockMGroupStatus))
+		if (Talos::Shared::FrameWork::Events::Router.inquire.event_manager.get_clr((int)c_event_router::ss_inquiry_data::e_event_type::ActiveBlockMGroupStatus))
 		____group(COUNT_OF_M_CODE_GROUPS_ARRAY, Talos::Shared::c_cache_data::ngc_block_record.m_group, 'M');
 
 
-	if (Talos::Shared::FrameWork::Events::Router.inquire.event_manager.get_clr((int)c_event_router::ss_inquiry_data::e_event_type::ActiveBlockWordStatus))
+		if (Talos::Shared::FrameWork::Events::Router.inquire.event_manager.get_clr((int)c_event_router::ss_inquiry_data::e_event_type::ActiveBlockWordStatus))
 		____word(COUNT_OF_BLOCK_WORDS_ARRAY, Talos::Shared::c_cache_data::ngc_block_record.word_values);
+	}
 }
 
 void Talos::Motion::Events::Report::__write_header(s_ngc_block block)
