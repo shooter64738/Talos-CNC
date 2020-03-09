@@ -30,145 +30,145 @@
     <EraseKey />
     <AsfFrameworkConfig>
       <framework-data>
-  <options />
-  <configurations />
-  <files />
-  <documentation help="" />
-  <offline-documentation help="" />
-  <dependencies>
-    <content-extension eid="atmel.asf" uuidref="Atmel.ASF" version="3.26.0" />
-  </dependencies>
-</framework-data>
+        <options />
+        <configurations />
+        <files />
+        <documentation help="" />
+        <offline-documentation help="" />
+        <dependencies>
+          <content-extension eid="atmel.asf" uuidref="Atmel.ASF" version="3.26.0" />
+        </dependencies>
+      </framework-data>
     </AsfFrameworkConfig>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <ToolchainSettings>
       <ArmGccCpp>
-  <armgcc.common.outputfiles.hex>True</armgcc.common.outputfiles.hex>
-  <armgcc.common.outputfiles.lss>True</armgcc.common.outputfiles.lss>
-  <armgcc.common.outputfiles.eep>True</armgcc.common.outputfiles.eep>
-  <armgcc.common.outputfiles.bin>True</armgcc.common.outputfiles.bin>
-  <armgcc.common.outputfiles.srec>True</armgcc.common.outputfiles.srec>
-  <armgcc.compiler.symbols.DefSymbols>
-    <ListValues>
-      <Value>NDEBUG</Value>
-    </ListValues>
-  </armgcc.compiler.symbols.DefSymbols>
-  <armgcc.compiler.directories.IncludePaths>
-    <ListValues>
-      <Value>%24(PackRepoDir)\ARM\CMSIS\5.4.0\CMSIS\Core\Include\</Value>
-      <Value>%24(PackRepoDir)\atmel\SAM3X_DFP\1.0.51\include</Value>
-    </ListValues>
-  </armgcc.compiler.directories.IncludePaths>
-  <armgcc.compiler.optimization.level>Optimize for size (-Os)</armgcc.compiler.optimization.level>
-  <armgcc.compiler.optimization.PrepareFunctionsForGarbageCollection>True</armgcc.compiler.optimization.PrepareFunctionsForGarbageCollection>
-  <armgcc.compiler.warnings.AllWarnings>True</armgcc.compiler.warnings.AllWarnings>
-  <armgcccpp.compiler.symbols.DefSymbols>
-    <ListValues>
-      <Value>NDEBUG</Value>
-    </ListValues>
-  </armgcccpp.compiler.symbols.DefSymbols>
-  <armgcccpp.compiler.directories.IncludePaths>
-    <ListValues>
-      <Value>%24(PackRepoDir)\ARM\CMSIS\5.4.0\CMSIS\Core\Include\</Value>
-      <Value>%24(PackRepoDir)\atmel\SAM3X_DFP\1.0.51\include</Value>
-    </ListValues>
-  </armgcccpp.compiler.directories.IncludePaths>
-  <armgcccpp.compiler.optimization.level>Optimize for size (-Os)</armgcccpp.compiler.optimization.level>
-  <armgcccpp.compiler.optimization.PrepareFunctionsForGarbageCollection>True</armgcccpp.compiler.optimization.PrepareFunctionsForGarbageCollection>
-  <armgcccpp.compiler.warnings.AllWarnings>True</armgcccpp.compiler.warnings.AllWarnings>
-  <armgcccpp.linker.libraries.Libraries>
-    <ListValues>
-      <Value>libm</Value>
-    </ListValues>
-  </armgcccpp.linker.libraries.Libraries>
-  <armgcccpp.linker.libraries.LibrarySearchPaths>
-    <ListValues>
-      <Value>%24(ProjectDir)\Device_Startup</Value>
-    </ListValues>
-  </armgcccpp.linker.libraries.LibrarySearchPaths>
-  <armgcccpp.linker.optimization.GarbageCollectUnusedSections>True</armgcccpp.linker.optimization.GarbageCollectUnusedSections>
-  <armgcccpp.linker.miscellaneous.LinkerFlags>-Tsam3x8e_flash.ld</armgcccpp.linker.miscellaneous.LinkerFlags>
-  <armgcccpp.assembler.general.IncludePaths>
-    <ListValues>
-      <Value>%24(PackRepoDir)\ARM\CMSIS\5.4.0\CMSIS\Core\Include\</Value>
-      <Value>%24(PackRepoDir)\atmel\SAM3X_DFP\1.0.51\include</Value>
-    </ListValues>
-  </armgcccpp.assembler.general.IncludePaths>
-  <armgcccpp.preprocessingassembler.general.IncludePaths>
-    <ListValues>
-      <Value>%24(PackRepoDir)\ARM\CMSIS\5.4.0\CMSIS\Core\Include\</Value>
-      <Value>%24(PackRepoDir)\atmel\SAM3X_DFP\1.0.51\include</Value>
-    </ListValues>
-  </armgcccpp.preprocessingassembler.general.IncludePaths>
-</ArmGccCpp>
+        <armgcc.common.outputfiles.hex>True</armgcc.common.outputfiles.hex>
+        <armgcc.common.outputfiles.lss>True</armgcc.common.outputfiles.lss>
+        <armgcc.common.outputfiles.eep>True</armgcc.common.outputfiles.eep>
+        <armgcc.common.outputfiles.bin>True</armgcc.common.outputfiles.bin>
+        <armgcc.common.outputfiles.srec>True</armgcc.common.outputfiles.srec>
+        <armgcc.compiler.symbols.DefSymbols>
+          <ListValues>
+            <Value>NDEBUG</Value>
+          </ListValues>
+        </armgcc.compiler.symbols.DefSymbols>
+        <armgcc.compiler.directories.IncludePaths>
+          <ListValues>
+            <Value>%24(PackRepoDir)\ARM\CMSIS\5.4.0\CMSIS\Core\Include\</Value>
+            <Value>%24(PackRepoDir)\atmel\SAM3X_DFP\1.0.51\include</Value>
+          </ListValues>
+        </armgcc.compiler.directories.IncludePaths>
+        <armgcc.compiler.optimization.level>Optimize for size (-Os)</armgcc.compiler.optimization.level>
+        <armgcc.compiler.optimization.PrepareFunctionsForGarbageCollection>True</armgcc.compiler.optimization.PrepareFunctionsForGarbageCollection>
+        <armgcc.compiler.warnings.AllWarnings>True</armgcc.compiler.warnings.AllWarnings>
+        <armgcccpp.compiler.symbols.DefSymbols>
+          <ListValues>
+            <Value>NDEBUG</Value>
+          </ListValues>
+        </armgcccpp.compiler.symbols.DefSymbols>
+        <armgcccpp.compiler.directories.IncludePaths>
+          <ListValues>
+            <Value>%24(PackRepoDir)\ARM\CMSIS\5.4.0\CMSIS\Core\Include\</Value>
+            <Value>%24(PackRepoDir)\atmel\SAM3X_DFP\1.0.51\include</Value>
+          </ListValues>
+        </armgcccpp.compiler.directories.IncludePaths>
+        <armgcccpp.compiler.optimization.level>Optimize for size (-Os)</armgcccpp.compiler.optimization.level>
+        <armgcccpp.compiler.optimization.PrepareFunctionsForGarbageCollection>True</armgcccpp.compiler.optimization.PrepareFunctionsForGarbageCollection>
+        <armgcccpp.compiler.warnings.AllWarnings>True</armgcccpp.compiler.warnings.AllWarnings>
+        <armgcccpp.linker.libraries.Libraries>
+          <ListValues>
+            <Value>libm</Value>
+          </ListValues>
+        </armgcccpp.linker.libraries.Libraries>
+        <armgcccpp.linker.libraries.LibrarySearchPaths>
+          <ListValues>
+            <Value>%24(ProjectDir)\Device_Startup</Value>
+          </ListValues>
+        </armgcccpp.linker.libraries.LibrarySearchPaths>
+        <armgcccpp.linker.optimization.GarbageCollectUnusedSections>True</armgcccpp.linker.optimization.GarbageCollectUnusedSections>
+        <armgcccpp.linker.miscellaneous.LinkerFlags>-Tsam3x8e_flash.ld</armgcccpp.linker.miscellaneous.LinkerFlags>
+        <armgcccpp.assembler.general.IncludePaths>
+          <ListValues>
+            <Value>%24(PackRepoDir)\ARM\CMSIS\5.4.0\CMSIS\Core\Include\</Value>
+            <Value>%24(PackRepoDir)\atmel\SAM3X_DFP\1.0.51\include</Value>
+          </ListValues>
+        </armgcccpp.assembler.general.IncludePaths>
+        <armgcccpp.preprocessingassembler.general.IncludePaths>
+          <ListValues>
+            <Value>%24(PackRepoDir)\ARM\CMSIS\5.4.0\CMSIS\Core\Include\</Value>
+            <Value>%24(PackRepoDir)\atmel\SAM3X_DFP\1.0.51\include</Value>
+          </ListValues>
+        </armgcccpp.preprocessingassembler.general.IncludePaths>
+      </ArmGccCpp>
     </ToolchainSettings>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <ToolchainSettings>
       <ArmGccCpp>
-  <armgcc.common.outputfiles.hex>True</armgcc.common.outputfiles.hex>
-  <armgcc.common.outputfiles.lss>True</armgcc.common.outputfiles.lss>
-  <armgcc.common.outputfiles.eep>True</armgcc.common.outputfiles.eep>
-  <armgcc.common.outputfiles.bin>True</armgcc.common.outputfiles.bin>
-  <armgcc.common.outputfiles.srec>True</armgcc.common.outputfiles.srec>
-  <armgcc.compiler.symbols.DefSymbols>
-    <ListValues>
-      <Value>DEBUG</Value>
-    </ListValues>
-  </armgcc.compiler.symbols.DefSymbols>
-  <armgcc.compiler.directories.IncludePaths>
-    <ListValues>
-      <Value>%24(PackRepoDir)\ARM\CMSIS\5.4.0\CMSIS\Core\Include\</Value>
-      <Value>%24(PackRepoDir)\atmel\SAM3X_DFP\1.0.51\include</Value>
-    </ListValues>
-  </armgcc.compiler.directories.IncludePaths>
-  <armgcc.compiler.optimization.level>Optimize (-O1)</armgcc.compiler.optimization.level>
-  <armgcc.compiler.optimization.PrepareFunctionsForGarbageCollection>True</armgcc.compiler.optimization.PrepareFunctionsForGarbageCollection>
-  <armgcc.compiler.optimization.DebugLevel>Maximum (-g3)</armgcc.compiler.optimization.DebugLevel>
-  <armgcc.compiler.warnings.AllWarnings>True</armgcc.compiler.warnings.AllWarnings>
-  <armgcccpp.compiler.symbols.DefSymbols>
-    <ListValues>
-      <Value>DEBUG</Value>
-    </ListValues>
-  </armgcccpp.compiler.symbols.DefSymbols>
-  <armgcccpp.compiler.directories.IncludePaths>
-    <ListValues>
-      <Value>%24(PackRepoDir)\ARM\CMSIS\5.4.0\CMSIS\Core\Include\</Value>
-      <Value>%24(PackRepoDir)\atmel\SAM3X_DFP\1.0.51\include</Value>
-    </ListValues>
-  </armgcccpp.compiler.directories.IncludePaths>
-  <armgcccpp.compiler.optimization.level>Optimize (-O1)</armgcccpp.compiler.optimization.level>
-  <armgcccpp.compiler.optimization.PrepareFunctionsForGarbageCollection>True</armgcccpp.compiler.optimization.PrepareFunctionsForGarbageCollection>
-  <armgcccpp.compiler.optimization.DebugLevel>Maximum (-g3)</armgcccpp.compiler.optimization.DebugLevel>
-  <armgcccpp.compiler.warnings.AllWarnings>True</armgcccpp.compiler.warnings.AllWarnings>
-  <armgcccpp.linker.libraries.Libraries>
-    <ListValues>
-      <Value>libm</Value>
-    </ListValues>
-  </armgcccpp.linker.libraries.Libraries>
-  <armgcccpp.linker.libraries.LibrarySearchPaths>
-    <ListValues>
-      <Value>%24(ProjectDir)\Device_Startup</Value>
-    </ListValues>
-  </armgcccpp.linker.libraries.LibrarySearchPaths>
-  <armgcccpp.linker.optimization.GarbageCollectUnusedSections>True</armgcccpp.linker.optimization.GarbageCollectUnusedSections>
-  <armgcccpp.linker.miscellaneous.LinkerFlags>-Tsam3x8e_flash.ld</armgcccpp.linker.miscellaneous.LinkerFlags>
-  <armgcccpp.assembler.general.IncludePaths>
-    <ListValues>
-      <Value>%24(PackRepoDir)\ARM\CMSIS\5.4.0\CMSIS\Core\Include\</Value>
-      <Value>%24(PackRepoDir)\atmel\SAM3X_DFP\1.0.51\include</Value>
-    </ListValues>
-  </armgcccpp.assembler.general.IncludePaths>
-  <armgcccpp.assembler.debugging.DebugLevel>Default (-g)</armgcccpp.assembler.debugging.DebugLevel>
-  <armgcccpp.preprocessingassembler.general.IncludePaths>
-    <ListValues>
-      <Value>%24(PackRepoDir)\ARM\CMSIS\5.4.0\CMSIS\Core\Include\</Value>
-      <Value>%24(PackRepoDir)\atmel\SAM3X_DFP\1.0.51\include</Value>
-    </ListValues>
-  </armgcccpp.preprocessingassembler.general.IncludePaths>
-  <armgcccpp.preprocessingassembler.debugging.DebugLevel>Default (-Wa,-g)</armgcccpp.preprocessingassembler.debugging.DebugLevel>
-</ArmGccCpp>
+        <armgcc.common.outputfiles.hex>True</armgcc.common.outputfiles.hex>
+        <armgcc.common.outputfiles.lss>True</armgcc.common.outputfiles.lss>
+        <armgcc.common.outputfiles.eep>True</armgcc.common.outputfiles.eep>
+        <armgcc.common.outputfiles.bin>True</armgcc.common.outputfiles.bin>
+        <armgcc.common.outputfiles.srec>True</armgcc.common.outputfiles.srec>
+        <armgcc.compiler.symbols.DefSymbols>
+          <ListValues>
+            <Value>DEBUG</Value>
+          </ListValues>
+        </armgcc.compiler.symbols.DefSymbols>
+        <armgcc.compiler.directories.IncludePaths>
+          <ListValues>
+            <Value>%24(PackRepoDir)\ARM\CMSIS\5.4.0\CMSIS\Core\Include\</Value>
+            <Value>%24(PackRepoDir)\atmel\SAM3X_DFP\1.0.51\include</Value>
+          </ListValues>
+        </armgcc.compiler.directories.IncludePaths>
+        <armgcc.compiler.optimization.level>Optimize (-O1)</armgcc.compiler.optimization.level>
+        <armgcc.compiler.optimization.PrepareFunctionsForGarbageCollection>True</armgcc.compiler.optimization.PrepareFunctionsForGarbageCollection>
+        <armgcc.compiler.optimization.DebugLevel>Maximum (-g3)</armgcc.compiler.optimization.DebugLevel>
+        <armgcc.compiler.warnings.AllWarnings>True</armgcc.compiler.warnings.AllWarnings>
+        <armgcccpp.compiler.symbols.DefSymbols>
+          <ListValues>
+            <Value>DEBUG</Value>
+          </ListValues>
+        </armgcccpp.compiler.symbols.DefSymbols>
+        <armgcccpp.compiler.directories.IncludePaths>
+          <ListValues>
+            <Value>%24(PackRepoDir)\ARM\CMSIS\5.4.0\CMSIS\Core\Include\</Value>
+            <Value>%24(PackRepoDir)\atmel\SAM3X_DFP\1.0.51\include</Value>
+          </ListValues>
+        </armgcccpp.compiler.directories.IncludePaths>
+        <armgcccpp.compiler.optimization.level>Optimize (-O1)</armgcccpp.compiler.optimization.level>
+        <armgcccpp.compiler.optimization.PrepareFunctionsForGarbageCollection>True</armgcccpp.compiler.optimization.PrepareFunctionsForGarbageCollection>
+        <armgcccpp.compiler.optimization.DebugLevel>Maximum (-g3)</armgcccpp.compiler.optimization.DebugLevel>
+        <armgcccpp.compiler.warnings.AllWarnings>True</armgcccpp.compiler.warnings.AllWarnings>
+        <armgcccpp.linker.libraries.Libraries>
+          <ListValues>
+            <Value>libm</Value>
+          </ListValues>
+        </armgcccpp.linker.libraries.Libraries>
+        <armgcccpp.linker.libraries.LibrarySearchPaths>
+          <ListValues>
+            <Value>%24(ProjectDir)\Device_Startup</Value>
+          </ListValues>
+        </armgcccpp.linker.libraries.LibrarySearchPaths>
+        <armgcccpp.linker.optimization.GarbageCollectUnusedSections>True</armgcccpp.linker.optimization.GarbageCollectUnusedSections>
+        <armgcccpp.linker.miscellaneous.LinkerFlags>-Tsam3x8e_flash.ld</armgcccpp.linker.miscellaneous.LinkerFlags>
+        <armgcccpp.assembler.general.IncludePaths>
+          <ListValues>
+            <Value>%24(PackRepoDir)\ARM\CMSIS\5.4.0\CMSIS\Core\Include\</Value>
+            <Value>%24(PackRepoDir)\atmel\SAM3X_DFP\1.0.51\include</Value>
+          </ListValues>
+        </armgcccpp.assembler.general.IncludePaths>
+        <armgcccpp.assembler.debugging.DebugLevel>Default (-g)</armgcccpp.assembler.debugging.DebugLevel>
+        <armgcccpp.preprocessingassembler.general.IncludePaths>
+          <ListValues>
+            <Value>%24(PackRepoDir)\ARM\CMSIS\5.4.0\CMSIS\Core\Include\</Value>
+            <Value>%24(PackRepoDir)\atmel\SAM3X_DFP\1.0.51\include</Value>
+          </ListValues>
+        </armgcccpp.preprocessingassembler.general.IncludePaths>
+        <armgcccpp.preprocessingassembler.debugging.DebugLevel>Default (-Wa,-g)</armgcccpp.preprocessingassembler.debugging.DebugLevel>
+      </ArmGccCpp>
     </ToolchainSettings>
   </PropertyGroup>
   <ItemGroup>
@@ -276,13 +276,37 @@
       <SubType>compile</SubType>
       <Link>Motion\motion_main.cpp</Link>
     </Compile>
-    <Compile Include="..\..\..\Motion\Processing\Data\DataHandlers\c_binary_data_handler.cpp">
+    <Compile Include="..\..\..\Motion\Processing\Data\c_data_buffers.cpp">
       <SubType>compile</SubType>
-      <Link>Motion\Processing\Data\DataHandlers\c_binary_data_handler.cpp</Link>
+      <Link>Motion\Processing\Data\c_data_buffers.cpp</Link>
     </Compile>
-    <Compile Include="..\..\..\Motion\Processing\Data\DataHandlers\c_binary_data_handler.h">
+    <Compile Include="..\..\..\Motion\Processing\Data\c_data_buffers.h">
       <SubType>compile</SubType>
-      <Link>Motion\Processing\Data\DataHandlers\c_binary_data_handler.h</Link>
+      <Link>Motion\Processing\Data\c_data_buffers.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Motion\Processing\Data\DataHandlers\c_ngc_data_handler.cpp">
+      <SubType>compile</SubType>
+      <Link>Motion\Processing\Data\DataHandlers\c_ngc_data_handler.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\Motion\Processing\Data\DataHandlers\c_ngc_data_handler.h">
+      <SubType>compile</SubType>
+      <Link>Motion\Processing\Data\DataHandlers\c_ngc_data_handler.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Motion\Processing\Data\DataHandlers\c_status_data_handler.cpp">
+      <SubType>compile</SubType>
+      <Link>Motion\Processing\Data\DataHandlers\c_status_data_handler.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\Motion\Processing\Data\DataHandlers\c_status_data_handler.h">
+      <SubType>compile</SubType>
+      <Link>Motion\Processing\Data\DataHandlers\c_status_data_handler.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Motion\Processing\Error\c_error.cpp">
+      <SubType>compile</SubType>
+      <Link>Motion\Error\c_error.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\Motion\Processing\Error\c_error.h">
+      <SubType>compile</SubType>
+      <Link>Motion\Error\c_error.h</Link>
     </Compile>
     <Compile Include="..\..\..\Motion\Processing\Events\EventHandlers\c_block_events.cpp">
       <SubType>compile</SubType>
@@ -292,6 +316,14 @@
       <SubType>compile</SubType>
       <Link>Motion\Processing\Events\EventHandlers\c_block_events.h</Link>
     </Compile>
+    <Compile Include="..\..\..\Motion\Processing\Events\EventHandlers\c_motion_controller_event_handler.cpp">
+      <SubType>compile</SubType>
+      <Link>Motion\Processing\Events\EventHandlers\c_motion_controller_event_handler.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\Motion\Processing\Events\EventHandlers\c_motion_controller_event_handler.h">
+      <SubType>compile</SubType>
+      <Link>Motion\Processing\Events\EventHandlers\c_motion_controller_event_handler.h</Link>
+    </Compile>
     <Compile Include="..\..\..\Motion\Processing\Events\EventHandlers\c_motion_control_event_handler.cpp">
       <SubType>compile</SubType>
       <Link>Motion\Processing\Events\EventHandlers\c_motion_control_event_handler.cpp</Link>
@@ -300,13 +332,13 @@
       <SubType>compile</SubType>
       <Link>Motion\Processing\Events\EventHandlers\c_motion_control_event_handler.h</Link>
     </Compile>
-    <Compile Include="..\..\..\Motion\Processing\Events\EventHandlers\c_motion_event_handler.cpp">
+    <Compile Include="..\..\..\Motion\Processing\Events\EventHandlers\c_report_events.cpp">
       <SubType>compile</SubType>
-      <Link>Motion\Processing\Events\EventHandlers\c_motion_event_handler.cpp</Link>
+      <Link>Motion\Processing\Events\EventHandlers\c_report_events.cpp</Link>
     </Compile>
-    <Compile Include="..\..\..\Motion\Processing\Events\EventHandlers\c_motion_event_handler.h">
+    <Compile Include="..\..\..\Motion\Processing\Events\EventHandlers\c_report_events.h">
       <SubType>compile</SubType>
-      <Link>Motion\Processing\Events\EventHandlers\c_motion_event_handler.h</Link>
+      <Link>Motion\Processing\Events\EventHandlers\c_report_events.h</Link>
     </Compile>
     <Compile Include="..\..\..\Motion\Processing\Events\EventHandlers\c_system_event_handler.cpp">
       <SubType>compile</SubType>
@@ -368,49 +400,77 @@
       <SubType>compile</SubType>
       <Link>physical_machine_parameters.h</Link>
     </Compile>
-    <Compile Include="..\..\..\Shared Data\Data\cache_data.cpp">
+    <Compile Include="..\..\..\Shared Data\FrameWork\Data\cache_data.cpp">
       <SubType>compile</SubType>
-      <Link>Shared Data\Data\cache_data.cpp</Link>
+      <Link>Shared Data\FrameWork\Data\cache_data.cpp</Link>
     </Compile>
-    <Compile Include="..\..\..\Shared Data\Data\cache_data.h">
+    <Compile Include="..\..\..\Shared Data\FrameWork\Data\cache_data.h">
       <SubType>compile</SubType>
-      <Link>Shared Data\Data\cache_data.h</Link>
+      <Link>Shared Data\FrameWork\Data\cache_data.h</Link>
     </Compile>
-    <Compile Include="..\..\..\Shared Data\Data\c_data_handler.cpp">
+    <Compile Include="..\..\..\Shared Data\FrameWork\Data\c_data_buffer.cpp">
       <SubType>compile</SubType>
-      <Link>Shared Data\Data\c_data_handler.cpp</Link>
+      <Link>Shared Data\FrameWork\Data\c_data_buffer.cpp</Link>
     </Compile>
-    <Compile Include="..\..\..\Shared Data\Data\c_data_handler.h">
+    <Compile Include="..\..\..\Shared Data\FrameWork\Data\c_data_buffer.h">
       <SubType>compile</SubType>
-      <Link>Shared Data\Data\c_data_handler.h</Link>
+      <Link>Shared Data\FrameWork\Data\c_data_buffer.h</Link>
     </Compile>
-    <Compile Include="..\..\..\Shared Data\Event\c_data_events.cpp">
+    <Compile Include="..\..\..\Shared Data\FrameWork\Data\c_framework_ngc_data_handler.cpp">
       <SubType>compile</SubType>
-      <Link>Shared Data\Event\c_data_events.cpp</Link>
+      <Link>Shared Data\FrameWork\Data\c_framework_ngc_data_handler.cpp</Link>
     </Compile>
-    <Compile Include="..\..\..\Shared Data\Event\c_data_events.h">
+    <Compile Include="..\..\..\Shared Data\FrameWork\Data\c_framework_ngc_data_handler.h">
       <SubType>compile</SubType>
-      <Link>Shared Data\Event\c_data_events.h</Link>
+      <Link>Shared Data\FrameWork\Data\c_framework_ngc_data_handler.h</Link>
     </Compile>
-    <Compile Include="..\..\..\Shared Data\Event\c_events.cpp">
+    <Compile Include="..\..\..\Shared Data\FrameWork\Data\c_framework_system_data_handler.cpp">
       <SubType>compile</SubType>
-      <Link>Shared Data\Event\c_events.cpp</Link>
+      <Link>Shared Data\FrameWork\Data\c_framework_system_data_handler.cpp</Link>
     </Compile>
-    <Compile Include="..\..\..\Shared Data\Event\c_events.h">
+    <Compile Include="..\..\..\Shared Data\FrameWork\Data\c_framework_system_data_handler.h">
       <SubType>compile</SubType>
-      <Link>Shared Data\Event\c_events.h</Link>
+      <Link>Shared Data\FrameWork\Data\c_framework_system_data_handler.h</Link>
     </Compile>
-    <Compile Include="..\..\..\Shared Data\Event\c_serial_event_handler.cpp">
+    <Compile Include="..\..\..\Shared Data\FrameWork\Enumerations\Status\_e_system_messages.h">
       <SubType>compile</SubType>
-      <Link>Shared Data\Event\c_serial_event_handler.cpp</Link>
+      <Link>Shared Data\FrameWork\Enumerations\Status\_e_system_messages.h</Link>
     </Compile>
-    <Compile Include="..\..\..\Shared Data\Event\c_serial_event_handler.h">
+    <Compile Include="..\..\..\Shared Data\FrameWork\Error\c_framework_error.cpp">
       <SubType>compile</SubType>
-      <Link>Shared Data\Event\c_serial_event_handler.h</Link>
+      <Link>Shared Data\FrameWork\Error\c_framework_error.cpp</Link>
     </Compile>
-    <Compile Include="..\..\..\Shared Data\Event\extern_events_types.h">
+    <Compile Include="..\..\..\Shared Data\FrameWork\Error\c_framework_error.h">
       <SubType>compile</SubType>
-      <Link>Shared Data\Event\extern_events_types.h</Link>
+      <Link>Shared Data\FrameWork\Error\c_framework_error.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Shared Data\FrameWork\Error\_s_framework_error.h">
+      <SubType>compile</SubType>
+      <Link>Shared Data\FrameWork\Error\_s_framework_error.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Shared Data\FrameWork\Event\c_event_router.cpp">
+      <SubType>compile</SubType>
+      <Link>Shared Data\FrameWork\Event\c_event_router.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\Shared Data\FrameWork\Event\c_event_router.h">
+      <SubType>compile</SubType>
+      <Link>Shared Data\FrameWork\Event\c_event_router.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Shared Data\FrameWork\Event\Serial\c_new_serial_event_handler.cpp">
+      <SubType>compile</SubType>
+      <Link>Shared Data\FrameWork\Event\Serial\c_new_serial_event_handler.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\Shared Data\FrameWork\Event\Serial\c_new_serial_event_handler.h">
+      <SubType>compile</SubType>
+      <Link>Shared Data\FrameWork\Event\Serial\c_new_serial_event_handler.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Shared Data\FrameWork\Startup\c_framework_start.cpp">
+      <SubType>compile</SubType>
+      <Link>Shared Data\FrameWork\Startup\c_framework_start.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\Shared Data\FrameWork\Startup\c_framework_start.h">
+      <SubType>compile</SubType>
+      <Link>Shared Data\FrameWork\Startup\c_framework_start.h</Link>
     </Compile>
     <Compile Include="..\..\..\Shared Data\Settings\Motion\_s_motion_control_settings_encapsulation.h">
       <SubType>compile</SubType>
@@ -440,14 +500,6 @@
       <SubType>compile</SubType>
       <Link>Shared Data\_e_feed_types.h</Link>
     </Compile>
-    <Compile Include="..\..\..\Shared Data\_e_motion_state.h">
-      <SubType>compile</SubType>
-      <Link>Shared Data\_e_motion_state.h</Link>
-    </Compile>
-    <Compile Include="..\..\..\Shared Data\_e_motion_sub_state.h">
-      <SubType>compile</SubType>
-      <Link>Shared Data\_e_motion_sub_state.h</Link>
-    </Compile>
     <Compile Include="..\..\..\Shared Data\_e_ramp_type.h">
       <SubType>compile</SubType>
       <Link>Shared Data\_e_ramp_type.h</Link>
@@ -467,10 +519,6 @@
     <Compile Include="..\..\..\Shared Data\_s_encoder_struct.h">
       <SubType>compile</SubType>
       <Link>Shared Data\_s_encoder_struct.h</Link>
-    </Compile>
-    <Compile Include="..\..\..\Shared Data\_s_framework_error.h">
-      <SubType>compile</SubType>
-      <Link>Shared Data\_s_framework_error.h</Link>
     </Compile>
     <Compile Include="..\..\..\Shared Data\_s_jog_data_struct.h">
       <SubType>compile</SubType>
@@ -562,6 +610,7 @@
     <Folder Include="Device_Startup\" />
     <Folder Include="Motion" />
     <Folder Include="Motion\Core" />
+    <Folder Include="Motion\Error" />
     <Folder Include="Motion\Processing\Data\DataHandlers" />
     <Folder Include="Motion\Processing\Events\EventHandlers" />
     <Folder Include="Motion\Processing\Main" />
@@ -578,8 +627,14 @@
     <Folder Include="PlatformSpecific" />
     <Folder Include="Ngc_Rs274" />
     <Folder Include="PlatformSpecific\disk_support\" />
-    <Folder Include="Shared Data\Data" />
-    <Folder Include="Shared Data\Event" />
+    <Folder Include="Shared Data\FrameWork" />
+    <Folder Include="Shared Data\FrameWork\Data" />
+    <Folder Include="Shared Data\FrameWork\Enumerations" />
+    <Folder Include="Shared Data\FrameWork\Enumerations\Status" />
+    <Folder Include="Shared Data\FrameWork\Error" />
+    <Folder Include="Shared Data\FrameWork\Event" />
+    <Folder Include="Shared Data\FrameWork\Event\Serial" />
+    <Folder Include="Shared Data\FrameWork\Startup" />
     <Folder Include="Shared Data\Settings" />
     <Folder Include="Shared Data\Settings\Motion" />
   </ItemGroup>
