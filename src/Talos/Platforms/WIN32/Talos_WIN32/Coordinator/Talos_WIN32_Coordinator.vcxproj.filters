@@ -335,9 +335,6 @@
     <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Data\cache_data.h">
       <Filter>Shared Data\FrameWork\Data</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Coordinator\Processing\Data\DataHandlers\c_status_data_handler.h">
-      <Filter>Coordinator\Processing\Data\DataHandlers</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\..\Coordinator\Processing\Events\EventHandlers\c_system_event_handler.h">
       <Filter>Coordinator\Processing\Events\EventHandlers</Filter>
     </ClInclude>
@@ -364,6 +361,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Error\_s_framework_error.h">
       <Filter>Shared Data\FrameWork\Error</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Coordinator\Processing\Data\DataHandlers\c_system_data_handler.h">
+      <Filter>Coordinator\Processing\Data\DataHandlers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -487,9 +487,6 @@
     <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Data\cache_data.cpp">
       <Filter>Shared Data\FrameWork\Data</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\Coordinator\Processing\Data\DataHandlers\c_status_data_handler.cpp">
-      <Filter>Coordinator\Processing\Data\DataHandlers</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\..\Coordinator\Processing\Events\EventHandlers\c_system_event_handler.cpp">
       <Filter>Coordinator\Processing\Events\EventHandlers</Filter>
     </ClCompile>
@@ -510,6 +507,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Error\c_framework_error.cpp">
       <Filter>Shared Data\FrameWork\Error</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Coordinator\Processing\Data\DataHandlers\c_system_data_handler.cpp">
+      <Filter>Coordinator\Processing\Data\DataHandlers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

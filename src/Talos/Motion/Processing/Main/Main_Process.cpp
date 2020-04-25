@@ -15,6 +15,8 @@
 #include "../Events/EventHandlers/c_motion_controller_event_handler.h"
 #include "../Events/EventHandlers/c_report_events.h"
 #include "../../../Shared Data/FrameWork/Startup/c_framework_start.h"
+#include "../Data/DataHandlers/c_status_data_handler.h"
+
 
 #include "../../../Shared Data/FrameWork/Enumerations/Status/_e_system_messages.h"
 
@@ -32,7 +34,40 @@ void Talos::Motion::Main_Process::__configure_ports()
 	Talos::Shared::FrameWork::StartUp::cpu_type.Motion = 0;
 	Talos::Shared::FrameWork::StartUp::cpu_type.Spindle = 2;
 	Talos::Shared::FrameWork::StartUp::cpu_type.Peripheral = 3;
+}
 
+//Simple function to validate comms with coordinator controller
+uint8_t Talos::Motion::Main_Process::coordinator_initialize()
+{
+	//The coordinator leads the cpu cluster so wait for it to request our status
+
+	while (1)
+	{
+		//Keep processing system events until we timeout or get a response
+		Talos::Motion::Events::System::process();
+
+		if (Talos::Motion::Events::Report::event_manager.get((int)Events::Report::e_event_type::StatusMessage))
+		{
+			Talos::Motion::Events::Report::process();
+			while (1) {}
+		}
+	}
+
+	//We need to ask the motion controller for a ready status. Queue up a message
+	Talos::Motion::Data::System::send((int)e_status_message::messages::e_informal::ReadyToProcess
+		, Talos::Shared::FrameWork::StartUp::cpu_type.Coordinator
+		, Talos::Shared::FrameWork::StartUp::cpu_type.Motion
+		, (int)e_status_message::e_status_state::motion::e_state::Idle
+		, (int)e_status_message::e_status_state::motion::e_sub_state::OK
+		, (int)e_status_message::e_status_type::Informal
+	);
+
+	//Start a timeout timer and wait for a response.
+
+	//The router determines which event handler needs to process the message
+	Talos::Shared::FrameWork::Events::Router.process();
+	
+	return 0;
 }
 
 void Talos::Motion::Main_Process::initialize()
@@ -59,7 +94,7 @@ void Talos::Motion::Main_Process::initialize()
 	//__initialization_start("Ngc Buffer", Talos::Motion::NgcBuffer::initialize);//<--g code buffer
 	//__initialization_start("Ngc Interpreter", NGC_RS274::Interpreter::Processor::initialize);//<--g code interpreter
 	//__initialization_start("Disk", Hardware_Abstraction_Layer::Disk::initialize, STARTUP_CLASS_CRITICAL);//<--drive/eprom storage
-	__initialization_start("Coordinator Comms", NULL, STARTUP_CLASS_CRITICAL);//<--coordinator controller card
+	__initialization_start("Coordinator Comms", Talos::Motion::Main_Process::coordinator_initialize, STARTUP_CLASS_CRITICAL);//<--coordinator controller card
 	__initialization_start("Spindle Control Comms", NULL, STARTUP_CLASS_CRITICAL);//<--spindle controller card
 
 	/*Talos::Shared::c_cache_data::pntr_read_ngc_block_record = Hardware_Abstraction_Layer::Disk::get_block;

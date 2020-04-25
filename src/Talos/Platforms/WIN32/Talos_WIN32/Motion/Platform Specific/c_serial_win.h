@@ -17,9 +17,9 @@ namespace Hardware_Abstraction_Layer
 	{
 		//variables
 	public:
-		static c_ring_buffer<char> _usart0_read_buffer;
-		static c_ring_buffer<char> _usart1_read_buffer;
-		static c_ring_buffer<char> _usart1_write_buffer;
+		//static c_ring_buffer<char> _usart0_read_buffer;
+		//static c_ring_buffer<char> _usart1_read_buffer;
+		//static c_ring_buffer<char> _usart1_write_buffer;
 	protected:
 	private:
 

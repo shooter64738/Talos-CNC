@@ -18,7 +18,7 @@
 *  along with Talos.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "c_status_data_handler.h"
+#include "c_system_data_handler.h"
 #include "../../../../Shared Data/FrameWork/Data/cache_data.h"
 #include "../../Events/EventHandlers/c_report_events.h"
 #include "../../../../Shared Data/FrameWork/Error/c_framework_error.h"
@@ -47,6 +47,7 @@ bool Talos::Coordinator::Data::System::send(uint8_t message
 	Talos::Shared::c_cache_data::pntr_status_record->sub_state = sub_state;
 	Talos::Shared::c_cache_data::pntr_status_record->type = type;
 
+	//We have a status record in the queue. Set the outbound status flag so the event router picks it up. 
 	Talos::Shared::FrameWork::Events::Router.outputs.event_manager.set((int)c_event_router::s_out_events::e_event_type::StatusUpdate);
 
 	return true;

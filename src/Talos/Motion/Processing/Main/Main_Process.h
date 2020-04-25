@@ -27,7 +27,8 @@ namespace Talos
 
 			//functions
 			public:
-			static void initialize();
+				static uint8_t coordinator_initialize();
+				static void initialize();
 			static void run();
 			static void test_coord_msg();
 			static void test_spindle_msg();

@@ -4,7 +4,7 @@
 class e_status_message
 {
 public:
-	enum class e_cpu_type :uint8_t //these doubel as port address for the send
+	enum class xe_cpu_type :uint8_t //these doubel as port address for the send
 	{
 		Host = 0,
 		Coordinator = 1,
@@ -43,6 +43,7 @@ public:
 			BlockCompleted = 1
 
 		};
+
 		enum class e_warning :uint8_t
 		{
 			testwarning = 0

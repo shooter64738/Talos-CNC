@@ -85,6 +85,9 @@
     <Filter Include="Shared data\FrameWork\Startup">
       <UniqueIdentifier>{d192251f-8597-44ee-92dc-4d9d454357af}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shared data\FrameWork\Error">
+      <UniqueIdentifier>{d3bc22dd-7bbe-474f-a215-c0927fd80b89}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\..\Motion\motion_main.cpp">
@@ -180,9 +183,6 @@
     <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Event\Serial\c_new_serial_event_handler.cpp">
       <Filter>Shared data\FrameWork\Event\Serial</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Data\c_new_data_handler.cpp">
-      <Filter>Shared data\FrameWork\Data</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Data\cache_data.cpp">
       <Filter>Shared data\FrameWork\Data</Filter>
     </ClCompile>
@@ -206,6 +206,18 @@
     </ClCompile>
     <ClCompile Include="..\..\..\..\Motion\Processing\Data\c_data_buffers.cpp">
       <Filter>Motion\Processing\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Data\c_data_buffer.cpp">
+      <Filter>Shared data\FrameWork\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Data\c_framework_ngc_data_handler.cpp">
+      <Filter>Shared data\FrameWork\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Data\c_framework_system_data_handler.cpp">
+      <Filter>Shared data\FrameWork\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Error\c_framework_error.cpp">
+      <Filter>Shared data\FrameWork\Error</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -373,9 +385,6 @@
     <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Event\Serial\c_new_serial_event_handler.h">
       <Filter>Shared data\FrameWork\Event\Serial</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Data\c_new_data_handler.h">
-      <Filter>Shared data\FrameWork\Data</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Data\cache_data.h">
       <Filter>Shared data\FrameWork\Data</Filter>
     </ClInclude>
@@ -402,6 +411,21 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\Motion\Processing\Data\c_data_buffers.h">
       <Filter>Motion\Processing\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Data\c_data_buffer.h">
+      <Filter>Shared data\FrameWork\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Data\c_framework_ngc_data_handler.h">
+      <Filter>Shared data\FrameWork\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Data\c_framework_system_data_handler.h">
+      <Filter>Shared data\FrameWork\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Error\_s_framework_error.h">
+      <Filter>Shared data\FrameWork\Error</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Error\c_framework_error.h">
+      <Filter>Shared data\FrameWork\Error</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
