@@ -3,7 +3,6 @@
 #include "../Startup/c_framework_start.h"
 #include "../Error/c_framework_error.h"
 #include "cache_data.h"
-//#include <avr/io.h>
 
 #define Base_Error 200
 void(*Talos::Shared::FrameWork::Data::System::pntr_read_release)();
@@ -12,7 +11,7 @@ void(*Talos::Shared::FrameWork::Data::System::pntr_write_release)();
 struct s_packet
 {
 	//c_ring_buffer<char> *source; //pointer to a ring buffer to read from
-	char cache[s_system_message::__size__]; //linear cache buffer
+	char cache[s_control_message::__size__]; //linear cache buffer
 	char *pntr_cache = cache; //pointer to linear cache buffer
 	uint8_t counter; //byte counter (counts down)
 	void(*pntr_data_copy)();
@@ -28,7 +27,7 @@ static s_packet write;
 void Talos::Shared::FrameWork::Data::System::route_read(uint8_t event_id, s_bit_flag_controller<uint32_t> *event_object)
 {
 	//read.cache = cache;
-	read.counter = s_system_message::__size__;
+	read.counter = s_control_message::__size__;
 	read.event_id = event_id;
 	read.pntr_cache = read.cache;
 	read.pntr_data_copy = NULL;
@@ -55,9 +54,9 @@ void Talos::Shared::FrameWork::Data::System::reader()
 		*read.pntr_cache = (c_event_router::inputs.pntr_ring_buffer + (int)read.event_id)->ring_buffer.get();
 		read.counter--;
 		read.pntr_cache++;
+				
 		if (!read.counter)
 		{
-
 			//*read.pntr_cache = 0;
 
 			read.pntr_data_copy = __data_copy;
@@ -86,13 +85,13 @@ void Talos::Shared::FrameWork::Data::System::__data_copy()
 	Talos::Shared::c_cache_data::pntr_status_record = &Talos::Shared::c_cache_data::status_record;
 
 	//Copy our binry data from local cache to the ready buffer cache
-	memcpy(Talos::Shared::c_cache_data::pntr_status_record, read.cache, s_system_message::__size__);
+	memcpy(Talos::Shared::c_cache_data::pntr_status_record, read.cache, s_control_message::__size__);
 	//get the read crc value from the record
 	read.crc.crc = Talos::Shared::c_cache_data::status_record.crc.crc;
 	read.pntr_cache = read.cache;
 	
 	//run a crc check, but ignore that last 2 bytes of data. we dont crc the crc
-	uint16_t crc = Talos::Shared::FrameWork::CRC::crc16(read.pntr_cache, s_system_message::__size__-2);
+	uint16_t crc = Talos::Shared::FrameWork::CRC::crc16(read.pntr_cache, s_control_message::__size__-2);
 	
 	if (read.crc.crc != crc)
 	{
@@ -118,7 +117,7 @@ void Talos::Shared::FrameWork::Data::System::__data_copy()
 	read.pntr_data_copy = NULL;
 	read.event_object = NULL;
 	read.pntr_cache = read.cache;
-	memset(read.cache, 0, s_system_message::__size__);
+	memset(read.cache, 0, s_control_message::__size__);
 	pntr_read_release = NULL;
 
 	//Set a ready event. Program eventing will pick this up and process it.
@@ -128,14 +127,15 @@ void Talos::Shared::FrameWork::Data::System::__data_copy()
 #define Err_4 4
 void Talos::Shared::FrameWork::Data::System::route_write(uint8_t event_id, s_bit_flag_controller<uint32_t> *event_object)
 {
-	write.counter = s_system_message::__size__;
+	write.counter = s_control_message::__size__;
 	write.event_id = event_id;
 	write.event_object = event_object;
 	//Clear the crc
 	Talos::Shared::c_cache_data::pntr_status_record->crc.crc = 0;
-	memcpy(write.cache, Talos::Shared::c_cache_data::pntr_status_record, s_system_message::__size__);
-	Talos::Shared::c_cache_data::status_record.crc.crc = Talos::Shared::FrameWork::CRC::crc16(write.cache, write.counter-2);
-	uint8_t last_2 = s_system_message::__size__ - 2;
+	memcpy(write.cache, Talos::Shared::c_cache_data::pntr_status_record, s_control_message::__size__);
+	//Talos::Shared::c_cache_data::status_record.crc.crc = Talos::Shared::FrameWork::CRC::crc16(write.cache, write.counter-2);
+	Talos::Shared::c_cache_data::pntr_status_record->crc.crc = Talos::Shared::FrameWork::CRC::crc16(write.cache, write.counter-2);
+	uint8_t last_2 = s_control_message::__size__ - 2;
 	write.pntr_cache = write.cache;
 	memcpy((write.pntr_cache + last_2), &Talos::Shared::c_cache_data::status_record.crc, 2);
 
@@ -143,7 +143,7 @@ void Talos::Shared::FrameWork::Data::System::route_write(uint8_t event_id, s_bit
 	write.pntr_data_copy = NULL;
 	write.target = Talos::Shared::c_cache_data::status_record.target;
 
-	//record has been copied to the liner write buffer. it can now be release
+	//record has been copied to the liner write buffer. it can now be released
 	Talos::Shared::c_cache_data::pntr_status_record = NULL;
 
 }

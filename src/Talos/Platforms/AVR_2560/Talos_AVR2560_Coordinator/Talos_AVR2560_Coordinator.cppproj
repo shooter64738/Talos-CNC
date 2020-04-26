@@ -210,13 +210,13 @@
       <SubType>compile</SubType>
       <Link>Coordinator\Processing\Data\DataHandlers\c_ngc_data_handler.h</Link>
     </Compile>
-    <Compile Include="..\..\..\Coordinator\Processing\Data\DataHandlers\c_status_data_handler.cpp">
+    <Compile Include="..\..\..\Coordinator\Processing\Data\DataHandlers\c_system_data_handler.cpp">
       <SubType>compile</SubType>
-      <Link>Coordinator\Processing\Data\DataHandlers\c_status_data_handler.cpp</Link>
+      <Link>Coordinator\Processing\Data\DataHandlers\c_system_data_handler.cpp</Link>
     </Compile>
-    <Compile Include="..\..\..\Coordinator\Processing\Data\DataHandlers\c_status_data_handler.h">
+    <Compile Include="..\..\..\Coordinator\Processing\Data\DataHandlers\c_system_data_handler.h">
       <SubType>compile</SubType>
-      <Link>Coordinator\Processing\Data\DataHandlers\c_status_data_handler.h</Link>
+      <Link>Coordinator\Processing\Data\DataHandlers\c_system_data_handler.h</Link>
     </Compile>
     <Compile Include="..\..\..\Coordinator\Processing\Error\c_error.cpp">
       <SubType>compile</SubType>

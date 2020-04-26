@@ -22,6 +22,8 @@
 #include "../Event/Serial/c_new_serial_event_handler.h"
 #include "../../FrameWork/extern_events_types.h"
 
+
+
 //c_event_router::ss_serial c_event_router::serial;
 c_event_router::ss_disk c_event_router::disk;
 c_event_router::ss_ready_data c_event_router::ready;
@@ -60,7 +62,6 @@ void c_event_router::process()
 			{
 				if (c_event_router::inputs.event_manager.get(i))
 				{
-
 					c_new_serial_event_handler::process(&c_event_router::inputs, (c_event_router::s_in_events::e_event_type)i);
 					//return here because we have processed an event, and we arent stacking them.
 					//one event gets assigned a handler and no other handler will be assigned

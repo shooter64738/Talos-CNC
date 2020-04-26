@@ -1,10 +1,14 @@
 #include "cache_data.h"
 
+
 char * Talos::Shared::c_cache_data::pntr_binary_buffer_array;
 char Talos::Shared::c_cache_data::binary_buffer_array[__FRAMEWORK_BINARY_BUFFER_SIZE];
 
-s_system_message Talos::Shared::c_cache_data::status_record;
-s_system_message *Talos::Shared::c_cache_data::pntr_status_record;
+s_control_message Talos::Shared::c_cache_data::status_record;
+s_control_message *Talos::Shared::c_cache_data::pntr_status_record;
+
+s_motion_control_settings_encapsulation Talos::Shared::c_cache_data::motion_configuration_record;
+s_motion_control_settings_encapsulation *Talos::Shared::c_cache_data::pntr_motion_configuration_record;
 
 s_txt_line_record Talos::Shared::c_cache_data::txt_record;
 s_ngc_block Talos::Shared::c_cache_data::ngc_block_record;

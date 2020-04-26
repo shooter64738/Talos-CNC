@@ -6,6 +6,7 @@
 #include "c_interpollation_software.h"
 #include "../../_bit_manipulation.h"
 #include <stdlib.h>
+#include "../../Shared Data/FrameWork/Data/cache_data.h"
 
 
 
@@ -44,7 +45,7 @@ uint8_t Motion_Core::Planner::Calculator::_plan_buffer_line(s_motion_data_block 
 		//planning_block->step_event_count = max(planning_block->step_event_count, planning_block->steps[idx]);
 		//unit_vec[idx] = target_block.axis_values[idx];
 		
-		target_steps[idx] = lround(target_block.axis_values[idx] * Motion_Core::Settings::_Settings.Hardware_Settings.steps_per_mm[idx] );
+		target_steps[idx] = lround(target_block.axis_values[idx] * Talos::Shared::c_cache_data::motion_configuration_record.hardware.steps_per_mm[idx] );
 		planning_block->steps[idx] = labs(target_steps[idx] - Motion_Core::Software::Interpolation::system_position[idx]);
 		
 		//c_processor::debug_serial.print_int32(idx +1);
@@ -53,7 +54,7 @@ uint8_t Motion_Core::Planner::Calculator::_plan_buffer_line(s_motion_data_block 
 		//c_processor::debug_serial.Write(CR);
 		
 		planning_block->step_event_count = max(planning_block->step_event_count, planning_block->steps[idx]);
-		delta_mm = (target_steps[idx] - Motion_Core::Software::Interpolation::system_position[idx])/Motion_Core::Settings::_Settings.Hardware_Settings.steps_per_mm[idx];
+		delta_mm = (target_steps[idx] - Motion_Core::Software::Interpolation::system_position[idx])/Talos::Shared::c_cache_data::motion_configuration_record.hardware.steps_per_mm[idx];
 		unit_vec[idx] = delta_mm;
 		
 		if (delta_mm > 0.0)
@@ -85,8 +86,8 @@ uint8_t Motion_Core::Planner::Calculator::_plan_buffer_line(s_motion_data_block 
 	// if they are also orthogonal/independent. Operates on the absolute value of the unit vector.
 
 	planning_block->millimeters = Motion_Core::convert_delta_vector_to_unit_vector(unit_vec);
-	planning_block->acceleration = Motion_Core::limit_value_by_axis_maximum(Motion_Core::Settings::_Settings.Hardware_Settings.acceleration, unit_vec);
-	planning_block->rapid_rate = Motion_Core::limit_value_by_axis_maximum(Motion_Core::Settings::_Settings.Hardware_Settings.max_rate, unit_vec);
+	planning_block->acceleration = Motion_Core::limit_value_by_axis_maximum(Talos::Shared::c_cache_data::motion_configuration_record.hardware.acceleration, unit_vec);
+	planning_block->rapid_rate = Motion_Core::limit_value_by_axis_maximum(Talos::Shared::c_cache_data::motion_configuration_record.hardware.max_rate, unit_vec);
 
 
 	// Store programmed rate.
@@ -165,10 +166,10 @@ uint8_t Motion_Core::Planner::Calculator::_plan_buffer_line(s_motion_data_block 
 			else
 			{
 				Motion_Core::convert_delta_vector_to_unit_vector(junction_unit_vec);
-				float junction_acceleration = Motion_Core::limit_value_by_axis_maximum(Motion_Core::Settings::_Settings.Hardware_Settings.acceleration, junction_unit_vec);
+				float junction_acceleration = Motion_Core::limit_value_by_axis_maximum(Talos::Shared::c_cache_data::motion_configuration_record.hardware.acceleration, junction_unit_vec);
 				float sin_theta_d2 = sqrt(0.5 * (1.0 - junction_cos_theta)); // Trig half angle identity. Always positive.
 				planning_block->max_junction_speed_sqr = max(MINIMUM_JUNCTION_SPEED*MINIMUM_JUNCTION_SPEED,
-					(junction_acceleration * Motion_Core::Settings::_Settings.junction_deviation * sin_theta_d2) / (1.0 - sin_theta_d2));
+					(junction_acceleration * Talos::Shared::c_cache_data::motion_configuration_record.tolerance.junction_deviation * sin_theta_d2) / (1.0 - sin_theta_d2));
 			}
 		}
 	}

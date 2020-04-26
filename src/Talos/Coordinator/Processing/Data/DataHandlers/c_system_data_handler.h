@@ -58,20 +58,20 @@ namespace Talos
 				class Type
 				{
 				public:
-					static void __process(s_system_message *status);
-					static void __critical(s_system_message *status, e_status_message::messages::e_critical message);
-					static void __data(s_system_message *status, e_status_message::messages::e_data message);
-					static void __informal(s_system_message *status, e_status_message::messages::e_informal message);
-					static void __warning(s_system_message *status, e_status_message::messages::e_warning message);
+					static void __process(s_control_message *status);
+					static void __critical(s_control_message *status, e_status_message::messages::e_critical message);
+					static void __data(s_control_message *status, e_status_message::messages::e_data message);
+					static void __informal(s_control_message *status, e_status_message::messages::e_informal message);
+					static void __warning(s_control_message *status, e_status_message::messages::e_warning message);
 				};
 				class Origin
 				{
 				public:
-					static void __host(s_system_message *status, e_status_message::messages::e_warning message);
-					static void __coordinator(s_system_message *status, e_status_message::messages::e_warning message);
-					static void __motion(s_system_message *status, e_status_message::messages::e_warning message);
-					static void __spindle(s_system_message *status, e_status_message::messages::e_warning message);
-					static void __peripheral(s_system_message *status, e_status_message::messages::e_warning message);
+					static void __host(s_control_message *status, e_status_message::messages::e_warning message);
+					static void __coordinator(s_control_message *status, e_status_message::messages::e_warning message);
+					static void __motion(s_control_message *status, e_status_message::messages::e_warning message);
+					static void __spindle(s_control_message *status, e_status_message::messages::e_warning message);
+					static void __peripheral(s_control_message *status, e_status_message::messages::e_warning message);
 				};
 
 			};

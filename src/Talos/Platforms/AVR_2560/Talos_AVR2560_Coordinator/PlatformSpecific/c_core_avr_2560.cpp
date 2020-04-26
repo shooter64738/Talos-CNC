@@ -11,11 +11,19 @@
 
 
 uint8_t Hardware_Abstraction_Layer::Core::register_at_int_stop =0;
+uint16_t Hardware_Abstraction_Layer::Core::delay_count_down = 0;
 
 uint8_t  Hardware_Abstraction_Layer::Core::initialize()
 {
 return 0;
 }
+
+void Hardware_Abstraction_Layer::Core::set_time_delay(uint16_t delay_seconds)
+{
+	Hardware_Abstraction_Layer::Core::delay_count_down = delay_seconds;
+	TCCR5B |= (1 << CS52) | (1 << CS50);
+}
+
 uint8_t Hardware_Abstraction_Layer::Core::start_interrupts()
 {
 	sei();
@@ -75,4 +83,11 @@ void Hardware_Abstraction_Layer::Core::delay_us(uint16_t delay_time)
 	}
 }
 
-
+ISR (TIMER5_COMPA_vect)
+{
+	UDR0='A';
+	Hardware_Abstraction_Layer::Core::delay_count_down--;
+	if (Hardware_Abstraction_Layer::Core::delay_count_down == 0)
+	TCCR5B |= ~(1 << CS52) | ~(1 << CS50);
+	
+}

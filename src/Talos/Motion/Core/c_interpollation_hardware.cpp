@@ -17,6 +17,7 @@ static ofstream myfile;
 #include "../Processing/Events/EventHandlers/c_system_event_handler.h"
 #include "../../Shared Data/FrameWork/extern_events_types.h"
 #include "../../Shared Data/_e_block_state.h"
+#include "../../Shared Data/FrameWork/Data/cache_data.h"
 
 Motion_Core::Segment::Bresenham::Bresenham_Item *Motion_Core::Hardware::Interpolation::Change_Check_Exec_Timer_Bresenham; // Tracks the current st_block index. Change indicates new block.
 Motion_Core::Segment::Timer::Timer_Item *Motion_Core::Hardware::Interpolation::Exec_Timer_Item;  // Pointer to the segment being executed
@@ -139,7 +140,7 @@ void Motion_Core::Hardware::Interpolation::Shutdown()
 	Talos::Motion::Events::MotionControl::event_manager.clear((int)Talos::Motion::Events::MotionControl::e_event_type::Interpollation);
 	Motion_Core::Hardware::Interpolation::Last_Completed_Sequence = Motion_Core::Hardware::Interpolation::Current_Sequence;
 
-	//if interpolation is done, then the block shoudl be done?
+	//if interpolation is done, then the block should be done?
 	Talos::Motion::Events::MotionControl::completed_sequence = Motion_Core::Hardware::Interpolation::Last_Completed_Sequence;
 	Motion_Core::Hardware::Interpolation::Last_Completed_Sequence = 0;
 	Talos::Motion::Events::MotionControl::event_manager.set((int)Talos::Motion::Events::MotionControl::e_event_type::BlockComplete);
@@ -172,14 +173,14 @@ uint8_t Motion_Core::Hardware::Interpolation::check_spindle_at_speed()
 {
 	
 	//Do we wait until we are at speed before interpolation?
-	if (Motion_Core::Settings::_Settings.Hardware_Settings.spindle_encoder.wait_spindle_at_speed
+	if (Talos::Shared::c_cache_data::motion_configuration_record.hardware.spindle_encoder.wait_spindle_at_speed
 	&& !Motion_Core::Hardware::Interpolation::spindle_synch)
 	{
 		//Are we near that speed yet?
 		if (!Motion_Core::Hardware::Interpolation::spindle_encoder->near(
-		Motion_Core::Settings::_Settings.Hardware_Settings.spindle_encoder.current_rpm
-		, Motion_Core::Settings::_Settings.Hardware_Settings.spindle_encoder.target_rpm
-		, Motion_Core::Settings::_Settings.Hardware_Settings.spindle_encoder.variable_percent)
+		Talos::Shared::c_cache_data::motion_configuration_record.hardware.spindle_encoder.current_rpm
+		, Talos::Shared::c_cache_data::motion_configuration_record.hardware.spindle_encoder.target_rpm
+		, Talos::Shared::c_cache_data::motion_configuration_record.hardware.spindle_encoder.variable_percent)
 		)
 		{
 			return false;

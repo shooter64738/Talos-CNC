@@ -3,7 +3,7 @@
 #include <stdint.h>
 #include <stddef.h>
 #include "../../_bit_manipulation.h"
-#include "../../Shared Data/Settings/Motion/_s_motion_tolerance_struct.h"
+#include "../../Shared Data/Settings/Motion/_s_motion_control_settings_encapsulation.h"
 
 
 //#define MOTION_RECORD 1
@@ -39,7 +39,7 @@ namespace Motion_Core
 	{
 	public:
 
-		static s_motion_tolerance_settings _Settings;
+		//static s_motion_control_settings_encapsulation _Settings;
 		
 	};
 #endif

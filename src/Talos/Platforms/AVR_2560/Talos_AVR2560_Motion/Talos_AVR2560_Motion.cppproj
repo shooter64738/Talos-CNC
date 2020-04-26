@@ -223,13 +223,13 @@
       <SubType>compile</SubType>
       <Link>Motion\Processing\Data\DataHandlers\c_ngc_data_handler.h</Link>
     </Compile>
-    <Compile Include="..\..\..\Motion\Processing\Data\DataHandlers\c_status_data_handler.cpp">
+    <Compile Include="..\..\..\Motion\Processing\Data\DataHandlers\c_system_data_handler.cpp">
       <SubType>compile</SubType>
-      <Link>Motion\Processing\Data\DataHandlers\c_status_data_handler.cpp</Link>
+      <Link>Motion\Processing\Data\DataHandlers\c_system_data_handler.cpp</Link>
     </Compile>
-    <Compile Include="..\..\..\Motion\Processing\Data\DataHandlers\c_status_data_handler.h">
+    <Compile Include="..\..\..\Motion\Processing\Data\DataHandlers\c_system_data_handler.h">
       <SubType>compile</SubType>
-      <Link>Motion\Processing\Data\DataHandlers\c_status_data_handler.h</Link>
+      <Link>Motion\Processing\Data\DataHandlers\c_system_data_handler.h</Link>
     </Compile>
     <Compile Include="..\..\..\Motion\Processing\Error\c_error.cpp">
       <SubType>compile</SubType>
@@ -374,18 +374,6 @@
     <Compile Include="..\..\..\Shared Data\FrameWork\Enumerations\Status\_e_system_messages.h">
       <SubType>compile</SubType>
       <Link>Shared Data\FrameWork\Enumerations\Status\_e_system_messages.h</Link>
-    </Compile>
-    <Compile Include="..\..\..\Shared Data\FrameWork\Enumerations\Status\_e_system_origins.h">
-      <SubType>compile</SubType>
-      <Link>Shared Data\FrameWork\Enumerations\Status\_e_system_origins.h</Link>
-    </Compile>
-    <Compile Include="..\..\..\Shared Data\FrameWork\Enumerations\Status\_e_system_states.h">
-      <SubType>compile</SubType>
-      <Link>Shared Data\FrameWork\Enumerations\Status\_e_system_states.h</Link>
-    </Compile>
-    <Compile Include="..\..\..\Shared Data\FrameWork\Enumerations\Status\_e_system_types.h">
-      <SubType>compile</SubType>
-      <Link>Shared Data\FrameWork\Enumerations\Status\_e_system_types.h</Link>
     </Compile>
     <Compile Include="..\..\..\Shared Data\FrameWork\Error\c_framework_error.cpp">
       <SubType>compile</SubType>

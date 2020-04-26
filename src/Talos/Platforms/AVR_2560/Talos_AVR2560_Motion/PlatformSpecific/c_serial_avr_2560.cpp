@@ -178,6 +178,7 @@ ISR(USART0_RX_vect)
 	char Byte = UDR0;
 	Talos::Motion::Data::Buffer::buffers[0].ring_buffer.put(Byte);
 	Talos::Shared::FrameWork::Events::Router.inputs.event_manager.set((int)c_event_router::s_in_events::e_event_type::Usart0DataArrival);
+	
 }
 #endif
 

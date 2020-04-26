@@ -19,11 +19,11 @@
 */
 
 #include "c_system_event_handler.h"
-#include "../../Data/DataHandlers/c_status_data_handler.h"
+#include "../../Data/DataHandlers/c_system_data_handler.h"
 #include "../../../../Shared Data/FrameWork/extern_events_types.h"
 #include "c_motion_control_event_handler.h"
 #include "c_motion_controller_event_handler.h"
-//#include <avr/io.h>
+#include <avr/io.h>
 
 s_bit_flag_controller<uint32_t> Talos::Motion::Events::System::event_manager;
 
@@ -42,7 +42,7 @@ void Talos::Motion::Events::System::process()
 		if (Talos::Shared::FrameWork::Events::Router.ready.event_manager.get((int)c_event_router::ss_ready_data::e_event_type::System))
 		//This will process the status record and may set several or no system events.
 		Talos::Motion::Data::System::process_system_eventing();
-//UDR0='A';
+
 		if (Talos::Shared::FrameWork::Events::Router.ready.event_manager.get((int)c_event_router::ss_ready_data::e_event_type::Testsignal))
 		//this send a test message back to its host.
 		if (Talos::Motion::Data::System::send((int)e_status_message::messages::e_informal::ReadyToProcess
@@ -71,4 +71,5 @@ void Talos::Motion::Events::System::process()
 
 		}
 	}
+	
 }

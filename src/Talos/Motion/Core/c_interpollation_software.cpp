@@ -4,6 +4,7 @@
 #include "c_interpollation_hardware.h"
 #include "c_gateway.h"
 #include "../Processing/Events/EventHandlers/c_motion_control_event_handler.h"
+#include "../../Shared Data/FrameWork/Data/cache_data.h"
 
 
 #define M_PI 3.14159265358979323846
@@ -94,7 +95,7 @@ uint8_t Motion_Core::Software::Interpolation::_mc_arc(s_motion_data_block * targ
 	// is desired, i.e. least-squares, midpoint on arc, just change the mm_per_arc_segment calculation.
 	// For the intended uses of Grbl, this value shouldn't exceed 2000 for the strictest of cases.
 	uint16_t segments = floor(fabs(0.5 * angular_travel * (*target_block->arc_values.Radius))
-	/ sqrt(Motion_Core::Settings::_Settings.arc_tolerance * (2 * (*target_block->arc_values.Radius) - Motion_Core::Settings::_Settings.arc_tolerance)));
+	/ sqrt(Talos::Shared::c_cache_data::motion_configuration_record.tolerance.arc_tolerance * (2 * (*target_block->arc_values.Radius) - Talos::Shared::c_cache_data::motion_configuration_record.tolerance.arc_tolerance)));
 	
 	if (segments)
 	{

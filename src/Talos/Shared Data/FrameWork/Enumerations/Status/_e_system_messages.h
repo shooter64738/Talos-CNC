@@ -33,7 +33,7 @@ public:
 
 		enum class e_data :uint8_t
 		{
-			testdata = 0
+			ConfigurationRequest = 0
 
 		};
 

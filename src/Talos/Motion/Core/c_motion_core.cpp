@@ -1,8 +1,6 @@
 #include "c_motion_core.h"
 #include "../../_bit_manipulation.h"
-
-s_motion_tolerance_settings Motion_Core::Settings::_Settings;
-
+#include "../../Shared Data/FrameWork/Data/cache_data.h"
 
 //int16_t Motion_Core::Settings.steps_per_mm[MACHINE_AXIS_COUNT]{160};
 //float Motion_Core::Settings.acceleration[MACHINE_AXIS_COUNT]{ (100.0 * 60 * 60)};
@@ -16,26 +14,26 @@ void Motion_Core::initialize()
 {
 	for (uint8_t i = 0; i < MACHINE_AXIS_COUNT; i++)
 	{
-		Motion_Core::Settings::_Settings.Hardware_Settings.steps_per_mm[i] = 160;
-		Motion_Core::Settings::_Settings.Hardware_Settings.acceleration[i] = (150.0 * 60 * 60);
-		Motion_Core::Settings::_Settings.Hardware_Settings.max_rate[i] = 12000;
-		Motion_Core::Settings::_Settings.Hardware_Settings.distance_per_rotation[i] = 5;
+		Talos::Shared::c_cache_data::motion_configuration_record.hardware.steps_per_mm[i] = 160;
+		Talos::Shared::c_cache_data::motion_configuration_record.hardware.acceleration[i] = (150.0 * 60 * 60);
+		Talos::Shared::c_cache_data::motion_configuration_record.hardware.max_rate[i] = 12000;
+		Talos::Shared::c_cache_data::motion_configuration_record.hardware.distance_per_rotation[i] = 5;
 		//arbitrary for testing
-		Motion_Core::Settings::_Settings.Hardware_Settings.back_lash_comp_distance[i] = 55;
+		Talos::Shared::c_cache_data::motion_configuration_record.hardware.back_lash_comp_distance[i] = 55;
 	}
 	
-	Motion_Core::Settings::_Settings.Hardware_Settings.pulse_length = 5;
-	Motion_Core::Settings::_Settings.Hardware_Settings.spindle_encoder.wait_spindle_at_speed = 1;
-	Motion_Core::Settings::_Settings.Hardware_Settings.spindle_encoder.spindle_synch_wait_time_ms = 5;
-	Motion_Core::Settings::_Settings.Hardware_Settings.spindle_encoder.ticks_per_revolution=400;
-	Motion_Core::Settings::_Settings.Hardware_Settings.spindle_encoder.current_rpm = 0;
-	Motion_Core::Settings::_Settings.Hardware_Settings.spindle_encoder.target_rpm = 100;
-	Motion_Core::Settings::_Settings.Hardware_Settings.spindle_encoder.variable_percent = 50;
-	Motion_Core::Settings::_Settings.Hardware_Settings.spindle_encoder.samples_per_second = 10;
+	Talos::Shared::c_cache_data::motion_configuration_record.hardware.pulse_length = 5;
+	Talos::Shared::c_cache_data::motion_configuration_record.hardware.spindle_encoder.wait_spindle_at_speed = 1;
+	Talos::Shared::c_cache_data::motion_configuration_record.hardware.spindle_encoder.spindle_synch_wait_time_ms = 5;
+	Talos::Shared::c_cache_data::motion_configuration_record.hardware.spindle_encoder.ticks_per_revolution=400;
+	Talos::Shared::c_cache_data::motion_configuration_record.hardware.spindle_encoder.current_rpm = 0;
+	Talos::Shared::c_cache_data::motion_configuration_record.hardware.spindle_encoder.target_rpm = 100;
+	Talos::Shared::c_cache_data::motion_configuration_record.hardware.spindle_encoder.variable_percent = 50;
+	Talos::Shared::c_cache_data::motion_configuration_record.hardware.spindle_encoder.samples_per_second = 10;
 	
-
-	Motion_Core::Settings::_Settings.arc_tolerance = 0.002;
-	Motion_Core::Settings::_Settings.arc_angular_correction = 12;
+	
+	Talos::Shared::c_cache_data::motion_configuration_record.tolerance.arc_tolerance = 0.002;
+	Talos::Shared::c_cache_data::motion_configuration_record.tolerance.arc_angular_correction = 12;
 	
 
 }

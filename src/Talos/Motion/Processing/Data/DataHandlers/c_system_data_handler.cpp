@@ -18,13 +18,14 @@
 *  along with Talos.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "c_status_data_handler.h"
+#include "c_system_data_handler.h"
 #include "../../../../Shared Data/FrameWork/Data/cache_data.h"
 #include "../../../../Shared Data/FrameWork/extern_events_types.h"
 #include "../../Events/EventHandlers/c_system_event_handler.h"
 #include "../../../Core/c_interpollation_hardware.h"
 #include "../../Main/Main_Process.h"
 #include "../../../../Shared Data/FrameWork/Error/c_framework_error.h"
+#include <avr/io.h>
 
 bool Talos::Motion::Data::System::send(uint8_t message, uint8_t origin, uint8_t target
 , uint8_t state, uint8_t sub_state, uint8_t type)
@@ -114,17 +115,38 @@ void Talos::Motion::Data::System::Type::__informal(s_system_message *status, e_s
 
 	//We got a system message from someone
 	if (message == e_status_message::messages::e_informal::ReadyToProcess)
-	{//TODO Make this a switch case
-		if (status->origin == Shared::FrameWork::StartUp::cpu_type.Coordinator)
-		Talos::Motion::Events::System::event_manager.set((int)Talos::Motion::Events::System::e_event_type::CoordinatorReady);
-		if (status->origin == Shared::FrameWork::StartUp::cpu_type.Host)
-		Talos::Motion::Events::System::event_manager.set((int)Talos::Motion::Events::System::e_event_type::HostReady);
-		if (status->origin == Shared::FrameWork::StartUp::cpu_type.Motion)
-		Talos::Motion::Events::System::event_manager.set((int)Talos::Motion::Events::System::e_event_type::MotionReady);
-		if (status->origin == Shared::FrameWork::StartUp::cpu_type.Peripheral)
-		Talos::Motion::Events::System::event_manager.set((int)Talos::Motion::Events::System::e_event_type::PeripheralReady);
-		if (status->origin == Shared::FrameWork::StartUp::cpu_type.Spindle)
-		Talos::Motion::Events::System::event_manager.set((int)Talos::Motion::Events::System::e_event_type::SpindleReady);
+	{//TODO Make this a switch case	
+		if (status->rx_from == Shared::FrameWork::StartUp::cpu_type.Coordinator)
+		{
+			UDR0='C';
+			Talos::Motion::Events::System::event_manager.set((int)Talos::Motion::Events::System::e_event_type::CoordinatorReady);
+			//if (Talos::Motion::Events::System::event_manager.get((int)Talos::Motion::Events::System::e_event_type::CoordinatorReady))
+			//{
+				//UDR0='R';
+			//}
+		}
+		else if (status->rx_from == Shared::FrameWork::StartUp::cpu_type.Host)
+		{
+			UDR0='H';
+			Talos::Motion::Events::System::event_manager.set((int)Talos::Motion::Events::System::e_event_type::HostReady);
+		}
+		else if (status->rx_from == Shared::FrameWork::StartUp::cpu_type.Motion)
+		{
+			UDR0='M';
+			Talos::Motion::Events::System::event_manager.set((int)Talos::Motion::Events::System::e_event_type::MotionReady);
+		}
+		else if (status->rx_from == Shared::FrameWork::StartUp::cpu_type.Peripheral)
+		{
+			UDR0='P';
+			Talos::Motion::Events::System::event_manager.set((int)Talos::Motion::Events::System::e_event_type::PeripheralReady);
+		}
+		else if (status->rx_from == Shared::FrameWork::StartUp::cpu_type.Spindle)
+		{
+			UDR0='S';
+			Talos::Motion::Events::System::event_manager.set((int)Talos::Motion::Events::System::e_event_type::SpindleReady);
+		}
+		else 
+		UDR0='U';
 	}
 
 

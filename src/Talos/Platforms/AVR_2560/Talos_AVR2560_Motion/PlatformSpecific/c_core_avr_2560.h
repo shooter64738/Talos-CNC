@@ -20,9 +20,12 @@ namespace Hardware_Abstraction_Layer
 {
 	class Core
 	{
+		
+		
 		//variables
 		public:
 		static uint8_t register_at_int_stop;
+		static uint16_t delay_count_down;
 		protected:
 		private:
 
@@ -30,6 +33,7 @@ namespace Hardware_Abstraction_Layer
 		public:
 		static uint8_t initialize();
 		static uint8_t start_interrupts();
+		static void set_time_delay(uint16_t delay);
 		static void stop_interrupts();
 		static void capture_status_register_SREG();
 		static void restore_status_register_SREG();

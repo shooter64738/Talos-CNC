@@ -15,13 +15,13 @@
 #include "../Events/EventHandlers/c_motion_controller_event_handler.h"
 #include "../Events/EventHandlers/c_report_events.h"
 #include "../../../Shared Data/FrameWork/Startup/c_framework_start.h"
-#include "../Data/DataHandlers/c_status_data_handler.h"
+#include "../Data/DataHandlers/c_system_data_handler.h"
 
 
 #include "../../../Shared Data/FrameWork/Enumerations/Status/_e_system_messages.h"
 
 //
-//#include <avr/io.h>
+#include <avr/io.h>
 //#include <avr/interrupt.h>
 
 c_Serial Talos::Motion::Main_Process::host_serial;
@@ -40,35 +40,43 @@ void Talos::Motion::Main_Process::__configure_ports()
 uint8_t Talos::Motion::Main_Process::coordinator_initialize()
 {
 	//The coordinator leads the cpu cluster so wait for it to request our status
+	Hardware_Abstraction_Layer::Core::set_time_delay(5);
 
-	while (1)
+	while (!Hardware_Abstraction_Layer::Core::delay_count_down)
 	{
 		//Keep processing system events until we timeout or get a response
 		Talos::Motion::Events::System::process();
-
-		if (Talos::Motion::Events::Report::event_manager.get((int)Events::Report::e_event_type::StatusMessage))
+		
+		//When we have a ready message from the coordinator we can request config data
+		if (Talos::Motion::Events::System::event_manager.get((int)Talos::Motion::Events::System::e_event_type::CoordinatorReady))
 		{
-			Talos::Motion::Events::Report::process();
-			while (1) {}
+			Talos::Motion::Main_Process::host_serial.print_string("Requesting configuration\r\n");
+			
+			//We need to ask the coordinator controller for all of the motion settings
+			Talos::Motion::Data::System::send((int)e_status_message::messages::e_data::ConfigurationRequest
+			, Talos::Shared::FrameWork::StartUp::cpu_type.Coordinator
+			, Talos::Shared::FrameWork::StartUp::cpu_type.Motion
+			, (int)e_status_message::e_status_state::motion::e_state::Idle
+			, (int)e_status_message::e_status_state::motion::e_sub_state::OK
+			, (int)e_status_message::e_status_type::Data
+			);
+			
+			//Restart the timer
+			Hardware_Abstraction_Layer::Core::set_time_delay(5);
 		}
 	}
-
-	//We need to ask the motion controller for a ready status. Queue up a message
-	Talos::Motion::Data::System::send((int)e_status_message::messages::e_informal::ReadyToProcess
-		, Talos::Shared::FrameWork::StartUp::cpu_type.Coordinator
-		, Talos::Shared::FrameWork::StartUp::cpu_type.Motion
-		, (int)e_status_message::e_status_state::motion::e_state::Idle
-		, (int)e_status_message::e_status_state::motion::e_sub_state::OK
-		, (int)e_status_message::e_status_type::Informal
-	);
-
-	//Start a timeout timer and wait for a response.
-
-	//The router determines which event handler needs to process the message
-	Talos::Shared::FrameWork::Events::Router.process();
-	
-	return 0;
+	Talos::Motion::Main_Process::host_serial.print_string("No Comms\r\n");
 }
+
+
+
+////Start a timeout timer and wait for a response.
+//
+////The router determines which event handler needs to process the message
+//Talos::Shared::FrameWork::Events::Router.process();
+//
+//return 0;
+//}
 
 void Talos::Motion::Main_Process::initialize()
 {
@@ -143,7 +151,7 @@ void Talos::Motion::Main_Process::__initialization_response(uint8_t response_cod
 
 //ISR (TIMER5_COMPA_vect)
 //{
-	//Talos::Shared::FrameWork::Events::Router.ready.event_manager.set((int)c_event_router::ss_ready_data::e_event_type::Testsignal);
+//Talos::Shared::FrameWork::Events::Router.ready.event_manager.set((int)c_event_router::ss_ready_data::e_event_type::Testsignal);
 //}
 
 static uint32_t tic_count = 0;
@@ -151,25 +159,25 @@ void Talos::Motion::Main_Process::run()
 {
 
 	//OCR5A = 600; //15624;
-//
+	//
 	//TCCR5B |= (1 << WGM52);
 	//// Mode 4, CTC on OCR1A
-//
+	//
 	//
 	////Set interrupt on compare match
-//
+	//
 	////TCCR1B |= (1 << CS12) | (1 << CS10);
 	//TCCR5B |= (1 << CS52);// | (1 << CS10);
-//
+	//
 	//Talos::Motion::Main_Process::host_serial.print_string("** System holding **");
 	//Talos::Shared::FrameWork::Events::extern_system_events.event_manager.set((int)s_system_events::e_event_type::SystemAllOk);
-//
+	//
 	////wait for the activation message from the coordinator.
 	//while(1)
 	//{
-		//Talos::Motion::Events::System::process();
-		//if (Talos::Motion::Events::Report::event_manager.get_clr((int) Events::Report::e_event_type::StatusMessage))
-		//break;
+	//Talos::Motion::Events::System::process();
+	//if (Talos::Motion::Events::Report::event_manager.get_clr((int) Events::Report::e_event_type::StatusMessage))
+	//break;
 	//}
 	//TIMSK5 |= (1 << OCIE5A);
 	

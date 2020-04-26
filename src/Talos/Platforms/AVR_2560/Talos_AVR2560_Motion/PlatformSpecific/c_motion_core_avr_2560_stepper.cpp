@@ -9,8 +9,9 @@
 //#include <avr/interrupt.h>
 #include "c_motion_core_avr_2560_stepper.h"
 #include "c_core_avr_2560.h"
-#include "../../../../Motion\Core/c_interpollation_hardware.h"
-#include "../../../../Motion\Core/c_motion_core.h"
+#include "../../../../Motion/Core/c_interpollation_hardware.h"
+#include "../../../../Motion/Core/c_motion_core.h"
+#include "../../../../Shared Data/FrameWork/Data/cache_data.h"
 
 
 uint8_t Hardware_Abstraction_Layer::MotionCore::Stepper::step_port_invert_mask;
@@ -87,12 +88,12 @@ void Hardware_Abstraction_Layer::MotionCore::Stepper::wake_up()
 	// Initialize step pulse timing from settings. Here to ensure updating after re-writing.
 	#ifdef STEP_PULSE_DELAY
 	// Set total step pulse time after direction pin set. Ad hoc computation from oscilloscope.
-	Motion_Core::Hardware::Interpolation::Step_Pulse_Length = -(((Motion_Core::Settings::_Settings.Hardware_Settings.pulse_length+STEP_PULSE_DELAY-2)*_TICKS_PER_MICROSECOND) >> 3);
+	Motion_Core::Hardware::Interpolation::Step_Pulse_Length = -(((Talos::Shared::c_cache_data::motion_configuration_record.hardware.pulse_length+STEP_PULSE_DELAY-2)*_TICKS_PER_MICROSECOND) >> 3);
 	// Set delay between direction pin write and step command.
 	OCR0A = -(((10)*_TICKS_PER_MICROSECOND) >> 3);
 	#else // Normal operation
 	// Set step pulse time. Ad hoc computation from oscilloscope. Uses two's complement.
-	Motion_Core::Hardware::Interpolation::Step_Pulse_Length = -(((Motion_Core::Settings::_Settings.Hardware_Settings.pulse_length - 2) * _TICKS_PER_MICROSECOND) >> 3);
+	Motion_Core::Hardware::Interpolation::Step_Pulse_Length = -(((Talos::Shared::c_cache_data::motion_configuration_record.hardware.pulse_length - 2) * _TICKS_PER_MICROSECOND) >> 3);
 	#endif
 
 	// Enable Stepper Driver Interrupt

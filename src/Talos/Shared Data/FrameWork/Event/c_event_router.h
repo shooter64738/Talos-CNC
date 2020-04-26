@@ -85,6 +85,7 @@ public:
 		{
 			StatusUpdate = 0,
 			NgcBlockRequest = 1,
+			MotionConfiguration = 2,
 			
 		};
 		s_bit_flag_controller<uint32_t> event_manager;

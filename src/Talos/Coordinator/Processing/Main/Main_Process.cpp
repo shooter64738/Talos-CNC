@@ -55,28 +55,34 @@ uint8_t Talos::Coordinator::Main_Process::motion_initialize()
 {
 	//We need to ask the motion controller for a ready status. Queue up a message
 	Talos::Coordinator::Data::System::send((int)e_status_message::messages::e_informal::ReadyToProcess
-		, Talos::Shared::FrameWork::StartUp::cpu_type.Coordinator
-		, Talos::Shared::FrameWork::StartUp::cpu_type.Motion
-		, (int)e_status_message::e_status_state::motion::e_state::Idle
-		, (int)e_status_message::e_status_state::motion::e_sub_state::OK
-		, (int)e_status_message::e_status_type::Informal
+	, Talos::Shared::FrameWork::StartUp::cpu_type.Coordinator
+	, Talos::Shared::FrameWork::StartUp::cpu_type.Motion
+	, (int)e_status_message::e_status_state::motion::e_state::Idle
+	, (int)e_status_message::e_status_state::motion::e_sub_state::OK
+	, (int)e_status_message::e_status_type::Informal
 	);
 
 	//Start a timeout timer and wait for a response.
+	Talos::Coordinator::Main_Process::host_serial.print_string("Delay set\r\n");
+	Hardware_Abstraction_Layer::Core::set_time_delay(5);
 
 	//The router determines which event handler needs to process the message
 	Talos::Shared::FrameWork::Events::Router.process();
-	while (1)
+	while (Hardware_Abstraction_Layer::Core::delay_count_down)
 	{
 		//Keep processing system events until we timeout or get a response
 		Talos::Coordinator::Events::System::process();
 
 		if (Talos::Coordinator::Events::Report::event_manager.get((int)Events::Report::e_event_type::StatusMessage))
 		{
+			Talos::Coordinator::Main_Process::host_serial.print_string("got message\r\n");
 			Talos::Coordinator::Events::Report::process();
-			while (1) {}
+			while (Hardware_Abstraction_Layer::Core::delay_count_down) {}
 		}
 	}
+	
+	Talos::Coordinator::Main_Process::host_serial.print_string("No Comms\r\n");
+	
 	return 0;
 }
 
@@ -127,7 +133,7 @@ void Talos::Coordinator::Main_Process::initialize()
 	NGC_RS274::Coordinate_Control::WCS::pntr_wcs_read = Hardware_Abstraction_Layer::Disk::get_wcs;
 	NGC_RS274::Coordinate_Control::WCS::pntr_wcs_write = Hardware_Abstraction_Layer::Disk::put_wcs;
 
-#ifdef MSVC
+	#ifdef MSVC
 	//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "g68x5.y5.R28.\r\ng0x6\r\n f4g1y1.\r\nx5\r\n");
 	//cutter comp line 1 left comp test
 	//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "p.25 g1 f1 g41 x1 y0\r\n g2 x1.5y0.5 i1.5 j0\r\n g1 x1.5y1.5\r\ng1 x3.5 y1.5\r\n");
@@ -146,7 +152,7 @@ void Talos::Coordinator::Main_Process::initialize()
 	//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "g0y#525r#<test>[1.0-[5.0+10]]\r\ng1x3\r\n");
 	//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "g99 y [ #777 - [#<test> + #<_glob> +-sqrt[2]] ] \r\n\r\n\r\n\r\n");// /n/ng1x3\r\n");
 	//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "#<tool>=10\r\n");
-#endif
+	#endif
 
 
 }
@@ -191,8 +197,8 @@ volatile uint32_t tick_at_time = 0;
 
 //ISR (TIMER5_COMPA_vect)
 //{
-	//UDR0='A';
-	//Talos::Shared::FrameWork::Events::Router.ready.event_manager.set((int)c_event_router::ss_ready_data::e_event_type::Testsignal);
+//UDR0='A';
+//Talos::Shared::FrameWork::Events::Router.ready.event_manager.set((int)c_event_router::ss_ready_data::e_event_type::Testsignal);
 //}
 
 void Talos::Coordinator::Main_Process::run()
@@ -204,14 +210,14 @@ void Talos::Coordinator::Main_Process::run()
 	////Set interrupt on compare match
 	//TCCR5B |= (1 << CS52) | (1 << CS50);
 	////TCCR5B |= (1 << CS52);// | (1 << CS50);
-//
+	//
 	Talos::Shared::FrameWork::Events::extern_system_events.event_manager.set((int)s_system_events::e_event_type::SystemAllOk);
 	//Talos::Coordinator::Main_Process::host_serial.print_string("\r\n** System holding **\r\n");
 	//while(tick_at_time == 0)
 	//{
-		//Talos::Coordinator::Events::System::process();
-		//if (Talos::Coordinator::Events::Report::event_manager.get_clr((int) Events::Report::e_event_type::StatusMessage))
-		//break;
+	//Talos::Coordinator::Events::System::process();
+	//if (Talos::Coordinator::Events::Report::event_manager.get_clr((int) Events::Report::e_event_type::StatusMessage))
+	//break;
 	//
 	//}
 	//TIMSK5 = 0;

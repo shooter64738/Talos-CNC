@@ -24,7 +24,7 @@
 #include "../../Data/c_framework_system_data_handler.h"
 #include "../../Data/c_framework_ngc_data_handler.h"
 #include "../../Error/c_framework_error.h"
-//#include <avr/io.h>
+#include <avr/io.h>
 
 #define Base_Error 100
 static uint8_t assign_tries = 0;
@@ -120,7 +120,7 @@ uint8_t c_new_serial_event_handler::__assign_handler(c_event_router::s_in_events
 		//c_new_serial_event_handler::pntr_data_read_handler = Txt::assign_handler(buffer, event_object, event_id, (e_record_types)peek_tail);
 		if (peek_tail == (int)e_record_types::System)
 		{
-				
+			
 			Talos::Shared::FrameWork::Data::System::route_read((int)event_id, &event_object->event_manager);
 			c_new_serial_event_handler::pntr_data_read_handler = Talos::Shared::FrameWork::Data::System::reader;
 			Talos::Shared::FrameWork::Data::System::pntr_read_release = c_new_serial_event_handler::read_data_handler_releaser;
@@ -177,11 +177,21 @@ void c_new_serial_event_handler::__assign_handler(c_event_router::s_out_events *
 		break;
 
 		case c_event_router::s_out_events::e_event_type::StatusUpdate:
-		Talos::Shared::FrameWork::Data::System::route_write((int)event_id, &event_object->event_manager);
-		c_new_serial_event_handler::pntr_data_write_handler = Talos::Shared::FrameWork::Data::System::writer;
-		//This is function point that gets 'called back' when all the data is done processing.
-		Talos::Shared::FrameWork::Data::System::pntr_write_release = c_new_serial_event_handler::write_data_handler_releaser;
-		break;
+		{
+			Talos::Shared::FrameWork::Data::System::route_write((int)event_id, &event_object->event_manager);
+			c_new_serial_event_handler::pntr_data_write_handler = Talos::Shared::FrameWork::Data::System::writer;
+			//This is function point that gets 'called back' when all the data is done processing.
+			Talos::Shared::FrameWork::Data::System::pntr_write_release = c_new_serial_event_handler::write_data_handler_releaser;
+			break;
+		}
+		case c_event_router::s_out_events::e_event_type::MotionConfiguration:
+		{
+			Talos::Shared::FrameWork::Data::System::route_write((int)event_id, &event_object->event_manager);
+			c_new_serial_event_handler::pntr_data_write_handler = Talos::Shared::FrameWork::Data::System::writer;
+			//This is function point that gets 'called back' when all the data is done processing.
+			Talos::Shared::FrameWork::Data::System::pntr_write_release = c_new_serial_event_handler::write_data_handler_releaser;
+			break;
+		}
 		default:
 		__raise_error(Err_4);
 		return;

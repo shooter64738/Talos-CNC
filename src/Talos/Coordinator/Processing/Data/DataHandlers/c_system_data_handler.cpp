@@ -64,7 +64,7 @@ void Talos::Coordinator::Data::System::process_system_eventing()
 	Talos::Shared::FrameWork::Events::Router.ready.event_manager.clear((int)c_event_router::ss_ready_data::e_event_type::System);
 }
 
-void Talos::Coordinator::Data::System::Type::__process(s_system_message *status)
+void Talos::Coordinator::Data::System::Type::__process(s_control_message *status)
 {
 	switch ((e_status_message::e_status_type)status->type)
 	{
@@ -85,7 +85,7 @@ void Talos::Coordinator::Data::System::Type::__process(s_system_message *status)
 	}
 }
 
-void Talos::Coordinator::Data::System::Type::__critical(s_system_message *status, e_status_message::messages::e_critical message)
+void Talos::Coordinator::Data::System::Type::__critical(s_control_message *status, e_status_message::messages::e_critical message)
 {
 	//This is a critical status. Something has failed and the entire system needs to hault. Perhaps a limit switch was hit
 	//or communication (heartbeat) has been lost. 
@@ -98,14 +98,18 @@ void Talos::Coordinator::Data::System::Type::__critical(s_system_message *status
 	}
 }
 
-void Talos::Coordinator::Data::System::Type::__data(s_system_message *status, e_status_message::messages::e_data message)
+//A data message8 has come in
+void Talos::Coordinator::Data::System::Type::__data(s_control_message *message, e_status_message::messages::e_data type)
 {
-	//This status message contains data of some type. it could be spindle speed/direction, motion planning, etc.. 
-
-	//check message value
+	//We got a request for configuration data
+	if (type == e_status_message::messages::e_data::ConfigurationRequest)
+	{
+		Talos::Coordinator::Events::Data
+		Talos::Coordinator::Events::Report::event_manager.set((int)Events::Report::e_event_type::StatusMessage);
+	}
 }
 
-void Talos::Coordinator::Data::System::Type::__informal(s_system_message *status, e_status_message::messages::e_informal message)
+void Talos::Coordinator::Data::System::Type::__informal(s_control_message *status, e_status_message::messages::e_informal message)
 {
 	//System message contains information that we need to present to the user. 
 
@@ -115,33 +119,35 @@ void Talos::Coordinator::Data::System::Type::__informal(s_system_message *status
 		
 		Talos::Coordinator::Events::Report::event_manager.set((int)Events::Report::e_event_type::StatusMessage);
 	}
+	
+	
 }
 
-void Talos::Coordinator::Data::System::Type::__warning(s_system_message *status, e_status_message::messages::e_warning message)
+void Talos::Coordinator::Data::System::Type::__warning(s_control_message *status, e_status_message::messages::e_warning message)
 {
-	//This is a warnign status from somewhere. We jsut need to inform the user of it, but its not somethign that will cause a fault
+	//This is a warning status from somewhere. We jsut need to inform the user of it, but its not somethign that will cause a fault
 
 	//check message value
 }
 
-void Talos::Coordinator::Data::System::Origin::__coordinator(s_system_message *status, e_status_message::messages::e_warning message)
+void Talos::Coordinator::Data::System::Origin::__coordinator(s_control_message *status, e_status_message::messages::e_warning message)
 {
 	Talos::Shared::FrameWork::Events::extern_system_events.event_manager.set((int)s_system_events::e_event_type::SystemCritical);
 	//Talos::Shared::FrameWork::Error::Handler::extern_pntr_error_handler(NULL, error);
 }
-void Talos::Coordinator::Data::System::Origin::__host(s_system_message *status, e_status_message::messages::e_warning message)
+void Talos::Coordinator::Data::System::Origin::__host(s_control_message *status, e_status_message::messages::e_warning message)
 {
 
 }
-void Talos::Coordinator::Data::System::Origin::__motion(s_system_message *status, e_status_message::messages::e_warning message)
+void Talos::Coordinator::Data::System::Origin::__motion(s_control_message *status, e_status_message::messages::e_warning message)
 {
 
 }
-void Talos::Coordinator::Data::System::Origin::__spindle(s_system_message *status, e_status_message::messages::e_warning message)
+void Talos::Coordinator::Data::System::Origin::__spindle(s_control_message *status, e_status_message::messages::e_warning message)
 {
 
 }
-void Talos::Coordinator::Data::System::Origin::__peripheral(s_system_message *status, e_status_message::messages::e_warning message)
+void Talos::Coordinator::Data::System::Origin::__peripheral(s_control_message *status, e_status_message::messages::e_warning message)
 {
 
 }
