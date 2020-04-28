@@ -74,7 +74,12 @@ void Talos::Coordinator::Error::__print_base()
 	__write_eol();err_serial->print_string("\tOrg:");
 	err_serial->print_int32((int)Talos::Shared::FrameWork::Error::framework_error.origin);
 	__write_eol(); err_serial->print_string("\tStk:");
-	err_serial->print_int32((int)Talos::Shared::FrameWork::Error::framework_error.stack);
+	__write_eol(); err_serial->print_string("\t\tBse:");
+	err_serial->print_int32((int)Talos::Shared::FrameWork::Error::framework_error.stack.base);
+	__write_eol(); err_serial->print_string("\t\tMod:");
+	err_serial->print_int32((int)Talos::Shared::FrameWork::Error::framework_error.stack.method);
+	__write_eol(); err_serial->print_string("\t\tLin:");
+	err_serial->print_int32((int)Talos::Shared::FrameWork::Error::framework_error.stack.line);
 	
 	if (Talos::Shared::FrameWork::Error::framework_error.data != NULL)
 	{

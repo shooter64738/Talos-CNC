@@ -14,6 +14,7 @@
 #include "../../../../../NGC_RS274/_ngc_m_Groups.h"
 #include "../../../../../Shared Data/FrameWork/extern_events_types.h"
 
+
 using namespace std;
 static std::fstream _cache_file_object;
 static char _cache_file_name[11] = "cache.dat";
@@ -88,6 +89,38 @@ uint8_t Hardware_Abstraction_Layer::Disk::load_initialize_block(s_ngc_block * in
 	initial_block->m_group[NGC_RS274::Groups::M::COOLANT] = NGC_RS274::M_codes::COOLANT_OFF;
 
 	initial_block->__station__ = 1;
+	return 0;
+}
+
+uint8_t Hardware_Abstraction_Layer::Disk::load_motion_control_settings(s_motion_control_settings_encapsulation * motion_settings)
+{
+	motion_settings->hardware.spindle_encoder.meta_data.reg_tc0_cv1 = 99;
+	motion_settings->hardware.spindle_encoder.meta_data.reg_tc0_ra0 = 88;
+	motion_settings->hardware.spindle_encoder.meta_data.speed_rps = 14;
+	motion_settings->hardware.spindle_encoder.meta_data.speed_rpm = 3500;
+
+	for (uint8_t i = 0; i < MACHINE_AXIS_COUNT; i++)
+	{
+		motion_settings->hardware.steps_per_mm[i] = 160;
+		motion_settings->hardware.acceleration[i] = (150.0 * 60 * 60);
+		motion_settings->hardware.max_rate[i] = 12000;
+		motion_settings->hardware.distance_per_rotation[i] = 5;
+		//arbitrary for testing
+		motion_settings->hardware.back_lash_comp_distance[i] = 55;
+	}
+
+	motion_settings->hardware.pulse_length = 5;
+	motion_settings->hardware.spindle_encoder.wait_spindle_at_speed = 1;
+	motion_settings->hardware.spindle_encoder.spindle_synch_wait_time_ms = 5;
+	motion_settings->hardware.spindle_encoder.ticks_per_revolution = 400;
+	motion_settings->hardware.spindle_encoder.current_rpm = 0;
+	motion_settings->hardware.spindle_encoder.target_rpm = 100;
+	motion_settings->hardware.spindle_encoder.variable_percent = 50;
+	motion_settings->hardware.spindle_encoder.samples_per_second = 10;
+
+
+	motion_settings->tolerance.arc_tolerance = 0.002;
+	motion_settings->tolerance.arc_angular_correction = 12;
 	return 0;
 }
 

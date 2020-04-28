@@ -3,11 +3,12 @@
 
 #include <stdint.h>
 
-union u_crc_16
-{
-	uint16_t crc;
-	uint8_t crc_bytes[2];
-};
+//union u_crc_16
+//{
+//	uint16_t crc;
+//	uint8_t crc_bytes[2];
+//};
+//uint8_t crc_size = 2;
 
 namespace Talos
 {

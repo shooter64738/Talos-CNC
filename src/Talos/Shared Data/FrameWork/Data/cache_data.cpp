@@ -4,8 +4,12 @@
 char * Talos::Shared::c_cache_data::pntr_binary_buffer_array;
 char Talos::Shared::c_cache_data::binary_buffer_array[__FRAMEWORK_BINARY_BUFFER_SIZE];
 
-s_control_message Talos::Shared::c_cache_data::status_record;
-s_control_message *Talos::Shared::c_cache_data::pntr_status_record;
+//s_control_message Talos::Shared::c_cache_data::system_record;
+//s_control_message *Talos::Shared::c_cache_data::pntr_system_record;
+
+s_control_message Talos::Shared::c_cache_data::system_message_group[4];
+s_control_message Talos::Shared::c_cache_data::temp_system_message;
+
 
 s_motion_control_settings_encapsulation Talos::Shared::c_cache_data::motion_configuration_record;
 s_motion_control_settings_encapsulation *Talos::Shared::c_cache_data::pntr_motion_configuration_record;

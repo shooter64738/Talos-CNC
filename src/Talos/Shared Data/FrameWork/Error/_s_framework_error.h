@@ -10,6 +10,13 @@ enum class e_error_behavior :uint8_t
 	Informal = 2
 };
 
+struct s_error_stack
+{
+	uint16_t base;
+	uint16_t method;
+	uint16_t line;
+};
+
 struct s_framework_error
 {
 	uint16_t group;
@@ -20,7 +27,7 @@ struct s_framework_error
 	uint16_t code;
 	uint8_t origin;
 	uint16_t data_size;
-	uint16_t stack;
+	s_error_stack stack;
 	char * data;
 	uint16_t buffer_head;
 	uint16_t buffer_tail;

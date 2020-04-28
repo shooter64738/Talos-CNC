@@ -1,19 +1,9 @@
 #include<stdint.h>
 #ifndef __C_E_SYSTEM_MESSAGES
 #define __C_E_SYSTEM_MESSAGES
-class e_status_message
+class e_system_message
 {
 public:
-	enum class xe_cpu_type :uint8_t //these doubel as port address for the send
-	{
-		Host = 0,
-		Coordinator = 1,
-		Motion = 2,
-		Spindle = 3,
-		Peripheral = 4
-
-	};
-	
 	enum class e_status_type :uint8_t
 	{
 		Critical = 0,
@@ -33,14 +23,16 @@ public:
 
 		enum class e_data :uint8_t
 		{
-			ConfigurationRequest = 0
-
+			Invalid = 0,
+			MotionConfiguration = 1,
+			
 		};
 
 		enum class e_informal :uint8_t
 		{
-			ReadyToProcess = 0,
-			BlockCompleted = 1
+			Invalid = 0,
+			ReadyToProcess = 1,
+			BlockCompleted = 2
 
 		};
 

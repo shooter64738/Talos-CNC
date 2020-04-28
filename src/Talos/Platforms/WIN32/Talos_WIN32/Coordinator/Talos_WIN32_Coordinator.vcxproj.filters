@@ -94,6 +94,9 @@
     <Filter Include="Shared Data\FrameWork\Error">
       <UniqueIdentifier>{8baf30b5-f716-43a1-a395-beef2a253d82}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shared Data\Settings\Motion">
+      <UniqueIdentifier>{11c0d96a-57bb-48a0-824c-7c4477f43c36}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\communication_def.h" />
@@ -364,6 +367,15 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\Coordinator\Processing\Data\DataHandlers\c_system_data_handler.h">
       <Filter>Coordinator\Processing\Data\DataHandlers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared Data\Settings\Motion\_s_motion_control_settings_encapsulation.h">
+      <Filter>Shared Data\Settings\Motion</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared Data\Settings\Motion\_s_motion_hardware.h">
+      <Filter>Shared Data\Settings\Motion</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared Data\Settings\Motion\_s_motion_tolerance_struct.h">
+      <Filter>Shared Data\Settings\Motion</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

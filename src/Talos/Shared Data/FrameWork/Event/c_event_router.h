@@ -40,7 +40,7 @@ public:
 			System = 1,
 			MotionDataBlock = 2,
 			NgcDataBlock = 3,
-			Testsignal = 4,
+			MotionConfiguration = 4,
 		};
 		s_bit_flag_controller<uint32_t> event_manager;
 		bool any()
@@ -90,7 +90,8 @@ public:
 		};
 		s_bit_flag_controller<uint32_t> event_manager;
 	};
-
+	static s_out_events outputs;
+	
 	struct s_in_events
 	{
 		enum class e_event_type : uint8_t
@@ -109,11 +110,8 @@ public:
 		s_device_buffer * pntr_ring_buffer;
 		uint8_t ms_time_out;
 	};
-	static s_out_events outputs;
 	static s_in_events inputs;
-	//struct s_data_events
-	//{
-	//static ss_serial serial;
+
 	static ss_disk disk;
 	static ss_ready_data ready;
 	static ss_inquiry_data inquire;

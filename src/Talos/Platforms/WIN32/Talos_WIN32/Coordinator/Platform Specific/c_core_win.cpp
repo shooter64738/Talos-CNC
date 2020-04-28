@@ -20,10 +20,16 @@
 
 #include "c_core_win.h"
 #include "../../../../../Coordinator/coordinator_hardware_def.h"
+uint16_t Hardware_Abstraction_Layer::Core::delay_count_down;
 
 void Hardware_Abstraction_Layer::Core::critical_shutdown()
 {
 	//This is the win core. 
+}
+
+void Hardware_Abstraction_Layer::Core::set_time_delay(uint8_t delay)
+{
+
 }
 
 uint8_t Hardware_Abstraction_Layer::Core::initialize()

@@ -37,11 +37,11 @@ namespace Talos
 			public:
 				enum class e_event_type
 				{
-					CoordinatorReady = 0,
-					HostReady = 1,
-					MotionReady = 2,
-					SpindleReady = 3,
-					PeripheralReady = 4,
+					CoordinatorReady = 1,
+					HostReady = 2,
+					MotionReady = 3,
+					SpindleReady = 4,
+					PeripheralReady = 5,
 					do_we_need_this=31
 				};
 				static s_bit_flag_controller<uint32_t> event_manager;

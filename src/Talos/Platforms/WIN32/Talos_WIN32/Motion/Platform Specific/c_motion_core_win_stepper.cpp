@@ -9,7 +9,7 @@
 //#include <avr/interrupt.h>
 #include "c_motion_core_win_stepper.h"
 #include "c_core_win.h"
-
+#include "../../../../../Shared Data/FrameWork/Data/cache_data.h"
 
 uint8_t Hardware_Abstraction_Layer::MotionCore::Stepper::step_port_invert_mask;
 uint8_t Hardware_Abstraction_Layer::MotionCore::Stepper::dir_port_invert_mask;
@@ -56,7 +56,7 @@ void Hardware_Abstraction_Layer::MotionCore::Stepper::wake_up()
 	OCR0A = -(((c_settings::settings.pulse_microseconds)*TICKS_PER_MICROSECOND) >> 3);
 #else // Normal operation
 	// Set step pulse time. Ad hoc computation from oscilloscope. Uses two's complement.
-	Motion_Core::Hardware::Interpolation::Step_Pulse_Length = -(((Motion_Core::Settings::_Settings.Hardware_Settings.pulse_length - 2) * _TICKS_PER_MICROSECOND) >> 3);
+	Motion_Core::Hardware::Interpolation::Step_Pulse_Length = -(((Talos::Shared::c_cache_data::motion_configuration_record.hardware.pulse_length - 2) * _TICKS_PER_MICROSECOND) >> 3);
 #endif
 
 	// Enable Stepper Driver Interrupt

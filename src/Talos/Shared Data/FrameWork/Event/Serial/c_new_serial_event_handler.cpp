@@ -24,9 +24,8 @@
 #include "../../Data/c_framework_system_data_handler.h"
 #include "../../Data/c_framework_ngc_data_handler.h"
 #include "../../Error/c_framework_error.h"
-#include <avr/io.h>
 
-#define Base_Error 100
+#define BASE_ERROR 100
 static uint8_t assign_tries = 0;
 
 void(*c_new_serial_event_handler::pntr_data_read_handler)();
@@ -79,7 +78,8 @@ void c_new_serial_event_handler::process(c_event_router::s_out_events * event_ob
 	}
 }
 
-#define Err_3 3
+#define __ASSIGN_HANDLER_IN 3
+#define UNDETERMINED_SERIAL_TYPE 1
 uint8_t c_new_serial_event_handler::__assign_handler(c_event_router::s_in_events * event_object, c_event_router::s_in_events::e_event_type event_id)
 {
 	
@@ -156,18 +156,13 @@ uint8_t c_new_serial_event_handler::__assign_handler(c_event_router::s_in_events
 		}
 		//since there is data here and we do not know what kind it is, we cannot determine which assigner it needs.
 		//i feel like this is probably a critical error.
-		Talos::Shared::FrameWork::Error::framework_error.origin = (int)event_object->event_manager._flag;
-		Talos::Shared::FrameWork::Error::framework_error.code = (int)event_id;
-		Talos::Shared::FrameWork::Error::framework_error.buffer_head = ((c_event_router::inputs.pntr_ring_buffer + (int)event_id)->ring_buffer._head);
-		Talos::Shared::FrameWork::Error::framework_error.buffer_tail = ((c_event_router::inputs.pntr_ring_buffer + (int)event_id)->ring_buffer._tail);
-		Talos::Shared::FrameWork::Error::framework_error.origin = (int)event_id;
-		Talos::Shared::FrameWork::Error::framework_error.data = ((c_event_router::inputs.pntr_ring_buffer + (int)event_id)->storage);
-		__raise_error(Err_3 +Base_Error);
+		__raise_error(BASE_ERROR,__ASSIGN_HANDLER_IN, UNDETERMINED_SERIAL_TYPE, (int)event_id);
 	}
 	return 0;
 }
 
-#define Err_4 4
+#define __ASSIGN_HANDLER_OUT 4
+#define UNHANDLED_EVENT_TYPE 1
 void c_new_serial_event_handler::__assign_handler(c_event_router::s_out_events * event_object, c_event_router::s_out_events::e_event_type event_id)
 {
 
@@ -193,7 +188,7 @@ void c_new_serial_event_handler::__assign_handler(c_event_router::s_out_events *
 			break;
 		}
 		default:
-		__raise_error(Err_4);
+		__raise_error(BASE_ERROR,__ASSIGN_HANDLER_OUT, UNHANDLED_EVENT_TYPE,(int)event_id);
 		return;
 	}
 
@@ -201,14 +196,22 @@ void c_new_serial_event_handler::__assign_handler(c_event_router::s_out_events *
 }
 
 #define Err_5 5
-void c_new_serial_event_handler::__raise_error(uint16_t stack)
+void c_new_serial_event_handler::__raise_error(uint16_t base, uint16_t method, uint16_t line, uint8_t event_id)
 {
 	//release the handler because we should be done with it now, but pass a flag in indicating if
 	//there is more data to read from this buffer
 	//c_data_handler::pntr_data_handler_release(buffer_source);
 	//set the handler release to null now. we dont need it
 	Talos::Shared::FrameWork::Data::Txt::pntr_read_release = NULL;
-	Talos::Shared::FrameWork::Error::framework_error.stack = stack;
+
+	Talos::Shared::FrameWork::Error::framework_error.buffer_head = ((c_event_router::inputs.pntr_ring_buffer + (int)event_id)->ring_buffer._head);
+	Talos::Shared::FrameWork::Error::framework_error.buffer_tail = ((c_event_router::inputs.pntr_ring_buffer + (int)event_id)->ring_buffer._tail);
+	Talos::Shared::FrameWork::Error::framework_error.origin = (int)event_id;
+	Talos::Shared::FrameWork::Error::framework_error.data = ((c_event_router::inputs.pntr_ring_buffer + (int)event_id)->storage);
+
+	Talos::Shared::FrameWork::Error::framework_error.stack.base = base;
+	Talos::Shared::FrameWork::Error::framework_error.stack.method = method;
+	Talos::Shared::FrameWork::Error::framework_error.stack.line = line;
 	Talos::Shared::FrameWork::extern_pntr_error_handler();
 }
 

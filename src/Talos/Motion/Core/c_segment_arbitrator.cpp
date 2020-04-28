@@ -603,7 +603,7 @@ void Motion_Core::Segment::Arbitrator::st_update_plan_block_parameters()
 
 void Motion_Core::Segment::Arbitrator::cycle_hold()
 {
-	s_system_message status;
+	s_control_message status;
 	if (step_event_control._flag == 0)
 	{
 

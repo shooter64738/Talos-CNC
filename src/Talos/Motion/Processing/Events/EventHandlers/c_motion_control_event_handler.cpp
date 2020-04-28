@@ -22,8 +22,8 @@
 #include "../../Data/DataHandlers/c_ngc_data_handler.h"
 #include "../../../Core/c_gateway.h"
 #include "../../../../Shared Data/_s_status_record.h"
-//#include "../../../../Shared Data/FrameWork/Data/cache_data.h"
-#include "../../Data/DataHandlers/c_system_data_handler.h"
+#include "../../../../Shared Data/FrameWork/Data/c_framework_system_data_handler.h"
+//#include "../../Data/DataHandlers/c_system_data_handler.h"
 
 uint32_t Talos::Motion::Events::MotionControl::completed_sequence = 0;
 
@@ -47,13 +47,15 @@ void Talos::Motion::Events::MotionControl::process()
 	if (MotionControl::event_manager.get((int)MotionControl::e_event_type::BlockComplete))
 	{
 		//see if we can send a system message. If not leave the events in place and it will keep trying
-		if (Talos::Motion::Data::System::send(
-			(int)e_status_message::messages::e_informal::BlockCompleted
+		if (Talos::Shared::FrameWork::Data::System::send(
+			(int)e_system_message::messages::e_informal::BlockCompleted
+			, (int)e_system_message::e_status_type::Informal
 			, Shared::FrameWork::StartUp::cpu_type.Motion
 			, Shared::FrameWork::StartUp::cpu_type.Coordinator
-			, (int)e_status_message::e_status_state::motion::e_state::Complete
-			, (int)e_status_message::e_status_state::motion::e_sub_state::Block_Complete
-			, (int)e_status_message::e_status_type::Informal))
+			, (int)e_system_message::e_status_state::motion::e_state::Complete
+			, (int)e_system_message::e_status_state::motion::e_sub_state::Block_Complete
+			, Motion_Core::Hardware::Interpolation::system_position
+			))
 			MotionControl::event_manager.clear((int)MotionControl::e_event_type::BlockComplete);
 
 	}

@@ -20,8 +20,13 @@ namespace Talos
 			static char binary_buffer_array[__FRAMEWORK_BINARY_BUFFER_SIZE];
 			static char * pntr_binary_buffer_array;
 
-			static s_control_message status_record;
-			static s_control_message *pntr_status_record;
+
+			
+			static s_control_message system_message_group[];
+			static s_control_message temp_system_message;
+
+			//static s_control_message system_record;
+			//static s_control_message *pntr_system_record;
 			
 			static s_motion_control_settings_encapsulation motion_configuration_record;
 			static s_motion_control_settings_encapsulation *pntr_motion_configuration_record;

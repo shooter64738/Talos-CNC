@@ -54,6 +54,9 @@
     <ClInclude Include="..\..\..\..\Shared Data\FrameWork\extern_events_types.h" />
     <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Startup\c_framework_start.h" />
     <ClInclude Include="..\..\..\..\Shared Data\Settings\Coordinator\_s_interp_config_struct.h" />
+    <ClInclude Include="..\..\..\..\Shared Data\Settings\Motion\_s_motion_control_settings_encapsulation.h" />
+    <ClInclude Include="..\..\..\..\Shared Data\Settings\Motion\_s_motion_hardware.h" />
+    <ClInclude Include="..\..\..\..\Shared Data\Settings\Motion\_s_motion_tolerance_struct.h" />
     <ClInclude Include="..\..\..\..\Shared Data\_e_binary_comm_response.h" />
     <ClInclude Include="..\..\..\..\Shared Data\_e_block_state.h" />
     <ClInclude Include="..\..\..\..\Shared Data\_e_feed_modes.h" />

@@ -74,7 +74,6 @@ void Talos::Shared::FrameWork::Data::System::route_read(uint8_t event_id, s_bit_
 	read.message_record = &c_cache_data::temp_system_message;
 	read.cache[SYS_ADDENDUM_RECORD] = NULL;
 	read.counter = s_control_message::__size__;
-	read.addendum_checked = false;
 	read.event_id = event_id;
 	read.event_object = event_object;
 	read.target = 0;

@@ -13,6 +13,7 @@
 #include "../../../../../NGC_RS274/_ngc_block_struct.h"
 #include "../../../../../NGC_RS274/_ngc_tool_struct.h"
 #include "../../../../../NGC_RS274/_ngc_coordinate_struct.h"
+#include "../../../../../Shared Data/Settings//Motion/_s_motion_control_settings_encapsulation.h"
 #include "c_core_win.h"
 #include<iostream>
 #include<fstream>
@@ -39,6 +40,7 @@ namespace Hardware_Abstraction_Layer
 		static uint8_t initialize();
 		static uint8_t load_configuration();
 		static uint8_t load_initialize_block(s_ngc_block * initial_block);
+		static uint8_t load_motion_control_settings(s_motion_control_settings_encapsulation * motion_settings);
 
 		static uint8_t read_file(char * filename, char * buffer);
 		
@@ -55,7 +57,7 @@ namespace Hardware_Abstraction_Layer
 		static uint8_t read(const char * filename, char * buffer, e_file_modes mode, uint16_t size, std::fstream &stream_object);
 	protected:
 	private:
-
+			
 
 	};
 };

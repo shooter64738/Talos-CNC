@@ -33,6 +33,7 @@ namespace Hardware_Abstraction_Layer
 	{
 		//variables
 		public:
+			static uint16_t delay_count_down;
 		protected:
 		private:
 
@@ -40,6 +41,7 @@ namespace Hardware_Abstraction_Layer
 		public:
 		static uint8_t initialize();
 		static void critical_shutdown();
+		static void set_time_delay(uint8_t delay);
 		static uint8_t start_interrupts();
 		static void stop_interrupts();
 		static void capture_status_register_SREG();

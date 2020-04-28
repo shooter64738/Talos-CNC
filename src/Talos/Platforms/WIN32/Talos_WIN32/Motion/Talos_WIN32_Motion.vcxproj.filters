@@ -186,9 +186,6 @@
     <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Data\cache_data.cpp">
       <Filter>Shared data\FrameWork\Data</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\Motion\Processing\Data\DataHandlers\c_status_data_handler.cpp">
-      <Filter>Motion\Processing\Data\DataHandlers</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\..\Motion\Processing\Data\DataHandlers\c_ngc_data_handler.cpp">
       <Filter>Motion\Processing\Data\DataHandlers</Filter>
     </ClCompile>
@@ -218,6 +215,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Error\c_framework_error.cpp">
       <Filter>Shared data\FrameWork\Error</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Motion\Processing\Data\DataHandlers\c_system_data_handler.cpp">
+      <Filter>Motion\Processing\Data\DataHandlers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -388,9 +388,6 @@
     <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Data\cache_data.h">
       <Filter>Shared data\FrameWork\Data</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Motion\Processing\Data\DataHandlers\c_status_data_handler.h">
-      <Filter>Motion\Processing\Data\DataHandlers</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Enumerations\Status\_e_system_messages.h">
       <Filter>Shared data\FrameWork\Enumerations\Status</Filter>
     </ClInclude>
@@ -426,6 +423,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Error\c_framework_error.h">
       <Filter>Shared data\FrameWork\Error</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Motion\Processing\Data\DataHandlers\c_system_data_handler.h">
+      <Filter>Motion\Processing\Data\DataHandlers</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
