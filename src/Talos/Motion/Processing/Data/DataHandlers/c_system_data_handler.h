@@ -49,7 +49,7 @@ namespace Talos
 				/*static xret_pointer assign_handler(c_ring_buffer <char> * buffer);
 				static void motion_control_setting_handler(c_ring_buffer <char> * buffer);
 				static void unkown_data_handler(c_ring_buffer <char> * buffer);*/
-				static void process_system_eventing();
+				static void process_system_eventing(s_control_message *status);
 				static void process();
 				/*static bool send(uint8_t message, uint8_t type, uint8_t origin, uint8_t target
 					, uint8_t state, uint8_t sub_state);*/
@@ -61,7 +61,7 @@ namespace Talos
 				{
 				public:
 					
-					static void __process(s_control_message *status);
+					
 					static void __critical(s_control_message *status, e_system_message::messages::e_critical message);
 					static void __data(s_control_message *status, e_system_message::messages::e_data message);
 					static void __informal(s_control_message *status, e_system_message::messages::e_informal message);

@@ -25,7 +25,7 @@
 #include "../../../c_ring_template.h"
 #include "../../Serial/c_Serial.h"
 #include "../../../Shared Data/FrameWork/extern_events_types.h"
-#include "../../../Shared Data/FrameWork/Error/c_framework_error.h"
+
 
 namespace Talos
 {

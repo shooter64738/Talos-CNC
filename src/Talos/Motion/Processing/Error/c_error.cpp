@@ -19,6 +19,7 @@
 */
 
 #include "c_error.h"
+#include "../../../Shared Data/FrameWork/Error/c_framework_error.h"
 
 static c_Serial *err_serial;
 
@@ -30,14 +31,15 @@ uint8_t Talos::Motion::Error::initialize(c_Serial *serial)
 
 void Talos::Motion::Error::general_error()
 {
-		err_serial->print_string("Err:");
-		if (Talos::Shared::FrameWork::Error::framework_error.behavior == e_error_behavior::Critical)
-		{
-			Talos::Shared::FrameWork::Events::extern_system_events.event_manager.set((int)s_system_events::e_event_type::SystemCritical);
-			Talos::Shared::FrameWork::Events::extern_system_events.event_manager.clear((int)s_system_events::e_event_type::SystemAllOk);
-			err_serial->print_string("{Critical}");
-		}
-		__print_base();
+	err_serial->print_string("Err:");
+	if (Talos::Shared::FrameWork::Error::framework_error.behavior == e_error_behavior::Critical)
+	{
+		Talos::Shared::FrameWork::Events::extern_system_events.event_manager.set((int)s_system_events::e_event_type::SystemCritical);
+		Talos::Shared::FrameWork::Events::extern_system_events.event_manager.clear((int)s_system_events::e_event_type::SystemAllOk);
+		err_serial->print_string("{Critical}");
+	}
+	__print_base();
+	while(1){}
 }
 
 
@@ -80,6 +82,22 @@ void Talos::Motion::Error::__print_base()
 	err_serial->print_int32((int)Talos::Shared::FrameWork::Error::framework_error.stack.method);
 	__write_eol(); err_serial->print_string("\t\tLin:");
 	err_serial->print_int32((int)Talos::Shared::FrameWork::Error::framework_error.stack.line);
+	
+	if (Talos::Shared::FrameWork::Error::framework_error.data != NULL)
+	{
+		__write_eol(); err_serial->print_string("\tDta:");
+		for (uint8_t i=0;i<255;i++)
+		{
+			err_serial->print_int32(*(Talos::Shared::FrameWork::Error::framework_error.data+i));
+			err_serial->Write(',');
+		}
+		
+		__write_eol();err_serial->print_string("\tHed:");
+		err_serial->print_int32((int)Talos::Shared::FrameWork::Error::framework_error.buffer_head);
+		__write_eol();err_serial->print_string("\tTal:");
+		err_serial->print_int32((int)Talos::Shared::FrameWork::Error::framework_error.buffer_tail);
+	}
+	__write_eol();
 
 	__write_eol();
 }

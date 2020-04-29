@@ -11,12 +11,12 @@ namespace Talos
 	{
 		namespace FrameWork
 		{
-			extern void(*extern_pntr_error_handler)();
+			
 			class Error
 			{
 			public:
 				static s_framework_error framework_error;
-				
+				static void(*extern_pntr_error_handler)();	
 				static void(*extern_pntr_ngc_error_handler)(char * ngc_line);
 			};
 		};

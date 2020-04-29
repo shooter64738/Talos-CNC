@@ -24,7 +24,7 @@
 #include "c_motion_control_event_handler.h"
 #include "c_motion_controller_event_handler.h"
 #include "../../../../Shared Data/FrameWork/Data/cache_data.h"
-
+#include <avr/io.h>
 s_bit_flag_controller<uint32_t> Talos::Motion::Events::System::event_manager;
 
 void Talos::Motion::Events::System::process()
@@ -39,6 +39,7 @@ void Talos::Motion::Events::System::process()
 
 	if (Talos::Shared::FrameWork::Events::Router.ready.event_manager._flag > 0)
 	{
+		
 		//See if there is an event set indicating we have a status record
 		if (Talos::Shared::FrameWork::Events::Router.ready.event_manager.get_clr((int)c_event_router::ss_ready_data::e_event_type::System))
 		{
@@ -47,16 +48,18 @@ void Talos::Motion::Events::System::process()
 			//Copy the temp system record to the its final destination now that we know where it goes. 
 			memcpy(&Talos::Shared::c_cache_data::system_message_group[Talos::Shared::c_cache_data::temp_system_message.rx_from]
 				, &Talos::Shared::c_cache_data::temp_system_message, s_control_message::__size__);
+				
+				Talos::Motion::Data::System::process_system_eventing(&Talos::Shared::c_cache_data::system_message_group[Talos::Shared::c_cache_data::temp_system_message.rx_from]);
 		}
 
-		if (Talos::Shared::FrameWork::Events::Router.ready.event_manager.get_clr((int)c_event_router::ss_ready_data::e_event_type::MotionConfiguration))
-		{
-			/*
-			We have an event that the motion configuration was updated. The framework would have already updated the data
-			but if we need to do something becuase the configuration was updated, we can do it here. 
-			*/
-			
-		}
+		//if (Talos::Shared::FrameWork::Events::Router.ready.event_manager.get_clr((int)c_event_router::ss_ready_data::e_event_type::MotionConfiguration))
+		//{
+			///*
+			//We have an event that the motion configuration was updated. The framework would have already updated the data
+			//but if we need to do something because the configuration was updated, we can do it here. 
+			//*/
+			//
+		//}
 
 	}
 

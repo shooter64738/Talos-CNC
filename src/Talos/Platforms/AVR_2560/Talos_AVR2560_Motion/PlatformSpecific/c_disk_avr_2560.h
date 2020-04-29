@@ -13,6 +13,7 @@
 #include "../../../../NGC_RS274/_ngc_block_struct.h"
 #include "../../../../NGC_RS274/_ngc_tool_struct.h"
 #include "../../../../NGC_RS274/_ngc_coordinate_struct.h"
+#include "../../../../Shared Data/Settings/Motion/_s_motion_control_settings_encapsulation.h"
 #include "Disk Support/ff.h"
 
 namespace Hardware_Abstraction_Layer
@@ -38,6 +39,7 @@ namespace Hardware_Abstraction_Layer
 		static uint8_t initialize();
 		static uint8_t load_configuration();
 		static uint8_t load_initialize_block(s_ngc_block * initial_block );
+		static uint8_t load_motion_control_settings(s_motion_control_settings_encapsulation * motion_settings);
 		
 		static uint8_t put_block(s_ngc_block * write_block);
 		static uint8_t get_block(s_ngc_block * read_block);

@@ -64,7 +64,7 @@ void Talos::Coordinator::Data::System::Type::__critical(s_control_message *statu
 	if (status->message >= 25)
 	{
 		Talos::Shared::FrameWork::Events::extern_system_events.event_manager.set((int)s_system_events::e_event_type::SystemCritical);
-		Talos::Shared::FrameWork::extern_pntr_error_handler();
+		Talos::Shared::FrameWork::Error::extern_pntr_error_handler();
 	}
 }
 

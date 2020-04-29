@@ -212,7 +212,7 @@ void c_new_serial_event_handler::__raise_error(uint16_t base, uint16_t method, u
 	Talos::Shared::FrameWork::Error::framework_error.stack.base = base;
 	Talos::Shared::FrameWork::Error::framework_error.stack.method = method;
 	Talos::Shared::FrameWork::Error::framework_error.stack.line = line;
-	Talos::Shared::FrameWork::extern_pntr_error_handler();
+	Talos::Shared::FrameWork::Error::extern_pntr_error_handler();
 }
 
 #define Err_6 6

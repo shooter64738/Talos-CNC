@@ -26,25 +26,11 @@
 #include "../../Main/Main_Process.h"
 #include "../../../../Shared Data/FrameWork/Error/c_framework_error.h"
 
-void Talos::Motion::Data::System::process_system_eventing()
+
+void Talos::Motion::Data::System::process_system_eventing(s_control_message *status)
 {
-	/*
-	I think this can all be done away with since the framework is flagging the respective records
-	as being ready now. Essentially the framework jsut flags that a record is ready, and it is up
-	to the hosting application to do something with that record. 
-	*/
-	return;
-
-
-
-	//Type::__process(&Talos::Shared::c_cache_data::system_record);
-	//Now that the status record is processed any event expansion has taken place
-	//We can clear the status record ready event
 	Talos::Shared::FrameWork::Events::Router.ready.event_manager.clear((int)c_event_router::ss_ready_data::e_event_type::System);
-}
-
-void Talos::Motion::Data::System::Type::__process(s_control_message *status)
-{
+	
 	switch ((e_system_message::e_status_type)status->type)
 	{
 		case e_system_message::e_status_type::Critical:
@@ -73,7 +59,7 @@ void Talos::Motion::Data::System::Type::__critical(s_control_message *status, e_
 	if (status->message >= 25)
 	{
 		Talos::Shared::FrameWork::Events::extern_system_events.event_manager.set((int)s_system_events::e_event_type::SystemCritical);
-		Talos::Shared::FrameWork::extern_pntr_error_handler();
+		Talos::Shared::FrameWork::Error::extern_pntr_error_handler();
 	}
 }
 

@@ -39,6 +39,7 @@ void Talos::Coordinator::Error::general_error()
 		err_serial->print_string("{Critical}");
 	}
 	__print_base();
+	while(1){}
 }
 
 void Talos::Coordinator::Error::ngc_error(char * ngc_line)

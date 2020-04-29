@@ -6,13 +6,14 @@
 
 struct s_motion_hardware
 {
-	s_encoders spindle_encoder;
-	float back_lash_comp_distance[MACHINE_AXIS_COUNT];//53
-	float distance_per_rotation[MACHINE_AXIS_COUNT];//53
-	float interpolation_error_distance;//57
-	float acceleration[MACHINE_AXIS_COUNT]; //13
-	float max_rate[MACHINE_AXIS_COUNT];//25
-	uint16_t steps_per_mm[MACHINE_AXIS_COUNT];//31
-	uint16_t pulse_length = 0;//49
+	s_encoders spindle_encoder; //39
+	float back_lash_comp_distance[MACHINE_AXIS_COUNT];//24
+	float distance_per_rotation[MACHINE_AXIS_COUNT];//24
+	float interpolation_error_distance;//4
+	float acceleration[MACHINE_AXIS_COUNT]; //24
+	float max_rate[MACHINE_AXIS_COUNT];//24
+	uint16_t steps_per_mm[MACHINE_AXIS_COUNT];//12
+	uint16_t pulse_length = 0;//2
+	//153 bytesS
 };
 #endif

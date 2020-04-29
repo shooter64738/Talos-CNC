@@ -102,7 +102,6 @@ void Hardware_Abstraction_Layer::Core::delay_us(uint16_t delay_time)
 
 ISR (TIMER5_COMPA_vect)
 {
-	UDR0='A';
 	Hardware_Abstraction_Layer::Core::delay_count_down--;
 	if (Hardware_Abstraction_Layer::Core::delay_count_down == 0)
 		TCCR5B |= ~(1 << CS52) | ~(1 << CS50);

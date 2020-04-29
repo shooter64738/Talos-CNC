@@ -8,16 +8,29 @@
 
 #include "Main_Process.h"
 #include "../Error/c_error.h"
-#include "../../../Shared Data/FrameWork/Data/cache_data.h"
-#include "../../../Shared Data/FrameWork/extern_events_types.h"
 #include "../Events/EventHandlers/c_system_event_handler.h"
 #include "../Events/EventHandlers/c_motion_control_event_handler.h"
 #include "../Events/EventHandlers/c_motion_controller_event_handler.h"
 #include "../Events/EventHandlers/c_report_events.h"
-#include "../../../Shared Data/FrameWork/Startup/c_framework_start.h"
-#include "../Data/DataHandlers/c_system_data_handler.h"
+#include "../../../Shared Data/FrameWork/Data/cache_data.h"
+#include "../../../Shared Data/FrameWork/extern_events_types.h"
+#include "../../../Shared Data/FrameWork/Error/c_framework_error.h"
 #include "../../../Shared Data/FrameWork/Enumerations/Status/_e_system_messages.h"
 #include "../../../Shared Data/FrameWork/Data/c_framework_system_data_handler.h"
+#include "../../../Shared Data/FrameWork/Startup/c_framework_start.h"
+
+#include "../../../Shared Data/FrameWork/extern_events_types.h"
+//#include "../../../Shared Data/FrameWork/Data/cache_data.h"
+//#include "../../../Shared Data/FrameWork/Startup/c_framework_start.h"
+//#include "../../../Shared Data/FrameWork/Error/c_framework_error.h"
+#include "../../../Shared Data/FrameWork/Event/Serial/c_new_serial_event_handler.h"
+#include "../../../Shared Data/FrameWork/Data/c_framework_system_data_handler.h"
+
+
+#include "../Data/DataHandlers/c_system_data_handler.h"
+
+#include "../../Core/c_interpollation_hardware.h"
+
 
 //
 //#include <avr/io.h>
@@ -39,38 +52,41 @@ void Talos::Motion::Main_Process::__configure_ports()
 uint8_t Talos::Motion::Main_Process::coordinator_initialize()
 {
 	//The coordinator leads the cpu cluster so wait for it to request our status
-	Hardware_Abstraction_Layer::Core::set_time_delay(5);
+	Hardware_Abstraction_Layer::Core::set_time_delay(30);
 
-	while (!Hardware_Abstraction_Layer::Core::delay_count_down)
+	while (Hardware_Abstraction_Layer::Core::delay_count_down>0)
 	{
 		//Keep processing system events until we timeout or get a response
 		Talos::Motion::Events::System::process();
 		
+		
 		//When we have a ready message from the coordinator we can request config data
 		if (Talos::Motion::Events::System::event_manager.get((int)Talos::Motion::Events::System::e_event_type::CoordinatorReady))
 		{
+			
 			Talos::Motion::Main_Process::host_serial.print_string("Requesting configuration\r\n");
 			
 			//We need to ask the coordinator controller for all of the motion settings
 			Talos::Shared::FrameWork::Data::System::send((int)e_system_message::messages::e_data::MotionConfiguration
-				, (int)e_system_message::e_status_type::Data
-				, Talos::Shared::FrameWork::StartUp::cpu_type.Coordinator
-				, Talos::Shared::FrameWork::StartUp::cpu_type.Motion
-				, (int)e_system_message::e_status_state::motion::e_state::Idle
-				, (int)e_system_message::e_status_state::motion::e_sub_state::OK
-				, Motion_Core::Hardware::Interpolation::system_position
+			, (int)e_system_message::e_status_type::Data
+			, Talos::Shared::FrameWork::StartUp::cpu_type.Motion
+			, Talos::Shared::FrameWork::StartUp::cpu_type.Coordinator
+			, (int)e_system_message::e_status_state::motion::e_state::Idle
+			, (int)e_system_message::e_status_state::motion::e_sub_state::OK
+			, Motion_Core::Hardware::Interpolation::system_position
 			);
 			
 			//Restart the timer
 			Hardware_Abstraction_Layer::Core::set_time_delay(5);
-			while (!Hardware_Abstraction_Layer::Core::delay_count_down)
+			while (Hardware_Abstraction_Layer::Core::delay_count_down>0)
 			{
 				//Keep processing system events until we timeout or get a response
 				Talos::Motion::Events::System::process();
 
 				if (Talos::Shared::FrameWork::Events::Router.ready.event_manager.get((int)c_event_router::ss_ready_data::e_event_type::MotionConfiguration))
 				{
-
+					Talos::Motion::Main_Process::host_serial.print_string("Configuration loaded\r\n");
+					return 0;
 				}
 			}
 		}
@@ -94,12 +110,11 @@ void Talos::Motion::Main_Process::initialize()
 	Talos::Motion::Main_Process::__configure_ports();
 
 	//setup the error handler function pointer
-	Talos::Shared::FrameWork::extern_pntr_error_handler = Talos::Motion::Error::general_error;
-	Talos::Shared::FrameWork::Error::extern_pntr_ngc_error_handler = Talos::Motion::Error::ngc_error;
-
-	//setup the error handler function pointer
 	Talos::Motion::Error::initialize(&Talos::Motion::Main_Process::host_serial);
 	Talos::Motion::Events::Report::initialize(&Talos::Motion::Main_Process::host_serial);
+	Talos::Shared::FrameWork::Error::extern_pntr_error_handler = Talos::Motion::Error::general_error;
+	Talos::Shared::FrameWork::Error::extern_pntr_ngc_error_handler = Talos::Motion::Error::ngc_error;
+
 
 	Hardware_Abstraction_Layer::Core::initialize();
 	//__initialization_start("Core", Hardware_Abstraction_Layer::Core::initialize,1);//<--core start up
@@ -107,14 +122,13 @@ void Talos::Motion::Main_Process::initialize()
 	Talos::Motion::Main_Process::coordinator_serial = c_Serial(Talos::Shared::FrameWork::StartUp::cpu_type.Coordinator, 250000); //<--Connect to host
 	Talos::Motion::Main_Process::host_serial.print_string("Motion Core initializing\r\n");
 
-
 	__initialization_start("Interrupts", Hardware_Abstraction_Layer::Core::start_interrupts, STARTUP_CLASS_CRITICAL);//<--start interrupts on hardware
 	//__initialization_start("Events", Talos::Shared::Events::initialize, STARTUP_CLASS_CRITICAL);//<--init events
 	//__initialization_start("Ngc Buffer", Talos::Motion::NgcBuffer::initialize);//<--g code buffer
 	//__initialization_start("Ngc Interpreter", NGC_RS274::Interpreter::Processor::initialize);//<--g code interpreter
 	//__initialization_start("Disk", Hardware_Abstraction_Layer::Disk::initialize, STARTUP_CLASS_CRITICAL);//<--drive/eprom storage
-	__initialization_start("Coordinator Comms", Talos::Motion::Main_Process::coordinator_initialize, STARTUP_CLASS_CRITICAL);//<--coordinator controller card
-	__initialization_start("Spindle Control Comms", NULL, STARTUP_CLASS_CRITICAL);//<--spindle controller card
+	__initialization_start("Coord Com", Talos::Motion::Main_Process::coordinator_initialize, STARTUP_CLASS_CRITICAL);//<--coordinator controller card
+	__initialization_start("Spndl Com", NULL, STARTUP_CLASS_CRITICAL);//<--spindle controller card
 
 	/*Talos::Shared::c_cache_data::pntr_read_ngc_block_record = Hardware_Abstraction_Layer::Disk::get_block;
 	s_ngc_block block;
@@ -149,10 +163,10 @@ void Talos::Motion::Main_Process::__initialization_response(uint8_t response_cod
 
 		if (critical)
 		{
-			Talos::Motion::Main_Process::host_serial.print_string("** System halted **");
+			Talos::Motion::Main_Process::host_serial.print_string("** Sys halted **");
 			while (1) {}
 		}
-		Talos::Motion::Main_Process::host_serial.print_string("\t** System warning **\r\n");
+		Talos::Motion::Main_Process::host_serial.print_string("\t** Sys warning **\r\n");
 	}
 	else
 	{
@@ -192,7 +206,7 @@ void Talos::Motion::Main_Process::run()
 	//}
 	//TIMSK5 |= (1 << OCIE5A);
 	
-	Talos::Motion::Main_Process::host_serial.print_string("** System ready **");
+	Talos::Motion::Main_Process::host_serial.print_string("** Sys ready **");
 
 	while (Talos::Shared::FrameWork::Events::extern_system_events.event_manager.get((int)s_system_events::e_event_type::SystemAllOk))
 	{

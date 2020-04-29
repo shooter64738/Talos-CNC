@@ -618,6 +618,18 @@
       <SubType>compile</SubType>
       <Link>Shared Data\Settings\Coordinator\_s_interp_config_struct.h</Link>
     </Compile>
+    <Compile Include="..\..\..\Shared Data\Settings\Motion\_s_motion_control_settings_encapsulation.h">
+      <SubType>compile</SubType>
+      <Link>Talos_AVR2560_Coordinator\Shared Data\Settings\Motion\_s_motion_control_settings_encapsulation.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Shared Data\Settings\Motion\_s_motion_hardware.h">
+      <SubType>compile</SubType>
+      <Link>Talos_AVR2560_Coordinator\Shared Data\Settings\Motion\_s_motion_hardware.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\Shared Data\Settings\Motion\_s_motion_tolerance_struct.h">
+      <SubType>compile</SubType>
+      <Link>Talos_AVR2560_Coordinator\Shared Data\Settings\Motion\_s_motion_tolerance_struct.h</Link>
+    </Compile>
     <Compile Include="..\..\..\Shared Data\_e_binary_comm_response.h">
       <SubType>compile</SubType>
       <Link>Shared Data\_e_binary_comm_response.h</Link>
@@ -758,6 +770,7 @@
     <Folder Include="Shared Data\FrameWork\Startup" />
     <Folder Include="Shared Data\Settings" />
     <Folder Include="Shared Data\Settings\Coordinator" />
+    <Folder Include="Shared Data\Settings\Motion" />
   </ItemGroup>
   <Import Project="$(AVRSTUDIO_EXE_PATH)\\Vs\\Compiler.targets" />
 </Project>

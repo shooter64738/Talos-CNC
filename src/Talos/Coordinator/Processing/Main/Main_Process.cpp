@@ -12,22 +12,26 @@ then move to their respective modules.
 
 #include "Main_Process.h"
 //#include "../../../Shared Data/Event/c_events.h"
-#include "../../../Shared Data/FrameWork/extern_events_types.h"
 #include "../../../NGC_RS274/NGC_Line_Processor.h"
 #include "../../../NGC_RS274/NGC_Tool.h"
 #include "../../../NGC_RS274/NGC_Coordinates.h"
 #include "../../../NGC_RS274/NGC_System.h"
 #include "../../../Configuration/c_configuration.h"
+#include "../Error/c_error.h"
 #include "../Events/EventHandlers/c_ngc_data_events.h"
 #include "../Events/EventHandlers/c_report_events.h"
-#include "../Error/c_error.h"
-#include "../../../Shared Data/FrameWork/Data/cache_data.h"
 #include "../Events/EventHandlers/c_system_event_handler.h"
+#include "../../../Shared Data/FrameWork/extern_events_types.h"
+#include "../../../Shared Data/FrameWork/Data/cache_data.h"
 #include "../../../Shared Data/FrameWork/Startup/c_framework_start.h"
 #include "../../../Shared Data/FrameWork/Error/c_framework_error.h"
 #include "../../../Shared Data/FrameWork/Event/Serial/c_new_serial_event_handler.h"
 #include "../../../Shared Data/FrameWork/Data/c_framework_system_data_handler.h"
 #include "../Data/DataHandlers/c_system_data_handler.h"
+
+
+#include "../../../Shared Data/_s_status_record.h"
+#include "../../../Shared Data/Settings/Motion/_s_motion_control_settings_encapsulation.h"
 //
 //#include <avr/io.h>
 //#include <avr/interrupt.h>
@@ -54,6 +58,16 @@ void Talos::Coordinator::Main_Process::__configure_ports()
 //Simple function to validate comms with motion controller
 uint8_t Talos::Coordinator::Main_Process::motion_initialize()
 {
+	//Talos::Coordinator::Main_Process::host_serial.print_string("control\r\n");
+	//Talos::Coordinator::Main_Process::host_serial.print_int32(sizeof(s_control_message));
+	//Talos::Coordinator::Main_Process::host_serial.print_string("\r\nsettings\r\n");
+	//Talos::Coordinator::Main_Process::host_serial.print_int32(sizeof(s_motion_control_settings_encapsulation));
+	
+	//wait 5 seconds... 
+	Hardware_Abstraction_Layer::Core::delay_ms(5000);
+	
+	
+	
 	//We need to ask the motion controller for a ready status. Queue up a message
 	Talos::Shared::FrameWork::Data::System::send((int)e_system_message::messages::e_informal::ReadyToProcess
 		, (int)e_system_message::e_status_type::Informal
@@ -63,9 +77,24 @@ uint8_t Talos::Coordinator::Main_Process::motion_initialize()
 		, (int)e_system_message::e_status_state::motion::e_sub_state::OK
 		, NULL
 	);
+	Talos::Coordinator::Main_Process::host_serial.print_string("sent 2 motion\r\n");
+	
+	Hardware_Abstraction_Layer::Core::set_time_delay(5);
+	while (!Hardware_Abstraction_Layer::Core::delay_count_down)
+	{
+		//Keep processing system events until we timeout or get a response
+		Talos::Coordinator::Events::System::process();
+		if (Talos::Shared::FrameWork::Events::Router.ready.event_manager.get((int)c_event_router::ss_ready_data::e_event_type::System))
+		{
+			Talos::Coordinator::Main_Process::host_serial.print_string("got message\r\n");
+			while(1)
+			{
+				
+			}
+		}
+	}
 
-	//Keep processing system events until we timeout or get a response
-	Talos::Coordinator::Events::System::process();
+	
 	
 	//When the motion controller responds, we can send it configuration data.
 	Talos::Shared::FrameWork::Data::System::send((int)e_system_message::messages::e_data::MotionConfiguration
@@ -115,7 +144,7 @@ void Talos::Coordinator::Main_Process::initialize()
 	Talos::Coordinator::Error::initialize(&Talos::Coordinator::Main_Process::host_serial);
 	Talos::Coordinator::Events::Report::initialize(&Talos::Coordinator::Main_Process::host_serial);
 
-	Talos::Shared::FrameWork::extern_pntr_error_handler = Talos::Coordinator::Error::general_error;
+	Talos::Shared::FrameWork::Error::extern_pntr_error_handler = Talos::Coordinator::Error::general_error;
 	Talos::Shared::FrameWork::Error::extern_pntr_ngc_error_handler = Talos::Coordinator::Error::ngc_error;
 
 	Talos::Coordinator::Main_Process::host_serial = c_Serial(Talos::Shared::FrameWork::StartUp::cpu_type.Host, 250000); //<--Connect to host
@@ -127,6 +156,8 @@ void Talos::Coordinator::Main_Process::initialize()
 	__critical_initialization("Disk", Hardware_Abstraction_Layer::Disk::initialize, STARTUP_CLASS_CRITICAL);//<--drive/eprom storage
 	__critical_initialization("\tSettings", Hardware_Abstraction_Layer::Disk::load_configuration, STARTUP_CLASS_WARNING);//<--drive/eprom storage
 	__critical_initialization("\tConfiguration", Talos::Confguration::initialize, STARTUP_CLASS_CRITICAL);//<--g code buffer
+	
+		
 	//__critical_initialization("Events", Talos::Shared::Events::initialize, STARTUP_CLASS_CRITICAL);//<--init events
 	//__critical_initialization("Data Buffer", Talos::Motion::NgcBuffer::initialize,STARTUP_CLASS_CRITICAL);//<--g code buffer
 	//__critical_initialization("Data Startup", c_ngc_data_handler::initialize, STARTUP_CLASS_CRITICAL);//<--g code buffer

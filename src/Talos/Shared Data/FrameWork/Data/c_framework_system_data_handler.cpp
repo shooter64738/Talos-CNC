@@ -2,7 +2,8 @@
 #include "../../_s_status_record.h"
 #include "../Error/c_framework_error.h"
 #include "cache_data.h"
-
+#include <avr/io.h>
+//#include "../../../Motion/Processing/Main/Main_Process.h"
 #define BASE_ERROR 200
 void(*Talos::Shared::FrameWork::Data::System::pntr_read_release)();
 void(*Talos::Shared::FrameWork::Data::System::pntr_write_release)();
@@ -67,6 +68,7 @@ bool Talos::Shared::FrameWork::Data::System::send(uint8_t message
 #define SYSTEM_RECORD_POINTER_NULL 1
 void Talos::Shared::FrameWork::Data::System::route_read(uint8_t event_id, s_bit_flag_controller<uint32_t> *event_object)
 {
+	
 	/*if (Shared::c_cache_data::pntr_system_record == NULL)
 		__raise_error(BASE_ERROR, ROUTE_READ_ERROR, SYSTEM_RECORD_POINTER_NULL, event_id);*/
 
@@ -86,25 +88,39 @@ void Talos::Shared::FrameWork::Data::System::route_read(uint8_t event_id, s_bit_
 #define ADDENDUM_CRC_FAILED 2
 void Talos::Shared::FrameWork::Data::System::reader()
 {
+	
 	while ((c_event_router::inputs.pntr_ring_buffer + (int)read.event_id)->ring_buffer.has_data())
 	{
 		*read.cache[read.record_number] = (c_event_router::inputs.pntr_ring_buffer + (int)read.event_id)->ring_buffer.get();
+		//if (read.has_addendum)
+		//{
+		//Talos::Motion::Main_Process::host_serial.print_int32(*read.cache[read.record_number]);
+		//Talos::Motion::Main_Process::host_serial.print_string(",");
+		//}
+		
 		read.counter--;
 		if (!read.counter)
 		{
+			
 			//See if there is an addendum
 			if (!read.addendum_checked)
+			{
 				__check_addendum(&read);
-
+				//if (read.has_addendum)
+				//Talos::Motion::Main_Process::host_serial.print_string("addendum\r\n");
+				
+			}
 			//if read counter is still zero then there is no addendum
 			if (!read.counter)
 			{
+				
 				uint16_t crc_check = __crc_compare(read.cache[SYS_CONTROL_RECORD], s_control_message::__size__);
 
 				if (crc_check != 0)
 				{
-					__raise_error(BASE_ERROR, READER_ERROR, SYSTEM_CRC_FAILED, read.event_id);
+					__raise_error(BASE_ERROR, READER_ERROR, SYSTEM_CRC_FAILED,read.event_id);
 				}
+				
 				//release the system record
 				//Talos::Shared::c_cache_data::pntr_system_record = NULL;
 				
@@ -155,10 +171,21 @@ void Talos::Shared::FrameWork::Data::System::reader()
 
 uint16_t Talos::Shared::FrameWork::Data::System::__crc_compare(char * source, uint16_t size)
 {
-	uint16_t read_crc = ((uint8_t)*(source - 1) << 8) | (uint8_t)*(source - 2);
-	*(source - 1) = 0;
-	*(source - 2) = 0;
-	read_crc -= Talos::Shared::FrameWork::CRC::crc16(source - (size - 1), size - crc_size);
+	#define LAST_BYTE 0
+	#define PREV_BYTE 1
+	//Talos::Motion::Main_Process::host_serial.print_string("read crc\r\n");
+	//Talos::Motion::Main_Process::host_serial.print_int32(((uint8_t)*(source - LAST_BYTE) ));
+	//Talos::Motion::Main_Process::host_serial.print_string(",");
+	//Talos::Motion::Main_Process::host_serial.print_int32((uint8_t)*(source - PREV_BYTE));
+	//Talos::Motion::Main_Process::host_serial.print_string(",");
+	
+	uint16_t read_crc = ((uint8_t)*(source - LAST_BYTE) << 8) | (uint8_t)*(source - PREV_BYTE);
+	Talos::Shared::FrameWork::Error::framework_error.source = read_crc;
+	*(source - LAST_BYTE) = 0;
+	*(source - PREV_BYTE) = 0;
+	uint16_t new_crc = Talos::Shared::FrameWork::CRC::crc16(source - (size - 1), size - crc_size);
+	Talos::Shared::FrameWork::Error::framework_error.code = new_crc;
+	read_crc -= new_crc;
 	return read_crc;
 }
 
@@ -193,7 +220,6 @@ void Talos::Shared::FrameWork::Data::System::writer()
 		//target value <10 is a serial route
 		if (write.target < 10)
 		{
-
 			c_event_router::outputs.pntr_serial_write(write.target, *(write.cache[write.record_number]));
 		}
 
@@ -230,15 +256,18 @@ void Talos::Shared::FrameWork::Data::System::writer()
 
 void Talos::Shared::FrameWork::Data::System::__raise_error(uint16_t base, uint16_t method, uint16_t line, uint8_t event_id)
 {
+	//return;
 	Talos::Shared::FrameWork::Error::framework_error.buffer_head = ((c_event_router::inputs.pntr_ring_buffer + (int)event_id)->ring_buffer._head);
 	Talos::Shared::FrameWork::Error::framework_error.buffer_tail = ((c_event_router::inputs.pntr_ring_buffer + (int)event_id)->ring_buffer._tail);
 	Talos::Shared::FrameWork::Error::framework_error.origin = (int)event_id;
 	Talos::Shared::FrameWork::Error::framework_error.data = ((c_event_router::inputs.pntr_ring_buffer + (int)event_id)->storage);
-
+//
 	Talos::Shared::FrameWork::Error::framework_error.stack.base = base;
 	Talos::Shared::FrameWork::Error::framework_error.stack.method = method;
 	Talos::Shared::FrameWork::Error::framework_error.stack.line = line;
-	Talos::Shared::FrameWork::extern_pntr_error_handler();
+
+	Talos::Shared::FrameWork::Error::extern_pntr_error_handler();
+
 
 }
 
@@ -270,7 +299,7 @@ void Talos::Shared::FrameWork::Data::System::__check_addendum(s_packet *cache_ob
 	}
 	case e_system_message::e_status_type::Informal:
 	{
-		//Informal messages shoudl have an addendum. the 'information' is in the system record
+		//Informal messages shouldn't have an addendum. the 'information' is in the system record
 		//__raise_error(BASE_ERROR, __CHECK_ADDENDUM, UNHANDLED_RECORD_TYPE, cache_object->event_id);
 		break;
 	}

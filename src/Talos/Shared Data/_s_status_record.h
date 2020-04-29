@@ -16,7 +16,7 @@ struct s_control_message
 	uint8_t sub_state; //substate value
 	int32_t position[MACHINE_AXIS_COUNT];
 	uint16_t crc;
-	static const uint8_t __size__ = 35; // speify size here.. 'sizeof()' will not work across differing platforms (8bit/32bit)
+	static const uint8_t __size__ = 34; // speify size here.. 'sizeof()' will not work across differing platforms (8bit/32bit)
 	
 	
 };

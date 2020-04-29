@@ -10,7 +10,7 @@ struct s_motion_control_settings_encapsulation
 	s_motion_hardware hardware;
 	s_motion_tolerance_settings tolerance;
 	uint16_t crc;
-	static const uint8_t __size__ = 175;
+	static const uint8_t __size__ = 168;
 };
 
 
