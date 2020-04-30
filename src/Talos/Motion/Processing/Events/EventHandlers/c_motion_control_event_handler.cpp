@@ -31,42 +31,42 @@ uint32_t Talos::Motion::Events::MotionControl::completed_sequence = 0;
 s_bit_flag_controller<uint32_t> Talos::Motion::Events::MotionControl::event_manager;
 void Talos::Motion::Events::MotionControl::process()
 {
-	//If the cycle start flag is set, we are ok to procede with motions.
-	if (MotionControl::event_manager.get((int)MotionControl::e_event_type::CycleStart))
-	{
-		//Cycle start is set, lets see if we have an ngc record in cache
-		if (Talos::Shared::FrameWork::Events::Router.ready.event_manager.get((int)c_event_router::ss_ready_data::e_event_type::NgcDataBlock))
-			Talos::Motion::Data::Ngc::load_block_from_cache();
+	////If the cycle start flag is set, we are ok to procede with motions.
+	//if (MotionControl::event_manager.get((int)MotionControl::e_event_type::CycleStart))
+	//{
+	//	//Cycle start is set, lets see if we have an ngc record in cache
+	//	if (Talos::Shared::FrameWork::Events::Router.ready.event_manager.get((int)c_event_router::ss_ready_data::e_event_type::NgcDataBlock))
+	//		Talos::Motion::Data::Ngc::load_block_from_cache();
 
-	}
+	//}
 
-	//while interpolation is active we need to run the process loop to keep the motion segment buffer full.
-	if (MotionControl::event_manager.get((int)MotionControl::e_event_type::Interpollation))
-		Motion_Core::Gateway::process_loop();
+	////while interpolation is active we need to run the process loop to keep the motion segment buffer full.
+	//if (MotionControl::event_manager.get((int)MotionControl::e_event_type::Interpollation))
+	//	Motion_Core::Gateway::process_loop();
 
-	//A block has completed. 
-	if (MotionControl::event_manager.get((int)MotionControl::e_event_type::BlockComplete))
-	{
-		//see if we can send a system message. If not leave the events in place and it will keep trying
-		if (Talos::Shared::FrameWork::Data::System::send(
-			(int)e_system_message::messages::e_informal::BlockCompleted
-			, (int)e_system_message::e_status_type::Informal
-			, Shared::FrameWork::StartUp::cpu_type.Motion
-			, Shared::FrameWork::StartUp::cpu_type.Coordinator
-			, (int)e_system_message::e_status_state::motion::e_state::Complete
-			, (int)e_system_message::e_status_state::motion::e_sub_state::Block_Complete
-			, Motion_Core::Hardware::Interpolation::system_position
-			))
-			MotionControl::event_manager.clear((int)MotionControl::e_event_type::BlockComplete);
+	////A block has completed. 
+	//if (MotionControl::event_manager.get((int)MotionControl::e_event_type::BlockComplete))
+	//{
+	//	//see if we can send a system message. If not leave the events in place and it will keep trying
+	//	if (Talos::Shared::FrameWork::Data::System::send(
+	//		(int)e_system_message::messages::e_informal::BlockCompleted
+	//		, (int)e_system_message::e_status_type::Informal
+	//		, Shared::FrameWork::StartUp::cpu_type.Motion
+	//		, Shared::FrameWork::StartUp::cpu_type.Coordinator
+	//		, (int)e_system_message::e_status_state::motion::e_state::Complete
+	//		, (int)e_system_message::e_status_state::motion::e_sub_state::Block_Complete
+	//		, Motion_Core::Hardware::Interpolation::system_position
+	//		))
+	//		MotionControl::event_manager.clear((int)MotionControl::e_event_type::BlockComplete);
 
-	}
-	//A block is currently executing
-	if (MotionControl::event_manager.get((int)MotionControl::e_event_type::BlockExecuting))
-	{
-	}
-	//A block was discarded. 
-	if (MotionControl::event_manager.get((int)MotionControl::e_event_type::BlockDiscarded))
-	{
-	}
+	//}
+	////A block is currently executing
+	//if (MotionControl::event_manager.get((int)MotionControl::e_event_type::BlockExecuting))
+	//{
+	//}
+	////A block was discarded. 
+	//if (MotionControl::event_manager.get((int)MotionControl::e_event_type::BlockDiscarded))
+	//{
+	//}
 
 }

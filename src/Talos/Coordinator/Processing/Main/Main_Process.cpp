@@ -19,9 +19,8 @@ then move to their respective modules.
 #include "../../../Configuration/c_configuration.h"
 #include "../Error/c_error.h"
 #include "../Events/EventHandlers/c_ngc_data_events.h"
-#include "../Events/EventHandlers/c_report_events.h"
 #include "../Events/EventHandlers/c_system_event_handler.h"
-#include "../../../Shared Data/FrameWork/extern_events_types.h"
+//#include "../../../Shared Data/FrameWork/extern_events_types.h"
 #include "../../../Shared Data/FrameWork/Data/cache_data.h"
 #include "../../../Shared Data/FrameWork/Startup/c_framework_start.h"
 #include "../../../Shared Data/FrameWork/Error/c_framework_error.h"
@@ -45,16 +44,6 @@ static int test_byte = 0;
 c_Serial Talos::Coordinator::Main_Process::host_serial;
 c_Serial Talos::Coordinator::Main_Process::motion_serial;
 
-void Talos::Coordinator::Main_Process::__configure_ports()
-{
-	Talos::Shared::FrameWork::StartUp::cpu_type.Coordinator = 0;
-	Talos::Shared::FrameWork::StartUp::cpu_type.Host = 0;
-	Talos::Shared::FrameWork::StartUp::cpu_type.Motion = 1;
-	Talos::Shared::FrameWork::StartUp::cpu_type.Spindle = 2;
-	Talos::Shared::FrameWork::StartUp::cpu_type.Peripheral = 3;
-
-}
-
 //Simple function to validate comms with motion controller
 uint8_t Talos::Coordinator::Main_Process::motion_initialize()
 {
@@ -77,16 +66,16 @@ uint8_t Talos::Coordinator::Main_Process::motion_initialize()
 		, (int)e_system_message::e_status_state::motion::e_sub_state::OK
 		, NULL
 	);
-	Talos::Coordinator::Main_Process::host_serial.print_string("sent 2 motion\r\n");
+	//Talos::Coordinator::Main_Process::host_serial.print_string("sent 2 motion\r\n");
 	
 	Hardware_Abstraction_Layer::Core::set_time_delay(5);
 	while (!Hardware_Abstraction_Layer::Core::delay_count_down)
 	{
-		//Keep processing system events until we timeout or get a response
+		//Keep processing system system_events until we timeout or get a response
 		Talos::Coordinator::Events::System::process();
-		if (Talos::Shared::FrameWork::Events::Router.ready.event_manager.get((int)c_event_router::ss_ready_data::e_event_type::System))
+		//if (Talos::Shared::FrameWork::Events::Router::ready.event_manager.get((int)Talos::Shared::FrameWork::Events::Router::ss_ready_data::e_event_type::System))
 		{
-			Talos::Coordinator::Main_Process::host_serial.print_string("got message\r\n");
+			//Talos::Coordinator::Main_Process::host_serial.print_string("got message\r\n");
 			while(1)
 			{
 				
@@ -106,7 +95,7 @@ uint8_t Talos::Coordinator::Main_Process::motion_initialize()
 		, NULL
 	);
 
-	//Keep processing system events until we timeout or get a response
+	//Keep processing system system_events until we timeout or get a response
 	Talos::Coordinator::Events::System::process();
 
 
@@ -117,18 +106,12 @@ uint8_t Talos::Coordinator::Main_Process::motion_initialize()
 	Hardware_Abstraction_Layer::Core::set_time_delay(5);
 
 	//The router determines which event handler needs to process the message
-	Talos::Shared::FrameWork::Events::Router.process();
+	Talos::Shared::FrameWork::Events::Router::process();
 	while (Hardware_Abstraction_Layer::Core::delay_count_down)
 	{
-		//Keep processing system events until we timeout or get a response
+		//Keep processing system system_events until we timeout or get a response
 		Talos::Coordinator::Events::System::process();
 
-		if (Talos::Coordinator::Events::Report::event_manager.get((int)Events::Report::e_event_type::StatusMessage))
-		{
-			Talos::Coordinator::Main_Process::host_serial.print_string("got message\r\n");
-			Talos::Coordinator::Events::Report::process();
-			while (Hardware_Abstraction_Layer::Core::delay_count_down) {}
-		}
 	}
 
 	Talos::Coordinator::Main_Process::host_serial.print_string("No Comms\r\n");
@@ -138,14 +121,16 @@ uint8_t Talos::Coordinator::Main_Process::motion_initialize()
 
 void Talos::Coordinator::Main_Process::initialize()
 {
-	Talos::Coordinator::Main_Process::__configure_ports();
+	//Talos::Coordinator::Main_Process::__configure_ports();
 
-	//setup the error handler function pointer
-	Talos::Coordinator::Error::initialize(&Talos::Coordinator::Main_Process::host_serial);
-	Talos::Coordinator::Events::Report::initialize(&Talos::Coordinator::Main_Process::host_serial);
-
-	Talos::Shared::FrameWork::Error::extern_pntr_error_handler = Talos::Coordinator::Error::general_error;
-	Talos::Shared::FrameWork::Error::extern_pntr_ngc_error_handler = Talos::Coordinator::Error::ngc_error;
+	//Setup the ports and function pointers so we know which cpu is talking and we can report back debug data
+	Talos::Shared::FrameWork::StartUp::initialize(0, 0, 1, 2, 3
+		, Talos::Coordinator::Main_Process::debug_string
+		, Talos::Coordinator::Main_Process::debug_byte
+		, Talos::Coordinator::Main_Process::debug_int
+		, Talos::Coordinator::Main_Process::debug_float
+		, Talos::Coordinator::Main_Process::debug_float_dec);
+	
 
 	Talos::Coordinator::Main_Process::host_serial = c_Serial(Talos::Shared::FrameWork::StartUp::cpu_type.Host, 250000); //<--Connect to host
 	Talos::Coordinator::Main_Process::motion_serial = c_Serial(Talos::Shared::FrameWork::StartUp::cpu_type.Motion, 250000); //<--Connect to host
@@ -158,7 +143,7 @@ void Talos::Coordinator::Main_Process::initialize()
 	__critical_initialization("\tConfiguration", Talos::Confguration::initialize, STARTUP_CLASS_CRITICAL);//<--g code buffer
 	
 		
-	//__critical_initialization("Events", Talos::Shared::Events::initialize, STARTUP_CLASS_CRITICAL);//<--init events
+	//__critical_initialization("Events", Talos::Shared::Events::initialize, STARTUP_CLASS_CRITICAL);//<--init system_events
 	//__critical_initialization("Data Buffer", Talos::Motion::NgcBuffer::initialize,STARTUP_CLASS_CRITICAL);//<--g code buffer
 	//__critical_initialization("Data Startup", c_ngc_data_handler::initialize, STARTUP_CLASS_CRITICAL);//<--g code buffer
 	//__critical_initialization("Data Line", NGC_RS274::LineProcessor::initialize,STARTUP_CLASS_CRITICAL);//<--g code interpreter
@@ -166,10 +151,17 @@ void Talos::Coordinator::Main_Process::initialize()
 	//Load the motion control settings from disk
 	Hardware_Abstraction_Layer::Disk::load_motion_control_settings(&Talos::Shared::c_cache_data::motion_configuration_record);
 	//Now try to comm with the motion controller so we can give it operatng parameters.
-	__critical_initialization("Motion Control Comms", Talos::Coordinator::Main_Process::motion_initialize, STARTUP_CLASS_WARNING);//<--motion controller card
+	//__critical_initialization("Motion Control Comms", Talos::Coordinator::Main_Process::motion_initialize, STARTUP_CLASS_WARNING);//<--motion controller card
 
-	__critical_initialization("Spindle Control Comms", NULL, STARTUP_CLASS_WARNING);//<--spindle controller card
+	//__critical_initialization("Spindle Control Comms", NULL, STARTUP_CLASS_WARNING);//<--spindle controller card
 
+	
+	Talos::Shared::FrameWork::StartUp::CpuCluster[Talos::Shared::FrameWork::StartUp::cpu_type.Motion].Synch(
+		e_system_message::messages::e_data::MotionConfiguration
+		, e_system_message::e_status_type::Data
+		, (int)e_system_message::messages::e_data::SystemRecord
+		, 0, true);
+	
 
 	//Load the initialize block from settings. These values are the 'initial' values of the gcode blocks
 	//that are processed.
@@ -270,7 +262,10 @@ void Talos::Coordinator::Main_Process::run()
 	//TCCR5B |= (1 << CS52) | (1 << CS50);
 	////TCCR5B |= (1 << CS52);// | (1 << CS50);
 	//
-	Talos::Shared::FrameWork::Events::extern_system_events.event_manager.set((int)s_system_events::e_event_type::SystemAllOk);
+	
+	
+	//Talos::Shared::FrameWork::Events::extern_system_events.event_manager.set((int)s_system_events::e_event_type::SystemAllOk);
+	
 	//Talos::Coordinator::Main_Process::host_serial.print_string("\r\n** System holding **\r\n");
 	//while(tick_at_time == 0)
 	//{
@@ -286,7 +281,8 @@ void Talos::Coordinator::Main_Process::run()
 
 
 	//Start the eventing loop, stop loop if a critical system error occurs
-	while (Talos::Shared::FrameWork::Events::extern_system_events.event_manager.get((int)s_system_events::e_event_type::SystemAllOk))
+	
+	while (Talos::Shared::FrameWork::StartUp::CpuCluster[Talos::Shared::FrameWork::StartUp::cpu_type.Host].system_events.get((int)c_cpu::e_event_type::OnLine))
 	{
 		if (tick_at_time > 0)
 		{
@@ -295,23 +291,24 @@ void Talos::Coordinator::Main_Process::run()
 			tick_at_time = 0;
 		}
 
-		//0: Handle system events
+		//0: Handle system system_events
 		//Talos::Coordinator::Events::system_event_handler.process();
 
-		//1: Handle hardware events
+		//1: Handle hardware system_events
 		//Talos::Coordinator::Events::hardware_event_handler.process();
 
-		//2: System event handler (should always follow the router events)
+		//2: System event handler (should always follow the router system_events)
 		Talos::Coordinator::Events::System::process();
 
-		//3: Handle ancillary events
+		//3: Handle ancillary system_events
 		//Talos::Coordinator::Events::ancillary_event_handler.process();
 
-		//4:: Handle ngc processing events
+		//4:: Handle ngc processing system_events
 		Talos::Coordinator::Events::Data::process();
 
-		//5: Process reporting events
-		Talos::Coordinator::Events::Report::process();
+		//Handle cpu events
+		Talos::Shared::FrameWork::StartUp::run_events();
+				
 
 		/*if (extern_data_events.inquire.event_manager.get((int)s_inquiry_data::e_event_type::IntialBlockStatus))
 		ngc_block_report(Talos::Shared::c_cache_data::ngc_block_record);*/
@@ -333,4 +330,25 @@ void Talos::Coordinator::Main_Process::test_motion_msg()
 	//Talos::Shared::c_cache_data::system_record.target = Talos::Shared::FrameWork::StartUp::cpu_type.Coordinator;
 
 	//Talos::Shared::c_cache_data::pntr_system_record = &Talos::Shared::c_cache_data::system_record;
+}
+
+void Talos::Coordinator::Main_Process::debug_string(const char * data)
+{
+	Talos::Coordinator::Main_Process::host_serial.print_string(data);
+}
+void Talos::Coordinator::Main_Process::debug_int(long data)
+{
+	Talos::Coordinator::Main_Process::host_serial.print_int32(data);
+}
+void Talos::Coordinator::Main_Process::debug_byte(const char data)
+{
+	Talos::Coordinator::Main_Process::host_serial.Write(data);
+}
+void Talos::Coordinator::Main_Process::debug_float(float data)
+{
+	Talos::Coordinator::Main_Process::host_serial.print_float(data);
+}
+void Talos::Coordinator::Main_Process::debug_float_dec(float data, uint8_t decimals)
+{
+	Talos::Coordinator::Main_Process::host_serial.print_float(data, decimals);
 }

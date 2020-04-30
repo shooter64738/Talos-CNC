@@ -27,109 +27,71 @@
 #include "../../../_bit_flag_control.h"
 #include "../Data/c_data_buffer.h"
 
-class c_event_router
+namespace Talos
 {
-	//variables
-public:
-
-	struct ss_ready_data
+	namespace Shared
 	{
-		enum class e_event_type : uint8_t
+		namespace FrameWork
 		{
-			NgcDataLine = 0,
-			System = 1,
-			MotionDataBlock = 2,
-			NgcDataBlock = 3,
-			MotionConfiguration = 4,
+			namespace Events
+			{
+				class Router
+				{
+					//variables
+				public:
+
+
+					struct ss_disk
+					{
+					};
+
+					struct s_out_events
+					{
+						uint8_t(*pntr_serial_write)(uint8_t port, char byte);
+						s_bit_flag_controller<uint32_t> event_manager;
+					};
+					static s_out_events outputs;
+
+					struct s_in_events
+					{
+						enum class e_event_type : uint8_t
+						{
+							Usart0DataArrival = 0,
+							Usart1DataArrival = 1,
+							Usart2DataArrival = 2,
+							Usart3DataArrival = 3,
+							MotionDataBlock = 4,
+							StatusUpdate = 5,
+							DiskDataArrival = 6,
+
+							TimeOutError = 31,
+						};
+						s_bit_flag_controller<uint32_t> event_manager;
+						s_device_buffer * pntr_ring_buffer;
+						uint8_t ms_time_out;
+					};
+					static s_in_events inputs;
+
+					static ss_disk disk;
+
+				protected:
+				private:
+
+
+					//functions
+				public:
+					//c_data_events();
+					//~c_data_events();
+					//c_data_events(const c_data_events &c);
+					//c_data_events& operator=(const c_data_events &c);
+
+					static void process();
+
+				protected:
+				private:
+				}; //c_serial_events
+			};
 		};
-		s_bit_flag_controller<uint32_t> event_manager;
-		bool any()
-		{
-			if (event_manager._flag > 0)
-				return true;
-			else
-				return false;
-		}
-		uint32_t ngc_block_cache_count = 0;
 	};
-
-	struct ss_inquiry_data
-	{
-		enum class e_event_type : uint8_t
-		{
-			ActiveBlockGGroupStatus = 0,
-			ActiveBlockMGroupStatus = 1,
-			ActiveBlockWordStatus = 2,
-		};
-		s_bit_flag_controller<uint32_t> event_manager;
-		bool any()
-		{
-			if (event_manager._flag > 0)
-				return true;
-			else
-				return false;
-		}
-		uint32_t ngc_block_cache_count = 0;
-	};
-
-	
-
-	struct ss_disk
-	{
-	};
-
-	struct s_out_events
-	{
-		uint8_t(*pntr_serial_write)(uint8_t port, char byte);
-		enum class e_event_type : uint8_t
-		{
-			StatusUpdate = 0,
-			NgcBlockRequest = 1,
-			MotionConfiguration = 2,
-			
-		};
-		s_bit_flag_controller<uint32_t> event_manager;
-	};
-	static s_out_events outputs;
-	
-	struct s_in_events
-	{
-		enum class e_event_type : uint8_t
-		{
-			Usart0DataArrival = 0,
-			Usart1DataArrival = 1,
-			Usart2DataArrival = 2,
-			Usart3DataArrival = 3,
-			MotionDataBlock = 4,
-			StatusUpdate = 5,
-			DiskDataArrival = 6,
-
-			TimeOutError = 31,
-		};
-		s_bit_flag_controller<uint32_t> event_manager;
-		s_device_buffer * pntr_ring_buffer;
-		uint8_t ms_time_out;
-	};
-	static s_in_events inputs;
-
-	static ss_disk disk;
-	static ss_ready_data ready;
-	static ss_inquiry_data inquire;
-
-protected:
-private:
-
-
-	//functions
-public:
-	//c_data_events();
-	//~c_data_events();
-	//c_data_events(const c_data_events &c);
-	//c_data_events& operator=(const c_data_events &c);
-
-	static void process();
-
-protected:
-private:
-}; //c_serial_events
+};
 #endif //__C_DATA_EVENTS_H__

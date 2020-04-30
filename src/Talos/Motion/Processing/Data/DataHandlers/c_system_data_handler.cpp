@@ -20,7 +20,6 @@
 
 #include "c_system_data_handler.h"
 #include "../../../../Shared Data/FrameWork/Data/cache_data.h"
-#include "../../../../Shared Data/FrameWork/extern_events_types.h"
 #include "../../Events/EventHandlers/c_system_event_handler.h"
 #include "../../../Core/c_interpollation_hardware.h"
 #include "../../Main/Main_Process.h"
@@ -29,38 +28,38 @@
 
 void Talos::Motion::Data::System::process_system_eventing(s_control_message *status)
 {
-	Talos::Shared::FrameWork::Events::Router.ready.event_manager.clear((int)c_event_router::ss_ready_data::e_event_type::System);
-	
-	switch ((e_system_message::e_status_type)status->type)
-	{
-		case e_system_message::e_status_type::Critical:
-		Type::__critical(status, (e_system_message::messages::e_critical) status->message);
-		break;
-		case e_system_message::e_status_type::Data:
-		Type::__data(status, (e_system_message::messages::e_data) status->message);
-		break;
-		case e_system_message::e_status_type::Informal:
-		Type::__informal(status, (e_system_message::messages::e_informal) status->message);
-		break;
-		case e_system_message::e_status_type::Warning:
-		Type::__warning(status, (e_system_message::messages::e_warning) status->message);
-		break;
-		default:
-		break;
-	}
+	//Talos::Shared::FrameWork::Events::Router.ready.event_manager.clear((int)c_event_router::ss_ready_data::e_event_type::System);
+	//
+	//switch ((e_system_message::e_status_type)status->type)
+	//{
+	//	case e_system_message::e_status_type::Critical:
+	//	Type::__critical(status, (e_system_message::messages::e_critical) status->message);
+	//	break;
+	//	case e_system_message::e_status_type::Data:
+	//	Type::__data(status, (e_system_message::messages::e_data) status->message);
+	//	break;
+	//	case e_system_message::e_status_type::Informal:
+	//	Type::__informal(status, (e_system_message::messages::e_informal) status->message);
+	//	break;
+	//	case e_system_message::e_status_type::Warning:
+	//	Type::__warning(status, (e_system_message::messages::e_warning) status->message);
+	//	break;
+	//	default:
+	//	break;
+	//}
 }
 
 void Talos::Motion::Data::System::Type::__critical(s_control_message *status, e_system_message::messages::e_critical message)
 {
-	//This is a critical status. Something has failed and the entire system needs to hault. Perhaps a limit switch was hit
-	//or communication (heartbeat) has been lost.
+	////This is a critical status. Something has failed and the entire system needs to hault. Perhaps a limit switch was hit
+	////or communication (heartbeat) has been lost.
 
-	//check message value
-	if (status->message >= 25)
-	{
-		Talos::Shared::FrameWork::Events::extern_system_events.event_manager.set((int)s_system_events::e_event_type::SystemCritical);
-		Talos::Shared::FrameWork::Error::extern_pntr_error_handler();
-	}
+	////check message value
+	//if (status->message >= 25)
+	//{
+	//	Talos::Shared::FrameWork::Events::extern_system_events.event_manager.set((int)s_system_events::e_event_type::SystemCritical);
+	//	Talos::Shared::FrameWork::Error::extern_pntr_error_handler();
+	//}
 }
 
 void Talos::Motion::Data::System::Type::__data(s_control_message *status, e_system_message::messages::e_data message)
@@ -116,7 +115,7 @@ void Talos::Motion::Data::System::Type::__warning(s_control_message *status, e_s
 
 void Talos::Motion::Data::System::Origin::__coordinator(s_control_message *status, e_system_message::messages::e_warning message)
 {
-	Talos::Shared::FrameWork::Events::extern_system_events.event_manager.set((int)s_system_events::e_event_type::SystemCritical);
+	/*Talos::Shared::FrameWork::Events::extern_system_events.event_manager.set((int)s_system_events::e_event_type::SystemCritical);*/
 	//Talos::Shared::FrameWork::Error::Handler::extern_pntr_error_handler(NULL, error);
 }
 void Talos::Motion::Data::System::Origin::__host(s_control_message *status, e_system_message::messages::e_warning message)

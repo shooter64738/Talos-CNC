@@ -23,7 +23,6 @@
 #define __C_COORDINATOR_NGC_DATA_HANDLER_H__
 #include <stdint.h>
 #include "../../../../c_ring_template.h"
-#include "../../../../Shared Data/FrameWork/extern_events_types.h"
 
 typedef void(*ret_pointer)(c_ring_buffer <char> * buffer);
 namespace Talos

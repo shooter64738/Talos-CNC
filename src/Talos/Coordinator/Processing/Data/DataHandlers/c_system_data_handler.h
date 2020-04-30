@@ -24,7 +24,7 @@
 
 #include <stdint.h>
 #include "../../../../c_ring_template.h"
-#include "../../../../Shared Data/FrameWork/extern_events_types.h"
+//#include "../../../../Shared Data/FrameWork/extern_events_types.h"
 #include "../../../../Shared Data/_s_status_record.h"
 
 typedef void(*xret_pointer)(c_ring_buffer <char> * buffer);
@@ -61,17 +61,17 @@ namespace Talos
 					static void __process(s_control_message *status);
 					static void __critical(s_control_message *status, e_system_message::messages::e_critical message);
 					static void __data(s_control_message *status, e_system_message::messages::e_data message);
-					static void __informal(s_control_message *status, e_system_message::messages::e_informal message);
-					static void __warning(s_control_message *status, e_system_message::messages::e_warning message);
+					//static void __informal(s_control_message *status, e_system_message::messages::e_informal message);
+					//static void __warning(s_control_message *status, e_system_message::messages::e_warning message);
 				};
 				class Origin
 				{
 				public:
-					static void __host(s_control_message *status, e_system_message::messages::e_warning message);
+					/*static void __host(s_control_message *status, e_system_message::messages::e_warning message);
 					static void __coordinator(s_control_message *status, e_system_message::messages::e_warning message);
 					static void __motion(s_control_message *status, e_system_message::messages::e_warning message);
 					static void __spindle(s_control_message *status, e_system_message::messages::e_warning message);
-					static void __peripheral(s_control_message *status, e_system_message::messages::e_warning message);
+					static void __peripheral(s_control_message *status, e_system_message::messages::e_warning message);*/
 				};
 
 			};

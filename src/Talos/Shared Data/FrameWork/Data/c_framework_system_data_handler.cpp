@@ -2,8 +2,7 @@
 #include "../../_s_status_record.h"
 #include "../Error/c_framework_error.h"
 #include "cache_data.h"
-#include <avr/io.h>
-//#include "../../../Motion/Processing/Main/Main_Process.h"
+
 #define BASE_ERROR 200
 void(*Talos::Shared::FrameWork::Data::System::pntr_read_release)();
 void(*Talos::Shared::FrameWork::Data::System::pntr_write_release)();
@@ -28,9 +27,9 @@ bool Talos::Shared::FrameWork::Data::System::send(uint8_t message
 )
 {
 	//There are multiple system messages. Target determines which one is going to update.
-	pntr_sys_wrk = &Talos::Shared::c_cache_data::system_message_group[target];
+	pntr_sys_wrk = &Talos::Shared::FrameWork::StartUp::CpuCluster[target].sys_message;
 	//if the cache data system rec pointer is null we are free to use it. if its not, we must
-	//leave the events set and keep checking on each loop. it should send after only 1 processor loop
+	//leave the system_events set and keep checking on each loop. it should send after only 1 processor loop
 	if (pntr_sys_wrk == NULL)
 		return false;
 
@@ -57,10 +56,10 @@ bool Talos::Shared::FrameWork::Data::System::send(uint8_t message
 	pntr_sys_wrk->position[4] = 345;
 	pntr_sys_wrk->position[5] = 678;
 
-	Talos::Shared::FrameWork::Events::Router.outputs.event_manager.set((int)c_event_router::s_out_events::e_event_type::StatusUpdate);
+	Talos::Shared::FrameWork::Events::Router::outputs.event_manager.set((int)e_system_message::messages::e_data::SystemRecord);
 	
-	//Since a message is now in the queue, process events for it. This may also process other events that are pending in the framework
-	Talos::Shared::FrameWork::Events::Router.process();
+	//Since a message is now in the queue, process system_events for it. This may also process other system_events that are pending in the framework
+	Talos::Shared::FrameWork::Events::Router::process();
 	return true;
 }
 
@@ -68,12 +67,8 @@ bool Talos::Shared::FrameWork::Data::System::send(uint8_t message
 #define SYSTEM_RECORD_POINTER_NULL 1
 void Talos::Shared::FrameWork::Data::System::route_read(uint8_t event_id, s_bit_flag_controller<uint32_t> *event_object)
 {
-	
-	/*if (Shared::c_cache_data::pntr_system_record == NULL)
-		__raise_error(BASE_ERROR, ROUTE_READ_ERROR, SYSTEM_RECORD_POINTER_NULL, event_id);*/
-
-	read.cache[SYS_CONTROL_RECORD] = (char*)&c_cache_data::temp_system_message;
-	read.message_record = &c_cache_data::temp_system_message;
+	read.cache[SYS_CONTROL_RECORD] = (char*)&Talos::Shared::FrameWork::StartUp::CpuCluster[event_id].sys_message;
+	read.message_record = &Talos::Shared::FrameWork::StartUp::CpuCluster[event_id].sys_message;
 	read.cache[SYS_ADDENDUM_RECORD] = NULL;
 	read.counter = s_control_message::__size__;
 	read.addendum_checked = false;
@@ -89,15 +84,9 @@ void Talos::Shared::FrameWork::Data::System::route_read(uint8_t event_id, s_bit_
 void Talos::Shared::FrameWork::Data::System::reader()
 {
 	
-	while ((c_event_router::inputs.pntr_ring_buffer + (int)read.event_id)->ring_buffer.has_data())
+	while ((Talos::Shared::FrameWork::Events::Router::inputs.pntr_ring_buffer + (int)read.event_id)->ring_buffer.has_data())
 	{
-		*read.cache[read.record_number] = (c_event_router::inputs.pntr_ring_buffer + (int)read.event_id)->ring_buffer.get();
-		//if (read.has_addendum)
-		//{
-		//Talos::Motion::Main_Process::host_serial.print_int32(*read.cache[read.record_number]);
-		//Talos::Motion::Main_Process::host_serial.print_string(",");
-		//}
-		
+		*read.cache[read.record_number] = (Talos::Shared::FrameWork::Events::Router::inputs.pntr_ring_buffer + (int)read.event_id)->ring_buffer.get();
 		read.counter--;
 		if (!read.counter)
 		{
@@ -106,13 +95,13 @@ void Talos::Shared::FrameWork::Data::System::reader()
 			if (!read.addendum_checked)
 			{
 				__check_addendum(&read);
-				//if (read.has_addendum)
-				//Talos::Motion::Main_Process::host_serial.print_string("addendum\r\n");
 				
 			}
 			//if read counter is still zero then there is no addendum
 			if (!read.counter)
 			{
+				
+				read.message_record->rx_from = (int)read.event_id;
 				
 				uint16_t crc_check = __crc_compare(read.cache[SYS_CONTROL_RECORD], s_control_message::__size__);
 
@@ -121,18 +110,16 @@ void Talos::Shared::FrameWork::Data::System::reader()
 					__raise_error(BASE_ERROR, READER_ERROR, SYSTEM_CRC_FAILED,read.event_id);
 				}
 				
-				//release the system record
-				//Talos::Shared::c_cache_data::pntr_system_record = NULL;
-				
 				//clear the read event. Thats the event that made us call into here and we are done
 				read.event_object->clear(read.event_id);
 				//A system record came in, so lets flag that event
-				c_event_router::ready.event_manager.set((int)c_event_router::ss_ready_data::e_event_type::System);
+				Talos::Shared::FrameWork::StartUp::CpuCluster[read.event_id].system_events.set((int)c_cpu::e_event_type::SystemRecord);
+				Talos::Shared::FrameWork::StartUp::CpuCluster[read.event_id].system_events.set((int)c_cpu::e_event_type::OnLine);
 				//The reader that has been calling into here must now be released
 				pntr_read_release();
 				//Talos::Shared::c_cache_data::system_record.rx_from = read.event_id;
 				//c_cache_data::temp_system_message.rx_from = read.event_id;
-				read.message_record->rx_from = (int)read.event_id;
+				
 				//These need to be null again. If this code gets called by mistake we can check for nulls and throw an line.
 				read.counter = 0;
 				read.event_id = 0;
@@ -141,7 +128,7 @@ void Talos::Shared::FrameWork::Data::System::reader()
 				//Shared::c_cache_data::pntr_system_record == NULL;
 
 				////Copy the temp system record to the its final destination now that we know where it goes. 
-				//memcpy(&Talos::Shared::c_cache_data::system_message_group[temp_system_message.rx_from]
+				//memcpy(&Talos::Shared::c_cache_data::sys_message[temp_system_message.rx_from]
 				//	, &temp_system_message, s_control_message::__size__);
 
 				//Do we have an andendum
@@ -153,6 +140,7 @@ void Talos::Shared::FrameWork::Data::System::reader()
 					{
 						__raise_error(BASE_ERROR, READER_ERROR, ADDENDUM_CRC_FAILED, read.event_id);
 					}
+					Talos::Shared::FrameWork::StartUp::CpuCluster[read.event_id].system_events.set((int)c_cpu::e_event_type::AddendumRecord);
 					//__check_addendum function determined if an addendum was recieved with the data. If it was it gave us an event controller
 					//and we need to set that event controllers flag so the rest of the application knows something came in, and what it was.
 					read.addendum_event_object->set(read.addendum_event_id);
@@ -220,7 +208,7 @@ void Talos::Shared::FrameWork::Data::System::writer()
 		//target value <10 is a serial route
 		if (write.target < 10)
 		{
-			c_event_router::outputs.pntr_serial_write(write.target, *(write.cache[write.record_number]));
+			Talos::Shared::FrameWork::Events::Router::outputs.pntr_serial_write(write.target, *(write.cache[write.record_number]));
 		}
 
 		write.cache[write.record_number]++;
@@ -256,17 +244,18 @@ void Talos::Shared::FrameWork::Data::System::writer()
 
 void Talos::Shared::FrameWork::Data::System::__raise_error(uint16_t base, uint16_t method, uint16_t line, uint8_t event_id)
 {
-	//return;
-	Talos::Shared::FrameWork::Error::framework_error.buffer_head = ((c_event_router::inputs.pntr_ring_buffer + (int)event_id)->ring_buffer._head);
-	Talos::Shared::FrameWork::Error::framework_error.buffer_tail = ((c_event_router::inputs.pntr_ring_buffer + (int)event_id)->ring_buffer._tail);
+	Talos::Shared::FrameWork::StartUp::CpuCluster[event_id].system_events.set((int)c_cpu::e_event_type::Error);
+
+	Talos::Shared::FrameWork::Error::framework_error.buffer_head = ((Talos::Shared::FrameWork::Events::Router::inputs.pntr_ring_buffer + (int)event_id)->ring_buffer._head);
+	Talos::Shared::FrameWork::Error::framework_error.buffer_tail = ((Talos::Shared::FrameWork::Events::Router::inputs.pntr_ring_buffer + (int)event_id)->ring_buffer._tail);
 	Talos::Shared::FrameWork::Error::framework_error.origin = (int)event_id;
-	Talos::Shared::FrameWork::Error::framework_error.data = ((c_event_router::inputs.pntr_ring_buffer + (int)event_id)->storage);
+	Talos::Shared::FrameWork::Error::framework_error.data = ((Talos::Shared::FrameWork::Events::Router::inputs.pntr_ring_buffer + (int)event_id)->storage);
 //
 	Talos::Shared::FrameWork::Error::framework_error.stack.base = base;
 	Talos::Shared::FrameWork::Error::framework_error.stack.method = method;
 	Talos::Shared::FrameWork::Error::framework_error.stack.line = line;
 
-	Talos::Shared::FrameWork::Error::extern_pntr_error_handler();
+	Talos::Shared::FrameWork::Error::general_error_handler();
 
 
 }
@@ -331,8 +320,8 @@ void Talos::Shared::FrameWork::Data::System::__classify_data_type_message(s_pack
 			Talos::Shared::FrameWork::CRC::crc16(cache_object->cache[SYS_ADDENDUM_RECORD], s_motion_control_settings_encapsulation::__size__ - crc_size);
 		cache_object->counter += s_motion_control_settings_encapsulation::__size__;
 		cache_object->addendum_size = s_motion_control_settings_encapsulation::__size__;
-		cache_object->addendum_event_object = &Talos::Shared::FrameWork::Events::Router.ready.event_manager;
-		cache_object->addendum_event_id = (uint8_t)c_event_router::ss_ready_data::e_event_type::MotionConfiguration;
+		cache_object->addendum_event_object = &Talos::Shared::FrameWork::StartUp::CpuCluster[cache_object->event_id].h_host_events.Data;
+		cache_object->addendum_event_id = (uint8_t)e_system_message::messages::e_data::MotionConfiguration;
 		break;
 	}
 	default:

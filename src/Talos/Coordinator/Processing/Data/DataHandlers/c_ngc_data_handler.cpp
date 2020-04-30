@@ -20,14 +20,15 @@
 #include "c_ngc_data_handler.h"
 
 #include "../../../../NGC_RS274/_ngc_errors_interpreter.h"
-#include "../../../../Shared Data/FrameWork/extern_events_types.h"
+//#include "../../../../Shared Data/FrameWork/extern_events_types.h"
 #include "../../../../NGC_RS274/NGC_Block_View.h"
 #include "../../../../NGC_RS274/NGC_Error_Check.h"
 #include "../../../../NGC_RS274/NGC_Line_Processor.h"
 #include "../../../../Shared Data/FrameWork/Data/cache_data.h"
 #include "../../../../Shared Data/FrameWork/Error/c_framework_error.h"
+#include "../../../../Shared Data/FrameWork/Event/c_event_router.h"
+static uint32_t ngc_block_cache_count = 0;
 
-//#include "../../../../Motion/Processing/GCode/xc_gcode_buffer.h"
 
 void Talos::Coordinator::Data::Ngc::load_block_from_cache()
 {
@@ -79,23 +80,28 @@ void Talos::Coordinator::Data::Ngc::load_block_from_cache()
 	NGC_RS274::Block_View::copy_persisted_data(&new_block, &Talos::Shared::c_cache_data::ngc_block_record);
 	//We dont copy station numbers so set this here.
 	Talos::Shared::c_cache_data::ngc_block_record.__station__ = new_block.__station__;
-	Talos::Shared::FrameWork::Events::Router.ready.ngc_block_cache_count++;
+	
+	ngc_block_cache_count++;
+	
 	//Clear the block event that was set when the line was loaded waaaaayyyy back in the dataevent handler
-	Talos::Shared::FrameWork::Events::Router.ready.event_manager.clear((int)c_event_router::ss_ready_data::e_event_type::NgcDataLine);
+	Talos::Shared::FrameWork::StartUp::CpuCluster[Talos::Shared::FrameWork::StartUp::cpu_type.Host]
+		.h_host_events.Data.clear((int)e_system_message::messages::e_data::NgcDataLine);
+	
 	Talos::Shared::c_cache_data::txt_record.pntr_record = NULL;
 }
 
 void  Talos::Coordinator::Data::Ngc::__raise_error(char * ngc_line)
 {
 	
-	Talos::Shared::FrameWork::Error::extern_pntr_ngc_error_handler(ngc_line);
+	Talos::Shared::FrameWork::Error::ngc_error_handler(ngc_line);
 	
 	__reset();
 }
 
 void Talos::Coordinator::Data::Ngc::__reset()
 {
-	Talos::Shared::FrameWork::Events::Router.ready.event_manager.clear((int)c_event_router::ss_ready_data::e_event_type::NgcDataLine);
+	Talos::Shared::FrameWork::StartUp::CpuCluster[Talos::Shared::FrameWork::StartUp::cpu_type.Host]
+		.h_host_events.Data.clear((int)e_system_message::messages::e_data::NgcDataLine);
 	Talos::Shared::c_cache_data::ngc_block_record.__station__ = 0;
 
 

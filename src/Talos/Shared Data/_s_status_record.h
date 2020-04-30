@@ -3,13 +3,13 @@
 #include "_e_record_types.h"
 #include "../physical_machine_parameters.h"
 #include "FrameWork/Enumerations/Status/_e_system_messages.h"
-#include "FrameWork/Startup/c_framework_start.h"
+//#include "FrameWork/Startup/c_framework_start.h"
 struct s_control_message
 {
 	e_record_types __rec_type__ = e_record_types::System;
 	uint8_t origin; //message origin relative to sender
 	uint8_t target; //message target relative to sender
-	uint8_t rx_from; //message target relative to receiver
+	uint8_t rx_from; //message origin relative to receiver
 	uint8_t type; //status type
 	uint8_t message; //corresponding message value
 	uint8_t state; //state value

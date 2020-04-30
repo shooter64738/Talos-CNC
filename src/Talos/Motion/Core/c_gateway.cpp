@@ -16,7 +16,6 @@
 #include <string.h>
 #include "../Processing/Events/EventHandlers/c_motion_control_event_handler.h"
 #include "../Processing/Events/EventHandlers/c_motion_controller_event_handler.h"
-#include "../../Shared Data/FrameWork/extern_events_types.h"
 #include "../../Shared Data/_s_status_record.h"
 #include "../../Shared Data/FrameWork/Enumerations/Status/_e_system_messages.h"
 

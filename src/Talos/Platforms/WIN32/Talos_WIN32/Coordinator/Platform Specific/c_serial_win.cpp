@@ -10,7 +10,8 @@
 #include "c_core_win.h"
 #include <iostream>
 //#include "../../../../../c_ring_template.h"
-#include "../../../../../Shared Data/FrameWork/extern_events_types.h"
+//#include "../../../../../Shared Data/FrameWork/extern_events_types.h"
+#include "../../../../../Shared Data/FrameWork/Event/c_event_router.h"
 #include "../../../../../Coordinator/Processing/Data/c_data_buffers.h"
 
 std::thread Hardware_Abstraction_Layer::Serial::__timer1_overflow(Hardware_Abstraction_Layer::Serial::__timer1_overflow_thread);
@@ -22,8 +23,8 @@ void Hardware_Abstraction_Layer::Serial::initialize(uint8_t Port, uint32_t BaudR
 	init = true;
 	
 	Talos::Coordinator::Data::Buffer::buffers[Port].ring_buffer.initialize(Talos::Coordinator::Data::Buffer::buffers[Port].storage, 256);
-	Talos::Shared::FrameWork::Events::Router.inputs.pntr_ring_buffer = Talos::Coordinator::Data::Buffer::buffers;
-	Talos::Shared::FrameWork::Events::Router.outputs.pntr_serial_write = Hardware_Abstraction_Layer::Serial::send;
+	Talos::Shared::FrameWork::Events::Router::inputs.pntr_ring_buffer = Talos::Coordinator::Data::Buffer::buffers;
+	Talos::Shared::FrameWork::Events::Router::outputs.pntr_serial_write = Hardware_Abstraction_Layer::Serial::send;
 	
 	
 }
@@ -46,7 +47,7 @@ void Hardware_Abstraction_Layer::Serial::add_to_buffer(uint8_t port, const char 
 		data++;
 	}
 	//Talos::Shared::FrameWork::Events::extern_data_events.serial.inbound.event_manager.set((int)s_inbound_data::e_event_type::Usart0DataArrival);
-	Talos::Shared::FrameWork::Events::Router.inputs.event_manager.set((int)c_event_router::s_in_events::e_event_type::Usart0DataArrival+ port);
+	Talos::Shared::FrameWork::Events::Router::inputs.event_manager.set((int)Talos::Shared::FrameWork::Events::Router::s_in_events::e_event_type::Usart0DataArrival+ port);
 	/*rxBuffer[port].Buffer[rxBuffer[port].Head++] = 13;
 	rxBuffer[port].EOL++;*/
 }
@@ -54,7 +55,7 @@ void Hardware_Abstraction_Layer::Serial::add_to_buffer(uint8_t port, const char 
 {
 	Talos::Coordinator::Data::Buffer::buffers[port].ring_buffer.put(data);
 	//Talos::Shared::FrameWork::Events::extern_data_events.serial.inbound.event_manager.set((int)s_inbound_data::e_event_type::Usart0DataArrival);
-	Talos::Shared::FrameWork::Events::Router.inputs.event_manager.set((int)c_event_router::s_in_events::e_event_type::Usart0DataArrival + port);
+	Talos::Shared::FrameWork::Events::Router::inputs.event_manager.set((int)Talos::Shared::FrameWork::Events::Router::s_in_events::e_event_type::Usart0DataArrival + port);
 
 	/*rxBuffer[port].Buffer[rxBuffer[port].Head++] = 13;
 	rxBuffer[port].EOL++;*/

@@ -24,8 +24,9 @@
 
 #include <stdint.h>
 #include "../../../../c_ring_template.h"
-#include "../../../FrameWork/extern_events_types.h"
+//#include "../../../FrameWork/extern_events_types.h"
 #include "../../../FrameWork/event/c_event_router.h"
+#include "../../Enumerations/Status/_e_system_messages.h"
 
 typedef void(*write_pointer)(uint8_t port, char byte);
 class c_new_serial_event_handler
@@ -42,16 +43,17 @@ private:
 
 	//functions
 public:
-	static void process(c_event_router::s_out_events * event_object, c_event_router::s_out_events::e_event_type event_id);
-	static void process(c_event_router::s_in_events * event_object, c_event_router::s_in_events::e_event_type event_id);
+	static void process(Talos::Shared::FrameWork::Events::Router::s_out_events * event_object, e_system_message::messages::e_data event_id);
+	static void process(Talos::Shared::FrameWork::Events::Router::s_in_events * event_object, Talos::Shared::FrameWork::Events::Router::s_in_events::e_event_type event_id);
 	
 	static void read_data_handler_releaser();
 	static void write_data_handler_releaser();
 
 protected:
 private:
-	static uint8_t __assign_handler(c_event_router::s_in_events * event_object, c_event_router::s_in_events::e_event_type event_id);
-	static void __assign_handler(c_event_router::s_out_events * event_object, c_event_router::s_out_events::e_event_type event_id);
+	static uint8_t __assign_handler(Talos::Shared::FrameWork::Events::Router::s_in_events * event_object, Talos::Shared::FrameWork::Events::Router::s_in_events::e_event_type event_id);
+	static void __assign_handler(Talos::Shared::FrameWork::Events::Router::s_out_events * event_object, e_system_message::messages::e_data event_id);
+	
 	static void __raise_error(uint16_t base, uint16_t method, uint16_t line, uint8_t event_id);
 
 }; //c_serial_events

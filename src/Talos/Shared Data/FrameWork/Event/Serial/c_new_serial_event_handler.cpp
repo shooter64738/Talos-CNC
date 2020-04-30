@@ -32,7 +32,7 @@ void(*c_new_serial_event_handler::pntr_data_read_handler)();
 void(*c_new_serial_event_handler::pntr_data_write_handler)();
 
 #define Err_1 1
-void c_new_serial_event_handler::process(c_event_router::s_in_events * event_object, c_event_router::s_in_events::e_event_type event_id)
+void c_new_serial_event_handler::process(Talos::Shared::FrameWork::Events::Router::s_in_events * event_object, Talos::Shared::FrameWork::Events::Router::s_in_events::e_event_type event_id)
 {
 	/*
 	When we receive the first bye of data, we determine which handler to use.
@@ -60,7 +60,7 @@ void c_new_serial_event_handler::process(c_event_router::s_in_events * event_obj
 }
 
 #define Err_2 2
-void c_new_serial_event_handler::process(c_event_router::s_out_events * event_object, c_event_router::s_out_events::e_event_type event_id)
+void c_new_serial_event_handler::process(Talos::Shared::FrameWork::Events::Router::s_out_events * event_object, e_system_message::messages::e_data event_id)
 {
 
 	//Is there is a handler assigned for this data class already? If a handler is assigned
@@ -80,13 +80,13 @@ void c_new_serial_event_handler::process(c_event_router::s_out_events * event_ob
 
 #define __ASSIGN_HANDLER_IN 3
 #define UNDETERMINED_SERIAL_TYPE 1
-uint8_t c_new_serial_event_handler::__assign_handler(c_event_router::s_in_events * event_object, c_event_router::s_in_events::e_event_type event_id)
+uint8_t c_new_serial_event_handler::__assign_handler(Talos::Shared::FrameWork::Events::Router::s_in_events * event_object, Talos::Shared::FrameWork::Events::Router::s_in_events::e_event_type event_id)
 {
 	
 	//Tail is always assumed to be at the 'start' of data
 	//event id for serial is the port the data came from or is going to. We can use that to access the buffer array pointer.
-	char peek_tail = (c_event_router::inputs.pntr_ring_buffer + (int)event_id)->
-	ring_buffer.peek((c_event_router::inputs.pntr_ring_buffer + (int)event_id)->ring_buffer._tail);
+	char peek_tail = (Talos::Shared::FrameWork::Events::Router::inputs.pntr_ring_buffer + (int)event_id)->
+	ring_buffer.peek((Talos::Shared::FrameWork::Events::Router::inputs.pntr_ring_buffer + (int)event_id)->ring_buffer._tail);
 
 	//Printable data is ngc line data. We need to check cr or lf because those are
 	//special line ending characters for ngc data. We will NEVER use 10 or 13 as a
@@ -101,8 +101,8 @@ uint8_t c_new_serial_event_handler::__assign_handler(c_event_router::s_in_events
 		//We can throw those characters away.
 		if (peek_tail == CR || peek_tail == LF)
 		{
-			(c_event_router::inputs.pntr_ring_buffer + (int)event_id)->ring_buffer.get();
-			if (!(c_event_router::inputs.pntr_ring_buffer + (int)event_id)->ring_buffer.has_data())
+			(Talos::Shared::FrameWork::Events::Router::inputs.pntr_ring_buffer + (int)event_id)->ring_buffer.get();
+			if (!(Talos::Shared::FrameWork::Events::Router::inputs.pntr_ring_buffer + (int)event_id)->ring_buffer.has_data())
 			event_object->event_manager.clear((int)event_id);
 			return 0;
 		}
@@ -126,7 +126,7 @@ uint8_t c_new_serial_event_handler::__assign_handler(c_event_router::s_in_events
 			Talos::Shared::FrameWork::Data::System::pntr_read_release = c_new_serial_event_handler::read_data_handler_releaser;
 		}
 
-		//Assign a release call back function. The handler knows nothing about serial events
+		//Assign a release call back function. The handler knows nothing about serial system_events
 		//and we want to keep it that way.
 
 	}
@@ -136,14 +136,14 @@ uint8_t c_new_serial_event_handler::__assign_handler(c_event_router::s_in_events
 		//Assign a specific handler for this data type
 		//c_new_serial_event_handler::pntr_data_read_handler = Txt::assign_handler(event_object, event_id, (e_record_types)peek_tail);
 
-		//Assign a release call back function. The handler knows nothing about serial events
+		//Assign a release call back function. The handler knows nothing about serial system_events
 		//and we want to keep it that way.
 		//Txt::pntr_read_data_handler_release = c_new_serial_event_handler::read_data_handler_releaser;
 	}
 	else //we dont know what kind of data it is
 	{
 		//UDR0='D';
-		(c_event_router::inputs.pntr_ring_buffer + (int)event_id)->ring_buffer.get();
+		(Talos::Shared::FrameWork::Events::Router::inputs.pntr_ring_buffer + (int)event_id)->ring_buffer.get();
 		assign_tries++;
 		return 1;
 		//Struggling here to come up with a solid solution. We got some unexpected data in the buffer.
@@ -151,7 +151,7 @@ uint8_t c_new_serial_event_handler::__assign_handler(c_event_router::s_in_events
 		if (assign_tries < 10)
 		{
 			assign_tries++;
-			(c_event_router::inputs.pntr_ring_buffer + (int)event_id)->ring_buffer.get();
+			(Talos::Shared::FrameWork::Events::Router::inputs.pntr_ring_buffer + (int)event_id)->ring_buffer.get();
 			__assign_handler(event_object, event_id);
 		}
 		//since there is data here and we do not know what kind it is, we cannot determine which assigner it needs.
@@ -163,15 +163,16 @@ uint8_t c_new_serial_event_handler::__assign_handler(c_event_router::s_in_events
 
 #define __ASSIGN_HANDLER_OUT 4
 #define UNHANDLED_EVENT_TYPE 1
-void c_new_serial_event_handler::__assign_handler(c_event_router::s_out_events * event_object, c_event_router::s_out_events::e_event_type event_id)
+void c_new_serial_event_handler::__assign_handler(Talos::Shared::FrameWork::Events::Router::s_out_events * event_object
+	, e_system_message::messages::e_data event_id)
 {
 
 	switch (event_id)
 	{
-		case c_event_router::s_out_events::e_event_type::NgcBlockRequest:
-		break;
+		//case Talos::Shared::FrameWork::Events::Router::s_out_events::e_event_type::NgcBlockRequest:
+		//break;
 
-		case c_event_router::s_out_events::e_event_type::StatusUpdate:
+		case e_system_message::messages::e_data::SystemRecord:
 		{
 			Talos::Shared::FrameWork::Data::System::route_write((int)event_id, &event_object->event_manager);
 			c_new_serial_event_handler::pntr_data_write_handler = Talos::Shared::FrameWork::Data::System::writer;
@@ -179,7 +180,7 @@ void c_new_serial_event_handler::__assign_handler(c_event_router::s_out_events *
 			Talos::Shared::FrameWork::Data::System::pntr_write_release = c_new_serial_event_handler::write_data_handler_releaser;
 			break;
 		}
-		case c_event_router::s_out_events::e_event_type::MotionConfiguration:
+		case e_system_message::messages::e_data::MotionConfiguration:
 		{
 			Talos::Shared::FrameWork::Data::System::route_write((int)event_id, &event_object->event_manager);
 			c_new_serial_event_handler::pntr_data_write_handler = Talos::Shared::FrameWork::Data::System::writer;
@@ -204,15 +205,15 @@ void c_new_serial_event_handler::__raise_error(uint16_t base, uint16_t method, u
 	//set the handler release to null now. we dont need it
 	Talos::Shared::FrameWork::Data::Txt::pntr_read_release = NULL;
 
-	Talos::Shared::FrameWork::Error::framework_error.buffer_head = ((c_event_router::inputs.pntr_ring_buffer + (int)event_id)->ring_buffer._head);
-	Talos::Shared::FrameWork::Error::framework_error.buffer_tail = ((c_event_router::inputs.pntr_ring_buffer + (int)event_id)->ring_buffer._tail);
+	Talos::Shared::FrameWork::Error::framework_error.buffer_head = ((Talos::Shared::FrameWork::Events::Router::inputs.pntr_ring_buffer + (int)event_id)->ring_buffer._head);
+	Talos::Shared::FrameWork::Error::framework_error.buffer_tail = ((Talos::Shared::FrameWork::Events::Router::inputs.pntr_ring_buffer + (int)event_id)->ring_buffer._tail);
 	Talos::Shared::FrameWork::Error::framework_error.origin = (int)event_id;
-	Talos::Shared::FrameWork::Error::framework_error.data = ((c_event_router::inputs.pntr_ring_buffer + (int)event_id)->storage);
+	Talos::Shared::FrameWork::Error::framework_error.data = ((Talos::Shared::FrameWork::Events::Router::inputs.pntr_ring_buffer + (int)event_id)->storage);
 
 	Talos::Shared::FrameWork::Error::framework_error.stack.base = base;
 	Talos::Shared::FrameWork::Error::framework_error.stack.method = method;
 	Talos::Shared::FrameWork::Error::framework_error.stack.line = line;
-	Talos::Shared::FrameWork::Error::extern_pntr_error_handler();
+	Talos::Shared::FrameWork::Error::general_error_handler();
 }
 
 #define Err_6 6

@@ -168,15 +168,6 @@
     <ClCompile Include="..\..\..\..\Motion\Processing\Planner\Canned Cycles\x_c_canned_cycle.cpp">
       <Filter>Motion\Processing\Planner\Canned Cycles</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\Shared Data\FrameWork\extern_events_types.cpp">
-      <Filter>Shared data\FrameWork</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\Motion\Processing\Error\c_error.cpp">
-      <Filter>Motion\Processing\Error</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\Motion\Processing\Events\EventHandlers\c_report_events.cpp">
-      <Filter>Motion\Processing\Events\EventHandlers</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Event\c_event_router.cpp">
       <Filter>Shared data\FrameWork\Event</Filter>
     </ClCompile>
@@ -218,6 +209,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\..\Motion\Processing\Data\DataHandlers\c_system_data_handler.cpp">
       <Filter>Motion\Processing\Data\DataHandlers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Startup\c_framework_cpu.cpp">
+      <Filter>Shared data\FrameWork\Startup</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -367,15 +361,6 @@
     <ClInclude Include="..\..\..\..\Shared Data\_s_framework_error.h">
       <Filter>Shared data</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\extern_events_types.h">
-      <Filter>Shared data\FrameWork</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Motion\Processing\Error\c_error.h">
-      <Filter>Motion\Processing\Error</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Motion\Processing\Events\EventHandlers\c_report_events.h">
-      <Filter>Motion\Processing\Events\EventHandlers</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\..\Motion\Record Defines\e_all_event_data_types.h">
       <Filter>Motion\Record Defines</Filter>
     </ClInclude>
@@ -426,6 +411,12 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\Motion\Processing\Data\DataHandlers\c_system_data_handler.h">
       <Filter>Motion\Processing\Data\DataHandlers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Enumerations\_e_system_events.h">
+      <Filter>Shared data\FrameWork\Enumerations</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Startup\c_framework_cpu.h">
+      <Filter>Shared data\FrameWork\Startup</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

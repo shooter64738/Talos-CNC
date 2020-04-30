@@ -331,7 +331,7 @@ void NGC_RS274::Block_View::xset_events(s_ngc_block * local_block, s_ngc_block *
 		//c_stager::update_non_modals(local_block);
 	}
 
-	//assign any events found in the G group, skipping non-modal. Here we only set a change event
+	//assign any system_events found in the G group, skipping non-modal. Here we only set a change event
 	//if the value has changed from teh last modal value that was set.
 	for (group = 1; group < COUNT_OF_G_CODE_GROUPS_ARRAY; group++)
 	{
@@ -344,7 +344,7 @@ void NGC_RS274::Block_View::xset_events(s_ngc_block * local_block, s_ngc_block *
 		}
 	}
 
-	//Assign any events found in the M group
+	//Assign any system_events found in the M group
 	for (group = 0; group < COUNT_OF_M_CODE_GROUPS_ARRAY; group++)
 	{
 		if (local_block->m_code_defined_in_block.get(group))
@@ -356,7 +356,7 @@ void NGC_RS274::Block_View::xset_events(s_ngc_block * local_block, s_ngc_block *
 		}
 	}
 
-	//assign any events that arent in a specific group, but we need to track
+	//assign any system_events that arent in a specific group, but we need to track
 	x__assign_other_event(local_block);
 }
 

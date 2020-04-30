@@ -22,44 +22,37 @@
 #define __C_REPORT_EVENT_HANDLING_H__
 
 #include <stdint.h>
-#include "../../../Serial/c_Serial.h"
-#include "../../../../Shared Data/FrameWork/extern_events_types.h"
-#include "../../../../NGC_RS274/_ngc_block_struct.h"
-#include "../../../../_bit_flag_control.h"
+#include "../../../NGC_RS274/_ngc_block_struct.h"
 
 namespace Talos
 {
-	namespace Motion
+	namespace Shared
 	{
-		namespace Events
+		namespace FrameWork
 		{
-			class Report
+			namespace Events
 			{
-				//variables
-				public:
-				enum class e_event_type
+				class Report
 				{
-					StatusMessage = 0,
-				};
-				static s_bit_flag_controller<uint32_t> event_manager;
-
+					//variables
+				public:
 				protected:
 				private:
 
 
-				//functions
+					//functions
 				public:
-				static void process();
-				static uint8_t initialize(c_Serial *serial);
-				
-				private:
-				
-				static void ____group(uint8_t count, uint16_t * pointer, char group_name);
-				static void ____word(uint8_t count, float * pointer);
-				static void __write_header(s_ngc_block block);
-				static void __pad_left(float value, uint8_t padcount, uint8_t decimals, char pad_char);
-				static void __write_eol();
+					static void process();
 
+				private:
+
+					static void ____group(uint8_t counter, uint16_t * pointer, char group_name);
+					static void ____word(uint8_t counter, float * pointer);
+					static void __write_header(s_ngc_block block);
+					static void __pad_left(float value, uint8_t padcount, uint8_t decimals, char pad_char);
+					static void __write_eol();
+
+				};
 			};
 		};
 	};

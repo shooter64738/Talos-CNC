@@ -97,6 +97,9 @@
     <Filter Include="Shared Data\Settings\Motion">
       <UniqueIdentifier>{11c0d96a-57bb-48a0-824c-7c4477f43c36}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shared Data\FrameWork\Report">
+      <UniqueIdentifier>{a998897b-9fdf-42a5-8884-fbfb656acad6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\communication_def.h" />
@@ -317,14 +320,8 @@
     <ClInclude Include="..\..\..\..\Coordinator\Processing\Events\EventHandlers\c_ngc_data_events.h">
       <Filter>Coordinator\Processing\Events\EventHandlers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\extern_events_types.h">
-      <Filter>Shared Data\FrameWork</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\..\Coordinator\Processing\Error\c_error.h">
       <Filter>Coordinator\Processing\Error</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Coordinator\Processing\Events\EventHandlers\c_report_events.h">
-      <Filter>Coordinator\Processing\Events\EventHandlers</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\Coordinator\Record Defines\xe_all_event_data_types.h">
       <Filter>Coordinator\Record Defines</Filter>
@@ -376,6 +373,15 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\Shared Data\Settings\Motion\_s_motion_tolerance_struct.h">
       <Filter>Shared Data\Settings\Motion</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Startup\c_framework_cpu.h">
+      <Filter>Shared Data\FrameWork\Startup</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Enumerations\_e_system_events.h">
+      <Filter>Shared Data\FrameWork\Enumerations</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Report\c_framework_report.h">
+      <Filter>Shared Data\FrameWork\Report</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -481,14 +487,8 @@
     <ClCompile Include="..\..\..\..\Coordinator\Processing\Events\EventHandlers\c_ngc_data_events.cpp">
       <Filter>Coordinator\Processing\Events\EventHandlers</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\Shared Data\FrameWork\extern_events_types.cpp">
-      <Filter>Shared Data\FrameWork</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\..\Coordinator\Processing\Error\c_error.cpp">
       <Filter>Coordinator\Processing\Error</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\Coordinator\Processing\Events\EventHandlers\c_report_events.cpp">
-      <Filter>Coordinator\Processing\Events\EventHandlers</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Event\Serial\c_new_serial_event_handler.cpp">
       <Filter>Shared Data\FrameWork\Event\Serial</Filter>
@@ -522,6 +522,12 @@
     </ClCompile>
     <ClCompile Include="..\..\..\..\Coordinator\Processing\Data\DataHandlers\c_system_data_handler.cpp">
       <Filter>Coordinator\Processing\Data\DataHandlers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Startup\c_framework_cpu.cpp">
+      <Filter>Shared Data\FrameWork\Startup</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Report\c_framework_report.cpp">
+      <Filter>Shared Data\FrameWork\Report</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

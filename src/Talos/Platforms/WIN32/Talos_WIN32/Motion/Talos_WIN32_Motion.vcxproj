@@ -26,11 +26,9 @@
     <ClCompile Include="..\..\..\..\Motion\Processing\Data\c_data_buffers.cpp" />
     <ClCompile Include="..\..\..\..\Motion\Processing\Data\DataHandlers\c_ngc_data_handler.cpp" />
     <ClCompile Include="..\..\..\..\Motion\Processing\Data\DataHandlers\c_system_data_handler.cpp" />
-    <ClCompile Include="..\..\..\..\Motion\Processing\Error\c_error.cpp" />
     <ClCompile Include="..\..\..\..\Motion\Processing\Events\EventHandlers\c_block_events.cpp" />
     <ClCompile Include="..\..\..\..\Motion\Processing\Events\EventHandlers\c_motion_controller_event_handler.cpp" />
     <ClCompile Include="..\..\..\..\Motion\Processing\Events\EventHandlers\c_motion_control_event_handler.cpp" />
-    <ClCompile Include="..\..\..\..\Motion\Processing\Events\EventHandlers\c_report_events.cpp" />
     <ClCompile Include="..\..\..\..\Motion\Processing\Events\EventHandlers\c_system_event_handler.cpp" />
     <ClCompile Include="..\..\..\..\Motion\Processing\Main\Main_Process.cpp" />
     <ClCompile Include="..\..\..\..\Motion\Processing\Planner\Canned Cycles\x_c_canned_cycle.cpp" />
@@ -46,7 +44,7 @@
     <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Error\c_framework_error.cpp" />
     <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Event\c_event_router.cpp" />
     <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Event\Serial\c_new_serial_event_handler.cpp" />
-    <ClCompile Include="..\..\..\..\Shared Data\FrameWork\extern_events_types.cpp" />
+    <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Startup\c_framework_cpu.cpp" />
     <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Startup\c_framework_start.cpp" />
     <ClCompile Include="Platform Specific\c_core_win.cpp" />
     <ClCompile Include="Platform Specific\c_disk_win.cpp" />
@@ -73,11 +71,9 @@
     <ClInclude Include="..\..\..\..\Motion\Processing\Data\c_data_buffers.h" />
     <ClInclude Include="..\..\..\..\Motion\Processing\Data\DataHandlers\c_ngc_data_handler.h" />
     <ClInclude Include="..\..\..\..\Motion\Processing\Data\DataHandlers\c_system_data_handler.h" />
-    <ClInclude Include="..\..\..\..\Motion\Processing\Error\c_error.h" />
     <ClInclude Include="..\..\..\..\Motion\Processing\Events\EventHandlers\c_block_events.h" />
     <ClInclude Include="..\..\..\..\Motion\Processing\Events\EventHandlers\c_motion_controller_event_handler.h" />
     <ClInclude Include="..\..\..\..\Motion\Processing\Events\EventHandlers\c_motion_control_event_handler.h" />
-    <ClInclude Include="..\..\..\..\Motion\Processing\Events\EventHandlers\c_report_events.h" />
     <ClInclude Include="..\..\..\..\Motion\Processing\Events\EventHandlers\c_system_event_handler.h" />
     <ClInclude Include="..\..\..\..\Motion\Processing\Main\Main_Process.h" />
     <ClInclude Include="..\..\..\..\Motion\Processing\Planner\Canned Cycles\x_c_canned_cycle.h" />
@@ -95,11 +91,12 @@
     <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Data\c_framework_ngc_data_handler.h" />
     <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Data\c_framework_system_data_handler.h" />
     <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Enumerations\Status\_e_system_messages.h" />
+    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Enumerations\_e_system_events.h" />
     <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Error\c_framework_error.h" />
     <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Error\_s_framework_error.h" />
     <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Event\c_event_router.h" />
     <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Event\Serial\c_new_serial_event_handler.h" />
-    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\extern_events_types.h" />
+    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Startup\c_framework_cpu.h" />
     <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Startup\c_framework_start.h" />
     <ClInclude Include="..\..\..\..\Shared Data\Settings\Motion\_s_motion_control_settings_encapsulation.h" />
     <ClInclude Include="..\..\..\..\Shared Data\Settings\Motion\_s_motion_tolerance_struct.h" />

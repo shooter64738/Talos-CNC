@@ -32,18 +32,7 @@ struct s_ancillary_events
 	};
 	s_bit_flag_controller<uint32_t> event_manager;
 };
-struct s_system_events
-{
-	enum class e_event_type : uint8_t
-	{
-		SystemAllOk = 0,
-		MotionConfigurationLoaded = 1,
-		SpindleConfigurationLoaded = 2,
-		NgcReset = 4,
-		SystemCritical = 31
-	};
-	s_bit_flag_controller<uint32_t> event_manager;
-};
+
 struct s_ngc_error_events
 {
 	enum class e_event_type : uint8_t
@@ -86,10 +75,10 @@ namespace Talos
 		{
 			namespace Events
 			{
-				extern c_event_router Router;
+				//extern c_event_router Router;
 				
 				extern s_ancillary_events extern_ancillary_events;
-				extern s_system_events extern_system_events;
+				//extern s_system_events extern_system_events;
 			};			
 		};
 	};

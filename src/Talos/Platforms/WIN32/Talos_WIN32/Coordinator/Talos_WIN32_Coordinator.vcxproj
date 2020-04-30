@@ -17,7 +17,6 @@
     <ClInclude Include="..\..\..\..\Coordinator\Processing\Data\DataHandlers\c_system_data_handler.h" />
     <ClInclude Include="..\..\..\..\Coordinator\Processing\Error\c_error.h" />
     <ClInclude Include="..\..\..\..\Coordinator\Processing\Events\EventHandlers\c_ngc_data_events.h" />
-    <ClInclude Include="..\..\..\..\Coordinator\Processing\Events\EventHandlers\c_report_events.h" />
     <ClInclude Include="..\..\..\..\Coordinator\Processing\Events\EventHandlers\c_system_event_handler.h" />
     <ClInclude Include="..\..\..\..\Coordinator\Record Defines\xe_all_event_data_types.h" />
     <ClInclude Include="..\..\..\..\NGC_RS274\Dialect\_ngc_dialect_validate.h" />
@@ -47,11 +46,13 @@
     <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Data\c_framework_ngc_data_handler.h" />
     <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Data\c_framework_system_data_handler.h" />
     <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Enumerations\Status\_e_system_messages.h" />
+    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Enumerations\_e_system_events.h" />
     <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Error\c_framework_error.h" />
     <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Error\_s_framework_error.h" />
     <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Event\c_event_router.h" />
     <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Event\Serial\c_new_serial_event_handler.h" />
-    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\extern_events_types.h" />
+    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Report\c_framework_report.h" />
+    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Startup\c_framework_cpu.h" />
     <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Startup\c_framework_start.h" />
     <ClInclude Include="..\..\..\..\Shared Data\Settings\Coordinator\_s_interp_config_struct.h" />
     <ClInclude Include="..\..\..\..\Shared Data\Settings\Motion\_s_motion_control_settings_encapsulation.h" />
@@ -119,7 +120,6 @@
     <ClCompile Include="..\..\..\..\Coordinator\Processing\Events\EventHandlers\c_ancillary_event_handler.cpp" />
     <ClCompile Include="..\..\..\..\Coordinator\Processing\Events\EventHandlers\c_network_data_events.cpp" />
     <ClCompile Include="..\..\..\..\Coordinator\Processing\Events\EventHandlers\c_ngc_data_events.cpp" />
-    <ClCompile Include="..\..\..\..\Coordinator\Processing\Events\EventHandlers\c_report_events.cpp" />
     <ClCompile Include="..\..\..\..\Coordinator\Processing\Events\EventHandlers\c_spi_data_events.cpp" />
     <ClCompile Include="..\..\..\..\Coordinator\Processing\Events\EventHandlers\c_system_event_handler.cpp" />
     <ClCompile Include="..\..\..\..\Coordinator\Processing\Main\Main_Process.cpp" />
@@ -151,7 +151,8 @@
     <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Error\c_framework_error.cpp" />
     <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Event\c_event_router.cpp" />
     <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Event\Serial\c_new_serial_event_handler.cpp" />
-    <ClCompile Include="..\..\..\..\Shared Data\FrameWork\extern_events_types.cpp" />
+    <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Report\c_framework_report.cpp" />
+    <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Startup\c_framework_cpu.cpp" />
     <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Startup\c_framework_start.cpp" />
     <ClCompile Include="Platform Specific\c_core_win.cpp" />
     <ClCompile Include="Platform Specific\c_disk_win.cpp" />

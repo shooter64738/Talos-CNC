@@ -12,7 +12,7 @@
 #include "../../../../../NGC_RS274/_ngc_g_Groups.h"
 #include "../../../../../NGC_RS274/_ngc_m_Groups.h"
 #include "../../../../../NGC_RS274/_ngc_m_Groups.h"
-#include "../../../../../Shared Data/FrameWork/extern_events_types.h"
+
 
 using namespace std;
 static std::fstream _cache_file_object;

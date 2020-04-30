@@ -9,7 +9,8 @@ public:
 		Critical = 0,
 		Warning = 1,
 		Informal = 2,
-		Data = 3
+		Data = 3,
+		Inquiry = 4,
 	};
 
 	class messages
@@ -25,6 +26,9 @@ public:
 		{
 			Invalid = 0,
 			MotionConfiguration = 1,
+			SystemRecord = 2,
+			NgcDataLine = 3,
+			NgcDataRequest = 4,
 			
 		};
 
@@ -33,6 +37,15 @@ public:
 			Invalid = 0,
 			ReadyToProcess = 1,
 			BlockCompleted = 2
+
+		};
+
+		enum class e_inquiry :uint8_t
+		{
+			Invalid = 0,
+			GCodeBlockReport = 1,
+			MCodeBlockReport = 2,
+			WordStatusReport = 3,
 
 		};
 

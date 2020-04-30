@@ -18,6 +18,7 @@
 *  along with Talos.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "c_framework_ngc_data_handler.h"
+#include "../Event/c_event_router.h"
 #include <ctype.h>
 
 void(*Talos::Shared::FrameWork::Data::Txt::pntr_read_release)();
@@ -70,10 +71,10 @@ void Talos::Shared::FrameWork::Data::Txt::reader()
 
 	bool has_eol = false;
 	//do we need to check this? technically we shouldnt ever get called here if there isnt any data.
-	while ((c_event_router::inputs.pntr_ring_buffer + (int)read.event_id)->ring_buffer.has_data())
+	while ((Talos::Shared::FrameWork::Events::Router::inputs.pntr_ring_buffer + (int)read.event_id)->ring_buffer.has_data())
 	{
 		//wait for the CR to come in so we know there is a complete line
-		*read.pntr_cache = toupper((c_event_router::inputs.pntr_ring_buffer + (int)read.event_id)->ring_buffer.get());
+		*read.pntr_cache = toupper((Talos::Shared::FrameWork::Events::Router::inputs.pntr_ring_buffer + (int)read.event_id)->ring_buffer.get());
 
 		if (*read.pntr_cache == 0)
 		{
@@ -86,10 +87,10 @@ void Talos::Shared::FrameWork::Data::Txt::reader()
 		if (has_eol)
 		{
 			//we hit a cr or lf. if the next peek value is cr or lf, we can throw it away.
-			
-			*read.pntr_cache = (c_event_router::inputs.pntr_ring_buffer + (int)read.event_id)->ring_buffer.peek(0);
+
+			*read.pntr_cache = (Talos::Shared::FrameWork::Events::Router::inputs.pntr_ring_buffer + (int)read.event_id)->ring_buffer.peek(0);
 			if (*(read.pntr_cache) == CR || *(read.pntr_cache) == LF)
-				(c_event_router::inputs.pntr_ring_buffer + (int)read.event_id)->ring_buffer.get();
+				(Talos::Shared::FrameWork::Events::Router::inputs.pntr_ring_buffer + (int)read.event_id)->ring_buffer.get();
 			//we dont need the CR or LF at the end of the line so we can set it to zero
 			*read.pntr_cache = 0;
 
@@ -122,7 +123,7 @@ void Talos::Shared::FrameWork::Data::Txt::__data_copy(uint8_t byte_count)
 	//because we never know if the ISR fired and got all of the data (which may contains 1 or mroe records)
 	//we are going to check to see if the buffer still has data. If it does, leave the event set. If it does
 	//not, clear the event.
-	if (!(c_event_router::inputs.pntr_ring_buffer + (int)read.event_id)->ring_buffer.has_data())
+	if (!(Talos::Shared::FrameWork::Events::Router::inputs.pntr_ring_buffer + (int)read.event_id)->ring_buffer.has_data())
 		read.event_object->clear((int)read.event_id);
 
 	//The reader that has been calling into here must now be released
@@ -156,8 +157,8 @@ void Talos::Shared::FrameWork::Data::Txt::writer()
 	//target value <10 is a serial route
 	if (write.target < 10)
 	{
-		c_event_router::outputs.pntr_serial_write(0, '0' + *(write.pntr_cache));
-		c_event_router::outputs.pntr_serial_write(write.target, *(write.pntr_cache));
+		Talos::Shared::FrameWork::Events::Router::outputs.pntr_serial_write(0, '0' + *(write.pntr_cache));
+		Talos::Shared::FrameWork::Events::Router::outputs.pntr_serial_write(write.target, *(write.pntr_cache));
 	}
 
 	if (*(write.pntr_cache) == CR || *(write.pntr_cache) == LF)
@@ -166,7 +167,7 @@ void Talos::Shared::FrameWork::Data::Txt::writer()
 		//if the next byte id cr or lf send it, but then stop
 		write.pntr_cache++;
 		if (*(write.pntr_cache) == CR || *(write.pntr_cache) == LF)
-			c_event_router::outputs.pntr_serial_write(write.target, *(write.pntr_cache));
+			Talos::Shared::FrameWork::Events::Router::outputs.pntr_serial_write(write.target, *(write.pntr_cache));
 
 		//The writer that has been calling into here must now be released
 		pntr_write_release();
@@ -212,29 +213,34 @@ void Talos::Shared::FrameWork::Data::Txt::__set_entry_mode(char first_byte, char
 	switch (first_byte)
 	{
 	case '?': //inquiry mode
+	{
 		__set_sub_entry_mode(second_byte);
-		//This is an inquiry and events will set and handle this. We dont actually need the record data
+		//This is an inquiry and system_events will set and handle this. We dont actually need the record data
 		Talos::Shared::c_cache_data::txt_record.pntr_record = NULL;
 		break;
+	}
 	default:
+	{
+		Talos::Shared::FrameWork::StartUp::CpuCluster[Talos::Shared::FrameWork::StartUp::cpu_type.Host].h_host_events.Data.set((int)e_system_message::messages::e_data::NgcDataLine);
 		//assume its plain ngc g code data
-		Talos::Shared::FrameWork::Events::Router.ready.event_manager.set((int)c_event_router::ss_ready_data::e_event_type::NgcDataLine);
+	}
 
 	}
 }
 
 void Talos::Shared::FrameWork::Data::Txt::__set_sub_entry_mode(char byte)
 {
+	s_bit_flag_controller<uint32_t> *pntr_event = &Talos::Shared::FrameWork::StartUp::CpuCluster[Talos::Shared::FrameWork::StartUp::cpu_type.Host].h_host_events.Inquiry;
 	switch (byte)
 	{
 	case 'G': //block g group status
-		Talos::Shared::FrameWork::Events::Router.inquire.event_manager.set((int)c_event_router::ss_inquiry_data::e_event_type::ActiveBlockGGroupStatus);
+		pntr_event->set((int)e_system_message::messages::e_inquiry::GCodeBlockReport);
 		break;
 	case 'M': //block m group status
-		Talos::Shared::FrameWork::Events::Router.inquire.event_manager.set((int)c_event_router::ss_inquiry_data::e_event_type::ActiveBlockMGroupStatus);
+		pntr_event->set((int)e_system_message::messages::e_inquiry::MCodeBlockReport);
 		break;
 	case 'W': //word value status
-		Talos::Shared::FrameWork::Events::Router.inquire.event_manager.set((int)c_event_router::ss_inquiry_data::e_event_type::ActiveBlockWordStatus);
+		pntr_event->set((int)e_system_message::messages::e_inquiry::WordStatusReport);
 		break;
 	default:
 		/*__raise_error(NULL, e_error_behavior::Informal, 0, e_error_group::DataHandler, e_error_process::Process
