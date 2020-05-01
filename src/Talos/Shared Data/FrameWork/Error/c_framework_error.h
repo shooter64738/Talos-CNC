@@ -16,6 +16,7 @@ namespace Talos
 			{
 			public:
 				static s_framework_error framework_error;
+				static void raise_error(uint16_t base, uint16_t method, uint16_t line, uint8_t event_id);
 				static void general_error_handler();
 				static void ngc_error_handler(char * ngc_line);
 

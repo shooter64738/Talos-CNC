@@ -85,6 +85,7 @@ uint8_t Hardware_Abstraction_Layer::Disk::load_configuration()
 
 uint8_t Hardware_Abstraction_Layer::Disk::load_motion_control_settings(s_motion_control_settings_encapsulation * motion_settings)
 {
+	return 0;
 	motion_settings->hardware.spindle_encoder.meta_data.reg_tc0_cv1 = 99;
 	motion_settings->hardware.spindle_encoder.meta_data.reg_tc0_ra0 = 88;
 	motion_settings->hardware.spindle_encoder.meta_data.speed_rps = 14;

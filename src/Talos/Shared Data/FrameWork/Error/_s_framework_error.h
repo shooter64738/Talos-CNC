@@ -19,14 +19,17 @@ struct s_error_stack
 
 struct s_framework_error
 {
-	uint16_t group;
-	uint16_t source;
-	uint16_t process;
-	e_record_types __rec_type__;
+	uint8_t sys_message;
+	uint8_t sys_type;
+	uint16_t user_code1;
+	uint16_t user_code2;
+	uint16_t read_crc;
+	uint16_t new_crc;
+	//e_record_types __rec_type__;
 	e_error_behavior behavior;
-	uint16_t code;
+	//uint16_t code;
 	uint8_t origin;
-	uint16_t data_size;
+	//uint16_t data_size;
 	s_error_stack stack;
 	char * data;
 	uint16_t buffer_head;

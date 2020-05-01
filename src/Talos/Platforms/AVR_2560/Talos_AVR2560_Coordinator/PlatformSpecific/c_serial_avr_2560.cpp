@@ -12,16 +12,16 @@
 #include <avr/io.h>
 #include <stddef.h>
 #include "../../../../Coordinator/Processing/Data/c_data_buffers.h"
-#include "../../../../Shared Data/FrameWork/extern_events_types.h"
 #include "../../../../Shared Data/FrameWork/Data/cache_data.h"
+#include "../../../../Shared Data/FrameWork/Event/c_event_router.h"
 
 
 void Hardware_Abstraction_Layer::Serial::initialize(uint8_t Port, uint32_t BaudRate)
 {
 	memset(Talos::Coordinator::Data::Buffer::buffers[Port].storage, 0,256);
 	Talos::Coordinator::Data::Buffer::buffers[Port].ring_buffer.initialize(Talos::Coordinator::Data::Buffer::buffers[Port].storage, 256);
-	Talos::Shared::FrameWork::Events::Router.inputs.pntr_ring_buffer = Talos::Coordinator::Data::Buffer::buffers;
-	Talos::Shared::FrameWork::Events::Router.outputs.pntr_serial_write = Hardware_Abstraction_Layer::Serial::send;
+	Talos::Shared::FrameWork::Events::Router::inputs.pntr_ring_buffer = Talos::Coordinator::Data::Buffer::buffers;
+	Talos::Shared::FrameWork::Events::Router::outputs.pntr_serial_write = Hardware_Abstraction_Layer::Serial::send;
 
 	uint16_t UBRR_value =0;
 	switch (Port)
@@ -170,7 +170,7 @@ ISR(USART_RX_vect)
 {
 	char Byte = UDR0;
 	Talos::Coordinator::Data::Buffer::buffers[0].ring_buffer.put(Byte);
-	Talos::Shared::FrameWork::Events::Router.inputs.event_manager.set((int)c_event_router::s_in_events::e_event_type::Usart0DataArrival);
+	Talos::Shared::FrameWork::Events::Router::inputs.event_manager.set((int)Talos::Shared::FrameWork::Events::Router::s_in_events::e_event_type::Usart0DataArrival);
 }
 #endif
 
@@ -179,7 +179,7 @@ ISR(USART0_RX_vect)
 {
 	char Byte = UDR0;
 	Talos::Coordinator::Data::Buffer::buffers[0].ring_buffer.put(Byte);
-	Talos::Shared::FrameWork::Events::Router.inputs.event_manager.set((int)c_event_router::s_in_events::e_event_type::Usart0DataArrival);
+	Talos::Shared::FrameWork::Events::Router::inputs.event_manager.set((int)Talos::Shared::FrameWork::Events::Router::s_in_events::e_event_type::Usart0DataArrival);
 }
 #endif
 
@@ -190,7 +190,7 @@ ISR(USART1_RX_vect)
 
 
 	Talos::Coordinator::Data::Buffer::buffers[1].ring_buffer.put(Byte);
-	Talos::Shared::FrameWork::Events::Router.inputs.event_manager.set((int)c_event_router::s_in_events::e_event_type::Usart1DataArrival);
+	Talos::Shared::FrameWork::Events::Router::inputs.event_manager.set((int)Talos::Shared::FrameWork::Events::Router::s_in_events::e_event_type::Usart1DataArrival);
 }
 #endif
 
@@ -200,7 +200,7 @@ ISR(USART2_RX_vect)
 	char Byte = UDR2;
 UDR0='c';
 	Talos::Coordinator::Data::Buffer::buffers[2].ring_buffer.put(Byte);
-	Talos::Shared::FrameWork::Events::Router.inputs.event_manager.set((int)c_event_router::s_in_events::e_event_type::Usart2DataArrival);
+	Talos::Shared::FrameWork::Events::Router::inputs.event_manager.set((int)Talos::Shared::FrameWork::Events::Router::s_in_events::e_event_type::Usart2DataArrival);
 }
 #endif
 
@@ -210,7 +210,7 @@ ISR(USART3_RX_vect)
 	char Byte = UDR3;
 UDR0='d';
 	Talos::Coordinator::Data::Buffer::buffers[3].ring_buffer.put(Byte);
-	Talos::Shared::FrameWork::Events::Router.inputs.event_manager.set((int)c_event_router::s_in_events::e_event_type::Usart3DataArrival);
+	Talos::Shared::FrameWork::Events::Router::inputs.event_manager.set((int)Talos::Shared::FrameWork::Events::Router::s_in_events::e_event_type::Usart3DataArrival);
 }
 #endif
 

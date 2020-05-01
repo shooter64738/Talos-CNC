@@ -58,9 +58,9 @@ void Talos::Motion::Main_Process::initialize()
 	//__initialization_start("Coord Com", Talos::Motion::Main_Process::coordinator_initialize, STARTUP_CLASS_CRITICAL);//<--coordinator controller card
 	//__initialization_start("Spndl Com", NULL, STARTUP_CLASS_CRITICAL);//<--spindle controller card
 
-	Talos::Shared::FrameWork::StartUp::CpuCluster[Talos::Shared::FrameWork::StartUp::cpu_type.Motion].Synch(
+	Talos::Shared::FrameWork::StartUp::CpuCluster[Talos::Shared::FrameWork::StartUp::cpu_type.Coordinator].Synch(
 		e_system_message::messages::e_data::MotionConfiguration
-		, e_system_message::e_status_type::Data
+		, e_system_message::e_status_type::Inquiry
 		, (int)e_system_message::messages::e_data::SystemRecord
 		, 0, false);
 

@@ -231,14 +231,6 @@
       <SubType>compile</SubType>
       <Link>Motion\Processing\Data\DataHandlers\c_system_data_handler.h</Link>
     </Compile>
-    <Compile Include="..\..\..\Motion\Processing\Error\c_error.cpp">
-      <SubType>compile</SubType>
-      <Link>Motion\Processing\Error\c_error.cpp</Link>
-    </Compile>
-    <Compile Include="..\..\..\Motion\Processing\Error\c_error.h">
-      <SubType>compile</SubType>
-      <Link>Motion\Processing\Error\c_error.h</Link>
-    </Compile>
     <Compile Include="..\..\..\Motion\Processing\Events\EventHandlers\c_block_events.cpp">
       <SubType>compile</SubType>
       <Link>Motion\Processing\Events\EventHandlers\c_block_events.cpp</Link>
@@ -262,14 +254,6 @@
     <Compile Include="..\..\..\Motion\Processing\Events\EventHandlers\c_motion_control_event_handler.h">
       <SubType>compile</SubType>
       <Link>Motion\Processing\Events\EventHandlers\c_motion_control_event_handler.h</Link>
-    </Compile>
-    <Compile Include="..\..\..\Motion\Processing\Events\EventHandlers\c_report_events.cpp">
-      <SubType>compile</SubType>
-      <Link>Motion\Processing\Events\EventHandlers\c_report_events.cpp</Link>
-    </Compile>
-    <Compile Include="..\..\..\Motion\Processing\Events\EventHandlers\c_report_events.h">
-      <SubType>compile</SubType>
-      <Link>Motion\Processing\Events\EventHandlers\c_report_events.h</Link>
     </Compile>
     <Compile Include="..\..\..\Motion\Processing\Events\EventHandlers\c_system_event_handler.cpp">
       <SubType>compile</SubType>
@@ -403,13 +387,13 @@
       <SubType>compile</SubType>
       <Link>Shared Data\FrameWork\Event\Serial\c_new_serial_event_handler.h</Link>
     </Compile>
-    <Compile Include="..\..\..\Shared Data\FrameWork\extern_events_types.cpp">
+    <Compile Include="..\..\..\Shared Data\FrameWork\Startup\c_framework_cpu.cpp">
       <SubType>compile</SubType>
-      <Link>Shared Data\FrameWork\extern_events_types.cpp</Link>
+      <Link>Shared Data\FrameWork\Startup\c_framework_cpu.cpp</Link>
     </Compile>
-    <Compile Include="..\..\..\Shared Data\FrameWork\extern_events_types.h">
+    <Compile Include="..\..\..\Shared Data\FrameWork\Startup\c_framework_cpu.h">
       <SubType>compile</SubType>
-      <Link>Shared Data\FrameWork\extern_events_types.h</Link>
+      <Link>Shared Data\FrameWork\Startup\c_framework_cpu.h</Link>
     </Compile>
     <Compile Include="..\..\..\Shared Data\FrameWork\Startup\c_framework_start.cpp">
       <SubType>compile</SubType>
@@ -564,7 +548,6 @@
     <Folder Include="Motion\Processing\Main" />
     <Folder Include="Motion\Processing\Data" />
     <Folder Include="Motion\Processing\Events" />
-    <Folder Include="Motion\Processing\Error" />
     <Folder Include="Motion\Processing\Planner" />
     <Folder Include="Motion\Processing\Planner\Canned Cycles" />
     <Folder Include="Motion\Processing\Planner\CRC" />

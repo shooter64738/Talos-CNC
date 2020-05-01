@@ -7,15 +7,15 @@
 
 class c_cpu
 {
-public:
+	public:
 	uint8_t ID;
 	void initialize(uint8_t id);
 	void Synch(
-		e_system_message::messages::e_data init_message
-		, e_system_message::e_status_type init_type
-		, uint8_t init_ready_wait_id
-		, uint8_t init_ready_id
-		, bool is_master_cpus);
+	e_system_message::messages::e_data init_message
+	, e_system_message::e_status_type init_type
+	, uint8_t init_ready_wait_id
+	, uint8_t init_ready_id
+	, bool is_master_cpus);
 
 	void service_events(int32_t * position, uint16_t rpm);
 
@@ -42,6 +42,10 @@ public:
 	};
 
 	s_event_class host_events;
+	
+	private:
+	void __send_formatted_message(uint8_t init_message, uint8_t init_type);
+	void __wait_formatted_message(uint8_t init_message, uint8_t init_type);
 	
 };
 #endif

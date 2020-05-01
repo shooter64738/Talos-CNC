@@ -218,14 +218,6 @@
       <SubType>compile</SubType>
       <Link>Coordinator\Processing\Data\DataHandlers\c_system_data_handler.h</Link>
     </Compile>
-    <Compile Include="..\..\..\Coordinator\Processing\Error\c_error.cpp">
-      <SubType>compile</SubType>
-      <Link>Coordinator\Processing\Error\c_error.cpp</Link>
-    </Compile>
-    <Compile Include="..\..\..\Coordinator\Processing\Error\c_error.h">
-      <SubType>compile</SubType>
-      <Link>Coordinator\Processing\Error\c_error.h</Link>
-    </Compile>
     <Compile Include="..\..\..\Coordinator\Processing\Events\EventHandlers\c_ancillary_event_handler.cpp">
       <SubType>compile</SubType>
       <Link>Coordinator\Processing\Events\EventHandlers\c_ancillary_event_handler.cpp</Link>
@@ -249,14 +241,6 @@
     <Compile Include="..\..\..\Coordinator\Processing\Events\EventHandlers\c_ngc_data_events.h">
       <SubType>compile</SubType>
       <Link>Coordinator\Processing\Events\EventHandlers\c_ngc_data_events.h</Link>
-    </Compile>
-    <Compile Include="..\..\..\Coordinator\Processing\Events\EventHandlers\c_report_events.cpp">
-      <SubType>compile</SubType>
-      <Link>Coordinator\Processing\Events\EventHandlers\c_report_events.cpp</Link>
-    </Compile>
-    <Compile Include="..\..\..\Coordinator\Processing\Events\EventHandlers\c_report_events.h">
-      <SubType>compile</SubType>
-      <Link>Coordinator\Processing\Events\EventHandlers\c_report_events.h</Link>
     </Compile>
     <Compile Include="..\..\..\Coordinator\Processing\Events\EventHandlers\c_spi_data_events.cpp">
       <SubType>compile</SubType>
@@ -598,13 +582,13 @@
       <SubType>compile</SubType>
       <Link>Shared Data\FrameWork\Event\Serial\c_new_serial_event_handler.h</Link>
     </Compile>
-    <Compile Include="..\..\..\Shared Data\FrameWork\extern_events_types.cpp">
+    <Compile Include="..\..\..\Shared Data\FrameWork\Startup\c_framework_cpu.cpp">
       <SubType>compile</SubType>
-      <Link>Shared Data\FrameWork\extern_events_types.cpp</Link>
+      <Link>Shared Data\FrameWork\Startup\c_framework_cpu.cpp</Link>
     </Compile>
-    <Compile Include="..\..\..\Shared Data\FrameWork\extern_events_types.h">
+    <Compile Include="..\..\..\Shared Data\FrameWork\Startup\c_framework_cpu.h">
       <SubType>compile</SubType>
-      <Link>Shared Data\FrameWork\extern_events_types.h</Link>
+      <Link>Shared Data\FrameWork\Startup\c_framework_cpu.h</Link>
     </Compile>
     <Compile Include="..\..\..\Shared Data\FrameWork\Startup\c_framework_start.cpp">
       <SubType>compile</SubType>
@@ -620,15 +604,15 @@
     </Compile>
     <Compile Include="..\..\..\Shared Data\Settings\Motion\_s_motion_control_settings_encapsulation.h">
       <SubType>compile</SubType>
-      <Link>Talos_AVR2560_Coordinator\Shared Data\Settings\Motion\_s_motion_control_settings_encapsulation.h</Link>
+      <Link>Shared Data\Settings\Motion\_s_motion_control_settings_encapsulation.h</Link>
     </Compile>
     <Compile Include="..\..\..\Shared Data\Settings\Motion\_s_motion_hardware.h">
       <SubType>compile</SubType>
-      <Link>Talos_AVR2560_Coordinator\Shared Data\Settings\Motion\_s_motion_hardware.h</Link>
+      <Link>Shared Data\Settings\Motion\_s_motion_hardware.h</Link>
     </Compile>
     <Compile Include="..\..\..\Shared Data\Settings\Motion\_s_motion_tolerance_struct.h">
       <SubType>compile</SubType>
-      <Link>Talos_AVR2560_Coordinator\Shared Data\Settings\Motion\_s_motion_tolerance_struct.h</Link>
+      <Link>Shared Data\Settings\Motion\_s_motion_tolerance_struct.h</Link>
     </Compile>
     <Compile Include="..\..\..\Shared Data\_e_binary_comm_response.h">
       <SubType>compile</SubType>
@@ -742,7 +726,6 @@
     <Folder Include="Coordinator\Processing\Data\" />
     <Folder Include="Coordinator\Processing\Data\DataHandlers\" />
     <Folder Include="Coordinator\Processing\Events\EventHandlers" />
-    <Folder Include="Coordinator\Processing\Error" />
     <Folder Include="Coordinator\Serial" />
     <Folder Include="Coordinator\Processing\" />
     <Folder Include="Coordinator\Processing\GCode\" />

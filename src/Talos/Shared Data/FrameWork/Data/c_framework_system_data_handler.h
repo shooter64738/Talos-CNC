@@ -54,9 +54,9 @@ namespace Talos
 				protected:
 				private:
 					static uint16_t __crc_compare(char * source, uint16_t size);
-					static void __raise_error(uint16_t base, uint16_t method, uint16_t line, uint8_t event_id);
 					static void __check_addendum(s_packet * cache_object);
 					static void __classify_data_type_message(s_packet * cache_object);
+					static void __classify_inquiry_type_message(s_packet *cache_object);
 				};
 			};
 		};

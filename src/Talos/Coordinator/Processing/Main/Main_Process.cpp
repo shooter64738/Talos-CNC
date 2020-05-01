@@ -80,7 +80,7 @@ void Talos::Coordinator::Main_Process::initialize()
 	
 	Talos::Shared::FrameWork::StartUp::CpuCluster[Talos::Shared::FrameWork::StartUp::cpu_type.Motion].Synch(
 		e_system_message::messages::e_data::MotionConfiguration
-		, e_system_message::e_status_type::Data
+		, e_system_message::e_status_type::Inquiry
 		, (int)e_system_message::messages::e_data::SystemRecord
 		, 0, true);
 	

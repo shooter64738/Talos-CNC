@@ -18,12 +18,12 @@ Talos::Shared::FrameWork::Data::s_packet read;
 Talos::Shared::FrameWork::Data::s_packet write;
 
 bool Talos::Shared::FrameWork::Data::System::send(uint8_t message
-	, uint8_t type
-	, uint8_t origin
-	, uint8_t target
-	, uint8_t state
-	, uint8_t sub_state
-	, int32_t * position_data
+, uint8_t type
+, uint8_t origin
+, uint8_t target
+, uint8_t state
+, uint8_t sub_state
+, int32_t * position_data
 )
 {
 	//There are multiple system messages. Target determines which one is going to update.
@@ -31,7 +31,7 @@ bool Talos::Shared::FrameWork::Data::System::send(uint8_t message
 	//if the cache data system rec pointer is null we are free to use it. if its not, we must
 	//leave the system_events set and keep checking on each loop. it should send after only 1 processor loop
 	if (pntr_sys_wrk == NULL)
-		return false;
+	return false;
 
 	//set the pointer to the cache record
 	//Talos::Shared::c_cache_data::pntr_system_record = &Talos::Shared::c_cache_data::system_record;
@@ -41,14 +41,14 @@ bool Talos::Shared::FrameWork::Data::System::send(uint8_t message
 	pntr_sys_wrk->target = target;
 	//copy position data from the interpolation hardware
 	if (position_data != NULL)
-		memcpy(pntr_sys_wrk->position
-			, position_data
-			, sizeof(int32_t)*MACHINE_AXIS_COUNT);
+	memcpy(pntr_sys_wrk->position
+	, position_data
+	, sizeof(int32_t)*MACHINE_AXIS_COUNT);
 	pntr_sys_wrk->state = state;
 	pntr_sys_wrk->sub_state = sub_state;
 	pntr_sys_wrk->type = type;
 
-	//make up some stuff for testing. 
+	//make up some stuff for testing.
 	pntr_sys_wrk->position[0] = 123;
 	pntr_sys_wrk->position[1] = 456;
 	pntr_sys_wrk->position[2] = 789;
@@ -105,7 +105,7 @@ void Talos::Shared::FrameWork::Data::System::reader()
 
 				if (crc_check != 0)
 				{
-					__raise_error(BASE_ERROR, READER_ERROR, SYSTEM_CRC_FAILED,read.event_id);
+					Talos::Shared::FrameWork::Error::raise_error(BASE_ERROR, READER_ERROR, SYSTEM_CRC_FAILED,read.event_id);
 				}
 				
 				read.message_record->rx_from = (int)read.event_id;
@@ -127,7 +127,7 @@ void Talos::Shared::FrameWork::Data::System::reader()
 				pntr_read_release = NULL;
 				//Shared::c_cache_data::pntr_system_record == NULL;
 
-				////Copy the temp system record to the its final destination now that we know where it goes. 
+				////Copy the temp system record to the its final destination now that we know where it goes.
 				//memcpy(&Talos::Shared::c_cache_data::sys_message[temp_system_message.rx_from]
 				//	, &temp_system_message, s_control_message::__size__);
 
@@ -138,13 +138,15 @@ void Talos::Shared::FrameWork::Data::System::reader()
 					crc_check = __crc_compare(read.cache[SYS_ADDENDUM_RECORD], read.addendum_size);
 					if (crc_check != 0)
 					{
-						__raise_error(BASE_ERROR, READER_ERROR, ADDENDUM_CRC_FAILED, read.event_id);
+						Talos::Shared::FrameWork::Error::raise_error(BASE_ERROR, READER_ERROR, ADDENDUM_CRC_FAILED, read.event_id);
 					}
 					Talos::Shared::FrameWork::StartUp::CpuCluster[read.event_id].system_events.set((int)c_cpu::e_event_type::AddendumRecord);
 					//__check_addendum function determined if an addendum was recieved with the data. If it was it gave us an event controller
 					//and we need to set that event controllers flag so the rest of the application knows something came in, and what it was.
-					read.addendum_event_object->set(read.addendum_event_id);
 				}
+				
+				if (read.addendum_event_object != NULL)
+				read.addendum_event_object->set(read.addendum_event_id);
 
 				return;
 			}
@@ -161,27 +163,21 @@ uint16_t Talos::Shared::FrameWork::Data::System::__crc_compare(char * source, ui
 {
 	#define LAST_BYTE 0
 	#define PREV_BYTE 1
-	//Talos::Motion::Main_Process::host_serial.print_string("read crc\r\n");
-	//Talos::Motion::Main_Process::host_serial.print_int32(((uint8_t)*(source - LAST_BYTE) ));
-	//Talos::Motion::Main_Process::host_serial.print_string(",");
-	//Talos::Motion::Main_Process::host_serial.print_int32((uint8_t)*(source - PREV_BYTE));
-	//Talos::Motion::Main_Process::host_serial.print_string(",");
 	
-	uint16_t read_crc = ((uint8_t)*(source - LAST_BYTE) << 8) | (uint8_t)*(source - PREV_BYTE);
-	Talos::Shared::FrameWork::Error::framework_error.source = read_crc;
+	Talos::Shared::FrameWork::Error::framework_error.read_crc = ((uint8_t)*(source - LAST_BYTE) << 8) | (uint8_t)*(source - PREV_BYTE);
+	
 	*(source - LAST_BYTE) = 0;
 	*(source - PREV_BYTE) = 0;
-	uint16_t new_crc = Talos::Shared::FrameWork::CRC::crc16(source - (size - 1), size - crc_size);
-	Talos::Shared::FrameWork::Error::framework_error.code = new_crc;
-	read_crc -= new_crc;
-	return read_crc;
+	
+	Talos::Shared::FrameWork::Error::framework_error.new_crc = Talos::Shared::FrameWork::CRC::crc16(source - (size - 1), size - crc_size);
+	return Talos::Shared::FrameWork::Error::framework_error.read_crc - Talos::Shared::FrameWork::Error::framework_error.new_crc;
 }
 
 #define ROUTE_WRITE_ERROR 4
 void Talos::Shared::FrameWork::Data::System::route_write(uint8_t event_id, s_bit_flag_controller<uint32_t> *event_object)
 {
 	if (pntr_sys_wrk == NULL)
-		__raise_error(BASE_ERROR, ROUTE_WRITE_ERROR, SYSTEM_RECORD_POINTER_NULL, event_id);
+	Talos::Shared::FrameWork::Error::raise_error(BASE_ERROR, ROUTE_WRITE_ERROR, SYSTEM_RECORD_POINTER_NULL, event_id);
 
 	write.counter = s_control_message::__size__;
 	write.message_record = pntr_sys_wrk;
@@ -218,7 +214,7 @@ void Talos::Shared::FrameWork::Data::System::writer()
 		{
 			//We now need to see if there is addendum data to send after that system record.
 			if (!write.addendum_checked)
-				__check_addendum(&write);
+			__check_addendum(&write);
 
 			//if write counter is still zero then there is no addendum
 			if (!write.counter)
@@ -242,24 +238,6 @@ void Talos::Shared::FrameWork::Data::System::writer()
 	}
 }
 
-void Talos::Shared::FrameWork::Data::System::__raise_error(uint16_t base, uint16_t method, uint16_t line, uint8_t event_id)
-{
-	Talos::Shared::FrameWork::StartUp::CpuCluster[event_id].system_events.set((int)c_cpu::e_event_type::Error);
-
-	Talos::Shared::FrameWork::Error::framework_error.buffer_head = ((Talos::Shared::FrameWork::Events::Router::inputs.pntr_ring_buffer + (int)event_id)->ring_buffer._head);
-	Talos::Shared::FrameWork::Error::framework_error.buffer_tail = ((Talos::Shared::FrameWork::Events::Router::inputs.pntr_ring_buffer + (int)event_id)->ring_buffer._tail);
-	Talos::Shared::FrameWork::Error::framework_error.origin = (int)event_id;
-	Talos::Shared::FrameWork::Error::framework_error.data = ((Talos::Shared::FrameWork::Events::Router::inputs.pntr_ring_buffer + (int)event_id)->storage);
-//
-	Talos::Shared::FrameWork::Error::framework_error.stack.base = base;
-	Talos::Shared::FrameWork::Error::framework_error.stack.method = method;
-	Talos::Shared::FrameWork::Error::framework_error.stack.line = line;
-
-	Talos::Shared::FrameWork::Error::general_error_handler();
-
-
-}
-
 #define __CHECK_ADDENDUM 6
 #define UNKNOWN_RECORD_TYPE 1
 #define UNHANDLED_RECORD_TYPE 2
@@ -269,35 +247,43 @@ void Talos::Shared::FrameWork::Data::System::__check_addendum(s_packet *cache_ob
 	cache_object->has_addendum = false;
 	cache_object->addendum_checked = true;
 	cache_object->addendum_size = 0;
+	cache_object->addendum_event_object = NULL;
+	cache_object->addendum_event_id = 0;
 
 	switch ((e_system_message::e_status_type)cache_object->message_record->type)
 	{
-	case e_system_message::e_status_type::Data:
-	{
-		__classify_data_type_message(cache_object);
+		case e_system_message::e_status_type::Data:
+		{
+			__classify_data_type_message(cache_object);
+			break;
+		}
+		case e_system_message::e_status_type::Inquiry:
+		{
+			__classify_inquiry_type_message(cache_object);
+			break;
+		}
+		case e_system_message::e_status_type::Critical:
+		{
+			Talos::Shared::FrameWork::Error::raise_error(BASE_ERROR, __CHECK_ADDENDUM, UNHANDLED_RECORD_TYPE, cache_object->event_id);
+			break;
+		}
+		case e_system_message::e_status_type::Warning:
+		{
+			Talos::Shared::FrameWork::Error::raise_error(BASE_ERROR, __CHECK_ADDENDUM, UNHANDLED_RECORD_TYPE, cache_object->event_id);
+			break;
+		}
+		case e_system_message::e_status_type::Informal:
+		{
+			//Informal messages shouldn't have an addendum. the 'information' is in the system record
+			//__raise_error(BASE_ERROR, __CHECK_ADDENDUM, UNHANDLED_RECORD_TYPE, cache_object->event_id);
+			break;
+		}
+		default:
+		Talos::Shared::FrameWork::Error::raise_error(BASE_ERROR, __CHECK_ADDENDUM, UNKNOWN_RECORD_TYPE, cache_object->event_id);
 		break;
-	case e_system_message::e_status_type::Critical:
-	{
-		__raise_error(BASE_ERROR, __CHECK_ADDENDUM, UNHANDLED_RECORD_TYPE, cache_object->event_id);
-		break;
-	}
-	case e_system_message::e_status_type::Warning:
-	{
-		__raise_error(BASE_ERROR, __CHECK_ADDENDUM, UNHANDLED_RECORD_TYPE, cache_object->event_id);
-		break;
-	}
-	case e_system_message::e_status_type::Informal:
-	{
-		//Informal messages shouldn't have an addendum. the 'information' is in the system record
-		//__raise_error(BASE_ERROR, __CHECK_ADDENDUM, UNHANDLED_RECORD_TYPE, cache_object->event_id);
-		break;
-	}
-	default:
-		__raise_error(BASE_ERROR, __CHECK_ADDENDUM, UNKNOWN_RECORD_TYPE, cache_object->event_id);
-		break;
-	}
 	}
 }
+
 
 #define __CLASSIFY_DATA_TYPE_MESSAGE 7
 #define UNKNOWN_MESSAGE_TYPE 1
@@ -306,26 +292,61 @@ void Talos::Shared::FrameWork::Data::System::__classify_data_type_message(s_pack
 {
 	switch (((e_system_message::messages::e_data)cache_object->message_record->message))
 	{
-	case e_system_message::messages::e_data::MotionConfiguration:
-	{
-		Talos::Shared::c_cache_data::pntr_motion_configuration_record = &Talos::Shared::c_cache_data::motion_configuration_record;
-		//Assign the second write cache object to the motion config record
-		cache_object->cache[SYS_ADDENDUM_RECORD] = (char*)Talos::Shared::c_cache_data::pntr_motion_configuration_record;
-		cache_object->has_addendum = true;
-		cache_object->record_number = SYS_ADDENDUM_RECORD;
-		//Clear the crc
-		Talos::Shared::c_cache_data::motion_configuration_record.crc = 0;
-		//Get a crc value
-		Talos::Shared::c_cache_data::motion_configuration_record.crc =
+		case e_system_message::messages::e_data::MotionConfiguration:
+		{
+			Talos::Shared::c_cache_data::pntr_motion_configuration_record = &Talos::Shared::c_cache_data::motion_configuration_record;
+			//Assign the second write cache object to the motion config record
+			cache_object->cache[SYS_ADDENDUM_RECORD] = (char*)Talos::Shared::c_cache_data::pntr_motion_configuration_record;
+			cache_object->has_addendum = true;
+			cache_object->record_number = SYS_ADDENDUM_RECORD;
+			//Clear the crc
+			Talos::Shared::c_cache_data::motion_configuration_record.crc = 0;
+			//Get a crc value
+			Talos::Shared::c_cache_data::motion_configuration_record.crc =
 			Talos::Shared::FrameWork::CRC::crc16(cache_object->cache[SYS_ADDENDUM_RECORD], s_motion_control_settings_encapsulation::__size__ - crc_size);
-		cache_object->counter += s_motion_control_settings_encapsulation::__size__;
-		cache_object->addendum_size = s_motion_control_settings_encapsulation::__size__;
-		cache_object->addendum_event_object = &Talos::Shared::FrameWork::StartUp::CpuCluster[cache_object->event_id].host_events.Data;
-		cache_object->addendum_event_id = (uint8_t)e_system_message::messages::e_data::MotionConfiguration;
+			cache_object->counter += s_motion_control_settings_encapsulation::__size__;
+			cache_object->addendum_size = s_motion_control_settings_encapsulation::__size__;
+			cache_object->addendum_event_object = &Talos::Shared::FrameWork::StartUp::CpuCluster[cache_object->event_id].host_events.Data;
+			cache_object->addendum_event_id = (uint8_t)e_system_message::messages::e_data::MotionConfiguration;
+			break;
+		}
+		default:
+		Talos::Shared::FrameWork::Error::raise_error(BASE_ERROR, __CLASSIFY_DATA_TYPE_MESSAGE, UNCLASSED_MESSAGE_TYPE, cache_object->event_id);
 		break;
 	}
-	default:
-		__raise_error(BASE_ERROR, __CLASSIFY_DATA_TYPE_MESSAGE, UNCLASSED_MESSAGE_TYPE, cache_object->event_id);
+}
+
+#define __CLASSIFY_INQUIRY_TYPE_MESSAGE 8
+#define UNKNOWN_MESSAGE_TYPE 1
+#define UNCLASSED_MESSAGE_TYPE 2
+void Talos::Shared::FrameWork::Data::System::__classify_inquiry_type_message(s_packet *cache_object)
+{
+	switch (((e_system_message::messages::e_data)cache_object->message_record->message))
+	{
+		case e_system_message::messages::e_data::MotionConfiguration:
+		{
+			//This is an inquiry message to get motion configuration data. Construct an event to send
+			//this data back
+			
+			
+			//Talos::Shared::c_cache_data::pntr_motion_configuration_record = &Talos::Shared::c_cache_data::motion_configuration_record;
+			////Assign the second write cache object to the motion config record
+			//cache_object->cache[SYS_ADDENDUM_RECORD] = (char*)Talos::Shared::c_cache_data::pntr_motion_configuration_record;
+			//cache_object->has_addendum = true;
+			//cache_object->record_number = SYS_ADDENDUM_RECORD;
+			////Clear the crc
+			//Talos::Shared::c_cache_data::motion_configuration_record.crc = 0;
+			////Get a crc value
+			//Talos::Shared::c_cache_data::motion_configuration_record.crc =
+			//Talos::Shared::FrameWork::CRC::crc16(cache_object->cache[SYS_ADDENDUM_RECORD], s_motion_control_settings_encapsulation::__size__ - crc_size);
+			//cache_object->counter += s_motion_control_settings_encapsulation::__size__;
+			//cache_object->addendum_size = s_motion_control_settings_encapsulation::__size__;
+			cache_object->addendum_event_object = &Talos::Shared::FrameWork::StartUp::CpuCluster[cache_object->event_id].host_events.Inquiry;
+			cache_object->addendum_event_id = (int)e_system_message::messages::e_data::MotionConfiguration;
+			break;
+		}
+		default:
+		Talos::Shared::FrameWork::Error::raise_error(BASE_ERROR, __CLASSIFY_DATA_TYPE_MESSAGE, UNCLASSED_MESSAGE_TYPE, cache_object->event_id);
 		break;
 	}
 }
