@@ -90,9 +90,13 @@ e_system_message::messages::e_data init_message
 	this->system_events.set((int)c_cpu::e_event_type::OnLine);
 	
 	Talos::Shared::FrameWork::StartUp::string_writer("value end =");
-	Talos::Shared::FrameWork::StartUp::int32_writer
-	(Talos::Shared::c_cache_data::motion_configuration_record.hardware.steps_per_mm[0]);
-	
+	Talos::Shared::FrameWork::StartUp::int32_writer(
+		Talos::Shared::c_cache_data::motion_configuration_record.hardware.steps_per_mm[0]);
+	Talos::Shared::FrameWork::StartUp::string_writer("\r\n");
+
+	Talos::Shared::FrameWork::StartUp::string_writer("time =");
+	Talos::Shared::FrameWork::StartUp::int32_writer(
+		this->message_lag_cycles);
 	//Lock up for now.. this is all testing stuff
 	while(1){}
 	
@@ -148,6 +152,8 @@ void c_cpu::__wait_formatted_message(uint8_t init_message, uint8_t init_type)
 
 void c_cpu::service_events(int32_t * position, uint16_t rpm)
 {
+	this->cycle_count++;
+
 	//if NoState and OnLine is false, theres no need to process events.
 	if (this->system_events.get((int)c_cpu::e_event_type::NoState)
 	|| !this->system_events.get((int)c_cpu::e_event_type::OnLine))
@@ -162,4 +168,9 @@ void c_cpu::service_events(int32_t * position, uint16_t rpm)
 
 	if (this->host_events.Inquiry.get_clr((int) e_system_message::messages::e_data::MotionConfiguration))
 		__send_formatted_message((int) e_system_message::messages::e_data::MotionConfiguration, (int)e_system_message::e_status_type::Data );
+}
+
+void c_cpu::update_message_time(uint32_t read_time)
+{
+	this->message_lag_cycles = read_time - this->cycle_count;
 }

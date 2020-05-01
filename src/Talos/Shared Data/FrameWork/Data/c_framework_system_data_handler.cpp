@@ -56,6 +56,8 @@ bool Talos::Shared::FrameWork::Data::System::send(uint8_t message
 	pntr_sys_wrk->position[4] = 345;
 	pntr_sys_wrk->position[5] = 678;
 
+	pntr_sys_wrk->time_code = Talos::Shared::FrameWork::StartUp::CpuCluster[target].cycle_count;
+
 	Talos::Shared::FrameWork::Events::Router::outputs.event_manager.set((int)e_system_message::messages::e_data::SystemRecord);
 	
 	//Since a message is now in the queue, process system_events for it. This may also process other system_events that are pending in the framework
@@ -148,6 +150,11 @@ void Talos::Shared::FrameWork::Data::System::reader()
 				if (read.addendum_event_object != NULL)
 				read.addendum_event_object->set(read.addendum_event_id);
 
+				//send the time code from the rx message to the cpu class so we can tell how many cycles it took since a message was sent
+				Talos::Shared::FrameWork::StartUp::CpuCluster[read.event_id].update_message_time
+					(Talos::Shared::FrameWork::StartUp::CpuCluster[read.event_id].sys_message.time_code);
+				
+
 				return;
 			}
 		}
@@ -186,6 +193,7 @@ void Talos::Shared::FrameWork::Data::System::route_write(uint8_t event_id, s_bit
 	write.target = pntr_sys_wrk->target;
 	write.cache[SYS_CONTROL_RECORD] = (char*)pntr_sys_wrk;
 	write.addendum_checked = false;
+	
 	//Clear the crc
 	pntr_sys_wrk->crc = 0;
 	//Get a crc value

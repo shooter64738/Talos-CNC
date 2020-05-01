@@ -175,16 +175,11 @@ volatile uint32_t tick_at_time = 0;
 void Talos::Coordinator::Main_Process::run()
 {
 	Talos::Coordinator::Main_Process::host_serial.print_string("\r\n** System ready **\r\n");
-
+	
+	//Talos::Shared::FrameWork::StartUp::CpuCluster[Talos::Shared::FrameWork::StartUp::cpu_type.Host].system_events.set((int)c_cpu::e_event_type::OnLine);
+	
 	while (Talos::Shared::FrameWork::StartUp::CpuCluster[Talos::Shared::FrameWork::StartUp::cpu_type.Host].system_events.get((int)c_cpu::e_event_type::OnLine))
 	{
-		if (tick_at_time > 0)
-		{
-			Talos::Coordinator::Main_Process::host_serial.print_int32(tick_at_time);
-			Talos::Coordinator::Main_Process::host_serial.print_string("\r\n");
-			tick_at_time = 0;
-		}
-
 		//0: Handle system system_events
 		//Talos::Coordinator::Events::system_event_handler.process();
 

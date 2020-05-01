@@ -42,6 +42,11 @@ class c_cpu
 	};
 
 	s_event_class host_events;
+
+	void update_message_time(uint32_t read_time);
+
+	uint32_t cycle_count = 0;
+	uint32_t message_lag_cycles = 0;
 	
 	private:
 	void __send_formatted_message(uint8_t init_message, uint8_t init_type);
