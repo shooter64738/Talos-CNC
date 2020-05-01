@@ -294,9 +294,9 @@ void Talos::Shared::FrameWork::Data::System::__classify_data_type_message(s_pack
 	{
 		case e_system_message::messages::e_data::MotionConfiguration:
 		{
-			Talos::Shared::c_cache_data::pntr_motion_configuration_record = &Talos::Shared::c_cache_data::motion_configuration_record;
+			
 			//Assign the second write cache object to the motion config record
-			cache_object->cache[SYS_ADDENDUM_RECORD] = (char*)Talos::Shared::c_cache_data::pntr_motion_configuration_record;
+			cache_object->cache[SYS_ADDENDUM_RECORD] = (char*)(&Talos::Shared::c_cache_data::motion_configuration_record);
 			cache_object->has_addendum = true;
 			cache_object->record_number = SYS_ADDENDUM_RECORD;
 			//Clear the crc

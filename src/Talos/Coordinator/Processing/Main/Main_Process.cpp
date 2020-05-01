@@ -24,8 +24,6 @@ then move to their respective modules.
 #include "../../../Shared Data/FrameWork/Event/Serial/c_new_serial_event_handler.h"
 #include "../../../Shared Data/FrameWork/Data/c_framework_system_data_handler.h"
 #include "../Data/DataHandlers/c_system_data_handler.h"
-
-
 #include "../../../Shared Data/_s_status_record.h"
 #include "../../../Shared Data/Settings/Motion/_s_motion_control_settings_encapsulation.h"
 //
@@ -82,7 +80,7 @@ void Talos::Coordinator::Main_Process::initialize()
 		e_system_message::messages::e_data::MotionConfiguration
 		, e_system_message::e_status_type::Inquiry
 		, (int)e_system_message::messages::e_data::SystemRecord
-		, 0, true);
+		, e_system_message::e_status_type::Data, true);
 	
 
 	//Load the initialize block from settings. These values are the 'initial' values of the gcode blocks

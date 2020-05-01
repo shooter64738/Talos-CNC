@@ -16,17 +16,17 @@ void c_cpu::initialize(uint8_t id)
 /*
 init_ready_wait_id - is the event id that we wait for, before we do anything
 init_message - is the value that is sent to the host
-init_type - is the message type that is sent to the host
-init_ready_id - is the event we should get back from the host after
-sending init_message+init_type indicating we are communicating and processors are connected
+init_request_type - is the message type that is sent to the host
+init_response_type - is the event we should get back from the host after
+sending init_message+init_request_type indicating we are communicating and processors are connected
 */
 
 #define __CPU_SYNCH 1
 void c_cpu::Synch(
 e_system_message::messages::e_data init_message
-, e_system_message::e_status_type init_type
+, e_system_message::e_status_type init_request_type
 , uint8_t init_ready_wait_id
-, uint8_t init_ready_id
+, e_system_message::e_status_type init_response_type
 , bool is_master_cpu)
 {
 	
@@ -46,14 +46,17 @@ e_system_message::messages::e_data init_message
 		Talos::Shared::FrameWork::StartUp::string_writer("mCU host ready\r\n");
 		
 		//Wait for specified message
-		__wait_formatted_message((int)init_message, (int)init_type);
+		__wait_formatted_message((int)init_message, (int)init_request_type);
 		
 		//The proper response to inquiry is data
-		if (init_type == e_system_message::e_status_type::Inquiry)
-		__send_formatted_message((int)init_message, (int)e_system_message::e_status_type::Data);
-		else
+		//if (init_request_type == e_system_message::e_status_type::Inquiry)
+		{
+			//__send_formatted_message((int)init_message, (int)e_system_message::e_status_type::Data);
+			__send_formatted_message((int)init_message, (int)init_response_type);
+		}
+		//else
 		//Child has responded with the specified message we matched on. Now reply with what the child asked for
-		__send_formatted_message((int)init_message, (int)init_type);
+		//__send_formatted_message((int)init_message, (int)init_request_type);
 		
 		Talos::Shared::FrameWork::StartUp::string_writer("mCU host specified\r\n");
 		
@@ -69,14 +72,15 @@ e_system_message::messages::e_data init_message
 		Talos::Shared::FrameWork::StartUp::string_writer("mCU child request\r\n");
 		
 		//The child has gotten a ready message from the master. The child now tells the master what it wants
-		__send_formatted_message((int)init_message, (int)init_type);
+		__send_formatted_message((int)init_message, (int)init_request_type);
 		
 		//The proper wait to inquiry is data
-		if (init_type == e_system_message::e_status_type::Inquiry)
-		__wait_formatted_message((int)init_message, (int)e_system_message::e_status_type::Data);
-		else
+		//if (init_request_type == e_system_message::e_status_type::Inquiry)
+		//__wait_formatted_message((int)init_message, (int)e_system_message::e_status_type::Data);
+		__wait_formatted_message((int)init_message, (int)init_response_type);
+		//else
 		//IF its not an inquiry wait for the specified message.
-		__wait_formatted_message((int)init_message, (int)init_type);
+		//__wait_formatted_message((int)init_message, (int)init_request_type);
 	}
 	
 	//And now we should be done.
@@ -144,7 +148,7 @@ void c_cpu::__wait_formatted_message(uint8_t init_message, uint8_t init_type)
 
 void c_cpu::service_events(int32_t * position, uint16_t rpm)
 {
-	//if NoState and OnLine is false, theres not need to process events.
+	//if NoState and OnLine is false, theres no need to process events.
 	if (this->system_events.get((int)c_cpu::e_event_type::NoState)
 	|| !this->system_events.get((int)c_cpu::e_event_type::OnLine))
 	return;
@@ -154,7 +158,7 @@ void c_cpu::service_events(int32_t * position, uint16_t rpm)
 	this->system_events.clear((int)c_cpu::e_event_type::OnLine);
 
 	memcpy(&this->sys_message.position, position, sizeof(position)*MACHINE_AXIS_COUNT);
-	//memcpy(&this->sys_message.rpm, &rpm, sizeof(uint16_t));
+	memcpy(&this->sys_message.rpm, &rpm, sizeof(uint16_t));
 
 	if (this->host_events.Inquiry.get_clr((int) e_system_message::messages::e_data::MotionConfiguration))
 		__send_formatted_message((int) e_system_message::messages::e_data::MotionConfiguration, (int)e_system_message::e_status_type::Data );

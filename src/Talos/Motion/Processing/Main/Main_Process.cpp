@@ -62,7 +62,7 @@ void Talos::Motion::Main_Process::initialize()
 		e_system_message::messages::e_data::MotionConfiguration
 		, e_system_message::e_status_type::Inquiry
 		, (int)e_system_message::messages::e_data::SystemRecord
-		, 0, false);
+		, e_system_message::e_status_type::Data, false);
 
 }
 

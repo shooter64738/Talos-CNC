@@ -18,8 +18,9 @@ struct s_control_message
 	uint8_t sub_state; //substate value
 	int32_t position[MACHINE_AXIS_COUNT];
 	uint16_t rpm;
+	uint32_t time_code;
 	uint16_t crc;
-	static const uint8_t __size__ = 36; // speify size here.. 'sizeof()' will not work across differing platforms (8bit/32bit)
+	static const uint8_t __size__ = 40; // speify size here.. 'sizeof()' will not work across differing platforms (8bit/32bit)
 });
 
 //struct s_system_motion_settings

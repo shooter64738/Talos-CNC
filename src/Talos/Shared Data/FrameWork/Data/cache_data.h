@@ -17,7 +17,6 @@ namespace Talos
 			//variables
 		public:
 			static s_motion_control_settings_encapsulation motion_configuration_record;
-			static s_motion_control_settings_encapsulation *pntr_motion_configuration_record;
 
 			static s_txt_line_record txt_record;
 			static s_ngc_block ngc_block_record;

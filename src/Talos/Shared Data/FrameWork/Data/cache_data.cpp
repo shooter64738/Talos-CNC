@@ -2,7 +2,6 @@
 
 
 s_motion_control_settings_encapsulation Talos::Shared::c_cache_data::motion_configuration_record;
-s_motion_control_settings_encapsulation *Talos::Shared::c_cache_data::pntr_motion_configuration_record;
 
 s_txt_line_record Talos::Shared::c_cache_data::txt_record;
 s_ngc_block Talos::Shared::c_cache_data::ngc_block_record;
