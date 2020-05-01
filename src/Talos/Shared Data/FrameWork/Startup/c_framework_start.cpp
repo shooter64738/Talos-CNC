@@ -1,4 +1,5 @@
 #include "c_framework_start.h"
+#include <stddef.h>
 
 Talos::Shared::FrameWork::StartUp::s_cpu_type Talos::Shared::FrameWork::StartUp::cpu_type;
 c_cpu Talos::Shared::FrameWork::StartUp::CpuCluster[CPU_CLUSTER_COUNT];
@@ -36,6 +37,19 @@ void Talos::Shared::FrameWork::StartUp::initialize(
 
 void Talos::Shared::FrameWork::StartUp::run_events()
 {
-	//loop through the event classes for the cpus cluster and service anything that needs to run
+	/* 
+	Loop through the event classes for the cpu cluster and service anything that needs to run.
+	Only cpu 'system_events' get processed here. 'host_events' should be handled within the
+	application	layer.
+	*/
+
+	//Motion always has the most updated position data. Copy its position information to everyone else
+	int32_t * position = CpuCluster[cpu_type.Motion].sys_message.position;
+	//Spindle has the most updated rpm data. Copy its rpm information to everyone else
+	uint16_t rpm = CpuCluster[cpu_type.Spindle].sys_message.rpm;
+	for (uint8_t i = 0; i < CPU_CLUSTER_COUNT; i++)
+	{
+		CpuCluster[i].service_events(position, rpm);
+	}
 
 }

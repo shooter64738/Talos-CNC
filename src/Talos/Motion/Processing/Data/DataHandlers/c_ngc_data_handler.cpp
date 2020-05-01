@@ -54,12 +54,12 @@ void Talos::Motion::Data::Ngc::load_block_from_cache()
 
 	//Clear the block event that was set when the line was loaded waaaaayyyy back in the dataevent handler
 	Talos::Shared::FrameWork::StartUp::CpuCluster[Talos::Shared::FrameWork::StartUp::cpu_type.Host]
-		.h_host_events.Data.clear((int)e_system_message::messages::e_data::NgcDataLine);
+		.host_events.Data.clear((int)e_system_message::messages::e_data::NgcDataLine);
 
 	//create an oubound request for ngc block data. 
 	//Talos::Shared::FrameWork::Events::Router.outputs.event_manager.set((int)c_event_router::s_out_events::e_event_type::NgcBlockRequest);
 	Talos::Shared::FrameWork::StartUp::CpuCluster[Talos::Shared::FrameWork::StartUp::cpu_type.Motion]
-		.h_host_events.Data.set((int)e_system_message::messages::e_data::NgcDataRequest);
+		.host_events.Data.set((int)e_system_message::messages::e_data::NgcDataRequest);
 }
 
 void  Talos::Motion::Data::Ngc::__raise_error(char * ngc_line)
@@ -71,7 +71,7 @@ void  Talos::Motion::Data::Ngc::__raise_error(char * ngc_line)
 void Talos::Motion::Data::Ngc::__reset()
 {
 	Talos::Shared::FrameWork::StartUp::CpuCluster[Talos::Shared::FrameWork::StartUp::cpu_type.Host]
-		.h_host_events.Data.clear((int)e_system_message::messages::e_data::NgcDataLine);
+		.host_events.Data.clear((int)e_system_message::messages::e_data::NgcDataLine);
 
 	Talos::Shared::c_cache_data::ngc_block_record.__station__ = 0;
 

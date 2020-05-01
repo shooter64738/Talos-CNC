@@ -176,14 +176,14 @@ uint8_t Motion_Core::Hardware::Interpolation::check_spindle_at_speed()
 	&& !Motion_Core::Hardware::Interpolation::spindle_synch)
 	{
 		//Are we near that speed yet?
-		if (!Motion_Core::Hardware::Interpolation::spindle_encoder->near(
+		/*if (!Motion_Core::Hardware::Interpolation::spindle_encoder->near(
 		Talos::Shared::c_cache_data::motion_configuration_record.hardware.spindle_encoder.current_rpm
 		, Talos::Shared::c_cache_data::motion_configuration_record.hardware.spindle_encoder.target_rpm
 		, Talos::Shared::c_cache_data::motion_configuration_record.hardware.spindle_encoder.variable_percent)
 		)
 		{
 			return false;
-		}
+		}*/
 	}
 
 	/*

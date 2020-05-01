@@ -100,9 +100,7 @@ void Talos::Shared::FrameWork::Data::System::reader()
 			//if read counter is still zero then there is no addendum
 			if (!read.counter)
 			{
-				
-				read.message_record->rx_from = (int)read.event_id;
-				
+				//DO NOT CHANGE ANYTHING IN THE RECORD UNTIL WE CHECK CRC!!!
 				uint16_t crc_check = __crc_compare(read.cache[SYS_CONTROL_RECORD], s_control_message::__size__);
 
 				if (crc_check != 0)
@@ -110,11 +108,13 @@ void Talos::Shared::FrameWork::Data::System::reader()
 					__raise_error(BASE_ERROR, READER_ERROR, SYSTEM_CRC_FAILED,read.event_id);
 				}
 				
+				read.message_record->rx_from = (int)read.event_id;
+
 				//clear the read event. Thats the event that made us call into here and we are done
 				read.event_object->clear(read.event_id);
 				//A system record came in, so lets flag that event
 				Talos::Shared::FrameWork::StartUp::CpuCluster[read.event_id].system_events.set((int)c_cpu::e_event_type::SystemRecord);
-				Talos::Shared::FrameWork::StartUp::CpuCluster[read.event_id].system_events.set((int)c_cpu::e_event_type::OnLine);
+				
 				//The reader that has been calling into here must now be released
 				pntr_read_release();
 				//Talos::Shared::c_cache_data::system_record.rx_from = read.event_id;
@@ -320,7 +320,7 @@ void Talos::Shared::FrameWork::Data::System::__classify_data_type_message(s_pack
 			Talos::Shared::FrameWork::CRC::crc16(cache_object->cache[SYS_ADDENDUM_RECORD], s_motion_control_settings_encapsulation::__size__ - crc_size);
 		cache_object->counter += s_motion_control_settings_encapsulation::__size__;
 		cache_object->addendum_size = s_motion_control_settings_encapsulation::__size__;
-		cache_object->addendum_event_object = &Talos::Shared::FrameWork::StartUp::CpuCluster[cache_object->event_id].h_host_events.Data;
+		cache_object->addendum_event_object = &Talos::Shared::FrameWork::StartUp::CpuCluster[cache_object->event_id].host_events.Data;
 		cache_object->addendum_event_id = (uint8_t)e_system_message::messages::e_data::MotionConfiguration;
 		break;
 	}

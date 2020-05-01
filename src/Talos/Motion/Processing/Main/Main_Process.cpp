@@ -32,15 +32,6 @@
 c_Serial Talos::Motion::Main_Process::host_serial;
 c_Serial Talos::Motion::Main_Process::coordinator_serial;
 
-//void Talos::Motion::Main_Process::__configure_ports()
-//{
-//	Talos::Shared::FrameWork::StartUp::cpu_type.Coordinator = 1;
-//	Talos::Shared::FrameWork::StartUp::cpu_type.Host = 0;
-//	Talos::Shared::FrameWork::StartUp::cpu_type.Motion = 0;
-//	Talos::Shared::FrameWork::StartUp::cpu_type.Spindle = 2;
-//	Talos::Shared::FrameWork::StartUp::cpu_type.Peripheral = 3;
-//}
-
 
 void Talos::Motion::Main_Process::initialize()
 {
@@ -112,37 +103,9 @@ void Talos::Motion::Main_Process::__initialization_response(uint8_t response_cod
 	}
 }
 
-//ISR (TIMER5_COMPA_vect)
-//{
-//Talos::Shared::FrameWork::Events::Router.ready.event_manager.set((int)c_event_router::ss_ready_data::e_event_type::Testsignal);
-//}
-
 static uint32_t tic_count = 0;
 void Talos::Motion::Main_Process::run()
 {
-
-	//OCR5A = 600; //15624;
-	//
-	//TCCR5B |= (1 << WGM52);
-	//// Mode 4, CTC on OCR1A
-	//
-	//
-	////Set interrupt on compare match
-	//
-	////TCCR1B |= (1 << CS12) | (1 << CS10);
-	//TCCR5B |= (1 << CS52);// | (1 << CS10);
-	//
-	//Talos::Motion::Main_Process::host_serial.print_string("** System holding **");
-	//Talos::Shared::FrameWork::Events::extern_system_events.event_manager.set((int)s_system_events::e_event_type::SystemAllOk);
-	//
-	////wait for the activation message from the coordinator.
-	//while(1)
-	//{
-	//Talos::Motion::Events::System::process();
-	//if (Talos::Motion::Events::Report::event_manager.get_clr((int) Events::Report::e_event_type::StatusMessage))
-	//break;
-	//}
-	//TIMSK5 |= (1 << OCIE5A);
 	
 	Talos::Motion::Main_Process::host_serial.print_string("** Sys ready **");
 
@@ -160,51 +123,10 @@ void Talos::Motion::Main_Process::run()
 
 		//4: Handle ancillary events
 		//Talos::Motion::Events::ancillary_event_handler.process();
+
+		//Handle cpu events
+		Talos::Shared::FrameWork::StartUp::run_events();
 	}
-}
-
-void Talos::Motion::Main_Process::test_coord_msg()
-{
-	//setup a fake status message from coordinator so the mc thinks its ready to run
-	//Talos::Shared::FrameWork::Events::Router.ready.event_manager.set((int)c_event_router::ss_ready_data::e_event_type::System);
-	//Talos::Shared::c_cache_data::system_record.type = (int)e_system_message::e_status_type::Informal;
-	//Talos::Shared::c_cache_data::system_record.message = (int)e_system_message::messages::e_informal::ReadyToProcess;
-	//Talos::Shared::c_cache_data::system_record.state = (int)e_system_message::e_status_state::motion::e_state::Idle;
-	//Talos::Shared::c_cache_data::system_record.sub_state = (int)e_system_message::e_status_state::motion::e_sub_state::OK;
-	//Talos::Shared::c_cache_data::system_record.origin = Talos::Shared::FrameWork::StartUp::cpu_type.Coordinator;
-	//Talos::Shared::c_cache_data::system_record.target = Talos::Shared::FrameWork::StartUp::cpu_type.Motion;
-}
-
-void Talos::Motion::Main_Process::test_spindle_msg()
-{
-	//setup a fake status message from spindle so the mc thinks its ready to run
-	//Talos::Shared::FrameWork::Events::Router.ready.event_manager.set((int)c_event_router::ss_ready_data::e_event_type::System);
-	//Talos::Shared::c_cache_data::system_record.type = (int)e_system_message::e_status_type::Informal;
-	//Talos::Shared::c_cache_data::system_record.message = (int)e_system_message::messages::e_informal::ReadyToProcess;
-	//Talos::Shared::c_cache_data::system_record.state = (int)e_system_message::e_status_state::motion::e_state::Idle;
-	//Talos::Shared::c_cache_data::system_record.sub_state = (int)e_system_message::e_status_state::motion::e_sub_state::OK;
-	//Talos::Shared::c_cache_data::system_record.origin = Talos::Shared::FrameWork::StartUp::cpu_type.Coordinator;
-	//Talos::Shared::c_cache_data::system_record.target = Talos::Shared::FrameWork::StartUp::cpu_type.Spindle;
-}
-
-void Talos::Motion::Main_Process::test_motion_msg()
-{
-	//setup a fake status message from spindle so the mc thinks its ready to run
-	//Talos::Shared::FrameWork::Events::Router.ready.event_manager.set((int)c_event_router::ss_ready_data::e_event_type::System);
-	/*Talos::Shared::c_cache_data::system_record.type = (int)e_system_message::e_status_type::Informal;
-	Talos::Shared::c_cache_data::system_record.message = (int)e_system_message::messages::e_informal::ReadyToProcess;
-	Talos::Shared::c_cache_data::system_record.state = (int)e_system_message::e_status_state::motion::e_state::Idle;
-	Talos::Shared::c_cache_data::system_record.sub_state = (int)e_system_message::e_status_state::motion::e_sub_state::OK;
-	Talos::Shared::c_cache_data::system_record.origin = Talos::Shared::FrameWork::StartUp::cpu_type.Motion;
-	Talos::Shared::c_cache_data::system_record.target = Talos::Shared::FrameWork::StartUp::cpu_type.Coordinator;*/
-}
-
-void Talos::Motion::Main_Process::test_ngc_block()
-{
-	//setup a fake ngc block from coordinator so the mc thinks its ready to run (this is after serial read routing)
-	//Talos::Shared::FrameWork::Events::Router.ready.event_manager.set((int)c_event_router::ss_ready_data::e_event_type::NgcDataBlock);
-	//Talos::Shared::c_cache_data::ngc_block_record.__station__ = 95;
-
 }
 
 void Talos::Motion::Main_Process::debug_string(const char * data)

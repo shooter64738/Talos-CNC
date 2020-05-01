@@ -80,11 +80,13 @@ void c_cpu::Synch(
 					//see if host responded with a message, and if so does it match the message and record type we expected 
 					if (this->system_events.get((int)c_cpu::e_event_type::SystemRecord))
 					{
-						//note sure yet what message I am going to respond with.... 
+						//not sure yet what message I am going to respond with.... 
 						if (this->sys_message.message == (int)e_system_message::messages::e_informal::ReadyToProcess
-							&& this->sys_message.type == (int)e_system_message::e_status_type::Informal)
+							&& this->sys_message.type == (int)init_type
+							&& this->host_events.Data.get((int)init_message))
 						{
 							Talos::Shared::FrameWork::StartUp::string_writer("mCU synch complete\r\n");
+							this->system_events.set((int)c_cpu::e_event_type::OnLine);
 							//probably jsut return here but until i decide for sure, just going to loop
 							while (1)
 							{
@@ -103,4 +105,22 @@ void c_cpu::Synch(
 			}
 		}
 	}
+}
+
+void c_cpu::service_events(int32_t * position, uint16_t rpm)
+{
+	//if NoState and OnLine is false, theres not need to process events.
+	if (this->system_events.get((int)c_cpu::e_event_type::NoState)
+		|| !this->system_events.get((int)c_cpu::e_event_type::OnLine))
+		return;
+
+	//If cpu is in error set it offline
+	if (this->system_events.get((int)c_cpu::e_event_type::Error))
+		this->system_events.clear((int)c_cpu::e_event_type::OnLine);
+
+	memcpy(&this->sys_message.position, position, sizeof(position)*MACHINE_AXIS_COUNT);
+	//memcpy(&this->sys_message.rpm, &rpm, sizeof(uint16_t));
+
+		//SystemRecord = 3,
+		//AddendumRecord = 4,
 }

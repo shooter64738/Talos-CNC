@@ -17,6 +17,8 @@ public:
 		, uint8_t init_ready_id
 		, bool is_master_cpus);
 
+	void service_events(int32_t * position, uint16_t rpm);
+
 	s_control_message sys_message;
 	enum class e_event_type : uint8_t
 	{
@@ -39,7 +41,7 @@ public:
 		s_bit_flag_controller<uint32_t> Inquiry;
 	};
 
-	s_event_class h_host_events;
+	s_event_class host_events;
 	
 };
 #endif

@@ -32,11 +32,9 @@ namespace Talos
 
 			//functions
 		public:
-			static uint8_t motion_initialize();
 			static void initialize();
 			static void run();
 			static void test_motion_msg();
-
 			
 			static void debug_string(const char * data);
 			static void debug_int(long data);

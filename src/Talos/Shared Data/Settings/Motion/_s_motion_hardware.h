@@ -2,8 +2,10 @@
 #define _C_MOTION_HARDWARE_STRUCT
 #include <stdint.h>
 #include "../../_s_encoder_struct.h"
+#include "../../_e_record_types.h"
 #include "../../../physical_machine_parameters.h"
 
+PACK(
 struct s_motion_hardware
 {
 	s_encoders spindle_encoder; //39
@@ -15,5 +17,5 @@ struct s_motion_hardware
 	uint16_t steps_per_mm[MACHINE_AXIS_COUNT];//12
 	uint16_t pulse_length = 0;//2
 	//153 bytesS
-};
+});
 #endif

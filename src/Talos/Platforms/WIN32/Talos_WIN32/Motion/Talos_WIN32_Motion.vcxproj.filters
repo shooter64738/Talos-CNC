@@ -61,9 +61,6 @@
     <Filter Include="Shared data\FrameWork">
       <UniqueIdentifier>{bf3749bb-df2c-448a-bdad-5af7eb759cfe}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Motion\Processing\Error">
-      <UniqueIdentifier>{0f2bbf67-ce26-46ad-820f-e9e37c1b6afc}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Motion\Record Defines">
       <UniqueIdentifier>{10b27a37-1f08-49b9-86c7-70874d55367f}</UniqueIdentifier>
     </Filter>

@@ -25,7 +25,7 @@
 
 void Talos::Shared::FrameWork::Events::Report::process()
 {
-	s_bit_flag_controller<uint32_t> *pntr_event = &Talos::Shared::FrameWork::StartUp::CpuCluster[Talos::Shared::FrameWork::StartUp::cpu_type.Host].h_host_events.Inquiry;
+	s_bit_flag_controller<uint32_t> *pntr_event = &Talos::Shared::FrameWork::StartUp::CpuCluster[Talos::Shared::FrameWork::StartUp::cpu_type.Host].host_events.Inquiry;
 	
 	if (pntr_event->_flag>0)
 	{

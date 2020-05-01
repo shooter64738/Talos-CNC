@@ -85,7 +85,7 @@ void Talos::Coordinator::Data::Ngc::load_block_from_cache()
 	
 	//Clear the block event that was set when the line was loaded waaaaayyyy back in the dataevent handler
 	Talos::Shared::FrameWork::StartUp::CpuCluster[Talos::Shared::FrameWork::StartUp::cpu_type.Host]
-		.h_host_events.Data.clear((int)e_system_message::messages::e_data::NgcDataLine);
+		.host_events.Data.clear((int)e_system_message::messages::e_data::NgcDataLine);
 	
 	Talos::Shared::c_cache_data::txt_record.pntr_record = NULL;
 }
@@ -101,7 +101,7 @@ void  Talos::Coordinator::Data::Ngc::__raise_error(char * ngc_line)
 void Talos::Coordinator::Data::Ngc::__reset()
 {
 	Talos::Shared::FrameWork::StartUp::CpuCluster[Talos::Shared::FrameWork::StartUp::cpu_type.Host]
-		.h_host_events.Data.clear((int)e_system_message::messages::e_data::NgcDataLine);
+		.host_events.Data.clear((int)e_system_message::messages::e_data::NgcDataLine);
 	Talos::Shared::c_cache_data::ngc_block_record.__station__ = 0;
 
 

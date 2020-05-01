@@ -4,7 +4,8 @@
 #include "../physical_machine_parameters.h"
 #include "FrameWork/Enumerations/Status/_e_system_messages.h"
 //#include "FrameWork/Startup/c_framework_start.h"
-struct s_control_message
+
+__declspec(align(1)) struct s_control_message
 {
 	e_record_types __rec_type__ = e_record_types::System;
 	uint8_t origin; //message origin relative to sender
@@ -15,11 +16,10 @@ struct s_control_message
 	uint8_t state; //state value
 	uint8_t sub_state; //substate value
 	int32_t position[MACHINE_AXIS_COUNT];
+	uint16_t rpm;
 	uint16_t crc;
-	static const uint8_t __size__ = 34; // speify size here.. 'sizeof()' will not work across differing platforms (8bit/32bit)
-	
-	
-};
+	static const uint8_t __size__ = 36; // speify size here.. 'sizeof()' will not work across differing platforms (8bit/32bit)
+};// PACK_AS_DEFINED
 
 //struct s_system_motion_settings
 //{

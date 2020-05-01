@@ -221,7 +221,7 @@ void Talos::Shared::FrameWork::Data::Txt::__set_entry_mode(char first_byte, char
 	}
 	default:
 	{
-		Talos::Shared::FrameWork::StartUp::CpuCluster[Talos::Shared::FrameWork::StartUp::cpu_type.Host].h_host_events.Data.set((int)e_system_message::messages::e_data::NgcDataLine);
+		Talos::Shared::FrameWork::StartUp::CpuCluster[Talos::Shared::FrameWork::StartUp::cpu_type.Host].host_events.Data.set((int)e_system_message::messages::e_data::NgcDataLine);
 		//assume its plain ngc g code data
 	}
 
@@ -230,7 +230,7 @@ void Talos::Shared::FrameWork::Data::Txt::__set_entry_mode(char first_byte, char
 
 void Talos::Shared::FrameWork::Data::Txt::__set_sub_entry_mode(char byte)
 {
-	s_bit_flag_controller<uint32_t> *pntr_event = &Talos::Shared::FrameWork::StartUp::CpuCluster[Talos::Shared::FrameWork::StartUp::cpu_type.Host].h_host_events.Inquiry;
+	s_bit_flag_controller<uint32_t> *pntr_event = &Talos::Shared::FrameWork::StartUp::CpuCluster[Talos::Shared::FrameWork::StartUp::cpu_type.Host].host_events.Inquiry;
 	switch (byte)
 	{
 	case 'G': //block g group status

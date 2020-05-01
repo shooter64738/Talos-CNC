@@ -15,7 +15,6 @@
     <ClInclude Include="..\..\..\..\Coordinator\Processing\Data\c_data_buffers.h" />
     <ClInclude Include="..\..\..\..\Coordinator\Processing\Data\DataHandlers\c_ngc_data_handler.h" />
     <ClInclude Include="..\..\..\..\Coordinator\Processing\Data\DataHandlers\c_system_data_handler.h" />
-    <ClInclude Include="..\..\..\..\Coordinator\Processing\Error\c_error.h" />
     <ClInclude Include="..\..\..\..\Coordinator\Processing\Events\EventHandlers\c_ngc_data_events.h" />
     <ClInclude Include="..\..\..\..\Coordinator\Processing\Events\EventHandlers\c_system_event_handler.h" />
     <ClInclude Include="..\..\..\..\Coordinator\Record Defines\xe_all_event_data_types.h" />
@@ -116,7 +115,6 @@
     <ClCompile Include="..\..\..\..\Coordinator\Processing\Data\DataHandlers\c_binary_data_handler.cpp" />
     <ClCompile Include="..\..\..\..\Coordinator\Processing\Data\DataHandlers\c_ngc_data_handler.cpp" />
     <ClCompile Include="..\..\..\..\Coordinator\Processing\Data\DataHandlers\c_system_data_handler.cpp" />
-    <ClCompile Include="..\..\..\..\Coordinator\Processing\Error\c_error.cpp" />
     <ClCompile Include="..\..\..\..\Coordinator\Processing\Events\EventHandlers\c_ancillary_event_handler.cpp" />
     <ClCompile Include="..\..\..\..\Coordinator\Processing\Events\EventHandlers\c_network_data_events.cpp" />
     <ClCompile Include="..\..\..\..\Coordinator\Processing\Events\EventHandlers\c_ngc_data_events.cpp" />

@@ -67,9 +67,6 @@
     <Filter Include="Shared Data\FrameWork">
       <UniqueIdentifier>{7aaecb41-7a90-4a60-ab63-ecb9c20346f0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Coordinator\Processing\Error">
-      <UniqueIdentifier>{fda74141-4b56-4e3f-bd36-7f041ee800b7}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Coordinator\Record Defines">
       <UniqueIdentifier>{453b7057-d8ac-495c-96d1-3b4f4984eb55}</UniqueIdentifier>
     </Filter>
@@ -320,9 +317,6 @@
     <ClInclude Include="..\..\..\..\Coordinator\Processing\Events\EventHandlers\c_ngc_data_events.h">
       <Filter>Coordinator\Processing\Events\EventHandlers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Coordinator\Processing\Error\c_error.h">
-      <Filter>Coordinator\Processing\Error</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\..\Coordinator\Record Defines\xe_all_event_data_types.h">
       <Filter>Coordinator\Record Defines</Filter>
     </ClInclude>
@@ -486,9 +480,6 @@
     </ClCompile>
     <ClCompile Include="..\..\..\..\Coordinator\Processing\Events\EventHandlers\c_ngc_data_events.cpp">
       <Filter>Coordinator\Processing\Events\EventHandlers</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\Coordinator\Processing\Error\c_error.cpp">
-      <Filter>Coordinator\Processing\Error</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Event\Serial\c_new_serial_event_handler.cpp">
       <Filter>Shared Data\FrameWork\Event\Serial</Filter>

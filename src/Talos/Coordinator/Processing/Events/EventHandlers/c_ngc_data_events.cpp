@@ -29,12 +29,12 @@
 void Talos::Coordinator::Events::Data::process()
 {
 	
-	if (Talos::Shared::FrameWork::StartUp::CpuCluster[Talos::Shared::FrameWork::StartUp::cpu_type.Host].h_host_events.Data._flag == 0)
+	if (Talos::Shared::FrameWork::StartUp::CpuCluster[Talos::Shared::FrameWork::StartUp::cpu_type.Host].host_events.Data._flag == 0)
 	return;
 	
 	//See if there is an event set indicating we loaded text data into the ngc cache record.
 	//if (Talos::Shared::FrameWork::Events::Router::ready.event_manager.get((int)Talos::Shared::FrameWork::Events::Router::ss_ready_data::e_event_type::NgcDataLine))
-	if (Talos::Shared::FrameWork::StartUp::CpuCluster[Talos::Shared::FrameWork::StartUp::cpu_type.Host].h_host_events.Data.get(
+	if (Talos::Shared::FrameWork::StartUp::CpuCluster[Talos::Shared::FrameWork::StartUp::cpu_type.Host].host_events.Data.get(
 		(int)e_system_message::messages::e_data::NgcDataLine))
 	Talos::Coordinator::Data::Ngc::load_block_from_cache();
 	

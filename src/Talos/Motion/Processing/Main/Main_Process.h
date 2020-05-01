@@ -29,10 +29,6 @@ namespace Talos
 
 			static void initialize();
 			static void run();
-			static void test_coord_msg();
-			static void test_spindle_msg();
-			static void test_motion_msg();
-			static void test_ngc_block();
 
 			static void debug_string(const char * data);
 			static void debug_int(long data);

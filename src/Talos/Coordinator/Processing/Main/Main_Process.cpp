@@ -11,16 +11,13 @@ then move to their respective modules.
 
 
 #include "Main_Process.h"
-//#include "../../../Shared Data/Event/c_events.h"
 #include "../../../NGC_RS274/NGC_Line_Processor.h"
 #include "../../../NGC_RS274/NGC_Tool.h"
 #include "../../../NGC_RS274/NGC_Coordinates.h"
 #include "../../../NGC_RS274/NGC_System.h"
 #include "../../../Configuration/c_configuration.h"
-#include "../Error/c_error.h"
 #include "../Events/EventHandlers/c_ngc_data_events.h"
 #include "../Events/EventHandlers/c_system_event_handler.h"
-//#include "../../../Shared Data/FrameWork/extern_events_types.h"
 #include "../../../Shared Data/FrameWork/Data/cache_data.h"
 #include "../../../Shared Data/FrameWork/Startup/c_framework_start.h"
 #include "../../../Shared Data/FrameWork/Error/c_framework_error.h"
@@ -43,81 +40,6 @@ static int test_byte = 0;
 
 c_Serial Talos::Coordinator::Main_Process::host_serial;
 c_Serial Talos::Coordinator::Main_Process::motion_serial;
-
-//Simple function to validate comms with motion controller
-uint8_t Talos::Coordinator::Main_Process::motion_initialize()
-{
-	//Talos::Coordinator::Main_Process::host_serial.print_string("control\r\n");
-	//Talos::Coordinator::Main_Process::host_serial.print_int32(sizeof(s_control_message));
-	//Talos::Coordinator::Main_Process::host_serial.print_string("\r\nsettings\r\n");
-	//Talos::Coordinator::Main_Process::host_serial.print_int32(sizeof(s_motion_control_settings_encapsulation));
-	
-	//wait 5 seconds... 
-	Hardware_Abstraction_Layer::Core::delay_ms(5000);
-	
-	
-	
-	//We need to ask the motion controller for a ready status. Queue up a message
-	Talos::Shared::FrameWork::Data::System::send((int)e_system_message::messages::e_informal::ReadyToProcess
-		, (int)e_system_message::e_status_type::Informal
-		, Talos::Shared::FrameWork::StartUp::cpu_type.Coordinator
-		, Talos::Shared::FrameWork::StartUp::cpu_type.Motion
-		, (int)e_system_message::e_status_state::motion::e_state::Idle
-		, (int)e_system_message::e_status_state::motion::e_sub_state::OK
-		, NULL
-	);
-	//Talos::Coordinator::Main_Process::host_serial.print_string("sent 2 motion\r\n");
-	
-	Hardware_Abstraction_Layer::Core::set_time_delay(5);
-	while (!Hardware_Abstraction_Layer::Core::delay_count_down)
-	{
-		//Keep processing system system_events until we timeout or get a response
-		Talos::Coordinator::Events::System::process();
-		//if (Talos::Shared::FrameWork::Events::Router::ready.event_manager.get((int)Talos::Shared::FrameWork::Events::Router::ss_ready_data::e_event_type::System))
-		{
-			//Talos::Coordinator::Main_Process::host_serial.print_string("got message\r\n");
-			while(1)
-			{
-				
-			}
-		}
-	}
-
-	
-	
-	//When the motion controller responds, we can send it configuration data.
-	Talos::Shared::FrameWork::Data::System::send((int)e_system_message::messages::e_data::MotionConfiguration
-		, (int)e_system_message::e_status_type::Data
-		, Talos::Shared::FrameWork::StartUp::cpu_type.Coordinator
-		, Talos::Shared::FrameWork::StartUp::cpu_type.Motion
-		, (int)e_system_message::e_status_state::motion::e_state::Idle
-		, (int)e_system_message::e_status_state::motion::e_sub_state::OK
-		, NULL
-	);
-
-	//Keep processing system system_events until we timeout or get a response
-	Talos::Coordinator::Events::System::process();
-
-
-	
-
-	//Start a timeout timer and wait for a response.
-	//Talos::Coordinator::Main_Process::host_serial.print_string("Delay set\r\n");
-	Hardware_Abstraction_Layer::Core::set_time_delay(5);
-
-	//The router determines which event handler needs to process the message
-	Talos::Shared::FrameWork::Events::Router::process();
-	while (Hardware_Abstraction_Layer::Core::delay_count_down)
-	{
-		//Keep processing system system_events until we timeout or get a response
-		Talos::Coordinator::Events::System::process();
-
-	}
-
-	Talos::Coordinator::Main_Process::host_serial.print_string("No Comms\r\n");
-
-	return 0;
-}
 
 void Talos::Coordinator::Main_Process::initialize()
 {
@@ -254,34 +176,8 @@ volatile uint32_t tick_at_time = 0;
 
 void Talos::Coordinator::Main_Process::run()
 {
-	//OCR5A = 15624;
-	//TCCR5B |= (1 << WGM52);
-	//// Mode 4, CTC on OCR1A
-	//TIMSK5 |= (1 << OCIE5A);
-	////Set interrupt on compare match
-	//TCCR5B |= (1 << CS52) | (1 << CS50);
-	////TCCR5B |= (1 << CS52);// | (1 << CS50);
-	//
-	
-	
-	//Talos::Shared::FrameWork::Events::extern_system_events.event_manager.set((int)s_system_events::e_event_type::SystemAllOk);
-	
-	//Talos::Coordinator::Main_Process::host_serial.print_string("\r\n** System holding **\r\n");
-	//while(tick_at_time == 0)
-	//{
-	//Talos::Coordinator::Events::System::process();
-	//if (Talos::Coordinator::Events::Report::event_manager.get_clr((int) Events::Report::e_event_type::StatusMessage))
-	//break;
-	//
-	//}
-	//TIMSK5 = 0;
-
-
 	Talos::Coordinator::Main_Process::host_serial.print_string("\r\n** System ready **\r\n");
 
-
-	//Start the eventing loop, stop loop if a critical system error occurs
-	
 	while (Talos::Shared::FrameWork::StartUp::CpuCluster[Talos::Shared::FrameWork::StartUp::cpu_type.Host].system_events.get((int)c_cpu::e_event_type::OnLine))
 	{
 		if (tick_at_time > 0)
@@ -316,20 +212,6 @@ void Talos::Coordinator::Main_Process::run()
 
 	Talos::Coordinator::Main_Process::host_serial.print_string("\r\n** System halted **");
 	while (1) {}
-}
-
-void Talos::Coordinator::Main_Process::test_motion_msg()
-{
-	////setup a fake status message from spindle so the mc thinks its ready to run
-	//Talos::Shared::FrameWork::Events::Router.ready.event_manager.set((int)c_event_router::ss_ready_data::e_event_type::System);
-	//Talos::Shared::c_cache_data::system_record.type = (int)e_system_message::e_status_type::Informal;
-	//Talos::Shared::c_cache_data::system_record.message = (int)e_system_message::messages::e_informal::ReadyToProcess;
-	//Talos::Shared::c_cache_data::system_record.state = (int)e_system_message::e_status_state::motion::e_state::Idle;
-	//Talos::Shared::c_cache_data::system_record.sub_state = (int)e_system_message::e_status_state::motion::e_sub_state::OK;
-	//Talos::Shared::c_cache_data::system_record.origin = Talos::Shared::FrameWork::StartUp::cpu_type.Coordinator;
-	//Talos::Shared::c_cache_data::system_record.target = Talos::Shared::FrameWork::StartUp::cpu_type.Coordinator;
-
-	//Talos::Shared::c_cache_data::pntr_system_record = &Talos::Shared::c_cache_data::system_record;
 }
 
 void Talos::Coordinator::Main_Process::debug_string(const char * data)
