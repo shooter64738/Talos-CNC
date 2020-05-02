@@ -11,8 +11,9 @@
 
 
 uint8_t Hardware_Abstraction_Layer::Core::register_at_int_stop =0;
-
 uint16_t Hardware_Abstraction_Layer::Core::delay_count_down = 0;
+
+uint32_t Hardware_Abstraction_Layer::Core::cpu_tick_ms = 0;
 
 uint8_t  Hardware_Abstraction_Layer::Core::initialize()
 {

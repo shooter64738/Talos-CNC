@@ -37,6 +37,8 @@ namespace Hardware_Abstraction_Layer
 		static void restore_status_register_SREG();
 		static uint32_t get_cpu_clock_rate();
 		
+		static uint32_t cpu_tick_ms;
+		
 		static void delay_ms(uint16_t delay_time);
 		static void delay_us(uint16_t delay_time);
 		protected:

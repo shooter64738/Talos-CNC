@@ -213,7 +213,7 @@ void Talos::Shared::FrameWork::Data::Txt::__set_entry_mode(char first_byte, char
 	switch (first_byte)
 	{
 	case '?': //inquiry mode
-	{
+	{		
 		__set_sub_entry_mode(second_byte);
 		//This is an inquiry and system_events will set and handle this. We dont actually need the record data
 		Talos::Shared::c_cache_data::txt_record.pntr_record = NULL;

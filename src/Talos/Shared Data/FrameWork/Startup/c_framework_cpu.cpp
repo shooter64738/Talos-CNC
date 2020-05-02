@@ -4,13 +4,15 @@
 #include "../Error/_s_framework_error.h"
 #include "../Error/c_framework_error.h"
 #include "../Data/cache_data.h"
+#include "../Report/c_framework_report.h"
 
 uint8_t ID = 0;
 #define BASE_ERROR 10
 
-void c_cpu::initialize(uint8_t id)
+void c_cpu::initialize(uint8_t id, uint32_t * tick_timer_ms)
 {
 	this->ID = id;
+	this->cycle_count = tick_timer_ms;
 }
 
 /*
@@ -35,18 +37,22 @@ e_system_message::messages::e_data init_message
 	(Talos::Shared::c_cache_data::motion_configuration_record.hardware.steps_per_mm[0]);
 	Talos::Shared::FrameWork::StartUp::string_writer("\r\n");
 	
+	
 	//if master_cpu its the controller. so we need to send a 'ReadyToProcess' message to our child
 	if (is_master_cpu)
 	{
+		uint32_t time_start = *this->cycle_count;
 		//Send ready message to child
 		__send_formatted_message((int)e_system_message::messages::e_informal::ReadyToProcess
 		,(int)e_system_message::e_status_type::Informal);
 		//Message is sent. The master now waits for a ready message from the child
-				
+		
 		Talos::Shared::FrameWork::StartUp::string_writer("mCU host ready\r\n");
 		
 		//Wait for specified message
 		__wait_formatted_message((int)init_message, (int)init_request_type);
+		uint32_t time_end = *this->cycle_count;
+		this->message_lag_cycles = time_end - time_start;
 		
 		//The proper response to inquiry is data
 		//if (init_request_type == e_system_message::e_status_type::Inquiry)
@@ -71,6 +77,8 @@ e_system_message::messages::e_data init_message
 		
 		Talos::Shared::FrameWork::StartUp::string_writer("mCU child request\r\n");
 		
+		uint32_t time_start = *this->cycle_count;
+		
 		//The child has gotten a ready message from the master. The child now tells the master what it wants
 		__send_formatted_message((int)init_message, (int)init_request_type);
 		
@@ -78,6 +86,8 @@ e_system_message::messages::e_data init_message
 		//if (init_request_type == e_system_message::e_status_type::Inquiry)
 		//__wait_formatted_message((int)init_message, (int)e_system_message::e_status_type::Data);
 		__wait_formatted_message((int)init_message, (int)init_response_type);
+		uint32_t time_end = *this->cycle_count;
+		this->message_lag_cycles = time_end - time_start;
 		//else
 		//IF its not an inquiry wait for the specified message.
 		//__wait_formatted_message((int)init_message, (int)init_request_type);
@@ -91,14 +101,15 @@ e_system_message::messages::e_data init_message
 	
 	Talos::Shared::FrameWork::StartUp::string_writer("value end =");
 	Talos::Shared::FrameWork::StartUp::int32_writer(
-		Talos::Shared::c_cache_data::motion_configuration_record.hardware.steps_per_mm[0]);
+	Talos::Shared::c_cache_data::motion_configuration_record.hardware.steps_per_mm[0]);
 	Talos::Shared::FrameWork::StartUp::string_writer("\r\n");
-
-	Talos::Shared::FrameWork::StartUp::string_writer("time =");
+	
+	Talos::Shared::FrameWork::StartUp::string_writer("lag =");
 	Talos::Shared::FrameWork::StartUp::int32_writer(
-		this->message_lag_cycles);
+	this->message_lag_cycles);Talos::Shared::FrameWork::StartUp::string_writer("\r\n");
+	
 	//Lock up for now.. this is all testing stuff
-	while(1){}
+	//while(1){}
 	
 }
 
@@ -152,7 +163,7 @@ void c_cpu::__wait_formatted_message(uint8_t init_message, uint8_t init_type)
 
 void c_cpu::service_events(int32_t * position, uint16_t rpm)
 {
-	this->cycle_count++;
+	//this->cycle_count++;
 
 	//if NoState and OnLine is false, theres no need to process events.
 	if (this->system_events.get((int)c_cpu::e_event_type::NoState)
@@ -165,12 +176,71 @@ void c_cpu::service_events(int32_t * position, uint16_t rpm)
 
 	memcpy(&this->sys_message.position, position, sizeof(position)*MACHINE_AXIS_COUNT);
 	memcpy(&this->sys_message.rpm, &rpm, sizeof(uint16_t));
+	
+	__service_host_events();
+	
+}
 
-	if (this->host_events.Inquiry.get_clr((int) e_system_message::messages::e_data::MotionConfiguration))
-		__send_formatted_message((int) e_system_message::messages::e_data::MotionConfiguration, (int)e_system_message::e_status_type::Data );
+void c_cpu::__service_host_events()
+{
+	/*
+	Critical = 0,
+	Warning = 1,
+	Informal = 2,
+	Data = 3,
+	Inquiry = 4,
+	*/
+	__service_host_events_critical();
+	__service_host_events_warning();
+	__service_host_events_informal();
+	__service_host_events_data();
+	__service_host_events_inquiry();
+}
+
+void c_cpu::__service_host_events_critical()
+{
+	
+}
+
+void c_cpu::__service_host_events_warning()
+{
+	
+}
+
+void c_cpu::__service_host_events_informal()
+{
+	
+}
+
+void c_cpu::__service_host_events_data()
+{
+	
+}
+
+void c_cpu::__service_host_events_inquiry()
+{
+	//Any events to process
+	if (this->host_events.Inquiry._flag == 0)
+	return;
+	
+	//Let the reporter handle G/M/W report requests.
+	Talos::Shared::FrameWork::Events::Report::process();
+	
+	//Are there any events left?
+	if (this->host_events.Inquiry._flag == 0)
+	return;
+	
+	//if (this->host_events.Inquiry.get_clr((int) e_system_message::messages::e_inquiry::GCodeBlockReport))
+	//{
+		//Talos::Shared::FrameWork::StartUp::string_writer("g config request\r\n");
+		////__send_formatted_message((int) e_system_message::messages::e_data::MotionConfiguration, (int)e_system_message::e_status_type::Data );
+	//}
 }
 
 void c_cpu::update_message_time(uint32_t read_time)
 {
-	this->message_lag_cycles = read_time - this->cycle_count;
+	Talos::Shared::FrameWork::StartUp::string_writer("lag read=");
+	Talos::Shared::FrameWork::StartUp::int32_writer(read_time);
+	Talos::Shared::FrameWork::StartUp::string_writer("\r\n");
+	this->message_lag_cycles = read_time - *this->cycle_count;
 }

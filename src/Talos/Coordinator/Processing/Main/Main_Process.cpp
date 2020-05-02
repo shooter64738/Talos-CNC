@@ -49,7 +49,8 @@ void Talos::Coordinator::Main_Process::initialize()
 		, Talos::Coordinator::Main_Process::debug_byte
 		, Talos::Coordinator::Main_Process::debug_int
 		, Talos::Coordinator::Main_Process::debug_float
-		, Talos::Coordinator::Main_Process::debug_float_dec);
+		, Talos::Coordinator::Main_Process::debug_float_dec
+		, &Hardware_Abstraction_Layer::Core::cpu_tick_ms );
 	
 
 	Talos::Coordinator::Main_Process::host_serial = c_Serial(Talos::Shared::FrameWork::StartUp::cpu_type.Host, 250000); //<--Connect to host
@@ -176,7 +177,8 @@ void Talos::Coordinator::Main_Process::run()
 {
 	Talos::Coordinator::Main_Process::host_serial.print_string("\r\n** System ready **\r\n");
 	
-	//Talos::Shared::FrameWork::StartUp::CpuCluster[Talos::Shared::FrameWork::StartUp::cpu_type.Host].system_events.set((int)c_cpu::e_event_type::OnLine);
+	//Since the host is running this code, its obviously on line. 
+	Talos::Shared::FrameWork::StartUp::CpuCluster[Talos::Shared::FrameWork::StartUp::cpu_type.Host].system_events.set((int)c_cpu::e_event_type::OnLine);
 	
 	while (Talos::Shared::FrameWork::StartUp::CpuCluster[Talos::Shared::FrameWork::StartUp::cpu_type.Host].system_events.get((int)c_cpu::e_event_type::OnLine))
 	{

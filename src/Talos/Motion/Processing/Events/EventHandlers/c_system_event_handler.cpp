@@ -23,11 +23,15 @@
 #include "c_motion_control_event_handler.h"
 #include "c_motion_controller_event_handler.h"
 #include "../../../../Shared Data/FrameWork/Data/cache_data.h"
+#include "../../../../Shared Data/FrameWork/Event/c_event_router.h"
 
 s_bit_flag_controller<uint32_t> Talos::Motion::Events::System::event_manager;
 
 void Talos::Motion::Events::System::process()
 {
+	
+	Talos::Shared::FrameWork::Events::Router::process();
+	
 //	/*
 //	System records are potential events that came from something else (off board)
 //	They could trigger system events if another processor indicated an error.

@@ -41,8 +41,8 @@ void Talos::Motion::Main_Process::initialize()
 		, Talos::Motion::Main_Process::debug_byte
 		, Talos::Motion::Main_Process::debug_int
 		, Talos::Motion::Main_Process::debug_float
-		, Talos::Motion::Main_Process::debug_float_dec);
-
+		, Talos::Motion::Main_Process::debug_float_dec
+		, &Hardware_Abstraction_Layer::Core::cpu_tick_ms);
 
 	Hardware_Abstraction_Layer::Core::initialize();
 	//__initialization_start("Core", Hardware_Abstraction_Layer::Core::initialize,1);//<--core start up
@@ -106,10 +106,13 @@ void Talos::Motion::Main_Process::__initialization_response(uint8_t response_cod
 static uint32_t tic_count = 0;
 void Talos::Motion::Main_Process::run()
 {
+	Talos::Motion::Main_Process::host_serial.print_string("\r\n** System ready **\r\n");
 	
-	Talos::Motion::Main_Process::host_serial.print_string("** Sys ready **");
+	//Since the host is running this code, its obviously on line.
+	Talos::Shared::FrameWork::StartUp::CpuCluster[Talos::Shared::FrameWork::StartUp::cpu_type.Host].system_events.set((int)c_cpu::e_event_type::OnLine);
 
-	while (Talos::Shared::FrameWork::StartUp::CpuCluster[Talos::Shared::FrameWork::StartUp::cpu_type.Motion].system_events.get((int)e_system_message::messages::e_critical::testcritical))
+
+	while (Talos::Shared::FrameWork::StartUp::CpuCluster[Talos::Shared::FrameWork::StartUp::cpu_type.Host].system_events.get((int)c_cpu::e_event_type::OnLine))
 	{
 		
 		//0: Handle system events (should always follow the router events)
@@ -127,6 +130,8 @@ void Talos::Motion::Main_Process::run()
 		//Handle cpu events
 		Talos::Shared::FrameWork::StartUp::run_events();
 	}
+	Talos::Motion::Main_Process::host_serial.print_string("\r\n** System halted **");
+	while (1) {}
 }
 
 void Talos::Motion::Main_Process::debug_string(const char * data)

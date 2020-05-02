@@ -13,6 +13,8 @@
 uint8_t Hardware_Abstraction_Layer::Core::register_at_int_stop =0;
 uint16_t Hardware_Abstraction_Layer::Core::delay_count_down = 0;
 
+uint32_t Hardware_Abstraction_Layer::Core::cpu_tick_ms = 0;
+
 uint8_t  Hardware_Abstraction_Layer::Core::initialize()
 {
 	////setup a generic timer
@@ -23,13 +25,16 @@ uint8_t  Hardware_Abstraction_Layer::Core::initialize()
 	////TCCR1B |= (1 << CS12) | (1 << CS10);
 	//TCCR5B |= (1 << CS52);// | (1 << CS10);
 	
-	OCR5A = 15624;
-	TCCR5B |= (1 << WGM52);
-	// Mode 4, CTC on OCR1A
+	OCR5A = 249;
+	//TCCR5B |= (1 << WGM52);
+	TCCR5A |= (1 << WGM51);
+	// Mode 4, CTC on OCR5A
 	TIMSK5 |= (1 << OCIE5A);
 	//Set interrupt on compare match
 	//TCCR5B |= (1 << CS52) | (1 << CS50);
 	//TCCR5B |= (1 << CS52);// | (1 << CS50);
+	//TCCR5B |= (1 << CS52) | (1 << CS50);
+	TCCR5B |= (1 << CS51) | (1 << CS50);
 	
 return 0;
 }
@@ -101,8 +106,8 @@ void Hardware_Abstraction_Layer::Core::delay_us(uint16_t delay_time)
 
 ISR (TIMER5_COMPA_vect)
 {
-	Hardware_Abstraction_Layer::Core::delay_count_down--;
-	if (Hardware_Abstraction_Layer::Core::delay_count_down == 0)
-	TCCR5B |= ~(1 << CS52) | ~(1 << CS50);
-	
+	//Hardware_Abstraction_Layer::Core::delay_count_down--;
+	//if (Hardware_Abstraction_Layer::Core::delay_count_down == 0)
+	//TCCR5B |= ~(1 << CS52) | ~(1 << CS50);
+	Hardware_Abstraction_Layer::Core::cpu_tick_ms++;
 }

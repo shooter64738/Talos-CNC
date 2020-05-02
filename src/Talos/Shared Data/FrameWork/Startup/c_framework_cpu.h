@@ -9,7 +9,7 @@ class c_cpu
 {
 	public:
 	uint8_t ID;
-	void initialize(uint8_t id);
+	void initialize(uint8_t id, uint32_t * tick_timer_ms);
 	void Synch(
 	e_system_message::messages::e_data init_message
 	, e_system_message::e_status_type init_request_type
@@ -45,12 +45,19 @@ class c_cpu
 
 	void update_message_time(uint32_t read_time);
 
-	uint32_t cycle_count = 0;
+	uint32_t *cycle_count;
 	uint32_t message_lag_cycles = 0;
 	
 	private:
 	void __send_formatted_message(uint8_t init_message, uint8_t init_type);
 	void __wait_formatted_message(uint8_t init_message, uint8_t init_type);
+	
+	void __service_host_events();
+	void __service_host_events_critical();
+	void __service_host_events_warning();
+	void __service_host_events_informal();
+	void __service_host_events_data();
+	void __service_host_events_inquiry();
 	
 };
 #endif

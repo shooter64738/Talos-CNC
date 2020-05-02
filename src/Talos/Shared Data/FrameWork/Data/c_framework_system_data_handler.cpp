@@ -56,7 +56,7 @@ bool Talos::Shared::FrameWork::Data::System::send(uint8_t message
 	pntr_sys_wrk->position[4] = 345;
 	pntr_sys_wrk->position[5] = 678;
 
-	pntr_sys_wrk->time_code = Talos::Shared::FrameWork::StartUp::CpuCluster[target].cycle_count;
+	pntr_sys_wrk->time_code = *Talos::Shared::FrameWork::StartUp::CpuCluster[target].cycle_count;
 
 	Talos::Shared::FrameWork::Events::Router::outputs.event_manager.set((int)e_system_message::messages::e_data::SystemRecord);
 	
@@ -151,8 +151,8 @@ void Talos::Shared::FrameWork::Data::System::reader()
 				read.addendum_event_object->set(read.addendum_event_id);
 
 				//send the time code from the rx message to the cpu class so we can tell how many cycles it took since a message was sent
-				Talos::Shared::FrameWork::StartUp::CpuCluster[read.event_id].update_message_time
-					(Talos::Shared::FrameWork::StartUp::CpuCluster[read.event_id].sys_message.time_code);
+				//Talos::Shared::FrameWork::StartUp::CpuCluster[read.event_id].update_message_time
+				//	(Talos::Shared::FrameWork::StartUp::CpuCluster[read.event_id].sys_message.time_code);
 				
 
 				return;

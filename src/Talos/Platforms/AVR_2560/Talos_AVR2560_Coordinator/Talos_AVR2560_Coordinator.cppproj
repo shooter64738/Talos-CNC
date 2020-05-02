@@ -582,6 +582,14 @@
       <SubType>compile</SubType>
       <Link>Shared Data\FrameWork\Event\Serial\c_new_serial_event_handler.h</Link>
     </Compile>
+    <Compile Include="..\..\..\Shared Data\FrameWork\Report\c_framework_report.cpp">
+      <SubType>compile</SubType>
+      <Link>Shared Data\FrameWork\Report\c_framework_report.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\Shared Data\FrameWork\Report\c_framework_report.h">
+      <SubType>compile</SubType>
+      <Link>Shared Data\FrameWork\Report\c_framework_report.h</Link>
+    </Compile>
     <Compile Include="..\..\..\Shared Data\FrameWork\Startup\c_framework_cpu.cpp">
       <SubType>compile</SubType>
       <Link>Shared Data\FrameWork\Startup\c_framework_cpu.cpp</Link>
@@ -750,6 +758,7 @@
     <Folder Include="Shared Data\FrameWork\Event\Serial" />
     <Folder Include="Shared Data\FrameWork\Enumerations" />
     <Folder Include="Shared Data\FrameWork\Error" />
+    <Folder Include="Shared Data\FrameWork\Report" />
     <Folder Include="Shared Data\FrameWork\Startup" />
     <Folder Include="Shared Data\Settings" />
     <Folder Include="Shared Data\Settings\Coordinator" />

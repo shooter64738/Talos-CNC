@@ -101,7 +101,6 @@ void Talos::Shared::FrameWork::Events::Report::____word(uint8_t counter, float *
 void Talos::Shared::FrameWork::Events::Report::__pad_left(float value, uint8_t padcount, uint8_t decimals, char pad_char)
 {
 	uint32_t dec_count = ((pow(10.0, padcount)) / (int)(value > 0 ? value : 1));
-
 	while (padcount - 1 > 0)
 	{
 		StartUp::byte_writer(pad_char);

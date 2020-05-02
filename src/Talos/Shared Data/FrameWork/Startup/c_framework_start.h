@@ -29,7 +29,8 @@ namespace Talos
 
 				static void initialize(uint8_t Host_Port, uint8_t Coordinator_Port, uint8_t Motion_Port, uint8_t Spindle_Port, uint8_t Peripheral_Port,
 					void(*string_writer)(const char * data), void(*byte_writer)(const char data), void(*int32_writer)(long value)
-					, void(*float_writer)(float value), void(*float_writer_dec)(float value, uint8_t decimals));
+					, void(*float_writer)(float value), void(*float_writer_dec)(float value, uint8_t decimals)
+					,uint32_t * cpu_tick_timer_ms);
 
 				static void(*string_writer)(const char * data);
 				static void(*byte_writer)(const char data);
