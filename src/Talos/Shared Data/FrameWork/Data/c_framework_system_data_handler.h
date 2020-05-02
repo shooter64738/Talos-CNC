@@ -20,7 +20,7 @@ namespace Talos
 					bool has_addendum;
 					bool addendum_checked;
 					s_bit_flag_controller<uint32_t> *addendum_event_object;
-					s_control_message *message_record;
+					//s_control_message *message_record;
 					uint8_t addendum_event_id;
 					uint8_t addendum_size;
 					uint8_t record_number;
@@ -28,7 +28,8 @@ namespace Talos
 					uint8_t counter; //byte counter (counts down)
 					uint8_t event_id;
 					s_bit_flag_controller<uint32_t> * event_object;
-					uint8_t target;
+					//uint8_t target;
+					c_cpu *cpu;
 				};
 
 				class System
@@ -44,7 +45,9 @@ namespace Talos
 
 					//functions
 				public:
-					static bool send(uint8_t message, uint8_t type, uint8_t origin, uint8_t target, uint8_t state, uint8_t sub_state, int32_t * position_data);
+					static bool send(uint8_t message
+					, uint8_t type, uint8_t origin, uint8_t target
+					, uint8_t state, uint8_t sub_state, int32_t * position_data);
 
 					static void route_read(uint8_t event_id, s_bit_flag_controller<uint32_t> *event_object);
 					static void route_write(uint8_t event_id, s_bit_flag_controller<uint32_t>* event_object);

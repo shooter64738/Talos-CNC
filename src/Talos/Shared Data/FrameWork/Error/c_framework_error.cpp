@@ -98,7 +98,7 @@ void Talos::Shared::FrameWork::Error::__print_base()
 	if (Talos::Shared::FrameWork::Error::framework_error.data != NULL)
 	{
 		__write_eol(); FrameWork::StartUp::string_writer("\tDta:");
-		for (uint8_t i = 0; i<255; i++)
+		for (uint16_t i = 0; i<RING_BUFFER_SIZE; i++)
 		{
 			FrameWork::StartUp::int32_writer(*(Talos::Shared::FrameWork::Error::framework_error.data + i));
 			FrameWork::StartUp::byte_writer(',');

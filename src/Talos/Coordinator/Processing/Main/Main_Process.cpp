@@ -76,12 +76,24 @@ void Talos::Coordinator::Main_Process::initialize()
 
 	//__critical_initialization("Spindle Control Comms", NULL, STARTUP_CLASS_WARNING);//<--spindle controller card
 
+//Talos::Shared::FrameWork::StartUp::print_rx_diagnostic = true;
+//Talos::Shared::FrameWork::StartUp::print_tx_diagnostic = true;
 	
 	Talos::Shared::FrameWork::StartUp::CpuCluster[Talos::Shared::FrameWork::StartUp::cpu_type.Motion].Synch(
 		e_system_message::messages::e_data::MotionConfiguration
 		, e_system_message::e_status_type::Inquiry
 		, (int)e_system_message::messages::e_data::SystemRecord
 		, e_system_message::e_status_type::Data, true);
+	
+	Hardware_Abstraction_Layer::Core::delay_ms(5000);
+	Talos::Shared::FrameWork::Data::System::send((int)e_system_message::messages::e_informal::SpindleAvailable //message id #
+	, (int)e_system_message::e_status_type::Informal //data type id #
+	, Talos::Shared::FrameWork::StartUp::cpu_type.Host //origin of the message
+	, Talos::Shared::FrameWork::StartUp::cpu_type.Motion //destination of the message
+	, (int)e_system_message::e_status_state::motion::e_state::Idle //state
+	, (int)e_system_message::e_status_state::motion::e_sub_state::OK //sub state
+	, NULL //position data
+	);
 	
 
 	//Load the initialize block from settings. These values are the 'initial' values of the gcode blocks

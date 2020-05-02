@@ -17,7 +17,7 @@
 
 void Hardware_Abstraction_Layer::Serial::initialize(uint8_t Port, uint32_t BaudRate)
 {
-	Talos::Motion::Data::Buffer::buffers[Port].ring_buffer.initialize(Talos::Motion::Data::Buffer::buffers[Port].storage, 256);
+	Talos::Motion::Data::Buffer::buffers[Port].ring_buffer.initialize(Talos::Motion::Data::Buffer::buffers[Port].storage, RING_BUFFER_SIZE);
 	Talos::Shared::FrameWork::Events::Router::inputs.pntr_ring_buffer = Talos::Motion::Data::Buffer::buffers;
 	Talos::Shared::FrameWork::Events::Router::outputs.pntr_serial_write = Hardware_Abstraction_Layer::Serial::send;
 

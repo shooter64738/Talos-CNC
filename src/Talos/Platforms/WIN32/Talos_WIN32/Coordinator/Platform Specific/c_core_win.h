@@ -34,6 +34,7 @@ namespace Hardware_Abstraction_Layer
 		//variables
 		public:
 			static uint16_t delay_count_down;
+			static uint32_t cpu_tick_ms;
 		protected:
 		private:
 

@@ -93,6 +93,14 @@ e_system_message::messages::e_data init_message
 		//__wait_formatted_message((int)init_message, (int)init_request_type);
 	}
 	
+	//Since we set events to handle and we processed those internally, clear all event flags here
+	this->host_events.Critical._flag = 0;
+	this->host_events.Data._flag = 0;
+	this->host_events.Informal._flag = 0;
+	this->host_events.Inquiry._flag = 0;
+	this->host_events.Warning._flag = 0;
+	this->system_events._flag = 0;
+	
 	//And now we should be done.
 	Talos::Shared::FrameWork::StartUp::string_writer("mCU synch complete!!\r\n");
 	
@@ -174,8 +182,11 @@ void c_cpu::service_events(int32_t * position, uint16_t rpm)
 	if (this->system_events.get((int)c_cpu::e_event_type::Error))
 	this->system_events.clear((int)c_cpu::e_event_type::OnLine);
 
-	memcpy(&this->sys_message.position, position, sizeof(position)*MACHINE_AXIS_COUNT);
-	memcpy(&this->sys_message.rpm, &rpm, sizeof(uint16_t));
+	if (!this->sys_message.__locked__)
+	{
+		memcpy(&this->sys_message.position, position, sizeof(int32_t)*MACHINE_AXIS_COUNT);
+		memcpy(&this->sys_message.rpm, &rpm, sizeof(uint16_t));
+	}
 	
 	__service_host_events();
 	
@@ -190,10 +201,10 @@ void c_cpu::__service_host_events()
 	Data = 3,
 	Inquiry = 4,
 	*/
-	__service_host_events_critical();
-	__service_host_events_warning();
-	__service_host_events_informal();
-	__service_host_events_data();
+	//__service_host_events_critical();
+	//__service_host_events_warning();
+	//__service_host_events_informal();
+	//__service_host_events_data();
 	__service_host_events_inquiry();
 }
 
@@ -214,7 +225,9 @@ void c_cpu::__service_host_events_informal()
 
 void c_cpu::__service_host_events_data()
 {
-	
+	if (this->host_events.Data._flag == 0)
+	return;
+	Talos::Shared::FrameWork::StartUp::string_writer("data=");
 }
 
 void c_cpu::__service_host_events_inquiry()
@@ -223,24 +236,16 @@ void c_cpu::__service_host_events_inquiry()
 	if (this->host_events.Inquiry._flag == 0)
 	return;
 	
-	//Let the reporter handle G/M/W report requests.
+	//Let the reporter handle G,M,W,etc... report requests.
 	Talos::Shared::FrameWork::Events::Report::process();
 	
 	//Are there any events left?
 	if (this->host_events.Inquiry._flag == 0)
 	return;
-	
+	Talos::Shared::FrameWork::StartUp::string_writer("inquiry=");
 	//if (this->host_events.Inquiry.get_clr((int) e_system_message::messages::e_inquiry::GCodeBlockReport))
 	//{
-		//Talos::Shared::FrameWork::StartUp::string_writer("g config request\r\n");
-		////__send_formatted_message((int) e_system_message::messages::e_data::MotionConfiguration, (int)e_system_message::e_status_type::Data );
+	//Talos::Shared::FrameWork::StartUp::string_writer("g config request\r\n");
+	////__send_formatted_message((int) e_system_message::messages::e_data::MotionConfiguration, (int)e_system_message::e_status_type::Data );
 	//}
-}
-
-void c_cpu::update_message_time(uint32_t read_time)
-{
-	Talos::Shared::FrameWork::StartUp::string_writer("lag read=");
-	Talos::Shared::FrameWork::StartUp::int32_writer(read_time);
-	Talos::Shared::FrameWork::StartUp::string_writer("\r\n");
-	this->message_lag_cycles = read_time - *this->cycle_count;
 }

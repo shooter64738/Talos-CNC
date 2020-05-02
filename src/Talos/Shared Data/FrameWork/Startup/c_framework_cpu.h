@@ -19,6 +19,7 @@ class c_cpu
 
 	void service_events(int32_t * position, uint16_t rpm);
 
+
 	s_control_message sys_message;
 	enum class e_event_type : uint8_t
 	{
@@ -27,6 +28,7 @@ class c_cpu
 		Error = 2,
 		SystemRecord = 3,
 		AddendumRecord = 4,
+		ReBoot = 5,
 	};
 	s_bit_flag_controller<uint32_t> system_events;
 
@@ -51,7 +53,7 @@ class c_cpu
 	private:
 	void __send_formatted_message(uint8_t init_message, uint8_t init_type);
 	void __wait_formatted_message(uint8_t init_message, uint8_t init_type);
-	
+
 	void __service_host_events();
 	void __service_host_events_critical();
 	void __service_host_events_warning();

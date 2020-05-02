@@ -20,6 +20,7 @@
 
 #include "c_event_router.h"
 #include "../Event/Serial/c_new_serial_event_handler.h"
+#include "../Startup/c_framework_start.h"
 //#include "../../FrameWork/extern_events_types.h"
 
 //c_event_router::ss_serial c_event_router::serial;

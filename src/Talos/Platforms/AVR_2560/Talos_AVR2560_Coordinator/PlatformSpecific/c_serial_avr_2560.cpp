@@ -11,6 +11,7 @@
 #include <avr/interrupt.h>
 #include <avr/io.h>
 #include <stddef.h>
+
 #include "../../../../Coordinator/Processing/Data/c_data_buffers.h"
 #include "../../../../Shared Data/FrameWork/Data/cache_data.h"
 #include "../../../../Shared Data/FrameWork/Event/c_event_router.h"
@@ -18,8 +19,8 @@
 
 void Hardware_Abstraction_Layer::Serial::initialize(uint8_t Port, uint32_t BaudRate)
 {
-	memset(Talos::Coordinator::Data::Buffer::buffers[Port].storage, 0,256);
-	Talos::Coordinator::Data::Buffer::buffers[Port].ring_buffer.initialize(Talos::Coordinator::Data::Buffer::buffers[Port].storage, 256);
+	memset(Talos::Coordinator::Data::Buffer::buffers[Port].storage, 0,RING_BUFFER_SIZE);
+	Talos::Coordinator::Data::Buffer::buffers[Port].ring_buffer.initialize(Talos::Coordinator::Data::Buffer::buffers[Port].storage, RING_BUFFER_SIZE);
 	Talos::Shared::FrameWork::Events::Router::inputs.pntr_ring_buffer = Talos::Coordinator::Data::Buffer::buffers;
 	Talos::Shared::FrameWork::Events::Router::outputs.pntr_serial_write = Hardware_Abstraction_Layer::Serial::send;
 

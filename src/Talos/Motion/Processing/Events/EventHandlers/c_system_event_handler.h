@@ -25,6 +25,7 @@
 
 #include <stdint.h>
 #include "../../../../_bit_flag_control.h"
+#include "../../../../Shared Data/FrameWork/Startup/c_framework_cpu.h"
 namespace Talos
 {
 	namespace Motion
@@ -51,7 +52,7 @@ namespace Talos
 
 				//functions
 			public:
-				static void process();
+				static void process(c_cpu *this_cpu);
 			protected:
 			private:
 

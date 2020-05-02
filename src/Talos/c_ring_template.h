@@ -49,9 +49,9 @@ public:
 	//Return true if contains data, false if not
 	bool has_data()
 	{
-		//if head==tail and not full, buffer is empty, no data to provide
 		if ((this->_head == this->_tail) && !this->_full)
 			return false;
+		
 		return true;
 	}
 
@@ -106,7 +106,8 @@ public:
 		//since we are pulling a byte off the buffer, it can not be full
 		this->_full = false;
 		//get the byte at the tail
-		TN data = this->_storage_pointer[this->_tail];
+		//TN data = this->_storage_pointer[this->_tail];
+		TN data = *(this->_storage_pointer+ this->_tail);
 		//clear this byte. keeps the storage buffered 'nulled'
 		//_storage_pointer[_tail] = 0;
 		//increment tail
@@ -203,7 +204,9 @@ public:
 		//if (this->_full)
 		//	return 0;
 		//convert byte stream to type,place data at head position, increment head
-		memcpy(&this->_storage_pointer[this->_head++], data, sizeof(TN));
+		//memcpy(&this->_storage_pointer[this->_head], data, sizeof(TN));
+		*(this->_storage_pointer+this->_head) = data;
+		this->_head++;
 		//if we are at the size of the buffer, wrap back to zero
 		if (this->_head == this->_buffer_size)
 		{
@@ -227,7 +230,9 @@ public:
 
 		//place the byte at the head position, increment head
 		this->_newest = this->_head;
-		this->_storage_pointer[this->_head++] = data;
+		//this->_storage_pointer[this->_head++] = data;
+		*(this->_storage_pointer+this->_head) = data;
+		this->_head++;
 		//if we are at the size of the buffer, wrap back to zero
 		if (this->_head == this->_buffer_size)
 		{

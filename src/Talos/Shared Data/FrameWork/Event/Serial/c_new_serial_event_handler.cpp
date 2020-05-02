@@ -47,6 +47,7 @@ void c_new_serial_event_handler::process(Talos::Shared::FrameWork::Events::Route
 	//keep using it until all the data is consumed. Otherwise assign a new handler.
 	if (c_new_serial_event_handler::pntr_data_read_handler == NULL)
 	{
+		//Talos::Shared::FrameWork::StartUp::string_writer("events\r\n");
 		while(c_new_serial_event_handler::__assign_handler(event_object, event_id) ==1);
 	}
 

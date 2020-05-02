@@ -4,6 +4,9 @@
 Talos::Shared::FrameWork::StartUp::s_cpu_type Talos::Shared::FrameWork::StartUp::cpu_type;
 c_cpu Talos::Shared::FrameWork::StartUp::CpuCluster[CPU_CLUSTER_COUNT];
 
+bool Talos::Shared::FrameWork::StartUp::print_rx_diagnostic = false;
+bool Talos::Shared::FrameWork::StartUp::print_tx_diagnostic = false;
+
 void(*Talos::Shared::FrameWork::StartUp::string_writer)(const char * data);
 void(*Talos::Shared::FrameWork::StartUp::byte_writer)(const char data);
 void(*Talos::Shared::FrameWork::StartUp::int32_writer)(long value);

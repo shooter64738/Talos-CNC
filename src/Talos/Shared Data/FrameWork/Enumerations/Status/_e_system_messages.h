@@ -36,7 +36,8 @@ public:
 		{
 			Invalid = 0,
 			ReadyToProcess = 1,
-			BlockCompleted = 2
+			//BlockCompleted = 2
+			SpindleAvailable = 3 ,
 
 		};
 

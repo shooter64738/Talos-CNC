@@ -3,9 +3,10 @@
 #include "_e_record_types.h"
 #include "../physical_machine_parameters.h"
 #include "FrameWork/Enumerations/Status/_e_system_messages.h"
+#include "../_bit_flag_control.h"
 //#include "FrameWork/Startup/c_framework_start.h"
 
-PACK(
+//PACK(
 struct s_control_message
 {
 	e_record_types __rec_type__ = e_record_types::System;
@@ -21,7 +22,8 @@ struct s_control_message
 	uint32_t time_code;
 	uint16_t crc;
 	static const uint8_t __size__ = 40; // speify size here.. 'sizeof()' will not work across differing platforms (8bit/32bit)
-});
+	bool __locked__;
+};//);
 
 //struct s_system_motion_settings
 //{

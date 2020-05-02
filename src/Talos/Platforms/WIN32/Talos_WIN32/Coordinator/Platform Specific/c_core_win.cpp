@@ -20,7 +20,8 @@
 
 #include "c_core_win.h"
 #include "../../../../../Coordinator/coordinator_hardware_def.h"
-uint16_t Hardware_Abstraction_Layer::Core::delay_count_down;
+uint16_t Hardware_Abstraction_Layer::Core::delay_count_down = 0;
+uint32_t Hardware_Abstraction_Layer::Core::cpu_tick_ms = 0;
 
 void Hardware_Abstraction_Layer::Core::critical_shutdown()
 {

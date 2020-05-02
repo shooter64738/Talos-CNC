@@ -37,12 +37,12 @@ void Talos::Motion::Main_Process::initialize()
 {
 	//Setup the ports and function pointers so we know which cpu is talking and we can report back debug data
 	Talos::Shared::FrameWork::StartUp::initialize(0, 1, 0, 2, 3
-		, Talos::Motion::Main_Process::debug_string
-		, Talos::Motion::Main_Process::debug_byte
-		, Talos::Motion::Main_Process::debug_int
-		, Talos::Motion::Main_Process::debug_float
-		, Talos::Motion::Main_Process::debug_float_dec
-		, &Hardware_Abstraction_Layer::Core::cpu_tick_ms);
+	, Talos::Motion::Main_Process::debug_string
+	, Talos::Motion::Main_Process::debug_byte
+	, Talos::Motion::Main_Process::debug_int
+	, Talos::Motion::Main_Process::debug_float
+	, Talos::Motion::Main_Process::debug_float_dec
+	, &Hardware_Abstraction_Layer::Core::cpu_tick_ms);
 
 	Hardware_Abstraction_Layer::Core::initialize();
 	//__initialization_start("Core", Hardware_Abstraction_Layer::Core::initialize,1);//<--core start up
@@ -59,10 +59,12 @@ void Talos::Motion::Main_Process::initialize()
 	//__initialization_start("Spndl Com", NULL, STARTUP_CLASS_CRITICAL);//<--spindle controller card
 
 	Talos::Shared::FrameWork::StartUp::CpuCluster[Talos::Shared::FrameWork::StartUp::cpu_type.Coordinator].Synch(
-		e_system_message::messages::e_data::MotionConfiguration
-		, e_system_message::e_status_type::Inquiry
-		, (int)e_system_message::messages::e_data::SystemRecord
-		, e_system_message::e_status_type::Data, false);
+	e_system_message::messages::e_data::MotionConfiguration
+	, e_system_message::e_status_type::Inquiry
+	, (int)e_system_message::messages::e_data::SystemRecord
+	, e_system_message::e_status_type::Data, false);
+
+//Talos::Shared::FrameWork::StartUp::print_rx_diagnostic=true;
 
 }
 
@@ -103,20 +105,25 @@ void Talos::Motion::Main_Process::__initialization_response(uint8_t response_cod
 	}
 }
 
-static uint32_t tic_count = 0;
 void Talos::Motion::Main_Process::run()
 {
 	Talos::Motion::Main_Process::host_serial.print_string("\r\n** System ready **\r\n");
 	
+	c_cpu *this_cpu = &Talos::Shared::FrameWork::StartUp::CpuCluster[Talos::Shared::FrameWork::StartUp::cpu_type.Host];
+	c_cpu *coordinator_cpu = &Talos::Shared::FrameWork::StartUp::CpuCluster[Talos::Shared::FrameWork::StartUp::cpu_type.Coordinator];
+	
 	//Since the host is running this code, its obviously on line.
-	Talos::Shared::FrameWork::StartUp::CpuCluster[Talos::Shared::FrameWork::StartUp::cpu_type.Host].system_events.set((int)c_cpu::e_event_type::OnLine);
+	this_cpu->system_events.set((int)c_cpu::e_event_type::OnLine);
 
-
-	while (Talos::Shared::FrameWork::StartUp::CpuCluster[Talos::Shared::FrameWork::StartUp::cpu_type.Host].system_events.get((int)c_cpu::e_event_type::OnLine))
+	while (this_cpu->system_events.get((int)c_cpu::e_event_type::OnLine))
 	{
+		if (this_cpu->system_events.get_clr((int)c_cpu::e_event_type::ReBoot))
+		{
+			initialize();
+		}
 		
 		//0: Handle system events (should always follow the router events)
-		Talos::Motion::Events::System::process();
+		Talos::Motion::Events::System::process(coordinator_cpu);
 
 		//1: Handle motion controller events
 		Talos::Motion::Events::MotionController::process();
@@ -130,6 +137,7 @@ void Talos::Motion::Main_Process::run()
 		//Handle cpu events
 		Talos::Shared::FrameWork::StartUp::run_events();
 	}
+	
 	Talos::Motion::Main_Process::host_serial.print_string("\r\n** System halted **");
 	while (1) {}
 }

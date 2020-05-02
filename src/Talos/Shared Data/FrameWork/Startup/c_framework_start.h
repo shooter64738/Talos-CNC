@@ -24,13 +24,13 @@ namespace Talos
 		{
 			class StartUp
 			{
-			public:
+				public:
 				static c_cpu CpuCluster[];
 
 				static void initialize(uint8_t Host_Port, uint8_t Coordinator_Port, uint8_t Motion_Port, uint8_t Spindle_Port, uint8_t Peripheral_Port,
-					void(*string_writer)(const char * data), void(*byte_writer)(const char data), void(*int32_writer)(long value)
-					, void(*float_writer)(float value), void(*float_writer_dec)(float value, uint8_t decimals)
-					,uint32_t * cpu_tick_timer_ms);
+				void(*string_writer)(const char * data), void(*byte_writer)(const char data), void(*int32_writer)(long value)
+				, void(*float_writer)(float value), void(*float_writer_dec)(float value, uint8_t decimals)
+				,uint32_t * cpu_tick_timer_ms);
 
 				static void(*string_writer)(const char * data);
 				static void(*byte_writer)(const char data);
@@ -39,6 +39,8 @@ namespace Talos
 				static void(*float_writer_dec)(float value, uint8_t decimals);
 
 				static void run_events();
+				static bool print_rx_diagnostic;
+				static bool print_tx_diagnostic;
 
 				struct s_cpu_type //these doubel as port address for the send
 				{
@@ -53,7 +55,7 @@ namespace Talos
 
 			class CRC
 			{
-			public:
+				public:
 
 
 				//static unsigned short crc16(const unsigned char* data_p, unsigned char length)

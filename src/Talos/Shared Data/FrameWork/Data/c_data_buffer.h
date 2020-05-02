@@ -38,10 +38,11 @@
 //			{
 //			public:
 				//variables
+#define RING_BUFFER_SIZE 32
 struct s_device_buffer
 {
 	c_ring_buffer<char> ring_buffer;
-	char storage[256];
+	char storage[RING_BUFFER_SIZE];
 	//uint8_t(*pntr_hw_write)(uint8_t port, char byte);
 };
 

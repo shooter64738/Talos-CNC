@@ -27,58 +27,89 @@
 
 s_bit_flag_controller<uint32_t> Talos::Motion::Events::System::event_manager;
 
-void Talos::Motion::Events::System::process()
+void Talos::Motion::Events::System::process(c_cpu *this_cpu)
 {
-	
+	//Talos::Shared::FrameWork::StartUp::string_writer("router\r\n");
 	Talos::Shared::FrameWork::Events::Router::process();
+	//Talos::Shared::FrameWork::StartUp::string_writer("system\r\n");
+	if( this_cpu->system_events._flag!=0)
+	{
+		//Talos::Shared::FrameWork::StartUp::int32_writer(this_cpu->system_events._flag);
+		
+		if (this_cpu->system_events.get_clr((int)c_cpu::e_event_type::SystemRecord))
+		{
+			Talos::Shared::FrameWork::StartUp::string_writer("system\r\n");
+			switch ((e_system_message::e_status_type) this_cpu->sys_message.type)
+			{
+				case e_system_message::e_status_type::Informal:
+				{
+					Talos::Shared::FrameWork::StartUp::string_writer("informal\r\n");
+					switch ((e_system_message::messages::e_informal)this_cpu->sys_message.message)
+					{
+						case e_system_message::messages::e_informal::SpindleAvailable:
+						{
+							Talos::Shared::FrameWork::StartUp::string_writer("found spindle\r\n");
+							break;
+						}
+						default:
+						{
+							/* Your code here */
+							break;
+						}
+					}
+				}
+			}
+		}
+	}
 	
-//	/*
-//	System records are potential events that came from something else (off board)
-//	They could trigger system events if another processor indicated an error.
-//	See if there is an event set indicating we have a system record
-//	*/
-//	//The router determines which event handler needs to process the message
-//	Talos::Shared::FrameWork::Events::Router.process();
-//
-//	if (Talos::Shared::FrameWork::Events::Router.ready.event_manager._flag > 0)
-//	{
-//		
-//		//See if there is an event set indicating we have a status record
-//		if (Talos::Shared::FrameWork::Events::Router.ready.event_manager.get_clr((int)c_event_router::ss_ready_data::e_event_type::System))
-//		{
-//			//We got a system record in the working buffer. We need to get it out and assign it to the correct record address
-//
-//			//Copy the temp system record to the its final destination now that we know where it goes. 
-//			memcpy(&Talos::Shared::c_cache_data::system_message_group[Talos::Shared::c_cache_data::temp_system_message.rx_from]
-//				, &Talos::Shared::c_cache_data::temp_system_message, s_control_message::__size__);
-//				
-//				Talos::Motion::Data::System::process_system_eventing(&Talos::Shared::c_cache_data::system_message_group[Talos::Shared::c_cache_data::temp_system_message.rx_from]);
-//		}
-//
-//		//if (Talos::Shared::FrameWork::Events::Router.ready.event_manager.get_clr((int)c_event_router::ss_ready_data::e_event_type::MotionConfiguration))
-//		//{
-//			///*
-//			//We have an event that the motion configuration was updated. The framework would have already updated the data
-//			//but if we need to do something because the configuration was updated, we can do it here. 
-//			//*/
-//			//
-//		//}
-//
-//	}
-//
-//	//This code is running in the motion controller, so we need to see if the coordinator and spindle are ready
-//	if (!MotionControl::event_manager.get((int)MotionControl::e_event_type::CycleStart))
-//	{
-//		if (System::event_manager.get((int)System::e_event_type::CoordinatorReady)
-//			&& System::event_manager.get((int)System::e_event_type::SpindleReady))
-//		{
-//			//prepare to run a program
-//			//1.Set drive system to lock
-//			//2.Enable drive motors
-//			//3.Set cycle start flag
-//			MotionControl::event_manager.set((int)MotionControl::e_event_type::CycleStart);
-//
-//		}
-//	}
+	
+	//	/*
+	//	System records are potential events that came from something else (off board)
+	//	They could trigger system events if another processor indicated an error.
+	//	See if there is an event set indicating we have a system record
+	//	*/
+	//	//The router determines which event handler needs to process the message
+	//	Talos::Shared::FrameWork::Events::Router.process();
+	//
+	//	if (Talos::Shared::FrameWork::Events::Router.ready.event_manager._flag > 0)
+	//	{
+	//
+	//		//See if there is an event set indicating we have a status record
+	//		if (Talos::Shared::FrameWork::Events::Router.ready.event_manager.get_clr((int)c_event_router::ss_ready_data::e_event_type::System))
+	//		{
+	//			//We got a system record in the working buffer. We need to get it out and assign it to the correct record address
+	//
+	//			//Copy the temp system record to the its final destination now that we know where it goes.
+	//			memcpy(&Talos::Shared::c_cache_data::system_message_group[Talos::Shared::c_cache_data::temp_system_message.rx_from]
+	//				, &Talos::Shared::c_cache_data::temp_system_message, s_control_message::__size__);
+	//
+	//				Talos::Motion::Data::System::process_system_eventing(&Talos::Shared::c_cache_data::system_message_group[Talos::Shared::c_cache_data::temp_system_message.rx_from]);
+	//		}
+	//
+	//		//if (Talos::Shared::FrameWork::Events::Router.ready.event_manager.get_clr((int)c_event_router::ss_ready_data::e_event_type::MotionConfiguration))
+	//		//{
+	//			///*
+	//			//We have an event that the motion configuration was updated. The framework would have already updated the data
+	//			//but if we need to do something because the configuration was updated, we can do it here.
+	//			//*/
+	//			//
+	//		//}
+	//
+	//	}
+	//
+	//	//This code is running in the motion controller, so we need to see if the coordinator and spindle are ready
+	//	if (!MotionControl::event_manager.get((int)MotionControl::e_event_type::CycleStart))
+	//	{
+	//		if (System::event_manager.get((int)System::e_event_type::CoordinatorReady)
+	//			&& System::event_manager.get((int)System::e_event_type::SpindleReady))
+	//		{
+	//			//prepare to run a program
+	//			//1.Set drive system to lock
+	//			//2.Enable drive motors
+	//			//3.Set cycle start flag
+	//			MotionControl::event_manager.set((int)MotionControl::e_event_type::CycleStart);
+	//
+	//		}
+	//	}
 
 }
