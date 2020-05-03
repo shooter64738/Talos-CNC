@@ -97,10 +97,12 @@ void Talos::Shared::FrameWork::Data::System::route_read(uint8_t event_id, s_bit_
 }
 
 #define READER_ERROR 30
+static bool notice = false;
 void Talos::Shared::FrameWork::Data::System::reader()
 {
-	if (Talos::Shared::FrameWork::StartUp::print_rx_diagnostic)
+	if (Talos::Shared::FrameWork::StartUp::print_rx_diagnostic && !notice)
 	{
+		notice = true;
 		Talos::Shared::FrameWork::StartUp::string_writer("rx");
 	}
 	while ((Talos::Shared::FrameWork::Events::Router::inputs.pntr_ring_buffer + (int)read.event_id)->ring_buffer.has_data())
@@ -190,6 +192,18 @@ void Talos::Shared::FrameWork::Data::System::reader()
 					crc_check = __crc_compare(read.cache[SYS_ADDENDUM_RECORD], read.addendum_size);
 					if (crc_check != 0)
 					{
+						//if (Talos::Shared::FrameWork::StartUp::print_rx_diagnostic)
+						{
+							for (int i = 0;i<read.addendum_size;i++)
+							{
+								
+								Talos::Shared::FrameWork::StartUp::int32_writer(*((read.cache[SYS_ADDENDUM_RECORD] - (read.addendum_size - 1))+i));
+								Talos::Shared::FrameWork::StartUp::byte_writer(',');
+								
+							}
+						}
+						Talos::Shared::FrameWork::StartUp::string_writer("\r\n");
+						
 						Talos::Shared::FrameWork::Error::raise_error(BASE_ERROR, READER_ERROR, ADDENDUM_CRC_FAILED, read.event_id);
 					}
 					Talos::Shared::FrameWork::StartUp::CpuCluster[read.event_id].system_events.set((int)c_cpu::e_event_type::AddendumRecord);
@@ -265,20 +279,12 @@ void Talos::Shared::FrameWork::Data::System::route_write(uint8_t event_id, s_bit
 #define WRITER_ERROR 50
 void Talos::Shared::FrameWork::Data::System::writer()
 {
-	if (Talos::Shared::FrameWork::StartUp::print_rx_diagnostic)
-	{
-		Talos::Shared::FrameWork::StartUp::string_writer("tx");
-	}
+	
 	while (write.counter)
 	{
 		//target value <10 is a serial route
 		if (write.cpu->sys_message.target < 10)
 		{
-			if (Talos::Shared::FrameWork::StartUp::print_tx_diagnostic)
-			{
-				Talos::Shared::FrameWork::StartUp::int32_writer(*(write.cache[write.record_number]));
-				Talos::Shared::FrameWork::StartUp::byte_writer(',');
-			}
 			Talos::Shared::FrameWork::Events::Router::outputs.pntr_serial_write(write.cpu->sys_message.target, *(write.cache[write.record_number]));
 		}
 
@@ -298,6 +304,28 @@ void Talos::Shared::FrameWork::Data::System::writer()
 				pntr_write_release();
 				//Clear the event so this will stop firing
 				write.event_object->clear(write.event_id);
+
+				if (Talos::Shared::FrameWork::StartUp::print_tx_diagnostic)
+				{
+					if (Talos::Shared::FrameWork::StartUp::print_rx_diagnostic)
+					{
+						Talos::Shared::FrameWork::StartUp::string_writer("tx");
+					}
+					for (int i = 0;i<s_control_message::__size__;i++)
+					{
+						Talos::Shared::FrameWork::StartUp::int32_writer(*((write.cache[SYS_CONTROL_RECORD] - (s_control_message::__size__ - 1))+i));
+						Talos::Shared::FrameWork::StartUp::byte_writer(',');
+						
+					}
+					for (int i = 0;i<write.addendum_size;i++)
+					{
+						
+						Talos::Shared::FrameWork::StartUp::int32_writer(*((write.cache[SYS_ADDENDUM_RECORD] - (write.addendum_size - 1))+i));
+						Talos::Shared::FrameWork::StartUp::byte_writer(',');
+					}
+					
+					Talos::Shared::FrameWork::StartUp::string_writer("\r\n");
+				}
 
 				//These need to be null again. If this code gets called by mistake we can check for nulls and throw an line.
 				write.counter = 0;

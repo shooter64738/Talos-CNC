@@ -53,8 +53,8 @@ void Talos::Coordinator::Main_Process::initialize()
 		, &Hardware_Abstraction_Layer::Core::cpu_tick_ms );
 	
 
-	Talos::Coordinator::Main_Process::host_serial = c_Serial(Talos::Shared::FrameWork::StartUp::cpu_type.Host, 250000); //<--Connect to host
-	Talos::Coordinator::Main_Process::motion_serial = c_Serial(Talos::Shared::FrameWork::StartUp::cpu_type.Motion, 250000); //<--Connect to host
+	Talos::Coordinator::Main_Process::host_serial = c_Serial(Talos::Shared::FrameWork::StartUp::cpu_type.Host, 500000); //<--Connect to host
+	Talos::Coordinator::Main_Process::motion_serial = c_Serial(Talos::Shared::FrameWork::StartUp::cpu_type.Motion, __FRAMEWORK_INTRA_CPU_BAUD_RATE); //<--Connect to motion
 	Talos::Coordinator::Main_Process::host_serial.print_string("Coordinator initializing\r\n");
 
 	__critical_initialization("Core", Hardware_Abstraction_Layer::Core::initialize, STARTUP_CLASS_CRITICAL);//<--core start up
@@ -77,7 +77,7 @@ void Talos::Coordinator::Main_Process::initialize()
 	//__critical_initialization("Spindle Control Comms", NULL, STARTUP_CLASS_WARNING);//<--spindle controller card
 
 //Talos::Shared::FrameWork::StartUp::print_rx_diagnostic = true;
-//Talos::Shared::FrameWork::StartUp::print_tx_diagnostic = true;
+Talos::Shared::FrameWork::StartUp::print_tx_diagnostic = true;
 	
 	Talos::Shared::FrameWork::StartUp::CpuCluster[Talos::Shared::FrameWork::StartUp::cpu_type.Motion].Synch(
 		e_system_message::messages::e_data::MotionConfiguration
@@ -85,7 +85,7 @@ void Talos::Coordinator::Main_Process::initialize()
 		, (int)e_system_message::messages::e_data::SystemRecord
 		, e_system_message::e_status_type::Data, true);
 	
-	Hardware_Abstraction_Layer::Core::delay_ms(5000);
+	Hardware_Abstraction_Layer::Core::delay_ms(2000);
 	Talos::Shared::FrameWork::Data::System::send((int)e_system_message::messages::e_informal::SpindleAvailable //message id #
 	, (int)e_system_message::e_status_type::Informal //data type id #
 	, Talos::Shared::FrameWork::StartUp::cpu_type.Host //origin of the message
@@ -95,6 +95,15 @@ void Talos::Coordinator::Main_Process::initialize()
 	, NULL //position data
 	);
 	
+	Hardware_Abstraction_Layer::Core::delay_ms(2000);
+	Talos::Shared::FrameWork::Data::System::send((int)e_system_message::messages::e_informal::Reboot //message id #
+	, (int)e_system_message::e_status_type::Informal //data type id #
+	, Talos::Shared::FrameWork::StartUp::cpu_type.Host //origin of the message
+	, Talos::Shared::FrameWork::StartUp::cpu_type.Motion //destination of the message
+	, (int)e_system_message::e_status_state::motion::e_state::Idle //state
+	, (int)e_system_message::e_status_state::motion::e_sub_state::OK //sub state
+	, NULL //position data
+	);
 
 	//Load the initialize block from settings. These values are the 'initial' values of the gcode blocks
 	//that are processed.
@@ -192,8 +201,26 @@ void Talos::Coordinator::Main_Process::run()
 	//Since the host is running this code, its obviously on line. 
 	Talos::Shared::FrameWork::StartUp::CpuCluster[Talos::Shared::FrameWork::StartUp::cpu_type.Host].system_events.set((int)c_cpu::e_event_type::OnLine);
 	
+	//reset the system ticker
+	Hardware_Abstraction_Layer::Core::cpu_tick_ms = 0;
+	uint32_t next_time = Hardware_Abstraction_Layer::Core::cpu_tick_ms +10 ;
 	while (Talos::Shared::FrameWork::StartUp::CpuCluster[Talos::Shared::FrameWork::StartUp::cpu_type.Host].system_events.get((int)c_cpu::e_event_type::OnLine))
 	{
+		//every 10ms send a status message.. lets see how fast it can go.
+		//if (Hardware_Abstraction_Layer::Core::cpu_tick_ms>= next_time)
+		//{
+			//Talos::Shared::FrameWork::Data::System::send((int)e_system_message::messages::e_informal::Reboot //message id #
+			//, (int)e_system_message::e_status_type::Informal //data type id #
+			//, Talos::Shared::FrameWork::StartUp::cpu_type.Host //origin of the message
+			//, Talos::Shared::FrameWork::StartUp::cpu_type.Motion //destination of the message
+			//, (int)e_system_message::e_status_state::motion::e_state::Idle //state
+			//, (int)e_system_message::e_status_state::motion::e_sub_state::OK //sub state
+			//, NULL //position data
+			//);
+			//
+			//next_time = Hardware_Abstraction_Layer::Core::cpu_tick_ms + 10;
+		//}
+		
 		//0: Handle system system_events
 		//Talos::Coordinator::Events::system_event_handler.process();
 

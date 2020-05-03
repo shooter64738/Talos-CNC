@@ -21,7 +21,7 @@ void Hardware_Abstraction_Layer::Serial::initialize(uint8_t Port, uint32_t BaudR
 	Talos::Shared::FrameWork::Events::Router::inputs.pntr_ring_buffer = Talos::Motion::Data::Buffer::buffers;
 	Talos::Shared::FrameWork::Events::Router::outputs.pntr_serial_write = Hardware_Abstraction_Layer::Serial::send;
 
-	uint16_t UBRR_value =0;
+	uint32_t UBRR_value =0;
 	switch (Port)
 	{
 		case 0:

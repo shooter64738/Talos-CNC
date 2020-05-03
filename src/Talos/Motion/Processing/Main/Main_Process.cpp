@@ -46,8 +46,8 @@ void Talos::Motion::Main_Process::initialize()
 
 	Hardware_Abstraction_Layer::Core::initialize();
 	//__initialization_start("Core", Hardware_Abstraction_Layer::Core::initialize,1);//<--core start up
-	Talos::Motion::Main_Process::host_serial = c_Serial(Talos::Shared::FrameWork::StartUp::cpu_type.Host, 250000); //<--Connect to host
-	Talos::Motion::Main_Process::coordinator_serial = c_Serial(Talos::Shared::FrameWork::StartUp::cpu_type.Coordinator, 250000); //<--Connect to host
+	Talos::Motion::Main_Process::host_serial = c_Serial(Talos::Shared::FrameWork::StartUp::cpu_type.Host, 500000); //<--Connect to host
+	Talos::Motion::Main_Process::coordinator_serial = c_Serial(Talos::Shared::FrameWork::StartUp::cpu_type.Coordinator, __FRAMEWORK_INTRA_CPU_BAUD_RATE); //<--Connect to host
 	Talos::Motion::Main_Process::host_serial.print_string("Motion Core initializing\r\n");
 
 	__initialization_start("Interrupts", Hardware_Abstraction_Layer::Core::start_interrupts, STARTUP_CLASS_CRITICAL);//<--start interrupts on hardware
@@ -58,13 +58,16 @@ void Talos::Motion::Main_Process::initialize()
 	//__initialization_start("Coord Com", Talos::Motion::Main_Process::coordinator_initialize, STARTUP_CLASS_CRITICAL);//<--coordinator controller card
 	//__initialization_start("Spndl Com", NULL, STARTUP_CLASS_CRITICAL);//<--spindle controller card
 
+//Talos::Shared::FrameWork::StartUp::print_rx_diagnostic=true;
+//Talos::Shared::FrameWork::StartUp::print_tx_diagnostic=true;
+
 	Talos::Shared::FrameWork::StartUp::CpuCluster[Talos::Shared::FrameWork::StartUp::cpu_type.Coordinator].Synch(
 	e_system_message::messages::e_data::MotionConfiguration
 	, e_system_message::e_status_type::Inquiry
 	, (int)e_system_message::messages::e_data::SystemRecord
 	, e_system_message::e_status_type::Data, false);
 
-//Talos::Shared::FrameWork::StartUp::print_rx_diagnostic=true;
+
 
 }
 
@@ -123,7 +126,7 @@ void Talos::Motion::Main_Process::run()
 		}
 		
 		//0: Handle system events (should always follow the router events)
-		Talos::Motion::Events::System::process(coordinator_cpu);
+		Talos::Motion::Events::System::process(coordinator_cpu, this_cpu);
 
 		//1: Handle motion controller events
 		Talos::Motion::Events::MotionController::process();

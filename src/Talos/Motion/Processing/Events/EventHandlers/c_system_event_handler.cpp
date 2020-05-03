@@ -27,28 +27,31 @@
 
 s_bit_flag_controller<uint32_t> Talos::Motion::Events::System::event_manager;
 
-void Talos::Motion::Events::System::process(c_cpu *this_cpu)
+void Talos::Motion::Events::System::process(c_cpu *active_cpu, c_cpu *this_cpu)
 {
 	//Talos::Shared::FrameWork::StartUp::string_writer("router\r\n");
 	Talos::Shared::FrameWork::Events::Router::process();
 	//Talos::Shared::FrameWork::StartUp::string_writer("system\r\n");
-	if( this_cpu->system_events._flag!=0)
+	if( active_cpu->system_events._flag!=0)
 	{
 		//Talos::Shared::FrameWork::StartUp::int32_writer(this_cpu->system_events._flag);
 		
-		if (this_cpu->system_events.get_clr((int)c_cpu::e_event_type::SystemRecord))
+		if (active_cpu->system_events.get_clr((int)c_cpu::e_event_type::SystemRecord))
 		{
-			Talos::Shared::FrameWork::StartUp::string_writer("system\r\n");
-			switch ((e_system_message::e_status_type) this_cpu->sys_message.type)
+			switch ((e_system_message::e_status_type) active_cpu->sys_message.type)
 			{
 				case e_system_message::e_status_type::Informal:
 				{
-					Talos::Shared::FrameWork::StartUp::string_writer("informal\r\n");
-					switch ((e_system_message::messages::e_informal)this_cpu->sys_message.message)
+					switch ((e_system_message::messages::e_informal)active_cpu->sys_message.message)
 					{
 						case e_system_message::messages::e_informal::SpindleAvailable:
 						{
-							Talos::Shared::FrameWork::StartUp::string_writer("found spindle\r\n");
+							break;
+						}
+						case e_system_message::messages::e_informal::Reboot:
+						{
+							Talos::Shared::FrameWork::StartUp::string_writer("ping\r\n");
+							//this_cpu->system_events.set((int)c_cpu::e_event_type::ReBoot);
 							break;
 						}
 						default:

@@ -38,7 +38,7 @@
 //			{
 //			public:
 				//variables
-#define RING_BUFFER_SIZE 32
+#define RING_BUFFER_SIZE 256
 struct s_device_buffer
 {
 	c_ring_buffer<char> ring_buffer;

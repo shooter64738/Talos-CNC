@@ -143,18 +143,6 @@ uint8_t c_new_serial_event_handler::__assign_handler(Talos::Shared::FrameWork::E
 	}
 	else //we dont know what kind of data it is
 	{
-		//UDR0='D';
-		(Talos::Shared::FrameWork::Events::Router::inputs.pntr_ring_buffer + (int)event_id)->ring_buffer.get();
-		assign_tries++;
-		return 1;
-		//Struggling here to come up with a solid solution. We got some unexpected data in the buffer.
-		//pull 1 byte off the buffer and call again
-		if (assign_tries < 10)
-		{
-			assign_tries++;
-			(Talos::Shared::FrameWork::Events::Router::inputs.pntr_ring_buffer + (int)event_id)->ring_buffer.get();
-			__assign_handler(event_object, event_id);
-		}
 		//since there is data here and we do not know what kind it is, we cannot determine which assigner it needs.
 		//i feel like this is probably a critical error.
 		__raise_error(BASE_ERROR,__ASSIGN_HANDLER_IN, UNDETERMINED_SERIAL_TYPE, (int)event_id);

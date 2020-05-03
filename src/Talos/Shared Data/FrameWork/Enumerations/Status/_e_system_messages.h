@@ -38,6 +38,7 @@ public:
 			ReadyToProcess = 1,
 			//BlockCompleted = 2
 			SpindleAvailable = 3 ,
+			Reboot = 4 ,
 
 		};
 

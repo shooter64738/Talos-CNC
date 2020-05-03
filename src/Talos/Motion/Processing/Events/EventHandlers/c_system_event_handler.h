@@ -52,7 +52,7 @@ namespace Talos
 
 				//functions
 			public:
-				static void process(c_cpu *this_cpu);
+				static void process(c_cpu *active_cpu, c_cpu *this_cpu);
 			protected:
 			private:
 
