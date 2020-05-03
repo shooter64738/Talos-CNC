@@ -6,7 +6,7 @@
  */
 
 //To enable compilation and debugging in Microsoft Visual C++ define MSCV
-#if !defined(__AVR_ATmega328P__) && !defined(__AVR_ATmega2560__) && !defined(__SAM3X8E__)
+#if !defined(__AVR_ATmega328P__) && !defined(__AVR_ATmega2560__) && !defined(__SAM3X8E__) && !defined(__STM32F103__)
 #define MSVC
 #endif
 
@@ -25,6 +25,14 @@
 #include "../Platforms/AVR_2560/Talos_AVR2560_Coordinator/PlatformSpecific/c_core_avr_2560.h"
 #include "../Platforms/AVR_2560/Talos_AVR2560_Coordinator/PlatformSpecific/c_spi_avr_2560.h"
 #include "../Platforms/AVR_2560/Talos_AVR2560_Coordinator/PlatformSpecific/c_disk_avr_2560.h"
+#endif
+
+#ifdef __STM32F103__
+#define F_CPU 16000000UL
+#include "../Platforms/STM32F/Talos_STM32F1_Coordinator/PlatformSpecific/c_serial_STM32F103.h"
+#include "../Platforms/STM32F/Talos_STM32F1_Coordinator/PlatformSpecific/c_core_STM32F103.h"
+#include "../Platforms/STM32F/Talos_STM32F1_Coordinator/PlatformSpecific/c_spi_STM32F103.h"
+#include "../Platforms/STM32F/Talos_STM32F1_Coordinator/PlatformSpecific/c_disk_STM32F103.h"
 #endif
 
 #ifdef MSVC

@@ -1,0 +1,1030 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Device-specific files">
+      <UniqueIdentifier>{9fcefb7a-b14e-4dd2-ae9d-b1f068051f21}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Device-specific files\HAL">
+      <UniqueIdentifier>{ca76d685-a228-4a2a-82d1-6726bdb53e06}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Device-specific files\LL">
+      <UniqueIdentifier>{56b954aa-810c-4719-96ce-ae6df4020c06}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="VisualGDB settings">
+      <UniqueIdentifier>{efc99045-d180-4abe-84c9-5d86616a5e51}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Configuration">
+      <UniqueIdentifier>{7d9389b0-b280-4340-b665-6ac8c74d6320}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Coordinator">
+      <UniqueIdentifier>{d75f9cca-799d-494c-af0b-0a7fa20785ff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Motion">
+      <UniqueIdentifier>{4ef4aff2-455c-4221-9645-b9fc7bb5445e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Ngc_Rs274">
+      <UniqueIdentifier>{ab4abeaf-77df-45a5-996b-8540e4ea1153}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PlatformSpecific">
+      <UniqueIdentifier>{7d5a4a21-3440-4354-8d4a-5d9d9455d1fb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shared Data">
+      <UniqueIdentifier>{7ea937e3-f7c2-4684-b503-a13602614897}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Coordinator\Processing">
+      <UniqueIdentifier>{c6831ed1-b20e-4b15-92b7-c0d62be89f48}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Coordinator\Processing\Data">
+      <UniqueIdentifier>{be1ed052-6e6c-49c4-80bd-1456f4019a8b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Coordinator\Processing\Events">
+      <UniqueIdentifier>{6e775aa0-c1a1-4ce0-9513-e9ebb4b41ff1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Coordinator\Processing\GCode">
+      <UniqueIdentifier>{ab6388cd-d340-4534-8ba9-ba10813fc9e8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Coordinator\Processing\Main">
+      <UniqueIdentifier>{92b0d589-6185-443a-af7b-fc581c315e5c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Coordinator\Processing\Data\DataHandlers">
+      <UniqueIdentifier>{55884040-ec3a-4aa8-8c10-e2a4df20c7cc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Coordinator\Processing\Events\EventHandlers">
+      <UniqueIdentifier>{b04d4296-9e7e-4791-8ee6-a6f140634c1e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Coordinator\Serial">
+      <UniqueIdentifier>{50e7f11e-8299-4f57-a217-2520b08c9f83}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Motion\Processing">
+      <UniqueIdentifier>{0b8bb5a4-3dc4-4dc5-bb71-73357afb3d7d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Motion\Processing\GCode">
+      <UniqueIdentifier>{af629830-5eec-449d-8d44-096584708300}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Ngc_Rs274\Dialect">
+      <UniqueIdentifier>{eb64b05f-48e6-40d0-a206-76bf4422c9d8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Ngc_Rs274\MachineSpecific">
+      <UniqueIdentifier>{2a68dcf0-d935-4523-821b-c52db768ee32}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Ngc_Rs274\MachineSpecific\Lathe">
+      <UniqueIdentifier>{e9c203b9-a55d-43fc-b274-aa5f23638b34}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Ngc_Rs274\MachineSpecific\Mill">
+      <UniqueIdentifier>{0b7a89c5-678a-4c47-9a6b-1f8ea9951019}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shared Data\FrameWork">
+      <UniqueIdentifier>{cdef58a4-0c53-4e13-8ecc-1de8313be3fa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shared Data\FrameWork\Data">
+      <UniqueIdentifier>{4a3b2a9c-3497-48ff-806a-da31cc415c93}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shared Data\FrameWork\Enumerations">
+      <UniqueIdentifier>{ab62e688-53d7-4772-a6dc-b6bd5218e7e4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shared Data\FrameWork\Error">
+      <UniqueIdentifier>{f56ad4b7-8919-4f9e-a5a6-994d2979cc3e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shared Data\FrameWork\Event">
+      <UniqueIdentifier>{444a2937-b42d-4924-8d20-61ff0d677509}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shared Data\FrameWork\Report">
+      <UniqueIdentifier>{fcab2cf6-a277-48f8-894d-40989a652c52}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shared Data\FrameWork\Startup">
+      <UniqueIdentifier>{0a6212b6-854a-43d7-9fdc-c226e82818c1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shared Data\FrameWork\Enumerations\Status">
+      <UniqueIdentifier>{2d855473-cf12-4685-9189-55ad348de6b1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shared Data\FrameWork\Event\Serial">
+      <UniqueIdentifier>{b6167e92-ba56-4743-ac11-9463a1f5649e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shared Data\Settings">
+      <UniqueIdentifier>{3c1f389a-edf8-40c9-981f-28deee1addc3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shared Data\Settings\Coordinator">
+      <UniqueIdentifier>{42ff1706-8683-4503-9d3b-d7d110f1fa0e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shared Data\Settings\Motion">
+      <UniqueIdentifier>{6efc6b6d-8428-4e3c-b49d-de386920a9b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PlatformSpecific\disk Support">
+      <UniqueIdentifier>{e1ed50f1-0a7f-49ee-a45d-1cd825d7a247}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="stm32.props">
+      <Filter>Device-specific files</Filter>
+    </None>
+    <ClCompile Include="$(BSP_ROOT)\STM32F1xxxx\StartupFiles\startup_stm32f103xb.c">
+      <Filter>Device-specific files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal.c">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_adc.c">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_adc_ex.c">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_can.c">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_cec.c">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_cortex.c">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_crc.c">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_dac.c">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_dac_ex.c">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_dma.c">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_eth.c">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_exti.c">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_flash.c">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_flash_ex.c">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_gpio.c">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_gpio_ex.c">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_hcd.c">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_i2c.c">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_i2s.c">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_irda.c">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_iwdg.c">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_mmc.c">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_nand.c">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_nor.c">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_pccard.c">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_pcd.c">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_pcd_ex.c">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_pwr.c">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_rcc.c">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_rcc_ex.c">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_rtc.c">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_rtc_ex.c">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_sd.c">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_smartcard.c">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_spi.c">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_sram.c">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_tim.c">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_tim_ex.c">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_uart.c">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_usart.c">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_wwdg.c">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Src\stm32f1xx_ll_usb.c">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Src\stm32f1xx_ll_adc.c">
+      <Filter>Device-specific files\LL</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Src\stm32f1xx_ll_crc.c">
+      <Filter>Device-specific files\LL</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Src\stm32f1xx_ll_dac.c">
+      <Filter>Device-specific files\LL</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Src\stm32f1xx_ll_dma.c">
+      <Filter>Device-specific files\LL</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Src\stm32f1xx_ll_exti.c">
+      <Filter>Device-specific files\LL</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Src\stm32f1xx_ll_fsmc.c">
+      <Filter>Device-specific files\LL</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Src\stm32f1xx_ll_gpio.c">
+      <Filter>Device-specific files\LL</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Src\stm32f1xx_ll_i2c.c">
+      <Filter>Device-specific files\LL</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Src\stm32f1xx_ll_pwr.c">
+      <Filter>Device-specific files\LL</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Src\stm32f1xx_ll_rcc.c">
+      <Filter>Device-specific files\LL</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Src\stm32f1xx_ll_rtc.c">
+      <Filter>Device-specific files\LL</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Src\stm32f1xx_ll_sdmmc.c">
+      <Filter>Device-specific files\LL</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Src\stm32f1xx_ll_spi.c">
+      <Filter>Device-specific files\LL</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Src\stm32f1xx_ll_tim.c">
+      <Filter>Device-specific files\LL</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Src\stm32f1xx_ll_usart.c">
+      <Filter>Device-specific files\LL</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Src\stm32f1xx_ll_utils.c">
+      <Filter>Device-specific files\LL</Filter>
+    </ClCompile>
+    <ClInclude Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal.h">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc.h">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc_ex.h">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_can.h">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_cec.h">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_cortex.h">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_crc.h">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dac.h">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dac_ex.h">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_def.h">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma.h">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma_ex.h">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_eth.h">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_exti.h">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash.h">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash_ex.h">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_gpio.h">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_gpio_ex.h">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_hcd.h">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_i2c.h">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_i2s.h">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_irda.h">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_iwdg.h">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_mmc.h">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_nand.h">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_nor.h">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_pccard.h">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_pcd.h">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_pcd_ex.h">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_pwr.h">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc.h">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc_ex.h">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rtc.h">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rtc_ex.h">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_sd.h">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_smartcard.h">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_spi.h">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_sram.h">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim.h">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim_ex.h">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_uart.h">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_usart.h">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_wwdg.h">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Inc\stm32f1xx_ll_usb.h">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Inc\Legacy\stm32f1xx_hal_can_ex_legacy.h">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Inc\Legacy\stm32f1xx_hal_can_legacy.h">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Inc\Legacy\stm32_hal_legacy.h">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32F1xxxx\CMSIS_HAL\Include\cmsis_armcc.h">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32F1xxxx\CMSIS_HAL\Include\cmsis_armclang.h">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32F1xxxx\CMSIS_HAL\Include\cmsis_compiler.h">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32F1xxxx\CMSIS_HAL\Include\cmsis_gcc.h">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32F1xxxx\CMSIS_HAL\Include\cmsis_iccarm.h">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32F1xxxx\CMSIS_HAL\Include\cmsis_version.h">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32F1xxxx\CMSIS_HAL\Include\core_armv8mbl.h">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32F1xxxx\CMSIS_HAL\Include\core_armv8mml.h">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32F1xxxx\CMSIS_HAL\Include\core_cm0.h">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32F1xxxx\CMSIS_HAL\Include\core_cm0plus.h">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32F1xxxx\CMSIS_HAL\Include\core_cm1.h">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32F1xxxx\CMSIS_HAL\Include\core_cm23.h">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32F1xxxx\CMSIS_HAL\Include\core_cm3.h">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32F1xxxx\CMSIS_HAL\Include\core_cm33.h">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32F1xxxx\CMSIS_HAL\Include\core_cm4.h">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32F1xxxx\CMSIS_HAL\Include\core_cm7.h">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32F1xxxx\CMSIS_HAL\Include\core_sc000.h">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32F1xxxx\CMSIS_HAL\Include\core_sc300.h">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32F1xxxx\CMSIS_HAL\Include\mpu_armv7.h">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32F1xxxx\CMSIS_HAL\Include\mpu_armv8.h">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32F1xxxx\CMSIS_HAL\Include\tz_context.h">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32F1xxxx\CMSIS_HAL\Device\ST\STM32F1xx\Include\stm32f1xx.h">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32F1xxxx\CMSIS_HAL\Device\ST\STM32F1xx\Include\system_stm32f1xx.h">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32F1xxxx\CMSIS_HAL\RTOS\Template\cmsis_os.h">
+      <Filter>Device-specific files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Inc\stm32f1xx_ll_adc.h">
+      <Filter>Device-specific files\LL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Inc\stm32f1xx_ll_bus.h">
+      <Filter>Device-specific files\LL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Inc\stm32f1xx_ll_cortex.h">
+      <Filter>Device-specific files\LL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Inc\stm32f1xx_ll_crc.h">
+      <Filter>Device-specific files\LL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Inc\stm32f1xx_ll_dac.h">
+      <Filter>Device-specific files\LL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Inc\stm32f1xx_ll_dma.h">
+      <Filter>Device-specific files\LL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Inc\stm32f1xx_ll_exti.h">
+      <Filter>Device-specific files\LL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Inc\stm32f1xx_ll_fsmc.h">
+      <Filter>Device-specific files\LL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Inc\stm32f1xx_ll_gpio.h">
+      <Filter>Device-specific files\LL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Inc\stm32f1xx_ll_i2c.h">
+      <Filter>Device-specific files\LL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Inc\stm32f1xx_ll_iwdg.h">
+      <Filter>Device-specific files\LL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Inc\stm32f1xx_ll_pwr.h">
+      <Filter>Device-specific files\LL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Inc\stm32f1xx_ll_rcc.h">
+      <Filter>Device-specific files\LL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Inc\stm32f1xx_ll_rtc.h">
+      <Filter>Device-specific files\LL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Inc\stm32f1xx_ll_sdmmc.h">
+      <Filter>Device-specific files\LL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Inc\stm32f1xx_ll_spi.h">
+      <Filter>Device-specific files\LL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Inc\stm32f1xx_ll_system.h">
+      <Filter>Device-specific files\LL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Inc\stm32f1xx_ll_tim.h">
+      <Filter>Device-specific files\LL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Inc\stm32f1xx_ll_usart.h">
+      <Filter>Device-specific files\LL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Inc\stm32f1xx_ll_utils.h">
+      <Filter>Device-specific files\LL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Inc\stm32f1xx_ll_wwdg.h">
+      <Filter>Device-specific files\LL</Filter>
+    </ClInclude>
+    <None Include="Talos_STM32F1_Coordinator-Debug.vgdbsettings">
+      <Filter>VisualGDB settings</Filter>
+    </None>
+    <None Include="Talos_STM32F1_Coordinator-Release.vgdbsettings">
+      <Filter>VisualGDB settings</Filter>
+    </None>
+    <None Include="stm32.xml">
+      <Filter>VisualGDB settings</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Talos_STM32F1_Coordinator.cpp" />
+    <ClCompile Include="system_stm32f1xx.c" />
+    <ClCompile Include="..\..\..\Configuration\c_configuration.cpp">
+      <Filter>Configuration</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Coordinator\Serial\c_Serial.cpp">
+      <Filter>Coordinator\Serial</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Coordinator\Processing\Data\c_data_buffers.cpp">
+      <Filter>Coordinator\Processing\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Coordinator\Processing\Data\DataHandlers\c_binary_data_handler.cpp">
+      <Filter>Coordinator\Processing\Data\DataHandlers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Coordinator\Processing\Data\DataHandlers\c_ngc_data_handler.cpp">
+      <Filter>Coordinator\Processing\Data\DataHandlers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Coordinator\Processing\Data\DataHandlers\c_system_data_handler.cpp">
+      <Filter>Coordinator\Processing\Data\DataHandlers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Coordinator\Processing\Events\EventHandlers\c_ancillary_event_handler.cpp">
+      <Filter>Coordinator\Processing\Events\EventHandlers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Coordinator\Processing\Events\EventHandlers\c_network_data_events.cpp">
+      <Filter>Coordinator\Processing\Events\EventHandlers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Coordinator\Processing\Events\EventHandlers\c_ngc_data_events.cpp">
+      <Filter>Coordinator\Processing\Events\EventHandlers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Coordinator\Processing\Events\EventHandlers\c_spi_data_events.cpp">
+      <Filter>Coordinator\Processing\Events\EventHandlers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Coordinator\Processing\Events\EventHandlers\c_system_event_handler.cpp">
+      <Filter>Coordinator\Processing\Events\EventHandlers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Coordinator\Processing\Main\Main_Process.cpp">
+      <Filter>Coordinator\Processing\Main</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Coordinator\coordinator_main.cpp">
+      <Filter>Coordinator</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\NGC_RS274\NGC_Block_Assignor.cpp">
+      <Filter>Ngc_Rs274</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\NGC_RS274\NGC_Block_View.cpp">
+      <Filter>Ngc_Rs274</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\NGC_RS274\NGC_Comp.cpp">
+      <Filter>Ngc_Rs274</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\NGC_RS274\NGC_Coordinates.cpp">
+      <Filter>Ngc_Rs274</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\NGC_RS274\NGC_Error_Check.cpp">
+      <Filter>Ngc_Rs274</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\NGC_RS274\NGC_Line_Processor.cpp">
+      <Filter>Ngc_Rs274</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\NGC_RS274\NGC_Parameters.cpp">
+      <Filter>Ngc_Rs274</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\NGC_RS274\NGC_Set_Targets.cpp">
+      <Filter>Ngc_Rs274</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\NGC_RS274\NGC_System.cpp">
+      <Filter>Ngc_Rs274</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\NGC_RS274\NGC_Tool.cpp">
+      <Filter>Ngc_Rs274</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\NGC_RS274\Dialect\_ngc_dialect_validate.cpp">
+      <Filter>Ngc_Rs274\Dialect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\NGC_RS274\Dialect\_ngc_validate_0_nonmodal.cpp">
+      <Filter>Ngc_Rs274\Dialect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\NGC_RS274\Dialect\_ngc_validate_1_motion.cpp">
+      <Filter>Ngc_Rs274\Dialect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\NGC_RS274\Dialect\_ngc_validate_2_plane_selection.cpp">
+      <Filter>Ngc_Rs274\Dialect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\NGC_RS274\Dialect\_ngc_validate_3_distance_mode.cpp">
+      <Filter>Ngc_Rs274\Dialect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\NGC_RS274\Dialect\_ngc_validate_5_feed_rate_mode.cpp">
+      <Filter>Ngc_Rs274\Dialect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\NGC_RS274\Dialect\_ngc_validate_7_cutter_radius_compensation.cpp">
+      <Filter>Ngc_Rs274\Dialect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\NGC_RS274\Dialect\_ngc_validate_16_plane_rotation.cpp">
+      <Filter>Ngc_Rs274\Dialect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\NGC_RS274\Machine Specific\Lathe\NGC_Lathe.cpp">
+      <Filter>Ngc_Rs274\MachineSpecific\Lathe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\NGC_RS274\Machine Specific\Mill\NGC_Mill.cpp">
+      <Filter>Ngc_Rs274\MachineSpecific\Mill</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Shared Data\FrameWork\Data\c_data_buffer.cpp">
+      <Filter>Shared Data\FrameWork\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Shared Data\FrameWork\Data\c_framework_ngc_data_handler.cpp">
+      <Filter>Shared Data\FrameWork\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Shared Data\FrameWork\Data\c_framework_system_data_handler.cpp">
+      <Filter>Shared Data\FrameWork\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Shared Data\FrameWork\Data\cache_data.cpp">
+      <Filter>Shared Data\FrameWork\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Shared Data\FrameWork\Error\c_framework_error.cpp">
+      <Filter>Shared Data\FrameWork\Error</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Shared Data\FrameWork\Event\c_event_router.cpp">
+      <Filter>Shared Data\FrameWork\Event</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Shared Data\FrameWork\Event\Serial\c_new_serial_event_handler.cpp">
+      <Filter>Shared Data\FrameWork\Event\Serial</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Shared Data\FrameWork\Report\c_framework_report.cpp">
+      <Filter>Shared Data\FrameWork\Report</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Shared Data\FrameWork\Startup\c_framework_cpu.cpp">
+      <Filter>Shared Data\FrameWork\Startup</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Shared Data\FrameWork\Startup\c_framework_start.cpp">
+      <Filter>Shared Data\FrameWork\Startup</Filter>
+    </ClCompile>
+    <ClCompile Include="PlatformSpecific\disk_support\ff.c">
+      <Filter>PlatformSpecific\disk Support</Filter>
+    </ClCompile>
+    <ClCompile Include="PlatformSpecific\c_core_STM32F103.cpp">
+      <Filter>PlatformSpecific</Filter>
+    </ClCompile>
+    <ClCompile Include="PlatformSpecific\c_disk_STM32F103.cpp">
+      <Filter>PlatformSpecific</Filter>
+    </ClCompile>
+    <ClCompile Include="PlatformSpecific\c_serial_STM32F103.cpp">
+      <Filter>PlatformSpecific</Filter>
+    </ClCompile>
+    <ClCompile Include="PlatformSpecific\c_spi_STM32F103.cpp">
+      <Filter>PlatformSpecific</Filter>
+    </ClCompile>
+    <ClCompile Include="PlatformSpecific\disk_support\mmc_stm32f1_spi.c">
+      <Filter>PlatformSpecific\disk Support</Filter>
+    </ClCompile>
+    <ClCompile Include="PlatformSpecific\disk_support\ffunicode.c">
+      <Filter>PlatformSpecific\disk Support</Filter>
+    </ClCompile>
+    <ClCompile Include="PlatformSpecific\disk_support\rtc_stm32f1.c">
+      <Filter>PlatformSpecific\disk Support</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="stm32f1xx_hal_conf.h" />
+    <ClInclude Include="..\..\..\Configuration\c_configuration.h">
+      <Filter>Configuration</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Coordinator\Serial\c_Serial.h">
+      <Filter>Coordinator\Serial</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Coordinator\Processing\Data\c_data_buffers.h">
+      <Filter>Coordinator\Processing\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Coordinator\Processing\Data\DataHandlers\c_binary_data_handler.h">
+      <Filter>Coordinator\Processing\Data\DataHandlers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Coordinator\Processing\Data\DataHandlers\c_ngc_data_handler.h">
+      <Filter>Coordinator\Processing\Data\DataHandlers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Coordinator\Processing\Data\DataHandlers\c_system_data_handler.h">
+      <Filter>Coordinator\Processing\Data\DataHandlers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Coordinator\Processing\Events\EventHandlers\c_ancillary_event_handler.h">
+      <Filter>Coordinator\Processing\Events\EventHandlers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Coordinator\Processing\Events\EventHandlers\c_network_data_events.h">
+      <Filter>Coordinator\Processing\Events\EventHandlers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Coordinator\Processing\Events\EventHandlers\c_ngc_data_events.h">
+      <Filter>Coordinator\Processing\Events\EventHandlers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Coordinator\Processing\Events\EventHandlers\c_spi_data_events.h">
+      <Filter>Coordinator\Processing\Events\EventHandlers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Coordinator\Processing\Events\EventHandlers\c_system_event_handler.h">
+      <Filter>Coordinator\Processing\Events\EventHandlers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Coordinator\Processing\Main\Main_Process.h">
+      <Filter>Coordinator\Processing\Main</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Coordinator\coordinator_hardware_def.h">
+      <Filter>Coordinator</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGC_RS274\_ngc_arc_struct.h">
+      <Filter>Ngc_Rs274</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGC_RS274\_ngc_axis_struct.h">
+      <Filter>Ngc_Rs274</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGC_RS274\_ngc_block_event_enums.h">
+      <Filter>Ngc_Rs274</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGC_RS274\_ngc_block_struct.h">
+      <Filter>Ngc_Rs274</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGC_RS274\_ngc_compensation_enums.h">
+      <Filter>Ngc_Rs274</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGC_RS274\_ngc_coordinate_struct.h">
+      <Filter>Ngc_Rs274</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGC_RS274\_ngc_defines.h">
+      <Filter>Ngc_Rs274</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGC_RS274\_ngc_dialect_enum.h">
+      <Filter>Ngc_Rs274</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGC_RS274\_ngc_errors_interpreter.h">
+      <Filter>Ngc_Rs274</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGC_RS274\_ngc_g_groups.h">
+      <Filter>Ngc_Rs274</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGC_RS274\_ngc_m_groups.h">
+      <Filter>Ngc_Rs274</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGC_RS274\_ngc_math_constants.h">
+      <Filter>Ngc_Rs274</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGC_RS274\_ngc_offset_struct.h">
+      <Filter>Ngc_Rs274</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGC_RS274\_ngc_plane_struct.h">
+      <Filter>Ngc_Rs274</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGC_RS274\_ngc_point_definition.h">
+      <Filter>Ngc_Rs274</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGC_RS274\_ngc_tool_struct.h">
+      <Filter>Ngc_Rs274</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGC_RS274\NGC_Block_Assignor.h">
+      <Filter>Ngc_Rs274</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGC_RS274\NGC_Block_View.h">
+      <Filter>Ngc_Rs274</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGC_RS274\NGC_Comp.h">
+      <Filter>Ngc_Rs274</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGC_RS274\NGC_Coordinates.h">
+      <Filter>Ngc_Rs274</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGC_RS274\NGC_Error_Check.h">
+      <Filter>Ngc_Rs274</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGC_RS274\NGC_Errors.h">
+      <Filter>Ngc_Rs274</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGC_RS274\NGC_Line_Processor.h">
+      <Filter>Ngc_Rs274</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGC_RS274\NGC_Parameters.h">
+      <Filter>Ngc_Rs274</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGC_RS274\NGC_Set_Targets.h">
+      <Filter>Ngc_Rs274</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGC_RS274\NGC_System.h">
+      <Filter>Ngc_Rs274</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGC_RS274\NGC_Tool.h">
+      <Filter>Ngc_Rs274</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGC_RS274\Dialect\_ngc_dialect_validate.h">
+      <Filter>Ngc_Rs274\Dialect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGC_RS274\Dialect\_ngc_validate_0_nonmodal.h">
+      <Filter>Ngc_Rs274\Dialect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGC_RS274\Dialect\_ngc_validate_1_motion.h">
+      <Filter>Ngc_Rs274\Dialect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGC_RS274\Dialect\_ngc_validate_2_plane_selection.h">
+      <Filter>Ngc_Rs274\Dialect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGC_RS274\Dialect\_ngc_validate_3_distance_mode.h">
+      <Filter>Ngc_Rs274\Dialect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGC_RS274\Dialect\_ngc_validate_5_feed_rate_mode.h">
+      <Filter>Ngc_Rs274\Dialect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGC_RS274\Dialect\_ngc_validate_7_cutter_radius_compensation.h">
+      <Filter>Ngc_Rs274\Dialect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGC_RS274\Dialect\_ngc_validate_16_plane_rotation.h">
+      <Filter>Ngc_Rs274\Dialect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGC_RS274\Machine Specific\Lathe\NGC_G_Codes.h">
+      <Filter>Ngc_Rs274\MachineSpecific\Lathe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGC_RS274\Machine Specific\Lathe\NGC_Lathe.h">
+      <Filter>Ngc_Rs274\MachineSpecific\Lathe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGC_RS274\Machine Specific\Lathe\NGC_M_Codes.h">
+      <Filter>Ngc_Rs274\MachineSpecific\Lathe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGC_RS274\Machine Specific\Mill\NGC_G_Codes.h">
+      <Filter>Ngc_Rs274\MachineSpecific\Mill</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGC_RS274\Machine Specific\Mill\NGC_M_Codes.h">
+      <Filter>Ngc_Rs274\MachineSpecific\Mill</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGC_RS274\Machine Specific\Mill\NGC_Mill.h">
+      <Filter>Ngc_Rs274\MachineSpecific\Mill</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\_bit_flag_control.h" />
+    <ClInclude Include="..\..\..\_bit_manipulation.h" />
+    <ClInclude Include="..\..\..\c_ring_template.h" />
+    <ClInclude Include="..\..\..\communication_def.h" />
+    <ClInclude Include="..\..\..\physical_machine_parameters.h" />
+    <ClInclude Include="..\..\..\Shared Data\FrameWork\Data\c_data_buffer.h">
+      <Filter>Shared Data\FrameWork\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared Data\FrameWork\Data\c_framework_ngc_data_handler.h">
+      <Filter>Shared Data\FrameWork\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared Data\FrameWork\Data\c_framework_system_data_handler.h">
+      <Filter>Shared Data\FrameWork\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared Data\FrameWork\Data\cache_data.h">
+      <Filter>Shared Data\FrameWork\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared Data\FrameWork\Enumerations\Status\_e_system_messages.h">
+      <Filter>Shared Data\FrameWork\Enumerations\Status</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared Data\FrameWork\Error\_s_framework_error.h">
+      <Filter>Shared Data\FrameWork\Error</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared Data\FrameWork\Error\c_framework_error.h">
+      <Filter>Shared Data\FrameWork\Error</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared Data\FrameWork\Event\c_event_router.h">
+      <Filter>Shared Data\FrameWork\Event</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared Data\FrameWork\Event\Serial\c_new_serial_event_handler.h">
+      <Filter>Shared Data\FrameWork\Event\Serial</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared Data\FrameWork\Report\c_framework_report.h">
+      <Filter>Shared Data\FrameWork\Report</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared Data\FrameWork\Startup\c_framework_cpu.h">
+      <Filter>Shared Data\FrameWork\Startup</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared Data\FrameWork\Startup\c_framework_start.h">
+      <Filter>Shared Data\FrameWork\Startup</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared Data\Settings\Coordinator\_s_interp_config_struct.h">
+      <Filter>Shared Data\Settings\Coordinator</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared Data\Settings\Motion\_s_motion_control_settings_encapsulation.h">
+      <Filter>Shared Data\Settings\Motion</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared Data\Settings\Motion\_s_motion_hardware.h">
+      <Filter>Shared Data\Settings\Motion</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared Data\Settings\Motion\_s_motion_tolerance_struct.h">
+      <Filter>Shared Data\Settings\Motion</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared Data\_e_binary_comm_response.h">
+      <Filter>Shared Data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared Data\_e_block_state.h">
+      <Filter>Shared Data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared Data\_e_feed_modes.h">
+      <Filter>Shared Data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared Data\_e_feed_types.h">
+      <Filter>Shared Data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared Data\_e_ramp_type.h">
+      <Filter>Shared Data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared Data\_e_record_types.h">
+      <Filter>Shared Data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared Data\_e_unit_types.h">
+      <Filter>Shared Data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared Data\_peripheral_overide_enums.h">
+      <Filter>Shared Data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared Data\_s_encoder_struct.h">
+      <Filter>Shared Data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared Data\_s_jog_data_struct.h">
+      <Filter>Shared Data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared Data\_s_motion_data_block.h">
+      <Filter>Shared Data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared Data\_s_ngc_line_record.h">
+      <Filter>Shared Data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared Data\_s_peripheral_panel_struct.h">
+      <Filter>Shared Data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared Data\_s_status_record.h">
+      <Filter>Shared Data</Filter>
+    </ClInclude>
+    <ClInclude Include="PlatformSpecific\disk_support\diskio.h">
+      <Filter>PlatformSpecific\disk Support</Filter>
+    </ClInclude>
+    <ClInclude Include="PlatformSpecific\disk_support\ff.h">
+      <Filter>PlatformSpecific\disk Support</Filter>
+    </ClInclude>
+    <ClInclude Include="PlatformSpecific\disk_support\ffconf.h">
+      <Filter>PlatformSpecific\disk Support</Filter>
+    </ClInclude>
+    <ClInclude Include="PlatformSpecific\disk_support\integer.h">
+      <Filter>PlatformSpecific\disk Support</Filter>
+    </ClInclude>
+    <ClInclude Include="PlatformSpecific\c_core_STM32F103.h">
+      <Filter>PlatformSpecific</Filter>
+    </ClInclude>
+    <ClInclude Include="PlatformSpecific\c_disk_STM32F103.h">
+      <Filter>PlatformSpecific</Filter>
+    </ClInclude>
+    <ClInclude Include="PlatformSpecific\c_serial_STM32F103.h">
+      <Filter>PlatformSpecific</Filter>
+    </ClInclude>
+    <ClInclude Include="PlatformSpecific\c_spi_STM32F103.h">
+      <Filter>PlatformSpecific</Filter>
+    </ClInclude>
+    <ClInclude Include="PlatformSpecific\disk_support\STM32F100.h">
+      <Filter>PlatformSpecific\disk Support</Filter>
+    </ClInclude>
+    <ClInclude Include="PlatformSpecific\disk_support\rtc_stm32f1.h">
+      <Filter>PlatformSpecific\disk Support</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

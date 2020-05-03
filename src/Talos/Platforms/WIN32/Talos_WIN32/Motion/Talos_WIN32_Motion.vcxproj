@@ -44,6 +44,7 @@
     <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Error\c_framework_error.cpp" />
     <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Event\c_event_router.cpp" />
     <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Event\Serial\c_new_serial_event_handler.cpp" />
+    <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Report\c_framework_report.cpp" />
     <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Startup\c_framework_cpu.cpp" />
     <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Startup\c_framework_start.cpp" />
     <ClCompile Include="Platform Specific\c_core_win.cpp" />
@@ -96,6 +97,7 @@
     <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Error\_s_framework_error.h" />
     <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Event\c_event_router.h" />
     <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Event\Serial\c_new_serial_event_handler.h" />
+    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Report\c_framework_report.h" />
     <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Startup\c_framework_cpu.h" />
     <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Startup\c_framework_start.h" />
     <ClInclude Include="..\..\..\..\Shared Data\Settings\Motion\_s_motion_control_settings_encapsulation.h" />

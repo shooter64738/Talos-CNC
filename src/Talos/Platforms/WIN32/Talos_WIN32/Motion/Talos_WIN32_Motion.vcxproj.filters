@@ -85,6 +85,9 @@
     <Filter Include="Shared data\FrameWork\Error">
       <UniqueIdentifier>{d3bc22dd-7bbe-474f-a215-c0927fd80b89}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shared data\FrameWork\Report">
+      <UniqueIdentifier>{a303188e-45a2-42b7-b07b-15158801eeb8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\..\Motion\motion_main.cpp">
@@ -209,6 +212,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Startup\c_framework_cpu.cpp">
       <Filter>Shared data\FrameWork\Startup</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Report\c_framework_report.cpp">
+      <Filter>Shared data\FrameWork\Report</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -414,6 +420,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Startup\c_framework_cpu.h">
       <Filter>Shared data\FrameWork\Startup</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Report\c_framework_report.h">
+      <Filter>Shared data\FrameWork\Report</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

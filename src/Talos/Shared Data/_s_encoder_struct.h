@@ -3,8 +3,7 @@
 #include "_e_record_types.h"
 #include <stdint.h>
 
-PACK(
-struct s_encoder_meta
+PACK(struct s_encoder_meta
 {
 	int32_t reg_tc0_cv1 = 0; //4
 	int32_t reg_tc0_ra0 = 0; //4
@@ -13,8 +12,7 @@ struct s_encoder_meta
 	//16 bytes
 });
 
-PACK(
-struct s_encoders
+PACK(struct s_encoders
 {
 	s_encoder_meta meta_data; //16
 	uint32_t feedrate_delay; //4

@@ -25,7 +25,7 @@ static float _square(float X)
 
 static void _check_near_zero(float *value)
 {
-	if (value < 0)
+	if (*value < 0)
 		*value = *value > -NEAR_ZERO ? 0 : *value;
 	else
 		*value = *value < NEAR_ZERO ? 0 : *value;
