@@ -47,10 +47,10 @@ void Talos::Motion::Main_Process::initialize()
 	Hardware_Abstraction_Layer::Core::initialize();
 	//__initialization_start("Core", Hardware_Abstraction_Layer::Core::initialize,1);//<--core start up
 	Talos::Motion::Main_Process::host_serial = c_Serial(Talos::Shared::FrameWork::StartUp::cpu_type.Host, 500000); //<--Connect to host
-	Talos::Motion::Main_Process::coordinator_serial = c_Serial(Talos::Shared::FrameWork::StartUp::cpu_type.Coordinator, __FRAMEWORK_INTRA_CPU_BAUD_RATE); //<--Connect to host
+	Talos::Motion::Main_Process::coordinator_serial = c_Serial(Talos::Shared::FrameWork::StartUp::cpu_type.Coordinator, 500000); //<--Connect to host
 	Talos::Motion::Main_Process::host_serial.print_string("Motion Core initializing\r\n");
-
 	__initialization_start("Interrupts", Hardware_Abstraction_Layer::Core::start_interrupts, STARTUP_CLASS_CRITICAL);//<--start interrupts on hardware
+	
 	//__initialization_start("Events", Talos::Shared::Events::initialize, STARTUP_CLASS_CRITICAL);//<--init events
 	//__initialization_start("Ngc Buffer", Talos::Motion::NgcBuffer::initialize);//<--g code buffer
 	//__initialization_start("Ngc Interpreter", NGC_RS274::Interpreter::Processor::initialize);//<--g code interpreter
@@ -58,8 +58,8 @@ void Talos::Motion::Main_Process::initialize()
 	//__initialization_start("Coord Com", Talos::Motion::Main_Process::coordinator_initialize, STARTUP_CLASS_CRITICAL);//<--coordinator controller card
 	//__initialization_start("Spndl Com", NULL, STARTUP_CLASS_CRITICAL);//<--spindle controller card
 
-//Talos::Shared::FrameWork::StartUp::print_rx_diagnostic=true;
-//Talos::Shared::FrameWork::StartUp::print_tx_diagnostic=true;
+	//Talos::Shared::FrameWork::StartUp::print_rx_diagnostic=true;
+	//Talos::Shared::FrameWork::StartUp::print_tx_diagnostic=true;
 
 	Talos::Shared::FrameWork::StartUp::CpuCluster[Talos::Shared::FrameWork::StartUp::cpu_type.Coordinator].Synch(
 	e_system_message::messages::e_data::MotionConfiguration
@@ -118,11 +118,29 @@ void Talos::Motion::Main_Process::run()
 	//Since the host is running this code, its obviously on line.
 	this_cpu->system_events.set((int)c_cpu::e_event_type::OnLine);
 
+	Hardware_Abstraction_Layer::Core::cpu_tick_ms = 0;
+	uint32_t next_time = Hardware_Abstraction_Layer::Core::cpu_tick_ms +10 ;
+
 	while (this_cpu->system_events.get((int)c_cpu::e_event_type::OnLine))
 	{
 		if (this_cpu->system_events.get_clr((int)c_cpu::e_event_type::ReBoot))
 		{
 			initialize();
+		}
+		
+		//every 10ms send a status message.. lets see how fast it can go.
+		if (Hardware_Abstraction_Layer::Core::cpu_tick_ms>= next_time)
+		{
+			Talos::Shared::FrameWork::Data::System::send((int)e_system_message::messages::e_informal::ReadyToProcess //message id #
+			, (int)e_system_message::e_status_type::Informal //data type id #
+			, Talos::Shared::FrameWork::StartUp::cpu_type.Host //origin of the message
+			, Talos::Shared::FrameWork::StartUp::cpu_type.Coordinator //destination of the message
+			, (int)e_system_message::e_status_state::motion::e_state::Idle //state
+			, (int)e_system_message::e_status_state::motion::e_sub_state::OK //sub state
+			, NULL //position data
+			);
+			
+			next_time = Hardware_Abstraction_Layer::Core::cpu_tick_ms + 10;
 		}
 		
 		//0: Handle system events (should always follow the router events)

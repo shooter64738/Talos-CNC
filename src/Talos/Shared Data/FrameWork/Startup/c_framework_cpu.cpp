@@ -12,7 +12,8 @@ uint8_t ID = 0;
 void c_cpu::initialize(uint8_t id, uint32_t * tick_timer_ms)
 {
 	this->ID = id;
-	this->cycle_count = tick_timer_ms;
+	this->pntr_cycle_count_ms = tick_timer_ms;
+	this->next_cycle_check_time = *(pntr_cycle_count_ms)+HEALTH_CHECK_TIME_MS;
 }
 
 /*
@@ -41,7 +42,7 @@ e_system_message::messages::e_data init_message
 	//if master_cpu its the controller. so we need to send a 'ReadyToProcess' message to our child
 	if (is_master_cpu)
 	{
-		uint32_t time_start = *this->cycle_count;
+		uint32_t time_start = *this->pntr_cycle_count_ms;
 		//Send ready message to child
 		__send_formatted_message((int)e_system_message::messages::e_informal::ReadyToProcess
 		,(int)e_system_message::e_status_type::Informal);
@@ -51,7 +52,7 @@ e_system_message::messages::e_data init_message
 		
 		//Wait for specified message
 		__wait_formatted_message((int)init_message, (int)init_request_type);
-		uint32_t time_end = *this->cycle_count;
+		uint32_t time_end = *this->pntr_cycle_count_ms;
 		this->message_lag_cycles = time_end - time_start;
 		
 		//The proper response to inquiry is data
@@ -77,7 +78,7 @@ e_system_message::messages::e_data init_message
 		
 		Talos::Shared::FrameWork::StartUp::string_writer("mCU child request\r\n");
 		
-		uint32_t time_start = *this->cycle_count;
+		uint32_t time_start = *this->pntr_cycle_count_ms;
 		
 		//The child has gotten a ready message from the master. The child now tells the master what it wants
 		__send_formatted_message((int)init_message, (int)init_request_type);
@@ -86,7 +87,7 @@ e_system_message::messages::e_data init_message
 		//if (init_request_type == e_system_message::e_status_type::Inquiry)
 		//__wait_formatted_message((int)init_message, (int)e_system_message::e_status_type::Data);
 		__wait_formatted_message((int)init_message, (int)init_response_type);
-		uint32_t time_end = *this->cycle_count;
+		uint32_t time_end = *this->pntr_cycle_count_ms;
 		this->message_lag_cycles = time_end - time_start;
 		//else
 		//IF its not an inquiry wait for the specified message.
@@ -115,10 +116,6 @@ e_system_message::messages::e_data init_message
 	Talos::Shared::FrameWork::StartUp::string_writer("lag =");
 	Talos::Shared::FrameWork::StartUp::int32_writer(
 	this->message_lag_cycles);Talos::Shared::FrameWork::StartUp::string_writer("\r\n");
-	
-	//Lock up for now.. this is all testing stuff
-	//while(1){}
-	
 }
 
 #define __SEND_FORMATTED_MESSAGE 2
@@ -171,7 +168,7 @@ void c_cpu::__wait_formatted_message(uint8_t init_message, uint8_t init_type)
 
 void c_cpu::service_events(int32_t * position, uint16_t rpm)
 {
-	//this->cycle_count++;
+	__check_health();
 
 	//if NoState and OnLine is false, theres no need to process events.
 	if (this->system_events.get((int)c_cpu::e_event_type::NoState)
@@ -182,13 +179,29 @@ void c_cpu::service_events(int32_t * position, uint16_t rpm)
 	if (this->system_events.get((int)c_cpu::e_event_type::Error))
 	this->system_events.clear((int)c_cpu::e_event_type::OnLine);
 
-	if (!this->sys_message.__locked__)
+	if (!this->sys_message.__locked_read__ && !this->sys_message.__locked_write__)
 	{
 		memcpy(&this->sys_message.position, position, sizeof(int32_t)*MACHINE_AXIS_COUNT);
 		memcpy(&this->sys_message.rpm, &rpm, sizeof(uint16_t));
 	}
 	
 	__service_host_events();
+	
+}
+
+void c_cpu::__check_health()
+{
+	//If the time code hasn't changed (we havent gotten a system message in X time)
+	//then we will assume the cpu is not healthy. Perhaps lost connection or its just lagging
+	if ( *(this->pntr_cycle_count_ms) > this->next_cycle_check_time)
+	{
+		this->next_cycle_check_time = *(pntr_cycle_count_ms) + HEALTH_CHECK_TIME_MS;
+		if (this->sys_message.time_code == last_time_code)
+		this->system_events.set((int)c_cpu::e_event_type::UnHealthy);
+		else
+		this->system_events.clear((int)c_cpu::e_event_type::UnHealthy);
+		last_time_code = this->sys_message.time_code;
+	}
 	
 }
 

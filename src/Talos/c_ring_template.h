@@ -31,7 +31,7 @@ public:
 	void reset()
 	{
 		this->_full = false;
-		memset(this->_storage_pointer, 0, sizeof(TN)*this->_buffer_size);
+		//memset(this->_storage_pointer, 0, sizeof(TN)*this->_buffer_size);
 
 		this->_head = 0;
 		this->_tail = 0;
@@ -253,7 +253,7 @@ public:
 public:
 
 	TN * _storage_pointer = NULL;
-	bool _full = false;
+	volatile bool _full = false;
 	uint16_t _buffer_size = 0;
 	uint16_t _head = 0;
 	uint16_t _tail = 0;

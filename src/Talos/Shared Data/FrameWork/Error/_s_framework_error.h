@@ -31,7 +31,7 @@ struct s_framework_error
 	uint8_t origin;
 	//uint16_t data_size;
 	s_error_stack stack;
-	char * data;
+	volatile char * data;
 	uint16_t buffer_head;
 	uint16_t buffer_tail;
 

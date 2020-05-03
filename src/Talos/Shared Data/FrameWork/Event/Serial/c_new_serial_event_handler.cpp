@@ -83,7 +83,7 @@ void c_new_serial_event_handler::process(Talos::Shared::FrameWork::Events::Route
 #define UNDETERMINED_SERIAL_TYPE 1
 uint8_t c_new_serial_event_handler::__assign_handler(Talos::Shared::FrameWork::Events::Router::s_in_events * event_object, Talos::Shared::FrameWork::Events::Router::s_in_events::e_event_type event_id)
 {
-	
+
 	//Tail is always assumed to be at the 'start' of data
 	//event id for serial is the port the data came from or is going to. We can use that to access the buffer array pointer.
 	char peek_tail = (Talos::Shared::FrameWork::Events::Router::inputs.pntr_ring_buffer + (int)event_id)->
@@ -143,6 +143,8 @@ uint8_t c_new_serial_event_handler::__assign_handler(Talos::Shared::FrameWork::E
 	}
 	else //we dont know what kind of data it is
 	{
+		
+		Talos::Shared::FrameWork::Error::framework_error.user_code1 = peek_tail;
 		//since there is data here and we do not know what kind it is, we cannot determine which assigner it needs.
 		//i feel like this is probably a critical error.
 		__raise_error(BASE_ERROR,__ASSIGN_HANDLER_IN, UNDETERMINED_SERIAL_TYPE, (int)event_id);
@@ -153,7 +155,7 @@ uint8_t c_new_serial_event_handler::__assign_handler(Talos::Shared::FrameWork::E
 #define __ASSIGN_HANDLER_OUT 4
 #define UNHANDLED_EVENT_TYPE 1
 void c_new_serial_event_handler::__assign_handler(Talos::Shared::FrameWork::Events::Router::s_out_events * event_object
-	, e_system_message::messages::e_data event_id)
+, e_system_message::messages::e_data event_id)
 {
 
 	switch (event_id)

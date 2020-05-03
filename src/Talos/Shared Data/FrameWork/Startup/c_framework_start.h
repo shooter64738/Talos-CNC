@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 #define __FRAMEWORK_COM_READ_TIMEOUT_MS 5000
-#define __FRAMEWORK_INTRA_CPU_BAUD_RATE 1000000
+#define __FRAMEWORK_INTRA_CPU_BAUD_RATE 250000
 
 #define CPU_CLUSTER_COUNT 5
 #include "c_framework_cpu.h"

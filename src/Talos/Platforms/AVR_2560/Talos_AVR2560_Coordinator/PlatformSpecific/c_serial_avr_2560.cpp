@@ -19,7 +19,7 @@
 
 void Hardware_Abstraction_Layer::Serial::initialize(uint8_t Port, uint32_t BaudRate)
 {
-	memset(Talos::Coordinator::Data::Buffer::buffers[Port].storage, 0,RING_BUFFER_SIZE);
+	//memset(Talos::Coordinator::Data::Buffer::buffers[Port].storage, 0,RING_BUFFER_SIZE);
 	Talos::Coordinator::Data::Buffer::buffers[Port].ring_buffer.initialize(Talos::Coordinator::Data::Buffer::buffers[Port].storage, RING_BUFFER_SIZE);
 	Talos::Shared::FrameWork::Events::Router::inputs.pntr_ring_buffer = Talos::Coordinator::Data::Buffer::buffers;
 	Talos::Shared::FrameWork::Events::Router::outputs.pntr_serial_write = Hardware_Abstraction_Layer::Serial::send;
@@ -124,14 +124,14 @@ uint8_t Hardware_Abstraction_Layer::Serial::send(uint8_t Port, char byte)
 	{
 		case 0:
 		{
-			while(! (UCSR0A & (1 << UDRE0)));
+			while(! (UCSR0A & (1 << UDRE0))){}
 			UDR0 = byte;
 			break;
 		}
 		#ifdef UCSR1A
 		case 1:
 		{
-			while(! (UCSR1A & (1 << UDRE1)));
+			while(! (UCSR1A & (1 << UDRE1))){}
 			UDR1 = byte;
 			break;
 		}
@@ -181,6 +181,7 @@ ISR(USART0_RX_vect)
 	char Byte = UDR0;
 	Talos::Coordinator::Data::Buffer::buffers[0].ring_buffer.put(Byte);
 	Talos::Shared::FrameWork::Events::Router::inputs.event_manager.set((int)Talos::Shared::FrameWork::Events::Router::s_in_events::e_event_type::Usart0DataArrival);
+	UDR1=Byte;
 }
 #endif
 

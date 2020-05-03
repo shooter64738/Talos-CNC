@@ -35,16 +35,16 @@ namespace Talos
 				class System
 				{
 					//variables
-				public:
+					public:
 					static void(*pntr_read_release)();
 					static void(*pntr_write_release)();
 					
-				protected:
-				private:
+					protected:
+					private:
 
 
 					//functions
-				public:
+					public:
 					static bool send(uint8_t message
 					, uint8_t type, uint8_t origin, uint8_t target
 					, uint8_t state, uint8_t sub_state, int32_t * position_data);
@@ -54,12 +54,13 @@ namespace Talos
 					
 					static void reader();
 					static void writer();
-				protected:
-				private:
+					protected:
+					private:
 					static uint16_t __crc_compare(char * source, uint16_t size);
 					static void __check_addendum(s_packet * cache_object);
 					static void __classify_data_type_message(s_packet * cache_object);
 					static void __classify_inquiry_type_message(s_packet *cache_object);
+					static void __print_diag_rx(char * data, uint16_t size, uint16_t byte_count);
 				};
 			};
 		};

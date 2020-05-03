@@ -41,29 +41,28 @@ c_Serial Talos::Coordinator::Main_Process::motion_serial;
 
 void Talos::Coordinator::Main_Process::initialize()
 {
-	//Talos::Coordinator::Main_Process::__configure_ports();
-
+	
 	//Setup the ports and function pointers so we know which cpu is talking and we can report back debug data
 	Talos::Shared::FrameWork::StartUp::initialize(0, 0, 1, 2, 3
-		, Talos::Coordinator::Main_Process::debug_string
-		, Talos::Coordinator::Main_Process::debug_byte
-		, Talos::Coordinator::Main_Process::debug_int
-		, Talos::Coordinator::Main_Process::debug_float
-		, Talos::Coordinator::Main_Process::debug_float_dec
-		, &Hardware_Abstraction_Layer::Core::cpu_tick_ms );
+	, Talos::Coordinator::Main_Process::debug_string
+	, Talos::Coordinator::Main_Process::debug_byte
+	, Talos::Coordinator::Main_Process::debug_int
+	, Talos::Coordinator::Main_Process::debug_float
+	, Talos::Coordinator::Main_Process::debug_float_dec
+	, &Hardware_Abstraction_Layer::Core::cpu_tick_ms );
 	
-
+	//Talos::Coordinator::Main_Process::__configure_ports();
 	Talos::Coordinator::Main_Process::host_serial = c_Serial(Talos::Shared::FrameWork::StartUp::cpu_type.Host, 500000); //<--Connect to host
-	Talos::Coordinator::Main_Process::motion_serial = c_Serial(Talos::Shared::FrameWork::StartUp::cpu_type.Motion, __FRAMEWORK_INTRA_CPU_BAUD_RATE); //<--Connect to motion
+	Talos::Coordinator::Main_Process::motion_serial = c_Serial(Talos::Shared::FrameWork::StartUp::cpu_type.Motion, 500000); //<--Connect to motion
 	Talos::Coordinator::Main_Process::host_serial.print_string("Coordinator initializing\r\n");
-
+		
 	__critical_initialization("Core", Hardware_Abstraction_Layer::Core::initialize, STARTUP_CLASS_CRITICAL);//<--core start up
 	__critical_initialization("Interrupts", Hardware_Abstraction_Layer::Core::start_interrupts, STARTUP_CLASS_CRITICAL);//<--start interrupts on hardware
 	__critical_initialization("Disk", Hardware_Abstraction_Layer::Disk::initialize, STARTUP_CLASS_CRITICAL);//<--drive/eprom storage
 	__critical_initialization("\tSettings", Hardware_Abstraction_Layer::Disk::load_configuration, STARTUP_CLASS_WARNING);//<--drive/eprom storage
 	__critical_initialization("\tConfiguration", Talos::Confguration::initialize, STARTUP_CLASS_CRITICAL);//<--g code buffer
 	
-		
+	
 	//__critical_initialization("Events", Talos::Shared::Events::initialize, STARTUP_CLASS_CRITICAL);//<--init system_events
 	//__critical_initialization("Data Buffer", Talos::Motion::NgcBuffer::initialize,STARTUP_CLASS_CRITICAL);//<--g code buffer
 	//__critical_initialization("Data Startup", c_ngc_data_handler::initialize, STARTUP_CLASS_CRITICAL);//<--g code buffer
@@ -76,34 +75,34 @@ void Talos::Coordinator::Main_Process::initialize()
 
 	//__critical_initialization("Spindle Control Comms", NULL, STARTUP_CLASS_WARNING);//<--spindle controller card
 
-//Talos::Shared::FrameWork::StartUp::print_rx_diagnostic = true;
-Talos::Shared::FrameWork::StartUp::print_tx_diagnostic = true;
+	//Talos::Shared::FrameWork::StartUp::print_rx_diagnostic = true;
+	//Talos::Shared::FrameWork::StartUp::print_tx_diagnostic = true;
 	
 	Talos::Shared::FrameWork::StartUp::CpuCluster[Talos::Shared::FrameWork::StartUp::cpu_type.Motion].Synch(
-		e_system_message::messages::e_data::MotionConfiguration
-		, e_system_message::e_status_type::Inquiry
-		, (int)e_system_message::messages::e_data::SystemRecord
-		, e_system_message::e_status_type::Data, true);
+	e_system_message::messages::e_data::MotionConfiguration
+	, e_system_message::e_status_type::Inquiry
+	, (int)e_system_message::messages::e_data::SystemRecord
+	, e_system_message::e_status_type::Data, true);
 	
-	Hardware_Abstraction_Layer::Core::delay_ms(2000);
-	Talos::Shared::FrameWork::Data::System::send((int)e_system_message::messages::e_informal::SpindleAvailable //message id #
-	, (int)e_system_message::e_status_type::Informal //data type id #
-	, Talos::Shared::FrameWork::StartUp::cpu_type.Host //origin of the message
-	, Talos::Shared::FrameWork::StartUp::cpu_type.Motion //destination of the message
-	, (int)e_system_message::e_status_state::motion::e_state::Idle //state
-	, (int)e_system_message::e_status_state::motion::e_sub_state::OK //sub state
-	, NULL //position data
-	);
-	
-	Hardware_Abstraction_Layer::Core::delay_ms(2000);
-	Talos::Shared::FrameWork::Data::System::send((int)e_system_message::messages::e_informal::Reboot //message id #
-	, (int)e_system_message::e_status_type::Informal //data type id #
-	, Talos::Shared::FrameWork::StartUp::cpu_type.Host //origin of the message
-	, Talos::Shared::FrameWork::StartUp::cpu_type.Motion //destination of the message
-	, (int)e_system_message::e_status_state::motion::e_state::Idle //state
-	, (int)e_system_message::e_status_state::motion::e_sub_state::OK //sub state
-	, NULL //position data
-	);
+	//Hardware_Abstraction_Layer::Core::delay_ms(2000);
+	//Talos::Shared::FrameWork::Data::System::send((int)e_system_message::messages::e_informal::SpindleAvailable //message id #
+	//, (int)e_system_message::e_status_type::Informal //data type id #
+	//, Talos::Shared::FrameWork::StartUp::cpu_type.Host //origin of the message
+	//, Talos::Shared::FrameWork::StartUp::cpu_type.Motion //destination of the message
+	//, (int)e_system_message::e_status_state::motion::e_state::Idle //state
+	//, (int)e_system_message::e_status_state::motion::e_sub_state::OK //sub state
+	//, NULL //position data
+	//);
+	//
+	//Hardware_Abstraction_Layer::Core::delay_ms(2000);
+	//Talos::Shared::FrameWork::Data::System::send((int)e_system_message::messages::e_informal::Reboot //message id #
+	//, (int)e_system_message::e_status_type::Informal //data type id #
+	//, Talos::Shared::FrameWork::StartUp::cpu_type.Host //origin of the message
+	//, Talos::Shared::FrameWork::StartUp::cpu_type.Motion //destination of the message
+	//, (int)e_system_message::e_status_state::motion::e_state::Idle //state
+	//, (int)e_system_message::e_status_state::motion::e_sub_state::OK //sub state
+	//, NULL //position data
+	//);
 
 	//Load the initialize block from settings. These values are the 'initial' values of the gcode blocks
 	//that are processed.
@@ -126,7 +125,7 @@ Talos::Shared::FrameWork::StartUp::print_tx_diagnostic = true;
 	NGC_RS274::Coordinate_Control::WCS::pntr_wcs_read = Hardware_Abstraction_Layer::Disk::get_wcs;
 	NGC_RS274::Coordinate_Control::WCS::pntr_wcs_write = Hardware_Abstraction_Layer::Disk::put_wcs;
 
-#ifdef MSVC
+	#ifdef MSVC
 	//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "g68x5.y5.R28.\r\ng0x6\r\n f4g1y1.\r\nx5\r\n");
 	//cutter comp line 1 left comp test
 	//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "p.25 g1 f1 g41 x1 y0\r\n g2 x1.5y0.5 i1.5 j0\r\n g1 x1.5y1.5\r\ng1 x3.5 y1.5\r\n");
@@ -145,7 +144,7 @@ Talos::Shared::FrameWork::StartUp::print_tx_diagnostic = true;
 	//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "g0y#525r#<test>[1.0-[5.0+10]]\r\ng1x3\r\n");
 	//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "g99 y [ #777 - [#<test> + #<_glob> +-sqrt[2]] ] \r\n\r\n\r\n\r\n");// /n/ng1x3\r\n");
 	//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "#<tool>=10\r\n");
-#endif
+	#endif
 
 
 }
@@ -198,28 +197,34 @@ void Talos::Coordinator::Main_Process::run()
 {
 	Talos::Coordinator::Main_Process::host_serial.print_string("\r\n** System ready **\r\n");
 	
-	//Since the host is running this code, its obviously on line. 
+	//Since the host is running this code, its obviously on line.
 	Talos::Shared::FrameWork::StartUp::CpuCluster[Talos::Shared::FrameWork::StartUp::cpu_type.Host].system_events.set((int)c_cpu::e_event_type::OnLine);
+	
+	c_cpu *this_cpu = &Talos::Shared::FrameWork::StartUp::CpuCluster[Talos::Shared::FrameWork::StartUp::cpu_type.Host];
+	c_cpu *motion_cpu = &Talos::Shared::FrameWork::StartUp::CpuCluster[Talos::Shared::FrameWork::StartUp::cpu_type.Motion];
+
+	this_cpu->system_events.set((int)c_cpu::e_event_type::OnLine);
 	
 	//reset the system ticker
 	Hardware_Abstraction_Layer::Core::cpu_tick_ms = 0;
-	uint32_t next_time = Hardware_Abstraction_Layer::Core::cpu_tick_ms +10 ;
-	while (Talos::Shared::FrameWork::StartUp::CpuCluster[Talos::Shared::FrameWork::StartUp::cpu_type.Host].system_events.get((int)c_cpu::e_event_type::OnLine))
+	uint32_t next_time = Hardware_Abstraction_Layer::Core::cpu_tick_ms +10;
+	
+	while (this_cpu->system_events.get((int)c_cpu::e_event_type::OnLine))
 	{
 		//every 10ms send a status message.. lets see how fast it can go.
-		//if (Hardware_Abstraction_Layer::Core::cpu_tick_ms>= next_time)
-		//{
-			//Talos::Shared::FrameWork::Data::System::send((int)e_system_message::messages::e_informal::Reboot //message id #
-			//, (int)e_system_message::e_status_type::Informal //data type id #
-			//, Talos::Shared::FrameWork::StartUp::cpu_type.Host //origin of the message
-			//, Talos::Shared::FrameWork::StartUp::cpu_type.Motion //destination of the message
-			//, (int)e_system_message::e_status_state::motion::e_state::Idle //state
-			//, (int)e_system_message::e_status_state::motion::e_sub_state::OK //sub state
-			//, NULL //position data
-			//);
-			//
-			//next_time = Hardware_Abstraction_Layer::Core::cpu_tick_ms + 10;
-		//}
+		if (Hardware_Abstraction_Layer::Core::cpu_tick_ms>= next_time)
+		{
+			Talos::Shared::FrameWork::Data::System::send((int)e_system_message::messages::e_informal::Reboot //message id #
+			, (int)e_system_message::e_status_type::Informal //data type id #
+			, Talos::Shared::FrameWork::StartUp::cpu_type.Host //origin of the message
+			, Talos::Shared::FrameWork::StartUp::cpu_type.Motion //destination of the message
+			, (int)e_system_message::e_status_state::motion::e_state::Idle //state
+			, (int)e_system_message::e_status_state::motion::e_sub_state::OK //sub state
+			, NULL //position data
+			);
+			
+			next_time = Hardware_Abstraction_Layer::Core::cpu_tick_ms + 10;
+		}
 		
 		//0: Handle system system_events
 		//Talos::Coordinator::Events::system_event_handler.process();
@@ -228,7 +233,7 @@ void Talos::Coordinator::Main_Process::run()
 		//Talos::Coordinator::Events::hardware_event_handler.process();
 
 		//2: System event handler (should always follow the router system_events)
-		Talos::Coordinator::Events::System::process();
+		Talos::Coordinator::Events::System::process(motion_cpu, this_cpu);
 
 		//3: Handle ancillary system_events
 		//Talos::Coordinator::Events::ancillary_event_handler.process();
@@ -238,7 +243,12 @@ void Talos::Coordinator::Main_Process::run()
 
 		//Handle cpu events
 		Talos::Shared::FrameWork::StartUp::run_events();
-				
+		if (motion_cpu->system_events.get((int)c_cpu::e_event_type::UnHealthy))
+		{
+			Talos::Coordinator::Main_Process::host_serial.print_string("** Motion CPU UnHealthy **\r\n");
+			while(1);
+		}
+		
 
 		/*if (extern_data_events.inquire.event_manager.get((int)s_inquiry_data::e_event_type::IntialBlockStatus))
 		ngc_block_report(Talos::Shared::c_cache_data::ngc_block_record);*/

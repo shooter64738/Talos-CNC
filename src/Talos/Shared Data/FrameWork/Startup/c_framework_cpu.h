@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include "../../../_bit_flag_control.h"
 #include "../../_s_status_record.h"
-
+#define HEALTH_CHECK_TIME_MS 1000
 class c_cpu
 {
 	public:
@@ -29,6 +29,7 @@ class c_cpu
 		SystemRecord = 3,
 		AddendumRecord = 4,
 		ReBoot = 5,
+		UnHealthy = 6,
 	};
 	s_bit_flag_controller<uint32_t> system_events;
 
@@ -47,10 +48,14 @@ class c_cpu
 
 	void update_message_time(uint32_t read_time);
 
-	uint32_t *cycle_count;
+	uint32_t *pntr_cycle_count_ms;
 	uint32_t message_lag_cycles = 0;
+	uint32_t next_cycle_check_time = 0;
+	uint32_t last_time_code = 0;
 	
 	private:
+	void __check_health();
+		
 	void __send_formatted_message(uint8_t init_message, uint8_t init_type);
 	void __wait_formatted_message(uint8_t init_message, uint8_t init_type);
 

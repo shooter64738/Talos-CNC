@@ -19,6 +19,12 @@ void(*string_writer)(const char * data), void(*byte_writer)(const char data), vo
 , void(*float_writer)(float value), void(*float_writer_dec)(float value, uint8_t decimals)
 ,uint32_t * cpu_tick_timer_ms)
 {
+	Talos::Shared::FrameWork::StartUp::byte_writer = byte_writer;
+	Talos::Shared::FrameWork::StartUp::string_writer = string_writer;
+	Talos::Shared::FrameWork::StartUp::int32_writer = int32_writer;
+	Talos::Shared::FrameWork::StartUp::float_writer = float_writer;
+	Talos::Shared::FrameWork::StartUp::float_writer_dec = float_writer_dec;
+	
 	Talos::Shared::FrameWork::StartUp::cpu_type.Coordinator = Coordinator_Port;
 	Talos::Shared::FrameWork::StartUp::cpu_type.Host = Host_Port;
 	Talos::Shared::FrameWork::StartUp::cpu_type.Motion = Motion_Port;
@@ -30,14 +36,6 @@ void(*string_writer)(const char * data), void(*byte_writer)(const char data), vo
 	Talos::Shared::FrameWork::StartUp::CpuCluster[Motion_Port].initialize(Motion_Port, cpu_tick_timer_ms);
 	Talos::Shared::FrameWork::StartUp::CpuCluster[Spindle_Port].initialize(Spindle_Port, cpu_tick_timer_ms);
 	Talos::Shared::FrameWork::StartUp::CpuCluster[Peripheral_Port].initialize(Peripheral_Port, cpu_tick_timer_ms);
-
-
-	Talos::Shared::FrameWork::StartUp::byte_writer = byte_writer;
-	Talos::Shared::FrameWork::StartUp::string_writer = string_writer;
-	Talos::Shared::FrameWork::StartUp::int32_writer = int32_writer;
-	Talos::Shared::FrameWork::StartUp::float_writer = float_writer;
-	Talos::Shared::FrameWork::StartUp::float_writer_dec = float_writer_dec;
-
 }
 
 void Talos::Shared::FrameWork::StartUp::run_events()

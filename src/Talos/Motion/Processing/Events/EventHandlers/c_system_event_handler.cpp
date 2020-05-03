@@ -50,7 +50,9 @@ void Talos::Motion::Events::System::process(c_cpu *active_cpu, c_cpu *this_cpu)
 						}
 						case e_system_message::messages::e_informal::Reboot:
 						{
-							Talos::Shared::FrameWork::StartUp::string_writer("ping\r\n");
+							Talos::Shared::FrameWork::StartUp::string_writer("CC_TC=");
+							Talos::Shared::FrameWork::StartUp::int32_writer(active_cpu->sys_message.time_code);
+							Talos::Shared::FrameWork::StartUp::string_writer("\r\n");
 							//this_cpu->system_events.set((int)c_cpu::e_event_type::ReBoot);
 							break;
 						}

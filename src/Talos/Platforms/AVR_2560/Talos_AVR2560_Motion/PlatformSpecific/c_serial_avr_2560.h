@@ -31,6 +31,7 @@ namespace Hardware_Abstraction_Layer
 		static void _add(uint8_t port, char byte, uint16_t position);
 		static void disable_tx_isr();
 		static void enable_tx_isr();
+		
 		protected:
 		private:
 		

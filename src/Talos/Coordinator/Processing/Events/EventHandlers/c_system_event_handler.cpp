@@ -22,16 +22,36 @@
 #include "../../Data/DataHandlers/c_system_data_handler.h"
 #include "../../../../Shared Data/FrameWork/Event/c_event_router.h"
 #include "../../../../Shared Data/FrameWork/Data/cache_data.h"
-void Talos::Coordinator::Events::System::process()
+void Talos::Coordinator::Events::System::process(c_cpu *active_cpu, c_cpu *this_cpu)
 {
-	
-
-	/*
-	System records are potential system_events that came from something else (off board)
-	They could trigger system system_events if another processor indicated an error.
-	See if there is an event set indicating we have a system record
-	*/
-	//The router determines which event handler needs to process the message
 	Talos::Shared::FrameWork::Events::Router::process();
 	
+	if( active_cpu->system_events._flag!=0)
+	{
+		if (active_cpu->system_events.get_clr((int)c_cpu::e_event_type::SystemRecord))
+		{
+			switch ((e_system_message::e_status_type) active_cpu->sys_message.type)
+			{
+				case e_system_message::e_status_type::Informal:
+				{
+					switch ((e_system_message::messages::e_informal)active_cpu->sys_message.message)
+					{
+						case e_system_message::messages::e_informal::ReadyToProcess:
+						{
+							Talos::Shared::FrameWork::StartUp::string_writer("MC_TC=");
+							Talos::Shared::FrameWork::StartUp::int32_writer(active_cpu->sys_message.time_code);
+							Talos::Shared::FrameWork::StartUp::string_writer("\r\n");
+							//this_cpu->system_events.set((int)c_cpu::e_event_type::ReBoot);
+							break;
+						}
+						default:
+						{
+							/* Your code here */
+							break;
+						}
+					}
+				}
+			}
+		}
+	}
 }

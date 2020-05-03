@@ -22,7 +22,9 @@ struct s_control_message
 	uint32_t time_code;
 	uint16_t crc;
 	static const uint8_t __size__ = 40; // speify size here.. 'sizeof()' will not work across differing platforms (8bit/32bit)
-	bool __locked__;
+	//None of the data below is sent or received in messages. These are just control flags. 
+	bool __locked_write__;
+	bool __locked_read__;
 };//);
 
 //struct s_system_motion_settings

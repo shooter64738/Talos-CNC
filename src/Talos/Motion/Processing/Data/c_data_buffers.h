@@ -28,7 +28,6 @@
 
 
 //typedef void(*xret_pointer)(c_ring_buffer <char> * buffer);
-
 namespace Talos
 {
 	namespace Motion
