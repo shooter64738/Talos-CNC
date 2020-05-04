@@ -7,7 +7,7 @@
 
 
 #include "c_core_STM32F103.h"
-#include <stm32f1xx_hal.h>
+#include <stm32f4xx_hal.h>
 #include <stm32_hal_legacy.h>
 
 

@@ -57,6 +57,10 @@ namespace Talos
 					protected:
 					private:
 					static uint16_t __crc_compare(char * source, uint16_t size);
+					static void __pop_out_message();
+					static void __push_out_message
+					( c_cpu * target_cpu, uint8_t message , uint8_t type , uint8_t origin
+					, uint8_t target , uint8_t state , uint8_t sub_state , int32_t * position_data);
 					static void __check_addendum(s_packet * cache_object);
 					static void __classify_data_type_message(s_packet * cache_object);
 					static void __classify_inquiry_type_message(s_packet *cache_object);

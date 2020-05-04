@@ -38,7 +38,6 @@ e_system_message::messages::e_data init_message
 	(Talos::Shared::c_cache_data::motion_configuration_record.hardware.steps_per_mm[0]);
 	Talos::Shared::FrameWork::StartUp::string_writer("\r\n");
 	
-	
 	//if master_cpu its the controller. so we need to send a 'ReadyToProcess' message to our child
 	if (is_master_cpu)
 	{
@@ -128,7 +127,7 @@ void c_cpu::__send_formatted_message(uint8_t init_message, uint8_t init_type)
 	, (int)e_system_message::e_status_state::motion::e_state::Idle //state
 	, (int)e_system_message::e_status_state::motion::e_sub_state::OK //sub state
 	, NULL //position data
-	);
+	);	
 }
 
 #define __WAIT_FORMATTED_MESSAGE 3
@@ -139,10 +138,14 @@ void c_cpu::__wait_formatted_message(uint8_t init_message, uint8_t init_type)
 	{
 		//keep processing framework system_events
 		Talos::Shared::FrameWork::Events::Router::process();
-
+	
 		//see if host responded with a message, and if so does it match the message and record type we expected
 		if (this->system_events.get_clr((int)c_cpu::e_event_type::SystemRecord))
 		{
+			Talos::Shared::FrameWork::StartUp::string_writer("lw4 = ");
+			Talos::Shared::FrameWork::StartUp::int32_writer(this->sys_message.__locked_write__ );
+			Talos::Shared::FrameWork::StartUp::string_writer("\r\n");
+			
 			Talos::Shared::FrameWork::Error::framework_error.sys_message = this->sys_message.message;
 			Talos::Shared::FrameWork::Error::framework_error.sys_type = this->sys_message.type;
 			Talos::Shared::FrameWork::Error::framework_error.user_code1 = (int)init_message;

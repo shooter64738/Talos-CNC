@@ -3,13 +3,18 @@
   <Memories>
     <MemoryUtilization>
       <MemoryName>FLASH</MemoryName>
-      <Used>64596</Used>
-      <Total>65536</Total>
+      <Used>65008</Used>
+      <Total>1048576</Total>
     </MemoryUtilization>
     <MemoryUtilization>
       <MemoryName>SRAM</MemoryName>
       <Used>6336</Used>
-      <Total>20480</Total>
+      <Total>131072</Total>
+    </MemoryUtilization>
+    <MemoryUtilization>
+      <MemoryName>CCMRAM</MemoryName>
+      <Used>0</Used>
+      <Total>65536</Total>
     </MemoryUtilization>
   </Memories>
 </MemoryUtilizationReport>
