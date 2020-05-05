@@ -9,7 +9,7 @@ class  c_ring_buffer
 
 public:
 
-	void initialize(TN *pointer, uint16_t buf_size)
+	void initialize(volatile TN *pointer, uint16_t buf_size)
 	{
 		this->_storage_pointer = pointer;
 		this->_buffer_size = buf_size;
@@ -252,7 +252,7 @@ public:
 
 public:
 
-	TN * _storage_pointer = NULL;
+	volatile TN * _storage_pointer = NULL;
 	volatile bool _full = false;
 	uint16_t _buffer_size = 0;
 	uint16_t _head = 0;

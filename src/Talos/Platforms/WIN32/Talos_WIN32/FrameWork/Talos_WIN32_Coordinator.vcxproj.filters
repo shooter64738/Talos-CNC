@@ -1,0 +1,154 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Shared Data">
+      <UniqueIdentifier>{c1ba3884-8fc3-46cf-aa6a-d4572b181ae5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shared Data\Settings">
+      <UniqueIdentifier>{0b55549e-60fb-4ae4-9a3c-a5e45e33ba04}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shared Data\Settings\Coordinator">
+      <UniqueIdentifier>{04a6e8a7-8ed7-4783-b20e-3202dbe3dbeb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shared Data\Settings\Motion">
+      <UniqueIdentifier>{11c0d96a-57bb-48a0-824c-7c4477f43c36}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="FrameWork_Startup">
+      <UniqueIdentifier>{f8772756-48e4-4b8b-a423-b957e1dd00ea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shared Data\NewFrameWork">
+      <UniqueIdentifier>{7aaecb41-7a90-4a60-ab63-ecb9c20346f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shared Data\NewFrameWork\Event">
+      <UniqueIdentifier>{d87cb87c-98f6-4b31-a7f3-f2e1ab078db5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shared Data\NewFrameWork\Event\Serial">
+      <UniqueIdentifier>{22c6105e-b607-49bf-8880-71e95a367573}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shared Data\NewFrameWork\Data">
+      <UniqueIdentifier>{cb7e5dc6-1339-493f-9ee1-34b1d7076820}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shared Data\NewFrameWork\Enumerations">
+      <UniqueIdentifier>{f21087f7-1302-498e-9d06-bd938bbaf2ea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shared Data\NewFrameWork\Error">
+      <UniqueIdentifier>{8baf30b5-f716-43a1-a395-beef2a253d82}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shared Data\NewFrameWork\Report">
+      <UniqueIdentifier>{a998897b-9fdf-42a5-8884-fbfb656acad6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shared Data\NewFrameWork\Comm">
+      <UniqueIdentifier>{28ca18b7-8918-48e3-a711-081276c4b6f2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shared Data\NewFrameWork\Base">
+      <UniqueIdentifier>{112b04cb-1025-46c3-8e49-8364e844e3ae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shared Data\NewFrameWork\CPU">
+      <UniqueIdentifier>{cc7d2559-34c4-4955-a7ba-685bdde9cfea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shared Data\NewFrameWork\Start">
+      <UniqueIdentifier>{6d358183-7ac0-4253-929b-51de9395bccc}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\..\Shared Data\Settings\Coordinator\_s_interp_config_struct.h">
+      <Filter>Shared Data\Settings\Coordinator</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared Data\Settings\Motion\_s_motion_control_settings_encapsulation.h">
+      <Filter>Shared Data\Settings\Motion</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared Data\Settings\Motion\_s_motion_hardware.h">
+      <Filter>Shared Data\Settings\Motion</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared Data\Settings\Motion\_s_motion_tolerance_struct.h">
+      <Filter>Shared Data\Settings\Motion</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Coordinator\coordinator_hardware_def.h">
+      <Filter>FrameWork_Startup</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\c_ring_template.h" />
+    <ClInclude Include="..\..\..\..\Shared Data\NewFrameWork\Base\c_framework_base.h">
+      <Filter>Shared Data\NewFrameWork\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared Data\NewFrameWork\Comm\c_framework_comm.h">
+      <Filter>Shared Data\NewFrameWork\Comm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared Data\NewFrameWork\CPU\c_cpu.h">
+      <Filter>Shared Data\NewFrameWork\CPU</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared Data\NewFrameWork\CPU\c_framework_cpu.h">
+      <Filter>Shared Data\NewFrameWork\CPU</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared Data\NewFrameWork\Start\c_framework_start.h">
+      <Filter>Shared Data\NewFrameWork\Start</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared Data\NewFrameWork\Error\_s_framework_error.h">
+      <Filter>Shared Data\NewFrameWork\Error</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared Data\NewFrameWork\Error\c_framework_error.h">
+      <Filter>Shared Data\NewFrameWork\Error</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared Data\NewFrameWork\Report\c_framework_report.h">
+      <Filter>Shared Data\NewFrameWork\Report</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared Data\NewFrameWork\Event\c_framework_software_event.h">
+      <Filter>Shared Data\NewFrameWork\Event</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\communication_def.h">
+      <Filter>Shared Data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared Data\NewFrameWork\Data\c_framework_data_handler.h">
+      <Filter>Shared Data\NewFrameWork\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared Data\NewFrameWork\_e_record_types.h">
+      <Filter>Shared Data\NewFrameWork</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared Data\NewFrameWork\_e_system_messages.h">
+      <Filter>Shared Data\NewFrameWork</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared Data\NewFrameWork\c_framework_utils.h">
+      <Filter>Shared Data\NewFrameWork</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared Data\NewFrameWork\framework_configuration.h">
+      <Filter>Shared Data\NewFrameWork</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared Data\NewFrameWork\_s_system_record.h">
+      <Filter>Shared Data\NewFrameWork</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared Data\NewFrameWork\Data\s_data_packet.h">
+      <Filter>Shared Data\NewFrameWork\Data</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\..\Coordinator\coordinator_main.cpp">
+      <Filter>FrameWork_Startup</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Shared Data\NewFrameWork\Base\c_framework_base.cpp">
+      <Filter>Shared Data\NewFrameWork\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Shared Data\NewFrameWork\Comm\c_framework_comm.cpp">
+      <Filter>Shared Data\NewFrameWork\Comm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Shared Data\NewFrameWork\CPU\c_cpu.cpp">
+      <Filter>Shared Data\NewFrameWork\CPU</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Shared Data\NewFrameWork\CPU\c_framework_cpu.cpp">
+      <Filter>Shared Data\NewFrameWork\CPU</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Shared Data\NewFrameWork\Start\c_framework_start.cpp">
+      <Filter>Shared Data\NewFrameWork\Start</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Shared Data\NewFrameWork\Error\c_framework_error.cpp">
+      <Filter>Shared Data\NewFrameWork\Error</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Shared Data\NewFrameWork\Report\c_framework_report.cpp">
+      <Filter>Shared Data\NewFrameWork\Report</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Shared Data\NewFrameWork\Event\c_framework_software_event.cpp">
+      <Filter>Shared Data\NewFrameWork\Event</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Shared Data\NewFrameWork\Data\c_framework_data_handler.cpp">
+      <Filter>Shared Data\NewFrameWork\Data</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

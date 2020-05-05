@@ -1,0 +1,77 @@
+
+#SPINDLE
+(feedrate_delay uint32_t)
+feedrate_delay = 0
+(samples_per_second uint16_t)
+samples_per_second = 10 (How frequently are we going to check the encoder signal)
+(ticks_per_revolution int16_t)
+ticks_per_revolution = 400 (How many ticks are in a rev)
+(variable_percent uint8_t)
+variable_percent = 0 (how far from the target can it be)
+(wait_spindle_at_speed uint8_t)		
+wait_spindle_at_speed = 1(do we wait for the spindle to get to speed before we start interpolation? 1 = yes, 0 = no)
+(lock_to_axis uint8_t)
+lock_to_axis = 0(if spindle lock_to_axis is set ('X','Y','Z','A','B','C','U','V','W') moving that axis will cause the spindle to rotate)
+(spindle_synch_wait_time_ms int32_t)
+spindle_synch_wait_time_ms = 5000 (when we are waiting for spindle at speed, how many milliseconds do we wait for synch to occur.)
+
+#MACHINE
+MACHINE_AXIS_COUNT = 6(number of axis' on machine (max 6))
+
+(back_lash_comp_distance float 1-n)
+back_lash_comp_distance,1 = 0.00(backlash comp amount for axis 1/x)
+back_lash_comp_distance,2 = 0.00(backlash comp amount for axis 2/y)
+back_lash_comp_distance,3 = 0.00(backlash comp amount for axis 3/z)
+back_lash_comp_distance,4 = 0.00(backlash comp amount for axis 4/a)
+back_lash_comp_distance,5 = 0.00(backlash comp amount for axis 5/b)
+back_lash_comp_distance,6 = 0.00(backlash comp amount for axis 6/c)
+
+(distance_per_rotation float 1-n)
+distance_per_rotation,1 = 5.00(distance in a single motor rotation for axis 1/x)
+distance_per_rotation,2 = 5.00(distance in a single motor rotation for axis 2/y)
+distance_per_rotation,3 = 5.00(distance in a single motor rotation for axis 3/z)
+distance_per_rotation,4 = 5.00(distance in a single motor rotation for axis 4/a)
+distance_per_rotation,5 = 5.00(distance in a single motor rotation for axis 5/b)
+distance_per_rotation,6 = 5.00(distance in a single motor rotation for axis 6/c)
+
+(interpolation_error_distance float 1-n)
+interpolation_error_distance,1 = 0.00(allowed interpolation error for axis 1/x)
+interpolation_error_distance,2 = 0.00(allowed interpolation error for axis 2/y)
+interpolation_error_distance,3 = 0.00(allowed interpolation error for axis 3/z)
+interpolation_error_distance,4 = 0.00(allowed interpolation error for axis 4/a)
+interpolation_error_distance,5 = 0.00(allowed interpolation error for axis 5/b)
+interpolation_error_distance,6 = 0.00(allowed interpolation error for axis 6/c)
+
+(acceleration float 1-n)
+acceleration,1 = 500 (acceleration max in meters per second squared for axis 1/x)	
+acceleration,2 = 500 (acceleration max in meters per second squared for axis 2/y)
+acceleration,3 = 500 (acceleration max in meters per second squared for axis 3/z)
+acceleration,4 = 500 (acceleration max in meters per second squared for axis 4/a)
+acceleration,5 = 500 (acceleration max in meters per second squared for axis 5/b)
+acceleration,6 = 500 (acceleration max in meters per second squared for axis 6/c)
+
+(max_rate float 1-n)
+max_rate,1 = 500 (speed max in millimeters per second squared for axis 1/x)	
+max_rate,2 = 500 (speed max in millimeters per second squared for axis 2/y)	
+max_rate,3 = 500 (speed max in millimeters per second squared for axis 3/z)	
+max_rate,4 = 500 (speed max in millimeters per second squared for axis 4/a)	
+max_rate,5 = 500 (speed max in millimeters per second squared for axis 5/b)	
+max_rate,6 = 500 (speed max in millimeters per second squared for axis 6/c)	
+
+(steps_per_mm uint16_t 1-n)
+steps_per_mm,1 = 800 (accounting for micro stepping, how many steps are required for 1mm of movement on axis 1/x)
+steps_per_mm,2 = 800 (accounting for micro stepping, how many steps are required for 1mm of movement on axis 2/y)
+steps_per_mm,3 = 800 (accounting for micro stepping, how many steps are required for 1mm of movement on axis 3/z)
+steps_per_mm,4 = 800 (accounting for micro stepping, how many steps are required for 1mm of movement on axis 4/a)
+steps_per_mm,5 = 800 (accounting for micro stepping, how many steps are required for 1mm of movement on axis 5/b)
+steps_per_mm,6 = 800 (accounting for micro stepping, how many steps are required for 1mm of movement on axis 6/c)
+
+(pulse_length uint16_t)
+pulse_length = 10 (minimum length of time in micro-seconds the pulse value must remain high)		
+float junction_deviation = 0;//43
+float arc_tolerance = 0;//47
+uint16_t arc_angular_correction = 12;//59
+uint8_t invert_mpg_directions = 0;//60
+BinaryRecords::e_unit_types machine_units = BinaryRecords::e_unit_types::MM;//61
+s_hardware Hardware_Settings;
+uint32_t _check_sum = 0;//65	

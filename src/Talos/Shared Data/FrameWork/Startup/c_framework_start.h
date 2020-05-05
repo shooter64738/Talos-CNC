@@ -7,7 +7,8 @@
 
 #define CPU_CLUSTER_COUNT 5
 #include "c_framework_cpu.h"
-
+#include "../../_s_usart.h"
+#include <stddef.h>
 //union u_crc_16
 //{
 //	uint16_t crc;
@@ -23,6 +24,8 @@ namespace Talos
 	{
 		namespace FrameWork
 		{
+			
+
 			class StartUp
 			{
 				public:

@@ -6,10 +6,60 @@
  * Author : Family
  */ 
 
-#include "Processing/Main/Main_Process.h"
+#include "../Shared Data/NewFrameWork/Start/c_framework_start.h"
 
 int main(void)
 {
-	Talos::Coordinator::Main_Process::initialize();
-	Talos::Coordinator::Main_Process::run();
+	//init framework base
+	Talos::NewFrameWork::Base::f_initialize();
+	//init framework comms
+	Talos::NewFrameWork::Comm::f_initialize(NULL, NULL, NULL, NULL, NULL);
+	//init framwork cpus
+	Talos::NewFrameWork::CPU::f_initialize(0, 0, 1, 2, 3, NULL);
+	//init data handler reader
+	Talos::NewFrameWork::DataHandler::Binary::f_initialize(Talos::NewFrameWork::CPU::cluster[Talos::NewFrameWork::CPU::host_id]);
+	
+	Talos::NewFrameWork::CPU::cluster[0].hw_data_buffer.put('\6');
+	Talos::NewFrameWork::CPU::cluster[0].hw_data_buffer.put('\0');
+	Talos::NewFrameWork::CPU::cluster[0].hw_data_buffer.put('\1');
+	Talos::NewFrameWork::CPU::cluster[0].hw_data_buffer.put('\1');
+	Talos::NewFrameWork::CPU::cluster[0].hw_data_buffer.put('\1');
+	Talos::NewFrameWork::CPU::cluster[0].hw_data_buffer.put('\1');
+	Talos::NewFrameWork::CPU::cluster[0].hw_data_buffer.put('\8');
+	Talos::NewFrameWork::CPU::cluster[0].hw_data_buffer.put('\8');
+	Talos::NewFrameWork::CPU::cluster[0].hw_data_buffer.put('\4');
+	Talos::NewFrameWork::CPU::cluster[0].hw_data_buffer.put('\0');
+	Talos::NewFrameWork::CPU::cluster[0].hw_data_buffer.put('\0');
+	Talos::NewFrameWork::CPU::cluster[0].hw_data_buffer.put('\0');
+	Talos::NewFrameWork::CPU::cluster[0].hw_data_buffer.put('\5');
+	Talos::NewFrameWork::CPU::cluster[0].hw_data_buffer.put('\0');
+	Talos::NewFrameWork::CPU::cluster[0].hw_data_buffer.put('\0');
+	Talos::NewFrameWork::CPU::cluster[0].hw_data_buffer.put('\0');
+	Talos::NewFrameWork::CPU::cluster[0].hw_data_buffer.put('\6');
+	Talos::NewFrameWork::CPU::cluster[0].hw_data_buffer.put('\0');
+	Talos::NewFrameWork::CPU::cluster[0].hw_data_buffer.put('\0');
+	Talos::NewFrameWork::CPU::cluster[0].hw_data_buffer.put('\0');
+	Talos::NewFrameWork::CPU::cluster[0].hw_data_buffer.put('\7');
+	Talos::NewFrameWork::CPU::cluster[0].hw_data_buffer.put('\0');
+	Talos::NewFrameWork::CPU::cluster[0].hw_data_buffer.put('\0');
+	Talos::NewFrameWork::CPU::cluster[0].hw_data_buffer.put('\0');
+	Talos::NewFrameWork::CPU::cluster[0].hw_data_buffer.put('\8');
+	Talos::NewFrameWork::CPU::cluster[0].hw_data_buffer.put('\0');
+	Talos::NewFrameWork::CPU::cluster[0].hw_data_buffer.put('\0');
+	Talos::NewFrameWork::CPU::cluster[0].hw_data_buffer.put('\0');
+	Talos::NewFrameWork::CPU::cluster[0].hw_data_buffer.put('\9');
+	Talos::NewFrameWork::CPU::cluster[0].hw_data_buffer.put('\0');
+	Talos::NewFrameWork::CPU::cluster[0].hw_data_buffer.put('\0');
+	Talos::NewFrameWork::CPU::cluster[0].hw_data_buffer.put('\0');
+	Talos::NewFrameWork::CPU::cluster[0].hw_data_buffer.put('\5');
+	Talos::NewFrameWork::CPU::cluster[0].hw_data_buffer.put('\0');
+	Talos::NewFrameWork::CPU::cluster[0].hw_data_buffer.put('\4');
+	Talos::NewFrameWork::CPU::cluster[0].hw_data_buffer.put('\0');
+	Talos::NewFrameWork::CPU::cluster[0].hw_data_buffer.put('\0');
+	Talos::NewFrameWork::CPU::cluster[0].hw_data_buffer.put('\0');
+	Talos::NewFrameWork::CPU::cluster[0].hw_data_buffer.put('\0');
+	Talos::NewFrameWork::CPU::cluster[0].hw_data_buffer.put('\0');
+
+	while(1)
+	Talos::NewFrameWork::CPU::cluster[0].service_events(NULL, 0);
 }
