@@ -118,6 +118,12 @@
     <ClInclude Include="..\..\..\..\Shared Data\NewFrameWork\Data\s_data_packet.h">
       <Filter>Shared Data\NewFrameWork\Data</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared Data\NewFrameWork\CPU\c_data_handler.h">
+      <Filter>Shared Data\NewFrameWork\CPU</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared Data\NewFrameWork\CPU\u_data_overlay.h">
+      <Filter>Shared Data\NewFrameWork\CPU</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\..\Coordinator\coordinator_main.cpp">
@@ -149,6 +155,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\..\Shared Data\NewFrameWork\Data\c_framework_data_handler.cpp">
       <Filter>Shared Data\NewFrameWork\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Shared Data\NewFrameWork\CPU\c_data_handler.cpp">
+      <Filter>Shared Data\NewFrameWork\CPU</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

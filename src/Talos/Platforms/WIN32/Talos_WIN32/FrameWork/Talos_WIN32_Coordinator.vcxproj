@@ -16,7 +16,9 @@
     <ClInclude Include="..\..\..\..\Shared Data\NewFrameWork\Base\c_framework_base.h" />
     <ClInclude Include="..\..\..\..\Shared Data\NewFrameWork\Comm\c_framework_comm.h" />
     <ClInclude Include="..\..\..\..\Shared Data\NewFrameWork\CPU\c_cpu.h" />
+    <ClInclude Include="..\..\..\..\Shared Data\NewFrameWork\CPU\c_data_handler.h" />
     <ClInclude Include="..\..\..\..\Shared Data\NewFrameWork\CPU\c_framework_cpu.h" />
+    <ClInclude Include="..\..\..\..\Shared Data\NewFrameWork\CPU\u_data_overlay.h" />
     <ClInclude Include="..\..\..\..\Shared Data\NewFrameWork\c_framework_utils.h" />
     <ClInclude Include="..\..\..\..\Shared Data\NewFrameWork\Data\c_framework_data_handler.h" />
     <ClInclude Include="..\..\..\..\Shared Data\NewFrameWork\Data\s_data_packet.h" />
@@ -40,6 +42,7 @@
     <ClCompile Include="..\..\..\..\Shared Data\NewFrameWork\Base\c_framework_base.cpp" />
     <ClCompile Include="..\..\..\..\Shared Data\NewFrameWork\Comm\c_framework_comm.cpp" />
     <ClCompile Include="..\..\..\..\Shared Data\NewFrameWork\CPU\c_cpu.cpp" />
+    <ClCompile Include="..\..\..\..\Shared Data\NewFrameWork\CPU\c_data_handler.cpp" />
     <ClCompile Include="..\..\..\..\Shared Data\NewFrameWork\CPU\c_framework_cpu.cpp" />
     <ClCompile Include="..\..\..\..\Shared Data\NewFrameWork\Data\c_framework_data_handler.cpp" />
     <ClCompile Include="..\..\..\..\Shared Data\NewFrameWork\Error\c_framework_error.cpp" />

@@ -33,5 +33,24 @@ namespace Talos
 			CPU::cluster[spindle_id].initialize(host_id, cpu_tick_timer_ms);
 			CPU::cluster[peripheral_id].initialize(host_id, cpu_tick_timer_ms);
 		}
+
+		void CPU::service_events()
+		{
+			/*
+			Loop through the event classes for the cpu cluster and service anything that needs to run.
+			Only cpu 'system_events' get processed here. 'host_events' should be handled within the
+			application	layer.
+			*/
+
+			//Motion always has the most updated position data. Copy its position information to everyone else
+			int32_t * position = cluster[motion_id].sys_message.position;
+			//Spindle has the most updated rpm data. Copy its rpm information to everyone else
+			uint16_t rpm = cluster[spindle_id].sys_message.rpm;
+			for (uint8_t i = 0; i < CPU_CLUSTER_COUNT; i++)
+			{
+				cluster[i].service_events(position, rpm);
+			}
+
+		}
 	}
 }

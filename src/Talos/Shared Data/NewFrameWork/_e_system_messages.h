@@ -48,6 +48,9 @@ public:
 			GCodeBlockReport = 1,
 			MCodeBlockReport = 2,
 			WordStatusReport = 3,
+			MotionConfiguration = 4,
+			SystemRecord = 5,
+			NgcDataLine = 6,
 
 		};
 

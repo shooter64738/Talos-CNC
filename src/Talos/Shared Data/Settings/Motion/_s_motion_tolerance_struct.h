@@ -9,11 +9,12 @@
 PACK(
 struct s_motion_tolerance_settings
 {
-	float junction_deviation = 0;//4
-	float arc_tolerance = 0;//4
-	uint16_t arc_angular_correction = 12;//2
-	uint8_t invert_mpg_directions = 0;//1
-	e_unit_types machine_units = e_unit_types::MM;//1
+	float junction_deviation;//4
+	float arc_tolerance;//4
+	uint16_t arc_angular_correction;// = 12;//2
+	uint8_t invert_mpg_directions;//1
+	uint8_t machine_units; // = e_unit_types::MM;//1
 	//12 bytes
-});
+}
+);
 #endif // !_C_MOTION_TOLERANCE_STRUCT

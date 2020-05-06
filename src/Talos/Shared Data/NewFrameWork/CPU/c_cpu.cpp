@@ -182,7 +182,7 @@ void c_cpu::__wait_formatted_message(uint8_t init_message, uint8_t init_type)
 
 void c_cpu::service_events(int32_t * position, uint16_t rpm)
 {
-	//This should get called frequently from teh main line. 
+	//This should get called frequently from the main line. 
 	__check_data();
 
 	__check_health();
@@ -196,92 +196,32 @@ void c_cpu::service_events(int32_t * position, uint16_t rpm)
 	if (this->system_events.get((int)c_cpu::e_event_type::Error))
 		this->system_events.clear((int)c_cpu::e_event_type::OnLine);
 
-	memcpy(&this->sys_message.position, position, sizeof(int32_t)*MACHINE_AXIS_COUNT);
+	if (position != NULL)
+		memcpy(&this->sys_message.position, position, sizeof(int32_t)*MACHINE_AXIS_COUNT);
+
 	memcpy(&this->sys_message.rpm, &rpm, sizeof(uint16_t));
 }
 
 void c_cpu::__check_data()
 {
-	//Is there a handler assigned for this data class already? If a handler is assigned
-	//keep using it until all the data is consumed. Otherwise assign a new handler.
-	if (this->pntr_data_read_handler == NULL)
-		this->__assign_handler();
+	//If not conencted to any data just return
+	if (this->hw_data_buffer._storage_pointer == NULL)
+		return;
+	//TODO:neeed an indicator to determine when data has arrived for this cpu
 
-	if (this->pntr_data_read_handler != NULL)
-		this->pntr_data_read_handler(&this->hw_data_buffer, this->ID);
+	//Check if there is data to read. If not return
 
-	//Need to check the data handlers buffer to see if there are buffered records to pull. 
-	/*
-	//Copy the record from the buffer into into the sys_message
-	memcpy(&this_packet->active_cpu->sys_message, &this_packet->sys_message_buffer[this_packet->buffer_index - 1], s_control_message::__size__);
-	this_packet->active_cpu->sys_message.rx_from = (int)this_packet->event_id;
-	*/
-	uint8_t oldest_ready_packet = Talos::NewFrameWork::DataHandler::Binary::get_fifo(this->ID);
-	if (oldest_ready_packet >0)
-		memcpy(&(this->sys_message)
-			, &Talos::NewFrameWork::DataHandler::Binary::read_packet[this->ID].sys_message_buffer[oldest_ready_packet-1], s_control_message::__size__);
-}
+	//Check to see if this data is setup to be read already. If not assign a reader
 
-#define __ASSIGN_HANDLER_IN 3
-#define UNDETERMINED_SERIAL_TYPE 1
-void c_cpu::__assign_handler()
-{
-
-	//Tail is always assumed to be at the 'start' of data
-	//event id for serial is the port the data came from or is going to. We can use that to access the buffer array pointer.
-	char peek_tail = this->hw_data_buffer.peek(this->hw_data_buffer._tail);
-
-	//Printable data is ngc line data. We need to check cr or lf because those are
-	//special line ending characters for ngc data. We will NEVER use 10 or 13 as a
-	//binary record type.
-	if ((peek_tail >= 32 && peek_tail <= 127) || (peek_tail == CR || peek_tail == LF))
+	if (cdh_is_busy)
 	{
-		//If CR and LF are the termination for an ngc line, we wont see those unless we jsut processed a record
-		//We can throw those characters away.
-		if (peek_tail == CR || peek_tail == LF)
-		{
-			this->hw_data_buffer.get();
-
-			return;
-		}
-
-		//Talos::Shared::FrameWork::Data::Txt::route_read((int)event_id, &event_object->event_manager);
-		//c_new_serial_event_handler::pntr_data_read_handler = Talos::Shared::FrameWork::Data::Txt::reader;
-		//Talos::Shared::FrameWork::Data::Txt::pntr_read_release = c_new_serial_event_handler::read_data_handler_releaser;
-
+		cdh_read();
 	}
-	else if (peek_tail > 0 && peek_tail < 32) //non-printable and below 32 is a binary record
+	else
 	{
-
-		if (peek_tail == (int)e_record_types::System)
-		{
-			Talos::NewFrameWork::DataHandler::Binary::route_read(this, &this->system_events, (int)e_record_types::System);
-			this->pntr_data_read_handler = Talos::NewFrameWork::DataHandler::Binary::read;
-		}
-
-		//Assign a release call back function. The handler knows nothing about serial system_events
-		//and we want to keep it that way.
-
+		cdh_get_message_type(&this->hw_data_buffer);
+		cdh_read();
 	}
-	else if (peek_tail > 127) //non-printable and above 127 is a control code
-	{
-		//UDR0='C';
-		//Assign a specific handler for this data type
-		//c_new_serial_event_handler::pntr_data_read_handler = Txt::assign_handler(event_object, event_id, (e_record_types)peek_tail);
-
-		//Assign a release call back function. The handler knows nothing about serial system_events
-		//and we want to keep it that way.
-		//Txt::pntr_read_data_handler_release = c_new_serial_event_handler::read_data_handler_releaser;
-	}
-	else //we dont know what kind of data it is
-	{
-
-		//Talos::Shared::FrameWork::Error::framework_error.user_code1 = peek_tail;
-		//since there is data here and we do not know what kind it is, we cannot determine which assigner it needs.
-		//i feel like this is probably a critical error.
-		//__raise_error(BASE_ERROR, __ASSIGN_HANDLER_IN, UNDETERMINED_SERIAL_TYPE, (int)event_id);
-	}
-	return;
 }
 
 void c_cpu::__check_health()

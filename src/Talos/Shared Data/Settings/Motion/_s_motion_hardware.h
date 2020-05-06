@@ -15,7 +15,8 @@ struct s_motion_hardware
 	float acceleration[MACHINE_AXIS_COUNT]; //24
 	float max_rate[MACHINE_AXIS_COUNT];//24
 	uint16_t steps_per_mm[MACHINE_AXIS_COUNT];//12
-	uint16_t pulse_length = 0;//2
+	uint16_t pulse_length;//2
 	//153 bytesS
-});
+}
+);
 #endif

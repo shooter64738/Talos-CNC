@@ -16,6 +16,8 @@ namespace Talos
 				, uint8_t peripheral_id
 				, volatile uint32_t * pntr_cpu_tick_timer_ms);
 
+			static void service_events();
+
 			static int host_id;
 			static int coordinator_id;
 			static int motion_id;
