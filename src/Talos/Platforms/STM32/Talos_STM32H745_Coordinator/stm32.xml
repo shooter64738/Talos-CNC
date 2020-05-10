@@ -8,8 +8,8 @@
   </ToolchainVersion>
   <BspID>com.sysprogs.arm.stm32</BspID>
   <BspVersion>2020.01</BspVersion>
-  <McuID>STM32F407VG</McuID>
-  <MCUDefinitionFile>STM32F4xxxx/DeviceDefinitions/stm32f407xx.xml</MCUDefinitionFile>
+  <McuID>STM32H745ZI</McuID>
+  <MCUDefinitionFile>STM32H7xxxx/DeviceDefinitions/stm32h745xx.xml</MCUDefinitionFile>
   <MCUProperties>
     <Entries>
       <KeyValue>
@@ -41,14 +41,6 @@
   </ReferencedFrameworks>
   <FrameworkProperties>
     <Entries>
-      <KeyValue>
-        <Key>com.sysprogs.stm32.legacy_hal_src</Key>
-        <Value />
-      </KeyValue>
-      <KeyValue>
-        <Key>com.sysprogs.bspoptions.stm32.hal_legacy</Key>
-        <Value>USE_HAL_LEGACY</Value>
-      </KeyValue>
       <KeyValue>
         <Key>com.sysprogs.bspoptions.stm32.ll_driver</Key>
       </KeyValue>

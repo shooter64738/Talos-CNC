@@ -9,23 +9,23 @@
 <!-- In order to build this project manually (outside VisualGDB), please provide TOOLCHAIN_ROOT, BSP_ROOT, EFP_BASE and TESTFW_BASE variables via Environment or Make command line -->
 	<ItemDefinitionGroup>
 		<ClCompile>
-			<PreprocessorDefinitions>ARM_MATH_CM4;flash_layout;STM32F407VG;STM32F407xx;USE_HAL_DRIVER;%(ClCompile.PreprocessorDefinitions)</PreprocessorDefinitions>
-			<AdditionalIncludeDirectories>%(ClCompile.AdditionalIncludeDirectories);$(ProjectDir);$(BSP_ROOT)/STM32F4xxxx/STM32F4xx_HAL_Driver/Inc;$(BSP_ROOT)/STM32F4xxxx/STM32F4xx_HAL_Driver/Inc/Legacy;$(BSP_ROOT)/STM32F4xxxx/CMSIS_HAL/Core/Include;$(BSP_ROOT)/STM32F4xxxx/CMSIS_HAL/Device/ST/STM32F4xx/Include;$(BSP_ROOT)/STM32F4xxxx/CMSIS_HAL/Include;$(BSP_ROOT)/STM32F4xxxx/CMSIS_HAL/RTOS2/Include</AdditionalIncludeDirectories>
+			<PreprocessorDefinitions>ARM_MATH_CM7;flash_layout;CORE_CM7;STM32H745ZI;STM32H745xx;USE_HAL_DRIVER;%(ClCompile.PreprocessorDefinitions)</PreprocessorDefinitions>
+			<AdditionalIncludeDirectories>%(ClCompile.AdditionalIncludeDirectories);$(ProjectDir);$(BSP_ROOT)/STM32H7xxxx/STM32H7xx_HAL_Driver/Inc;$(BSP_ROOT)/STM32H7xxxx/STM32H7xx_HAL_Driver/Inc/Legacy;$(BSP_ROOT)/STM32H7xxxx/CMSIS_HAL/Core/Include;$(BSP_ROOT)/STM32H7xxxx/CMSIS_HAL/Device/ST/STM32H7xx/Include;$(BSP_ROOT)/STM32H7xxxx/CMSIS_HAL/Include;$(BSP_ROOT)/STM32H7xxxx/CMSIS_HAL/RTOS2/Include</AdditionalIncludeDirectories>
 		</ClCompile>
 	</ItemDefinitionGroup>
 	<ItemDefinitionGroup>
 		<Link>
-			<LinkerScript Condition="'%(Link.LinkerScript)' == ''">$(BSP_ROOT)/STM32F4xxxx/LinkerScripts/STM32F407VG_flash.lds</LinkerScript>
+			<LinkerScript Condition="'%(Link.LinkerScript)' == ''">$(BSP_ROOT)/STM32H7xxxx/LinkerScripts/STM32H745ZI_flash.lds</LinkerScript>
 			<AdditionalOptions>--specs=nano.specs --specs=nosys.specs %(Link.AdditionalOptions)</AdditionalOptions>
 		</Link>
 	</ItemDefinitionGroup>
 	<PropertyGroup>
-		<DefaultLinkerScript>$(BSP_ROOT)/STM32F4xxxx/LinkerScripts/STM32F407VG_flash.lds</DefaultLinkerScript>
+		<DefaultLinkerScript>$(BSP_ROOT)/STM32H7xxxx/LinkerScripts/STM32H745ZI_flash.lds</DefaultLinkerScript>
 	</PropertyGroup>
 
 	<ItemDefinitionGroup>
 		<ToolchainSettingsContainer>
-			<ARMCPU  Condition="'%(ToolchainSettingsContainer.ARMCPU)' == ''">cortex-m4</ARMCPU>
+			<ARMCPU  Condition="'%(ToolchainSettingsContainer.ARMCPU)' == ''">cortex-m7</ARMCPU>
 			<InstructionSet  Condition="'%(ToolchainSettingsContainer.InstructionSet)' == ''">THUMB</InstructionSet>
 			<ARMFPU  Condition="'%(ToolchainSettingsContainer.ARMFPU)' == ''">fpv4-sp-d16</ARMFPU>
 			<FloatABI  Condition="'%(ToolchainSettingsContainer.FloatABI)' == ''">soft</FloatABI>

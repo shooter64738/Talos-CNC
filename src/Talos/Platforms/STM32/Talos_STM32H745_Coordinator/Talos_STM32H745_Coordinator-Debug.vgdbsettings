@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <VisualGDBProjectSettings2 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <ConfigurationName>Release</ConfigurationName>
+  <ConfigurationName>Debug</ConfigurationName>
   <Project xsi:type="com.visualgdb.project.embedded">
     <CustomSourceDirectories>
       <Directories />
@@ -17,7 +17,7 @@
         <Revision>0</Revision>
       </Version>
     </ToolchainID>
-    <ProjectFile>Talos_STM32F1_Coordinator.vcxproj</ProjectFile>
+    <ProjectFile>Talos_STM32H745_Coordinator.vcxproj</ProjectFile>
     <ParallelJobCount>0</ParallelJobCount>
     <SuppressDirectoryChangeMessages>true</SuppressDirectoryChangeMessages>
   </Build>
@@ -86,10 +86,10 @@
     </AdditionalGDBSettings>
     <DebugMethod>
       <ID>com.sysprogs.arm.openocd</ID>
-      <InterfaceID>stlink-v2</InterfaceID>
-      <InterfaceSerialNumber>6&amp;3B1541FF&amp;0&amp;1</InterfaceSerialNumber>
+      <InterfaceID>stlink-v3</InterfaceID>
+      <InterfaceSerialNumber>0038001F3137510F39383538</InterfaceSerialNumber>
       <Configuration xsi:type="com.visualgdb.edp.openocd.settings">
-        <CommandLine>-f interface/stlink-v2.cfg -f target/stm32f1x.cfg -c init -c "reset init"</CommandLine>
+        <CommandLine>-f interface/stlink.cfg -f target/stm32h7x_dual_core.cfg -c init -c "reset init"</CommandLine>
         <ExtraParameters>
           <Frequency xsi:nil="true" />
           <BoostedFrequency xsi:nil="true" />
@@ -108,7 +108,7 @@
         <PreferredGDBPort>0</PreferredGDBPort>
         <PreferredTelnetPort>0</PreferredTelnetPort>
         <AlwaysPassSerialNumber>false</AlwaysPassSerialNumber>
-        <SelectedCoreIndex xsi:nil="true" />
+        <SelectedCoreIndex>0</SelectedCoreIndex>
       </Configuration>
     </DebugMethod>
     <AutoDetectRTOS>true</AutoDetectRTOS>
