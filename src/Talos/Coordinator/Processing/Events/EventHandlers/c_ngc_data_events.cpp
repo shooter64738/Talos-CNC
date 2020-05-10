@@ -20,8 +20,6 @@
 
 #include "c_ngc_data_events.h"
 #include "../../Data/DataHandlers/c_ngc_data_handler.h"
-#include "../../../../Shared Data/FrameWork/Event/c_event_router.h"
-#include "../../../../Shared Data/FrameWork/Startup/c_framework_start.h"
 
 
 
@@ -29,16 +27,16 @@
 void Talos::Coordinator::Events::Data::process()
 {
 	
-	if (Talos::Shared::FrameWork::StartUp::CpuCluster[Talos::Shared::FrameWork::StartUp::cpu_type.Host].host_events.Data._flag == 0)
-	return;
-	
-	Talos::Shared::FrameWork::StartUp::string_writer("data\r\n");
-	
-	//See if there is an event set indicating we loaded text data into the ngc cache record.
-	//if (Talos::Shared::FrameWork::Events::Router::ready.event_manager.get((int)Talos::Shared::FrameWork::Events::Router::ss_ready_data::e_event_type::NgcDataLine))
-	if (Talos::Shared::FrameWork::StartUp::CpuCluster[Talos::Shared::FrameWork::StartUp::cpu_type.Host].host_events.Data.get(
-		(int)e_system_message::messages::e_data::NgcDataLine))
-	Talos::Coordinator::Data::Ngc::load_block_from_cache();
-	
+//	if (Talos::Shared::FrameWork::StartUp::CpuCluster[Talos::Shared::FrameWork::StartUp::cpu_type.Host].host_events.Data._flag == 0)
+//	return;
+//	
+//	Talos::Shared::FrameWork::StartUp::string_writer("data\r\n");
+//	
+//	//See if there is an event set indicating we loaded text data into the ngc cache record.
+//	//if (Talos::Shared::FrameWork::Events::Router::ready.event_manager.get((int)Talos::Shared::FrameWork::Events::Router::ss_ready_data::e_event_type::NgcDataLine))
+//	if (Talos::Shared::FrameWork::StartUp::CpuCluster[Talos::Shared::FrameWork::StartUp::cpu_type.Host].host_events.Data.get(
+//		(int)e_system_message::messages::e_data::NgcDataLine))
+//	Talos::Coordinator::Data::Ngc::load_block_from_cache();
+//	
 }
 

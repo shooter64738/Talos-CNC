@@ -22,7 +22,7 @@
 #include "../coordinator_hardware_def.h"
 #include "../../communication_def.h"
 #include "../../c_ring_template.h"
-#include "../Processing/Data/c_data_buffers.h"
+
 
 static c_ring_buffer<char> rxBuffer[2];
 //s_Buffer c_Serial::rxBuffer;
@@ -37,12 +37,12 @@ c_Serial::c_Serial(uint8_t Port, uint32_t BaudRate)
 	this->_port = Port;
 	
 	//c_hal::comm.PNTR_INITIALIZE != NULL ? c_hal::comm.PNTR_INITIALIZE(Port, 115200) : void();
-	Hardware_Abstraction_Layer::Serial::initialize(Port,BaudRate);
+	//Hardware_Abstraction_Layer::Serial::initialize(Port,BaudRate);
 }
 
 bool c_Serial::HasData()
 {
-	return Talos::Coordinator::Data::Buffer::buffers[this->_port].ring_buffer.has_data();
+	//return Talos::Coordinator::Data::Buffer::buffers[this->_port].ring_buffer.has_data();
 }
 
 /*This sends the specified string. It will not return until transmission is complete*/
@@ -58,7 +58,7 @@ void c_Serial::Write(const char *Buffer)
 
 void c_Serial::Write(char Buffer)
 {
-	Hardware_Abstraction_Layer::Serial::send(this->_port, Buffer);
+	//Hardware_Abstraction_Layer::Serial::send(this->_port, Buffer);
 }
 
 void c_Serial::print_string(const char *s)

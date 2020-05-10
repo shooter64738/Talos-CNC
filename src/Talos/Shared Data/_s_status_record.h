@@ -2,7 +2,6 @@
 #define _C_STATUS_MESSAGE
 #include "_e_record_types.h"
 #include "../physical_machine_parameters.h"
-#include "FrameWork/Enumerations/Status/_e_system_messages.h"
 #include "../_bit_flag_control.h"
 //#include "FrameWork/Startup/c_framework_start.h"
 

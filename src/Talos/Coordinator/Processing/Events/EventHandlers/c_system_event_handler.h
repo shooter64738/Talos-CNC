@@ -24,7 +24,6 @@
 #define __C_SYSTEM_EVENTS_H__
 
 #include <stdint.h>
-#include "../../../../Shared Data/FrameWork/Startup/c_framework_cpu.h"
 
 namespace Talos
 {
@@ -41,7 +40,7 @@ namespace Talos
 
 				//functions
 			public:
-				static void process(c_cpu *active_cpu, c_cpu *this_cpu);
+
 			protected:
 			private:
 				

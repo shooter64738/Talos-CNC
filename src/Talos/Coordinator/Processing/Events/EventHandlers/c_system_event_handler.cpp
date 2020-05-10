@@ -20,38 +20,3 @@
 
 #include "c_system_event_handler.h"
 #include "../../Data/DataHandlers/c_system_data_handler.h"
-#include "../../../../Shared Data/FrameWork/Event/c_event_router.h"
-#include "../../../../Shared Data/FrameWork/Data/cache_data.h"
-void Talos::Coordinator::Events::System::process(c_cpu *active_cpu, c_cpu *this_cpu)
-{
-	Talos::Shared::FrameWork::Events::Router::process();
-	
-	if( active_cpu->system_events._flag!=0)
-	{
-		if (active_cpu->system_events.get_clr((int)c_cpu::e_event_type::SystemRecord))
-		{
-			switch ((e_system_message::e_status_type) active_cpu->sys_message.type)
-			{
-				case e_system_message::e_status_type::Informal:
-				{
-					switch ((e_system_message::messages::e_informal)active_cpu->sys_message.message)
-					{
-						case e_system_message::messages::e_informal::ReadyToProcess:
-						{
-							Talos::Shared::FrameWork::StartUp::string_writer("MC_TC=");
-							Talos::Shared::FrameWork::StartUp::int32_writer(active_cpu->sys_message.time_code);
-							Talos::Shared::FrameWork::StartUp::string_writer("\r\n");
-							//this_cpu->system_events.set((int)c_cpu::e_event_type::ReBoot);
-							break;
-						}
-						default:
-						{
-							/* Your code here */
-							break;
-						}
-					}
-				}
-			}
-		}
-	}
-}

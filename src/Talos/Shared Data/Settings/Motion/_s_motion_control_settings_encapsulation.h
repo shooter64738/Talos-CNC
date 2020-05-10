@@ -2,6 +2,7 @@
 #define __C_S_MOTION_CONTROL_SETTINGS
 #include "_s_motion_hardware.h"
 #include "_s_motion_tolerance_struct.h"
+#include "../../_e_record_types.h"
 
 //PACK(
 struct s_motion_control_settings_encapsulation

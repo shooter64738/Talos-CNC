@@ -1,7 +1,7 @@
 #ifndef _C_ENCODER_STRUCT
 #define _C_ENCODER_STRUCT
 #include <stdint.h>
-
+#include "Kernel/c_kernel_utils.h"
 PACK(
 struct s_encoder_meta
 {

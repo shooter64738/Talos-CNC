@@ -14,9 +14,9 @@ namespace Talos
 {
 	namespace Kernel
 	{
-		Talos::Kernel::Error;
-		Talos::Kernel::Comm;
-		Talos::Kernel::CPU;
+//		Talos::Kernel::Error;
+//		Talos::Kernel::Comm;
+//		Talos::Kernel::CPU;
 		//Talos::Kernel::DataHandler::Binary;
 
 		class Base
