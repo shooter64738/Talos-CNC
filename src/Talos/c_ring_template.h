@@ -9,11 +9,15 @@ class  c_ring_buffer
 
 public:
 
-	void initialize(volatile TN *pointer, uint16_t buf_size)
+	bool initialize(volatile TN *pointer, uint16_t buf_size)
 	{
+		if (pointer == NULL)
+			return false;
+
 		this->_storage_pointer = pointer;
 		this->_buffer_size = buf_size;
 		this->reset();
+		return true;
 	}
 
 	void attach(TN *pointer, uint16_t buf_size)

@@ -17,15 +17,15 @@ class c_cpu : private c_data_handler_read
 {
 public:
 	uint8_t ID;
-	void initialize(uint8_t id, volatile uint32_t * tick_timer_ms);
-	void Synch(
+	bool initialize(uint8_t id, volatile uint32_t * tick_timer_ms);
+	bool Synch(
 		e_system_message::messages::e_data init_message
 		, e_system_message::e_status_type init_request_type
 		, uint8_t init_ready_wait_id
 		, e_system_message::e_status_type init_response_type
 		, bool is_master_cpus);
 
-	void service_events(int32_t * position, uint16_t rpm);
+	bool service_events(int32_t * position, uint16_t rpm);
 	bool send_message(uint8_t message
 		, uint8_t type
 		, uint8_t origin
@@ -68,15 +68,15 @@ public:
 	uint32_t next_cycle_check_time = 0;
 	uint32_t last_time_code = 0;
 
-	void(*pntr_data_read_handler)(c_ring_buffer<char> * buffer, uint8_t cpu_id);
-	void(*pntr_data_write_handler)();
+	bool(*pntr_data_read_handler)(c_ring_buffer<char> * buffer, uint8_t cpu_id);
+	bool(*pntr_data_write_handler)();
 
 private:
 
 
-	void __check_health();
-	void __send_formatted_message(uint8_t init_message, uint8_t init_type);
-	void __wait_formatted_message(uint8_t init_message, uint8_t init_type);
+	bool __check_health();
+	bool __send_formatted_message(uint8_t init_message, uint8_t init_type);
+	bool __wait_formatted_message(uint8_t init_message, uint8_t init_type);
 
 	bool __check_data();
 };

@@ -3,7 +3,6 @@
 #include "../CPU/c_kernel_cpu.h"
 #include "../Comm/c_kernel_comm.h"
 
-#define ERROR_STACK_SIZE 20
 
 namespace Talos
 {
@@ -12,11 +11,11 @@ namespace Talos
 
 		s_kernel_error Error::framework_error;
 
-		static s_kernel_error error_stack[ERROR_STACK_SIZE];
-		static uint8_t stack_index = 0;
+		s_kernel_error Error::error_stack[ERROR_STACK_SIZE];
+		uint8_t Error::stack_index = 0;
 
 		//Keep in mind an error may originate on CPU 1, serial port 3, but we want to report it on CPU1 serial port 0 (or host) so we can debug easier.
-		void Error::raise_error(uint16_t base, uint16_t method, uint16_t line, uint8_t event_id)
+		void Error::raise_error(uint16_t base, uint16_t method, uint16_t method_or_line, uint8_t event_id)
 		{
 			//Save one stack slot, so we can error that the stack was full if needed
 			if (stack_index + 2 >= ERROR_STACK_SIZE)
@@ -30,7 +29,7 @@ namespace Talos
 				error_stack[stack_index].behavior = e_error_behavior::Critical;
 				error_stack[stack_index].stack.base = 0;
 				error_stack[stack_index].stack.method = 0;
-				error_stack[stack_index].stack.line = 0;
+				error_stack[stack_index].stack.method_or_line = 0;
 				return;
 			}
 
@@ -42,10 +41,10 @@ namespace Talos
 			//Error::framework_error.data = ((Talos::Shared::FrameWork::Events::Router::inputs.pntr_ring_buffer + (int)event_id)->storage);
 			Error::framework_error.stack.base = base;
 			Error::framework_error.stack.method = method;
-			Error::framework_error.stack.line = line;
+			Error::framework_error.stack.method_or_line = method_or_line;
 
 			//copy the error to the error stack.
-			memcpy(&error_stack, &framework_error, sizeof(framework_error));
+			memcpy(&error_stack[stack_index], &framework_error, sizeof(framework_error));
 
 			//Dont print the error details yet. This is coming from the kernel and we cant play around time wise
 			//Error::general_error_handler(CPU::host_id);
@@ -54,19 +53,19 @@ namespace Talos
 
 		void Error::general_error_handler(int cpu_target)
 		{
-			Comm::pntr_string_writer(cpu_target,"Err:");
+			Comm::pntr_string_writer(cpu_target, "Err:");
 			if (Error::framework_error.behavior == e_error_behavior::Critical)
 			{
 				CPU::cluster[CPU::host_id].system_events.set((int)c_cpu::e_event_type::Error);
-				Comm::pntr_string_writer(cpu_target,"{Critical}");
+				Comm::pntr_string_writer(cpu_target, "{Critical}");
 			}
 			__print_base(cpu_target);
-			
+
 		}
 
 		void Error::ngc_error_handler(int cpu_target, char * ngc_line)
 		{
-			Comm::pntr_string_writer(cpu_target,"Err:{Ngc}");
+			Comm::pntr_string_writer(cpu_target, "Err:{Ngc}");
 			__write_eol(cpu_target);
 
 			CPU::cluster[CPU::host_id].system_events.set((int)c_cpu::e_event_type::Error);
@@ -98,7 +97,7 @@ namespace Talos
 			__write_eol(cpu_target); Comm::pntr_string_writer(cpu_target, "\t\tMod:");
 			Comm::pntr_int32_writer(cpu_target, (int)Error::framework_error.stack.method);
 			__write_eol(cpu_target); Comm::pntr_string_writer(cpu_target, "\t\tLin:");
-			Comm::pntr_int32_writer(cpu_target, (int)Error::framework_error.stack.line);
+			Comm::pntr_int32_writer(cpu_target, (int)Error::framework_error.stack.method_or_line);
 
 			if (Error::framework_error.data != NULL)
 			{
@@ -109,7 +108,7 @@ namespace Talos
 					Comm::pntr_byte_writer(cpu_target, ',');
 				}
 
-				__write_eol(cpu_target); Comm::pntr_string_writer(cpu_target,"\tHed:");
+				__write_eol(cpu_target); Comm::pntr_string_writer(cpu_target, "\tHed:");
 				Comm::pntr_int32_writer(cpu_target, (int)Error::framework_error.buffer_head);
 				__write_eol(cpu_target); Comm::pntr_string_writer(cpu_target, "\tTal:");
 				Comm::pntr_int32_writer(cpu_target, (int)Error::framework_error.buffer_tail);

@@ -19,13 +19,13 @@ int main(void)
 //	//init data handler reader
 //	Talos::Kernel::DataHandler::Binary::f_initialize(Talos::Kernel::CPU::cluster[Talos::Kernel::CPU::host_id]);
 	
-	Talos::Kernel::CPU::cluster[0].hw_data_buffer.put('G');
-	Talos::Kernel::CPU::cluster[0].hw_data_buffer.put('0');
+	Talos::Kernel::CPU::cluster[0].hw_data_buffer.put('\6');
+	Talos::Kernel::CPU::cluster[0].hw_data_buffer.put(127);
 	Talos::Kernel::CPU::cluster[0].hw_data_buffer.put('X');
-	Talos::Kernel::CPU::cluster[0].hw_data_buffer.put('1');
+	Talos::Kernel::CPU::cluster[0].hw_data_buffer.put(32);
+	Talos::Kernel::CPU::cluster[0].hw_data_buffer.put('\3');
 	Talos::Kernel::CPU::cluster[0].hw_data_buffer.put('\r');
 	Talos::Kernel::CPU::cluster[0].hw_data_buffer.put('\n');
-	Talos::Kernel::CPU::cluster[0].hw_data_buffer.put('\8');
 	Talos::Kernel::CPU::cluster[0].hw_data_buffer.put('\8');
 	Talos::Kernel::CPU::cluster[0].hw_data_buffer.put('\4');
 	Talos::Kernel::CPU::cluster[0].hw_data_buffer.put('\1');
@@ -72,6 +72,14 @@ int main(void)
 	Talos::Kernel::CPU::cluster[0].hw_data_buffer.put('\1');
 	Talos::Kernel::CPU::cluster[0].hw_data_buffer.put('\1');
 
-	while(1)
-	Talos::Kernel::CPU::service_events();
+	while (1)
+	{
+		//if this returns false we had an error in the kernel. 
+		//check the error stack
+		if (!Talos::Kernel::CPU::service_events())
+		{
+			s_error_stack stack = Talos::Kernel::Error::error_stack[0].stack;
+			int x = 0;
+		}
+	}
 }

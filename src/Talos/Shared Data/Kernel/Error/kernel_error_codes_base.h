@@ -9,6 +9,7 @@ namespace Talos
 		{
 			enum class e_error_base_values
 			{
+				CPU_CLUSTER_BASE_ERROR_VALUE = 50,
 				CPU_BASE_ERROR_VALUE = 100,
 				DATA_READER_BASE_ERROR_VALUE = 200,
 				DATA_WRITER_BASE_ERROR_VALUE = 300,

@@ -72,9 +72,6 @@
     <ClInclude Include="..\..\..\..\Shared Data\Kernel\CPU\c_data_handler_write.h">
       <Filter>Kernel\CPU</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Shared Data\Kernel\Data\c_kernel_data_handler.h">
-      <Filter>Kernel\Data</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\..\Shared Data\Kernel\Base\c_kernel_base.h">
       <Filter>Kernel\Base</Filter>
     </ClInclude>
@@ -119,13 +116,19 @@
     <ClInclude Include="..\..\..\..\Shared Data\Kernel\Error\kernel_error_codes_cpu.h">
       <Filter>Kernel\Error</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Shared Data\Kernel\Error\kernel_error_codes_reader.h">
-      <Filter>Kernel\Error</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\..\Shared Data\Kernel\Error\kernel_error_codes_writer.h">
       <Filter>Kernel\Error</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\Shared Data\Kernel\Error\kernel_error_codes_base.h">
+      <Filter>Kernel\Error</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared Data\Kernel\Error\kernel_error_codes_cpu_cluster.h">
+      <Filter>Kernel\Error</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared Data\Kernel\Error\kernel_error_codes_reader.h">
+      <Filter>Kernel\Error</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared Data\Kernel\Error\_d_err_macros.h">
       <Filter>Kernel\Error</Filter>
     </ClInclude>
   </ItemGroup>
@@ -141,9 +144,6 @@
     </ClCompile>
     <ClCompile Include="..\..\..\..\Shared Data\Kernel\CPU\c_data_handler_write.cpp">
       <Filter>Kernel\CPU</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\Shared Data\Kernel\Data\c_kernel_data_handler.cpp">
-      <Filter>Kernel\Data</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\..\Shared Data\Kernel\Base\c_kernel_base.cpp">
       <Filter>Kernel\Base</Filter>

@@ -8,7 +8,7 @@ namespace Talos
 		class CPU
 		{
 		public:
-			static void f_initialize(
+			static bool f_initialize(
 				uint8_t host_id
 				, uint8_t coordinator_id
 				, uint8_t motion_id
@@ -16,7 +16,7 @@ namespace Talos
 				, uint8_t peripheral_id
 				, volatile uint32_t * pntr_cpu_tick_timer_ms);
 
-			static void service_events();
+			static bool service_events();
 
 			static int host_id;
 			static int coordinator_id;

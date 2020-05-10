@@ -1,11 +1,10 @@
 #ifndef _C_STATUS_MESSAGE
 #define _C_STATUS_MESSAGE
 #include <stdint.h>
-#include "_e_record_types.h"
 #include "../../physical_machine_parameters.h"
-#include "c_kernel_utils.h"
+//#include "c_kernel_utils.h"
 
-PACK(
+//PACK(
 struct s_control_message
 {
 	uint8_t __rec_type__;// = (int)e_record_types::System;
@@ -20,6 +19,6 @@ struct s_control_message
 	uint16_t rpm;
 	uint32_t time_code;
 	uint16_t crc;
-}
-);
+};
+//);
 #endif // !_C_STATUS_MESSAGE

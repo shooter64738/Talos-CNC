@@ -1,7 +1,8 @@
 
 #include "c_kernel_cpu.h"
-//#include "../Start/_C_KERNEL_start.h"
-
+#include "../c_kernel_utils.h"
+#include "../Error/kernel_error_codes_cpu_cluster.h"
+using Talos::Kernel::ErrorCodes::ERR_CPU_CLUSTER;
 namespace Talos
 {
 	namespace Kernel
@@ -14,7 +15,7 @@ namespace Talos
 
 		c_cpu CPU::cluster[CPU_CLUSTER_COUNT];
 
-		void CPU::f_initialize(uint8_t host_id
+		bool CPU::f_initialize(uint8_t host_id
 			, uint8_t coordinator_id
 			, uint8_t motion_id
 			, uint8_t spindle_id
@@ -32,9 +33,10 @@ namespace Talos
 			CPU::cluster[motion_id].initialize(host_id, cpu_tick_timer_ms);
 			CPU::cluster[spindle_id].initialize(host_id, cpu_tick_timer_ms);
 			CPU::cluster[peripheral_id].initialize(host_id, cpu_tick_timer_ms);
+			return true;
 		}
 
-		void CPU::service_events()
+		bool CPU::service_events()
 		{
 			/*
 			Loop through the event classes for the cpu cluster and service anything that needs to run.
@@ -48,9 +50,10 @@ namespace Talos
 			uint16_t rpm = cluster[spindle_id].sys_message.rpm;
 			for (uint8_t i = 0; i < CPU_CLUSTER_COUNT; i++)
 			{
-				cluster[i].service_events(position, rpm);
+				ADD_2_STK_RTN_FALSE_IF_CALL_FALSE(cluster[i].service_events(position, rpm)
+					, cluster[i].ID, ERR_CPU_CLUSTER::BASE, ERR_CPU_CLUSTER::METHOD::service_events, ERR_CPU_CLUSTER::METHOD::child_service_events);
 			}
-
+			return true;
 		}
 	}
 }

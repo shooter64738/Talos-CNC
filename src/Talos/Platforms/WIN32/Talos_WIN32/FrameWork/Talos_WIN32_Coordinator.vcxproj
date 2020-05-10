@@ -22,13 +22,14 @@
     <ClInclude Include="..\..\..\..\Shared Data\Kernel\CPU\c_kernel_cpu.h" />
     <ClInclude Include="..\..\..\..\Shared Data\Kernel\CPU\u_data_overlay.h" />
     <ClInclude Include="..\..\..\..\Shared Data\Kernel\c_kernel_utils.h" />
-    <ClInclude Include="..\..\..\..\Shared Data\Kernel\Data\c_kernel_data_handler.h" />
     <ClInclude Include="..\..\..\..\Shared Data\Kernel\Data\s_data_packet.h" />
     <ClInclude Include="..\..\..\..\Shared Data\Kernel\Error\c_kernel_error.h" />
     <ClInclude Include="..\..\..\..\Shared Data\Kernel\Error\kernel_error_codes_base.h" />
     <ClInclude Include="..\..\..\..\Shared Data\Kernel\Error\kernel_error_codes_cpu.h" />
+    <ClInclude Include="..\..\..\..\Shared Data\Kernel\Error\kernel_error_codes_cpu_cluster.h" />
     <ClInclude Include="..\..\..\..\Shared Data\Kernel\Error\kernel_error_codes_reader.h" />
     <ClInclude Include="..\..\..\..\Shared Data\Kernel\Error\kernel_error_codes_writer.h" />
+    <ClInclude Include="..\..\..\..\Shared Data\Kernel\Error\_d_err_macros.h" />
     <ClInclude Include="..\..\..\..\Shared Data\Kernel\Error\_s_kernel_error.h" />
     <ClInclude Include="..\..\..\..\Shared Data\Kernel\Event\c_kernel_software_event.h" />
     <ClInclude Include="..\..\..\..\Shared Data\Kernel\kernel_configuration.h" />
@@ -52,7 +53,6 @@
     <ClCompile Include="..\..\..\..\Shared Data\Kernel\CPU\c_data_handler_read.cpp" />
     <ClCompile Include="..\..\..\..\Shared Data\Kernel\CPU\c_data_handler_write.cpp" />
     <ClCompile Include="..\..\..\..\Shared Data\Kernel\CPU\c_kernel_cpu.cpp" />
-    <ClCompile Include="..\..\..\..\Shared Data\Kernel\Data\c_kernel_data_handler.cpp" />
     <ClCompile Include="..\..\..\..\Shared Data\Kernel\Error\c_kernel_error.cpp" />
     <ClCompile Include="..\..\..\..\Shared Data\Kernel\Event\c_kernel_software_event.cpp" />
     <ClCompile Include="..\..\..\..\Shared Data\Kernel\Report\c_kernel_report.cpp" />
@@ -62,7 +62,7 @@
     <ProjectGuid>{842D3902-7944-4D31-868D-EDAD55DD8A7E}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>Talos_WIN32</RootNamespace>
-    <ProjectName>Talos_WIN32_FrameWork</ProjectName>
+    <ProjectName>Talos_WIN32_Kernel</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

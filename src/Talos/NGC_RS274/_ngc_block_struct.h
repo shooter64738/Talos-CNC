@@ -30,7 +30,7 @@ struct s_ngc_block
 	//double theta;
 	//
 	//// control (o-word) stuff
-	//long offset;                 // start of line in file
+	//long offset;                 // start of method_or_line in file
 	//int o_type;
 	//int o_number;
 	//char *o_name;                // !!!KL be sure to free this

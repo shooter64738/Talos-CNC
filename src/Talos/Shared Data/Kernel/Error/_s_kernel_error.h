@@ -14,7 +14,7 @@ struct s_error_stack
 {
 	uint16_t base;
 	uint16_t method;
-	uint16_t line;
+	uint16_t method_or_line;
 };
 
 struct s_kernel_error

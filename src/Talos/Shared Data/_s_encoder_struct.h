@@ -1,6 +1,5 @@
 #ifndef _C_ENCODER_STRUCT
 #define _C_ENCODER_STRUCT
-#include "_e_record_types.h"
 #include <stdint.h>
 
 PACK(

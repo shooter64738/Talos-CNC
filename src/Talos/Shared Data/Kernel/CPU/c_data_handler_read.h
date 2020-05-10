@@ -8,6 +8,8 @@
 #include "../_e_system_messages.h"
 #include "../Error/kernel_error_codes_reader.h"
 #include "../Error/c_kernel_error.h"
+#include "../Error/_d_err_macros.h"
+#include "../c_kernel_utils.h"
 #include "../../Settings/Motion/_s_motion_control_settings_encapsulation.h"
 #include "../../../c_ring_template.h"
 #include "../../../communication_def.h"
@@ -15,6 +17,8 @@
 #define SERIAL 0
 #define BUFFER_SOURCES_COUNT 1
 #define MAX_TEXT_BUFFER_SIZE 256
+
+using Talos::Kernel::ErrorCodes::ERR_RDR;
 
 class c_data_handler_read
 {
@@ -35,19 +39,21 @@ protected:
 		uint16_t read_count = 0;
 		uint16_t *addendum_crc_value = 0;
 		bool has_addendum = false;
-		uint16_t expand_record()
+
+		bool expand_record()
 		{
 			if (record_type == e_record_types::Text)
 				return __sys_data_classify(e_system_message::messages::e_data::NgcDataLine);
+			
+			ADD_2_STK_RTN_FALSE_IF_CALL_FALSE(__sys_typer()
+				, 0,ERR_RDR::BASE, ERR_RDR::METHOD::expand_record, ERR_RDR::METHOD::__sys_typer);
 
-			addendum_size = __sys_typer();
 			has_addendum = addendum_size > 0;
-			return addendum_size;
+			return true;
 		}
 
-
 	private:
-		uint16_t __sys_critical_classify(e_system_message::messages::e_critical message)
+		bool __sys_critical_classify(e_system_message::messages::e_critical message)
 		{
 			switch (message)
 			{
@@ -58,14 +64,14 @@ protected:
 			}
 
 			default:
-				addendum_size = 0;
+				ADD_2_STK_RTN_FALSE(0, ERR_RDR::BASE, ERR_RDR::METHOD::__sys_critical_classify, ERR_RDR::METHOD::LINE::illegal_system_critical_class_type);
 				break;
 
 			}
-			return addendum_size;
+			return true;
 		}
 
-		uint16_t __sys_data_classify(e_system_message::messages::e_data message)
+		bool __sys_data_classify(e_system_message::messages::e_data message)
 		{
 			switch (message)
 			{
@@ -84,13 +90,13 @@ protected:
 				addendum_size = sizeof(s_control_message);
 				break;
 			default:
-				addendum_size = 0;
+				ADD_2_STK_RTN_FALSE(0, ERR_RDR::BASE, ERR_RDR::METHOD::__sys_data_classify, ERR_RDR::METHOD::LINE::illegal_system_data_class_type);
 				break;
 			}
-			return addendum_size;
+			return true;
 		}
 
-		uint16_t __sys_informal_classify(e_system_message::messages::e_informal message)
+		bool __sys_informal_classify(e_system_message::messages::e_informal message)
 		{
 			switch (message)
 			{
@@ -101,13 +107,13 @@ protected:
 			}
 
 			default:
-				addendum_size = 0;
+				ADD_2_STK_RTN_FALSE(0, ERR_RDR::BASE, ERR_RDR::METHOD::__sys_informal_classify, ERR_RDR::METHOD::LINE::illegal_system_informal_class_type);
 				break;
 			}
-			return addendum_size;
+			return true;
 		}
 
-		uint16_t __sys_inquiry_classify(e_system_message::messages::e_inquiry message)
+		bool __sys_inquiry_classify(e_system_message::messages::e_inquiry message)
 		{
 			switch (message)
 			{
@@ -133,12 +139,13 @@ protected:
 				addendum_size = 0;
 				break;
 			default:
+				ADD_2_STK_RTN_FALSE(0, ERR_RDR::BASE, ERR_RDR::METHOD::__sys_inquiry_classify, ERR_RDR::METHOD::LINE::illegal_system_inquiry_class_type);
 				break;
 			}
-			return addendum_size;
+			return true;
 		}
 
-		uint16_t __sys_warning_classify(e_system_message::messages::e_warning message)
+		bool __sys_warning_classify(e_system_message::messages::e_warning message)
 		{
 			switch (message)
 			{
@@ -149,13 +156,13 @@ protected:
 			}
 
 			default:
-				addendum_size = 0;
+				ADD_2_STK_RTN_FALSE(0, ERR_RDR::BASE, ERR_RDR::METHOD::__sys_warning_classify, ERR_RDR::METHOD::LINE::illegal_system_warning_class_type);
 				break;
 			}
-			return addendum_size;
+			return true;
 		}
 
-		uint16_t  __sys_typer()
+		bool  __sys_typer()
 		{
 			switch ((e_system_message::e_status_type)overlays.system_control.type)
 			{
@@ -176,7 +183,11 @@ protected:
 			}
 			case e_system_message::e_status_type::Data:
 			{
-				__sys_data_classify((e_system_message::messages::e_data)overlays.system_control.message);
+				ADD_2_STK_RTN_FALSE_IF_CALL_FALSE(__sys_data_classify((e_system_message::messages::e_data)overlays.system_control.message)
+					, 0, ERR_RDR::BASE, ERR_RDR::METHOD::__sys_typer, ERR_RDR::METHOD::__sys_data_classify);
+
+				/*ADD_2_STK_RTN_FALSE(0, __sys_data_classify((e_system_message::messages::e_data)overlays.system_control.message)
+					,ERR_RDR::BASE,*/
 				break;
 			}
 			case e_system_message::e_status_type::Inquiry:
@@ -185,11 +196,11 @@ protected:
 				break;
 			}
 
-			default:
-				addendum_size = 0;
+			default:				
+				ADD_2_STK_RTN_FALSE(0, ERR_RDR::BASE, ERR_RDR::METHOD::__sys_typer, ERR_RDR::METHOD::LINE::illegal_system_record_type);
 				break;
 			}
-			return addendum_size;
+			return true;
 		}
 	};
 
@@ -204,14 +215,21 @@ protected:
 		uint8_t index;
 		//u_data_overlays rec_buffer[CPU_CONTROL_BUFFER_SIZE];
 		s_read_record rec_buffer[CPU_CONTROL_BUFFER_SIZE];
-		uint8_t free()
+		int16_t free()
 		{
 			return CPU_CONTROL_BUFFER_SIZE - index;
 		}
 		//u_data_overlays * get()
 		s_read_record * get()
 		{
-			return &rec_buffer[index];
+			if (free()>0)
+				return &rec_buffer[index];
+			else
+			{
+				ADD_2_STK(0, ERR_RDR::BASE, ERR_RDR::METHOD::get, ERR_RDR::METHOD::free);
+				return NULL;
+			}
+			
 		}
 		s_read_record * active_record;
 	};

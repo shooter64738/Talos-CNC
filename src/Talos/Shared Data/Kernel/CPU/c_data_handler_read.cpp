@@ -1,8 +1,9 @@
 #include "c_data_handler_read.h"
 #include "../Base/c_kernel_base.h"
-//#include "../Error/kernel_error_codes_reader.h"
+#include "../Error/_d_err_macros.h"
+#include <ctype.h>
 
-using Talos::Kernel::ErrorCodes::ERR_RDR;
+
 
 bool c_data_handler_read::cdh_r_get_message_type(c_ring_buffer<char> * buffer)
 {
@@ -10,12 +11,12 @@ bool c_data_handler_read::cdh_r_get_message_type(c_ring_buffer<char> * buffer)
 
 	char peek_tail = buffer->peek(buffer->_tail);
 
-	//Printable data is ngc line data. We need to check cr or lf because those are
-	//special line ending characters for ngc data. We will NEVER use 10 or 13 as a
+	//Printable data is ngc method_or_line data. We need to check cr or lf because those are
+	//special method_or_line ending characters for ngc data. We will NEVER use 10 or 13 as a
 	//binary record type.
 	if ((peek_tail >= 32 && peek_tail <= 127) || (peek_tail == CR || peek_tail == LF))
 	{
-		//If CR and LF are the termination for an ngc line, we wont see those unless we jsut processed a record
+		//If CR and LF are the termination for an ngc method_or_line, we wont see those unless we jsut processed a record
 		//We can throw those characters away.
 		if (peek_tail == CR || peek_tail == LF)
 		{
@@ -24,10 +25,11 @@ bool c_data_handler_read::cdh_r_get_message_type(c_ring_buffer<char> * buffer)
 			__read_size = 0;
 			cdh_r_is_busy = false;
 		}
-
+		
 		cdh_r_is_busy = true;
 		__read_size = 256;
 		dvc_source->active_record = __source_buffers[0].get();
+		ADD_2_STK_RTN_FALSE_IF_OBJECT_NULL(dvc_source->active_record, 0, ERR_RDR::BASE, ERR_RDR::METHOD::cdh_r_get_message_type, ERR_RDR::METHOD::LINE::txt_buffer_over_run);
 		dvc_source->active_record->record_type = e_record_types::Text;
 	}
 	else if (peek_tail == (int)e_record_types::System)
@@ -35,6 +37,7 @@ bool c_data_handler_read::cdh_r_get_message_type(c_ring_buffer<char> * buffer)
 		cdh_r_is_busy = true;
 		__read_size = sizeof(s_control_message);
 		dvc_source->active_record = dvc_source->get();
+		ADD_2_STK_RTN_FALSE_IF_OBJECT_NULL(dvc_source->active_record, 0, ERR_RDR::BASE, ERR_RDR::METHOD::cdh_r_get_message_type, ERR_RDR::METHOD::LINE::sys_buffer_over_run);
 		dvc_source->active_record->record_type = e_record_types::System;
 
 	}
@@ -75,17 +78,28 @@ bool c_data_handler_read::cdh_r_read()
 		*(this->__active_target_buffer + dvc_source->active_record->read_count) = byte;
 		__read_size--; dvc_source->active_record->read_count++;
 
-		if ((dvc_source->active_record->record_type == e_record_types::Text) && (byte == CR || byte == LF))
+		if (dvc_source->active_record->record_type == e_record_types::Text)
 		{
-			__read_size = 0;
-			dvc_source->active_record->read_count--;
+			byte = toupper(byte);
+			if (byte < 32 || byte >126)
+			{
+				ADD_2_STK_RTN_FALSE(0, ERR_RDR::BASE, ERR_RDR::METHOD::cdh_r_read, ERR_RDR::METHOD::LINE::illegal_data_in_text_stream);
+			}
+			//see if end of data
+			if (byte == CR || byte == LF)
+			{
+				__read_size = 0;
+				dvc_source->active_record->read_count--;
+			}
 		}
 
 
 		if (!__read_size)
 		{
-			__read_size = dvc_source->active_record->expand_record();
+			ADD_2_STK_RTN_FALSE_IF_CALL_FALSE(dvc_source->active_record->expand_record()
+				,0,ERR_RDR::BASE,ERR_RDR::METHOD::cdh_r_read,ERR_RDR::METHOD::expand_record)
 
+			__read_size = dvc_source->active_record->addendum_size;
 			if (!__read_size)
 			{
 				cdh_r_is_busy = false;
@@ -112,7 +126,7 @@ bool c_data_handler_read::__cdh_r_close_read()
 		uint16_t new_crc = Talos::Kernel::Base::CRC::generate(this->__active_target_buffer, sizeof(s_control_message) - CRC_BYTE_SIZE);
 		if (system_crc != new_crc)
 		{
-			Talos::Kernel::Error::raise_error(ERR_RDR::BASE, ERR_RDR::METHOD::__cdh_r_close_read, ERR_RDR::METHOD::LINE::crc_failed_system_record, 0);
+			ADD_2_STK_RTN_FALSE(0, ERR_RDR::BASE, ERR_RDR::METHOD::__cdh_r_close_read, ERR_RDR::METHOD::LINE::crc_failed_system_record);
 		}
 
 		if (dvc_source->active_record->has_addendum)
@@ -126,7 +140,7 @@ bool c_data_handler_read::__cdh_r_close_read()
 				, dvc_source->active_record->addendum_size - CRC_BYTE_SIZE);
 			if (addendum_crc != new_crc)
 			{
-				Talos::Kernel::Error::raise_error(ERR_RDR::BASE, ERR_RDR::METHOD::__cdh_r_close_read, ERR_RDR::METHOD::LINE::crc_failed_addendum_record, 0);
+				ADD_2_STK_RTN_FALSE(0, ERR_RDR::BASE, ERR_RDR::METHOD::__cdh_r_close_read, ERR_RDR::METHOD::LINE::crc_failed_addendum_record);
 			}
 		}
 	}
