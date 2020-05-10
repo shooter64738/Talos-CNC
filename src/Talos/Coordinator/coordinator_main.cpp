@@ -7,9 +7,15 @@
  */ 
 
 #include "../Shared Data/Kernel/Base/c_kernel_base.h"
+#include "../Coordinator/coordinator_hardware_def.h"
 
 int main(void)
 {
+	//Setup the processor HAL
+	Hardware_Abstraction_Layer::Core::initialize();
+	//Start serial service
+	Hardware_Abstraction_Layer::Serial::initialize(0,0);
+
 	//init framework base
 	Talos::Kernel::Base::f_initialize();
 	//init framework comms

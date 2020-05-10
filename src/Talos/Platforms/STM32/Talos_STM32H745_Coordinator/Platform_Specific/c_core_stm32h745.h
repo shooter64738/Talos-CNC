@@ -22,7 +22,8 @@
 #ifndef __C_CORE_STM32H754_H__
 #define __C_CORE_STM32H754_H__
 #include <stdint.h>
-
+#include <stm32h7xx_hal.h>
+#include <stm32_hal_legacy.h>
 namespace Hardware_Abstraction_Layer
 {
 	class Core

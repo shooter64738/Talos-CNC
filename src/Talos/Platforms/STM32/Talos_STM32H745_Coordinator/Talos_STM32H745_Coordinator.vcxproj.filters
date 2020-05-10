@@ -13,9 +13,6 @@
     <Filter Include="Ngc_Rs274">
       <UniqueIdentifier>{1a0ac2b8-af84-4134-94bd-aec3abe53d51}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Platform Specific">
-      <UniqueIdentifier>{4f36eec1-fdea-476e-9039-cf605c649b54}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Shared Data">
       <UniqueIdentifier>{b5e43b14-901b-4678-b380-2df2b10dd88c}</UniqueIdentifier>
     </Filter>
@@ -117,8 +114,8 @@
     <Filter Include="_VisualGDB Info\Header files\Device-specific files\LL">
       <UniqueIdentifier>{5f9ddb89-0e4c-44a5-840b-12c2e5b193c8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="stuff">
-      <UniqueIdentifier>{a2eff084-77a8-49b5-a043-6824502cf972}</UniqueIdentifier>
+    <Filter Include="Platform_Specific">
+      <UniqueIdentifier>{4f36eec1-fdea-476e-9039-cf605c649b54}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -611,17 +608,14 @@
     <ClCompile Include="..\..\..\Shared Data\Kernel\Report\c_kernel_report.cpp">
       <Filter>Shared Data\Kernel\Report</Filter>
     </ClCompile>
-    <ClCompile Include="Core.cpp">
-      <Filter>_VisualGDB Info\Source files</Filter>
+    <ClCompile Include="Platform_Specific\c_serial_stm32h745.cpp">
+      <Filter>Platform_Specific</Filter>
     </ClCompile>
-    <ClCompile Include="Platform Specific\c_core_stm32h754.cpp">
-      <Filter>Platform Specific</Filter>
+    <ClCompile Include="Platform_Specific\c_disk_stm32h745.cpp">
+      <Filter>Platform_Specific</Filter>
     </ClCompile>
-    <ClCompile Include="Platform Specific\c_disk_stm32h754.cpp">
-      <Filter>Platform Specific</Filter>
-    </ClCompile>
-    <ClCompile Include="Platform Specific\c_serial_stm32h754.cpp">
-      <Filter>Platform Specific</Filter>
+    <ClCompile Include="Platform_Specific\c_core_stm32h745.cpp">
+      <Filter>Platform_Specific</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1335,14 +1329,14 @@
     <ClInclude Include="..\..\..\Shared Data\Kernel\kernel_configuration.h">
       <Filter>Shared Data\Kernel</Filter>
     </ClInclude>
-    <ClInclude Include="Platform Specific\c_core_stm32h754.h">
-      <Filter>Platform Specific</Filter>
+    <ClInclude Include="Platform_Specific\c_serial_stm32h745.h">
+      <Filter>Platform_Specific</Filter>
     </ClInclude>
-    <ClInclude Include="Platform Specific\c_disk_stm32h754.h">
-      <Filter>Platform Specific</Filter>
+    <ClInclude Include="Platform_Specific\c_disk_stm32h745.h">
+      <Filter>Platform_Specific</Filter>
     </ClInclude>
-    <ClInclude Include="Platform Specific\c_serial_stm32h754.h">
-      <Filter>Platform Specific</Filter>
+    <ClInclude Include="Platform_Specific\c_core_stm32h745.h">
+      <Filter>Platform_Specific</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

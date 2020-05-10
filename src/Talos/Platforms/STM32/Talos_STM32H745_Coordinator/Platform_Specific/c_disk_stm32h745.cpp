@@ -6,7 +6,7 @@
 */
 
 
-#include "c_disk_stm32h754.h"
+#include "c_disk_stm32h745.h"
 #include "../../../../NGC_RS274/_ngc_defines.h"
 #include "../../../../NGC_RS274/_ngc_g_groups.h"
 #include "../../../../NGC_RS274/_ngc_m_groups.h"

@@ -17,7 +17,7 @@
 *  You should have received a copy of the GNU General Public License
 *  along with Talos.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "c_core_stm32h754.h"
+#include "c_core_stm32h745.h"
 using namespace Hardware_Abstraction_Layer;
 
 
@@ -35,7 +35,7 @@ void Core::set_time_delay(uint8_t delay)
 
 uint8_t Core::initialize()
 {
-	//This is the win core. 
+	HAL_Init();
 	return 0;
 }
 uint8_t Core::start_interrupts()

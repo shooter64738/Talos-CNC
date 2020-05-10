@@ -29,8 +29,8 @@
 
 #ifdef __STM32__
 #define F_CPU 460000000UL
-//#include "../Platforms/STM32F/Talos_STM32F1_Coordinator/PlatformSpecific/c_serial_STM32F103.h"
-//#include "../Platforms/STM32F/Talos_STM32F1_Coordinator/PlatformSpecific/c_core_STM32F103.h"
+#include "../Platforms/STM32/Talos_STM32H745_Coordinator/Platform_Specific/c_serial_stm32h745.h"
+#include "../Platforms/STM32/Talos_STM32H745_Coordinator/Platform_Specific/c_core_stm32h745.h"
 //#include "../Platforms/STM32F/Talos_STM32F1_Coordinator/PlatformSpecific/c_spi_STM32F103.h"
 //#include "../Platforms/STM32F/Talos_STM32F1_Coordinator/PlatformSpecific/c_disk_STM32F103.h"
 #endif
