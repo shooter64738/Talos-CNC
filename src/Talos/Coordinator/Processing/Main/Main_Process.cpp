@@ -25,18 +25,40 @@ then move to their respective modules.
 //#include <avr/io.h>
 //#include <avr/interrupt.h>
 
+#include "../../../Shared Data/Kernel/Base/c_kernel_base.h"
+
 
 #ifdef MSVC
 static char test_line[256] = "?G1\r\n";
 static int test_byte = 0;
 #endif
 
-c_Serial Talos::Coordinator::Main_Process::host_serial;
-c_Serial Talos::Coordinator::Main_Process::motion_serial;
+using namespace Talos;
 
-void Talos::Coordinator::Main_Process::initialize()
+c_Serial Coordinator::Main_Process::host_serial;
+c_Serial Coordinator::Main_Process::motion_serial;
+
+void Coordinator::Main_Process::initialize()
 {
-	
+	Kernel::Base::f_initialize();
+	//init framework comms (not much going on in here yet)
+	Kernel::Comm::f_initialize(NULL, NULL, NULL, NULL, NULL);
+	//init framwork cpus (assign an ID number to each cpu object. Init the data buffers
+	Kernel::CPU::f_initialize(
+		HOST_CPU_ID, CORD_CPU_ID, MACH_CPU_ID, SPDL_CPU_ID, PRPH_CPU_ID, Hardware_Abstraction_Layer::Core::cpu_tick_ms);
+	//Create a serial 'wrapper' to make writing strings and numbers easier.
+	//Assign the handle for the cpu's hardware buffer to a specific serial usart on the hardware.
+	Coordinator::Main_Process::host_serial = c_Serial(Kernel::CPU::host_id, 115200, &Kernel::CPU::cluster[Kernel::CPU::host_id].hw_data_buffer); //<--Connect to host
+	Coordinator::Main_Process::host_serial.print_string("hello world!\r\n");
+	while (1)
+	{
+		//check the error stack
+		if (!Kernel::CPU::service_events())
+		{
+			s_error_stack stack = Kernel::Error::error_stack[0].stack;
+			int x = 0;
+		}
+	}
 //	//Setup the ports and function pointers so we know which cpu is talking and we can report back debug data
 //	Talos::Shared::FrameWork::StartUp::initialize(0, 0, 1, 2, 3
 //	, Talos::Coordinator::Main_Process::debug_string
@@ -144,7 +166,7 @@ void Talos::Coordinator::Main_Process::initialize()
 
 }
 
-void Talos::Coordinator::Main_Process::__critical_initialization(const char * message, init_function initialization_pointer, uint8_t critical)
+void Talos::Coordinator::Main_Process::__critical_initialization(const char* message, init_function initialization_pointer, uint8_t critical)
 {
 	Talos::Coordinator::Main_Process::host_serial.print_string(message);
 	Talos::Coordinator::Main_Process::host_serial.print_string("...");
@@ -190,70 +212,70 @@ volatile uint32_t tick_at_time = 0;
 
 void Talos::Coordinator::Main_Process::run()
 {
-//	Talos::Coordinator::Main_Process::host_serial.print_string("\r\n** System ready **\r\n");
-//	
-//	//Since the host is running this code, its obviously on line.
-//	Talos::Shared::FrameWork::StartUp::CpuCluster[Talos::Shared::FrameWork::StartUp::cpu_type.Host].system_events.set((int)c_cpu::e_event_type::OnLine);
-//	
-//	c_cpu *this_cpu = &Talos::Shared::FrameWork::StartUp::CpuCluster[Talos::Shared::FrameWork::StartUp::cpu_type.Host];
-//	c_cpu *motion_cpu = &Talos::Shared::FrameWork::StartUp::CpuCluster[Talos::Shared::FrameWork::StartUp::cpu_type.Motion];
-//
-//	this_cpu->system_events.set((int)c_cpu::e_event_type::OnLine);
-//	
-//	//reset the system ticker
-//	Hardware_Abstraction_Layer::Core::cpu_tick_ms = 0;
-//	uint32_t next_time = Hardware_Abstraction_Layer::Core::cpu_tick_ms +10;
-//	
-//	while (this_cpu->system_events.get((int)c_cpu::e_event_type::OnLine))
-//	{
-//		//every 10ms send a status message.. lets see how fast it can go.
-//		if (Hardware_Abstraction_Layer::Core::cpu_tick_ms>= next_time)
-//		{
-//			Talos::Shared::FrameWork::Data::System::send((int)e_system_message::messages::e_informal::Reboot //message id #
-//			, (int)e_system_message::e_status_type::Informal //data type id #
-//			, Talos::Shared::FrameWork::StartUp::cpu_type.Host //origin of the message
-//			, Talos::Shared::FrameWork::StartUp::cpu_type.Motion //destination of the message
-//			, (int)e_system_message::e_status_state::motion::e_state::Idle //state
-//			, (int)e_system_message::e_status_state::motion::e_sub_state::OK //sub state
-//			, NULL //position data
-//			);
-//			
-//			next_time = Hardware_Abstraction_Layer::Core::cpu_tick_ms + 10;
-//		}
-//		
-//		//0: Handle system system_events
-//		//Talos::Coordinator::Events::system_event_handler.process();
-//
-//		//1: Handle hardware system_events
-//		//Talos::Coordinator::Events::hardware_event_handler.process();
-//
-//		//2: System event handler (should always follow the router system_events)
-//		Talos::Coordinator::Events::System::process(motion_cpu, this_cpu);
-//
-//		//3: Handle ancillary system_events
-//		//Talos::Coordinator::Events::ancillary_event_handler.process();
-//
-//		//4:: Handle ngc processing system_events
-//		Talos::Coordinator::Events::Data::process();
-//
-//		//Handle cpu events
-//		Talos::Shared::FrameWork::StartUp::run_events();
-//		if (motion_cpu->system_events.get((int)c_cpu::e_event_type::UnHealthy))
-//		{
-//			Talos::Coordinator::Main_Process::host_serial.print_string("** Motion CPU UnHealthy **\r\n");
-//			while(1);
-//		}
-//		
-//
-//		/*if (extern_data_events.inquire.event_manager.get((int)s_inquiry_data::e_event_type::IntialBlockStatus))
-//		ngc_block_report(Talos::Shared::c_cache_data::ngc_block_record);*/
-//	}
-//
-//	Talos::Coordinator::Main_Process::host_serial.print_string("\r\n** System halted **");
-//	while (1) {}
+	//	Talos::Coordinator::Main_Process::host_serial.print_string("\r\n** System ready **\r\n");
+	//	
+	//	//Since the host is running this code, its obviously on line.
+	//	Talos::Shared::FrameWork::StartUp::CpuCluster[Talos::Shared::FrameWork::StartUp::cpu_type.Host].system_events.set((int)c_cpu::e_event_type::OnLine);
+	//	
+	//	c_cpu *this_cpu = &Talos::Shared::FrameWork::StartUp::CpuCluster[Talos::Shared::FrameWork::StartUp::cpu_type.Host];
+	//	c_cpu *motion_cpu = &Talos::Shared::FrameWork::StartUp::CpuCluster[Talos::Shared::FrameWork::StartUp::cpu_type.Motion];
+	//
+	//	this_cpu->system_events.set((int)c_cpu::e_event_type::OnLine);
+	//	
+	//	//reset the system ticker
+	//	Hardware_Abstraction_Layer::Core::cpu_tick_ms = 0;
+	//	uint32_t next_time = Hardware_Abstraction_Layer::Core::cpu_tick_ms +10;
+	//	
+	//	while (this_cpu->system_events.get((int)c_cpu::e_event_type::OnLine))
+	//	{
+	//		//every 10ms send a status message.. lets see how fast it can go.
+	//		if (Hardware_Abstraction_Layer::Core::cpu_tick_ms>= next_time)
+	//		{
+	//			Talos::Shared::FrameWork::Data::System::send((int)e_system_message::messages::e_informal::Reboot //message id #
+	//			, (int)e_system_message::e_status_type::Informal //data type id #
+	//			, Talos::Shared::FrameWork::StartUp::cpu_type.Host //origin of the message
+	//			, Talos::Shared::FrameWork::StartUp::cpu_type.Motion //destination of the message
+	//			, (int)e_system_message::e_status_state::motion::e_state::Idle //state
+	//			, (int)e_system_message::e_status_state::motion::e_sub_state::OK //sub state
+	//			, NULL //position data
+	//			);
+	//			
+	//			next_time = Hardware_Abstraction_Layer::Core::cpu_tick_ms + 10;
+	//		}
+	//		
+	//		//0: Handle system system_events
+	//		//Talos::Coordinator::Events::system_event_handler.process();
+	//
+	//		//1: Handle hardware system_events
+	//		//Talos::Coordinator::Events::hardware_event_handler.process();
+	//
+	//		//2: System event handler (should always follow the router system_events)
+	//		Talos::Coordinator::Events::System::process(motion_cpu, this_cpu);
+	//
+	//		//3: Handle ancillary system_events
+	//		//Talos::Coordinator::Events::ancillary_event_handler.process();
+	//
+	//		//4:: Handle ngc processing system_events
+	//		Talos::Coordinator::Events::Data::process();
+	//
+	//		//Handle cpu events
+	//		Talos::Shared::FrameWork::StartUp::run_events();
+	//		if (motion_cpu->system_events.get((int)c_cpu::e_event_type::UnHealthy))
+	//		{
+	//			Talos::Coordinator::Main_Process::host_serial.print_string("** Motion CPU UnHealthy **\r\n");
+	//			while(1);
+	//		}
+	//		
+	//
+	//		/*if (extern_data_events.inquire.event_manager.get((int)s_inquiry_data::e_event_type::IntialBlockStatus))
+	//		ngc_block_report(Talos::Shared::c_cache_data::ngc_block_record);*/
+	//	}
+	//
+	//	Talos::Coordinator::Main_Process::host_serial.print_string("\r\n** System halted **");
+	//	while (1) {}
 }
 
-void Talos::Coordinator::Main_Process::debug_string(const char * data)
+void Talos::Coordinator::Main_Process::debug_string(const char* data)
 {
 	Talos::Coordinator::Main_Process::host_serial.print_string(data);
 }

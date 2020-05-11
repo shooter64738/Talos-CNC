@@ -119,9 +119,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Talos_STM32H745_Coordinator.cpp">
-      <Filter>_VisualGDB Info\Source files</Filter>
-    </ClCompile>
     <ClCompile Include="system_stm32h7xx.c">
       <Filter>_VisualGDB Info\Source files</Filter>
     </ClCompile>
@@ -131,354 +128,6 @@
     <ClInclude Include="stm32h7xx_hal_conf.h">
       <Filter>_VisualGDB Info\Header files</Filter>
     </ClInclude>
-    <ClCompile Include="STM32H7xxxx\StartupFiles\startup_stm32h745xx.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_ll_adc.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\LL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_ll_bdma.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\LL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_ll_comp.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\LL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_ll_crc.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\LL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_ll_crs.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\LL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_ll_dac.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\LL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_ll_delayblock.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\LL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_ll_dma.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\LL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_ll_dma2d.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\LL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_ll_exti.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\LL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_ll_fmc.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\LL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_ll_gpio.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\LL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_ll_hrtim.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\LL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_ll_i2c.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\LL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_ll_lptim.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\LL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_ll_lpuart.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\LL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_ll_mdma.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\LL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_ll_opamp.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\LL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_ll_pwr.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\LL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_ll_rcc.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\LL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_ll_rng.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\LL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_ll_rtc.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\LL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_ll_sdmmc.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\LL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_ll_spi.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\LL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_ll_swpmi.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\LL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_ll_tim.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\LL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_ll_usart.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\LL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_ll_utils.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\LL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_adc.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\HAL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_adc_ex.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\HAL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_cec.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\HAL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_comp.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\HAL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_cortex.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\HAL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_crc.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\HAL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_crc_ex.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\HAL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_cryp.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\HAL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_cryp_ex.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\HAL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_dac.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\HAL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_dac_ex.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\HAL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_dcmi.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\HAL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_dfsdm.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\HAL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_dfsdm_ex.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\HAL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_dma.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\HAL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_dma_ex.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\HAL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_dma2d.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\HAL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_dsi.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\HAL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_dts.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\HAL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_eth.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\HAL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_eth_ex.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\HAL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_exti.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\HAL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_fdcan.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\HAL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_flash.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\HAL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_flash_ex.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\HAL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_gfxmmu.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\HAL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_gpio.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\HAL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_hash.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\HAL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_hash_ex.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\HAL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_hcd.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\HAL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_hrtim.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\HAL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_hsem.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\HAL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_i2c.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\HAL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_i2c_ex.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\HAL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_i2s.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\HAL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_i2s_ex.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\HAL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_irda.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\HAL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_iwdg.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\HAL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_jpeg.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\HAL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_lptim.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\HAL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_ltdc.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\HAL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_ltdc_ex.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\HAL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_mdios.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\HAL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_mdma.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\HAL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_mmc.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\HAL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_mmc_ex.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\HAL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_nand.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\HAL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_nor.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\HAL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_opamp.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\HAL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_opamp_ex.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\HAL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_ospi.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\HAL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_otfdec.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\HAL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_pcd.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\HAL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_pcd_ex.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\HAL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_pssi.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\HAL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_pwr.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\HAL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_pwr_ex.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\HAL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_qspi.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\HAL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_ramecc.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\HAL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_rcc.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\HAL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_rcc_ex.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\HAL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_rng.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\HAL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_rng_ex.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\HAL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_rtc.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\HAL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_rtc_ex.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\HAL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_sai.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\HAL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_sai_ex.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\HAL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_sd.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\HAL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_sd_ex.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\HAL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_sdram.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\HAL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_smartcard.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\HAL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_smartcard_ex.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\HAL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_smbus.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\HAL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_spdifrx.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\HAL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_spi.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\HAL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_spi_ex.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\HAL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_sram.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\HAL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_swpmi.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\HAL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_tim.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\HAL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_tim_ex.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\HAL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_uart.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\HAL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_uart_ex.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\HAL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_usart.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\HAL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_usart_ex.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\HAL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_wwdg.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\HAL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_ll_usb.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\HAL</Filter>
-    </ClCompile>
-    <ClCompile Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files\HAL</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\Coordinator\coordinator_main.cpp">
       <Filter>Coordinator</Filter>
     </ClCompile>
@@ -617,470 +266,356 @@
     <ClCompile Include="Platform_Specific\c_core_stm32h745.cpp">
       <Filter>Platform_Specific</Filter>
     </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\StartupFiles\startup_stm32h745xx.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_adc.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_adc_ex.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_cec.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_comp.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_cortex.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_crc.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_crc_ex.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_cryp.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_cryp_ex.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_dac.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_dac_ex.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_dcmi.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_dfsdm.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_dfsdm_ex.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_dma.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_dma2d.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_dma_ex.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_dsi.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_dts.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_eth.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_eth_ex.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_exti.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_fdcan.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_flash.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_flash_ex.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_gfxmmu.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_gpio.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_hash.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_hash_ex.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_hcd.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_hrtim.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_hsem.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_i2c.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_i2c_ex.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_i2s.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_i2s_ex.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_irda.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_iwdg.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_jpeg.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_lptim.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_ltdc.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_ltdc_ex.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_mdios.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_mdma.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_mmc.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_mmc_ex.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_nand.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_nor.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_opamp.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_opamp_ex.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_ospi.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_otfdec.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_pcd.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_pcd_ex.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_pssi.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_pwr.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_pwr_ex.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_qspi.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_ramecc.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_rcc.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_rcc_ex.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_rng.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_rng_ex.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_rtc.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_rtc_ex.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_sai.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_sai_ex.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_sd.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_sdram.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_sd_ex.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_smartcard.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_smartcard_ex.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_smbus.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_spdifrx.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_spi.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_spi_ex.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_sram.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_swpmi.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_tim.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_tim_ex.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_uart.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_uart_ex.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_usart.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_usart_ex.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_wwdg.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_ll_adc.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_ll_bdma.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_ll_comp.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_ll_crc.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_ll_crs.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_ll_dac.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_ll_delayblock.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_ll_dma.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_ll_dma2d.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_ll_exti.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_ll_fmc.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_ll_gpio.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_ll_hrtim.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_ll_i2c.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_ll_lptim.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_ll_lpuart.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_ll_mdma.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_ll_opamp.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_ll_pwr.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_ll_rcc.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_ll_rng.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_ll_rtc.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_ll_sdmmc.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_ll_spi.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_ll_swpmi.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_ll_tim.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_ll_usart.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_ll_usb.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_ll_utils.c">
+      <Filter>_VisualGDB Info\Source files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="STM32H7xxxx\CMSIS_HAL\Include\cmsis_armcc.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\CMSIS_HAL\Include\cmsis_armclang.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\CMSIS_HAL\Include\cmsis_compiler.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\CMSIS_HAL\Include\cmsis_gcc.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\CMSIS_HAL\Include\cmsis_iccarm.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\CMSIS_HAL\RTOS\Template\cmsis_os.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\CMSIS_HAL\Include\cmsis_version.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\CMSIS_HAL\Include\core_armv8mbl.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\CMSIS_HAL\Include\core_armv8mml.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\CMSIS_HAL\Include\core_cm0.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\CMSIS_HAL\Include\core_cm0plus.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\CMSIS_HAL\Include\core_cm1.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\CMSIS_HAL\Include\core_cm3.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\CMSIS_HAL\Include\core_cm4.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\CMSIS_HAL\Include\core_cm7.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\CMSIS_HAL\Include\core_cm23.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\CMSIS_HAL\Include\core_cm33.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\CMSIS_HAL\Include\core_sc000.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\CMSIS_HAL\Include\core_sc300.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\CMSIS_HAL\Include\mpu_armv7.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\CMSIS_HAL\Include\mpu_armv8.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\Legacy\stm32_hal_legacy.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\CMSIS_HAL\Device\ST\STM32H7xx\Include\stm32h7a3xxq.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\CMSIS_HAL\Device\ST\STM32H7xx\Include\stm32h7b0xxq.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\CMSIS_HAL\Device\ST\STM32H7xx\Include\stm32h7b3xxq.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\CMSIS_HAL\Device\ST\STM32H7xx\Include\stm32h7xx.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_adc.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_adc_ex.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_cec.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_comp.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_conf_template.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_cortex.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_crc.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_crc_ex.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_cryp.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_cryp_ex.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_dac.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_dac_ex.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_dcmi.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_def.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_dfsdm.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_dfsdm_ex.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_dma.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_dma_ex.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_dma2d.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_dsi.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_dts.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_eth.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_eth_ex.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_exti.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_fdcan.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_flash.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_flash_ex.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_gfxmmu.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_gpio.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_gpio_ex.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_hash.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_hash_ex.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_hcd.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_hrtim.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_hsem.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_i2c.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_i2c_ex.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_i2s.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_i2s_ex.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_irda.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_irda_ex.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_iwdg.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_jpeg.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_lptim.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_ltdc.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_ltdc_ex.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_mdios.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_mdma.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_mmc.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_mmc_ex.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_nand.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_nor.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_opamp.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_opamp_ex.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_ospi.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_otfdec.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_pcd.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_pcd_ex.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_pssi.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_pwr.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_pwr_ex.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_qspi.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_ramecc.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_rcc.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_rcc_ex.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_rng.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_rng_ex.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_rtc.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_rtc_ex.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_sai.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_sai_ex.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_sd.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_sd_ex.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_sdram.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_smartcard.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_smartcard_ex.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_smbus.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_spdifrx.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_spi.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_spi_ex.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_sram.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_swpmi.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim_ex.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart_ex.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_usart.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_usart_ex.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_wwdg.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_usb.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\CMSIS_HAL\Device\ST\STM32H7xx\Include\system_stm32h7xx.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\CMSIS_HAL\Include\tz_context.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_adc.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\LL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_bdma.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\LL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_bus.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\LL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_comp.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\LL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_cortex.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\LL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_crc.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\LL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_crs.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\LL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_dac.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\LL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_delayblock.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\LL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_dma.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\LL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_dma2d.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\LL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_dmamux.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\LL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_exti.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\LL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_fmc.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\LL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_gpio.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\LL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_hrtim.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\LL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_hsem.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\LL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_i2c.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\LL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_iwdg.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\LL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_lptim.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\LL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_lpuart.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\LL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_mdma.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\LL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_opamp.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\LL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_pwr.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\LL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_rcc.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\LL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_rng.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\LL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_rtc.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\LL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_sdmmc.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\LL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_spi.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\LL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_swpmi.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\LL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_system.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\LL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_tim.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\LL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_usart.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\LL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_utils.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\LL</Filter>
-    </ClInclude>
-    <ClInclude Include="STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_wwdg.h">
-      <Filter>_VisualGDB Info\Header files\Device-specific files\LL</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\Coordinator\coordinator_hardware_def.h">
       <Filter>Coordinator</Filter>
     </ClInclude>
@@ -1338,16 +873,478 @@
     <ClInclude Include="Platform_Specific\c_core_stm32h745.h">
       <Filter>Platform_Specific</Filter>
     </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\CMSIS_HAL\Device\ST\STM32H7xx\Include\stm32h7a3xxq.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\CMSIS_HAL\Device\ST\STM32H7xx\Include\stm32h7b0xxq.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\CMSIS_HAL\Device\ST\STM32H7xx\Include\stm32h7b3xxq.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\CMSIS_HAL\Device\ST\STM32H7xx\Include\stm32h7xx.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\CMSIS_HAL\Device\ST\STM32H7xx\Include\system_stm32h7xx.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\CMSIS_HAL\Include\cmsis_armcc.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\CMSIS_HAL\Include\cmsis_armclang.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\CMSIS_HAL\Include\cmsis_compiler.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\CMSIS_HAL\Include\cmsis_gcc.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\CMSIS_HAL\Include\cmsis_iccarm.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\CMSIS_HAL\Include\cmsis_version.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\CMSIS_HAL\Include\core_armv8mbl.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\CMSIS_HAL\Include\core_armv8mml.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\CMSIS_HAL\Include\core_cm0.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\CMSIS_HAL\Include\core_cm0plus.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\CMSIS_HAL\Include\core_cm1.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\CMSIS_HAL\Include\core_cm23.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\CMSIS_HAL\Include\core_cm3.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\CMSIS_HAL\Include\core_cm33.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\CMSIS_HAL\Include\core_cm4.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\CMSIS_HAL\Include\core_cm7.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\CMSIS_HAL\Include\core_sc000.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\CMSIS_HAL\Include\core_sc300.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\CMSIS_HAL\Include\mpu_armv7.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\CMSIS_HAL\Include\mpu_armv8.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\CMSIS_HAL\Include\tz_context.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\CMSIS_HAL\RTOS\Template\cmsis_os.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\Legacy\stm32_hal_legacy.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_adc.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_adc_ex.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_cec.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_comp.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_conf_template.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_cortex.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_crc.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_crc_ex.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_cryp.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_cryp_ex.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_dac.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_dac_ex.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_dcmi.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_def.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_dfsdm.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_dfsdm_ex.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_dma.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_dma2d.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_dma_ex.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_dsi.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_dts.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_eth.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_eth_ex.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_exti.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_fdcan.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_flash.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_flash_ex.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_gfxmmu.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_gpio.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_gpio_ex.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_hash.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_hash_ex.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_hcd.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_hrtim.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_hsem.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_i2c.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_i2c_ex.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_i2s.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_i2s_ex.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_irda.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_irda_ex.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_iwdg.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_jpeg.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_lptim.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_ltdc.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_ltdc_ex.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_mdios.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_mdma.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_mmc.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_mmc_ex.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_nand.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_nor.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_opamp.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_opamp_ex.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_ospi.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_otfdec.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_pcd.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_pcd_ex.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_pssi.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_pwr.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_pwr_ex.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_qspi.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_ramecc.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_rcc.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_rcc_ex.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_rng.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_rng_ex.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_rtc.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_rtc_ex.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_sai.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_sai_ex.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_sd.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_sdram.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_sd_ex.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_smartcard.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_smartcard_ex.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_smbus.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_spdifrx.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_spi.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_spi_ex.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_sram.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_swpmi.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim_ex.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart_ex.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_usart.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_usart_ex.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_wwdg.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_adc.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_bdma.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_bus.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_comp.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_cortex.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_crc.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_crs.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_dac.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_delayblock.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_dma.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_dma2d.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_dmamux.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_exti.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_fmc.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_gpio.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_hrtim.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_hsem.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_i2c.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_iwdg.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_lptim.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_lpuart.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_mdma.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_opamp.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_pwr.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_rcc.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_rng.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_rtc.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_sdmmc.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_spi.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_swpmi.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_system.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_tim.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_usart.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_usb.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_utils.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_wwdg.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="stm32.xml">
       <Filter>_VisualGDB Info</Filter>
     </None>
     <None Include="Talos_STM32H745_Coordinator-Debug.vgdbsettings">
-      <Filter>_VisualGDB Info</Filter>
+      <Filter>_VisualGDB Info\VisualGDB settings</Filter>
     </None>
     <None Include="Talos_STM32H745_Coordinator-Release.vgdbsettings">
-      <Filter>_VisualGDB Info</Filter>
+      <Filter>_VisualGDB Info\VisualGDB settings</Filter>
     </None>
   </ItemGroup>
 </Project>

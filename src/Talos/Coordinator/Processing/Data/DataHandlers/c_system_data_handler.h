@@ -25,7 +25,7 @@
 #include <stdint.h>
 #include "../../../../c_ring_template.h"
 //#include "../../../../Shared Data/FrameWork/extern_events_types.h"
-#include "../../../../Shared Data/_s_status_record.h"
+#include "../../../../Shared_Data/_s_status_record.h"
 
 typedef void(*xret_pointer)(c_ring_buffer <char> * buffer);
 namespace Talos

@@ -22,7 +22,7 @@
 #define __C_CONFIGURATION_H__
 
 #include <stdint.h>
-#include "../Shared Data/Settings/Coordinator/_s_interp_config_struct.h"
+#include "../Shared_Data/Settings/Coordinator/_s_interp_config_struct.h"
 namespace Talos
 {
 	namespace Confguration

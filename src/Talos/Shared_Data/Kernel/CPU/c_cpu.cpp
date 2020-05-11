@@ -229,6 +229,9 @@ bool c_cpu::__check_data()
 		return true;
 
 	//TODO:neeed an indicator to determine when data has arrived for this cpu
+	if (!this->hw_data_buffer.has_data())
+		return true;
+
 
 	if (cdh_r_is_busy)//<--Check to see if this data is setup to be read already. If not assign a reader
 	{

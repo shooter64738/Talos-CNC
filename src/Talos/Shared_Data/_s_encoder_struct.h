@@ -2,7 +2,7 @@
 #define _C_ENCODER_STRUCT
 #include <stdint.h>
 #include "Kernel/c_kernel_utils.h"
-PACK(
+__PACK__(
 struct s_encoder_meta
 {
 	int32_t reg_tc0_cv1; //4
@@ -13,7 +13,7 @@ struct s_encoder_meta
 }
 );
 
-PACK(
+__PACK__(
 struct s_encoders
 {
 	s_encoder_meta meta_data; //16

@@ -19,19 +19,17 @@
 *  along with Talos.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef __C_CORE_STM32H754_H__
-#define __C_CORE_STM32H754_H__
+#ifndef __C_CORE_STM32H745_H__
+#define __C_CORE_STM32H745_H__
 #include <stdint.h>
-#include <stm32h7xx_hal.h>
-#include <stm32_hal_legacy.h>
+
 namespace Hardware_Abstraction_Layer
 {
 	class Core
 	{
 		//variables
 		public:
-			static uint16_t delay_count_down;
-			static uint32_t cpu_tick_ms;
+			static uint32_t * cpu_tick_ms;
 		protected:
 		private:
 
@@ -53,4 +51,5 @@ namespace Hardware_Abstraction_Layer
 		private:
 	};
 };
+
 #endif //__C_CORE_WIN_H__

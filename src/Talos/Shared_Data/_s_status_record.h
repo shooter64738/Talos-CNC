@@ -1,6 +1,6 @@
 #ifndef _C_STATUS_MESSAGE
 #define _C_STATUS_MESSAGE
-#include "_e_record_types.h"
+#include "Kernel/_e_record_types.h"
 #include "../physical_machine_parameters.h"
 #include "../_bit_flag_control.h"
 //#include "FrameWork/Startup/c_framework_start.h"

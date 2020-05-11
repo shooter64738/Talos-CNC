@@ -26,11 +26,8 @@
 //#include <ctype.h>
 //#include <stdlib.h>
 #include <stdint.h>
+#include "../../c_ring_template.h"
 
-////To enable compilation and debugging in Microsoft Visual C++ define MSCV
-//#if !defined(__AVR_ATmega328P__) && !defined(__AVR_ATmega2560__) && !defined(__SAM3X8E__)
-//#define MSVC
-//#endif
 
 
 class c_Serial
@@ -47,7 +44,7 @@ class c_Serial
 	//functions
 	public:
 	c_Serial();
-	c_Serial(uint8_t Port, uint32_t BaudRate);
+	c_Serial(uint8_t Port, uint32_t BaudRate, c_ring_buffer<char> * buffer);
 	
 	void Write(const char*);
 	void Write(char);

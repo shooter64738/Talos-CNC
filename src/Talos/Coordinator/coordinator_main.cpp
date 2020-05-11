@@ -6,15 +6,18 @@
  * Author : Family
  */ 
 
-#include "../Shared Data/Kernel/Base/c_kernel_base.h"
+#include "../Shared_Data/Kernel/Base/c_kernel_base.h"
 #include "../Coordinator/coordinator_hardware_def.h"
+#include "Processing/Main/Main_Process.h"
 
 int main(void)
 {
+	Talos::Coordinator::Main_Process::initialize();
+	
 	//Setup the processor HAL
 	Hardware_Abstraction_Layer::Core::initialize();
 	//Start serial service
-	Hardware_Abstraction_Layer::Serial::initialize(0,0);
+	Hardware_Abstraction_Layer::Serial::initialize(0,0,NULL);
 
 	//init framework base
 	Talos::Kernel::Base::f_initialize();

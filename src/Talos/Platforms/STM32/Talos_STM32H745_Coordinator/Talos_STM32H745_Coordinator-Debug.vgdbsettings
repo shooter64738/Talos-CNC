@@ -49,7 +49,7 @@
       </AdvancedSettings>
     </Connection>
     <LastConnectionTime>0</LastConnectionTime>
-    <EchoTypedCharacters>false</EchoTypedCharacters>
+    <EchoTypedCharacters>true</EchoTypedCharacters>
     <ClearContentsWhenReconnecting>true</ClearContentsWhenReconnecting>
     <ReconnectAutomatically>false</ReconnectAutomatically>
     <DisplayMode>ASCII</DisplayMode>

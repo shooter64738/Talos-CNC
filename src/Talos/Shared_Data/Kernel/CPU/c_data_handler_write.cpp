@@ -10,11 +10,11 @@ bool c_data_handler_write::cdh_w_get_message_type(c_ring_buffer<char> * buffer)
 	//Printable data is ngc method_or_line data. We need to check cr or lf because those are
 	//special method_or_line ending characters for ngc data. We will NEVER use 10 or 13 as a
 	//binary record type.
-	if ((peek_tail >= 32 && peek_tail <= 127) || (peek_tail == CR || peek_tail == LF))
+	if ((peek_tail >= 32 && peek_tail <= 127) || (peek_tail == ___CR || peek_tail == ___LF))
 	{
 		//If CR and LF are the termination for an ngc method_or_line, we wont see those unless we jsut processed a record
 		//We can throw those characters away.
-		if (peek_tail == CR || peek_tail == LF)
+		if (peek_tail == ___CR || peek_tail == ___LF)
 		{
 			//txt record started with Cr or LF. throw it away
 			buffer->get();
@@ -82,7 +82,7 @@ bool c_data_handler_write::cdh_w_write()
 				ADD_2_STK_RTN_FALSE(0, ERR_RDR::BASE, ERR_RDR::METHOD::cdh_r_read, ERR_RDR::METHOD::LINE::illegal_data_in_text_stream);
 			}
 			//see if end of data
-			if (byte == CR || byte == LF)
+			if (byte == ___CR || byte == ___LF)
 			{
 				__write_size = 0;
 				dvc_source->active_record->read_count--;

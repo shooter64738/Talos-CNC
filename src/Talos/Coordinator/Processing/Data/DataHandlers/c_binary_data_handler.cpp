@@ -20,7 +20,7 @@
 
 #include "c_binary_data_handler.h"
 #include "../../Main/Main_Process.h"
-#include "../../../../Shared Data/_e_record_types.h"
+#include "../../../../Shared_Data/Kernel/_e_record_types.h"
 
 /*
 We should NEVER include this file, this way these handlers stay totaly
