@@ -64,38 +64,35 @@
     <Filter Include="Shared Data\Settings\Coordinator">
       <UniqueIdentifier>{04a6e8a7-8ed7-4783-b20e-3202dbe3dbeb}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Shared Data\FrameWork">
-      <UniqueIdentifier>{7aaecb41-7a90-4a60-ab63-ecb9c20346f0}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Coordinator\Record Defines">
       <UniqueIdentifier>{453b7057-d8ac-495c-96d1-3b4f4984eb55}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Shared Data\FrameWork\Event">
-      <UniqueIdentifier>{d87cb87c-98f6-4b31-a7f3-f2e1ab078db5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Shared Data\FrameWork\Data">
-      <UniqueIdentifier>{cb7e5dc6-1339-493f-9ee1-34b1d7076820}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Shared Data\FrameWork\Event\Serial">
-      <UniqueIdentifier>{22c6105e-b607-49bf-8880-71e95a367573}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Shared Data\FrameWork\Enumerations">
-      <UniqueIdentifier>{f21087f7-1302-498e-9d06-bd938bbaf2ea}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Shared Data\FrameWork\Enumerations\Status">
-      <UniqueIdentifier>{df4f8830-b35a-4562-9b72-547fc302efad}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Shared Data\FrameWork\Startup">
-      <UniqueIdentifier>{6d358183-7ac0-4253-929b-51de9395bccc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Shared Data\FrameWork\Error">
-      <UniqueIdentifier>{8baf30b5-f716-43a1-a395-beef2a253d82}</UniqueIdentifier>
     </Filter>
     <Filter Include="Shared Data\Settings\Motion">
       <UniqueIdentifier>{11c0d96a-57bb-48a0-824c-7c4477f43c36}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Shared Data\FrameWork\Report">
-      <UniqueIdentifier>{a998897b-9fdf-42a5-8884-fbfb656acad6}</UniqueIdentifier>
+    <Filter Include="Shared Data\Kernel">
+      <UniqueIdentifier>{fad518d8-1d16-4b54-a3b9-c4a5d28af323}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shared Data\Kernel\Base">
+      <UniqueIdentifier>{294f4e61-08f1-4624-b81a-c79c12a870e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shared Data\Kernel\Comm">
+      <UniqueIdentifier>{8c259c4d-f6b3-4df2-981d-97d100af742e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shared Data\Kernel\CPU">
+      <UniqueIdentifier>{d7614b97-e662-4f57-8b47-7adb4d2248eb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shared Data\Kernel\Error">
+      <UniqueIdentifier>{cb6d22e9-94ea-477f-a414-84a3e6a3c8d5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shared Data\Kernel\Event">
+      <UniqueIdentifier>{b2c25dd6-0ee2-43ee-9beb-8f7074bbcd3b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shared Data\Kernel\Report">
+      <UniqueIdentifier>{b9d7e42f-96c7-4862-b077-be4c414c9923}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shared Data\Kernel\Start">
+      <UniqueIdentifier>{1aef5480-ef51-494d-9b64-7d79f948b0b0}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -320,41 +317,8 @@
     <ClInclude Include="..\..\..\..\Coordinator\Record Defines\xe_all_event_data_types.h">
       <Filter>Coordinator\Record Defines</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Event\Serial\c_new_serial_event_handler.h">
-      <Filter>Shared Data\FrameWork\Event\Serial</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Event\c_event_router.h">
-      <Filter>Shared Data\FrameWork\Event</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Data\cache_data.h">
-      <Filter>Shared Data\FrameWork\Data</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\..\Coordinator\Processing\Events\EventHandlers\c_system_event_handler.h">
       <Filter>Coordinator\Processing\Events\EventHandlers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Enumerations\Status\_e_system_messages.h">
-      <Filter>Shared Data\FrameWork\Enumerations\Status</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Startup\c_framework_start.h">
-      <Filter>Shared Data\FrameWork\Startup</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Coordinator\Processing\Data\c_data_buffers.h">
-      <Filter>Coordinator\Processing\Data</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Data\c_data_buffer.h">
-      <Filter>Shared Data\FrameWork\Data</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Data\c_framework_ngc_data_handler.h">
-      <Filter>Shared Data\FrameWork\Data</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Data\c_framework_system_data_handler.h">
-      <Filter>Shared Data\FrameWork\Data</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Error\c_framework_error.h">
-      <Filter>Shared Data\FrameWork\Error</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Error\_s_framework_error.h">
-      <Filter>Shared Data\FrameWork\Error</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\Coordinator\Processing\Data\DataHandlers\c_system_data_handler.h">
       <Filter>Coordinator\Processing\Data\DataHandlers</Filter>
@@ -368,14 +332,68 @@
     <ClInclude Include="..\..\..\..\Shared Data\Settings\Motion\_s_motion_tolerance_struct.h">
       <Filter>Shared Data\Settings\Motion</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Startup\c_framework_cpu.h">
-      <Filter>Shared Data\FrameWork\Startup</Filter>
+    <ClInclude Include="..\..\..\..\Shared_Data\Kernel\_e_record_types.h">
+      <Filter>Shared Data\Kernel</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Enumerations\_e_system_events.h">
-      <Filter>Shared Data\FrameWork\Enumerations</Filter>
+    <ClInclude Include="..\..\..\..\Shared_Data\Kernel\_e_system_messages.h">
+      <Filter>Shared Data\Kernel</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Report\c_framework_report.h">
-      <Filter>Shared Data\FrameWork\Report</Filter>
+    <ClInclude Include="..\..\..\..\Shared_Data\Kernel\_s_system_record.h">
+      <Filter>Shared Data\Kernel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared_Data\Kernel\c_kernel_utils.h">
+      <Filter>Shared Data\Kernel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared_Data\Kernel\kernel_configuration.h">
+      <Filter>Shared Data\Kernel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared_Data\Kernel\Base\c_kernel_base.h">
+      <Filter>Shared Data\Kernel\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared_Data\Kernel\Comm\c_kernel_comm.h">
+      <Filter>Shared Data\Kernel\Comm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared_Data\Kernel\CPU\c_cpu.h">
+      <Filter>Shared Data\Kernel\CPU</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared_Data\Kernel\CPU\c_kernel_cpu.h">
+      <Filter>Shared Data\Kernel\CPU</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared_Data\Kernel\CPU\u_data_overlay.h">
+      <Filter>Shared Data\Kernel\CPU</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared_Data\Kernel\Error\_d_err_macros.h">
+      <Filter>Shared Data\Kernel\Error</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared_Data\Kernel\Error\_s_kernel_error.h">
+      <Filter>Shared Data\Kernel\Error</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared_Data\Kernel\Error\c_kernel_error.h">
+      <Filter>Shared Data\Kernel\Error</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared_Data\Kernel\Error\kernel_error_codes_base.h">
+      <Filter>Shared Data\Kernel\Error</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared_Data\Kernel\Error\kernel_error_codes_cpu.h">
+      <Filter>Shared Data\Kernel\Error</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared_Data\Kernel\Error\kernel_error_codes_cpu_cluster.h">
+      <Filter>Shared Data\Kernel\Error</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared_Data\Kernel\Error\kernel_error_codes_reader.h">
+      <Filter>Shared Data\Kernel\Error</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared_Data\Kernel\Error\kernel_error_codes_writer.h">
+      <Filter>Shared Data\Kernel\Error</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared_Data\Kernel\Event\c_kernel_software_event.h">
+      <Filter>Shared Data\Kernel\Event</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared_Data\Kernel\Report\c_kernel_report.h">
+      <Filter>Shared Data\Kernel\Report</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared_Data\Kernel\Start\c_kernel_start.h">
+      <Filter>Shared Data\Kernel\Start</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -481,44 +499,35 @@
     <ClCompile Include="..\..\..\..\Coordinator\Processing\Events\EventHandlers\c_ngc_data_events.cpp">
       <Filter>Coordinator\Processing\Events\EventHandlers</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Event\Serial\c_new_serial_event_handler.cpp">
-      <Filter>Shared Data\FrameWork\Event\Serial</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Event\c_event_router.cpp">
-      <Filter>Shared Data\FrameWork\Event</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Data\cache_data.cpp">
-      <Filter>Shared Data\FrameWork\Data</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\..\Coordinator\Processing\Events\EventHandlers\c_system_event_handler.cpp">
       <Filter>Coordinator\Processing\Events\EventHandlers</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Startup\c_framework_start.cpp">
-      <Filter>Shared Data\FrameWork\Startup</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\Coordinator\Processing\Data\c_data_buffers.cpp">
-      <Filter>Coordinator\Processing\Data</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Data\c_data_buffer.cpp">
-      <Filter>Shared Data\FrameWork\Data</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Data\c_framework_ngc_data_handler.cpp">
-      <Filter>Shared Data\FrameWork\Data</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Data\c_framework_system_data_handler.cpp">
-      <Filter>Shared Data\FrameWork\Data</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Error\c_framework_error.cpp">
-      <Filter>Shared Data\FrameWork\Error</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\..\Coordinator\Processing\Data\DataHandlers\c_system_data_handler.cpp">
       <Filter>Coordinator\Processing\Data\DataHandlers</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Startup\c_framework_cpu.cpp">
-      <Filter>Shared Data\FrameWork\Startup</Filter>
+    <ClCompile Include="..\..\..\..\Shared_Data\Kernel\Base\c_kernel_base.cpp">
+      <Filter>Shared Data\Kernel\Base</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Report\c_framework_report.cpp">
-      <Filter>Shared Data\FrameWork\Report</Filter>
+    <ClCompile Include="..\..\..\..\Shared_Data\Kernel\Comm\c_kernel_comm.cpp">
+      <Filter>Shared Data\Kernel\Comm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Shared_Data\Kernel\CPU\c_cpu.cpp">
+      <Filter>Shared Data\Kernel\CPU</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Shared_Data\Kernel\CPU\c_kernel_cpu.cpp">
+      <Filter>Shared Data\Kernel\CPU</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Shared_Data\Kernel\Error\c_kernel_error.cpp">
+      <Filter>Shared Data\Kernel\Error</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Shared_Data\Kernel\Event\c_kernel_software_event.cpp">
+      <Filter>Shared Data\Kernel\Event</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Shared_Data\Kernel\Report\c_kernel_report.cpp">
+      <Filter>Shared Data\Kernel\Report</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Shared_Data\Kernel\Start\c_kernel_start.cpp">
+      <Filter>Shared Data\Kernel\Start</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

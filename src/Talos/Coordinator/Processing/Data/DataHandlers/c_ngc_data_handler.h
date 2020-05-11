@@ -23,7 +23,7 @@
 #define __C_COORDINATOR_NGC_DATA_HANDLER_H__
 #include <stdint.h>
 #include "../../../../c_ring_template.h"
-#include "../../../NGC_RS274/_ngc_block_struct.h"
+#include "../../../../NGC_RS274/_ngc_block_struct.h"
 //#include "../../../../Shared_Data/FrameWork/extern_events_types.h"
 
 typedef void(*ret_pointer)(c_ring_buffer <char> * buffer);

@@ -12,7 +12,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\Configuration\c_configuration.h" />
-    <ClInclude Include="..\..\..\..\Coordinator\Processing\Data\c_data_buffers.h" />
     <ClInclude Include="..\..\..\..\Coordinator\Processing\Data\DataHandlers\c_ngc_data_handler.h" />
     <ClInclude Include="..\..\..\..\Coordinator\Processing\Data\DataHandlers\c_system_data_handler.h" />
     <ClInclude Include="..\..\..\..\Coordinator\Processing\Events\EventHandlers\c_ngc_data_events.h" />
@@ -40,19 +39,6 @@
     <ClInclude Include="..\..\..\..\NGC_RS274\_ngc_plane_struct.h" />
     <ClInclude Include="..\..\..\..\NGC_RS274\_ngc_point_definition.h" />
     <ClInclude Include="..\..\..\..\NGC_RS274\_ngc_tool_struct.h" />
-    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Data\cache_data.h" />
-    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Data\c_data_buffer.h" />
-    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Data\c_framework_ngc_data_handler.h" />
-    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Data\c_framework_system_data_handler.h" />
-    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Enumerations\Status\_e_system_messages.h" />
-    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Enumerations\_e_system_events.h" />
-    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Error\c_framework_error.h" />
-    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Error\_s_framework_error.h" />
-    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Event\c_event_router.h" />
-    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Event\Serial\c_new_serial_event_handler.h" />
-    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Report\c_framework_report.h" />
-    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Startup\c_framework_cpu.h" />
-    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Startup\c_framework_start.h" />
     <ClInclude Include="..\..\..\..\Shared Data\Settings\Coordinator\_s_interp_config_struct.h" />
     <ClInclude Include="..\..\..\..\Shared Data\Settings\Motion\_s_motion_control_settings_encapsulation.h" />
     <ClInclude Include="..\..\..\..\Shared Data\Settings\Motion\_s_motion_hardware.h" />
@@ -71,6 +57,27 @@
     <ClInclude Include="..\..\..\..\Shared Data\_s_ngc_line_record.h" />
     <ClInclude Include="..\..\..\..\Shared Data\_s_peripheral_panel_struct.h" />
     <ClInclude Include="..\..\..\..\Shared Data\_s_status_record.h" />
+    <ClInclude Include="..\..\..\..\Shared_Data\Kernel\Base\c_kernel_base.h" />
+    <ClInclude Include="..\..\..\..\Shared_Data\Kernel\Comm\c_kernel_comm.h" />
+    <ClInclude Include="..\..\..\..\Shared_Data\Kernel\CPU\c_cpu.h" />
+    <ClInclude Include="..\..\..\..\Shared_Data\Kernel\CPU\c_kernel_cpu.h" />
+    <ClInclude Include="..\..\..\..\Shared_Data\Kernel\CPU\u_data_overlay.h" />
+    <ClInclude Include="..\..\..\..\Shared_Data\Kernel\c_kernel_utils.h" />
+    <ClInclude Include="..\..\..\..\Shared_Data\Kernel\Error\c_kernel_error.h" />
+    <ClInclude Include="..\..\..\..\Shared_Data\Kernel\Error\kernel_error_codes_base.h" />
+    <ClInclude Include="..\..\..\..\Shared_Data\Kernel\Error\kernel_error_codes_cpu.h" />
+    <ClInclude Include="..\..\..\..\Shared_Data\Kernel\Error\kernel_error_codes_cpu_cluster.h" />
+    <ClInclude Include="..\..\..\..\Shared_Data\Kernel\Error\kernel_error_codes_reader.h" />
+    <ClInclude Include="..\..\..\..\Shared_Data\Kernel\Error\kernel_error_codes_writer.h" />
+    <ClInclude Include="..\..\..\..\Shared_Data\Kernel\Error\_d_err_macros.h" />
+    <ClInclude Include="..\..\..\..\Shared_Data\Kernel\Error\_s_kernel_error.h" />
+    <ClInclude Include="..\..\..\..\Shared_Data\Kernel\Event\c_kernel_software_event.h" />
+    <ClInclude Include="..\..\..\..\Shared_Data\Kernel\kernel_configuration.h" />
+    <ClInclude Include="..\..\..\..\Shared_Data\Kernel\Report\c_kernel_report.h" />
+    <ClInclude Include="..\..\..\..\Shared_Data\Kernel\Start\c_kernel_start.h" />
+    <ClInclude Include="..\..\..\..\Shared_Data\Kernel\_e_record_types.h" />
+    <ClInclude Include="..\..\..\..\Shared_Data\Kernel\_e_system_messages.h" />
+    <ClInclude Include="..\..\..\..\Shared_Data\Kernel\_s_system_record.h" />
     <ClInclude Include="..\..\..\..\_bit_manipulation.h" />
     <ClInclude Include="..\..\..\..\communication_def.h" />
     <ClInclude Include="..\..\..\..\Coordinator\coordinator_hardware_def.h" />
@@ -111,7 +118,6 @@
   <ItemGroup>
     <ClCompile Include="..\..\..\..\Configuration\c_configuration.cpp" />
     <ClCompile Include="..\..\..\..\Coordinator\coordinator_main.cpp" />
-    <ClCompile Include="..\..\..\..\Coordinator\Processing\Data\c_data_buffers.cpp" />
     <ClCompile Include="..\..\..\..\Coordinator\Processing\Data\DataHandlers\c_binary_data_handler.cpp" />
     <ClCompile Include="..\..\..\..\Coordinator\Processing\Data\DataHandlers\c_ngc_data_handler.cpp" />
     <ClCompile Include="..\..\..\..\Coordinator\Processing\Data\DataHandlers\c_system_data_handler.cpp" />
@@ -142,16 +148,14 @@
     <ClCompile Include="..\..\..\..\NGC_RS274\NGC_Set_Targets.cpp" />
     <ClCompile Include="..\..\..\..\NGC_RS274\NGC_System.cpp" />
     <ClCompile Include="..\..\..\..\NGC_RS274\NGC_Tool.cpp" />
-    <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Data\cache_data.cpp" />
-    <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Data\c_data_buffer.cpp" />
-    <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Data\c_framework_ngc_data_handler.cpp" />
-    <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Data\c_framework_system_data_handler.cpp" />
-    <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Error\c_framework_error.cpp" />
-    <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Event\c_event_router.cpp" />
-    <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Event\Serial\c_new_serial_event_handler.cpp" />
-    <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Report\c_framework_report.cpp" />
-    <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Startup\c_framework_cpu.cpp" />
-    <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Startup\c_framework_start.cpp" />
+    <ClCompile Include="..\..\..\..\Shared_Data\Kernel\Base\c_kernel_base.cpp" />
+    <ClCompile Include="..\..\..\..\Shared_Data\Kernel\Comm\c_kernel_comm.cpp" />
+    <ClCompile Include="..\..\..\..\Shared_Data\Kernel\CPU\c_cpu.cpp" />
+    <ClCompile Include="..\..\..\..\Shared_Data\Kernel\CPU\c_kernel_cpu.cpp" />
+    <ClCompile Include="..\..\..\..\Shared_Data\Kernel\Error\c_kernel_error.cpp" />
+    <ClCompile Include="..\..\..\..\Shared_Data\Kernel\Event\c_kernel_software_event.cpp" />
+    <ClCompile Include="..\..\..\..\Shared_Data\Kernel\Report\c_kernel_report.cpp" />
+    <ClCompile Include="..\..\..\..\Shared_Data\Kernel\Start\c_kernel_start.cpp" />
     <ClCompile Include="Platform Specific\c_core_win.cpp" />
     <ClCompile Include="Platform Specific\c_disk_win.cpp" />
     <ClCompile Include="Platform Specific\c_serial_win.cpp" />
@@ -165,19 +169,19 @@
     <ProjectGuid>{842D3902-7944-4D31-868D-EDAD55DD8A7E}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>Talos_WIN32</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.14393.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>

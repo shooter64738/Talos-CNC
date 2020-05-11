@@ -21,6 +21,11 @@
 
 #ifdef __AVR_ATmega2560__
 #define F_CPU 16000000UL
+#define HOST_CPU_ID 0
+#define CORD_CPU_ID 1
+#define MACH_CPU_ID 2
+#define SPDL_CPU_ID 3
+#define PRPH_CPU_ID 4
 #include "../Platforms/AVR_2560/Talos_AVR2560_Coordinator/PlatformSpecific/c_serial_avr_2560.h"
 #include "../Platforms/AVR_2560/Talos_AVR2560_Coordinator/PlatformSpecific/c_core_avr_2560.h"
 #include "../Platforms/AVR_2560/Talos_AVR2560_Coordinator/PlatformSpecific/c_spi_avr_2560.h"
@@ -44,6 +49,11 @@
 
 #ifdef MSVC
 #define F_CPU 16000000
+#define HOST_CPU_ID 0
+#define CORD_CPU_ID 1
+#define MACH_CPU_ID 2
+#define SPDL_CPU_ID 3
+#define PRPH_CPU_ID 4
 #include "../Platforms/WIN32/Talos_WIN32/Coordinator/Platform Specific/c_serial_win.h"
 #include "../Platforms/WIN32/Talos_WIN32/Coordinator/Platform Specific/c_core_win.h"
 #include "../Platforms/WIN32/Talos_WIN32/Coordinator/Platform Specific/c_spi_win.h"

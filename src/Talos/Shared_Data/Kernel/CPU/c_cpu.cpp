@@ -622,9 +622,11 @@ bool c_cpu::__set_entry_mode(char first_byte, char second_byte)
 	{
 		//Talos::Shared::FrameWork::StartUp::CpuCluster[Talos::Shared::FrameWork::StartUp::cpu_type.Host].host_events.Data.set((int)e_system_message::messages::e_data::NgcDataLine);
 		//assume its plain ngc g code data
+		return false;
 	}
 
 	}
+	return true;
 }
 
 bool c_cpu::__set_sub_entry_mode(char byte)
@@ -647,7 +649,8 @@ bool c_cpu::__set_sub_entry_mode(char byte)
 	default:
 		/*__raise_error(NULL, e_error_behavior::Informal, 0, e_error_group::DataHandler, e_error_process::Process
 			, tracked_read_type, e_error_source::Serial, e_error_code::UnExpectedDataTypeForRecord);*/
+		return false;
 		break;
 	}
-
+	return true;
 }

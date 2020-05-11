@@ -45,7 +45,7 @@ void Coordinator::Main_Process::initialize()
 		Coordinator::Main_Process::debug_float_dec);
 	//init framwork cpus (assign an ID number to each cpu object. Init the data buffers
 	Kernel::CPU::f_initialize(
-		HOST_CPU_ID, CORD_CPU_ID, MACH_CPU_ID, SPDL_CPU_ID, PRPH_CPU_ID, Hardware_Abstraction_Layer::Core::cpu_tick_ms);
+		HOST_CPU_ID, CORD_CPU_ID, MACH_CPU_ID, SPDL_CPU_ID, PRPH_CPU_ID, &Hardware_Abstraction_Layer::Core::cpu_tick_ms);
 	//Create a serial 'wrapper' to make writing strings and numbers easier.
 	//Assign the handle for the cpu's hardware buffer to a specific serial usart on the hardware.
 	Coordinator::Main_Process::host_serial = c_Serial(Kernel::CPU::host_id, 115200, &Kernel::CPU::cluster[Kernel::CPU::host_id].hw_data_buffer); //<--Connect to host
