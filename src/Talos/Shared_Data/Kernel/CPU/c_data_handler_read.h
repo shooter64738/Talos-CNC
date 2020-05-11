@@ -223,12 +223,12 @@ protected:
 			{
 				__set_sub_entry_mode(second_byte);
 				//This is an inquiry and system_events will set and handle this. We dont actually need the record data
-				Talos::Shared::c_cache_data::txt_record.pntr_record = NULL;
+				//Talos::Shared::c_cache_data::txt_record.pntr_record = NULL;
 				break;
 			}
 			default:
 			{
-				Talos::Shared::FrameWork::StartUp::CpuCluster[Talos::Shared::FrameWork::StartUp::cpu_type.Host].host_events.Data.set((int)e_system_message::messages::e_data::NgcDataLine);
+				//Talos::Shared::FrameWork::StartUp::CpuCluster[Talos::Shared::FrameWork::StartUp::cpu_type.Host].host_events.Data.set((int)e_system_message::messages::e_data::NgcDataLine);
 				//assume its plain ngc g code data
 			}
 
@@ -237,17 +237,17 @@ protected:
 
 		void __set_sub_entry_mode(char byte)
 		{
-			s_bit_flag_controller<uint32_t>* pntr_event = &Talos::Shared::FrameWork::StartUp::CpuCluster[Talos::Shared::FrameWork::StartUp::cpu_type.Host].host_events.Inquiry;
+			//s_bit_flag_controller<uint32_t>* pntr_event = &Talos::Shared::FrameWork::StartUp::CpuCluster[Talos::Shared::FrameWork::StartUp::cpu_type.Host].host_events.Inquiry;
 			switch (byte)
 			{
 			case 'G': //block g group status
-				pntr_event->set((int)e_system_message::messages::e_inquiry::GCodeBlockReport);
+				//pntr_event->set((int)e_system_message::messages::e_inquiry::GCodeBlockReport);
 				break;
 			case 'M': //block m group status
-				pntr_event->set((int)e_system_message::messages::e_inquiry::MCodeBlockReport);
+				//pntr_event->set((int)e_system_message::messages::e_inquiry::MCodeBlockReport);
 				break;
 			case 'W': //word value status
-				pntr_event->set((int)e_system_message::messages::e_inquiry::WordStatusReport);
+				//pntr_event->set((int)e_system_message::messages::e_inquiry::WordStatusReport);
 				break;
 			default:
 				/*__raise_error(NULL, e_error_behavior::Informal, 0, e_error_group::DataHandler, e_error_process::Process
