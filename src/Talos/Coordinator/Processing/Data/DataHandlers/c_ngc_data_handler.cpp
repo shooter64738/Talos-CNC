@@ -25,7 +25,7 @@
 #include "../../../../NGC_RS274/NGC_Error_Check.h"
 #include "../../../../NGC_RS274/NGC_Line_Processor.h"
 static uint32_t ngc_block_cache_count = 0;
-
+s_ngc_block Talos::Coordinator::Data::Ngc::active_block;
 
 void Talos::Coordinator::Data::Ngc::load_block_from_cache()
 {

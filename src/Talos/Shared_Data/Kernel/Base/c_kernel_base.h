@@ -7,6 +7,7 @@
 #include "../Error/c_kernel_error.h"
 #include "../Comm/c_kernel_comm.h"
 #include "../CPU/c_kernel_cpu.h"
+#include "../Report/c_kernel_report.h"
 //#include "../Data/c_kernel_data_handler.h"
 #include "../kernel_configuration.h"
 

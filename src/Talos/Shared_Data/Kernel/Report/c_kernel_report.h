@@ -38,7 +38,7 @@ namespace Talos
 
 				//functions
 			public:
-				static void process();
+				static void process(s_ngc_block ngc_block_record);
 
 			private:
 

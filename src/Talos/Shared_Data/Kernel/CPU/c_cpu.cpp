@@ -21,7 +21,7 @@ c_cpu::c_cpu(uint8_t id, volatile uint32_t* tick_timer_ms)
 	this->ID = id;
 }
 
-bool c_cpu::initialize(uint8_t id, volatile uint32_t * tick_timer_ms)
+bool c_cpu::initialize(uint8_t id, volatile uint32_t* tick_timer_ms)
 {
 	this->ID = id;
 	this->pntr_cycle_count_ms = tick_timer_ms;
@@ -45,7 +45,7 @@ bool c_cpu::send_message(uint8_t message
 	, uint8_t target
 	, uint8_t state
 	, uint8_t sub_state
-	, int32_t * position_data)
+	, int32_t* position_data)
 {
 	return false;
 }
@@ -203,18 +203,18 @@ bool c_cpu::__wait_formatted_message(uint8_t init_message, uint8_t init_type)
 	}
 }
 
-bool c_cpu::service_events(int32_t * position, uint16_t rpm)
+bool c_cpu::service_events(int32_t* position, uint16_t rpm)
 {
 	//This should get called frequently from the main method_or_line. 
 	ADD_2_STK_RTN_FALSE_IF_CALL_FALSE(
 		__check_data()
 		, this->ID, ERR_CPU::BASE, ERR_CPU::METHOD::service_events, ERR_CPU::METHOD::__check_data);
-	
+
 	ADD_2_STK_RTN_FALSE_IF_CALL_FALSE(
 		__check_health()
 		, this->ID, ERR_CPU::BASE, ERR_CPU::METHOD::service_events, ERR_CPU::METHOD::__check_health);
 
-	
+
 
 	//if NoState and OnLine is false, theres no need to process events.
 	if (this->system_events.get((int)c_cpu::e_event_type::NoState)
@@ -226,7 +226,7 @@ bool c_cpu::service_events(int32_t * position, uint16_t rpm)
 		this->system_events.clear((int)c_cpu::e_event_type::OnLine);
 
 	if (position != NULL)
-		memcpy(&this->sys_message.position, position, sizeof(int32_t)*MACHINE_AXIS_COUNT);
+		memcpy(&this->sys_message.position, position, sizeof(int32_t) * MACHINE_AXIS_COUNT);
 
 	memcpy(&this->sys_message.rpm, &rpm, sizeof(uint16_t));
 
@@ -299,14 +299,17 @@ bool c_cpu::cdh_r_get_message_type(c_ring_buffer<char>* buffer)
 			//txt record started with Cr or LF. throw it away
 			buffer->get();
 			__read_size = 0;
-			cdh_r_is_busy = false;
+			return true;
 		}
+		else
+		{
 
-		cdh_r_is_busy = true;
-		__read_size = 256;
-		dvc_source->active_rcv_buffer = __rcving_buffers[SERIAL].get();
-		ADD_2_STK_RTN_FALSE_IF_OBJECT_NULL(dvc_source->active_rcv_buffer, 0, ERR_RDR::BASE, ERR_RDR::METHOD::cdh_r_get_message_type, ERR_RDR::METHOD::LINE::txt_buffer_over_run);
-		dvc_source->active_rcv_buffer->record_type = e_record_types::Text;
+			cdh_r_is_busy = true;
+			__read_size = 256;
+			dvc_source->active_rcv_buffer = __rcving_buffers[SERIAL].get();
+			ADD_2_STK_RTN_FALSE_IF_OBJECT_NULL(dvc_source->active_rcv_buffer, 0, ERR_RDR::BASE, ERR_RDR::METHOD::cdh_r_get_message_type, ERR_RDR::METHOD::LINE::txt_buffer_over_run);
+			dvc_source->active_rcv_buffer->record_type = e_record_types::Text;
+		}
 	}
 	else if (peek_tail == (int)e_record_types::System)
 	{
@@ -375,7 +378,7 @@ bool c_cpu::cdh_r_read()
 
 		if (!__read_size)
 		{
-			ADD_2_STK_RTN_FALSE_IF_CALL_FALSE(dvc_source->active_rcv_buffer->expand_record()
+			ADD_2_STK_RTN_FALSE_IF_CALL_FALSE(__expand_record(dvc_source->active_rcv_buffer)
 				, 0, ERR_RDR::BASE, ERR_RDR::METHOD::cdh_r_read, ERR_RDR::METHOD::expand_record);
 
 			__read_size = dvc_source->active_rcv_buffer->addendum_size;
@@ -429,4 +432,222 @@ bool c_cpu::__cdh_r_close_read()
 	__active_hw_buffer = NULL;
 	__read_size = 0;
 	return true;
+}
+
+bool c_cpu::__expand_record(s_read_record* record)
+{
+	if (record->record_type == e_record_types::Text)
+	{
+		return __sys_data_classify(e_system_message::messages::e_data::NgcDataLine, record);
+	}
+	else
+	{
+		ADD_2_STK_RTN_FALSE_IF_CALL_FALSE(__sys_typer(record)
+			, 0, ERR_RDR::BASE, ERR_RDR::METHOD::expand_record, ERR_RDR::METHOD::__sys_typer);
+	}
+	record->has_addendum = record->addendum_size > 0;
+	return true;
+}
+
+bool c_cpu::__sys_critical_classify(e_system_message::messages::e_critical message, s_read_record* record)
+{
+	switch (message)
+	{
+	case e_system_message::messages::e_critical::testcritical:
+	{
+		record->addendum_size = 0;
+		break;
+	}
+
+	default:
+		ADD_2_STK_RTN_FALSE(0, ERR_RDR::BASE, ERR_RDR::METHOD::__sys_critical_classify, ERR_RDR::METHOD::LINE::illegal_system_critical_class_type);
+		break;
+
+	}
+	return true;
+}
+
+bool c_cpu::__sys_data_classify(e_system_message::messages::e_data message, s_read_record* record)
+{
+	switch (message)
+	{
+	case e_system_message::messages::e_data::MotionConfiguration:
+		record->addendum_crc_value = &record->overlays.motion_control_settings.crc;
+		record->addendum_size = sizeof(s_motion_control_settings_encapsulation);
+		break;
+	case e_system_message::messages::e_data::NgcDataLine:
+		//record->addendum_size = 256;
+		__set_entry_mode(record->overlays.text[0], record->overlays.text[1]);
+		break;
+	case e_system_message::messages::e_data::NgcDataRequest:
+		record->addendum_size = 0;
+		break;
+	case e_system_message::messages::e_data::SystemRecord:
+		record->addendum_crc_value = &record->overlays.system_control.crc;
+		record->addendum_size = sizeof(s_control_message);
+		break;
+	default:
+		ADD_2_STK_RTN_FALSE(0, ERR_RDR::BASE, ERR_RDR::METHOD::__sys_data_classify, ERR_RDR::METHOD::LINE::illegal_system_data_class_type);
+		break;
+	}
+	return true;
+}
+
+bool c_cpu::__sys_informal_classify(e_system_message::messages::e_informal message, s_read_record* record)
+{
+	switch (message)
+	{
+	case e_system_message::messages::e_informal::ReadyToProcess:
+	{
+		record->addendum_size = 0;
+		break;
+	}
+
+	default:
+		ADD_2_STK_RTN_FALSE(0, ERR_RDR::BASE, ERR_RDR::METHOD::__sys_informal_classify, ERR_RDR::METHOD::LINE::illegal_system_informal_class_type);
+		break;
+	}
+	return true;
+}
+
+bool c_cpu::__sys_inquiry_classify(e_system_message::messages::e_inquiry message, s_read_record* record)
+{
+	switch (message)
+	{
+	case e_system_message::messages::e_inquiry::GCodeBlockReport:
+		record->addendum_size = 0;
+		break;
+	case e_system_message::messages::e_inquiry::Invalid:
+		record->addendum_size = 0;
+		break;
+	case e_system_message::messages::e_inquiry::MCodeBlockReport:
+		record->addendum_size = 0;
+		break;
+	case e_system_message::messages::e_inquiry::WordStatusReport:
+		record->addendum_size = 0;
+		break;
+	case e_system_message::messages::e_inquiry::MotionConfiguration:
+		record->addendum_size = 0;
+		break;
+	case e_system_message::messages::e_inquiry::NgcDataLine:
+		record->addendum_size = 0;
+		break;
+	case e_system_message::messages::e_inquiry::SystemRecord:
+		record->addendum_size = 0;
+		break;
+	default:
+		ADD_2_STK_RTN_FALSE(0, ERR_RDR::BASE, ERR_RDR::METHOD::__sys_inquiry_classify, ERR_RDR::METHOD::LINE::illegal_system_inquiry_class_type);
+		break;
+	}
+	return true;
+}
+
+bool c_cpu::__sys_warning_classify(e_system_message::messages::e_warning message, s_read_record* record)
+{
+	switch (message)
+	{
+	case e_system_message::messages::e_warning::testwarning:
+	{
+		record->addendum_size = 0;
+		break;
+	}
+
+	default:
+		ADD_2_STK_RTN_FALSE(0, ERR_RDR::BASE, ERR_RDR::METHOD::__sys_warning_classify, ERR_RDR::METHOD::LINE::illegal_system_warning_class_type);
+		break;
+	}
+	return true;
+}
+
+bool c_cpu::__sys_typer(s_read_record* record)
+{
+	switch ((e_system_message::e_status_type)record->overlays.system_control.type)
+	{
+	case e_system_message::e_status_type::Critical:
+	{
+		__sys_critical_classify(
+			(e_system_message::messages::e_critical)record->overlays.system_control.message,
+			record);
+		break;
+	}
+	case e_system_message::e_status_type::Warning:
+	{
+		__sys_warning_classify(
+			(e_system_message::messages::e_warning)record->overlays.system_control.message,
+			record);
+		break;
+	}
+	case e_system_message::e_status_type::Informal:
+	{
+		__sys_informal_classify((e_system_message::messages::e_informal)record->overlays.system_control.message,
+			record);
+		break;
+	}
+	case e_system_message::e_status_type::Data:
+	{
+		ADD_2_STK_RTN_FALSE_IF_CALL_FALSE(
+			__sys_data_classify((e_system_message::messages::e_data)record->overlays.system_control.message, record)
+			, 0, ERR_RDR::BASE, ERR_RDR::METHOD::__sys_typer, ERR_RDR::METHOD::__sys_data_classify);
+
+		/*ADD_2_STK_RTN_FALSE(0, __sys_data_classify((e_system_message::messages::e_data)overlays.system_control.message)
+			,ERR_RDR::BASE,*/
+		break;
+	}
+	case e_system_message::e_status_type::Inquiry:
+	{
+		__sys_inquiry_classify((e_system_message::messages::e_inquiry)record->overlays.system_control.message, record);
+		break;
+	}
+
+	default:
+		ADD_2_STK_RTN_FALSE(0, ERR_RDR::BASE, ERR_RDR::METHOD::__sys_typer, ERR_RDR::METHOD::LINE::illegal_system_record_type);
+		break;
+	}
+	return true;
+}
+
+bool c_cpu::__set_entry_mode(char first_byte, char second_byte)
+{
+
+	switch (first_byte)
+	{
+	case '?': //inquiry mode
+	{
+		__set_sub_entry_mode(second_byte);
+		//This is an inquiry and system_events will set and handle this. We dont actually need the record data
+		//Talos::Shared::c_cache_data::txt_record.pntr_record = NULL;
+		break;
+	}
+	default:
+	{
+		//Talos::Shared::FrameWork::StartUp::CpuCluster[Talos::Shared::FrameWork::StartUp::cpu_type.Host].host_events.Data.set((int)e_system_message::messages::e_data::NgcDataLine);
+		//assume its plain ngc g code data
+	}
+
+	}
+}
+
+bool c_cpu::__set_sub_entry_mode(char byte)
+{
+	//s_bit_flag_controller<uint32_t>* pntr_event = &Talos::Shared::FrameWork::StartUp::CpuCluster[Talos::Shared::FrameWork::StartUp::cpu_type.Host].host_events.Inquiry;
+	switch (byte)
+	{
+	case 'G': //block g group status
+		this->host_events.Inquiry.set((int)e_system_message::messages::e_inquiry::GCodeBlockReport);
+		//pntr_event->set((int)e_system_message::messages::e_inquiry::GCodeBlockReport);
+		break;
+	case 'M': //block m group status
+		//pntr_event->set((int)e_system_message::messages::e_inquiry::MCodeBlockReport);
+		this->host_events.Inquiry.set((int)e_system_message::messages::e_inquiry::MCodeBlockReport);
+		break;
+	case 'W': //word value status
+		//pntr_event->set((int)e_system_message::messages::e_inquiry::WordStatusReport);
+		this->host_events.Inquiry.set((int)e_system_message::messages::e_inquiry::WordStatusReport);
+		break;
+	default:
+		/*__raise_error(NULL, e_error_behavior::Informal, 0, e_error_group::DataHandler, e_error_process::Process
+			, tracked_read_type, e_error_source::Serial, e_error_code::UnExpectedDataTypeForRecord);*/
+		break;
+	}
+
 }
