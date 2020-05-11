@@ -27,7 +27,7 @@ extern "C"
 
 void SysTick_Handler(void)
 {
-	(*Hardware_Abstraction_Layer::Core::cpu_tick_ms)++;
+//	*(Hardware_Abstraction_Layer::Core::cpu_tick_ms)++;
 	HAL_IncTick();
 	HAL_SYSTICK_IRQHandler();
 }
@@ -48,6 +48,7 @@ void Core::set_time_delay(uint8_t delay)
 
 uint8_t Core::initialize()
 {
+	*Hardware_Abstraction_Layer::Core::cpu_tick_ms = 0;
 	HAL_Init();
 	return 0;
 }

@@ -13,6 +13,7 @@
 #include "../../Settings/Motion/_s_motion_control_settings_encapsulation.h"
 #include "../../../c_ring_template.h"
 #include "../../../communication_def.h"
+#include "c_cpu.h"
 
 #define SERIAL 0
 #define BUFFER_SOURCES_COUNT 1
@@ -22,6 +23,13 @@ using Talos::Kernel::ErrorCodes::ERR_RDR;
 
 class c_data_handler_read
 {
+private:
+	c_cpu __local_cpu;
+public:
+	c_data_handler_read();
+	c_data_handler_read(c_cpu cpu);
+	
+
 protected:
 
 	union u_data_overlays
@@ -43,11 +51,14 @@ protected:
 		bool expand_record()
 		{
 			if (record_type == e_record_types::Text)
+			{
 				return __sys_data_classify(e_system_message::messages::e_data::NgcDataLine);
-			
-			ADD_2_STK_RTN_FALSE_IF_CALL_FALSE(__sys_typer()
-				, 0,ERR_RDR::BASE, ERR_RDR::METHOD::expand_record, ERR_RDR::METHOD::__sys_typer);
-
+			}
+			else
+			{
+				ADD_2_STK_RTN_FALSE_IF_CALL_FALSE(__sys_typer()
+					, 0, ERR_RDR::BASE, ERR_RDR::METHOD::expand_record, ERR_RDR::METHOD::__sys_typer);
+			}
 			has_addendum = addendum_size > 0;
 			return true;
 		}
@@ -202,13 +213,57 @@ protected:
 			}
 			return true;
 		}
+
+		void __set_entry_mode(char first_byte, char second_byte)
+		{
+
+			switch (first_byte)
+			{
+			case '?': //inquiry mode
+			{
+				__set_sub_entry_mode(second_byte);
+				//This is an inquiry and system_events will set and handle this. We dont actually need the record data
+				Talos::Shared::c_cache_data::txt_record.pntr_record = NULL;
+				break;
+			}
+			default:
+			{
+				Talos::Shared::FrameWork::StartUp::CpuCluster[Talos::Shared::FrameWork::StartUp::cpu_type.Host].host_events.Data.set((int)e_system_message::messages::e_data::NgcDataLine);
+				//assume its plain ngc g code data
+			}
+
+			}
+		}
+
+		void __set_sub_entry_mode(char byte)
+		{
+			s_bit_flag_controller<uint32_t>* pntr_event = &Talos::Shared::FrameWork::StartUp::CpuCluster[Talos::Shared::FrameWork::StartUp::cpu_type.Host].host_events.Inquiry;
+			switch (byte)
+			{
+			case 'G': //block g group status
+				pntr_event->set((int)e_system_message::messages::e_inquiry::GCodeBlockReport);
+				break;
+			case 'M': //block m group status
+				pntr_event->set((int)e_system_message::messages::e_inquiry::MCodeBlockReport);
+				break;
+			case 'W': //word value status
+				pntr_event->set((int)e_system_message::messages::e_inquiry::WordStatusReport);
+				break;
+			default:
+				/*__raise_error(NULL, e_error_behavior::Informal, 0, e_error_group::DataHandler, e_error_process::Process
+					, tracked_read_type, e_error_source::Serial, e_error_code::UnExpectedDataTypeForRecord);*/
+				break;
+			}
+
+		}
+
 	};
 
 	uint8_t __current_source;
 
-	c_ring_buffer<char> * __active_source_buffer;
+	c_ring_buffer<char> * __active_hw_buffer;
 
-	char * __active_target_buffer;
+	char * __pntr_active_rcv_buffer;
 
 	struct s_source_buffer
 	{
@@ -231,19 +286,19 @@ protected:
 			}
 			
 		}
-		s_read_record * active_record;
+		s_read_record * active_rcv_buffer;
 	};
 
-	s_source_buffer __source_buffers[BUFFER_SOURCES_COUNT]; //a buffer for each input type (com,net,disk,spi, etc)
+	s_source_buffer __rcving_buffers[BUFFER_SOURCES_COUNT]; //a buffer for each input type (com,net,disk,spi, etc)
 
 	uint16_t __read_size = 0;
 	bool __cdh_r_close_read();
 
-public:
-	bool cdh_r_get_message_type(c_ring_buffer<char> * buffer);
-	bool cdh_r_read();
-	bool cdh_r_is_busy = false;
-	s_source_buffer * dvc_source;
+	public:
+		bool cdh_r_get_message_type(c_ring_buffer<char>* buffer);
+		bool cdh_r_read();
+		bool cdh_r_is_busy = false;
+		s_source_buffer* dvc_source;
 
 
 };

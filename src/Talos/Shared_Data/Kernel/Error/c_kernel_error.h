@@ -17,6 +17,7 @@ namespace Talos
 
 			static void raise_error(uint16_t base, uint16_t method, uint16_t method_or_line, uint8_t event_id);
 			static void general_error_handler(int cpu_target);
+			static void report_stack_trace();
 			static void ngc_error_handler(int cpu_target, char * ngc_line);
 
 		private:

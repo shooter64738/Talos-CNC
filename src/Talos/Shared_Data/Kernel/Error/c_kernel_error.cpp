@@ -13,10 +13,12 @@ namespace Talos
 
 		s_kernel_error Error::error_stack[ERROR_STACK_SIZE];
 		uint8_t Error::stack_index = 0;
-
+		static bool reported = true;
 		//Keep in mind an error may originate on CPU 1, serial port 3, but we want to report it on CPU1 serial port 0 (or host) so we can debug easier.
 		void Error::raise_error(uint16_t base, uint16_t method, uint16_t method_or_line, uint8_t event_id)
 		{
+			reported = false;
+
 			//Save one stack slot, so we can error that the stack was full if needed
 			if (stack_index + 2 >= ERROR_STACK_SIZE)
 			{
@@ -61,6 +63,33 @@ namespace Talos
 			}
 			__print_base(cpu_target);
 
+		}
+
+		void Error::report_stack_trace()
+		{
+			if (reported)
+			{
+				Comm::pntr_string_writer(0, "No new errors in call stack.\r\n");
+				return;
+			}
+
+			for (uint8_t i = stack_index-1; i > 1; i--)
+			{
+				Comm::pntr_string_writer(0,"Call ");
+				Comm::pntr_int32_writer(0, error_stack[i].stack.base);
+				Comm::pntr_string_writer(0, "->");
+				Comm::pntr_int32_writer(0, error_stack[i].stack.method);
+				Comm::pntr_string_writer(0, "->");
+				Comm::pntr_int32_writer(0, error_stack[i].stack.method_or_line);
+				Comm::pntr_string_writer(0, "\r\n");
+			}
+			Comm::pntr_string_writer(0, "Error at=");
+			Comm::pntr_int32_writer(0, error_stack[0].stack.base);
+			Comm::pntr_string_writer(0, "->");
+			Comm::pntr_int32_writer(0, error_stack[0].stack.method);
+			Comm::pntr_string_writer(0, "->");
+			Comm::pntr_int32_writer(0, error_stack[0].stack.method_or_line);
+			Comm::pntr_string_writer(0, "\r\n");
 		}
 
 		void Error::ngc_error_handler(int cpu_target, char * ngc_line)

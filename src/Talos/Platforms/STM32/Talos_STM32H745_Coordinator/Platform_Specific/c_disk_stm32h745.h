@@ -12,7 +12,7 @@
 #include "../../../../NGC_RS274/_ngc_block_struct.h"
 #include "../../../../NGC_RS274/_ngc_tool_struct.h"
 #include "../../../../NGC_RS274/_ngc_coordinate_struct.h"
-#include "../../../../Shared Data/Settings/Motion/_s_motion_control_settings_encapsulation.h"
+#include "../../../../Shared_Data/Settings/Motion/_s_motion_control_settings_encapsulation.h"
 
 namespace Hardware_Abstraction_Layer
 {

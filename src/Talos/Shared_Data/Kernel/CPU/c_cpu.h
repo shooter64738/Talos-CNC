@@ -16,6 +16,9 @@
 class c_cpu : private c_data_handler_read
 {
 public:
+	c_cpu::c_cpu();
+	c_cpu::c_cpu(uint8_t id, volatile uint32_t* tick_timer_ms):c_data_handler_read(c_cpu this_cpu);
+	
 	uint8_t ID;
 	bool initialize(uint8_t id, volatile uint32_t * tick_timer_ms);
 	bool Synch(

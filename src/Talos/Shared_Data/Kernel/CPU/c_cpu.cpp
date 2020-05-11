@@ -10,6 +10,16 @@ using Talos::Kernel::ErrorCodes::ERR_CPU;
 
 uint8_t ID = 0;
 
+c_cpu::c_cpu()
+{
+	c_data_handler_read();
+}
+c_cpu::c_cpu(uint8_t id, volatile uint32_t* tick_timer_ms)
+{
+	this->ID = id;
+	c_data_handler_read(this);
+}
+
 bool c_cpu::initialize(uint8_t id, volatile uint32_t * tick_timer_ms)
 {
 	this->ID = id;

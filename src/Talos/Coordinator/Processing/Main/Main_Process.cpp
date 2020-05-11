@@ -19,13 +19,13 @@ then move to their respective modules.
 #include "../Events/EventHandlers/c_ngc_data_events.h"
 #include "../Events/EventHandlers/c_system_event_handler.h"
 #include "../Data/DataHandlers/c_system_data_handler.h"
-#include "../../../Shared Data/_s_status_record.h"
-#include "../../../Shared Data/Settings/Motion/_s_motion_control_settings_encapsulation.h"
+#include "../../../Shared_Data/_s_status_record.h"
+#include "../../../Shared_Data/Settings/Motion/_s_motion_control_settings_encapsulation.h"
 //
 //#include <avr/io.h>
 //#include <avr/interrupt.h>
 
-#include "../../../Shared Data/Kernel/Base/c_kernel_base.h"
+#include "../../../Shared_Data/Kernel/Base/c_kernel_base.h"
 
 
 #ifdef MSVC
@@ -42,19 +42,21 @@ void Coordinator::Main_Process::initialize()
 {
 	Kernel::Base::f_initialize();
 	//init framework comms (not much going on in here yet)
-	Kernel::Comm::f_initialize(NULL, NULL, NULL, NULL, NULL);
+	Kernel::Comm::f_initialize(Coordinator::Main_Process::debug_string,NULL, Coordinator::Main_Process::debug_int, NULL, NULL);
 	//init framwork cpus (assign an ID number to each cpu object. Init the data buffers
 	Kernel::CPU::f_initialize(
 		HOST_CPU_ID, CORD_CPU_ID, MACH_CPU_ID, SPDL_CPU_ID, PRPH_CPU_ID, Hardware_Abstraction_Layer::Core::cpu_tick_ms);
 	//Create a serial 'wrapper' to make writing strings and numbers easier.
 	//Assign the handle for the cpu's hardware buffer to a specific serial usart on the hardware.
 	Coordinator::Main_Process::host_serial = c_Serial(Kernel::CPU::host_id, 115200, &Kernel::CPU::cluster[Kernel::CPU::host_id].hw_data_buffer); //<--Connect to host
-	Coordinator::Main_Process::host_serial.print_string("hello world!\r\n");
+	
+																																				 //Coordinator::Main_Process::host_serial.print_string("hello world!\r\n");
 	while (1)
 	{
 		//check the error stack
 		if (!Kernel::CPU::service_events())
 		{
+			Kernel::Error::report_stack_trace();
 			s_error_stack stack = Kernel::Error::error_stack[0].stack;
 			int x = 0;
 		}
@@ -275,23 +277,23 @@ void Talos::Coordinator::Main_Process::run()
 	//	while (1) {}
 }
 
-void Talos::Coordinator::Main_Process::debug_string(const char* data)
+void Talos::Coordinator::Main_Process::debug_string(int port, const char* data)
 {
 	Talos::Coordinator::Main_Process::host_serial.print_string(data);
 }
-void Talos::Coordinator::Main_Process::debug_int(long data)
+void Talos::Coordinator::Main_Process::debug_int(int port, long data)
 {
 	Talos::Coordinator::Main_Process::host_serial.print_int32(data);
 }
-void Talos::Coordinator::Main_Process::debug_byte(const char data)
+void Talos::Coordinator::Main_Process::debug_byte(int port, const char data)
 {
 	Talos::Coordinator::Main_Process::host_serial.Write(data);
 }
-void Talos::Coordinator::Main_Process::debug_float(float data)
+void Talos::Coordinator::Main_Process::debug_float(int port, float data)
 {
 	Talos::Coordinator::Main_Process::host_serial.print_float(data);
 }
-void Talos::Coordinator::Main_Process::debug_float_dec(float data, uint8_t decimals)
+void Talos::Coordinator::Main_Process::debug_float_dec(int port, float data, uint8_t decimals)
 {
 	Talos::Coordinator::Main_Process::host_serial.print_float(data, decimals);
 }

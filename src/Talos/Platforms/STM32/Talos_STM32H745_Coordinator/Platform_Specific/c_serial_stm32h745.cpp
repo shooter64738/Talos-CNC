@@ -76,9 +76,10 @@ void Serial::__init_host_gpio()
 	GPIO_InitStructure.Mode = GPIO_MODE_AF_OD;
 	HAL_GPIO_Init(GPIOD, &GPIO_InitStructure);
 }
-
+static uint8_t byte = 0;
 void Serial::__init_host_comm()
 {
+
 	__init_host_gpio();
 
 	__USART3_CLK_ENABLE();
@@ -91,14 +92,19 @@ void Serial::__init_host_comm()
 	s_HostUARTHandle.Init.Mode = UART_MODE_TX_RX;
 	s_HostUARTHandle.Init.OverSampling = UART_OVERSAMPLING_16;
 
-	if (HAL_UART_Init(&s_HostUARTHandle) != HAL_OK)
-		asm("bkpt 255");
-
+	
 	/* Peripheral interrupt init*/
 	HAL_NVIC_SetPriority(USART3_IRQn, 0, 0);
 	HAL_NVIC_EnableIRQ(USART3_IRQn);
 	host_com_init = true;
+	
+	if (HAL_UART_Init(&s_HostUARTHandle) != HAL_OK)
+		asm("bkpt 255");
+
+	
+	
 	//HAL_UART_Receive_IT(&s_HostUARTHandle, &byte, 1);
+	SET_BIT(USART3->CR1, USART_CR1_PEIE | USART_CR1_RXNEIE_RXFNEIE);
 }
 
 
@@ -122,6 +128,7 @@ uint8_t Serial::send(uint8_t Port, char byte)
 	case HOST_CPU_ID:
 		//if (host_com_init)HAL_UART_Transmit(&s_HostUARTHandle, byte, sizeof(byte), HAL_MAX_DELAY)
 		s_HostUARTHandle.Instance->TDR = byte;
+		while (!(s_HostUARTHandle.Instance->ISR & USART_FLAG_TC));
 		break;
 	case CORD_CPU_ID:
 		//if (!host_com_init) __init_host_comm();

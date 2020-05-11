@@ -18,7 +18,8 @@ int main(void)
 	Hardware_Abstraction_Layer::Core::initialize();
 	//Start serial service
 	Hardware_Abstraction_Layer::Serial::initialize(0,0,NULL);
-
+	while(1)
+	{ }
 	//init framework base
 	Talos::Kernel::Base::f_initialize();
 	//init framework comms
