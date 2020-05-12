@@ -11,6 +11,9 @@
 #include "../../../../NGC_RS274/_ngc_g_groups.h"
 #include "../../../../NGC_RS274/_ngc_m_groups.h"
 #include "../../../../NGC_RS274/_ngc_m_groups.h"
+
+#include <stm32h7xx_hal.h>
+
 //#include "../../../../../Shared_Data/FrameWork/extern_events_types.h"
 using namespace Hardware_Abstraction_Layer;
 
@@ -27,9 +30,84 @@ static uint32_t _tool_write_position = 0;
 
 //static std::fstream _text_file_object;
 
+#include <string.h>
+static SPI_HandleTypeDef spi;
+
+void GenerateTestSPISignal()
+{
+
+	
+
+}
+
+void Disk::spi_start()
+{
+	__SPI1_CLK_ENABLE();
+	spi.Instance = SPI1;
+	spi.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_256;
+	spi.Init.Direction = SPI_DIRECTION_2LINES;
+	spi.Init.CLKPhase = SPI_PHASE_2EDGE;
+	spi.Init.CLKPolarity = SPI_POLARITY_HIGH;
+	spi.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLED;
+	spi.Init.DataSize = SPI_DATASIZE_8BIT;
+	spi.Init.FirstBit = SPI_FIRSTBIT_LSB;
+	spi.Init.NSS = SPI_NSS_SOFT;
+	spi.Init.TIMode = SPI_TIMODE_DISABLED;
+	spi.Init.Mode = SPI_MODE_MASTER;
+	if (HAL_SPI_Init(&spi) != HAL_OK)
+	{
+		asm("bkpt 255");
+	}
+
+
+	__GPIOA_CLK_ENABLE();
+	GPIO_InitTypeDef  GPIO_InitStruct;
+
+	GPIO_InitStruct.Pin = GPIO_PIN_5 | GPIO_PIN_6 | GPIO_PIN_7;
+	GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+	GPIO_InitStruct.Pull = GPIO_PULLUP;
+	GPIO_InitStruct.Speed = GPIO_SPEED_HIGH;
+	GPIO_InitStruct.Alternate = GPIO_AF5_SPI1;
+
+	HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+	GPIO_InitStruct.Pin = GPIO_PIN_4;
+	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+	HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+	__GPIOA_CLK_ENABLE();
+	GPIO_InitTypeDef  GPIO_InitStruct;
+	//PA4 SS <-- not using PA4 as auto slave select. Using it as regular GPIO
+	//PA5 SCK
+	//PA6 MISO
+	//PA7 MOSI
+	GPIO_InitStruct.Pin = GPIO_PIN_5 | GPIO_PIN_6 | GPIO_PIN_7;
+	GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+	GPIO_InitStruct.Pull = GPIO_PULLUP;
+	GPIO_InitStruct.Speed = GPIO_SPEED_HIGH;
+	GPIO_InitStruct.Alternate = GPIO_AF5_SPI1;
+
+	HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+	GPIO_InitStruct.Pin = GPIO_PIN_4;
+	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+	HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+	//configure PA4 as manual slave (regular ole GPIO)
+	GPIO_InitStruct.Pin = GPIO_PIN_4;
+	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+	HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+}
 
 uint8_t Disk::initialize()
 {
+	spi_start();
+
+	//make pin low
+	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_RESET);
+	HAL_SPI_Transmit(&spi, (uint8_t*)message, strlen(message), HAL_MAX_DELAY);
+	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_SET);
+	//FATFS FatFs;
 //	_cache_file_object = fstream(_cache_file_name, ios::in | ios::out | ios::app);
 //	_cache_file_object.close();
 //	_cache_file_object.open(_cache_file_name, std::fstream::in | std::fstream::out | std::fstream::binary);
@@ -52,11 +130,11 @@ uint8_t Disk::initialize()
 
 uint8_t Disk::load_configuration()
 {
-//	return 1;
+	//	return 1;
 
 }
 
-uint8_t Disk::load_initialize_block(s_ngc_block * initial_block)
+uint8_t Disk::load_initialize_block(s_ngc_block* initial_block)
 {
 	//default the motion state to canceled
 	initial_block->g_group[NGC_RS274::Groups::G::Motion] = NGC_RS274::G_codes::MOTION_CANCELED;
@@ -91,7 +169,7 @@ uint8_t Disk::load_initialize_block(s_ngc_block * initial_block)
 	return 0;
 }
 
-uint8_t Disk::load_motion_control_settings(s_motion_control_settings_encapsulation * motion_settings)
+uint8_t Disk::load_motion_control_settings(s_motion_control_settings_encapsulation* motion_settings)
 {
 	motion_settings->hardware.spindle_encoder.meta_data.reg_tc0_cv1 = 99;
 	motion_settings->hardware.spindle_encoder.meta_data.reg_tc0_ra0 = 88;
@@ -123,146 +201,146 @@ uint8_t Disk::load_motion_control_settings(s_motion_control_settings_encapsulati
 	return 0;
 }
 
-uint8_t Disk::put_block(s_ngc_block * write_block)
+uint8_t Disk::put_block(s_ngc_block* write_block)
 {
-//	const uint16_t rec_size = sizeof(s_ngc_block);
-//
-//	char stream[rec_size];
-//	memcpy(stream, write_block, rec_size);
-//	if (write_block->__station__)
-//	{
-//		uint32_t position = rec_size * (write_block->__station__ - 1);
-//		//position should now be at the beginning point of the block requested by __station__
-//		_cache_file_object.seekp(position, SEEK_SET);
-//	}
-//	write(NULL, stream, e_file_modes::OpenCreate, rec_size, _cache_file_object);
-//	_cache_write_position = _cache_file_object.tellp();
-//	return 1;
+	//	const uint16_t rec_size = sizeof(s_ngc_block);
+	//
+	//	char stream[rec_size];
+	//	memcpy(stream, write_block, rec_size);
+	//	if (write_block->__station__)
+	//	{
+	//		uint32_t position = rec_size * (write_block->__station__ - 1);
+	//		//position should now be at the beginning point of the block requested by __station__
+	//		_cache_file_object.seekp(position, SEEK_SET);
+	//	}
+	//	write(NULL, stream, e_file_modes::OpenCreate, rec_size, _cache_file_object);
+	//	_cache_write_position = _cache_file_object.tellp();
+	//	return 1;
 }
 
-uint8_t Disk::get_block(s_ngc_block * read_block)
+uint8_t Disk::get_block(s_ngc_block* read_block)
 {
-//	const uint16_t rec_size = sizeof(s_ngc_block);
-//
-//	char stream[rec_size];
-//
-//	//If a station number was sent with the block we need to seek
-//	//that block id in the cache. The offset in the cache is simple.
-//	if (read_block->__station__)
-//	{
-//		uint32_t position = rec_size * (read_block->__station__ - 1);
-//		//position should now be at the beginning point of the block requested by __station__
-//		_cache_file_object.seekp(position, SEEK_SET);
-//	}
-//
-//	read(NULL, stream, e_file_modes::OpenCreate, rec_size, _cache_file_object);
-//
-//	memcpy(read_block, stream, rec_size);
-//	_cache_read_position = _cache_file_object.tellp();
-//	return 1;
+	//	const uint16_t rec_size = sizeof(s_ngc_block);
+	//
+	//	char stream[rec_size];
+	//
+	//	//If a station number was sent with the block we need to seek
+	//	//that block id in the cache. The offset in the cache is simple.
+	//	if (read_block->__station__)
+	//	{
+	//		uint32_t position = rec_size * (read_block->__station__ - 1);
+	//		//position should now be at the beginning point of the block requested by __station__
+	//		_cache_file_object.seekp(position, SEEK_SET);
+	//	}
+	//
+	//	read(NULL, stream, e_file_modes::OpenCreate, rec_size, _cache_file_object);
+	//
+	//	memcpy(read_block, stream, rec_size);
+	//	_cache_read_position = _cache_file_object.tellp();
+	//	return 1;
 }
 
-uint8_t Disk::put_tool(s_tool_definition * write_tool)
+uint8_t Disk::put_tool(s_tool_definition* write_tool)
 {
-//	const uint16_t rec_size = sizeof(s_tool_definition);
-//
-//	char stream[rec_size];
-//	memcpy(stream, write_tool, rec_size);
-//	if (write_tool->toolno)
-//	{
-//		uint32_t position = rec_size * (write_tool->toolno - 1);
-//		//position should now be at the beginning point of the block requested by __station__
-//		_cache_file_object.seekp(position, SEEK_SET);
-//	}
-//	write(NULL, stream, e_file_modes::OpenCreate, rec_size, _cache_file_object);
-//	_cache_write_position = _cache_file_object.tellp();
-//	return 1;
+	//	const uint16_t rec_size = sizeof(s_tool_definition);
+	//
+	//	char stream[rec_size];
+	//	memcpy(stream, write_tool, rec_size);
+	//	if (write_tool->toolno)
+	//	{
+	//		uint32_t position = rec_size * (write_tool->toolno - 1);
+	//		//position should now be at the beginning point of the block requested by __station__
+	//		_cache_file_object.seekp(position, SEEK_SET);
+	//	}
+	//	write(NULL, stream, e_file_modes::OpenCreate, rec_size, _cache_file_object);
+	//	_cache_write_position = _cache_file_object.tellp();
+	//	return 1;
 }
 
-uint8_t Disk::get_tool(s_tool_definition * read_tool)
+uint8_t Disk::get_tool(s_tool_definition* read_tool)
 {
-//	const uint16_t rec_size = sizeof(s_tool_definition);
-//	char stream[rec_size];
-//
-//	//If a station number was sent with the block we need to seek
-//	//that block id in the cache. The offset in the cache is simple.
-//	if (read_tool->toolno)
-//	{
-//		uint32_t position = rec_size * (read_tool->toolno - 1);
-//		//position should now be at the beginning point of the block requested by __station__
-//		_tool_file_object.seekp(position, SEEK_SET);
-//	}
-//
-//	read(NULL, stream, e_file_modes::OpenCreate, rec_size, _cache_file_object);
-//
-//	memcpy(read_tool, stream, rec_size);
-//	_tool_read_position = _tool_file_object.tellp();
-//	return 1;
+	//	const uint16_t rec_size = sizeof(s_tool_definition);
+	//	char stream[rec_size];
+	//
+	//	//If a station number was sent with the block we need to seek
+	//	//that block id in the cache. The offset in the cache is simple.
+	//	if (read_tool->toolno)
+	//	{
+	//		uint32_t position = rec_size * (read_tool->toolno - 1);
+	//		//position should now be at the beginning point of the block requested by __station__
+	//		_tool_file_object.seekp(position, SEEK_SET);
+	//	}
+	//
+	//	read(NULL, stream, e_file_modes::OpenCreate, rec_size, _cache_file_object);
+	//
+	//	memcpy(read_tool, stream, rec_size);
+	//	_tool_read_position = _tool_file_object.tellp();
+	//	return 1;
 }
 
-uint8_t Disk::put_wcs(s_wcs * write_wcs)
+uint8_t Disk::put_wcs(s_wcs* write_wcs)
 {
-//	const uint16_t rec_size = sizeof(s_wcs);
-//
-//	char stream[rec_size];
-//	memcpy(stream, write_wcs, rec_size);
-//	if (write_wcs->wcs_id)
-//	{
-//		uint32_t position = rec_size * (write_wcs->wcs_id - 1);
-//		//position should now be at the beginning point of the block requested by __station__
-//		_cache_file_object.seekp(position, SEEK_SET);
-//	}
-//	write(NULL, stream, e_file_modes::OpenCreate, rec_size, _cache_file_object);
-//	_cache_write_position = _cache_file_object.tellp();
-//	return 1;
+	//	const uint16_t rec_size = sizeof(s_wcs);
+	//
+	//	char stream[rec_size];
+	//	memcpy(stream, write_wcs, rec_size);
+	//	if (write_wcs->wcs_id)
+	//	{
+	//		uint32_t position = rec_size * (write_wcs->wcs_id - 1);
+	//		//position should now be at the beginning point of the block requested by __station__
+	//		_cache_file_object.seekp(position, SEEK_SET);
+	//	}
+	//	write(NULL, stream, e_file_modes::OpenCreate, rec_size, _cache_file_object);
+	//	_cache_write_position = _cache_file_object.tellp();
+	//	return 1;
 }
 
-uint8_t Disk::get_wcs(s_wcs * read_wcs)
+uint8_t Disk::get_wcs(s_wcs* read_wcs)
 {
-//	const uint16_t rec_size = sizeof(s_ngc_block);
-//	char stream[rec_size];
-//
-//	//If a station number was sent with the block we need to seek
-//	//that block id in the cache. The offset in the cache is simple.
-//	if (read_wcs->wcs_id)
-//	{
-//		uint32_t position = rec_size * (read_wcs->wcs_id - 1);
-//		//position should now be at the beginning point of the block requested by __station__
-//		_tool_file_object.seekp(position, SEEK_SET);
-//	}
-//
-//	read(NULL, stream, e_file_modes::OpenCreate, rec_size, _cache_file_object);
-//
-//	memcpy(read_wcs, stream, rec_size);
-//	_tool_read_position = _tool_file_object.tellp();
-//	return 1;
+	//	const uint16_t rec_size = sizeof(s_ngc_block);
+	//	char stream[rec_size];
+	//
+	//	//If a station number was sent with the block we need to seek
+	//	//that block id in the cache. The offset in the cache is simple.
+	//	if (read_wcs->wcs_id)
+	//	{
+	//		uint32_t position = rec_size * (read_wcs->wcs_id - 1);
+	//		//position should now be at the beginning point of the block requested by __station__
+	//		_tool_file_object.seekp(position, SEEK_SET);
+	//	}
+	//
+	//	read(NULL, stream, e_file_modes::OpenCreate, rec_size, _cache_file_object);
+	//
+	//	memcpy(read_wcs, stream, rec_size);
+	//	_tool_read_position = _tool_file_object.tellp();
+	//	return 1;
 }
 
-uint8_t Disk::read_file(char * filename, char * buffer)
+uint8_t Disk::read_file(char* filename, char* buffer)
 {
-//	uint8_t byte_count = 0;
-//
-//	if (!_text_file_object.is_open())
-//	{
-//		_text_file_object = fstream(filename, fstream::in);
-//		//_text_file_object.open(filename);
-//	}
-//	char byte = 0;
-//	while (!_text_file_object.eof())
-//	{
-//		//read(NULL, buffer, e_file_modes::Open, 1, _text_file_object);
-//		_text_file_object.read(&byte, 1);
-//		if (byte == '\r' || byte == '\n')
-//		{
-//			byte_count++;
-//			break;
-//		}
-//		buffer++;
-//		byte_count++;
-//	}
-//	//if (byte_count)
-//		//Talos::Shared::FrameWork::Events::Router.disk.inbound.event_manager.set((int)c_event_router::ss_inbound_data::e_event_type::DiskDataArrival);
-//	return byte_count;
+	//	uint8_t byte_count = 0;
+	//
+	//	if (!_text_file_object.is_open())
+	//	{
+	//		_text_file_object = fstream(filename, fstream::in);
+	//		//_text_file_object.open(filename);
+	//	}
+	//	char byte = 0;
+	//	while (!_text_file_object.eof())
+	//	{
+	//		//read(NULL, buffer, e_file_modes::Open, 1, _text_file_object);
+	//		_text_file_object.read(&byte, 1);
+	//		if (byte == '\r' || byte == '\n')
+	//		{
+	//			byte_count++;
+	//			break;
+	//		}
+	//		buffer++;
+	//		byte_count++;
+	//	}
+	//	//if (byte_count)
+	//		//Talos::Shared::FrameWork::Events::Router.disk.inbound.event_manager.set((int)c_event_router::ss_inbound_data::e_event_type::DiskDataArrival);
+	//	return byte_count;
 }
 
 //uint8_t Disk::write(const char * filename, char * buffer, e_file_modes mode, uint16_t size, std::fstream &stream_object)

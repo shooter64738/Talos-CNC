@@ -33,6 +33,7 @@ namespace Hardware_Abstraction_Layer
 
 		//functions
 	public:
+		static void spi_start();
 		static uint8_t initialize();
 		static uint8_t load_configuration();
 		static uint8_t load_initialize_block(s_ngc_block * initial_block);

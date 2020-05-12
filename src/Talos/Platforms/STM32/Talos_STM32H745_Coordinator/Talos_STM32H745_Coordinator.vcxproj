@@ -51,8 +51,6 @@
       <LinkerScript />
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
@@ -217,6 +215,9 @@
     <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_ll_usart.c" />
     <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_ll_usb.c" />
     <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_ll_utils.c" />
+    <ClCompile Include="Platform_Specific\c_spi_stm32h745.cpp" />
+    <ClCompile Include="Platform_Specific\sd2\fatfs\diskio.c" />
+    <ClCompile Include="Platform_Specific\sd2\fatfs\ff.c" />
     <ClCompile Include="system_stm32h7xx.c" />
     <None Include="stm32.props" />
     <ClInclude Include="..\..\..\communication_def.h" />
@@ -460,6 +461,11 @@
     <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_usb.h" />
     <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_utils.h" />
     <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_wwdg.h" />
+    <ClInclude Include="Platform_Specific\c_spi_stm32h745.h" />
+    <ClInclude Include="Platform_Specific\sd2\fatfs\diskio.h" />
+    <ClInclude Include="Platform_Specific\sd2\fatfs\ff.h" />
+    <ClInclude Include="Platform_Specific\sd2\fatfs\ffconf.h" />
+    <ClInclude Include="Platform_Specific\sd2\fatfs\integer.h" />
     <ClInclude Include="stm32h7xx_hal_conf.h" />
     <None Include="Talos_STM32H745_Coordinator-Debug.vgdbsettings" />
     <None Include="Talos_STM32H745_Coordinator-Release.vgdbsettings" />
