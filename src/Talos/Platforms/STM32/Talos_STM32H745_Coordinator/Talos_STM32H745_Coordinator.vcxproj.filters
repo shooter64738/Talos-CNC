@@ -1383,6 +1383,9 @@
     <ClInclude Include="Platform_Specific\disk_support\SPI\Hardware\sd_card.h">
       <Filter>Platform_Specific\disk_support\SPI\Hardware</Filter>
     </ClInclude>
+    <ClInclude Include="Platform_Specific\sys_clock_configs.h">
+      <Filter>Platform_Specific</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="stm32.xml">

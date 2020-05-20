@@ -6,6 +6,18 @@
 #define SPI_BAUDRATE                   12000000//71000000 //18000000
 
 
+static const uint32_t baudrate[] =
+{
+	SPI_BAUDRATEPRESCALER_2,
+	SPI_BAUDRATEPRESCALER_4,
+	SPI_BAUDRATEPRESCALER_8,
+	SPI_BAUDRATEPRESCALER_16,
+	SPI_BAUDRATEPRESCALER_32,
+	SPI_BAUDRATEPRESCALER_64,
+	SPI_BAUDRATEPRESCALER_128,
+	SPI_BAUDRATEPRESCALER_256,
+};
+
 void HW_config(SPI_TypeDef* SPIxInstance)
 {
 	HW_config_gpio();
@@ -55,7 +67,7 @@ void HW_config_spi_handler(SPI_TypeDef* SPIxInstance)
 		__HAL_RCC_SPI1_CLK_ENABLE();
 
 		p_spi->Instance = SPIxInstance;
-		p_spi->Init.BaudRatePrescaler = HW_config_spi_baud_prescaler(HAL_RCC_GetHCLKFreq(), SPI_BAUDRATE);
+		p_spi->Init.BaudRatePrescaler = baudrate[0];// HW_config_spi_baud_prescaler(HAL_RCC_GetHCLKFreq(), SPI_BAUDRATE);
 		p_spi->Init.Direction = SPI_DIRECTION_2LINES;
 		p_spi->Init.CLKPhase = SPI_PHASE_2EDGE;
 		p_spi->Init.CLKPolarity = SPI_POLARITY_HIGH;
@@ -86,16 +98,6 @@ uint32_t HW_config_spi_baud_prescaler(uint32_t clock_src_freq, uint32_t baudrate
 	uint32_t divisor = 0;
 	uint32_t spi_clk = clock_src_freq;
 	uint32_t presc = 0;
-	static const uint32_t baudrate[] =
-	{ SPI_BAUDRATEPRESCALER_2,
-	  SPI_BAUDRATEPRESCALER_4,
-	  SPI_BAUDRATEPRESCALER_8,
-	  SPI_BAUDRATEPRESCALER_16,
-	  SPI_BAUDRATEPRESCALER_32,
-	  SPI_BAUDRATEPRESCALER_64,
-	  SPI_BAUDRATEPRESCALER_128,
-	  SPI_BAUDRATEPRESCALER_256,
-	};
 
 	while (spi_clk > baudrate_mbps)
 	{
@@ -107,4 +109,34 @@ uint32_t HW_config_spi_baud_prescaler(uint32_t clock_src_freq, uint32_t baudrate
 	}
 
 	return presc;
+}
+
+uint32_t HW_config_spi_baud_prescaler_negoatiate(SPI_HandleTypeDef * SPIxInstance, uint8_t current_prescale)
+{
+	
+	SPIxInstance->Init.BaudRatePrescaler = baudrate[current_prescale];
+	SPIxInstance->Init.Direction = SPI_DIRECTION_2LINES;
+	SPIxInstance->Init.CLKPhase = SPI_PHASE_2EDGE;
+	SPIxInstance->Init.CLKPolarity = SPI_POLARITY_HIGH;
+	SPIxInstance->Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
+	SPIxInstance->Init.CRCPolynomial = 7;
+	SPIxInstance->Init.DataSize = SPI_DATASIZE_8BIT;
+	SPIxInstance->Init.FirstBit = SPI_FIRSTBIT_MSB;
+	SPIxInstance->Init.NSS = SPI_NSS_SOFT;
+	SPIxInstance->Init.TIMode = SPI_TIMODE_DISABLE;
+	SPIxInstance->Init.Mode = SPI_MODE_MASTER;
+	SPIxInstance->Init.MasterKeepIOState = SPI_MASTER_KEEP_IO_STATE_ENABLE; /* Recommanded setting to avoid glitches */
+		
+	SPIxInstance->Init.FifoThreshold = SPI_FIFO_THRESHOLD_01DATA;
+	SPIxInstance->Init.CRCLength = SPI_CRC_LENGTH_8BIT;
+	SPIxInstance->Init.TxCRCInitializationPattern = SPI_CRC_INITIALIZATION_ALL_ZERO_PATTERN;
+	SPIxInstance->Init.RxCRCInitializationPattern = SPI_CRC_INITIALIZATION_ALL_ZERO_PATTERN;
+	SPIxInstance->Init.NSSPolarity = SPI_NSS_POLARITY_LOW;
+	SPIxInstance->Init.NSSPMode = SPI_NSS_PULSE_DISABLE;
+	SPIxInstance->Init.MasterSSIdleness = 0x00000000;
+	SPIxInstance->Init.MasterInterDataIdleness = 0x00000000;
+	SPIxInstance->Init.MasterReceiverAutoSusp = 0x00000000;
+	HAL_SPI_Init(SPIxInstance);
+	
+	
 }

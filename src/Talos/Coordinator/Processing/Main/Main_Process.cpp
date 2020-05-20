@@ -46,7 +46,7 @@ void Coordinator::Main_Process::initialize()
 	//Create a serial 'wrapper' to make writing strings and numbers easier.
 	//Assign the handle for the cpu's hardware buffer to a specific serial usart on the hardware.
 	Coordinator::Main_Process::host_serial = c_Serial(Kernel::CPU::host_id, 115200, &Kernel::CPU::cluster[Kernel::CPU::host_id].hw_data_buffer); //<--Connect to host
-	Coordinator::Main_Process::host_serial.print_string("Ready to process:\r\n");
+	Coordinator::Main_Process::host_serial.print_string("Boot CPU 0:\r\n");
 	
 	Kernel::Base::f_initialize();
 	//init framework comms (not much going on in here yet)

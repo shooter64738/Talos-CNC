@@ -43,23 +43,41 @@ static void debug_out(const char * message, void(*string_writer)(int serial_id, 
 {
 	if (string_writer != NULL)
 	{
+		string_writer(0, "\t");
 		string_writer(0, message);
 		string_writer(0, "\r\n");
 	}
 }
+
+
+
 uint8_t Disk::initialize(void(*string_writer)(int serial_id, const char * data))
 {
 	debug_out("Starting disk I/O", string_writer);
-	FatResult = (FRESULT)SD_IO_Init(SPI1);
-	FatResult = f_mount(&FatFs, "", 1);
-	debug_out("\t Opening Cache", string_writer);
-	f_open(&_cache_file_object, _cache_file_name, FA_WRITE | FA_READ | FA_CREATE_NEW);
-	debug_out("\t Opening Tools", string_writer);
-	f_open(&_tool_file_object, _tool_file_name, FA_WRITE | FA_READ | FA_CREATE_NEW);
-	debug_out("\t Opening WCS", string_writer);
-	f_open(&_wcs_file_object, _wcs_file_name, FA_WRITE | FA_READ | FA_CREATE_NEW);
-	debug_out("\t Opening MCS", string_writer);
-	//f_open(&_wcs_file_object, _wcs_file_name, FA_WRITE | FA_READ | FA_CREATE_NEW);
+	
+	if ((FatResult = (FRESULT)SD_IO_Init(SPI1)) != FR_OK)
+		debug_out("\tError", string_writer);
+	
+	debug_out("Drive start", string_writer);
+	if ((FatResult = f_mount(&FatFs, "", 1)) != FR_OK)
+		debug_out("\tError", string_writer);
+	
+	debug_out("\tOpening Cache", string_writer);
+	if ((FatResult = f_open(&_cache_file_object, _cache_file_name, FA_WRITE | FA_READ | FA_CREATE_NEW)) != FR_OK)
+		debug_out("\tError", string_writer);
+
+	debug_out("\tOpening Tools", string_writer);
+	if ((FatResult = f_open(&_tool_file_object, _tool_file_name, FA_WRITE | FA_READ | FA_CREATE_NEW)) != FR_OK)
+		debug_out("\tError", string_writer);
+	
+	debug_out("\tOpening WCS", string_writer);
+	if ((FatResult = f_open(&_wcs_file_object, _wcs_file_name, FA_WRITE | FA_READ | FA_CREATE_NEW)) != FR_OK)
+		debug_out("\tError", string_writer);
+	
+	debug_out("\tOpening MCS", string_writer);
+	//if ((FatResult = f_open(&_mcs_file_object, _mcs_file_name, FA_WRITE | FA_READ | FA_CREATE_NEW)) != FR_OK)
+	//debug_out("\t Error", string_writer);
+	
 	debug_out("\tComplete.", string_writer);
 
 	return (uint8_t) FatResult;

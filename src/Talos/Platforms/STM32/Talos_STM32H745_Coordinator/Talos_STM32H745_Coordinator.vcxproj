@@ -43,7 +43,7 @@
     <ClCompile>
       <AdditionalIncludeDirectories>STM32H7xxxx;%(ClCompile.AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>DEBUG=1;__STM32__;DEBUG_DEFAULT_INTERRUPT_HANDLERS;%(ClCompile.PreprocessorDefinitions)</PreprocessorDefinitions>
-      <Optimization>O1</Optimization>
+      <Optimization>O0</Optimization>
     </ClCompile>
     <Link>
       <AdditionalLinkerInputs>;%(Link.AdditionalLinkerInputs)</AdditionalLinkerInputs>
@@ -474,6 +474,7 @@
     <ClInclude Include="Platform_Specific\disk_support\SPI\Hardware\hardware_config.h" />
     <ClInclude Include="Platform_Specific\disk_support\SPI\Hardware\hardware_io.h" />
     <ClInclude Include="Platform_Specific\disk_support\SPI\Hardware\sd_card.h" />
+    <ClInclude Include="Platform_Specific\sys_clock_configs.h" />
     <ClInclude Include="stm32h7xx_hal_conf.h" />
     <None Include="Talos_STM32H745_Coordinator-Debug.vgdbsettings" />
     <None Include="Talos_STM32H745_Coordinator-Release.vgdbsettings" />

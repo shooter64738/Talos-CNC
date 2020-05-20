@@ -46,11 +46,27 @@ int32_t SD_IO_Init(SPI_TypeDef* SPIxInstance)
 		counter++;
 	} while (counter <= 9U);
 
+	/*
+	This is a little crazy, but I am going to attempt SPI comm with the SD card
+	 and if it fails, I am going to drop to the next baud rate and try again until
+	 I can talk to the card.... We tried scaler 0 the first time and if it failed
+	 we will start at 1 and go to the highest prescaler available.
+	 */
 	//Put card in idle state
-	/* SD initialized and set to SPI mode properly */
-	if (SD_GoIdleState() != HARDWARE_IO_OK)
+	for(uint8_t i = 1 ; i < SPI_PRESCALER_COUNT; i++)
 	{
-		ret = HARDWARE_IO_UNKNOWN_ERROR;
+		/* SD initialized and set to SPI mode properly */
+		if (SD_GoIdleState() != HARDWARE_IO_OK)
+		{
+			//If we run out of baudrate prescalers THEN we can error. 
+			if (i < 7)
+			{
+				HW_config_spi_baud_prescaler_negoatiate(&cfg_spi_handler, i);
+				HAL_Delay(250);
+			}
+			else
+				ret = HARDWARE_IO_UNKNOWN_ERROR;
+		}
 	}
 
 	return ret;
