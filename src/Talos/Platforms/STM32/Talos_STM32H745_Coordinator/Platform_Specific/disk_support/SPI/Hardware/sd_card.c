@@ -16,316 +16,34 @@
 static uint32_t CardType = SDSC_NORM_CAPACITY;
 static volatile DSTATUS Stat = STA_NOINIT;
 
-int32_t SD_IO_Init(SPI_TypeDef* SPIxInstance)
+//These are all internal functions
+static int32_t SD_ReadData(uint8_t* Data)
 {
-	int32_t ret = HARDWARE_IO_OK;
-	uint8_t counter = 0, tmp;
-	GPIO_InitTypeDef  GPIO_InitStruct;
-	//Configure the spi object. If it was already configured this wont execute
-	if (HAL_SPI_GetState(&cfg_spi_handler) == HAL_SPI_STATE_RESET)
-	{
-		//Config gpio, and spi object
-		HW_config(SPIxInstance);
+	uint8_t timeout = 0x08U;
+	uint8_t tmp;
 
-		HW_IO_SET_CS_HIGH();
-	}
-	
-	HW_IO_SET_CS_HIGH();
-	//Send dummy byte 0xFF, 10 times with CS high 
-		//Rise CS and MOSI for 80 clocks cycles
 	tmp = SD_DUMMY_BYTE;
-
+	/* Check if response is got or a timeout is happen */
 	do
 	{
-		/* Send dummy byte 0xFF */
-		if (HW_IO_SPI_send(&tmp, 1U) != HARDWARE_IO_OK)
+		if (HW_IO_SPI_sendrecv(&tmp, Data, 1) != HARDWARE_IO_OK)
 		{
-			ret = HARDWARE_IO_COMM_ERROR;
-			break;
+			return HARDWARE_IO_COMM_ERROR;
 		}
-		counter++;
-	} while (counter <= 9U);
+		timeout--;
 
-	/*
-	This is a little crazy, but I am going to attempt SPI comm with the SD card
-	 and if it fails, I am going to drop to the next baud rate and try again until
-	 I can talk to the card.... We tried scaler 0 the first time and if it failed
-	 we will start at 1 and go to the highest prescaler available.
-	 */
-	//Put card in idle state
-	for(uint8_t i = 1 ; i < SPI_PRESCALER_COUNT; i++)
+	} while ((*Data == SD_DUMMY_BYTE) && (timeout != 0U));
+
+	if (timeout == 0U)
 	{
-		/* SD initialized and set to SPI mode properly */
-		if (SD_GoIdleState() != HARDWARE_IO_OK)
-		{
-			//If we run out of baudrate prescalers THEN we can error. 
-			if (i < 7)
-			{
-				HW_config_spi_baud_prescaler_negoatiate(&cfg_spi_handler, i);
-				HAL_Delay(250);
-			}
-			else
-				ret = HARDWARE_IO_UNKNOWN_ERROR;
-		}
+		/* After time out */
+		return HARDWARE_IO_BUSY_ERROR;
 	}
 
-	return ret;
+	/* Right response got */
+	return HARDWARE_IO_OK;
 }
-
-//void SD_IO_CSState(uint32_t Value)
-//{
-//	if (Value == 1U)
-//	{
-//		HW_IO_SET_CS_HIGH();
-//	}
-//	else
-//	{
-//		HW_IO_SET_CS_LOW();
-//	}
-//}
-//static int32_t SD_GetCSDRegister(SD_CardSpecificData_t* Csd)
-//{
-//	int32_t ret = BSP_ERROR_NONE;
-//	uint32_t counter;
-//	uint32_t CSD_Tab[16];
-//	uint32_t response;
-//	uint8_t tmp;
-//
-//	/* Send CMD9 (CSD register) or CMD10(CSD register) and Wait for response in the R1 format (0x00 is no errors) */
-//	response = SD_SendCmd(SD_CMD_SEND_CSD, 0U, 0xFFU, (uint8_t)SD_ANSWER_R1_EXPECTED);
-//	if ((uint8_t)(response & 0xFFU) == (uint8_t)SD_R1_NO_ERROR)
-//	{
-//		if (SD_WaitData(SD_TOKEN_START_DATA_SINGLE_BLOCK_READ) == BSP_ERROR_NONE)
-//		{
-//			tmp = SD_DUMMY_BYTE;
-//			for (counter = 0U; counter < 16U; counter++)
-//			{
-//				/* Store CSD register value on CSD_Tab */
-//				if (BUS_SPIx_SendRecv(&tmp, (uint8_t*)& CSD_Tab[counter], 1U) != BSP_ERROR_NONE)
-//				{
-//					ret = BSP_ERROR_PERIPH_FAILURE;
-//					break;
-//				}
-//			}
-//
-//			if (ret == BSP_ERROR_NONE)
-//			{
-//				/* Get CRC bytes (not really needed by us, but required by SD) */
-//				if (BUS_SPIx_Send(&tmp, 1U) != BSP_ERROR_NONE)
-//				{
-//					ret = BSP_ERROR_PERIPH_FAILURE;
-//				}
-//				else if (BUS_SPIx_Send(&tmp, 1U) != BSP_ERROR_NONE)
-//				{
-//					ret = BSP_ERROR_PERIPH_FAILURE;
-//				}
-//				else
-//				{
-//					/*************************************************************************
-//					CSD header decoding
-//					*************************************************************************/
-//
-//					/* Byte 0 */
-//					Csd->CSDStruct = (CSD_Tab[0] & 0xC0U) >> 6U;
-//					Csd->Reserved1 = CSD_Tab[0] & 0x3FU;
-//
-//					/* Byte 1 */
-//					Csd->TAAC = CSD_Tab[1];
-//
-//					/* Byte 2 */
-//					Csd->NSAC = CSD_Tab[2];
-//
-//					/* Byte 3 */
-//					Csd->MaxBusClkFrec = CSD_Tab[3];
-//
-//					/* Byte 4/5 */
-//					Csd->CardComdClasses = (uint16_t)(((uint16_t)CSD_Tab[4] << 4U) | ((uint16_t)(CSD_Tab[5] & 0xF0U) >> 4U));
-//					Csd->RdBlockLen = CSD_Tab[5] & 0x0FU;
-//
-//					/* Byte 6 */
-//					Csd->PartBlockRead = (CSD_Tab[6] & 0x80U) >> 7U;
-//					Csd->WrBlockMisalign = (CSD_Tab[6] & 0x40U) >> 6U;
-//					Csd->RdBlockMisalign = (CSD_Tab[6] & 0x20U) >> 5U;
-//					Csd->DSRImpl = (CSD_Tab[6] & 0x10U) >> 4U;
-//
-//					/*************************************************************************
-//					CSD v1/v2 decoding
-//					*************************************************************************/
-//
-//					if (CardType == ADAFRUIT_802_CARD_SDSC)
-//					{
-//						Csd->version.v1.Reserved1 = ((CSD_Tab[6] & 0x0CU) >> 2U);
-//
-//						Csd->version.v1.DeviceSize = ((CSD_Tab[6] & 0x03U) << 10U) | (CSD_Tab[7] << 2U) | ((CSD_Tab[8] & 0xC0U) >> 6U);
-//						Csd->version.v1.MaxRdCurrentVDDMin = (CSD_Tab[8] & 0x38U) >> 3U;
-//						Csd->version.v1.MaxRdCurrentVDDMax = (CSD_Tab[8] & 0x07U);
-//						Csd->version.v1.MaxWrCurrentVDDMin = (CSD_Tab[9] & 0xE0U) >> 5U;
-//						Csd->version.v1.MaxWrCurrentVDDMax = (CSD_Tab[9] & 0x1CU) >> 2U;
-//						Csd->version.v1.DeviceSizeMul = ((CSD_Tab[9] & 0x03U) << 1U) | ((CSD_Tab[10] & 0x80U) >> 7U);
-//					}
-//					else
-//					{
-//						Csd->version.v2.Reserved1 = ((CSD_Tab[6] & 0x0FU) << 2U) | ((CSD_Tab[7] & 0xC0U) >> 6U);
-//						Csd->version.v2.DeviceSize = ((CSD_Tab[7] & 0x3FU) << 16U) | (CSD_Tab[8] << 8U) | CSD_Tab[9];
-//						Csd->version.v2.Reserved2 = ((CSD_Tab[10] & 0x80U) >> 8U);
-//					}
-//
-//					Csd->EraseSingleBlockEnable = (CSD_Tab[10] & 0x40U) >> 6U;
-//					Csd->EraseSectorSize = ((CSD_Tab[10] & 0x3FU) << 1U) | ((CSD_Tab[11] & 0x80U) >> 7U);
-//					Csd->WrProtectGrSize = (CSD_Tab[11] & 0x7FU);
-//					Csd->WrProtectGrEnable = (CSD_Tab[12] & 0x80U) >> 7U;
-//					Csd->Reserved2 = (CSD_Tab[12] & 0x60U) >> 5U;
-//					Csd->WrSpeedFact = (CSD_Tab[12] & 0x1CU) >> 2U;
-//					Csd->MaxWrBlockLen = ((CSD_Tab[12] & 0x03U) << 2U) | ((CSD_Tab[13] & 0xC0U) >> 6U);
-//					Csd->WriteBlockPartial = (CSD_Tab[13] & 0x20U) >> 5U;
-//					Csd->Reserved3 = (CSD_Tab[13] & 0x1FU);
-//					Csd->FileFormatGrouop = (CSD_Tab[14] & 0x80U) >> 7U;
-//					Csd->CopyFlag = (CSD_Tab[14] & 0x40U) >> 6U;
-//					Csd->PermWrProtect = (CSD_Tab[14] & 0x20U) >> 5U;
-//					Csd->TempWrProtect = (CSD_Tab[14] & 0x10U) >> 4U;
-//					Csd->FileFormat = (CSD_Tab[14] & 0x0CU) >> 2U;
-//					Csd->Reserved4 = (CSD_Tab[14] & 0x03U);
-//					Csd->crc = (CSD_Tab[15] & 0xFEU) >> 1U;
-//					Csd->Reserved5 = (CSD_Tab[15] & 0x01U);
-//
-//					ret = BSP_ERROR_NONE;
-//				}
-//			}
-//		}
-//	}
-//	else
-//	{
-//		ret = BSP_ERROR_UNKNOWN_FAILURE;
-//	}
-//
-//	if (ret == BSP_ERROR_NONE)
-//	{
-//		/* Send dummy byte: 8 Clock pulses of delay */
-//		SD_IO_CSState(1);
-//
-//		if (BUS_SPIx_Send(&tmp, 1U) != BSP_ERROR_NONE)
-//		{
-//			ret = BSP_ERROR_PERIPH_FAILURE;
-//		}
-//	}
-//
-//	/* Return the reponse */
-//	return ret;
-//}
-//static int32_t SD_GetCIDRegister(SD_CardIdData_t* Cid)
-//{
-//	int32_t ret = BSP_ERROR_NONE;
-//	uint32_t CID_Tab[16];
-//	uint32_t response;
-//	uint32_t counter;
-//	uint8_t tmp;
-//
-//	/* Send CMD10 (CID register) and Wait for response in the R1 format (0x00 is no errors) */
-//	response = SD_SendCmd(SD_CMD_SEND_CID, 0U, 0xFFU, (uint8_t)SD_ANSWER_R1_EXPECTED);
-//	if ((uint8_t)(response & 0xFFU) == (uint8_t)SD_R1_NO_ERROR)
-//	{
-//		if (SD_WaitData(SD_TOKEN_START_DATA_SINGLE_BLOCK_READ) == BSP_ERROR_NONE)
-//		{
-//			tmp = SD_DUMMY_BYTE;
-//
-//			/* Store CID register value on CID_Tab */
-//			for (counter = 0U; counter < 16U; counter++)
-//			{
-//				if (BUS_SPIx_SendRecv(&tmp, (uint8_t*)& CID_Tab[counter], 1U) != BSP_ERROR_NONE)
-//				{
-//					ret = BSP_ERROR_PERIPH_FAILURE;
-//					break;
-//				}
-//			}
-//
-//			if (ret == BSP_ERROR_NONE)
-//			{
-//				/* Get CRC bytes (not really needed by us, but required by SD) */
-//				if (BUS_SPIx_Send(&tmp, 1U) != BSP_ERROR_NONE)
-//				{
-//					ret = BSP_ERROR_PERIPH_FAILURE;
-//				}
-//				else if (BUS_SPIx_Send(&tmp, 1U) != BSP_ERROR_NONE)
-//				{
-//					ret = BSP_ERROR_PERIPH_FAILURE;
-//				}
-//				else
-//				{
-//					/* Byte 0 */
-//					Cid->ManufacturerID = CID_Tab[0];
-//
-//					/* Byte 1 */
-//					Cid->OEM_AppliID = CID_Tab[1] << 8U;
-//
-//					/* Byte 2 */
-//					Cid->OEM_AppliID |= CID_Tab[2];
-//
-//					/* Byte 3 */
-//					Cid->ProdName1 = CID_Tab[3] << 24U;
-//
-//					/* Byte 4 */
-//					Cid->ProdName1 |= CID_Tab[4] << 16U;
-//
-//					/* Byte 5 */
-//					Cid->ProdName1 |= CID_Tab[5] << 8U;
-//
-//					/* Byte 6 */
-//					Cid->ProdName1 |= CID_Tab[6];
-//
-//					/* Byte 7 */
-//					Cid->ProdName2 = CID_Tab[7];
-//
-//					/* Byte 8 */
-//					Cid->ProdRev = CID_Tab[8];
-//
-//					/* Byte 9 */
-//					Cid->ProdSN = CID_Tab[9] << 24U;
-//
-//					/* Byte 10 */
-//					Cid->ProdSN |= CID_Tab[10] << 16U;
-//
-//					/* Byte 11 */
-//					Cid->ProdSN |= CID_Tab[11] << 8U;
-//
-//					/* Byte 12 */
-//					Cid->ProdSN |= CID_Tab[12];
-//
-//					/* Byte 13 */
-//					Cid->Reserved1 |= (CID_Tab[13] & 0xF0U) >> 4U;
-//					Cid->ManufactDate = (CID_Tab[13] & 0x0FU) << 8U;
-//
-//					/* Byte 14 */
-//					Cid->ManufactDate |= CID_Tab[14];
-//
-//					/* Byte 15 */
-//					Cid->CID_CRC = (CID_Tab[15] & 0xFEU) >> 1U;
-//					Cid->Reserved2 = 1U;
-//
-//					ret = BSP_ERROR_NONE;
-//				}
-//			}
-//		}
-//	}
-//	else
-//	{
-//		ret = BSP_ERROR_UNKNOWN_FAILURE;
-//	}
-//
-//	if (ret == BSP_ERROR_NONE)
-//	{
-//		/* Send dummy byte: 8 Clock pulses of delay */
-//		SD_IO_CSState(1);
-//
-//		if (BUS_SPIx_Send(&tmp, 1U) != BSP_ERROR_NONE)
-//		{
-//			ret = BSP_ERROR_PERIPH_FAILURE;
-//		}
-//	}
-//
-//	/* Return the reponse */
-//	return ret;
-//}
-uint32_t SD_SendCmd(uint8_t Cmd, uint32_t Arg, uint8_t Crc, uint8_t Answer)
+static uint32_t SD_SendCmd(uint8_t Cmd, uint32_t Arg, uint8_t Crc, uint8_t Answer)
 {
 	uint8_t frame[SD_CMD_LENGTH], frameout[SD_CMD_LENGTH];
 	uint32_t response = 0xFFFF;
@@ -444,63 +162,7 @@ uint32_t SD_SendCmd(uint8_t Cmd, uint32_t Arg, uint8_t Crc, uint8_t Answer)
 	}
 	return response;
 }
-int32_t SD_GetDataResponse(uint8_t* DataResponse)
-{
-	uint8_t dataresponse, tmp, tmp1;
-	*DataResponse = (uint8_t)SD_DATA_OTHER_ERROR;
-
-	tmp = SD_DUMMY_BYTE;
-	if (HW_IO_SPI_sendrecv(&tmp, &dataresponse, 1U) != HARDWARE_IO_OK)
-	{
-		return HARDWARE_IO_NEGOTIATION_ERROR;
-	}
-	/* read the busy response byte*/
-	if (HW_IO_SPI_send(&tmp, 1U) != HARDWARE_IO_OK)
-	{
-		return HARDWARE_IO_NEGOTIATION_ERROR;
-	}
-	else
-	{
-		/* Mask unused bits */
-		switch (dataresponse & 0x1FU)
-		{
-		case SD_DATA_OK:
-			*DataResponse = (uint8_t)SD_DATA_OK;
-
-			/* Set CS High */
-			HW_IO_SET_CS_HIGH();
-			/* Set CS Low */
-			HW_IO_SET_CS_LOW();
-			tmp = SD_DUMMY_BYTE;
-
-			/* Wait IO line return 0xFF */
-			if (HW_IO_SPI_sendrecv(&tmp, &tmp1, 1U) != HARDWARE_IO_OK)
-			{
-				return HARDWARE_IO_NEGOTIATION_ERROR;
-			}
-			while (tmp1 != 0xFFU)
-			{
-				if (HW_IO_SPI_sendrecv(&tmp, &tmp1, 1U) != HARDWARE_IO_OK)
-				{
-					return HARDWARE_IO_NEGOTIATION_ERROR;
-				}
-			}
-			break;
-		case SD_DATA_CRC_ERROR:
-			*DataResponse = (uint8_t)SD_DATA_CRC_ERROR;
-			break;
-		case SD_DATA_WRITE_ERROR:
-			*DataResponse = (uint8_t)SD_DATA_WRITE_ERROR;
-			break;
-		default:
-			break;
-		}
-	}
-
-	/* Return response */
-	return HARDWARE_IO_OK;
-}
-int32_t SD_GoIdleState(void)
+static int32_t SD_GoIdleState()
 {
 	uint32_t response;
 	__IO uint8_t counter = 0;
@@ -633,33 +295,120 @@ int32_t SD_GoIdleState(void)
 
 	return HARDWARE_IO_OK;
 }
-int32_t SD_ReadData(uint8_t* Data)
+int32_t SD_IO_Init(SPI_TypeDef* SPIxInstance)
 {
-	uint8_t timeout = 0x08U;
-	uint8_t tmp;
+	int32_t ret = HARDWARE_IO_OK;
+	uint8_t counter = 0, tmp;
+	GPIO_InitTypeDef  GPIO_InitStruct;
+	//Configure the spi object. If it was already configured this wont execute
+	if (HAL_SPI_GetState(&cfg_spi_handler) == HAL_SPI_STATE_RESET)
+	{
+		//Config gpio, and spi object
+		HW_config(SPIxInstance);
 
+		HW_IO_SET_CS_HIGH();
+	}
+	
+	HW_IO_SET_CS_HIGH();
+	//Send dummy byte 0xFF, 10 times with CS high 
+		//Rise CS and MOSI for 80 clocks cycles
 	tmp = SD_DUMMY_BYTE;
-	/* Check if response is got or a timeout is happen */
+
 	do
 	{
-		if (HW_IO_SPI_sendrecv(&tmp, Data, 1) != HARDWARE_IO_OK)
+		/* Send dummy byte 0xFF */
+		if (HW_IO_SPI_send(&tmp, 1U) != HARDWARE_IO_OK)
 		{
-			return HARDWARE_IO_COMM_ERROR;
+			ret = HARDWARE_IO_COMM_ERROR;
+			break;
 		}
-		timeout--;
+		counter++;
+	} while (counter <= 9U);
 
-	} while ((*Data == SD_DUMMY_BYTE) && (timeout != 0U));
-
-	if (timeout == 0U)
+	/*
+	This is a little crazy, but I am going to attempt SPI comm with the SD card
+	 and if it fails, I am going to drop to the next baud rate and try again until
+	 I can talk to the card.... We tried scaler 0 the first time and if it failed
+	 we will start at 1 and go to the highest prescaler available.
+	 */
+	//Put card in idle state
+	for(uint8_t i = 1 ; i < SPI_PRESCALER_COUNT; i++)
 	{
-		/* After time out */
-		return HARDWARE_IO_BUSY_ERROR;
+		/* SD initialized and set to SPI mode properly */
+		if (SD_GoIdleState() != HARDWARE_IO_OK)
+		{
+			//If we run out of baudrate prescalers THEN we can error. 
+			if (i < SPI_PRESCALER_COUNT)
+			{
+				HW_config_spi_baud_prescaler_negoatiate(&cfg_spi_handler, i);
+				HAL_Delay(250);
+			}
+			else
+				ret = HARDWARE_IO_UNKNOWN_ERROR;
+		}
+		else
+			break;
 	}
 
-	/* Right response got */
+	return ret;
+}
+static int32_t SD_GetDataResponse(uint8_t* DataResponse)
+{
+	uint8_t dataresponse, tmp, tmp1;
+	*DataResponse = (uint8_t)SD_DATA_OTHER_ERROR;
+
+	tmp = SD_DUMMY_BYTE;
+	if (HW_IO_SPI_sendrecv(&tmp, &dataresponse, 1U) != HARDWARE_IO_OK)
+	{
+		return HARDWARE_IO_NEGOTIATION_ERROR;
+	}
+	/* read the busy response byte*/
+	if (HW_IO_SPI_send(&tmp, 1U) != HARDWARE_IO_OK)
+	{
+		return HARDWARE_IO_NEGOTIATION_ERROR;
+	}
+	else
+	{
+		/* Mask unused bits */
+		switch (dataresponse & 0x1FU)
+		{
+		case SD_DATA_OK:
+			*DataResponse = (uint8_t)SD_DATA_OK;
+
+			/* Set CS High */
+			HW_IO_SET_CS_HIGH();
+			/* Set CS Low */
+			HW_IO_SET_CS_LOW();
+			tmp = SD_DUMMY_BYTE;
+
+			/* Wait IO line return 0xFF */
+			if (HW_IO_SPI_sendrecv(&tmp, &tmp1, 1U) != HARDWARE_IO_OK)
+			{
+				return HARDWARE_IO_NEGOTIATION_ERROR;
+			}
+			while (tmp1 != 0xFFU)
+			{
+				if (HW_IO_SPI_sendrecv(&tmp, &tmp1, 1U) != HARDWARE_IO_OK)
+				{
+					return HARDWARE_IO_NEGOTIATION_ERROR;
+				}
+			}
+			break;
+		case SD_DATA_CRC_ERROR:
+			*DataResponse = (uint8_t)SD_DATA_CRC_ERROR;
+			break;
+		case SD_DATA_WRITE_ERROR:
+			*DataResponse = (uint8_t)SD_DATA_WRITE_ERROR;
+			break;
+		default:
+			break;
+		}
+	}
+
+	/* Return response */
 	return HARDWARE_IO_OK;
 }
-int32_t SD_WaitData(uint8_t Data)
+static int32_t SD_WaitData(uint8_t Data)
 {
 	uint16_t timeout = 0xFFFF;
 	uint8_t readvalue, tmp;
@@ -685,7 +434,283 @@ int32_t SD_WaitData(uint8_t Data)
 	/* Right response got */
 	return HARDWARE_IO_OK;
 }
+static int32_t SD_GetCSDRegister(SD_CardSpecificData_t* Csd)
+{
+	int32_t ret = HARDWARE_IO_OK;
+	uint32_t counter;
+	uint32_t CSD_Tab[16];
+	uint32_t response;
+	uint8_t tmp;
 
+	/* Send CMD9 (CSD register) or CMD10(CSD register) and Wait for response in the R1 format (0x00 is no errors) */
+	response = SD_SendCmd(SD_CMD_SEND_CSD, 0U, 0xFFU, (uint8_t)SD_ANSWER_R1_EXPECTED);
+	if ((uint8_t)(response & 0xFFU) == (uint8_t)SD_R1_NO_ERROR)
+	{
+		if (SD_WaitData(SD_TOKEN_START_DATA_SINGLE_BLOCK_READ) == HARDWARE_IO_OK)
+		{
+			tmp = SD_DUMMY_BYTE;
+			for (counter = 0U; counter < 16U; counter++)
+			{
+				/* Store CSD register value on CSD_Tab */
+				if (HW_IO_SPI_sendrecv(&tmp, (uint8_t*)& CSD_Tab[counter], 1U) != HARDWARE_IO_OK)
+				{
+					ret = HARDWARE_IO_COMM_ERROR;
+					break;
+				}
+			}
+
+			if (ret == HARDWARE_IO_OK)
+			{
+				/* Get CRC bytes (not really needed by us, but required by SD) */
+				if (HW_IO_SPI_send(&tmp, 1U) != HARDWARE_IO_OK)
+				{
+					ret = HARDWARE_IO_COMM_ERROR;
+				}
+				else if (HW_IO_SPI_send(&tmp, 1U) != HARDWARE_IO_OK)
+				{
+					ret = HARDWARE_IO_COMM_ERROR;
+				}
+				else
+				{
+					/*************************************************************************
+					CSD header decoding
+					*************************************************************************/
+
+					/* Byte 0 */
+					Csd->CSDStruct = (CSD_Tab[0] & 0xC0U) >> 6U;
+					Csd->Reserved1 = CSD_Tab[0] & 0x3FU;
+
+					/* Byte 1 */
+					Csd->TAAC = CSD_Tab[1];
+
+					/* Byte 2 */
+					Csd->NSAC = CSD_Tab[2];
+
+					/* Byte 3 */
+					Csd->MaxBusClkFrec = CSD_Tab[3];
+
+					/* Byte 4/5 */
+					Csd->CardComdClasses = (uint16_t)(((uint16_t)CSD_Tab[4] << 4U) | ((uint16_t)(CSD_Tab[5] & 0xF0U) >> 4U));
+					Csd->RdBlockLen = CSD_Tab[5] & 0x0FU;
+
+					/* Byte 6 */
+					Csd->PartBlockRead = (CSD_Tab[6] & 0x80U) >> 7U;
+					Csd->WrBlockMisalign = (CSD_Tab[6] & 0x40U) >> 6U;
+					Csd->RdBlockMisalign = (CSD_Tab[6] & 0x20U) >> 5U;
+					Csd->DSRImpl = (CSD_Tab[6] & 0x10U) >> 4U;
+
+					/*************************************************************************
+					CSD v1/v2 decoding
+					*************************************************************************/
+
+					if (CardType == SDSC_NORM_CAPACITY)
+					{
+						Csd->version.v1.Reserved1 = ((CSD_Tab[6] & 0x0CU) >> 2U);
+
+						Csd->version.v1.DeviceSize = ((CSD_Tab[6] & 0x03U) << 10U) | (CSD_Tab[7] << 2U) | ((CSD_Tab[8] & 0xC0U) >> 6U);
+						Csd->version.v1.MaxRdCurrentVDDMin = (CSD_Tab[8] & 0x38U) >> 3U;
+						Csd->version.v1.MaxRdCurrentVDDMax = (CSD_Tab[8] & 0x07U);
+						Csd->version.v1.MaxWrCurrentVDDMin = (CSD_Tab[9] & 0xE0U) >> 5U;
+						Csd->version.v1.MaxWrCurrentVDDMax = (CSD_Tab[9] & 0x1CU) >> 2U;
+						Csd->version.v1.DeviceSizeMul = ((CSD_Tab[9] & 0x03U) << 1U) | ((CSD_Tab[10] & 0x80U) >> 7U);
+					}
+					else
+					{
+						Csd->version.v2.Reserved1 = ((CSD_Tab[6] & 0x0FU) << 2U) | ((CSD_Tab[7] & 0xC0U) >> 6U);
+						Csd->version.v2.DeviceSize = ((CSD_Tab[7] & 0x3FU) << 16U) | (CSD_Tab[8] << 8U) | CSD_Tab[9];
+						Csd->version.v2.Reserved2 = ((CSD_Tab[10] & 0x80U) >> 8U);
+					}
+
+					Csd->EraseSingleBlockEnable = (CSD_Tab[10] & 0x40U) >> 6U;
+					Csd->EraseSectorSize = ((CSD_Tab[10] & 0x3FU) << 1U) | ((CSD_Tab[11] & 0x80U) >> 7U);
+					Csd->WrProtectGrSize = (CSD_Tab[11] & 0x7FU);
+					Csd->WrProtectGrEnable = (CSD_Tab[12] & 0x80U) >> 7U;
+					Csd->Reserved2 = (CSD_Tab[12] & 0x60U) >> 5U;
+					Csd->WrSpeedFact = (CSD_Tab[12] & 0x1CU) >> 2U;
+					Csd->MaxWrBlockLen = ((CSD_Tab[12] & 0x03U) << 2U) | ((CSD_Tab[13] & 0xC0U) >> 6U);
+					Csd->WriteBlockPartial = (CSD_Tab[13] & 0x20U) >> 5U;
+					Csd->Reserved3 = (CSD_Tab[13] & 0x1FU);
+					Csd->FileFormatGrouop = (CSD_Tab[14] & 0x80U) >> 7U;
+					Csd->CopyFlag = (CSD_Tab[14] & 0x40U) >> 6U;
+					Csd->PermWrProtect = (CSD_Tab[14] & 0x20U) >> 5U;
+					Csd->TempWrProtect = (CSD_Tab[14] & 0x10U) >> 4U;
+					Csd->FileFormat = (CSD_Tab[14] & 0x0CU) >> 2U;
+					Csd->Reserved4 = (CSD_Tab[14] & 0x03U);
+					Csd->crc = (CSD_Tab[15] & 0xFEU) >> 1U;
+					Csd->Reserved5 = (CSD_Tab[15] & 0x01U);
+
+					ret = HARDWARE_IO_OK;
+				}
+			}
+		}
+	}
+	else
+	{
+		ret = HARDWARE_IO_UNKNOWN_ERROR;
+	}
+
+	if (ret == HARDWARE_IO_OK)
+	{
+		/* Send dummy byte: 8 Clock pulses of delay */
+		HW_IO_SET_CS_HIGH();
+
+		if (HW_IO_SPI_send(&tmp, 1U) != HARDWARE_IO_OK)
+		{
+			ret = HARDWARE_IO_ERROR;
+		}
+	}
+
+	/* Return the reponse */
+	return ret;
+}
+static int32_t SD_GetCIDRegister(SD_CardIdData_t* Cid)
+{
+	int32_t ret = HARDWARE_IO_OK;
+	uint32_t CID_Tab[16];
+	uint32_t response;
+	uint32_t counter;
+	uint8_t tmp;
+
+	/* Send CMD10 (CID register) and Wait for response in the R1 format (0x00 is no errors) */
+	response = SD_SendCmd(SD_CMD_SEND_CID, 0U, 0xFFU, (uint8_t)SD_ANSWER_R1_EXPECTED);
+	if ((uint8_t)(response & 0xFFU) == (uint8_t)SD_R1_NO_ERROR)
+	{
+		if (SD_WaitData(SD_TOKEN_START_DATA_SINGLE_BLOCK_READ) == HARDWARE_IO_OK)
+		{
+			tmp = SD_DUMMY_BYTE;
+
+			/* Store CID register value on CID_Tab */
+			for (counter = 0U; counter < 16U; counter++)
+			{
+				if (HW_IO_SPI_sendrecv(&tmp, (uint8_t*)& CID_Tab[counter], 1U) != HARDWARE_IO_OK)
+				{
+					ret = HARDWARE_IO_COMM_ERROR;
+					break;
+				}
+			}
+
+			if (ret == HARDWARE_IO_OK)
+			{
+				/* Get CRC bytes (not really needed by us, but required by SD) */
+				if (HW_IO_SPI_send(&tmp, 1U) != HARDWARE_IO_OK)
+				{
+					ret = HARDWARE_IO_COMM_ERROR;
+				}
+				else if (HW_IO_SPI_send(&tmp, 1U) != HARDWARE_IO_OK)
+				{
+					ret = HARDWARE_IO_COMM_ERROR;
+				}
+				else
+				{
+					/* Byte 0 */
+					Cid->ManufacturerID = CID_Tab[0];
+
+					/* Byte 1 */
+					Cid->OEM_AppliID = CID_Tab[1] << 8U;
+
+					/* Byte 2 */
+					Cid->OEM_AppliID |= CID_Tab[2];
+
+					/* Byte 3 */
+					Cid->ProdName1 = CID_Tab[3] << 24U;
+
+					/* Byte 4 */
+					Cid->ProdName1 |= CID_Tab[4] << 16U;
+
+					/* Byte 5 */
+					Cid->ProdName1 |= CID_Tab[5] << 8U;
+
+					/* Byte 6 */
+					Cid->ProdName1 |= CID_Tab[6];
+
+					/* Byte 7 */
+					Cid->ProdName2 = CID_Tab[7];
+
+					/* Byte 8 */
+					Cid->ProdRev = CID_Tab[8];
+
+					/* Byte 9 */
+					Cid->ProdSN = CID_Tab[9] << 24U;
+
+					/* Byte 10 */
+					Cid->ProdSN |= CID_Tab[10] << 16U;
+
+					/* Byte 11 */
+					Cid->ProdSN |= CID_Tab[11] << 8U;
+
+					/* Byte 12 */
+					Cid->ProdSN |= CID_Tab[12];
+
+					/* Byte 13 */
+					Cid->Reserved1 |= (CID_Tab[13] & 0xF0U) >> 4U;
+					Cid->ManufactDate = (CID_Tab[13] & 0x0FU) << 8U;
+
+					/* Byte 14 */
+					Cid->ManufactDate |= CID_Tab[14];
+
+					/* Byte 15 */
+					Cid->CID_CRC = (CID_Tab[15] & 0xFEU) >> 1U;
+					Cid->Reserved2 = 1U;
+
+					ret = HARDWARE_IO_OK;
+				}
+			}
+		}
+	}
+	else
+	{
+		ret = HARDWARE_IO_COMM_ERROR;
+	}
+
+	if (ret == HARDWARE_IO_OK)
+	{
+		/* Send dummy byte: 8 Clock pulses of delay */
+		HW_IO_SET_CS_HIGH();
+
+		if (HW_IO_SPI_send(&tmp, 1U) != HARDWARE_IO_OK)
+		{
+			ret = HARDWARE_IO_COMM_ERROR;
+		}
+	}
+
+	/* Return the reponse */
+	return ret;
+}
+static int32_t SD_GetCardInfo(uint32_t Instance, SD_CardInfo_t* CardInfo)
+{
+	int32_t ret = HARDWARE_IO_OK;
+
+	if (Instance >= 1)
+	{
+		ret = HARDWARE_IO_NEGOTIATION_ERROR;
+	}
+	else if (SD_GetCSDRegister(&(CardInfo->Csd)) != HARDWARE_IO_OK)
+	{
+		ret = HARDWARE_IO_UNKNOWN_ERROR;
+	}
+	else if (SD_GetCIDRegister(&(CardInfo->Cid)) != HARDWARE_IO_OK)
+	{
+		ret = HARDWARE_IO_UNKNOWN_ERROR;
+	}
+	else if (CardType == SDHC_LARG_CAPACITY)
+	{
+		CardInfo->LogBlockSize = 512U;
+		CardInfo->CardBlockSize = 512U;
+		CardInfo->CardCapacity = (CardInfo->Csd.version.v2.DeviceSize + 1U) * 1024U * CardInfo->LogBlockSize;
+		CardInfo->LogBlockNbr = (CardInfo->CardCapacity) / (CardInfo->LogBlockSize);
+	}
+	else
+	{
+		CardInfo->CardCapacity = ((uint32_t)CardInfo->Csd.version.v1.DeviceSize + 1U);
+		CardInfo->CardCapacity *= (1UL << ((CardInfo->Csd.version.v1.DeviceSizeMul + 2U) & 0x1FU));
+		CardInfo->LogBlockSize = 512U;
+		CardInfo->CardBlockSize = (1UL << (uint32_t)(CardInfo->Csd.RdBlockLen & 0x1FU));
+		CardInfo->CardCapacity *= CardInfo->CardBlockSize;
+		CardInfo->LogBlockNbr = (CardInfo->CardCapacity) / (CardInfo->LogBlockSize);
+	}
+
+	return ret;
+}
 void SPI_IO_Delay(uint32_t Delay)
 {
 	int32_t tickstart;
@@ -694,7 +719,6 @@ void SPI_IO_Delay(uint32_t Delay)
 	{
 	}
 }
-
 static int32_t __ReadBlocks(uint32_t Instance, uint32_t* pData, uint32_t BlockIdx, uint32_t BlocksNbr)
 {
 
@@ -801,7 +825,6 @@ static int32_t __ReadBlocks(uint32_t Instance, uint32_t* pData, uint32_t BlockId
 	/* Return BSP status */
 	return ret;
 }
-
 static int32_t __WriteBlocks(uint32_t Instance, uint32_t* pData, uint32_t BlockIdx, uint32_t BlocksNbr)
 {
 	int32_t ret = HARDWARE_IO_OK;
@@ -928,7 +951,6 @@ static int32_t __WriteBlocks(uint32_t Instance, uint32_t* pData, uint32_t BlockI
 	/* Return BSP status */
 	return ret;
 }
-
 static DSTATUS __GetCardState(BYTE Instance)
 {
 	int32_t ret;
@@ -964,6 +986,7 @@ static DSTATUS __GetCardState(BYTE Instance)
 	return ret;
 }
 
+//These functions are called from the diskio.c file through fatfs
 DSTATUS pntr_from_link_drvr_SD_initialize(BYTE lun)
 {
 	Stat = STA_NOINIT;
@@ -982,7 +1005,6 @@ DSTATUS pntr_from_link_drvr_SD_status(BYTE lun)
 
 	return Stat;
 }
-
 DRESULT pntr_from_link_drvr_SD_read(BYTE lun, BYTE* buff, DWORD sector, UINT count)
 {
 	DRESULT res = RES_ERROR;
@@ -1014,7 +1036,47 @@ DRESULT pntr_from_link_drvr_SD_write(BYTE lun, const BYTE* buff, DWORD sector, U
 
 	return res;
 }
+DRESULT pntr_from_link_drvr_SD_io(BYTE lun, BYTE cmd, void* buff)
+{
+	DRESULT res = RES_ERROR;
+	SD_CardInfo_t CardInfo;
 
+	if (Stat & STA_NOINIT) return RES_NOTRDY;
+
+	switch (cmd)
+	{
+		/* Make sure that no pending write process */
+	case CTRL_SYNC:
+		res = RES_OK;
+		break;
+
+		/* Get number of sectors on the disk (DWORD) */
+	case GET_SECTOR_COUNT:
+		SD_GetCardInfo(0, &CardInfo);
+		*(DWORD*)buff = CardInfo.LogBlockNbr;
+		res = RES_OK;
+		break;
+
+		/* Get R/W sector size (WORD) */
+	case GET_SECTOR_SIZE:
+		SD_GetCardInfo(0, &CardInfo);
+		*(WORD*)buff = CardInfo.LogBlockSize;
+		res = RES_OK;
+		break;
+
+		/* Get erase block size in unit of sector (DWORD) */
+	case GET_BLOCK_SIZE:
+		SD_GetCardInfo(0, &CardInfo);
+		*(DWORD*)buff = CardInfo.LogBlockSize / SD_BLOCK_SIZE;
+		res = RES_OK;
+		break;
+
+	default:
+		res = RES_PARERR;
+	}
+
+	return res;
+}
 __weak DWORD get_fattime(void)
 {
 	return 0;

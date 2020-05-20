@@ -91,7 +91,7 @@ DRESULT disk_ioctl(
 	void* buff		/* Buffer to send/receive control data */
 )
 {
-
-	return RES_PARERR;
+	return pntr_from_link_drvr_SD_io(pdrv, cmd, buff);
+	//return RES_PARERR;
 }
 

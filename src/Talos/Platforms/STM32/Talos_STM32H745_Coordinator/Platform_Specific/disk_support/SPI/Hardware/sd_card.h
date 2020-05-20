@@ -88,38 +88,110 @@ extern "C" {
 		SD_DATA_OTHER_ERROR = 0xFFU
 	} SD_Error_t;
 
+	typedef struct
+	{
+		uint32_t Reserved1 : 2U;               /* Reserved */
+		uint32_t DeviceSize : 12U;             /* Device Size */
+		uint32_t MaxRdCurrentVDDMin : 3U;      /* Max. read current @ VDD min */
+		uint32_t MaxRdCurrentVDDMax : 3U;      /* Max. read current @ VDD max */
+		uint32_t MaxWrCurrentVDDMin : 3U;      /* Max. write current @ VDD min */
+		uint32_t MaxWrCurrentVDDMax : 3U;      /* Max. write current @ VDD max */
+		uint32_t DeviceSizeMul : 3U;           /* Device size multiplier */
+	} SD_Version_1_t;
+
+
+	typedef struct
+	{
+		uint32_t Reserved1 : 6U;               /* Reserved */
+		uint32_t DeviceSize : 22U;             /* Device Size */
+		uint32_t Reserved2 : 1U;               /* Reserved */
+	} SD_Version_2_t;
+
+	/**
+	  * @brief  Card Specific Data: CSD Register
+	  */
+	typedef struct
+	{
+		/* Header part */
+		uint32_t  CSDStruct : 2U;            /* CSD structure */
+		uint32_t  Reserved1 : 6U;            /* Reserved */
+		uint32_t  TAAC : 8U;                 /* Data read access-time 1 */
+		uint32_t  NSAC : 8U;                 /* Data read access-time 2 in CLK cycles */
+		uint32_t  MaxBusClkFrec : 8U;        /* Max. bus clock frequency */
+		uint32_t  CardComdClasses : 12U;     /* Card command classes */
+		uint32_t  RdBlockLen : 4U;           /* Max. read data block length */
+		uint32_t  PartBlockRead : 1U;        /* Partial blocks for read allowed */
+		uint32_t  WrBlockMisalign : 1U;      /* Write block misalignment */
+		uint32_t  RdBlockMisalign : 1U;      /* Read block misalignment */
+		uint32_t  DSRImpl : 1U;              /* DSR implemented */
+
+		/* v1 or v2 struct */
+		union csd_version
+		{
+			SD_Version_1_t v1;
+			SD_Version_2_t v2;
+		} version;
+
+		uint32_t  EraseSingleBlockEnable : 1U;  /* Erase single block enable */
+		uint32_t  EraseSectorSize : 7U;         /* Erase group size multiplier */
+		uint32_t  WrProtectGrSize : 7U;         /* Write protect group size */
+		uint32_t  WrProtectGrEnable : 1U;       /* Write protect group enable */
+		uint32_t  Reserved2 : 2U;               /* Reserved */
+		uint32_t  WrSpeedFact : 3U;             /* Write speed factor */
+		uint32_t  MaxWrBlockLen : 4U;           /* Max. write data block length */
+		uint32_t  WriteBlockPartial : 1U;       /* Partial blocks for write allowed */
+		uint32_t  Reserved3 : 5U;               /* Reserved */
+		uint32_t  FileFormatGrouop : 1U;        /* File format group */
+		uint32_t  CopyFlag : 1U;                /* Copy flag (OTP) */
+		uint32_t  PermWrProtect : 1U;           /* Permanent write protection */
+		uint32_t  TempWrProtect : 1U;           /* Temporary write protection */
+		uint32_t  FileFormat : 2U;              /* File Format */
+		uint32_t  Reserved4 : 2U;               /* Reserved */
+		uint32_t  crc : 7U;                     /* Reserved */
+		uint32_t  Reserved5 : 1U;               /* always 1*/
+
+	} SD_CardSpecificData_t;
+
+	/**
+	  * @brief  Card Identification Data: CID Register
+	  */
+	typedef struct
+	{
+		uint32_t  ManufacturerID;       /* ManufacturerID */
+		uint32_t  OEM_AppliID;          /* OEM/Application ID */
+		uint32_t  ProdName1;            /* Product Name part1 */
+		uint32_t  ProdName2;            /* Product Name part2*/
+		uint32_t  ProdRev;              /* Product Revision */
+		uint32_t  ProdSN;               /* Product Serial Number */
+		uint32_t  Reserved1;            /* Reserved1 */
+		uint32_t  ManufactDate;         /* Manufacturing Date */
+		uint32_t  CID_CRC;              /* CID CRC */
+		uint32_t  Reserved2;            /* always 1 */
+	} SD_CardIdData_t;
+
+	/**
+	  * @brief SD Card information
+	  */
+	typedef struct
+	{
+		SD_CardSpecificData_t Csd;
+		SD_CardIdData_t Cid;
+		uint32_t CardCapacity;              /*!< Card Capacity */
+		uint32_t CardBlockSize;             /*!< Card Block Size */
+		uint32_t LogBlockNbr;               /*!< Specifies the Card logical Capacity in blocks   */
+		uint32_t LogBlockSize;              /*!< Specifies logical block size in bytes           */
+	} SD_CardInfo_t;
+
+
+	//These are exposed functions that can be called from outside sd_card.c
 	int32_t SD_IO_Init(SPI_TypeDef* SPIxInstance);
-	void SD_IO_DeInit(void);
-	void SD_IO_CSState(uint32_t Value);
-	//static int32_t SD_GetCSDRegister(SD_CardSpecificData_t* Csd);
-	//static int32_t SD_GetCIDRegister(SD_CardIdData_t* Cid);
-	uint32_t SD_SendCmd(uint8_t Cmd, uint32_t Arg, uint8_t Crc, uint8_t Answer);
-	int32_t SD_GetDataResponse(uint8_t* DataResponse);
-	int32_t SD_GoIdleState(void);
-	int32_t SD_ReadData(uint8_t* Data);
-	int32_t SD_WaitData(uint8_t Data);
-	void SPI_IO_Delay(uint32_t Delay);
-	
+		
 	DWORD get_fattime(void);
-	//DSTATUS __GetCardState(BYTE lun);
 	DSTATUS pntr_from_link_drvr_SD_initialize(BYTE);
 	DSTATUS pntr_from_link_drvr_SD_status(BYTE);
 	DRESULT pntr_from_link_drvr_SD_read(BYTE, BYTE*, DWORD, UINT);
 	DRESULT pntr_from_link_drvr_SD_write(BYTE, const BYTE*, DWORD, UINT);
-
-	//This is nothing more than a collection of function pointers...... 
-	//const Diskio_drvTypeDef  SD_Driver =
-	//{
-	//pntr_from_link_drvr_SD_initialize,
-	//pntr_from_link_drvr_SD_status,
-	//pntr_from_link_drvr_SD_read,
-	//pntr_from_link_drvr_SD_write
-	//  //#if  _USE_IOCTL == 1
-	//  //  SD_ioctl,
-	//  //#endif /* _USE_IOCTL == 1 */
-	//};
-
-
+	DRESULT pntr_from_link_drvr_SD_io(BYTE lun, BYTE cmd, void* buff);
 
 #ifdef __cplusplus
 }

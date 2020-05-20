@@ -404,7 +404,7 @@ bool c_cpu::__cdh_r_close_read()
 		uint16_t system_crc = dvc_source->active_rcv_buffer->overlays.system_control.crc;
 
 		//crcs are always calcualted with the current crc value ignored.
-		uint16_t new_crc = Talos::Kernel::Base::kernel_crc::generate(this->__pntr_active_rcv_buffer, sizeof(s_control_message) - CRC_BYTE_SIZE);
+		uint16_t new_crc = Talos::Kernel::Base::kernel_crc::generate(this->__pntr_active_rcv_buffer, sizeof(s_control_message) - KERNEL_CRC_BYTE_SIZE);
 		if (system_crc != new_crc)
 		{
 			ADD_2_STK_RTN_FALSE(0, ERR_RDR::BASE, ERR_RDR::METHOD::__cdh_r_close_read, ERR_RDR::METHOD::LINE::crc_failed_system_record);
@@ -418,7 +418,7 @@ bool c_cpu::__cdh_r_close_read()
 			//crcs are always calcualted with the current crc value ignored. This check must skip over the system rec
 			uint16_t new_crc = Talos::Kernel::Base::kernel_crc::generate(
 				(this->__pntr_active_rcv_buffer + sizeof(s_control_message))
-				, dvc_source->active_rcv_buffer->addendum_size - CRC_BYTE_SIZE);
+				, dvc_source->active_rcv_buffer->addendum_size - KERNEL_CRC_BYTE_SIZE);
 			if (addendum_crc != new_crc)
 			{
 				ADD_2_STK_RTN_FALSE(0, ERR_RDR::BASE, ERR_RDR::METHOD::__cdh_r_close_read, ERR_RDR::METHOD::LINE::crc_failed_addendum_record);

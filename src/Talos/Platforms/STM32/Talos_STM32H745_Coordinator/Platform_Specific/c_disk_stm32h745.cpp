@@ -39,7 +39,17 @@ static char _wcs_file_name[9] = "wcs.dat\0";
 static uint32_t _wcs_read_position = 0;
 static uint32_t _wcs_write_position = 0;
 
-static void debug_out(const char * message, void(*string_writer)(int serial_id, const char * data))
+static FIL _mcs_file_object;
+static char _mcs_file_name[9] = "mcs.dat\0";
+static uint32_t _mcs_read_position = 0;
+static uint32_t _mcs_write_position = 0;
+
+static FIL _motion_control_settings_file_object;
+static char _motion_control_settings_file_name[14] = "mtnctcfg.dat\0";
+//static uint32_t _wcs_read_position = 0;
+//static uint32_t _wcs_write_position = 0;
+
+static void debug_out(const char* message, void(*string_writer)(int serial_id, const char* data))
 {
 	if (string_writer != NULL)
 	{
@@ -49,38 +59,56 @@ static void debug_out(const char * message, void(*string_writer)(int serial_id, 
 	}
 }
 
+static bool create_file_if_not_exist(const char * filename)
+{
+	FILINFO f_info;
+	FIL file;
+
+	FatResult = f_stat(filename, &f_info);
+	if (FatResult == FR_NO_FILE)
+	{
+		FatResult = f_open(&file, filename, FA_WRITE | FA_CREATE_ALWAYS);
+		FatResult = f_close(&file);
+		return 1;
+	}
+}
 
 
-uint8_t Disk::initialize(void(*string_writer)(int serial_id, const char * data))
+
+uint8_t Disk::initialize(void(*string_writer)(int serial_id, const char* data))
 {
 	debug_out("Starting disk I/O", string_writer);
-	
+
 	if ((FatResult = (FRESULT)SD_IO_Init(SPI1)) != FR_OK)
 		debug_out("\tError", string_writer);
-	
+
 	debug_out("Drive start", string_writer);
 	if ((FatResult = f_mount(&FatFs, "", 1)) != FR_OK)
 		debug_out("\tError", string_writer);
-	
+
 	debug_out("\tOpening Cache", string_writer);
-	if ((FatResult = f_open(&_cache_file_object, _cache_file_name, FA_WRITE | FA_READ | FA_CREATE_NEW)) != FR_OK)
+	if ((FatResult = f_open(&_cache_file_object, _cache_file_name, FA_WRITE | FA_READ | FA_CREATE_ALWAYS)) != FR_OK)
 		debug_out("\tError", string_writer);
 
 	debug_out("\tOpening Tools", string_writer);
-	if ((FatResult = f_open(&_tool_file_object, _tool_file_name, FA_WRITE | FA_READ | FA_CREATE_NEW)) != FR_OK)
+	if ((FatResult = f_open(&_tool_file_object, _tool_file_name, FA_WRITE | FA_READ | FA_OPEN_ALWAYS)) != FR_OK)
 		debug_out("\tError", string_writer);
-	
+
 	debug_out("\tOpening WCS", string_writer);
-	if ((FatResult = f_open(&_wcs_file_object, _wcs_file_name, FA_WRITE | FA_READ | FA_CREATE_NEW)) != FR_OK)
+	if ((FatResult = f_open(&_wcs_file_object, _wcs_file_name, FA_WRITE | FA_READ | FA_OPEN_ALWAYS)) != FR_OK)
 		debug_out("\tError", string_writer);
-	
+
 	debug_out("\tOpening MCS", string_writer);
-	//if ((FatResult = f_open(&_mcs_file_object, _mcs_file_name, FA_WRITE | FA_READ | FA_CREATE_NEW)) != FR_OK)
-	//debug_out("\t Error", string_writer);
-	
+	if ((FatResult = f_open(&_mcs_file_object, _mcs_file_name, FA_WRITE | FA_READ | FA_OPEN_ALWAYS)) != FR_OK)
+		debug_out("\t Error", string_writer);
+
+	debug_out("\tOpening Motion Settings", string_writer);
+	if ((FatResult = f_open(&_motion_control_settings_file_object, _motion_control_settings_file_name, FA_WRITE | FA_READ | FA_OPEN_ALWAYS)) != FR_OK)
+		debug_out("\t Error", string_writer);
+
 	debug_out("\tComplete.", string_writer);
 
-	return (uint8_t) FatResult;
+	return (uint8_t)FatResult;
 }
 
 uint8_t Hardware_Abstraction_Layer::Disk::load_configuration()
@@ -99,42 +127,40 @@ uint8_t Hardware_Abstraction_Layer::Disk::load_configuration()
 		FatResult = f_close(&file);
 		return 1;
 	}
-	
+
 }
 
-uint8_t Hardware_Abstraction_Layer::Disk::load_motion_control_settings(s_motion_control_settings_encapsulation * motion_settings)
+uint8_t Hardware_Abstraction_Layer::Disk::get_motion_control_settings(char * stream, uint16_t size)
 {
-	motion_settings->hardware.spindle_encoder.meta_data.reg_tc0_cv1 = 99;
-	motion_settings->hardware.spindle_encoder.meta_data.reg_tc0_ra0 = 88;
-	motion_settings->hardware.spindle_encoder.meta_data.speed_rps = 14;
-	motion_settings->hardware.spindle_encoder.meta_data.speed_rpm = 3500;
 
-	for (uint8_t i = 0; i < MACHINE_AXIS_COUNT; i++)
-	{
-		motion_settings->hardware.steps_per_mm[i] = 160;
-		motion_settings->hardware.acceleration[i] = (150.0 * 60 * 60);
-		motion_settings->hardware.max_rate[i] = 12000;
-		motion_settings->hardware.distance_per_rotation[i] = 5;
-		//arbitrary for testing
-		motion_settings->hardware.back_lash_comp_distance[i] = 55;
-	}
+	//If machien config file did not exist create it. 
+	create_file_if_not_exist(_motion_control_settings_file_name);
+	
+	/*const uint16_t rec_size = sizeof(s_motion_control_settings_encapsulation);
+	char stream[rec_size];
+*/
+	////If a station number was sent with the block we need to seek
+	////that block id in the cache. The offset int he cache is simple.
+	//if (read_block->__station__)
+	//{
+	//	DWORD position = rec_size * (read_block->__station__ - 1);
+		//position should now be at the beginning point of the block requested by __station__
+		f_lseek(&_motion_control_settings_file_object, 0);
+	//}
 
-	motion_settings->hardware.pulse_length = 5;
-	motion_settings->hardware.spindle_encoder.wait_spindle_at_speed = 1;
-	motion_settings->hardware.spindle_encoder.spindle_synch_wait_time_ms = 5;
-	motion_settings->hardware.spindle_encoder.ticks_per_revolution = 400;
-	motion_settings->hardware.spindle_encoder.current_rpm = 0;
-	motion_settings->hardware.spindle_encoder.target_rpm = 100;
-	motion_settings->hardware.spindle_encoder.variable_percent = 50;
-	motion_settings->hardware.spindle_encoder.samples_per_second = 10;
-
-
-	motion_settings->tolerance.arc_tolerance = 0.002;
-	motion_settings->tolerance.arc_angular_correction = 12;
+	uint8_t ret_code = read(_motion_control_settings_file_object, stream, e_file_modes::OpenCreate, size);
+	if (ret_code) return ret_code;
+	
 	return 0;
 }
 
-uint8_t Hardware_Abstraction_Layer::Disk::load_initialize_block(s_ngc_block * initial_block)
+uint8_t Hardware_Abstraction_Layer::Disk::put_motion_control_settings(char* stream, uint16_t size)
+{
+		f_lseek(&_motion_control_settings_file_object, 0);
+	return write(_motion_control_settings_file_object, stream, e_file_modes::OpenCreate, size);
+}
+
+uint8_t Hardware_Abstraction_Layer::Disk::load_initialize_block(s_ngc_block* initial_block)
 {
 	//default the motion state to canceled
 	initial_block->g_group[NGC_RS274::Groups::G::Motion] = NGC_RS274::G_codes::MOTION_CANCELED;
@@ -166,11 +192,11 @@ uint8_t Hardware_Abstraction_Layer::Disk::load_initialize_block(s_ngc_block * in
 	initial_block->m_group[NGC_RS274::Groups::M::COOLANT] = NGC_RS274::M_codes::COOLANT_OFF;
 }
 
-uint8_t Hardware_Abstraction_Layer::Disk::put_block(s_ngc_block * write_block)
+uint8_t Hardware_Abstraction_Layer::Disk::put_block(s_ngc_block* write_block)
 {
 	const uint16_t rec_size = sizeof(s_ngc_block);
 	char stream[rec_size];
-	
+
 	memcpy(stream, write_block, rec_size);
 
 	if (write_block->__station__)
@@ -185,20 +211,20 @@ uint8_t Hardware_Abstraction_Layer::Disk::put_block(s_ngc_block * write_block)
 	_cache_write_position = f_tell(&_cache_file_object);
 }
 
-uint8_t Hardware_Abstraction_Layer::Disk::get_block(s_ngc_block * read_block)
+uint8_t Hardware_Abstraction_Layer::Disk::get_block(s_ngc_block* read_block)
 {
 	const uint16_t rec_size = sizeof(s_ngc_block);
 	char stream[rec_size];
 
 	//If a station number was sent with the block we need to seek
 	//that block id in the cache. The offset int he cache is simple.
-	if(read_block->__station__)
+	if (read_block->__station__)
 	{
 		DWORD position = rec_size * (read_block->__station__ - 1);
 		//position should now be at the beginning point of the block requested by __station__
 		f_lseek(&_cache_file_object, position);
 	}
-	
+
 	uint8_t ret_code = read(_cache_file_object, stream, e_file_modes::OpenCreate, rec_size);
 	if (ret_code) return ret_code;
 
@@ -208,11 +234,11 @@ uint8_t Hardware_Abstraction_Layer::Disk::get_block(s_ngc_block * read_block)
 	return 0;
 }
 
-uint8_t Hardware_Abstraction_Layer::Disk::put_tool(s_tool_definition * write_tool)
+uint8_t Hardware_Abstraction_Layer::Disk::put_tool(s_tool_definition* write_tool)
 {
 	const uint16_t rec_size = sizeof(s_tool_definition);
 	char stream[rec_size];
-	
+
 	memcpy(stream, write_tool, rec_size);
 
 	if (write_tool->toolno)
@@ -227,20 +253,20 @@ uint8_t Hardware_Abstraction_Layer::Disk::put_tool(s_tool_definition * write_too
 	_tool_write_position = f_tell(&_tool_file_object);
 }
 
-uint8_t Hardware_Abstraction_Layer::Disk::get_tool(s_tool_definition * read_tool)
+uint8_t Hardware_Abstraction_Layer::Disk::get_tool(s_tool_definition* read_tool)
 {
 	const uint16_t rec_size = sizeof(s_tool_definition);
 	char stream[rec_size];
 
 	//If a station number was sent with the block we need to seek
 	//that block id in the cache. The offset in the cache is simple.
-	if(read_tool->toolno)
+	if (read_tool->toolno)
 	{
 		DWORD position = rec_size * (read_tool->toolno - 1);
 		//position should now be at the beginning point of the block requested by __station__
 		f_lseek(&_cache_file_object, position);
 	}
-	
+
 	uint8_t ret_code = read(_tool_file_object, stream, e_file_modes::OpenCreate, rec_size);
 	if (ret_code) return ret_code;
 
@@ -250,11 +276,11 @@ uint8_t Hardware_Abstraction_Layer::Disk::get_tool(s_tool_definition * read_tool
 	return 0;
 }
 
-uint8_t Hardware_Abstraction_Layer::Disk::put_wcs(s_wcs * write_wcs)
+uint8_t Hardware_Abstraction_Layer::Disk::put_wcs(s_wcs* write_wcs)
 {
 	const uint16_t rec_size = sizeof(s_wcs);
 	char stream[rec_size];
-	
+
 	memcpy(stream, write_wcs, rec_size);
 
 	if (write_wcs->wcs_id)
@@ -269,20 +295,20 @@ uint8_t Hardware_Abstraction_Layer::Disk::put_wcs(s_wcs * write_wcs)
 	_wcs_write_position = f_tell(&_wcs_file_object);
 }
 
-uint8_t Hardware_Abstraction_Layer::Disk::get_wcs(s_wcs * read_wcs)
+uint8_t Hardware_Abstraction_Layer::Disk::get_wcs(s_wcs* read_wcs)
 {
 	const uint16_t rec_size = sizeof(s_wcs);
 	char stream[rec_size];
 
 	//If a station number was sent with the block we need to seek
 	//that block id in the cache. The offset in the cache is simple.
-	if(read_wcs->wcs_id)
+	if (read_wcs->wcs_id)
 	{
 		DWORD position = rec_size * (read_wcs->wcs_id - 1);
 		//position should now be at the beginning point of the block requested by __station__
 		f_lseek(&_wcs_file_object, position);
 	}
-	
+
 	uint8_t ret_code = read(_wcs_file_object, stream, e_file_modes::OpenCreate, rec_size);
 	if (ret_code) return ret_code;
 
@@ -292,22 +318,22 @@ uint8_t Hardware_Abstraction_Layer::Disk::get_wcs(s_wcs * read_wcs)
 	return 0;
 }
 
-uint8_t Hardware_Abstraction_Layer::Disk::write(FIL file, char * buffer, e_file_modes mode, uint16_t size)
+uint8_t Hardware_Abstraction_Layer::Disk::write(FIL file, char* buffer, e_file_modes mode, uint16_t size)
 {
 	UINT write_size;
 	FRESULT result = FR_OK;
-	
+
 	result = f_write(&file, buffer, size, &write_size);
 	if (result != FR_OK) return result;
-	
+
 	result = f_sync(&file);
 	if (result != FR_OK) return result;
 }
 
-uint8_t Hardware_Abstraction_Layer::Disk::read(FIL file, char * buffer, e_file_modes mode, uint16_t size)
+uint8_t Hardware_Abstraction_Layer::Disk::read(FIL file, char* buffer, e_file_modes mode, uint16_t size)
 {
 	UINT read_size = 0;
 	FRESULT result = f_read(&file, buffer, size, &read_size);
-	
+
 }
 

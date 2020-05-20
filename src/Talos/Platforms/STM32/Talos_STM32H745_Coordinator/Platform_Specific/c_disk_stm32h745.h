@@ -51,6 +51,9 @@ namespace Hardware_Abstraction_Layer
 		static uint8_t put_wcs(s_wcs * write_wcs);
 		static uint8_t get_wcs(s_wcs * read_wcs);
 		
+		static uint8_t get_motion_control_settings(char* stream, uint16_t size);
+		static uint8_t put_motion_control_settings(char* stream, uint16_t size);
+
 		static uint8_t write(FIL file, char * buffer, e_file_modes mode, uint16_t size);
 		static uint8_t read(FIL file, char * buffer, e_file_modes mode, uint16_t size);
 	protected:

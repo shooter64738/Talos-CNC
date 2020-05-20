@@ -48,18 +48,18 @@ e_parsing_errors NGC_RS274::Error_Check::error_check(NGC_RS274::Block_View *v_ne
 	//tool select should happen before non modals since it will effect non modals. 
 
 	
-	if ((ret_code =(NGC_RS274::Dialect::Group0::non_modal_validate(v_new_block, Talos::Confguration::Interpreter::Parameters.dialect))) != e_parsing_errors::OK) return ret_code;
+	if ((ret_code =(NGC_RS274::Dialect::Group0::non_modal_validate(v_new_block, Talos::Configuration::Interpreter::Parameters::InputProcessing.dialect))) != e_parsing_errors::OK) return ret_code;
 	//i think plane validation should be first because it effects so many other things
-	if ((ret_code = (NGC_RS274::Dialect::Group2::plane_validate(v_new_block, Talos::Confguration::Interpreter::Parameters.dialect))) != e_parsing_errors::OK) return ret_code;
+	if ((ret_code = (NGC_RS274::Dialect::Group2::plane_validate(v_new_block, Talos::Configuration::Interpreter::Parameters::InputProcessing.dialect))) != e_parsing_errors::OK) return ret_code;
 		
 	//rotation depends on plane, so set plane first. add all offsets (work, tool, radius) before rotating
-	if ((ret_code = (NGC_RS274::Dialect::Group16::rotation_validate(v_new_block, Talos::Confguration::Interpreter::Parameters.dialect))) != e_parsing_errors::OK) return ret_code;
+	if ((ret_code = (NGC_RS274::Dialect::Group16::rotation_validate(v_new_block, Talos::Configuration::Interpreter::Parameters::InputProcessing.dialect))) != e_parsing_errors::OK) return ret_code;
 
 	//Feed rate mode only needs validation if a motion is going to run. Do not call that here on its own. 
 	//CHK_CALL_RTN_ERROR_CODE(NGC_RS274::Dialect::Group5::feed_rate_validate(v_new_block, Talos::Confguration::Interpreter::Parameters.dialect));
 	//Distance mode is checked inside the motion validate. Do not call it here on its own.
 	//CHK_CALL_RTN_ERROR_CODE(NGC_RS274::Dialect::Group3::distance_mode_validate(v_new_block, Talos::Confguration::Interpreter::Parameters.dialect));
-	if ((ret_code = (NGC_RS274::Dialect::Group1::motion_validate(v_new_block, Talos::Confguration::Interpreter::Parameters.dialect))) != e_parsing_errors::OK) return ret_code;
+	if ((ret_code = (NGC_RS274::Dialect::Group1::motion_validate(v_new_block, Talos::Configuration::Interpreter::Parameters::InputProcessing.dialect))) != e_parsing_errors::OK) return ret_code;
 	
 	
 	//all offsets and motion should be valid before we get to cutter compensation

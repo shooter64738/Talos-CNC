@@ -22,6 +22,7 @@ then move to their respective modules.
 #include "../Data/DataHandlers/c_ngc_data_handler.h"
 #include "../../../Shared_Data/_s_status_record.h"
 #include "../../../Shared_Data/Settings/Motion/_s_motion_control_settings_encapsulation.h"
+#include "../../../Configuration/c_configuration.h"
 //
 //#include <avr/io.h>
 //#include <avr/interrupt.h>
@@ -61,6 +62,10 @@ void Coordinator::Main_Process::initialize()
 		HOST_CPU_ID, CORD_CPU_ID, MACH_CPU_ID, SPDL_CPU_ID, PRPH_CPU_ID, Hardware_Abstraction_Layer::Core::cpu_tick_ms);
 	
 	Hardware_Abstraction_Layer::Disk::initialize(Coordinator::Main_Process::debug_string);
+
+	Talos::Configuration::initialize();
+	
+
 	while (1 == 1)
 	{
 	}
