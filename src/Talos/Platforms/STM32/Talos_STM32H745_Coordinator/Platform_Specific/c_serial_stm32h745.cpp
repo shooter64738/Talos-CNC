@@ -92,19 +92,18 @@ void Serial::__init_host_comm()
 	s_HostUARTHandle.Init.Mode = UART_MODE_TX_RX;
 	s_HostUARTHandle.Init.OverSampling = UART_OVERSAMPLING_16;
 
-	
-	/* Peripheral interrupt init*/
-	HAL_NVIC_SetPriority(USART3_IRQn, 0, 0);
-	HAL_NVIC_EnableIRQ(USART3_IRQn);
-	host_com_init = true;
-	
 	if (HAL_UART_Init(&s_HostUARTHandle) != HAL_OK)
 		asm("bkpt 255");
 
+	/* Peripheral interrupt init*/
+	HAL_NVIC_SetPriority(USART3_IRQn, 0, 0);
+	HAL_NVIC_EnableIRQ(USART3_IRQn);
 	
+	host_com_init = true;
 	
-	//HAL_UART_Receive_IT(&s_HostUARTHandle, &byte, 1);
-	SET_BIT(USART3->CR1, USART_CR1_PEIE | USART_CR1_RXNEIE_RXFNEIE);
+	//HAL_UART_Receive_IT(&s_UARTHandle, &byte, 1);
+	
+//SET_BIT(USART3->CR1, USART_CR1_PEIE | USART_CR1_RXNEIE_RXFNEIE);
 }
 
 
@@ -121,14 +120,18 @@ void Serial::__init_host_comm()
 //	}
 //}
 
-uint8_t Serial::send(uint8_t Port, char byte)
+uint8_t Serial::send(uint8_t Port, uint8_t * byte)
 {
+			
 	switch (Port)
 	{
 	case HOST_CPU_ID:
-		//if (host_com_init)HAL_UART_Transmit(&s_HostUARTHandle, byte, sizeof(byte), HAL_MAX_DELAY)
-		s_HostUARTHandle.Instance->TDR = byte;
-		while (!(s_HostUARTHandle.Instance->ISR & USART_FLAG_TC));
+		if (host_com_init)
+		{
+			//Wait until we are not transmitting
+			while(!(s_HostUARTHandle.Instance->ISR & UART_FLAG_TC));
+			s_HostUARTHandle.Instance->TDR = (uint8_t)(*byte);
+		}
 		break;
 	case CORD_CPU_ID:
 		//if (!host_com_init) __init_host_comm();
@@ -155,10 +158,11 @@ extern "C"
 void USART3_IRQHandler()
 {
 	//HAL_UART_IRQHandler(&s_UARTHandle);
-	uint32_t IIR = USART3->ISR; //<--flag clears when we read the ISR
-	if (IIR & USART_FLAG_RXNE) //<-- check to see if this is an RXNE (read data register not empty
-	{                  // read interrupt
-		char byte = USART3->RDR;
+	uint32_t IIR = USART3->ISR;   //<--flag clears when we read the ISR
+	if(IIR & USART_FLAG_RXNE) //<-- check to see if this is an RXNE (read data register not empty
+	{
+		// read interrupt
+char byte = USART3->RDR;
 		Serial::host_ring_buffer->put(byte);
 		////USART3->ISR &= ~USART_FLAG_RXNE;	          // clear interrupt
 		//uint8_t buffer[] = "XX";

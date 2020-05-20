@@ -27,7 +27,7 @@ namespace Talos
 			static bool print_rx_diagnostic;
 			static bool print_tx_diagnostic;
 
-			class CRC
+			class kernel_crc
 			{
 			public:
 				static uint16_t generate(char* data_p, uint8_t length);

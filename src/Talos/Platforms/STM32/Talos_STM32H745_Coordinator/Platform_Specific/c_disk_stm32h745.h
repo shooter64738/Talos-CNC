@@ -13,6 +13,7 @@
 #include "../../../../NGC_RS274/_ngc_tool_struct.h"
 #include "../../../../NGC_RS274/_ngc_coordinate_struct.h"
 #include "../../../../Shared_Data/Settings/Motion/_s_motion_control_settings_encapsulation.h"
+#include "disk_support/SPI/Hardware/sd_card.h"
 
 namespace Hardware_Abstraction_Layer
 {
@@ -33,8 +34,8 @@ namespace Hardware_Abstraction_Layer
 
 		//functions
 	public:
-		static void spi_start();
-		static uint8_t initialize();
+		
+		static uint8_t initialize(void(*string_writer)(int serial_id, const char * data));
 		static uint8_t load_configuration();
 		static uint8_t load_initialize_block(s_ngc_block * initial_block);
 		static uint8_t load_motion_control_settings(s_motion_control_settings_encapsulation * motion_settings);
@@ -50,8 +51,8 @@ namespace Hardware_Abstraction_Layer
 		static uint8_t put_wcs(s_wcs * write_wcs);
 		static uint8_t get_wcs(s_wcs * read_wcs);
 		
-		//static uint8_t write(const char * filename, char * buffer, e_file_modes mode, uint16_t size, std::fstream &stream_object);
-		//static uint8_t read(const char * filename, char * buffer, e_file_modes mode, uint16_t size, std::fstream &stream_object);
+		static uint8_t write(FIL file, char * buffer, e_file_modes mode, uint16_t size);
+		static uint8_t read(FIL file, char * buffer, e_file_modes mode, uint16_t size);
 	protected:
 	private:
 			

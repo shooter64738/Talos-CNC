@@ -11,7 +11,7 @@ namespace Talos
 
 		}
 
-		uint16_t Base::CRC::generate(char* data_p, uint8_t length)
+		uint16_t Base::kernel_crc::generate(char* data_p, uint8_t length)
 		{
 			char x;
 			uint16_t crc = 0xFFFF;

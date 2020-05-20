@@ -117,11 +117,20 @@
     <Filter Include="Shared_Data\Kernel\Start">
       <UniqueIdentifier>{8acab90f-a974-4608-8025-48ecd4f8403c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Platform_Specific\sd2">
-      <UniqueIdentifier>{78e6adf7-f686-484b-b028-f2bdb0c39b2e}</UniqueIdentifier>
+    <Filter Include="Platform_Specific\disk_support">
+      <UniqueIdentifier>{1a35835c-f0cb-43b7-a4f9-287c9a52679f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Platform_Specific\sd2\fatfs">
-      <UniqueIdentifier>{d6794853-5f06-4f10-b171-35c9ac22bf88}</UniqueIdentifier>
+    <Filter Include="Platform_Specific\disk_support\SPI">
+      <UniqueIdentifier>{7a265348-937c-46ce-b8eb-07f478fbe462}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Platform_Specific\disk_support\SDMMC">
+      <UniqueIdentifier>{e18fea8d-d803-4eb4-8045-6d7bc99dc521}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Platform_Specific\disk_support\SPI\Hardware">
+      <UniqueIdentifier>{220c8422-a53e-4001-953f-fa23cc0464ee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Platform_Specific\disk_support\SPI\FatFs">
+      <UniqueIdentifier>{8d417bab-898d-4a45-8458-f1b80ff150a4}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -614,14 +623,29 @@
     <ClCompile Include="..\..\..\Shared_Data\Kernel\Start\c_kernel_start.cpp">
       <Filter>Shared_Data\Kernel\Start</Filter>
     </ClCompile>
-    <ClCompile Include="Platform_Specific\sd2\fatfs\diskio.c">
-      <Filter>Platform_Specific\sd2\fatfs</Filter>
-    </ClCompile>
-    <ClCompile Include="Platform_Specific\sd2\fatfs\ff.c">
-      <Filter>Platform_Specific\sd2\fatfs</Filter>
-    </ClCompile>
     <ClCompile Include="Platform_Specific\c_spi_stm32h745.cpp">
       <Filter>Platform_Specific</Filter>
+    </ClCompile>
+    <ClCompile Include="Platform_Specific\disk_support\SPI\FatFs\diskio.c">
+      <Filter>Platform_Specific\disk_support\SPI\FatFs</Filter>
+    </ClCompile>
+    <ClCompile Include="Platform_Specific\disk_support\SPI\FatFs\ff.c">
+      <Filter>Platform_Specific\disk_support\SPI\FatFs</Filter>
+    </ClCompile>
+    <ClCompile Include="Platform_Specific\disk_support\SPI\FatFs\ffsystem.c">
+      <Filter>Platform_Specific\disk_support\SPI\FatFs</Filter>
+    </ClCompile>
+    <ClCompile Include="Platform_Specific\disk_support\SPI\FatFs\ffunicode.c">
+      <Filter>Platform_Specific\disk_support\SPI\FatFs</Filter>
+    </ClCompile>
+    <ClCompile Include="Platform_Specific\disk_support\SPI\Hardware\hardware_config.c">
+      <Filter>Platform_Specific\disk_support\SPI\Hardware</Filter>
+    </ClCompile>
+    <ClCompile Include="Platform_Specific\disk_support\SPI\Hardware\hardware_io.c">
+      <Filter>Platform_Specific\disk_support\SPI\Hardware</Filter>
+    </ClCompile>
+    <ClCompile Include="Platform_Specific\disk_support\SPI\Hardware\sd_card.c">
+      <Filter>Platform_Specific\disk_support\SPI\Hardware</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1338,20 +1362,26 @@
     <ClInclude Include="..\..\..\Shared_Data\Kernel\_s_system_record.h">
       <Filter>Shared_Data\Kernel</Filter>
     </ClInclude>
-    <ClInclude Include="Platform_Specific\sd2\fatfs\diskio.h">
-      <Filter>Platform_Specific\sd2\fatfs</Filter>
-    </ClInclude>
-    <ClInclude Include="Platform_Specific\sd2\fatfs\ff.h">
-      <Filter>Platform_Specific\sd2\fatfs</Filter>
-    </ClInclude>
-    <ClInclude Include="Platform_Specific\sd2\fatfs\ffconf.h">
-      <Filter>Platform_Specific\sd2\fatfs</Filter>
-    </ClInclude>
-    <ClInclude Include="Platform_Specific\sd2\fatfs\integer.h">
-      <Filter>Platform_Specific\sd2\fatfs</Filter>
-    </ClInclude>
     <ClInclude Include="Platform_Specific\c_spi_stm32h745.h">
       <Filter>Platform_Specific</Filter>
+    </ClInclude>
+    <ClInclude Include="Platform_Specific\disk_support\SPI\FatFs\diskio.h">
+      <Filter>Platform_Specific\disk_support\SPI\FatFs</Filter>
+    </ClInclude>
+    <ClInclude Include="Platform_Specific\disk_support\SPI\FatFs\ff.h">
+      <Filter>Platform_Specific\disk_support\SPI\FatFs</Filter>
+    </ClInclude>
+    <ClInclude Include="Platform_Specific\disk_support\SPI\FatFs\ffconf.h">
+      <Filter>Platform_Specific\disk_support\SPI\FatFs</Filter>
+    </ClInclude>
+    <ClInclude Include="Platform_Specific\disk_support\SPI\Hardware\hardware_config.h">
+      <Filter>Platform_Specific\disk_support\SPI\Hardware</Filter>
+    </ClInclude>
+    <ClInclude Include="Platform_Specific\disk_support\SPI\Hardware\hardware_io.h">
+      <Filter>Platform_Specific\disk_support\SPI\Hardware</Filter>
+    </ClInclude>
+    <ClInclude Include="Platform_Specific\disk_support\SPI\Hardware\sd_card.h">
+      <Filter>Platform_Specific\disk_support\SPI\Hardware</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

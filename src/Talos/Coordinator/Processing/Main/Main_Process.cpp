@@ -33,8 +33,21 @@ using namespace Talos;
 c_Serial Coordinator::Main_Process::host_serial;
 c_Serial Coordinator::Main_Process::motion_serial;
 
+volatile uint8_t safe1 = 1;
+volatile uint8_t safe2 = 1;
 void Coordinator::Main_Process::initialize()
 {
+	while (safe1 == safe2)
+	{
+		int c = 0;
+	}
+	Hardware_Abstraction_Layer::Core::initialize();
+	
+	//Create a serial 'wrapper' to make writing strings and numbers easier.
+	//Assign the handle for the cpu's hardware buffer to a specific serial usart on the hardware.
+	Coordinator::Main_Process::host_serial = c_Serial(Kernel::CPU::host_id, 115200, &Kernel::CPU::cluster[Kernel::CPU::host_id].hw_data_buffer); //<--Connect to host
+	Coordinator::Main_Process::host_serial.print_string("Ready to process:\r\n");
+	
 	Kernel::Base::f_initialize();
 	//init framework comms (not much going on in here yet)
 	Kernel::Comm::f_initialize(
@@ -45,10 +58,13 @@ void Coordinator::Main_Process::initialize()
 		Coordinator::Main_Process::debug_float_dec);
 	//init framwork cpus (assign an ID number to each cpu object. Init the data buffers
 	Kernel::CPU::f_initialize(
-		HOST_CPU_ID, CORD_CPU_ID, MACH_CPU_ID, SPDL_CPU_ID, PRPH_CPU_ID, &Hardware_Abstraction_Layer::Core::cpu_tick_ms);
-	//Create a serial 'wrapper' to make writing strings and numbers easier.
-	//Assign the handle for the cpu's hardware buffer to a specific serial usart on the hardware.
-	Coordinator::Main_Process::host_serial = c_Serial(Kernel::CPU::host_id, 115200, &Kernel::CPU::cluster[Kernel::CPU::host_id].hw_data_buffer); //<--Connect to host
+		HOST_CPU_ID, CORD_CPU_ID, MACH_CPU_ID, SPDL_CPU_ID, PRPH_CPU_ID, Hardware_Abstraction_Layer::Core::cpu_tick_ms);
+	
+	Hardware_Abstraction_Layer::Disk::initialize(Coordinator::Main_Process::debug_string);
+	while (1 == 1)
+	{
+	}
+	
 	Hardware_Abstraction_Layer::Disk::load_initialize_block(&Talos::Coordinator::Data::Ngc::active_block);
 	Coordinator::Main_Process::host_serial.print_string("Ready to process:\r\n");
 	

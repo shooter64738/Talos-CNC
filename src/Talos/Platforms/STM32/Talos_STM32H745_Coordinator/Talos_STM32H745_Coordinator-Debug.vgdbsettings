@@ -20,6 +20,7 @@
     <ProjectFile>Talos_STM32H745_Coordinator.vcxproj</ProjectFile>
     <RemoteBuildEnvironment>
       <Records />
+      <EnvironmentSetupFiles />
     </RemoteBuildEnvironment>
     <ParallelJobCount>1</ParallelJobCount>
     <SuppressDirectoryChangeMessages>true</SuppressDirectoryChangeMessages>
@@ -95,7 +96,7 @@
     </HexSettings>
     <LineEnding>CRLF</LineEnding>
     <TreatLFAsCRLF>false</TreatLFAsCRLF>
-    <KeepOpenAfterExit>false</KeepOpenAfterExit>
+    <KeepOpenAfterExit>true</KeepOpenAfterExit>
     <ShowAfterProgramming>true</ShowAfterProgramming>
   </DeviceTerminalSettings>
   <CustomShortcuts>

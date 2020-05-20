@@ -60,7 +60,10 @@ void c_Serial::Write(const char *Buffer)
 
 void c_Serial::Write(char Buffer)
 {
-	Hardware_Abstraction_Layer::Serial::send(this->_port, Buffer);
+	uint8_t* ptr;
+	uint8_t b = (uint8_t) Buffer;
+	ptr = &b;
+	Hardware_Abstraction_Layer::Serial::send(this->_port, ptr);
 }
 
 void c_Serial::print_string(const char *s)
