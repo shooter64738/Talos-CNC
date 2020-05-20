@@ -1,5 +1,5 @@
 /*
-*  c_events.cpp - NGC_RS274 controller.
+*  c_events.h - NGC_RS274 controller.
 *  A component of Talos
 *
 *  Copyright (c) 2016-2019 Jeff Dill
@@ -18,27 +18,25 @@
 *  along with Talos.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "c_configuration.h"
-#include "../Coordinator/coordinator_hardware_def.h"
-#include "../Shared_Data/Kernel/Base/c_kernel_base.h"
+#ifndef __C_INTERPRETER_INPUT_PROCESS_STRUCT_H__
+#define __C_INTERPRETER_INPUT_PROCESS_STRUCT_H__
 
 
-//c_parameters Talos::Configuration::Interpreter::Parameters;
-//c_defaultblock Talos::Configuration::Interpreter::DefaultBlock;
+#include "../../../NGC_RS274/_ngc_dialect_enum.h"
+#include "../../../_bit_flag_control.h"
 
-uint8_t Talos::Configuration::initialize()
+#define LEAST_INPUT_INCRIMET_MM 0.001
+#define LEAST_INPUT_INCRIMET_INCH 0.0001
+
+enum class e_config_bit_flags
 {
-	//Load configuration for interpreter
-	Interpreter::Parameters.initialize();
+	DecimalPointInput = 0, //Fanuc parameter 3401 or 2400. 0 = least input, 1 = pocket calculator
+};
 
-	//Load configuration for startup G/M block
-	Interpreter::DefaultBlock.initialize();
+struct s_interpreter_configuration
+{
+	s_bit_flag_controller<uint32_t> flags;
+	e_dialects dialect;
 
-	//Load motion controller settings
-	Motion::Controller.initialize();
-
-	//Load motion system settings
-	//Motion::System::initialize();
-
-	return 0;
-}
+};
+#endif //__C_EVENTS_H__

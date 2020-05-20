@@ -46,6 +46,9 @@ static uint32_t _mcs_write_position = 0;
 
 static FIL _motion_control_settings_file_object;
 static char _motion_control_settings_file_name[14] = "mtnctcfg.dat\0";
+
+s_bit_flag_controller<uint32_t> Disk::states;
+
 //static uint32_t _wcs_read_position = 0;
 //static uint32_t _wcs_write_position = 0;
 
@@ -77,38 +80,30 @@ static bool create_file_if_not_exist(const char * filename)
 
 uint8_t Disk::initialize(void(*string_writer)(int serial_id, const char* data))
 {
-	debug_out("Starting disk I/O", string_writer);
 
-	if ((FatResult = (FRESULT)SD_IO_Init(SPI1)) != FR_OK)
-		debug_out("\tError", string_writer);
+	((FatResult = (FRESULT)SD_IO_Init(SPI1)) != FR_OK)
+		? Disk::states.set((int)e_disk_states::drive_start_error) : Disk::states.set((int)e_disk_states::drive_start_success);
 
-	debug_out("Drive start", string_writer);
-	if ((FatResult = f_mount(&FatFs, "", 1)) != FR_OK)
-		debug_out("\tError", string_writer);
+	((FatResult = f_mount(&FatFs, "", 1)) != FR_OK)
+		? Disk::states.set((int)e_disk_states::drive_mount_error) : Disk::states.set((int)e_disk_states::drive_mount_success);
 
-	debug_out("\tOpening Cache", string_writer);
-	if ((FatResult = f_open(&_cache_file_object, _cache_file_name, FA_WRITE | FA_READ | FA_CREATE_ALWAYS)) != FR_OK)
-		debug_out("\tError", string_writer);
+	((FatResult = f_open(&_cache_file_object, _cache_file_name, FA_WRITE | FA_READ | FA_CREATE_ALWAYS)) != FR_OK)
+		? Disk::states.set((int)e_disk_states::cache_open_error) : Disk::states.set((int)e_disk_states::cache_open_success);
 
-	debug_out("\tOpening Tools", string_writer);
-	if ((FatResult = f_open(&_tool_file_object, _tool_file_name, FA_WRITE | FA_READ | FA_OPEN_ALWAYS)) != FR_OK)
-		debug_out("\tError", string_writer);
+	((FatResult = f_open(&_tool_file_object, _tool_file_name, FA_WRITE | FA_READ | FA_OPEN_ALWAYS)) != FR_OK)
+		? Disk::states.set((int)e_disk_states::tool_open_error) : Disk::states.set((int)e_disk_states::tool_open_success);
+	
+	((FatResult = f_open(&_wcs_file_object, _wcs_file_name, FA_WRITE | FA_READ | FA_OPEN_ALWAYS)) != FR_OK)
+		? Disk::states.set((int)e_disk_states::wcs_open_error) : Disk::states.set((int)e_disk_states::wcs_open_success);
 
-	debug_out("\tOpening WCS", string_writer);
-	if ((FatResult = f_open(&_wcs_file_object, _wcs_file_name, FA_WRITE | FA_READ | FA_OPEN_ALWAYS)) != FR_OK)
-		debug_out("\tError", string_writer);
+	((FatResult = f_open(&_mcs_file_object, _mcs_file_name, FA_WRITE | FA_READ | FA_OPEN_ALWAYS)) != FR_OK)
+		? Disk::states.set((int)e_disk_states::mcs_open_error) : Disk::states.set((int)e_disk_states::mcs_open_success);
 
-	debug_out("\tOpening MCS", string_writer);
-	if ((FatResult = f_open(&_mcs_file_object, _mcs_file_name, FA_WRITE | FA_READ | FA_OPEN_ALWAYS)) != FR_OK)
-		debug_out("\t Error", string_writer);
+	((FatResult = f_open(&_motion_control_settings_file_object, _motion_control_settings_file_name, FA_WRITE | FA_READ | FA_OPEN_ALWAYS)) != FR_OK)
+		? Disk::states.set((int)e_disk_states::motion_setting_open_error) : Disk::states.set((int)e_disk_states::motion_setting_open_success);
 
-	debug_out("\tOpening Motion Settings", string_writer);
-	if ((FatResult = f_open(&_motion_control_settings_file_object, _motion_control_settings_file_name, FA_WRITE | FA_READ | FA_OPEN_ALWAYS)) != FR_OK)
-		debug_out("\t Error", string_writer);
-
-	debug_out("\tComplete.", string_writer);
-
-	return (uint8_t)FatResult;
+	//Return 0 if not failures, so mask the first 15 bits. only return a non zero if ANY of the first 15 bits are true.
+	return (Disk::states._flag & 0xFFFF);
 }
 
 uint8_t Hardware_Abstraction_Layer::Disk::load_configuration()
@@ -135,18 +130,7 @@ uint8_t Hardware_Abstraction_Layer::Disk::get_motion_control_settings(char * str
 
 	//If machien config file did not exist create it. 
 	create_file_if_not_exist(_motion_control_settings_file_name);
-	
-	/*const uint16_t rec_size = sizeof(s_motion_control_settings_encapsulation);
-	char stream[rec_size];
-*/
-	////If a station number was sent with the block we need to seek
-	////that block id in the cache. The offset int he cache is simple.
-	//if (read_block->__station__)
-	//{
-	//	DWORD position = rec_size * (read_block->__station__ - 1);
-		//position should now be at the beginning point of the block requested by __station__
-		f_lseek(&_motion_control_settings_file_object, 0);
-	//}
+	f_lseek(&_motion_control_settings_file_object, 0);
 
 	uint8_t ret_code = read(_motion_control_settings_file_object, stream, e_file_modes::OpenCreate, size);
 	if (ret_code) return ret_code;

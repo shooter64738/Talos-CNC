@@ -1,5 +1,5 @@
 /*
-*  c_events.cpp - NGC_RS274 controller.
+*  c_events.h - NGC_RS274 controller.
 *  A component of Talos
 *
 *  Copyright (c) 2016-2019 Jeff Dill
@@ -18,27 +18,18 @@
 *  along with Talos.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "c_configuration.h"
-#include "../Coordinator/coordinator_hardware_def.h"
-#include "../Shared_Data/Kernel/Base/c_kernel_base.h"
+#ifndef __C_S_INTERPRETER_CONTROL_SETTINGS_ENCAPSULATION
+#define __C_S_INTERPRETER_CONTROL_SETTINGS_ENCAPSULATION
 
+#include "../../Kernel/_e_record_types.h"
+#include "_s_interpreter_input_processing.h"
 
-//c_parameters Talos::Configuration::Interpreter::Parameters;
-//c_defaultblock Talos::Configuration::Interpreter::DefaultBlock;
-
-uint8_t Talos::Configuration::initialize()
+struct s_interpreter_settings_encapsulation_configuration
 {
-	//Load configuration for interpreter
-	Interpreter::Parameters.initialize();
+	static const e_record_types __rec_type__ = e_record_types::Interpreter_Setting;
+	char version[6];
+	s_interpreter_input_configuration input_process;
+	//e_dialects dialect;
 
-	//Load configuration for startup G/M block
-	Interpreter::DefaultBlock.initialize();
-
-	//Load motion controller settings
-	Motion::Controller.initialize();
-
-	//Load motion system settings
-	//Motion::System::initialize();
-
-	return 0;
-}
+};
+#endif 

@@ -22,99 +22,36 @@
 #define __C_CONFIGURATION_H__
 
 #include <stdint.h>
-#include "../Shared_Data/Settings/Coordinator/_s_interp_config_struct.h"
-#include "../Shared_Data/Settings/Motion/_s_motion_control_settings_encapsulation.h"
-#include "../_bit_flag_control.h"
+#include "Interpreter/c_interpreter_input.h"
+#include "Interpreter/c_interpreter_base_gmcode.h"
+#include "Motion/c_configuration_motion_controller.h"
+#include "Motion/c_configuration_motion_system.h"
+//#include "../Shared_Data/Settings/Coordinator/_s_interpeter_settings_encapsulation.h"
+//#include "../Shared_Data/Settings/Motion/_s_motion_control_settings_encapsulation.h"
+//#include "../NGC_RS274/_ngc_block_struct.h"
+//#include "../_bit_flag_control.h"
 
 namespace Talos
 {
 	namespace Configuration
 	{
-	
+
 		//call to initialize all
 		extern uint8_t initialize();
-		
+
 		namespace Interpreter
 		{
-			class Parameters
-			{
-				//variables
-			public:
-				static s_interpreter_configuration InputProcessing;
-			protected:
-			private:
-
-
-				//functions
-			public:
-			public:
-				enum class e_control_setting_states
-				{
-					hardware_error_occured = 1,
-					default_settings_loaded_successful = 2,
-					crc_failed_using_defaults = 3,
-					settings_saved_successful = 4,
-					settings_save_hardware_error = 5,
-					settings_loaded_successful = 6,
-					settings_load_hardware_error = 5,
-
-				};
-				static s_bit_flag_controller<uint32_t> states;
-				static uint8_t initialize();
-				static uint8_t load_defaults();
-				static uint8_t load_from_disk();
-				static uint8_t save_to_disk();
-
-			protected:
-			private:
-			};
+			static c_parameters Parameters;
+			static c_defaultblock DefaultBlock;
 		};
 		namespace Motion
 		{
-			class Controller
-			{
-			public:
-				enum class e_control_setting_states
-				{
-					hardware_error_occured = 1,
-					default_settings_loaded_successful = 2,
-					crc_failed_using_defaults = 3,
-					settings_saved_successful = 4,
-					settings_save_hardware_error = 5,
-					settings_loaded_successful = 6,
-					settings_load_hardware_error = 5,
-
-				};
-				static s_bit_flag_controller<uint32_t> states;
-				static uint8_t initialize();
-				static uint8_t load_defaults();
-				static uint8_t load_from_disk();
-				static uint8_t save_to_disk();
-				static s_motion_control_settings_encapsulation Motion_Settings;
-			};
-
-			class System
-			{
-			public:
-				enum class e_system_setting_states
-				{
-					hardware_error_occured = 1,
-					default_settings_loaded_successful = 2,
-					crc_failed_using_defaults = 3,
-					settings_saved_successful = 4,
-					settings_save_hardware_error = 5,
-					settings_loaded_successful = 6,
-					settings_load_hardware_error = 5,
-
-				};
-				static s_bit_flag_controller<uint32_t> states;
-				static uint8_t initialize();
-				static uint8_t load_defaults();
-				static uint8_t load_from_disk();
-				static uint8_t save_to_disk();
-				static uint8_t save_wcs(char* pointer_to_object);
-				static uint8_t save_mcs(char* pointer_to_object);
-			};
+			/*
+			Contains all the information to generate motion on the hardware.
+			Steps/mm, accel/decel, arc calculations, spindle config,
+			*/
+			static c_controller Controller;
+			static c_system Machine;
 
 		};
 	};

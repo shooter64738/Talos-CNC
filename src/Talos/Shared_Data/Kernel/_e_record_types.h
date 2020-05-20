@@ -11,5 +11,6 @@
 		System = 6,
 		Empty = 3,
 		Motion_Control_Setting = 4,
+		Interpreter_Setting = 5
 	};
 #endif /* RECORDS_DEF_H */

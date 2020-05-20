@@ -63,14 +63,12 @@ void Coordinator::Main_Process::initialize()
 	
 	Hardware_Abstraction_Layer::Disk::initialize(Coordinator::Main_Process::debug_string);
 
+	Coordinator::Main_Process::host_serial.print_string("Settings load.\r\n");
 	Talos::Configuration::initialize();
 	
-
-	while (1 == 1)
-	{
-	}
-	
+	Coordinator::Main_Process::host_serial.print_string("Default G/M load.\r\n");
 	Hardware_Abstraction_Layer::Disk::load_initialize_block(&Talos::Coordinator::Data::Ngc::active_block);
+
 	Coordinator::Main_Process::host_serial.print_string("Ready to process:\r\n");
 	
 																																				 //Coordinator::Main_Process::host_serial.print_string("hello world!\r\n");

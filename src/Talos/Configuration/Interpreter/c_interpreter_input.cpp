@@ -18,27 +18,18 @@
 *  along with Talos.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "c_configuration.h"
-#include "../Coordinator/coordinator_hardware_def.h"
-#include "../Shared_Data/Kernel/Base/c_kernel_base.h"
+#include "c_interpreter_input.h"
+#include "../../Coordinator/coordinator_hardware_def.h"
+#include "../../Shared_Data/Kernel/Base/c_kernel_base.h"
 
 
-//c_parameters Talos::Configuration::Interpreter::Parameters;
-//c_defaultblock Talos::Configuration::Interpreter::DefaultBlock;
 
-uint8_t Talos::Configuration::initialize()
+//Interpreter input settings
+s_interpreter_settings_encapsulation_configuration c_parameters::Settings;
+uint8_t c_parameters::initialize()
 {
-	//Load configuration for interpreter
-	Interpreter::Parameters.initialize();
-
-	//Load configuration for startup G/M block
-	Interpreter::DefaultBlock.initialize();
-
-	//Load motion controller settings
-	Motion::Controller.initialize();
-
-	//Load motion system settings
-	//Motion::System::initialize();
-
+	Settings.input_process.dialect = e_dialects::Fanuc_A;
+	Settings.input_process.flags.set((int)e_config_bit_flags::DecimalPointInput);
 	return 0;
 }
+

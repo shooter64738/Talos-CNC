@@ -132,6 +132,12 @@
     <Filter Include="Platform_Specific\disk_support\SPI\FatFs">
       <UniqueIdentifier>{8d417bab-898d-4a45-8458-f1b80ff150a4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Configuration\Interpreter">
+      <UniqueIdentifier>{a4df0879-e670-4320-84fd-b3005974e451}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Configuration\Motion">
+      <UniqueIdentifier>{e9004d45-a225-4c96-ba1c-d32b9cefcc52}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="system_stm32h7xx.c">
@@ -646,6 +652,18 @@
     </ClCompile>
     <ClCompile Include="Platform_Specific\disk_support\SPI\Hardware\sd_card.c">
       <Filter>Platform_Specific\disk_support\SPI\Hardware</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Configuration\Interpreter\c_interpreter_base_gmcode.cpp">
+      <Filter>Configuration\Interpreter</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Configuration\Interpreter\c_interpreter_input.cpp">
+      <Filter>Configuration\Interpreter</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Configuration\Motion\c_configuration_motion_controller.cpp">
+      <Filter>Configuration\Motion</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Configuration\Motion\c_configuration_motion_system.cpp">
+      <Filter>Configuration\Motion</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1329,9 +1347,6 @@
     <ClInclude Include="..\..\..\Shared_Data\Kernel\Error\kernel_error_codes_writer.h">
       <Filter>Shared_Data\Kernel\Error</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Shared_Data\Settings\Coordinator\_s_interp_config_struct.h">
-      <Filter>Shared_Data\Settings\Coordinator</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\Shared_Data\Settings\Motion\_s_motion_tolerance_struct.h">
       <Filter>Shared_Data\Settings\Motion</Filter>
     </ClInclude>
@@ -1385,6 +1400,27 @@
     </ClInclude>
     <ClInclude Include="Platform_Specific\sys_clock_configs.h">
       <Filter>Platform_Specific</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared_Data\Settings\Motion\_s_motion_axis_options.h">
+      <Filter>Shared_Data\Settings\Motion</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared_Data\Settings\Coordinator\_s_interpeter_settings_encapsulation.h">
+      <Filter>Shared_Data\Settings\Coordinator</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared_Data\Settings\Coordinator\_s_interpreter_input_processing.h">
+      <Filter>Shared_Data\Settings\Coordinator</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Configuration\Interpreter\c_interpreter_base_gmcode.h">
+      <Filter>Configuration\Interpreter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Configuration\Interpreter\c_interpreter_input.h">
+      <Filter>Configuration\Interpreter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Configuration\Motion\c_configuration_motion_controller.h">
+      <Filter>Configuration\Motion</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Configuration\Motion\c_configuration_motion_system.h">
+      <Filter>Configuration\Motion</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
