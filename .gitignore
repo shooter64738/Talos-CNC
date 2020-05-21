@@ -359,9 +359,7 @@ src/Talos/Platforms/STM32/Talos_STM32H745_Coordinator/xxxxSTM32H7xxxx/BSP/Compon
 src/Talos/Platforms/STM32/Talos_STM32H745_Coordinator/VisualGDB/VisualGDBCache/Talos_STM32H745_Coordinator-Debug/MemoryUtilizationReport.xml
 src/Talos/Platforms/STM32/Talos_STM32H745_Coordinator/Talos_STM32H745_Coordinator.vcxproj.filters
 src/Talos/Platforms/STM32/Talos_STM32H745_Coordinator/Talos_STM32H745_Coordinator.vcxproj
-src/Talos/Platforms/STM32/Talos_STM32H745_Coordinator/Talos_STM32H745_Coordinator.sln
 src/Talos/Platforms/STM32/Talos_STM32H745_Coordinator/Talos_STM32H745_Coordinator.cpp
-src/Talos/Platforms/STM32/Talos_STM32H745_Coordinator/Talos_STM32H745_Coordinator-Release.vgdbsettings
 *.vgdbsettings
 src/Talos/Platforms/STM32/Talos_STM32H745_Coordinator/stm32.xml
 *.filters
@@ -371,4 +369,4 @@ src/Talos/Platforms/STM32/Talos_STM32H745_Coordinator/stm32.xml
 /src/Talos/Platforms/STM32/Talos_STM32H745_Motion/Talos_STM32H745_Motion/stm32.xml
 /src/Talos/Platforms/STM32/Talos_STM32H745_Motion/Talos_STM32H745_Motion/system_stm32h7xx.c
 /src/Talos/Platforms/STM32/Talos_STM32H745_Motion/Talos_STM32H745_Motion/stm32h7xx_hal_conf.h
-/src/Talos/Platforms/STM32/Talos_STM32H745_Motion/Talos_STM32H745_Motion/stm32.props
+*.props
