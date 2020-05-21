@@ -317,6 +317,7 @@
     <ClInclude Include="..\..\..\Shared_Data\Settings\Motion\_s_motion_axis_options.h" />
     <ClInclude Include="..\..\..\Shared_Data\Settings\Motion\_s_motion_control_settings_encapsulation.h" />
     <ClInclude Include="..\..\..\Shared_Data\Settings\Motion\_s_motion_hardware.h" />
+    <ClInclude Include="..\..\..\Shared_Data\Settings\Motion\_s_motion_system.h" />
     <ClInclude Include="..\..\..\Shared_Data\Settings\Motion\_s_motion_tolerance_struct.h" />
     <ClInclude Include="..\..\..\_bit_flag_control.h" />
     <ClInclude Include="..\..\..\_bit_manipulation.h" />

@@ -98,12 +98,12 @@ void Serial::__init_host_comm()
 	/* Peripheral interrupt init*/
 	HAL_NVIC_SetPriority(USART3_IRQn, 0, 0);
 	HAL_NVIC_EnableIRQ(USART3_IRQn);
-	
+
 	host_com_init = true;
-	
+
 	//HAL_UART_Receive_IT(&s_UARTHandle, &byte, 1);
-	
-//SET_BIT(USART3->CR1, USART_CR1_PEIE | USART_CR1_RXNEIE_RXFNEIE);
+
+	SET_BIT(USART3->CR1, USART_CR1_PEIE | USART_CR1_RXNEIE_RXFNEIE);
 }
 
 
@@ -120,16 +120,16 @@ void Serial::__init_host_comm()
 //	}
 //}
 
-uint8_t Serial::send(uint8_t Port, uint8_t * byte)
+uint8_t Serial::send(uint8_t Port, uint8_t* byte)
 {
-			
+
 	switch (Port)
 	{
 	case HOST_CPU_ID:
 		if (host_com_init)
 		{
 			//Wait until we are not transmitting
-			while(!(s_HostUARTHandle.Instance->ISR & UART_FLAG_TC));
+			while (!(s_HostUARTHandle.Instance->ISR & UART_FLAG_TC));
 			s_HostUARTHandle.Instance->TDR = (uint8_t)(*byte);
 		}
 		break;
@@ -159,10 +159,10 @@ void USART3_IRQHandler()
 {
 	//HAL_UART_IRQHandler(&s_UARTHandle);
 	uint32_t IIR = USART3->ISR;   //<--flag clears when we read the ISR
-	if(IIR & USART_FLAG_RXNE) //<-- check to see if this is an RXNE (read data register not empty
+	if (IIR & USART_FLAG_RXNE) //<-- check to see if this is an RXNE (read data register not empty
 	{
 		// read interrupt
-char byte = USART3->RDR;
+		char byte = USART3->RDR;
 		Serial::host_ring_buffer->put(byte);
 		////USART3->ISR &= ~USART_FLAG_RXNE;	          // clear interrupt
 		//uint8_t buffer[] = "XX";

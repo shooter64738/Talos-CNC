@@ -79,7 +79,11 @@ void Coordinator::Main_Process::initialize()
 			int x = 0;
 
 		}
-		Kernel::Report::process(Talos::Coordinator::Data::Ngc::active_block);
+		if (Kernel::CPU::cluster[HOST_CPU_ID].host_events.Inquiry._flag > 0)
+		{
+			Kernel::Report::process(Talos::Coordinator::Data::Ngc::active_block);
+		}
+		
 
 	}
 	//	//Setup the ports and function pointers so we know which cpu is talking and we can report back debug data

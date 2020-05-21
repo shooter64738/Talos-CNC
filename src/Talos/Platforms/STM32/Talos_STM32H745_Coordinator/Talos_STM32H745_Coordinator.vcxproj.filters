@@ -1422,6 +1422,9 @@
     <ClInclude Include="..\..\..\Configuration\Interpreter\c_start_block_gmcode.h">
       <Filter>Configuration\Interpreter</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\Shared_Data\Settings\Motion\_s_motion_system.h">
+      <Filter>Shared_Data\Settings\Motion</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="stm32.xml">

@@ -18,6 +18,9 @@
 *  along with Talos.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "c_configuration_motion_system.h"
+#include "c_motion_system.h"
 #include "../../Coordinator/coordinator_hardware_def.h"
 #include "../../Shared_Data/Kernel/Base/c_kernel_base.h"
+
+
+s_motion_system_settings c_system::Settings;

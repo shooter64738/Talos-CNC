@@ -23,6 +23,7 @@
 
 #include <stdint.h>
 #include "../../_bit_flag_control.h"
+#include "../../Shared_Data/Settings/Motion/_s_motion_system.h"
 
 class c_system
 {
@@ -39,13 +40,9 @@ public:
 		settings_loaded_wrong_version = 8,
 
 	};
-	enum class e_machine_type
-	{
-		mill = 1,
-		lathe = 2,
-		laser = 3,
-		plasma = 4,
-	};
+
+	static s_motion_system_settings Settings;
+
 	static s_bit_flag_controller<uint32_t> states;
 	static uint8_t initialize();
 	static uint8_t load_defaults();
