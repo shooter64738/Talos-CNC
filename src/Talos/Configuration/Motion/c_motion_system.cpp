@@ -18,24 +18,6 @@
 *  along with Talos.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "c_configuration.h"
-#include "../Coordinator/coordinator_hardware_def.h"
-#include "../Shared_Data/Kernel/Base/c_kernel_base.h"
-
-
-uint8_t Talos::Configuration::initialize()
-{
-	//Load configuration for interpreter
-	Interpreter::Parameters.initialize();
-
-	//Load configuration for startup G/M block
-	Interpreter::DefaultBlock.initialize();
-
-	//Load motion controller settings
-	Motion::Controller.initialize();
-
-	//Load motion system settings
-	//Motion::System::initialize();
-
-	return 0;
-}
+#include "c_configuration_motion_system.h"
+#include "../../Coordinator/coordinator_hardware_def.h"
+#include "../../Shared_Data/Kernel/Base/c_kernel_base.h"

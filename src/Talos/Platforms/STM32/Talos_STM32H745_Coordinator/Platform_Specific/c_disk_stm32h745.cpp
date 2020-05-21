@@ -44,6 +44,10 @@ static char _mcs_file_name[9] = "mcs.dat\0";
 static uint32_t _mcs_read_position = 0;
 static uint32_t _mcs_write_position = 0;
 
+static FIL _dflt_blk_file_object;
+static char _dflt_blk_file_name[13] = "dfltblk.dat\0";
+
+
 static FIL _motion_control_settings_file_object;
 static char _motion_control_settings_file_name[14] = "mtnctcfg.dat\0";
 
@@ -99,6 +103,9 @@ uint8_t Disk::initialize(void(*string_writer)(int serial_id, const char* data))
 	((FatResult = f_open(&_mcs_file_object, _mcs_file_name, FA_WRITE | FA_READ | FA_OPEN_ALWAYS)) != FR_OK)
 		? Disk::states.set((int)e_disk_states::mcs_open_error) : Disk::states.set((int)e_disk_states::mcs_open_success);
 
+	((FatResult = f_open(&_dflt_blk_file_object, _dflt_blk_file_name, FA_WRITE | FA_READ | FA_OPEN_ALWAYS)) != FR_OK)
+		? Disk::states.set((int)e_disk_states::default_block_open_error) : Disk::states.set((int)e_disk_states::default_block_open_success);
+
 	((FatResult = f_open(&_motion_control_settings_file_object, _motion_control_settings_file_name, FA_WRITE | FA_READ | FA_OPEN_ALWAYS)) != FR_OK)
 		? Disk::states.set((int)e_disk_states::motion_setting_open_error) : Disk::states.set((int)e_disk_states::motion_setting_open_success);
 
@@ -140,40 +147,26 @@ uint8_t Hardware_Abstraction_Layer::Disk::get_motion_control_settings(char * str
 
 uint8_t Hardware_Abstraction_Layer::Disk::put_motion_control_settings(char* stream, uint16_t size)
 {
-		f_lseek(&_motion_control_settings_file_object, 0);
+	f_lseek(&_motion_control_settings_file_object, 0);
 	return write(_motion_control_settings_file_object, stream, e_file_modes::OpenCreate, size);
 }
 
-uint8_t Hardware_Abstraction_Layer::Disk::load_initialize_block(s_ngc_block* initial_block)
+uint8_t Hardware_Abstraction_Layer::Disk::get_default_block(char * stream, uint16_t size)
 {
-	//default the motion state to canceled
-	initial_block->g_group[NGC_RS274::Groups::G::Motion] = NGC_RS274::G_codes::MOTION_CANCELED;
-	//default plane selection
-	initial_block->g_group[NGC_RS274::Groups::G::PLANE_SELECTION] = NGC_RS274::G_codes::XY_PLANE_SELECTION;
-	//default the machines distance mode to absolute
-	initial_block->g_group[NGC_RS274::Groups::G::DISTANCE_MODE] = NGC_RS274::G_codes::ABSOLUTE_DISANCE_MODE;
-	//default feed rate mode
-	initial_block->g_group[NGC_RS274::Groups::G::Feed_rate_mode] = NGC_RS274::G_codes::FEED_RATE_UNITS_PER_MINUTE_MODE;
-	//default the machines units to inches
-	initial_block->g_group[NGC_RS274::Groups::G::Units] = NGC_RS274::G_codes::MILLIMETER_SYSTEM_SELECTION;
-	//default the machines cutter comp to off
-	initial_block->g_group[NGC_RS274::Groups::G::Cutter_radius_compensation] = NGC_RS274::G_codes::CANCEL_CUTTER_RADIUS_COMPENSATION;
-	//default tool length offset
-	initial_block->g_group[NGC_RS274::Groups::G::Tool_length_offset] = NGC_RS274::G_codes::CANCEL_TOOL_LENGTH_OFFSET;
-	//default tool length offset
-	initial_block->g_group[NGC_RS274::Groups::G::RETURN_MODE_CANNED_CYCLE] = NGC_RS274::G_codes::CANNED_CYCLE_RETURN_TO_Z;
-	//default coordinate system selection
-	initial_block->g_group[NGC_RS274::Groups::G::COORDINATE_SYSTEM_SELECTION] = NGC_RS274::G_codes::MOTION_IN_MACHINE_COORDINATE_SYSTEM;
-	//default path control mode
-	initial_block->g_group[NGC_RS274::Groups::G::PATH_CONTROL_MODE] = NGC_RS274::G_codes::PATH_CONTROL_EXACT_PATH;
-	//default coordinate system type
-	initial_block->g_group[NGC_RS274::Groups::G::RECTANGLAR_POLAR_COORDS_SELECTION] = NGC_RS274::G_codes::RECTANGULAR_COORDINATE_SYSTEM;
-	//default canned cycle return mode
-	initial_block->g_group[NGC_RS274::Groups::G::RETURN_MODE_CANNED_CYCLE] = NGC_RS274::G_codes::CANNED_CYCLE_RETURN_TO_R;
-	//default spindle mode
-	initial_block->m_group[NGC_RS274::Groups::M::SPINDLE] = NGC_RS274::M_codes::SPINDLE_STOP;
-	//default coolant mode
-	initial_block->m_group[NGC_RS274::Groups::M::COOLANT] = NGC_RS274::M_codes::COOLANT_OFF;
+	//If machien config file did not exist create it. 
+	create_file_if_not_exist(_dflt_blk_file_name);
+	f_lseek(&_dflt_blk_file_object, 0);
+
+	uint8_t ret_code = read(_dflt_blk_file_object, stream, e_file_modes::OpenCreate, size);
+	if (ret_code) return ret_code;
+
+	return 0;
+}
+
+uint8_t Hardware_Abstraction_Layer::Disk::put_default_block(char* stream, uint16_t size)
+{
+	f_lseek(&_dflt_blk_file_object, 0);
+	return write(_dflt_blk_file_object, stream, e_file_modes::OpenCreate, size);
 }
 
 uint8_t Hardware_Abstraction_Layer::Disk::put_block(s_ngc_block* write_block)

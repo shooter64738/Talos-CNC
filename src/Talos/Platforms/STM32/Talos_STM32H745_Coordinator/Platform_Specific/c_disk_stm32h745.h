@@ -41,6 +41,7 @@ namespace Hardware_Abstraction_Layer
 			wcs_open_error = 5,
 			mcs_open_error = 6,
 			motion_setting_open_error = 7,
+			default_block_open_error = 8,
 
 			//second 15 (15-31) bits are used for success
 			hardware_success = hardware_error + 15,
@@ -51,6 +52,7 @@ namespace Hardware_Abstraction_Layer
 			wcs_open_success = wcs_open_error + 15,
 			mcs_open_success = mcs_open_error + 15,
 			motion_setting_open_success = motion_setting_open_error + 15,
+			default_block_open_success = default_block_open_error + 15,
 
 		};
 
@@ -64,7 +66,6 @@ namespace Hardware_Abstraction_Layer
 
 		static uint8_t initialize(void(*string_writer)(int serial_id, const char* data));
 		static uint8_t load_configuration();
-		static uint8_t load_initialize_block(s_ngc_block* initial_block);
 
 		static uint8_t read_file(char* filename, char* buffer);
 
@@ -76,6 +77,9 @@ namespace Hardware_Abstraction_Layer
 
 		static uint8_t put_wcs(s_wcs* write_wcs);
 		static uint8_t get_wcs(s_wcs* read_wcs);
+
+		static uint8_t get_default_block(char* stream, uint16_t size);
+		static uint8_t put_default_block(char* stream, uint16_t size);
 
 		static uint8_t get_motion_control_settings(char* stream, uint16_t size);
 		static uint8_t put_motion_control_settings(char* stream, uint16_t size);

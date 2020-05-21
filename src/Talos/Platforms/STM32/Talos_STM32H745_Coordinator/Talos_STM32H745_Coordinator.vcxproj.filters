@@ -653,17 +653,17 @@
     <ClCompile Include="Platform_Specific\disk_support\SPI\Hardware\sd_card.c">
       <Filter>Platform_Specific\disk_support\SPI\Hardware</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Configuration\Interpreter\c_interpreter_base_gmcode.cpp">
-      <Filter>Configuration\Interpreter</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\Configuration\Interpreter\c_interpreter_input.cpp">
       <Filter>Configuration\Interpreter</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Configuration\Motion\c_configuration_motion_controller.cpp">
+    <ClCompile Include="..\..\..\Configuration\Motion\c_motion_system.cpp">
       <Filter>Configuration\Motion</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Configuration\Motion\c_configuration_motion_system.cpp">
+    <ClCompile Include="..\..\..\Configuration\Motion\c_motion_controller.cpp">
       <Filter>Configuration\Motion</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Configuration\Interpreter\c_start_block_gmcode.cpp">
+      <Filter>Configuration\Interpreter</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1410,17 +1410,17 @@
     <ClInclude Include="..\..\..\Shared_Data\Settings\Coordinator\_s_interpreter_input_processing.h">
       <Filter>Shared_Data\Settings\Coordinator</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Configuration\Interpreter\c_interpreter_base_gmcode.h">
-      <Filter>Configuration\Interpreter</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\Configuration\Interpreter\c_interpreter_input.h">
       <Filter>Configuration\Interpreter</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Configuration\Motion\c_configuration_motion_controller.h">
+    <ClInclude Include="..\..\..\Configuration\Motion\c_motion_system.h">
       <Filter>Configuration\Motion</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Configuration\Motion\c_configuration_motion_system.h">
+    <ClInclude Include="..\..\..\Configuration\Motion\c_motion_controller.h">
       <Filter>Configuration\Motion</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Configuration\Interpreter\c_start_block_gmcode.h">
+      <Filter>Configuration\Interpreter</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

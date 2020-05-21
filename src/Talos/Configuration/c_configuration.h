@@ -23,13 +23,9 @@
 
 #include <stdint.h>
 #include "Interpreter/c_interpreter_input.h"
-#include "Interpreter/c_interpreter_base_gmcode.h"
-#include "Motion/c_configuration_motion_controller.h"
-#include "Motion/c_configuration_motion_system.h"
-//#include "../Shared_Data/Settings/Coordinator/_s_interpeter_settings_encapsulation.h"
-//#include "../Shared_Data/Settings/Motion/_s_motion_control_settings_encapsulation.h"
-//#include "../NGC_RS274/_ngc_block_struct.h"
-//#include "../_bit_flag_control.h"
+#include "Interpreter/c_start_block_gmcode.h"
+#include "Motion/c_motion_controller.h"
+#include "Motion/c_motion_system.h"
 
 namespace Talos
 {
