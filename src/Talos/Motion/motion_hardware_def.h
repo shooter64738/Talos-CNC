@@ -6,7 +6,7 @@
  */
 
 //To enable compilation and debugging in Microsoft Visual C++ define MSCV
-#if !defined(__AVR_ATmega328P__) && !defined(__AVR_ATmega2560__) && !defined(__SAM3X8E__)
+#if !defined(__AVR_ATmega328P__) && !defined(__AVR_ATmega2560__) && !defined(__SAM3X8E__) && !defined(__STM32H745ZIQ__)
 #define MSVC
 #endif
 
@@ -54,6 +54,27 @@
 #include "../Platforms/ARM_3X8E/Talos_ARM3X8E_Motion/PlatformSpecific/c_motion_core_arm_3x8e_inputs.h"
 #include "../Platforms/ARM_3X8E/Talos_ARM3X8E_Motion/PlatformSpecific/c_motion_core_arm_3x8e_stepper.h"
 #include "../Platforms/ARM_3X8E/Talos_ARM3X8E_Motion/PlatformSpecific/c_motion_core_arm_3x8e_spindle.h"
+#endif
+
+#ifdef __STM32H745ZIQ__
+#define F_CPU 220000000UL
+#define HOST_CPU_ID 0
+#define CORD_CPU_ID 1
+#define MACH_CPU_ID 2
+#define SPDL_CPU_ID 3
+#define PRPH_CPU_ID 4
+#define MAX_STEP_RATE 172000 //<--This doe not limit anything. It is only for a safety check.
+#define F_CPU 16000000
+#define F_CPU_2 F_CPU/2
+#define _TICKS_PER_MICROSECOND (F_CPU/1000000)
+#include "../Platforms/STM32/Talos_STM32H745_Coordinator/Platform_Specific/c_core_stm32h745.h"
+#include "../Platforms/STM32/Talos_STM32H745_Coordinator/Platform_Specific/c_serial_stm32h745.h"
+#include "../Platforms/STM32/Talos_STM32H745_Coordinator/Platform_Specific/c_disk_stm32h745.h"
+
+#include "../Platforms/WIN32/Talos_WIN32/Motion/Platform Specific/c_motion_core_win_stepper.h"
+#include "../Platforms/WIN32/Talos_WIN32/Motion/Platform Specific/c_motion_core_win_inputs.h"
+#include "../Platforms/WIN32/Talos_WIN32/Motion/Platform Specific/c_motion_core_win_spindle.h"
+
 #endif
 
 #ifdef MSVC
