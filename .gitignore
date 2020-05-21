@@ -364,3 +364,11 @@ src/Talos/Platforms/STM32/Talos_STM32H745_Coordinator/Talos_STM32H745_Coordinato
 src/Talos/Platforms/STM32/Talos_STM32H745_Coordinator/Talos_STM32H745_Coordinator-Release.vgdbsettings
 *.vgdbsettings
 src/Talos/Platforms/STM32/Talos_STM32H745_Coordinator/stm32.xml
+*.filters
+*.vcxproj
+*.sln
+*.cpp
+/src/Talos/Platforms/STM32/Talos_STM32H745_Motion/Talos_STM32H745_Motion/stm32.xml
+/src/Talos/Platforms/STM32/Talos_STM32H745_Motion/Talos_STM32H745_Motion/system_stm32h7xx.c
+/src/Talos/Platforms/STM32/Talos_STM32H745_Motion/Talos_STM32H745_Motion/stm32h7xx_hal_conf.h
+/src/Talos/Platforms/STM32/Talos_STM32H745_Motion/Talos_STM32H745_Motion/stm32.props
