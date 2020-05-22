@@ -667,9 +667,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\Coordinator\coordinator_hardware_def.h">
-      <Filter>Coordinator</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\Coordinator\Serial\c_Serial.h">
       <Filter>Coordinator\Serial</Filter>
     </ClInclude>

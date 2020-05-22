@@ -7,7 +7,7 @@
 #include "c_block_buffer.h"
 #include "c_motion_core.h"
 #include "../motion_hardware_def.h"
-#include "../../Shared Data/_e_ramp_type.h"
+#include "../../Shared_Data/_e_ramp_type.h"
 
 
 namespace Motion_Core

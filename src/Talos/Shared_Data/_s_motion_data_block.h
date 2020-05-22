@@ -2,7 +2,7 @@
 #define _C_MOTION_DATA_BLOCK
 
 #include <stdint.h>
-#include "_e_record_types.h"
+#include "Kernel/_e_record_types.h"
 #include "../physical_machine_parameters.h"
 #include "../NGC_RS274/_ngc_arc_struct.h"
 #include "_e_feed_modes.h"

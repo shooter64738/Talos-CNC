@@ -19,7 +19,7 @@
 */
 
 #include "c_configuration.h"
-#include "../Coordinator/coordinator_hardware_def.h"
+#include "../talos_hardware_def.h"
 #include "../Shared_Data/Kernel/Base/c_kernel_base.h"
 
 

@@ -2,8 +2,8 @@
 #include "c_segment_timer_bresenham.h"
 #include "c_segment_timer_item.h"
 #include "c_motion_core.h"
-#include "../../Shared Data/_s_motion_data_block.h"
-#include "../../Shared Data/_e_feed_modes.h"
+#include "../../Shared_Data/_s_motion_data_block.h"
+#include "../../Shared_Data/_e_feed_modes.h"
 
 namespace Motion_Core
 {

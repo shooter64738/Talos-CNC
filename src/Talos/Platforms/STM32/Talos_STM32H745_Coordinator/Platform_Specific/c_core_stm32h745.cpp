@@ -17,7 +17,7 @@
 *  You should have received a copy of the GNU General Public License
 *  along with Talos.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "../../../../Coordinator/coordinator_hardware_def.h"
+
 #include "c_core_stm32h745.h"
 #include <stm32h7xx_hal.h>
 #include <stm32_hal_legacy.h>
@@ -66,7 +66,7 @@ void stop_interrupts()
 }
 uint32_t Core::get_cpu_clock_rate()
 {
-	return F_CPU;
+	//return F_CPU;
 }
 
 void Core::capture_status_register_SREG()

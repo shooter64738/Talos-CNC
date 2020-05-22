@@ -11,7 +11,7 @@
 
 #include "../Serial/c_Serial.h"
 #include "../motion_hardware_def.h"
-#include "../../Shared Data/_s_motion_data_block.h"
+#include "../../Shared_Data/_s_motion_data_block.h"
 
 
 namespace Motion_Core

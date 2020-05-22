@@ -19,7 +19,7 @@
 */
 
 #include "c_start_block_gmcode.h"
-#include "../../Coordinator/coordinator_hardware_def.h"
+#include "../../talos_hardware_def.h"
 #include "../../Shared_Data/Kernel/Base/c_kernel_base.h"
 #include "../../NGC_RS274/_ngc_g_groups.h"
 #include "../../NGC_RS274/_ngc_m_groups.h"

@@ -1,6 +1,6 @@
 #include <stdint.h>
 #include "c_planner_compute_block.h"
-#include "../../Shared Data/_s_motion_data_block.h"
+#include "../../Shared_Data/_s_motion_data_block.h"
 
 #ifndef __C_SOFTWARE_INTERPOLLATION
 #define __C_SOFTWARE_INTERPOLLATION

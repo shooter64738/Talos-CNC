@@ -3,7 +3,7 @@
 #include <stdint.h>
 #include <stddef.h>
 #include "../../_bit_manipulation.h"
-#include "../../Shared Data/Settings/Motion/_s_motion_control_settings_encapsulation.h"
+#include "../../Shared_Data/Settings/Motion/_s_motion_control_settings_encapsulation.h"
 
 
 //#define MOTION_RECORD 1
