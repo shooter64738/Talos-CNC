@@ -28,7 +28,7 @@ static uint32_t _tool_write_position = 0;
 static std::fstream _text_file_object;
 
 
-uint8_t Hardware_Abstraction_Layer::Disk::initialize()
+uint8_t Hardware_Abstraction_Layer::Disk::initialize(void(*string_writer)(int serial_id, const char* data))
 {
 	_cache_file_object = fstream(_cache_file_name, ios::in | ios::out | ios::app);
 	_cache_file_object.close();

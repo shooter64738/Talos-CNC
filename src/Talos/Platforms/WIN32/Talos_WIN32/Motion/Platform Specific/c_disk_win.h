@@ -34,7 +34,7 @@ namespace Hardware_Abstraction_Layer
 
 		//functions
 	public:
-		static uint8_t initialize();
+		static uint8_t initialize(void(*string_writer)(int serial_id, const char* data));
 		static uint8_t load_configuration();
 		static uint8_t load_initialize_block(s_ngc_block * initial_block);
 

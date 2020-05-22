@@ -424,5 +424,6 @@
     <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Report\c_framework_report.h">
       <Filter>Shared data\FrameWork\Report</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\..\talos_hardware_def.h" />
   </ItemGroup>
 </Project>

@@ -79,7 +79,7 @@ struct s_bit_flag_controller_ex
 
 	bool get_high(int get_value)
 	{
-		return (bool)(BitGet(_flag & 0xFFFF0000, get_value+ bit_offset_size));
+		return (bool)(BitGet(_flag & high_bits, get_value+ bit_offset_size));
 	};
 
 	bool get_clr_low(int get_value)
