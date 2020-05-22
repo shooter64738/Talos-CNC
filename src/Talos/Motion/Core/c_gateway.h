@@ -10,7 +10,7 @@
 #define __C_PROCESSOR_H__
 
 #include "../Serial/c_Serial.h"
-#include "../motion_hardware_def.h"
+#include "../../talos_hardware_def.h"
 #include "../../Shared_Data/_s_motion_data_block.h"
 
 

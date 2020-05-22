@@ -6,7 +6,7 @@
 */
 
 
-#include "../../../../../Motion/motion_hardware_def.h"
+#include "../../../../../talos_hardware_def.h"
 #ifndef __C_MOTIONCORE_WIN_INPUTS_H__
 #define __C_MOTIONCORE_WIN_INPUTS_H__
 #include <stdint.h>

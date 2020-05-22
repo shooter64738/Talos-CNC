@@ -1,5 +1,5 @@
 #include "c_interpollation_hardware.h"
-#include "../motion_hardware_def.h"
+#include "../../talos_hardware_def.h"
 #include "c_motion_core.h"
 
 #ifdef MSVC

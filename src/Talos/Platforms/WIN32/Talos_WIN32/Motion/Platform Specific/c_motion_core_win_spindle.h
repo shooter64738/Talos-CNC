@@ -5,7 +5,7 @@
 * Author: jeff_d
 */
 #include <stdint.h>
-#include "../../../../../Motion/motion_hardware_def.h"
+#include "../../../../../talos_hardware_def.h"
 
 #ifdef MSVC
 

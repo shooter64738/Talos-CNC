@@ -23,9 +23,7 @@ then move to their respective modules.
 #include "../../../Shared_Data/_s_status_record.h"
 #include "../../../Shared_Data/Settings/Motion/_s_motion_control_settings_encapsulation.h"
 #include "../../../Configuration/c_configuration.h"
-//
-//#include <avr/io.h>
-//#include <avr/interrupt.h>
+
 
 #include "../../../Shared_Data/Kernel/Base/c_kernel_base.h"
 

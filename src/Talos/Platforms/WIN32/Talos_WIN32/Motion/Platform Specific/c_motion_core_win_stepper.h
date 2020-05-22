@@ -4,7 +4,7 @@
 * Created: 3/7/2019 10:22:11 AM
 * Author: jeff_d
 */
-#include "../../../../../Motion/motion_hardware_def.h"
+#include "../../../../../talos_hardware_def.h"
 #include "../../../../../Motion/Core/c_motion_core.h"
 #include "../../../../../Motion/Core/c_interpollation_hardware.h"
 #ifdef MSVC

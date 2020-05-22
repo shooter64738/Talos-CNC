@@ -30,11 +30,11 @@ namespace Talos
 			static void initialize();
 			static void run();
 
-			static void debug_string(const char * data);
-			static void debug_int(long data);
-			static void debug_byte(const char data);
-			static void debug_float(float data);
-			static void debug_float_dec(float data, uint8_t decimals);
+			static void debug_string(int port, const char* data);
+			static void debug_int(int port, long data);
+			static void debug_byte(int port, const char data);
+			static void debug_float(int port, float data);
+			static void debug_float_dec(int port, float data, uint8_t decimals);
 
 			//Main_Process();
 			//~Main_Process();
