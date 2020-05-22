@@ -81,6 +81,41 @@ namespace Motion
 				return return_value;
 			}
 
+			uint8_t _convert_ngc_distance(s_ngc_block target_block, s_motion_hardware hw_settings, uint32_t* system_position)
+			{
+				int32_t target_steps[MACHINE_AXIS_COUNT]{ 0 };
+				float unit_vec[MACHINE_AXIS_COUNT]{ 0.0 };
+				float delta_mm = 0.0;
+				uint8_t idx;
+
+				s_bit_flag_controller<uint16_t> bl_comp_flags;
+
+				for (idx = 0; idx < MACHINE_AXIS_COUNT; idx++)
+				{
+					target_steps[idx] = lround(target_block.axis_values[idx] * hw_settings.steps_per_mm[idx]);
+					planning_block->steps[idx] = labs(target_steps[idx] - system_position[idx]);
+
+					planning_block->step_event_count = max(planning_block->step_event_count, planning_block->steps[idx]);
+					delta_mm = (target_steps[idx] - system_position[idx]) / hw_settings.steps_per_mm[idx];
+					unit_vec[idx] = delta_mm;
+
+					__set_backlash_control(delta_mm, idx, &bl_comp_flags)
+				}
+			}
+
+			void __set_backlash_control(float distance, uint8_t axis_id, s_bit_flag_controller<uint16_t> * bl_comp)
+			{
+				if (distance > 0.0)
+				{
+					bl_comp->set(axis_id);
+				}
+				// Set direction bits. Bit enabled always means direction is negative.
+				else if (distance < 0.0)
+				{
+					bl_comp->clear(axis_id);
+					planning_block->direction_bits |= Motion_Core::get_direction_pin_mask(axis_id);
+				}
+			}
 			uint8_t _plan_buffer_line(s_ngc_block target_block, s_motion_hardware hw_settings, uint32_t * system_position)
 			{
 				//this is a 'temporary' get from the buffer. We may find this block has no distance to move and we dont want to advance
