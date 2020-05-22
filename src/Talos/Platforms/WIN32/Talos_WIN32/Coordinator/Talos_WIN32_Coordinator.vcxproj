@@ -12,6 +12,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\Configuration\c_configuration.h" />
+    <ClInclude Include="..\..\..\..\Configuration\Interpreter\c_interpreter_input.h" />
+    <ClInclude Include="..\..\..\..\Configuration\Interpreter\c_start_block_gmcode.h" />
+    <ClInclude Include="..\..\..\..\Configuration\Motion\c_motion_controller.h" />
+    <ClInclude Include="..\..\..\..\Configuration\Motion\c_motion_system.h" />
     <ClInclude Include="..\..\..\..\Coordinator\Processing\Data\DataHandlers\c_ngc_data_handler.h" />
     <ClInclude Include="..\..\..\..\Coordinator\Processing\Data\DataHandlers\c_system_data_handler.h" />
     <ClInclude Include="..\..\..\..\Coordinator\Processing\Events\EventHandlers\c_ngc_data_events.h" />
@@ -78,6 +82,7 @@
     <ClInclude Include="..\..\..\..\Shared_Data\Kernel\_e_record_types.h" />
     <ClInclude Include="..\..\..\..\Shared_Data\Kernel\_e_system_messages.h" />
     <ClInclude Include="..\..\..\..\Shared_Data\Kernel\_s_system_record.h" />
+    <ClInclude Include="..\..\..\..\talos_hardware_def.h" />
     <ClInclude Include="..\..\..\..\_bit_manipulation.h" />
     <ClInclude Include="..\..\..\..\communication_def.h" />
     <ClInclude Include="..\..\..\..\Coordinator\coordinator_hardware_def.h" />
@@ -117,6 +122,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\..\Configuration\c_configuration.cpp" />
+    <ClCompile Include="..\..\..\..\Configuration\Interpreter\c_interpreter_input.cpp" />
+    <ClCompile Include="..\..\..\..\Configuration\Interpreter\c_start_block_gmcode.cpp" />
+    <ClCompile Include="..\..\..\..\Configuration\Motion\c_motion_controller.cpp" />
+    <ClCompile Include="..\..\..\..\Configuration\Motion\c_motion_system.cpp" />
     <ClCompile Include="..\..\..\..\Coordinator\coordinator_main.cpp" />
     <ClCompile Include="..\..\..\..\Coordinator\Processing\Data\DataHandlers\c_binary_data_handler.cpp" />
     <ClCompile Include="..\..\..\..\Coordinator\Processing\Data\DataHandlers\c_ngc_data_handler.cpp" />
@@ -207,7 +216,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions);TALOS_COORDINATOR</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -222,7 +231,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions);TALOS_COORDINATOR</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

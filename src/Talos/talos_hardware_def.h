@@ -148,10 +148,10 @@
 #define MACH_CPU_ID 2
 #define SPDL_CPU_ID 3
 #define PRPH_CPU_ID 4
-#include "../Platforms/WIN32/Talos_WIN32/Coordinator/Platform Specific/c_serial_win.h"
-#include "../Platforms/WIN32/Talos_WIN32/Coordinator/Platform Specific/c_core_win.h"
-#include "../Platforms/WIN32/Talos_WIN32/Coordinator/Platform Specific/c_spi_win.h"
-#include "../Platforms/WIN32/Talos_WIN32/Coordinator/Platform Specific/c_disk_win.h"
+#include "Platforms/WIN32/Talos_WIN32/Coordinator/Platform Specific/c_serial_win.h"
+#include "Platforms/WIN32/Talos_WIN32/Coordinator/Platform Specific/c_core_win.h"
+#include "Platforms/WIN32/Talos_WIN32/Coordinator/Platform Specific/c_spi_win.h"
+#include "Platforms/WIN32/Talos_WIN32/Coordinator/Platform Specific/c_disk_win.h"
 #endif
 
 

@@ -51,6 +51,15 @@ void NGC_RS274::Block_View::load(s_ngc_block *block)
 	this->__assign_canned(block);
 	this->__assign_gcode(block);
 	this->__assign_mcode(block);
+	axis_array[0] = get_word_value('X', block);
+	axis_array[1] = get_word_value('Y', block);
+	axis_array[2] = get_word_value('Z', block);
+	axis_array[3] = get_word_value('A', block);
+	axis_array[4] = get_word_value('B', block);
+	axis_array[5] = get_word_value('C', block);
+	axis_array[6] = get_word_value('U', block);
+	axis_array[7] = get_word_value('V', block);
+	axis_array[8] = get_word_value('W', block);
 }
 
 bool NGC_RS274::Block_View::any_axis_defined(s_ngc_block * block)
@@ -529,6 +538,7 @@ uint8_t NGC_RS274::Block_View::get_axis_number(char axis_letter)
 	}
 	return 0;
 }
+
 
 char NGC_RS274::Block_View::get_axis_letter(uint8_t axis_index)
 {

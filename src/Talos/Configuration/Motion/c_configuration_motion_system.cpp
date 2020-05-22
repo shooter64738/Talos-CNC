@@ -19,5 +19,5 @@
 */
 
 #include "c_motion_system.h"
-#include "../../Coordinator/coordinator_hardware_def.h"
+#include "../../talos_hardware_def.h"
 #include "../../Shared_Data/Kernel/Base/c_kernel_base.h"

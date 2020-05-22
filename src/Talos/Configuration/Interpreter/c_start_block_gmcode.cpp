@@ -66,6 +66,8 @@ uint8_t c_defaultblock::initialize()
 	
 	//Copy the start up block to the first block in the ngc buffer.
 	memcpy(&Talos::Coordinator::Data::Ngc::active_block, &Settings, sizeof(s_ngc_block));
+
+	return 0;
 }
 
 uint8_t c_defaultblock::load_defaults()

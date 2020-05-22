@@ -115,6 +115,8 @@ namespace NGC_RS274
 		s_mcodes current_m_codes;
 
 		s_ngc_block * active_view_block;
+		
+		float * axis_array[9];
 
 		void clear(s_ngc_block *block);
 		void load(s_ngc_block * block);

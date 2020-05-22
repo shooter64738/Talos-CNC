@@ -47,6 +47,8 @@ uint8_t c_controller::initialize()
 	}
 
 	//Do any other prep work on settings, or validations here.. I dont know yet what that might be. 		
+
+	return 0;
 }
 
 uint8_t c_controller::load_defaults()

@@ -9,12 +9,9 @@
 #define __C_DISK_WIN_H__
 
 #include <stdint.h>
-
 #include "../../../../../NGC_RS274/_ngc_block_struct.h"
 #include "../../../../../NGC_RS274/_ngc_tool_struct.h"
 #include "../../../../../NGC_RS274/_ngc_coordinate_struct.h"
-#include "../../../../../Shared_Data/Settings/Motion/_s_motion_control_settings_encapsulation.h"
-#include "c_core_win.h"
 #include<iostream>
 #include<fstream>
 
@@ -37,13 +34,18 @@ namespace Hardware_Abstraction_Layer
 
 		//functions
 	public:
-		static uint8_t initialize();
+		static uint8_t initialize(void(*string_writer)(int serial_id, const char* data));
 		static uint8_t load_configuration();
 		static uint8_t load_initialize_block(s_ngc_block * initial_block);
-		static uint8_t load_motion_control_settings(s_motion_control_settings_encapsulation * motion_settings);
 
 		static uint8_t read_file(char * filename, char * buffer);
 		
+		static uint8_t get_default_block(char * stream, uint16_t size);
+		static uint8_t put_default_block(char * stream, uint16_t size);
+
+		static uint8_t get_motion_control_settings(char * stream, uint16_t size);
+		static uint8_t put_motion_control_settings(char * stream, uint16_t size);
+
 		static uint8_t put_block(s_ngc_block * write_block);
 		static uint8_t get_block(s_ngc_block * read_block);
 
@@ -57,7 +59,7 @@ namespace Hardware_Abstraction_Layer
 		static uint8_t read(const char * filename, char * buffer, e_file_modes mode, uint16_t size, std::fstream &stream_object);
 	protected:
 	private:
-			
+
 
 	};
 };

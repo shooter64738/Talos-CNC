@@ -12,6 +12,7 @@
 
 int main(void)
 {
+
 	Talos::Coordinator::Main_Process::initialize();
 	
 	//Setup the processor HAL

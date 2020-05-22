@@ -5,10 +5,11 @@
 #include "../../physical_machine_parameters.h"
 #include "../../_bit_flag_control.h"
 
-enum class e_axis_direction
+enum class e_block_flags
 {
-	forward = 0,
-	backward = 1,
+	feedmode_change = 0,
+	feed_on_spindle = 1,
+	
 };
 
 struct s_segmented_block
@@ -17,10 +18,11 @@ struct s_segmented_block
 			// NOTE: Used by stepper algorithm to execute the block correctly. Do not alter these values.
 	uint32_t steps[MACHINE_AXIS_COUNT];    // Step count along each axis
 	uint32_t step_event_count; // The maximum step axis count and number of steps required to complete this block.
-	uint8_t direction_bits;    // The direction bit set for this block (refers to *_DIRECTION_BIT in config.h)
+	s_bit_flag_controller<uint16_t> direction_bits;    // The direction bit set for this block (refers to *_DIRECTION_BIT in config.h)
+	s_bit_flag_controller<uint16_t> bl_comp_bits;//Direction changes are tracked and bit flags are set per axis for bl comp.
 
-							   // Block condition data to ensure correct execution depending on states and overrides.
-	uint8_t condition;      // Block bitflag variable defining block run conditions. Copied from pl_line_data.
+						  // Block condition data to ensure correct execution depending on states and overrides.
+	uint8_t condition;    // Block bitflag variable defining block run conditions. Copied from pl_line_data.
 	int32_t line_number;  // Block line number for real-time reporting. Copied from pl_line_data.
 
 						  // Fields used by the motion planner to manage acceleration. Some of these values may be updated

@@ -94,6 +94,12 @@
     <Filter Include="Shared Data\Kernel\Start">
       <UniqueIdentifier>{1aef5480-ef51-494d-9b64-7d79f948b0b0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Configuration\Motion">
+      <UniqueIdentifier>{8bdf9097-0fe0-4e92-acb4-e9853c28bd8f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Configuration\Interpreter">
+      <UniqueIdentifier>{0cdc7dff-0cb4-4773-a4a4-eec46cae5587}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\communication_def.h" />
@@ -395,6 +401,19 @@
     <ClInclude Include="..\..\..\..\Shared_Data\Kernel\Start\c_kernel_start.h">
       <Filter>Shared Data\Kernel\Start</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\..\talos_hardware_def.h" />
+    <ClInclude Include="..\..\..\..\Configuration\Motion\c_motion_system.h">
+      <Filter>Configuration\Motion</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Configuration\Motion\c_motion_controller.h">
+      <Filter>Configuration\Motion</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Configuration\Interpreter\c_interpreter_input.h">
+      <Filter>Configuration\Interpreter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Configuration\Interpreter\c_start_block_gmcode.h">
+      <Filter>Configuration\Interpreter</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\..\Coordinator\coordinator_main.cpp">
@@ -528,6 +547,18 @@
     </ClCompile>
     <ClCompile Include="..\..\..\..\Shared_Data\Kernel\Start\c_kernel_start.cpp">
       <Filter>Shared Data\Kernel\Start</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Configuration\Motion\c_motion_system.cpp">
+      <Filter>Configuration\Motion</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Configuration\Motion\c_motion_controller.cpp">
+      <Filter>Configuration\Motion</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Configuration\Interpreter\c_interpreter_input.cpp">
+      <Filter>Configuration\Interpreter</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Configuration\Interpreter\c_start_block_gmcode.cpp">
+      <Filter>Configuration\Interpreter</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -18,6 +18,8 @@
 *  You should have received a copy of the GNU General Public License
 *  along with Talos.  If not, see <http://www.gnu.org/licenses/>.
 */
+#include "../../../../../talos_hardware_def.h"
+#ifdef MSVC//<--This will stop the multiple ISR definition error
 
 #ifndef __C_CORE_WIN_H__
 #define __C_CORE_WIN_H__
@@ -34,13 +36,13 @@ namespace Hardware_Abstraction_Layer
 		//variables
 		public:
 			static uint16_t delay_count_down;
-			static uint32_t cpu_tick_ms;
+			static uint32_t *cpu_tick_ms;
 		protected:
 		private:
 
 		//functions
 		public:
-		static uint8_t initialize();
+		static void initialize();
 		static void critical_shutdown();
 		static void set_time_delay(uint8_t delay);
 		static uint8_t start_interrupts();
@@ -57,3 +59,4 @@ namespace Hardware_Abstraction_Layer
 	};
 };
 #endif //__C_CORE_WIN_H__
+#endif

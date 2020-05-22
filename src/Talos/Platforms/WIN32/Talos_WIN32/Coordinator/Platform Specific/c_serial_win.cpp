@@ -26,7 +26,7 @@ void Hardware_Abstraction_Layer::Serial::initialize(uint8_t Port, uint32_t BaudR
 }
 
 static bool loop = false;
-uint8_t Hardware_Abstraction_Layer::Serial::send(uint8_t Port, char byte)
+uint8_t Hardware_Abstraction_Layer::Serial::send(uint8_t Port, uint8_t * byte)
 {
 	//if (loop)
 	//Hardware_Abstraction_Layer::Serial::add_to_buffer(Port, byte);

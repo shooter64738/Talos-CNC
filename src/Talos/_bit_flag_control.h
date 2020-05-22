@@ -48,22 +48,39 @@ struct s_bit_flag_controller
 		_flag = 0;
 	};
 
-	volatile TN _flag;//because this can be accessed by interrupts, i am making it volatile
+	volatile TN _flag = 0;//because this can be accessed by interrupts, i am making it volatile
 };
+
+
 #define low_bits 0x0000FFFF
 #define high_bits 0xFFFF0000
-#define bit_offset_size 15
+
 template <typename TN>//Uses 1/2 the bits in the flag to determine state and compares to the other half
 struct s_bit_flag_controller_ex
 {
+	uint8_t half_bits = 0;
+	s_bit_flag_controller_ex()
+	{
+		half_bits = __bit_offset_size();
+	}
+
+	uint8_t __bit_offset_size()
+	{
+		return (sizeof(uint8_t) * 8) / 2;
+	}
+
+	/*
+	Specify only the LOW bit. The high bit will be calculated.
+	Returns true if both the hi and lo bits are set. Returns false otherwise.
+	*/
 	bool get(int get_value)
 	{
-		uint8_t low_bit = 0;
-		uint8_t high_bit = 0;
+		uint8_t low_bit = get_value;
+		uint8_t high_bit = get_value + half_bits;
 
-		if (get_value > sizeof(TN) / 2)
+		if (get_value > half_bits)
 		{
-			low_bit = get_value - (sizeof(TN) / 2);
+			low_bit = get_value - half_bits;
 			high_bit = get_value;
 		}
 
@@ -72,14 +89,35 @@ struct s_bit_flag_controller_ex
 
 	};
 
+	/*
+	Specify only the LOW bit. The high bit will be calculated.
+	Returns true if the hi and lo bits are different. Returns false otherwise.
+	*/
+	bool get_inv(int get_value)
+	{
+		uint8_t low_bit = get_value;
+		uint8_t high_bit = get_value + half_bits;
+
+		if (get_value > half_bits)
+		{
+			low_bit = get_value - half_bits;
+			high_bit = get_value;
+		}
+
+		//return true or false if the high and low bits are different
+		return ((bool)(BitGet(_flag, low_bit)) != (bool)(BitGet(_flag, high_bit)));
+
+	};
+
 	bool get_low(int get_value)
 	{
 		return (bool)(BitGet(_flag & low_bits, get_value));
 	};
 
+	//Specify only the LOW bit. The high bit will be calculated.
 	bool get_high(int get_value)
 	{
-		return (bool)(BitGet(_flag & high_bits, get_value+ bit_offset_size));
+		return (bool)(BitGet(_flag & high_bits, get_value + half_bits));
 	};
 
 	bool get_clr_low(int get_value)
@@ -88,10 +126,11 @@ struct s_bit_flag_controller_ex
 		clear_low(get_value);
 		return ret;
 	};
-	
+
+	//Specify only the LOW bit. The high bit will be calculated.
 	bool get_clr_high(int get_value)
 	{
-		bool ret = (BitGet(_flag & high_bits, get_value + bit_offset_size));
+		bool ret = (BitGet(_flag & high_bits, get_value + half_bits));
 		clear_high(get_value);
 		return ret;
 	};
@@ -101,9 +140,10 @@ struct s_bit_flag_controller_ex
 		BitFlp(_flag & low_bits, flip_value);
 	};
 
+	//Specify only the LOW bit. The high bit will be calculated.
 	void flip_high(int flip_value)
 	{
-		BitFlp(_flag & high_bits, flip_value + bit_offset_size);
+		BitFlp(_flag & high_bits, flip_value + half_bits);
 	};
 
 	void set_low(int set_value)
@@ -111,9 +151,10 @@ struct s_bit_flag_controller_ex
 		BitSet_(_flag, set_value);
 	};
 
+	//Specify only the LOW bit. The high bit will be calculated.
 	void set_high(int set_value)
 	{
-		BitSet_(_flag, set_value + bit_offset_size);
+		BitSet_(_flag, set_value + half_bits);
 	};
 
 	void set_low(bool bit_value, int bit_num)
@@ -124,12 +165,13 @@ struct s_bit_flag_controller_ex
 			BitClr_(_flag, bit_num);
 	};
 
+	//Specify only the LOW bit. The high bit will be calculated.
 	void set_high(bool bit_value, int bit_num)
 	{
 		if (bit_value)
-			BitSet_(_flag, bit_num+bit_offset_size);
+			BitSet_(_flag, bit_num + half_bits);
 		else
-			BitClr_(_flag, bit_num + bit_offset_size);
+			BitClr_(_flag, bit_num + half_bits);
 	};
 
 	void clear_low(int clear_value)
@@ -137,9 +179,10 @@ struct s_bit_flag_controller_ex
 		BitClr_(_flag, clear_value);
 	};
 
+	//Specify only the LOW bit. The high bit will be calculated.
 	void clear_high(int clear_value)
 	{
-		BitClr_(_flag, clear_value+bit_offset_size);
+		BitClr_(_flag, clear_value + half_bits);
 	};
 
 	void reset()
@@ -147,7 +190,7 @@ struct s_bit_flag_controller_ex
 		_flag = 0;
 	};
 
-	volatile TN _flag;//because this can be accessed by interrupts, i am making it volatile
+	volatile TN _flag = 0;//because this can be accessed by interrupts, i am making it volatile
 };
 
 #endif

@@ -88,6 +88,9 @@
     <Filter Include="Shared data\FrameWork\Report">
       <UniqueIdentifier>{a303188e-45a2-42b7-b07b-15158801eeb8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Motion\NewCore">
+      <UniqueIdentifier>{35c92a49-a6b5-4e7f-b263-57e6172c1287}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\..\Motion\motion_main.cpp">
@@ -215,6 +218,12 @@
     </ClCompile>
     <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Report\c_framework_report.cpp">
       <Filter>Shared data\FrameWork\Report</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Motion\NewCore\c_ngc_input.cpp">
+      <Filter>Motion\NewCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Motion\NewCore\c_ngc_to_segment.cpp">
+      <Filter>Motion\NewCore</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -425,5 +434,14 @@
       <Filter>Shared data\FrameWork\Report</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\talos_hardware_def.h" />
+    <ClInclude Include="..\..\..\..\Motion\NewCore\c_ngc_input.h">
+      <Filter>Motion\NewCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Motion\NewCore\c_ngc_to_segment.h">
+      <Filter>Motion\NewCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Motion\NewCore\s_segmented_block.h">
+      <Filter>Motion\NewCore</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

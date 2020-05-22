@@ -19,9 +19,8 @@
 */
 
 #include "c_core_win.h"
-#include "../../../../../Coordinator/coordinator_hardware_def.h"
-uint16_t Hardware_Abstraction_Layer::Core::delay_count_down = 0;
-uint32_t Hardware_Abstraction_Layer::Core::cpu_tick_ms = 0;
+uint16_t Hardware_Abstraction_Layer::Core::delay_count_down;
+uint32_t *Hardware_Abstraction_Layer::Core::cpu_tick_ms = 0;
 
 void Hardware_Abstraction_Layer::Core::critical_shutdown()
 {
@@ -33,10 +32,9 @@ void Hardware_Abstraction_Layer::Core::set_time_delay(uint8_t delay)
 
 }
 
-uint8_t Hardware_Abstraction_Layer::Core::initialize()
+void Hardware_Abstraction_Layer::Core::initialize()
 {
 	//This is the win core. 
-	return 0;
 }
 uint8_t Hardware_Abstraction_Layer::Core::start_interrupts()
 {
