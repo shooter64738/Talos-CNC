@@ -1,0 +1,50 @@
+﻿<Window x:Class="UI.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:UI"
+        mc:Ignorable="d"
+        Title="Talos CNC Configuration and Setup" Height="716.314" Width="1426.039" WindowState="Maximized">
+
+    <Grid Name="baseGrid" Loaded="Grid_Loaded">
+        <TextBlock Name="securityWarning" Text="Loading configurations..."
+                       VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="20" FontWeight="Bold" TextWrapping="Wrap"/>
+        <WrapPanel Orientation="Horizontal" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  Name="parentGrid">
+            
+
+            <!--<local:Tile Height="200" Width="350" Background="#FF4DAEB5" Margin="15" CustomClick="UAT_Settings_Click" 
+                        Description="Setup and configuration of the UAT utiltiy to manipulate data between production and UAT."
+                        Title="UAT Settings" Icon="C:\TFS\4Sight\Production\CD_Sandbox\jDill\Data Migration and Merge Utility\UAT\icons\settings.png"
+                        />-->
+            <!--<local:Tile Height="200" Width="350" Background="#FF4DB552" Margin="15" CustomClick="UAT_Data_Click" 
+                        Description="Copies/updates data from the 4sight production system to the UAT system."
+                        Title="UAT Data Copy" Icon="C:\TFS\4Sight\Production\CD_Sandbox\jDill\Data Migration and Merge Utility\UAT\icons\icons8-computers-connecting-96.png"
+                        />-->
+            <!--<local:Tile Height="200" Width="350" Background="#FFD68513" Margin="15" CustomClick="UAT_Configuration_Synch_Click"
+                        Description="This can saying anything I want to say..."
+                        Title="Configuration Synch" Icon="C:\TFS\4Sight\Production\CD_Sandbox\jDill\Data Migration and Merge Utility\UAT\icons\icons8-repeat-one-96.png"
+                        />-->
+            <!--<local:Tile Height="200" Width="350" Background="#FF555BBE" Margin="15"
+                        Description="Change the server names on the UAT system. This does not affect the production environment."
+                        Title="Renaming" Icon="C:\TFS\4Sight\Production\CD_Sandbox\jDill\Data Migration and Merge Utility\UAT\icons\icons8-windows-explorer-96.png"
+                        />
+            <local:Tile Height="200" Width="350" Background="#FF333333" Margin="15"
+                        Description="Adminstrative audit of the activity performed by this tool on the UAT system."
+                        Title="Audit" Icon="C:\TFS\4Sight\Production\CD_Sandbox\jDill\Data Migration and Merge Utility\UAT\icons\history.png"
+                        />
+            <local:Tile Height="200" Width="350" Background="#FF781768" Margin="15"
+                        Description="This is a purple tile.."
+                        Title="Purple"
+                        />
+            <local:Tile Height="200" Width="350" Background="#FF00" Margin="15" CustomClick="Uat_Yellow"
+                        Description="Yellow tile.."
+                        Title="Yellow"  Icon="C:\TFS\4Sight\Production\CD_Sandbox\jDill\Data Migration and Merge Utility\UAT\icons\history.png"
+                        />-->
+        </WrapPanel>
+        <Grid Name="childGrid" Grid.Row="0" Grid.Column="0" Grid.RowSpan="5" Grid.ColumnSpan="5">
+
+        </Grid>
+    </Grid>
+
+</Window>
