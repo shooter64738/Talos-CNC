@@ -19,10 +19,23 @@
 */
 
 #include "c_configuration.h"
-s_interpreter_configuration Talos::Confguration::Interpreter::Parameters;
-uint8_t Talos::Confguration::Interpreter::initialize()
+#include "../Coordinator/coordinator_hardware_def.h"
+#include "../Shared_Data/Kernel/Base/c_kernel_base.h"
+
+
+uint8_t Talos::Configuration::initialize()
 {
-	Talos::Confguration::Interpreter::Parameters.dialect = e_dialects::Fanuc_A;
-	//Talos::Confguration::Interpreter::Parameters.flags.set((int)e_config_bit_flags::DecimalPointInput);
+	//Load configuration for interpreter
+	Interpreter::Parameters.initialize();
+
+	//Load configuration for startup G/M block
+	Interpreter::DefaultBlock.initialize();
+
+	//Load motion controller settings
+	Motion::Controller.initialize();
+
+	//Load motion system settings
+	//Motion::System::initialize();
+
 	return 0;
 }

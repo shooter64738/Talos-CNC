@@ -251,11 +251,18 @@ bool c_cpu::__check_data()
 	}
 	else
 	{
-		ADD_2_STK_RTN_FALSE_IF_CALL_FALSE(cdh_r_get_message_type(&this->hw_data_buffer)
-			, this->ID, ERR_CPU::BASE, ERR_CPU::METHOD::__check_data, ERR_CPU::METHOD::cdh_r_get_message_type);//<--get message type, configure reader
-
-		ADD_2_STK_RTN_FALSE_IF_CALL_FALSE(cdh_r_read()
-			, this->ID, ERR_CPU::BASE, ERR_CPU::METHOD::__check_data, ERR_CPU::METHOD::cdh_r_read);//<--read what is already in the buffer, if its nto all there, we get it on the next loop
+		uint8_t ret = cdh_r_get_message_type(&this->hw_data_buffer);
+		if (ret == 2)
+		{
+			//this just means we read a throw away byte from a text record (cr or lf)
+			cdh_r_is_busy = 0;
+			return true;
+		}
+		else if (ret == 1)
+		{
+			ADD_2_STK_RTN_FALSE_IF_CALL_FALSE(cdh_r_read()
+				, this->ID, ERR_CPU::BASE, ERR_CPU::METHOD::__check_data, ERR_CPU::METHOD::cdh_r_read);//<--read what is already in the buffer, if its nto all there, we get it on the next loop
+		}
 	}
 	return true;
 }
@@ -281,7 +288,7 @@ bool c_cpu::__check_health()
 
 //Reader Code
 
-bool c_cpu::cdh_r_get_message_type(c_ring_buffer<char>* buffer)
+uint8_t c_cpu::cdh_r_get_message_type(c_ring_buffer<char>* buffer)
 {
 	dvc_source = &__rcving_buffers[SERIAL];
 
@@ -299,12 +306,12 @@ bool c_cpu::cdh_r_get_message_type(c_ring_buffer<char>* buffer)
 			//txt record started with Cr or LF. throw it away
 			buffer->get();
 			__read_size = 0;
-			return true;
+			cdh_r_is_busy = 2;
 		}
 		else
 		{
 
-			cdh_r_is_busy = true;
+			cdh_r_is_busy = 1;
 			__read_size = 256;
 			dvc_source->active_rcv_buffer = __rcving_buffers[SERIAL].get();
 			ADD_2_STK_RTN_FALSE_IF_OBJECT_NULL(dvc_source->active_rcv_buffer, 0, ERR_RDR::BASE, ERR_RDR::METHOD::cdh_r_get_message_type, ERR_RDR::METHOD::LINE::txt_buffer_over_run);
@@ -313,7 +320,7 @@ bool c_cpu::cdh_r_get_message_type(c_ring_buffer<char>* buffer)
 	}
 	else if (peek_tail == (int)e_record_types::System)
 	{
-		cdh_r_is_busy = true;
+		cdh_r_is_busy = 1;
 		__read_size = sizeof(s_control_message);
 		dvc_source->active_rcv_buffer = dvc_source->get();
 		ADD_2_STK_RTN_FALSE_IF_OBJECT_NULL(dvc_source->active_rcv_buffer, 0, ERR_RDR::BASE, ERR_RDR::METHOD::cdh_r_get_message_type, ERR_RDR::METHOD::LINE::sys_buffer_over_run);
@@ -323,12 +330,12 @@ bool c_cpu::cdh_r_get_message_type(c_ring_buffer<char>* buffer)
 	else if (peek_tail > 127) //non-printable and above 127 is a control code
 	{
 		Talos::Kernel::Error::raise_error(ERR_RDR::BASE, ERR_RDR::METHOD::cdh_r_get_message_type, ERR_RDR::METHOD::LINE::record_type_called_on_invalid_data, 0);
-		cdh_r_is_busy = false;
+		cdh_r_is_busy = 0;
 	}
 	else
 	{
 		Talos::Kernel::Error::raise_error(ERR_RDR::BASE, ERR_RDR::METHOD::cdh_r_get_message_type, ERR_RDR::METHOD::LINE::record_type_called_on_null_data, 0);
-		cdh_r_is_busy = false;
+		cdh_r_is_busy = 0;
 	}
 
 	if (cdh_r_is_busy)
@@ -404,7 +411,7 @@ bool c_cpu::__cdh_r_close_read()
 		uint16_t system_crc = dvc_source->active_rcv_buffer->overlays.system_control.crc;
 
 		//crcs are always calcualted with the current crc value ignored.
-		uint16_t new_crc = Talos::Kernel::Base::CRC::generate(this->__pntr_active_rcv_buffer, sizeof(s_control_message) - CRC_BYTE_SIZE);
+		uint16_t new_crc = Talos::Kernel::Base::kernel_crc::generate(this->__pntr_active_rcv_buffer, sizeof(s_control_message) - KERNEL_CRC_BYTE_SIZE);
 		if (system_crc != new_crc)
 		{
 			ADD_2_STK_RTN_FALSE(0, ERR_RDR::BASE, ERR_RDR::METHOD::__cdh_r_close_read, ERR_RDR::METHOD::LINE::crc_failed_system_record);
@@ -416,9 +423,9 @@ bool c_cpu::__cdh_r_close_read()
 			uint16_t addendum_crc = *dvc_source->active_rcv_buffer->addendum_crc_value;
 
 			//crcs are always calcualted with the current crc value ignored. This check must skip over the system rec
-			uint16_t new_crc = Talos::Kernel::Base::CRC::generate(
+			uint16_t new_crc = Talos::Kernel::Base::kernel_crc::generate(
 				(this->__pntr_active_rcv_buffer + sizeof(s_control_message))
-				, dvc_source->active_rcv_buffer->addendum_size - CRC_BYTE_SIZE);
+				, dvc_source->active_rcv_buffer->addendum_size - KERNEL_CRC_BYTE_SIZE);
 			if (addendum_crc != new_crc)
 			{
 				ADD_2_STK_RTN_FALSE(0, ERR_RDR::BASE, ERR_RDR::METHOD::__cdh_r_close_read, ERR_RDR::METHOD::LINE::crc_failed_addendum_record);

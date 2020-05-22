@@ -1,5 +1,5 @@
 /*
-*  c_events.h - NGC_RS274 controller.
+*  c_events.cpp - NGC_RS274 controller.
 *  A component of Talos
 *
 *  Copyright (c) 2016-2019 Jeff Dill
@@ -18,25 +18,9 @@
 *  along with Talos.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef __C_INTERPRETER_CONFIGURATION_STRUCT_H__
-#define __C_INTERPRETER_CONFIGURATION_STRUCT_H__
+#include "c_motion_system.h"
+#include "../../Coordinator/coordinator_hardware_def.h"
+#include "../../Shared_Data/Kernel/Base/c_kernel_base.h"
 
 
-#include "../../../NGC_RS274/_ngc_dialect_enum.h"
-#include "../../../_bit_flag_control.h"
-
-#define LEAST_INPUT_INCRIMET_MM 0.001
-#define LEAST_INPUT_INCRIMET_INCH 0.0001
-
-enum class e_config_bit_flags
-{
-	DecimalPointInput = 0, //Fanuc parameter 3401 or 2400. 0 = least input, 1 = pocket calculator
-};
-
-struct s_interpreter_configuration
-{
-	s_bit_flag_controller<uint32_t> flags;
-	e_dialects dialect;
-
-};
-#endif //__C_EVENTS_H__
+s_motion_system_settings c_system::Settings;

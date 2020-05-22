@@ -4,6 +4,8 @@
 #include <stdint.h>
 #include <stddef.h>
 
+
+
 #include "../Error/c_kernel_error.h"
 #include "../Comm/c_kernel_comm.h"
 #include "../CPU/c_kernel_cpu.h"
@@ -26,8 +28,9 @@ namespace Talos
 			static void f_initialize();
 			static bool print_rx_diagnostic;
 			static bool print_tx_diagnostic;
+			static bool check_version(char* check_version);
 
-			class CRC
+			class kernel_crc
 			{
 			public:
 				static uint16_t generate(char* data_p, uint8_t length);

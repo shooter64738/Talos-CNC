@@ -22,33 +22,34 @@
 #define __C_CONFIGURATION_H__
 
 #include <stdint.h>
-#include "../Shared_Data/Settings/Coordinator/_s_interp_config_struct.h"
+#include "Interpreter/c_interpreter_input.h"
+#include "Interpreter/c_start_block_gmcode.h"
+#include "Motion/c_motion_controller.h"
+#include "Motion/c_motion_system.h"
+
 namespace Talos
 {
-	namespace Confguration
+	namespace Configuration
 	{
-		class Interpreter
-		{
-			//variables
-			public:
-				static s_interpreter_configuration Parameters;
-			protected:
-			private:
 
-
-			//functions
-			public:
-				static uint8_t initialize();
-			protected:
-			private:
-		};
-		
 		//call to initialize all
-		static uint8_t initialize()
+		extern uint8_t initialize();
+
+		namespace Interpreter
 		{
-			Interpreter::initialize();
-			return 0;
-		}
+			static c_parameters Parameters;
+			static c_defaultblock DefaultBlock;
+		};
+		namespace Motion
+		{
+			/*
+			Contains all the information to generate motion on the hardware.
+			Steps/mm, accel/decel, arc calculations, spindle config,
+			*/
+			static c_controller Controller;
+			static c_system Machine;
+
+		};
 	};
 };
 #endif //__C_EVENTS_H__

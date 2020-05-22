@@ -26,7 +26,7 @@
 
 void NGC_RS274::Dialect::Validate::set_fanuc_decimal_by_parameter(uint8_t word, float * word_value, float factor)
 {
-	float multiplier = Talos::Confguration::Interpreter::Parameters.flags.get((int)e_config_bit_flags::DecimalPointInput) ? factor : 1;
+	float multiplier = Talos::Configuration::Interpreter::Parameters.Settings.input_process.flags.get((int)e_config_bit_flags::DecimalPointInput) ? factor : 1;
 
 	//XYZUVWABCIJKQRF - mill words
 	//XYZUVWABCIJKRF - turn words

@@ -43,6 +43,7 @@
     <ClCompile>
       <AdditionalIncludeDirectories>STM32H7xxxx;%(ClCompile.AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>DEBUG=1;__STM32__;DEBUG_DEFAULT_INTERRUPT_HANDLERS;%(ClCompile.PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Optimization>O0</Optimization>
     </ClCompile>
     <Link>
       <AdditionalLinkerInputs>;%(Link.AdditionalLinkerInputs)</AdditionalLinkerInputs>
@@ -51,13 +52,15 @@
       <LinkerScript />
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Configuration\c_configuration.cpp" />
+    <ClCompile Include="..\..\..\Configuration\Interpreter\c_start_block_gmcode.cpp" />
+    <ClCompile Include="..\..\..\Configuration\Interpreter\c_interpreter_input.cpp" />
+    <ClCompile Include="..\..\..\Configuration\Motion\c_motion_controller.cpp" />
+    <ClCompile Include="..\..\..\Configuration\Motion\c_motion_system.cpp" />
     <ClCompile Include="..\..\..\Coordinator\coordinator_main.cpp" />
     <ClCompile Include="..\..\..\Coordinator\Processing\Data\DataHandlers\c_binary_data_handler.cpp" />
     <ClCompile Include="..\..\..\Coordinator\Processing\Data\DataHandlers\c_ngc_data_handler.cpp" />
@@ -217,10 +220,22 @@
     <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_ll_usart.c" />
     <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_ll_usb.c" />
     <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_ll_utils.c" />
+    <ClCompile Include="Platform_Specific\c_spi_stm32h745.cpp" />
+    <ClCompile Include="Platform_Specific\disk_support\SPI\FatFs\diskio.c" />
+    <ClCompile Include="Platform_Specific\disk_support\SPI\FatFs\ff.c" />
+    <ClCompile Include="Platform_Specific\disk_support\SPI\FatFs\ffsystem.c" />
+    <ClCompile Include="Platform_Specific\disk_support\SPI\FatFs\ffunicode.c" />
+    <ClCompile Include="Platform_Specific\disk_support\SPI\Hardware\hardware_config.c" />
+    <ClCompile Include="Platform_Specific\disk_support\SPI\Hardware\hardware_io.c" />
+    <ClCompile Include="Platform_Specific\disk_support\SPI\Hardware\sd_card.c" />
     <ClCompile Include="system_stm32h7xx.c" />
     <None Include="stm32.props" />
     <ClInclude Include="..\..\..\communication_def.h" />
     <ClInclude Include="..\..\..\Configuration\c_configuration.h" />
+    <ClInclude Include="..\..\..\Configuration\Interpreter\c_start_block_gmcode.h" />
+    <ClInclude Include="..\..\..\Configuration\Interpreter\c_interpreter_input.h" />
+    <ClInclude Include="..\..\..\Configuration\Motion\c_motion_controller.h" />
+    <ClInclude Include="..\..\..\Configuration\Motion\c_motion_system.h" />
     <ClInclude Include="..\..\..\Coordinator\coordinator_hardware_def.h" />
     <ClInclude Include="..\..\..\Coordinator\Processing\Data\DataHandlers\c_binary_data_handler.h" />
     <ClInclude Include="..\..\..\Coordinator\Processing\Data\DataHandlers\c_ngc_data_handler.h" />
@@ -297,9 +312,12 @@
     <ClInclude Include="..\..\..\Shared_Data\Kernel\_e_record_types.h" />
     <ClInclude Include="..\..\..\Shared_Data\Kernel\_e_system_messages.h" />
     <ClInclude Include="..\..\..\Shared_Data\Kernel\_s_system_record.h" />
-    <ClInclude Include="..\..\..\Shared_Data\Settings\Coordinator\_s_interp_config_struct.h" />
+    <ClInclude Include="..\..\..\Shared_Data\Settings\Coordinator\_s_interpreter_input_processing.h" />
+    <ClInclude Include="..\..\..\Shared_Data\Settings\Coordinator\_s_interpeter_settings_encapsulation.h" />
+    <ClInclude Include="..\..\..\Shared_Data\Settings\Motion\_s_motion_axis_options.h" />
     <ClInclude Include="..\..\..\Shared_Data\Settings\Motion\_s_motion_control_settings_encapsulation.h" />
     <ClInclude Include="..\..\..\Shared_Data\Settings\Motion\_s_motion_hardware.h" />
+    <ClInclude Include="..\..\..\Shared_Data\Settings\Motion\_s_motion_system.h" />
     <ClInclude Include="..\..\..\Shared_Data\Settings\Motion\_s_motion_tolerance_struct.h" />
     <ClInclude Include="..\..\..\_bit_flag_control.h" />
     <ClInclude Include="..\..\..\_bit_manipulation.h" />
@@ -460,6 +478,14 @@
     <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_usb.h" />
     <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_utils.h" />
     <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_wwdg.h" />
+    <ClInclude Include="Platform_Specific\c_spi_stm32h745.h" />
+    <ClInclude Include="Platform_Specific\disk_support\SPI\FatFs\diskio.h" />
+    <ClInclude Include="Platform_Specific\disk_support\SPI\FatFs\ff.h" />
+    <ClInclude Include="Platform_Specific\disk_support\SPI\FatFs\ffconf.h" />
+    <ClInclude Include="Platform_Specific\disk_support\SPI\Hardware\hardware_config.h" />
+    <ClInclude Include="Platform_Specific\disk_support\SPI\Hardware\hardware_io.h" />
+    <ClInclude Include="Platform_Specific\disk_support\SPI\Hardware\sd_card.h" />
+    <ClInclude Include="Platform_Specific\sys_clock_configs.h" />
     <ClInclude Include="stm32h7xx_hal_conf.h" />
     <None Include="Talos_STM32H745_Coordinator-Debug.vgdbsettings" />
     <None Include="Talos_STM32H745_Coordinator-Release.vgdbsettings" />

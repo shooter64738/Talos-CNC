@@ -364,9 +364,9 @@ protected:
 	bool __cdh_r_close_read();
 
 public:
-	bool cdh_r_get_message_type(c_ring_buffer<char>* buffer);
+	uint8_t cdh_r_get_message_type(c_ring_buffer<char>* buffer);
 	bool cdh_r_read();
-	bool cdh_r_is_busy = false;
+	uint8_t cdh_r_is_busy = 0;
 	s_source_buffer* dvc_source;
 
 

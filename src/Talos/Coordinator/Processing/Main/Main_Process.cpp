@@ -22,6 +22,7 @@ then move to their respective modules.
 #include "../Data/DataHandlers/c_ngc_data_handler.h"
 #include "../../../Shared_Data/_s_status_record.h"
 #include "../../../Shared_Data/Settings/Motion/_s_motion_control_settings_encapsulation.h"
+#include "../../../Configuration/c_configuration.h"
 //
 //#include <avr/io.h>
 //#include <avr/interrupt.h>
@@ -33,8 +34,21 @@ using namespace Talos;
 c_Serial Coordinator::Main_Process::host_serial;
 c_Serial Coordinator::Main_Process::motion_serial;
 
+volatile uint8_t safe1 = 1;
+volatile uint8_t safe2 = 1;
 void Coordinator::Main_Process::initialize()
 {
+	while (safe1 == safe2)
+	{
+		int c = 0;
+	}
+	Hardware_Abstraction_Layer::Core::initialize();
+	
+	//Create a serial 'wrapper' to make writing strings and numbers easier.
+	//Assign the handle for the cpu's hardware buffer to a specific serial usart on the hardware.
+	Coordinator::Main_Process::host_serial = c_Serial(Kernel::CPU::host_id, 115200, &Kernel::CPU::cluster[Kernel::CPU::host_id].hw_data_buffer); //<--Connect to host
+	Coordinator::Main_Process::host_serial.print_string("Boot CPU 0:\r\n");
+	
 	Kernel::Base::f_initialize();
 	//init framework comms (not much going on in here yet)
 	Kernel::Comm::f_initialize(
@@ -45,11 +59,13 @@ void Coordinator::Main_Process::initialize()
 		Coordinator::Main_Process::debug_float_dec);
 	//init framwork cpus (assign an ID number to each cpu object. Init the data buffers
 	Kernel::CPU::f_initialize(
-		HOST_CPU_ID, CORD_CPU_ID, MACH_CPU_ID, SPDL_CPU_ID, PRPH_CPU_ID, &Hardware_Abstraction_Layer::Core::cpu_tick_ms);
-	//Create a serial 'wrapper' to make writing strings and numbers easier.
-	//Assign the handle for the cpu's hardware buffer to a specific serial usart on the hardware.
-	Coordinator::Main_Process::host_serial = c_Serial(Kernel::CPU::host_id, 115200, &Kernel::CPU::cluster[Kernel::CPU::host_id].hw_data_buffer); //<--Connect to host
-	Hardware_Abstraction_Layer::Disk::load_initialize_block(&Talos::Coordinator::Data::Ngc::active_block);
+		HOST_CPU_ID, CORD_CPU_ID, MACH_CPU_ID, SPDL_CPU_ID, PRPH_CPU_ID, Hardware_Abstraction_Layer::Core::cpu_tick_ms);
+	
+	Hardware_Abstraction_Layer::Disk::initialize(Coordinator::Main_Process::debug_string);
+
+	Coordinator::Main_Process::host_serial.print_string("Settings load.\r\n");
+	Talos::Configuration::initialize();
+	
 	Coordinator::Main_Process::host_serial.print_string("Ready to process:\r\n");
 	
 																																				 //Coordinator::Main_Process::host_serial.print_string("hello world!\r\n");
@@ -63,7 +79,11 @@ void Coordinator::Main_Process::initialize()
 			int x = 0;
 
 		}
-		Kernel::Report::process(Talos::Coordinator::Data::Ngc::active_block);
+		if (Kernel::CPU::cluster[HOST_CPU_ID].host_events.Inquiry._flag > 0)
+		{
+			Kernel::Report::process(Talos::Coordinator::Data::Ngc::active_block);
+		}
+		
 
 	}
 	//	//Setup the ports and function pointers so we know which cpu is talking and we can report back debug data
