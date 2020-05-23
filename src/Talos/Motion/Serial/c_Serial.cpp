@@ -19,7 +19,7 @@
 */
 
 #include "c_Serial.h"
-#include "../coordinator_hardware_def.h"
+#include "../../talos_hardware_def.h"
 #include "../../communication_def.h"
 
 

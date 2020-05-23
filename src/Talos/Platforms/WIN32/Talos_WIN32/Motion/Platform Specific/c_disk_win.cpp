@@ -91,6 +91,26 @@ uint8_t Hardware_Abstraction_Layer::Disk::load_initialize_block(s_ngc_block * in
 	return 0;
 }
 
+uint8_t Hardware_Abstraction_Layer::Disk::get_default_block(char * stream, uint16_t size)
+{
+	return 0;
+}
+
+uint8_t Hardware_Abstraction_Layer::Disk::put_default_block(char * stream, uint16_t size)
+{
+	return 0;
+}
+
+uint8_t Hardware_Abstraction_Layer::Disk::get_motion_control_settings(char * stream, uint16_t size)
+{
+	return 0;
+}
+
+uint8_t Hardware_Abstraction_Layer::Disk::put_motion_control_settings(char * stream, uint16_t size)
+{
+	return 0;
+}
+
 uint8_t Hardware_Abstraction_Layer::Disk::put_block(s_ngc_block * write_block)
 {
 	const uint16_t rec_size = sizeof(s_ngc_block);

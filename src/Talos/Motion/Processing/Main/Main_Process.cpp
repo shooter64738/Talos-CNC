@@ -9,9 +9,11 @@
 #include "Main_Process.h"
 #include "../../../talos_hardware_def.h"
 #include "../../../Shared_Data/Kernel/Base/c_kernel_base.h"
-//
-//#include <avr/io.h>
-//#include <avr/interrupt.h>
+
+/*
+testing
+*/
+#include "../../NewCore/c_ngc_to_segment.h"
 
 c_Serial Talos::Motion::Main_Process::host_serial;
 c_Serial Talos::Motion::Main_Process::coordinator_serial;
@@ -21,10 +23,12 @@ volatile uint8_t safe2 = 1;
 
 void Talos::Motion::Main_Process::initialize()
 {
+#ifndef MSVC
 	while (safe1 == safe2)
 	{
 		int c = 0;
 	}
+#endif
 	Hardware_Abstraction_Layer::Core::initialize();
 
 	//Create a serial 'wrapper' to make writing strings and numbers easier.
@@ -51,7 +55,7 @@ void Talos::Motion::Main_Process::run()
 {
 	while(1)
 	{
-	
+		Motion::Core::Input::Segment::load_ngc_test();
 	}
 		
 	Talos::Motion::Main_Process::host_serial.print_string("\r\n** System halted **");

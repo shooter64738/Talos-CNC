@@ -40,6 +40,12 @@ namespace Hardware_Abstraction_Layer
 
 		static uint8_t read_file(char * filename, char * buffer);
 		
+		static uint8_t get_default_block(char * stream, uint16_t size);
+		static uint8_t put_default_block(char * stream, uint16_t size);
+
+		static uint8_t get_motion_control_settings(char * stream, uint16_t size);
+		static uint8_t put_motion_control_settings(char * stream, uint16_t size);
+
 		static uint8_t put_block(s_ngc_block * write_block);
 		static uint8_t get_block(s_ngc_block * read_block);
 

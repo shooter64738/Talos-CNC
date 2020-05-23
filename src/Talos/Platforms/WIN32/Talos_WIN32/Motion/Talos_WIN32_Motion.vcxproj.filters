@@ -58,38 +58,38 @@
     <Filter Include="Shared data\Settings\Motion">
       <UniqueIdentifier>{fdc3f069-7f5c-46e9-af9c-e87dd1364df2}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Shared data\FrameWork">
-      <UniqueIdentifier>{bf3749bb-df2c-448a-bdad-5af7eb759cfe}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Motion\Record Defines">
       <UniqueIdentifier>{10b27a37-1f08-49b9-86c7-70874d55367f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Shared data\FrameWork\Event">
-      <UniqueIdentifier>{fdb15ec8-667d-4cee-a265-8fee164675a4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Shared data\FrameWork\Event\Serial">
-      <UniqueIdentifier>{6727b467-42e2-4ee1-ab24-a82b5722335d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Shared data\FrameWork\Data">
-      <UniqueIdentifier>{2aefea15-392f-4535-a23b-3ae71bd1bec9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Shared data\FrameWork\Enumerations">
-      <UniqueIdentifier>{feda060b-a695-4f75-9ff8-f9b46664913d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Shared data\FrameWork\Enumerations\Status">
-      <UniqueIdentifier>{84376f92-f37a-491a-bc66-fcd0b1dd973b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Shared data\FrameWork\Startup">
-      <UniqueIdentifier>{d192251f-8597-44ee-92dc-4d9d454357af}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Shared data\FrameWork\Error">
-      <UniqueIdentifier>{d3bc22dd-7bbe-474f-a215-c0927fd80b89}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Shared data\FrameWork\Report">
-      <UniqueIdentifier>{a303188e-45a2-42b7-b07b-15158801eeb8}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Motion\NewCore">
       <UniqueIdentifier>{35c92a49-a6b5-4e7f-b263-57e6172c1287}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shared data\Kernel">
+      <UniqueIdentifier>{e234f514-ac63-4942-8078-870f2d329542}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shared data\Kernel\Base">
+      <UniqueIdentifier>{e16346a4-b675-4937-8a67-c2cf8bfaa09f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shared data\Kernel\Comm">
+      <UniqueIdentifier>{88f700a6-45fa-4350-80ac-89212d77de45}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shared data\Kernel\CPU">
+      <UniqueIdentifier>{5f78e9d8-6aca-4f12-ab13-5f96ea65aa89}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shared data\Kernel\Error">
+      <UniqueIdentifier>{6bfbec17-ad10-4d71-a4e4-2d5ee03ec282}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shared data\Kernel\Report">
+      <UniqueIdentifier>{4d301ef2-f46b-4016-b7fb-6adc16ef48c5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shared data\Kernel\Start">
+      <UniqueIdentifier>{674c6d48-5c67-42fe-8eb0-bfaae6cbf24d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Configuration\Motion">
+      <UniqueIdentifier>{840882df-ef13-41ad-a46d-f12eb93f6d1e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Configuration\Interpreter">
+      <UniqueIdentifier>{eea33a2c-9b16-4a6a-a72b-749aa6edd46e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -101,39 +101,6 @@
     </ClCompile>
     <ClCompile Include="..\..\..\..\Motion\Processing\Main\Main_Process.cpp">
       <Filter>Motion\Processing\Main</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\Motion\Core\c_block.cpp">
-      <Filter>Motion\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\Motion\Core\c_block_buffer.cpp">
-      <Filter>Motion\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\Motion\Core\c_gateway.cpp">
-      <Filter>Motion\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\Motion\Core\c_interpollation_hardware.cpp">
-      <Filter>Motion\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\Motion\Core\c_interpollation_software.cpp">
-      <Filter>Motion\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\Motion\Core\c_motion_core.cpp">
-      <Filter>Motion\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\Motion\Core\c_planner_compute_block.cpp">
-      <Filter>Motion\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\Motion\Core\c_segment_arbitrator.cpp">
-      <Filter>Motion\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\Motion\Core\c_segment_timer_bresenham.cpp">
-      <Filter>Motion\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\Motion\Core\c_segment_timer_item.cpp">
-      <Filter>Motion\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\Motion\Core\c_system.cpp">
-      <Filter>Motion\Core</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\..\Motion\Processing\Planner\c_event_control.cpp">
       <Filter>Motion\Processing\Planner</Filter>
@@ -162,68 +129,56 @@
     <ClCompile Include="Platform Specific\c_disk_win.cpp">
       <Filter>Platform Specific</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\Motion\Processing\Events\EventHandlers\c_block_events.cpp">
-      <Filter>Motion\Processing\Events\EventHandlers</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\Motion\Processing\Events\EventHandlers\c_system_event_handler.cpp">
-      <Filter>Motion\Processing\Events\EventHandlers</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\..\Motion\Processing\Planner\Canned Cycles\x_c_canned_cycle.cpp">
       <Filter>Motion\Processing\Planner\Canned Cycles</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Event\c_event_router.cpp">
-      <Filter>Shared data\FrameWork\Event</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Event\Serial\c_new_serial_event_handler.cpp">
-      <Filter>Shared data\FrameWork\Event\Serial</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Data\cache_data.cpp">
-      <Filter>Shared data\FrameWork\Data</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\Motion\Processing\Data\DataHandlers\c_ngc_data_handler.cpp">
-      <Filter>Motion\Processing\Data\DataHandlers</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\..\NGC_RS274\NGC_Block_View.cpp">
       <Filter>Ngc_Rs274</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\Motion\Processing\Events\EventHandlers\c_motion_controller_event_handler.cpp">
-      <Filter>Motion\Processing\Events\EventHandlers</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\Motion\Processing\Events\EventHandlers\c_motion_control_event_handler.cpp">
-      <Filter>Motion\Processing\Events\EventHandlers</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Startup\c_framework_start.cpp">
-      <Filter>Shared data\FrameWork\Startup</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\Motion\Processing\Data\c_data_buffers.cpp">
-      <Filter>Motion\Processing\Data</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Data\c_data_buffer.cpp">
-      <Filter>Shared data\FrameWork\Data</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Data\c_framework_ngc_data_handler.cpp">
-      <Filter>Shared data\FrameWork\Data</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Data\c_framework_system_data_handler.cpp">
-      <Filter>Shared data\FrameWork\Data</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Error\c_framework_error.cpp">
-      <Filter>Shared data\FrameWork\Error</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\Motion\Processing\Data\DataHandlers\c_system_data_handler.cpp">
-      <Filter>Motion\Processing\Data\DataHandlers</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Startup\c_framework_cpu.cpp">
-      <Filter>Shared data\FrameWork\Startup</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\Shared Data\FrameWork\Report\c_framework_report.cpp">
-      <Filter>Shared data\FrameWork\Report</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\..\Motion\NewCore\c_ngc_input.cpp">
       <Filter>Motion\NewCore</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\..\Motion\NewCore\c_ngc_to_segment.cpp">
       <Filter>Motion\NewCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Shared_Data\Kernel\Base\c_kernel_base.cpp">
+      <Filter>Shared data\Kernel\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Shared_Data\Kernel\Comm\c_kernel_comm.cpp">
+      <Filter>Shared data\Kernel\Comm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Shared_Data\Kernel\CPU\c_cpu.cpp">
+      <Filter>Shared data\Kernel\CPU</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Shared_Data\Kernel\CPU\c_data_handler.cpp">
+      <Filter>Shared data\Kernel\CPU</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Shared_Data\Kernel\CPU\c_kernel_cpu.cpp">
+      <Filter>Shared data\Kernel\CPU</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Shared_Data\Kernel\Error\c_kernel_error.cpp">
+      <Filter>Shared data\Kernel\Error</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Shared_Data\Kernel\Start\c_kernel_start.cpp">
+      <Filter>Shared data\Kernel\Start</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Shared_Data\Kernel\Report\c_kernel_report.cpp">
+      <Filter>Shared data\Kernel\Report</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Configuration\Motion\c_motion_controller.cpp">
+      <Filter>Configuration\Motion</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Configuration\c_configuration.cpp">
+      <Filter>Configuration</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Configuration\Motion\c_motion_system.cpp">
+      <Filter>Configuration\Motion</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Configuration\Interpreter\c_interpreter_input.cpp">
+      <Filter>Configuration\Interpreter</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Configuration\Interpreter\c_start_block_gmcode.cpp">
+      <Filter>Configuration\Interpreter</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -250,39 +205,6 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\Motion\Processing\Main\Main_Process.h">
       <Filter>Motion\Processing\Main</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Motion\Core\c_block.h">
-      <Filter>Motion\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Motion\Core\c_block_buffer.h">
-      <Filter>Motion\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Motion\Core\c_gateway.h">
-      <Filter>Motion\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Motion\Core\c_interpollation_hardware.h">
-      <Filter>Motion\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Motion\Core\c_interpollation_software.h">
-      <Filter>Motion\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Motion\Core\c_motion_core.h">
-      <Filter>Motion\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Motion\Core\c_planner_compute_block.h">
-      <Filter>Motion\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Motion\Core\c_segment_arbitrator.h">
-      <Filter>Motion\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Motion\Core\c_segment_timer_bresenham.h">
-      <Filter>Motion\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Motion\Core\c_segment_timer_item.h">
-      <Filter>Motion\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Motion\Core\c_system.h">
-      <Filter>Motion\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\Motion\Processing\Planner\c_event_control.h">
       <Filter>Motion\Processing\Planner</Filter>
@@ -317,12 +239,6 @@
     <ClInclude Include="..\..\..\..\_bit_flag_control.h" />
     <ClInclude Include="Platform Specific\c_disk_win.h">
       <Filter>Platform Specific</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Motion\Processing\Events\EventHandlers\c_block_events.h">
-      <Filter>Motion\Processing\Events\EventHandlers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Motion\Processing\Events\EventHandlers\c_system_event_handler.h">
-      <Filter>Motion\Processing\Events\EventHandlers</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\Shared Data\Settings\Motion\_s_motion_tolerance_struct.h">
       <Filter>Shared data\Settings\Motion</Filter>
@@ -376,62 +292,8 @@
     <ClInclude Include="..\..\..\..\Motion\Record Defines\e_all_event_data_types.h">
       <Filter>Motion\Record Defines</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Event\c_event_router.h">
-      <Filter>Shared data\FrameWork\Event</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Event\Serial\c_new_serial_event_handler.h">
-      <Filter>Shared data\FrameWork\Event\Serial</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Data\cache_data.h">
-      <Filter>Shared data\FrameWork\Data</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Enumerations\Status\_e_system_messages.h">
-      <Filter>Shared data\FrameWork\Enumerations\Status</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Motion\Processing\Data\DataHandlers\c_ngc_data_handler.h">
-      <Filter>Motion\Processing\Data\DataHandlers</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\..\NGC_RS274\ngc_block_view.h">
       <Filter>Ngc_Rs274</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Motion\Processing\Events\EventHandlers\c_motion_controller_event_handler.h">
-      <Filter>Motion\Processing\Events\EventHandlers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Motion\Processing\Events\EventHandlers\c_motion_control_event_handler.h">
-      <Filter>Motion\Processing\Events\EventHandlers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Startup\c_framework_start.h">
-      <Filter>Shared data\FrameWork\Startup</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Motion\Processing\Data\c_data_buffers.h">
-      <Filter>Motion\Processing\Data</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Data\c_data_buffer.h">
-      <Filter>Shared data\FrameWork\Data</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Data\c_framework_ngc_data_handler.h">
-      <Filter>Shared data\FrameWork\Data</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Data\c_framework_system_data_handler.h">
-      <Filter>Shared data\FrameWork\Data</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Error\_s_framework_error.h">
-      <Filter>Shared data\FrameWork\Error</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Error\c_framework_error.h">
-      <Filter>Shared data\FrameWork\Error</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Motion\Processing\Data\DataHandlers\c_system_data_handler.h">
-      <Filter>Motion\Processing\Data\DataHandlers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Enumerations\_e_system_events.h">
-      <Filter>Shared data\FrameWork\Enumerations</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Startup\c_framework_cpu.h">
-      <Filter>Shared data\FrameWork\Startup</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Shared Data\FrameWork\Report\c_framework_report.h">
-      <Filter>Shared data\FrameWork\Report</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\talos_hardware_def.h" />
     <ClInclude Include="..\..\..\..\Motion\NewCore\c_ngc_input.h">
@@ -442,6 +304,69 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\Motion\NewCore\s_segmented_block.h">
       <Filter>Motion\NewCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared_Data\Kernel\Base\c_kernel_base.h">
+      <Filter>Shared data\Kernel\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared_Data\Kernel\Comm\c_kernel_comm.h">
+      <Filter>Shared data\Kernel\Comm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared_Data\Kernel\CPU\c_cpu.h">
+      <Filter>Shared data\Kernel\CPU</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared_Data\Kernel\CPU\c_data_handler.h">
+      <Filter>Shared data\Kernel\CPU</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared_Data\Kernel\CPU\c_kernel_cpu.h">
+      <Filter>Shared data\Kernel\CPU</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared_Data\Kernel\CPU\u_data_overlay.h">
+      <Filter>Shared data\Kernel\CPU</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared_Data\Kernel\Error\_d_err_macros.h">
+      <Filter>Shared data\Kernel\Error</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared_Data\Kernel\Error\_s_kernel_error.h">
+      <Filter>Shared data\Kernel\Error</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared_Data\Kernel\Error\c_kernel_error.h">
+      <Filter>Shared data\Kernel\Error</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared_Data\Kernel\Error\kernel_error_codes_base.h">
+      <Filter>Shared data\Kernel\Error</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared_Data\Kernel\Error\kernel_error_codes_cpu.h">
+      <Filter>Shared data\Kernel\Error</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared_Data\Kernel\Error\kernel_error_codes_cpu_cluster.h">
+      <Filter>Shared data\Kernel\Error</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared_Data\Kernel\Error\kernel_error_codes_reader.h">
+      <Filter>Shared data\Kernel\Error</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared_Data\Kernel\Error\kernel_error_codes_writer.h">
+      <Filter>Shared data\Kernel\Error</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared_Data\Kernel\Start\c_kernel_start.h">
+      <Filter>Shared data\Kernel\Start</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared_Data\Kernel\Report\c_kernel_report.h">
+      <Filter>Shared data\Kernel\Report</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Configuration\Motion\c_motion_controller.h">
+      <Filter>Configuration\Motion</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Configuration\c_configuration.h">
+      <Filter>Configuration</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Configuration\Motion\c_motion_system.h">
+      <Filter>Configuration\Motion</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Configuration\Interpreter\c_interpreter_input.h">
+      <Filter>Configuration\Interpreter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Configuration\Interpreter\c_start_block_gmcode.h">
+      <Filter>Configuration\Interpreter</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

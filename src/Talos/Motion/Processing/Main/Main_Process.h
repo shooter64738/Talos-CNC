@@ -9,7 +9,7 @@
 #ifndef __MAIN_PROCESS_H__
 #define __MAIN_PROCESS_H__
 
-#include "../../motion_hardware_def.h"
+#include "../../../talos_hardware_def.h"
 #include "../../Serial/c_Serial.h"
 
 namespace Talos

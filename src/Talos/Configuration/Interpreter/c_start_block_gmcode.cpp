@@ -65,7 +65,7 @@ uint8_t c_defaultblock::initialize()
 	//Do any other prep work on settings, or validations here.. I dont know yet what that might be. 	
 	
 	//Copy the start up block to the first block in the ngc buffer.
-	memcpy(&Talos::Coordinator::Data::Ngc::active_block, &Settings, sizeof(s_ngc_block));
+	//memcpy(&Talos::Coordinator::Data::Ngc::active_block, &Settings, sizeof(s_ngc_block));
 
 	return 0;
 }
