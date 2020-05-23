@@ -81,6 +81,13 @@ uint8_t c_controller::load_defaults()
 	Settings.tolerance.arc_tolerance = 0.002;
 	Settings.tolerance.arc_angular_correction = 12;
 
+	Settings.internals.ARC_ANGULAR_TRAVEL_EPSILON = 5E-7;
+	Settings.internals.N_ARC_CORRECTION = 12;
+	Settings.internals.MINIMUM_JUNCTION_SPEED = 0.0;
+	Settings.internals.MINIMUM_FEED_RATE = 1.0;
+	Settings.internals.ACCELERATION_TICKS_PER_SECOND = 1000;
+	Settings.internals.REQ_MM_INCREMENT_SCALAR = 1.25;
+
 	Settings.crc = 0;
 	states.set((int)e_setting_states::default_settings_loaded_successful);
 	return 0;

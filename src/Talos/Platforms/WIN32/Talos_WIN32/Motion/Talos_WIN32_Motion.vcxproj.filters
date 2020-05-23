@@ -135,12 +135,6 @@
     <ClCompile Include="..\..\..\..\NGC_RS274\NGC_Block_View.cpp">
       <Filter>Ngc_Rs274</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\Motion\NewCore\c_ngc_input.cpp">
-      <Filter>Motion\NewCore</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\Motion\NewCore\c_ngc_to_segment.cpp">
-      <Filter>Motion\NewCore</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\..\Shared_Data\Kernel\Base\c_kernel_base.cpp">
       <Filter>Shared data\Kernel\Base</Filter>
     </ClCompile>
@@ -179,6 +173,12 @@
     </ClCompile>
     <ClCompile Include="..\..\..\..\Configuration\Interpreter\c_start_block_gmcode.cpp">
       <Filter>Configuration\Interpreter</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Motion\NewCore\c_ngc_to_block.cpp">
+      <Filter>Motion\NewCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Motion\NewCore\c_block_to_segment.cpp">
+      <Filter>Motion\NewCore</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -240,12 +240,6 @@
     <ClInclude Include="Platform Specific\c_disk_win.h">
       <Filter>Platform Specific</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Shared Data\Settings\Motion\_s_motion_tolerance_struct.h">
-      <Filter>Shared data\Settings\Motion</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Shared Data\Settings\Motion\_s_motion_control_settings_encapsulation.h">
-      <Filter>Shared data\Settings\Motion</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\..\NGC_RS274\_ngc_block_struct.h">
       <Filter>Ngc_Rs274</Filter>
     </ClInclude>
@@ -264,9 +258,6 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\Shared Data\_e_unit_types.h">
       <Filter>Shared data</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Shared Data\Settings\Motion\_s_motion_hardware.h">
-      <Filter>Shared data\Settings\Motion</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\Shared Data\_e_binary_comm_response.h">
       <Filter>Shared data</Filter>
@@ -296,15 +287,6 @@
       <Filter>Ngc_Rs274</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\talos_hardware_def.h" />
-    <ClInclude Include="..\..\..\..\Motion\NewCore\c_ngc_input.h">
-      <Filter>Motion\NewCore</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Motion\NewCore\c_ngc_to_segment.h">
-      <Filter>Motion\NewCore</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Motion\NewCore\s_segmented_block.h">
-      <Filter>Motion\NewCore</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\..\Shared_Data\Kernel\Base\c_kernel_base.h">
       <Filter>Shared data\Kernel\Base</Filter>
     </ClInclude>
@@ -367,6 +349,51 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\Configuration\Interpreter\c_start_block_gmcode.h">
       <Filter>Configuration\Interpreter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Motion\NewCore\s_motion_block.h">
+      <Filter>Motion\NewCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Motion\NewCore\c_ngc_to_block.h">
+      <Filter>Motion\NewCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Motion\NewCore\c_block_to_segment.h">
+      <Filter>Motion\NewCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Motion\NewCore\s_segment_base.h">
+      <Filter>Motion\NewCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Motion\NewCore\e_ramp_states.h">
+      <Filter>Motion\NewCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Motion\NewCore\s_bresenham_item.h">
+      <Filter>Motion\NewCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Motion\NewCore\s_timer_item.h">
+      <Filter>Motion\NewCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Motion\NewCore\e_block_state.h">
+      <Filter>Motion\NewCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Motion\NewCore\s_segment_timer_common.h">
+      <Filter>Motion\NewCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared_Data\Settings\Motion\_s_motion_axis_options.h">
+      <Filter>Shared data\Settings\Motion</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared_Data\Settings\Motion\_s_motion_control_settings_encapsulation.h">
+      <Filter>Shared data\Settings\Motion</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared_Data\Settings\Motion\_s_motion_hardware.h">
+      <Filter>Shared data\Settings\Motion</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared_Data\Settings\Motion\_s_motion_system.h">
+      <Filter>Shared data\Settings\Motion</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared_Data\Settings\Motion\_s_motion_tolerance_struct.h">
+      <Filter>Shared data\Settings\Motion</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared_Data\Settings\Motion\_s_motion_internal.h">
+      <Filter>Shared data\Settings\Motion</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

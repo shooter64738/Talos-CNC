@@ -2,6 +2,7 @@
 #define C_SEGMENTED_BLOCK_H
 
 #include <stdint.h>
+#include "s_segment_timer_common.h"
 #include "../../physical_machine_parameters.h"
 #include "../../_bit_flag_control.h"
 
@@ -12,7 +13,7 @@ enum class e_block_flags
 	
 };
 
-struct s_segmented_block
+struct __s_motion_block
 {
 	// Fields used by the bresenham algorithm for tracing the line
 			// NOTE: Used by stepper algorithm to execute the block correctly. Do not alter these values.
@@ -23,8 +24,6 @@ struct s_segmented_block
 
 						  // Block condition data to ensure correct execution depending on states and overrides.
 	uint8_t condition;    // Block bitflag variable defining block run conditions. Copied from pl_line_data.
-	int32_t line_number;  // Block line number for real-time reporting. Copied from pl_line_data.
-
 						  // Fields used by the motion planner to manage acceleration. Some of these values may be updated
 						  // by the stepper module during execution of special motion cases for replanning purposes.
 	float entry_speed_sqr;     // The current planned entry speed at block junction in (mm/min)^2
@@ -41,8 +40,11 @@ struct s_segmented_block
 
 								  // Stored spindle speed data used by spindle overrides and resuming methods.
 	uint8_t Station;
-	uint32_t sequence;
-	s_bit_flag_controller<uint32_t> flag;
+	s_common_segment_items common;
+	//int32_t line_number;  // Block line number for real-time reporting. Copied from pl_line_data.
+	//uint32_t sequence;
+	//s_bit_flag_controller<uint32_t> flag;
+	//s_bresenham null; //
 	float programmed_spindle_speed;
 	uint8_t spindle_state;
 

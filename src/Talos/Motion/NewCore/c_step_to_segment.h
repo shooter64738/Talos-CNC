@@ -7,7 +7,7 @@
 #include "../../NGC_RS274/_ngc_block_struct.h"
 #include "../../NGC_RS274/ngc_block_view.h"
 #include "../../_bit_flag_control.h"
-#include "s_segmented_block.h"
+#include "s_step_block.h"
 
 namespace Talos
 {
@@ -38,7 +38,8 @@ namespace Talos
 						, s_motion_hardware hw_settings
 						, int32_t* system_position
 						, float* unit_vectors
-						, int32_t* target_steps);
+						, int32_t* target_steps
+						, s_bit_flag_controller<uint16_t>* bl_comp);
 
 					static void ___set_backlash_control(
 						float distance

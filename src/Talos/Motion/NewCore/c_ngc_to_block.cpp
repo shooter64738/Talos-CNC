@@ -6,7 +6,8 @@
 */
 
 
-#include "c_ngc_to_segment.h"
+#include "c_ngc_to_block.h"
+#include "c_block_to_segment.h"
 #include "../../_bit_manipulation.h"
 #include "../../Configuration/c_configuration.h"
 #include <math.h>
@@ -15,14 +16,6 @@
 #define SOME_LARGE_VALUE 1.0E+38
 #define MINIMUM_JUNCTION_SPEED 0.0
 #define MINIMUM_FEED_RATE 1.0
-
-
-//Keeps track of last comp directions
-s_bit_flag_controller<uint16_t> bl_comp_direction_flags;
-s_bit_flag_controller<uint16_t> bl_comp_dir_flags;
-float previous_unit_vec[MACHINE_AXIS_COUNT]{ 0.0 };
-int32_t last_planned_position[MACHINE_AXIS_COUNT]{ 0 };
-float previous_nominal_speed = 0.0;
 
 namespace mtn_cfg = Talos::Configuration::Motion;
 namespace int_cfg = Talos::Configuration::Interpreter;
@@ -35,7 +28,17 @@ namespace Talos
 		{
 			namespace Input
 			{
-				void Segment::load_ngc_test()
+				//Keeps track of last comp directions
+				s_bit_flag_controller<uint16_t> Block::bl_comp_direction_flags;
+				float Block::previous_unit_vec[MACHINE_AXIS_COUNT]{ 0.0 };
+				int32_t Block::last_planned_position[MACHINE_AXIS_COUNT]{ 0 };
+				float Block::previous_nominal_speed = 0.0;
+
+				__s_motion_block Block::block_buffer_store[BLOCK_BUFFER_SIZE]{ 0 };
+				c_ring_buffer<__s_motion_block> Block::block_buffer(Block::block_buffer_store, BLOCK_BUFFER_SIZE);
+
+
+				void Block::load_ngc_test()
 				{
 					mtn_cfg::Controller.load_defaults();
 					int_cfg::DefaultBlock.load_defaults();
@@ -46,18 +49,32 @@ namespace Talos
 
 					int_cfg::DefaultBlock.Settings.target_motion_position[0] = 10;
 					//create a work motion block
-					s_segmented_block motion_block1{ 0 };
+					__s_motion_block motion_block1{ 0 }; motion_block1.Station = 0;
 					load_ngc(&int_cfg::DefaultBlock.Settings, &motion_block1);
+					block_buffer.put(motion_block1);
 
-
-					int_cfg::DefaultBlock.Settings.target_motion_position[0] = -10;
+					int_cfg::DefaultBlock.Settings.target_motion_position[0] = 50;
 					//create a work motion block
-					s_segmented_block motion_block2{ 0 };
+					__s_motion_block motion_block2{ 0 };; motion_block2.Station = 1;
 					load_ngc(&int_cfg::DefaultBlock.Settings, &motion_block2);
+					block_buffer.put(motion_block2);
 
+					int_cfg::DefaultBlock.Settings.target_motion_position[0] = 0;
+					//create a work motion block
+					__s_motion_block motion_block3{ 0 };; motion_block3.Station = 2;
+					load_ngc(&int_cfg::DefaultBlock.Settings, &motion_block3);
+					block_buffer.put(motion_block3);
+
+					int_cfg::DefaultBlock.Settings.target_motion_position[0] = -100;
+					//create a work motion block
+					__s_motion_block motion_block4{ 0 };; motion_block4.Station = 3;
+					load_ngc(&int_cfg::DefaultBlock.Settings, &motion_block4);
+					block_buffer.put(motion_block4);
+
+					Talos::Motion::Core::Process::Segment::fill_step_segment_buffer();
 				}
 
-				uint8_t Segment::load_ngc(s_ngc_block* ngc_block, s_segmented_block* motion_block)
+				uint8_t Block::load_ngc(s_ngc_block* ngc_block, __s_motion_block* motion_block)
 
 				{
 					/*
@@ -92,7 +109,6 @@ namespace Talos
 					}
 
 
-
 					//create an array to hold our unit distances
 					float unit_vec[MACHINE_AXIS_COUNT]{ 0.0 };
 
@@ -106,7 +122,8 @@ namespace Talos
 						, mtn_cfg::Controller.Settings.hardware
 						, last_planned_position
 						, unit_vec
-						, target_steps);
+						, target_steps
+						, &bl_comp_direction_flags);
 
 					//if work block is null, no distance to move
 					if (ret == 0)
@@ -136,13 +153,14 @@ namespace Talos
 					return 1;
 				}
 
-				uint8_t Segment::__convert_ngc_distance(
+				uint8_t Block::__convert_ngc_distance(
 					s_ngc_block* ngc_block
-					, s_segmented_block* motion_block
+					, __s_motion_block* motion_block
 					, s_motion_hardware hw_settings
 					, int32_t* system_position
 					, float* unit_vectors
-					, int32_t* target_steps)
+					, int32_t* target_steps
+					, s_bit_flag_controller<uint16_t>* bl_comp)
 
 				{
 					float delta_mm = 0.0;
@@ -158,7 +176,7 @@ namespace Talos
 						unit_vectors[idx] = delta_mm;
 
 						//check for direction change and apply bl comp flag if needed.
-						___set_backlash_control(delta_mm, idx, &bl_comp_direction_flags, motion_block);
+						___set_backlash_control(delta_mm, idx, bl_comp, motion_block);
 					}
 
 					if (motion_block->step_event_count == 0)
@@ -168,10 +186,10 @@ namespace Talos
 					return 1;
 				}
 
-				void Segment::___set_backlash_control(
+				void Block::___set_backlash_control(
 					float distance, uint8_t axis_id
 					, s_bit_flag_controller<uint16_t>* bl_comp
-					, s_segmented_block* motion_block)
+					, __s_motion_block* motion_block)
 				{
 					//When the motion for this block begins we can check to see if the high and low bit are the same.
 					//If the bits are not the same a direction change has occured and we need a BC motion to execute first.		
@@ -189,7 +207,7 @@ namespace Talos
 					}
 
 					//If axis direction is different than previous direction, it needs bl comp
-					if ((motion_block->direction_bits.get(axis_id) != bl_comp_dir_flags.get(axis_id)))
+					if ((motion_block->direction_bits.get(axis_id) != bl_comp->get(axis_id)))
 					{
 						//The direction for this axis is different than the previous direction. We need a bl comp move
 						motion_block->bl_comp_bits.set(axis_id);
@@ -197,13 +215,13 @@ namespace Talos
 
 				}
 
-				void Segment::__configure_feedrate(
+				void Block::__configure_feedrate(
 					NGC_RS274::Block_View ngc_view
-					, s_segmented_block* motion_block)
+					, __s_motion_block* motion_block)
 				{
-					motion_block->flag.clear((int)e_block_flags::feed_on_spindle);
+					motion_block->common.flag.clear((int)e_block_flags::feed_on_spindle);
 					// Store programmed rate.
-					if (*ngc_view.current_g_codes.Feed_rate_mode == NGC_RS274::G_codes::RAPID_POSITIONING)
+					if (*ngc_view.current_g_codes.Feed_rate_mode == NGC_RS274::G_codes::FEED_RATE_UNITS_PER_MINUTE_MODE)
 					{
 						motion_block->programmed_rate = motion_block->rapid_rate;
 					}
@@ -217,13 +235,13 @@ namespace Talos
 						else if (*ngc_view.current_g_codes.Feed_rate_mode == NGC_RS274::G_codes::FEED_RATE_UNITS_PER_ROTATION)
 						{
 							motion_block->programmed_rate *= motion_block->millimeters * motion_block->programmed_spindle_speed;
-							motion_block->flag.set((int)e_block_flags::feedmode_change);
-							motion_block->flag.set((int)e_block_flags::feed_on_spindle);
+							motion_block->common.flag.set((int)e_block_flags::feedmode_change);
+							motion_block->common.flag.set((int)e_block_flags::feed_on_spindle);
 						}
 					}
 				}
 
-				float Segment::convert_delta_vector_to_unit_vector(float* vector)
+				float Block::convert_delta_vector_to_unit_vector(float* vector)
 				{
 					uint8_t idx;
 					float magnitude = 0.0;
@@ -244,7 +262,7 @@ namespace Talos
 					return (magnitude);
 				}
 
-				float Segment::limit_value_by_axis_maximum(float* max_value, float* unit_vec)
+				float Block::limit_value_by_axis_maximum(float* max_value, float* unit_vec)
 				{
 					uint8_t idx;
 					float limit_value = SOME_LARGE_VALUE;
@@ -258,8 +276,8 @@ namespace Talos
 					return (limit_value);
 				}
 
-				uint8_t Segment::__plan_buffer_line(
-					s_segmented_block* motion_block
+				uint8_t Block::__plan_buffer_line(
+					__s_motion_block* motion_block
 					, s_motion_control_settings_encapsulation hw_settings
 					, int32_t* system_position
 					, float* unit_vectors
@@ -328,7 +346,10 @@ namespace Talos
 					return (1);
 				}
 
-				void Segment::plan_compute_profile_parameters(s_segmented_block* motion_block, float nominal_speed, float prev_nominal_speed)
+				void Block::plan_compute_profile_parameters(
+					__s_motion_block* motion_block
+					, float nominal_speed
+					, float prev_nominal_speed)
 				{
 					// Compute the junction maximum entry based on the minimum of the junction speed and neighboring nominal speeds.
 					if (nominal_speed > prev_nominal_speed)
@@ -345,7 +366,7 @@ namespace Talos
 					}
 				}
 
-				float Segment::plan_compute_profile_nominal_speed(s_segmented_block* motion_block)
+				float Block::plan_compute_profile_nominal_speed(__s_motion_block* motion_block)
 				{
 					uint8_t over_ride = 100;
 					float nominal_speed = motion_block->programmed_rate;
@@ -371,6 +392,22 @@ namespace Talos
 						return (nominal_speed);
 					}
 					return (MINIMUM_FEED_RATE);
+				}
+
+				float Block::plan_get_exec_block_exit_speed_sqr()
+				{
+					bool last_item = false;
+					__s_motion_block* block = Block::block_buffer.cur_tail(&last_item);
+
+					//Motion_Core::Planner::Block_Item *block_index = Motion_Core::Planner::Buffer::Current();
+					if (last_item)
+					{
+						return (0.0);
+					}
+					//Get the block ahead of our current block
+					//return (Motion_Core::Planner::Buffer::Get(Motion_Core::Segment::Arbitrator::Active_Block->Station + 1)->entry_speed_sqr);
+					return (block->entry_speed_sqr);
+
 				}
 
 			}

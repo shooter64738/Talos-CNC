@@ -59,7 +59,7 @@
 #endif
 
 #ifdef __STM32H745ZIQ__
-#define F_CPU 220000000UL
+#define F_CPU 460000000UL
 #define HOST_CPU_ID 0
 #define CORD_CPU_ID 1
 #define MACH_CPU_ID 2
@@ -85,7 +85,7 @@
 #define SPDL_CPU_ID 3
 #define PRPH_CPU_ID 4
 #define MAX_STEP_RATE 172000 //<--This doe not limit anything. It is only for a safety check.
-#define F_CPU 16000000
+#define F_CPU 460000000UL
 #define F_CPU_2 F_CPU/2
 #define _TICKS_PER_MICROSECOND (F_CPU/1000000)
 #include "Platforms/WIN32/Talos_WIN32/Motion/Platform Specific/c_disk_win.h"
@@ -128,6 +128,7 @@
 
 #ifdef __STM32H745ZIQ__
 #define F_CPU 460000000UL
+#define _TICKS_PER_MICROSECOND (F_CPU/1000000)
 #define HOST_CPU_ID 0
 #define CORD_CPU_ID 1
 #define MACH_CPU_ID 2
@@ -143,6 +144,7 @@
 
 #ifdef MSVC
 #define F_CPU 16000000
+#define _TICKS_PER_MICROSECOND (F_CPU/1000000)
 #define HOST_CPU_ID 0
 #define CORD_CPU_ID 1
 #define MACH_CPU_ID 2

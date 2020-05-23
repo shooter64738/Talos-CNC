@@ -3,6 +3,7 @@
 #include "_s_motion_hardware.h"
 #include "_s_motion_tolerance_struct.h"
 #include "_s_motion_axis_options.h"
+#include "_s_motion_internal.h"
 #include "../../Kernel/_e_record_types.h"
 
 //PACK(
@@ -13,6 +14,7 @@ struct s_motion_control_settings_encapsulation
 	s_motion_hardware hardware;
 	s_motion_tolerance_settings tolerance;
 	s_motion_axis_options axis_options;
+	s_motion_internal_settings internals;
 	uint16_t crc;
 };
 //);

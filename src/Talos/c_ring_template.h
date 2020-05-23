@@ -6,10 +6,17 @@
 template <typename TN>
 class  c_ring_buffer
 {
-
 public:
 
-	bool initialize(volatile TN *pointer, uint16_t buf_size)
+	c_ring_buffer()
+	{}
+
+	c_ring_buffer(TN* pointer, uint16_t buf_size)
+	{
+		initialize(pointer, buf_size);
+	}
+
+	bool initialize(TN *pointer, uint16_t buf_size)
 	{
 		if (pointer == NULL)
 			return false;
@@ -39,7 +46,8 @@ public:
 
 		this->_head = 0;
 		this->_tail = 0;
-		this->_newest = 0;
+		this->_last_read = 0;
+		this->_last_write = 0;
 	}
 
 	void release()
@@ -115,6 +123,7 @@ public:
 		//clear this byte. keeps the storage buffered 'nulled'
 		//_storage_pointer[_tail] = 0;
 		//increment tail
+		this->_last_read = this->_tail;
 		this->_tail++;
 		//if we are at the size of the buffer, wrap back to zero
 		if (this->_tail == this->_buffer_size)
@@ -122,6 +131,42 @@ public:
 			this->_tail = 0;
 		}
 		return data;
+	}
+
+	TN* cur(bool* last)
+	{
+		if (!this->has_data())
+			return NULL;
+
+		*last = false;
+		if (this->_tail == this->_head)
+			* last = true;
+
+		return (this->_storage_pointer + this->_last_read);
+	}
+
+	TN *cur_tail(bool * last)
+	{
+		if (!this->has_data())
+			return NULL;
+
+		*last = false;
+		if (this->_tail == this->_head)
+			* last = true;
+
+		return (this->_storage_pointer + this->_last_read);
+	}
+	
+	TN *cur_head(bool* last)
+	{
+		if (!this->has_data())
+			return NULL;
+
+		*last = false;
+		if (this->_tail == this->_head)
+			* last = true;
+
+		return (this->_storage_pointer + this->_last_write);
 	}
 
 	TN * get_h()
@@ -209,6 +254,7 @@ public:
 		//	return 0;
 		//convert byte stream to type,place data at head position, increment head
 		//memcpy(&this->_storage_pointer[this->_head], data, sizeof(TN));
+		this->_last_write = this->_head;
 		*(this->_storage_pointer+this->_head) = data;
 		this->_head++;
 		//if we are at the size of the buffer, wrap back to zero
@@ -233,7 +279,8 @@ public:
 		//	return 0;
 
 		//place the byte at the head position, increment head
-		this->_newest = this->_head;
+		this->_last_write = this->_head;
+		//memcpy(this->_storage_pointer[this->_head++], (char*)data, sizeof(data));
 		//this->_storage_pointer[this->_head++] = data;
 		*(this->_storage_pointer+this->_head) = data;
 		this->_head++;
@@ -256,12 +303,13 @@ public:
 
 public:
 
-	volatile TN * _storage_pointer = NULL;
-	volatile bool _full = false;
+	TN * _storage_pointer = NULL;
+	bool _full = false;
 	uint16_t _buffer_size = 0;
 	uint16_t _head = 0;
 	uint16_t _tail = 0;
-	uint16_t _newest = 0;
+	uint16_t _last_read = 0;
+	uint16_t _last_write = 0;
 	uint16_t _peek_stepper = 0;
 };
 

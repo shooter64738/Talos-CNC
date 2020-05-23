@@ -69,7 +69,7 @@ public:
 
 	s_event_class host_events;
 
-	volatile char hw_data_container[RING_BUFFER_SIZE];
+	char hw_data_container[RING_BUFFER_SIZE];
 	c_ring_buffer <char> hw_data_buffer;
 
 	volatile uint32_t* pntr_cycle_count_ms;
