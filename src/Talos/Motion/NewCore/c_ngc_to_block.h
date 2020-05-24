@@ -30,10 +30,10 @@ namespace Talos
 				private:
 
 					//Keeps track of last comp directions
-					static s_bit_flag_controller<uint16_t> bl_comp_direction_flags;
-					static float previous_unit_vec[MACHINE_AXIS_COUNT];
-					static int32_t last_planned_position[MACHINE_AXIS_COUNT];
-					static float previous_nominal_speed;
+					static s_bit_flag_controller<uint16_t> __bl_comp_direction_flags;
+					static float __previous_unit_vec[MACHINE_AXIS_COUNT];
+					static int32_t __last_planned_position[MACHINE_AXIS_COUNT];
+					static float __previous_nominal_speed;
 					
 					static __s_motion_block Block::block_buffer_store[BLOCK_BUFFER_SIZE];
 
@@ -71,7 +71,7 @@ namespace Talos
 
 					static float convert_delta_vector_to_unit_vector(float* vector);
 
-					static float limit_value_by_axis_maximum(float* max_value, float* unit_vec);
+					static float __limit_value_by_axis_maximum(float* max_value, float* unit_vec);
 
 					static uint8_t __plan_buffer_line(
 						__s_motion_block* motion_block
@@ -80,9 +80,9 @@ namespace Talos
 						, float* unit_vectors
 						, int32_t* target_steps);
 
-					static void Block::planner_recalculate();
+					static void __planner_recalculate();
 
-					static void Block::forward_plan();
+					static void __forward_plan();
 
 				};
 

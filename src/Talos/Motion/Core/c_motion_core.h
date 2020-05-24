@@ -27,7 +27,7 @@ namespace Motion_Core
 
 
 	float convert_delta_vector_to_unit_vector(float *vector);
-	float limit_value_by_axis_maximum(float *max_value, float *unit_vec);
+	float __limit_value_by_axis_maximum(float *max_value, float *unit_vec);
 	uint8_t get_direction_pin_mask(uint8_t axis_idx);
 
 	void initialize();

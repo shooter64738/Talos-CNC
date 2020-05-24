@@ -29,10 +29,10 @@ namespace Talos
 			namespace Input
 			{
 				//Keeps track of last comp directions
-				s_bit_flag_controller<uint16_t> Block::bl_comp_direction_flags;
-				float Block::previous_unit_vec[MACHINE_AXIS_COUNT]{ 0.0 };
-				int32_t Block::last_planned_position[MACHINE_AXIS_COUNT]{ 0 };
-				float Block::previous_nominal_speed = 0.0;
+				s_bit_flag_controller<uint16_t> Block::__bl_comp_direction_flags;
+				float Block::__previous_unit_vec[MACHINE_AXIS_COUNT]{ 0.0 };
+				int32_t Block::__last_planned_position[MACHINE_AXIS_COUNT]{ 0 };
+				float Block::__previous_nominal_speed = 0.0;
 
 				__s_motion_block Block::block_buffer_store[BLOCK_BUFFER_SIZE]{ 0 };
 				c_ring_buffer<__s_motion_block> Block::block_buffer(Block::block_buffer_store, BLOCK_BUFFER_SIZE);
@@ -128,10 +128,10 @@ namespace Talos
 						ngc_block
 						, motion_block
 						, mtn_cfg::Controller.Settings.hardware
-						, last_planned_position
+						, __last_planned_position
 						, unit_vec
 						, target_steps
-						, &bl_comp_direction_flags);
+						, &__bl_comp_direction_flags);
 
 					//if work block is null, no distance to move
 					if (ret == 0)
@@ -139,7 +139,7 @@ namespace Talos
 
 					//First moves after start up dont get compensation so dont set this flag until after the first axis
 					//moves are calculated.
-					if (!bl_comp_direction_flags.get(15))
+					if (!__bl_comp_direction_flags.get(15))
 					{
 
 						//clear the comp bits that might have been set on this block
@@ -148,19 +148,19 @@ namespace Talos
 					//set bit 15 so we know that motion has ran once and any more motions need backlash
 					//(motions that dont actually cause motion will have already been ignored)
 					//Save the direction bits for when the next block is processed. (set the 15th bit always)
-					bl_comp_direction_flags._flag = motion_block->direction_bits._flag | 0X8000;
+					__bl_comp_direction_flags._flag = motion_block->direction_bits._flag | 0X8000;
 
 					motion_block->millimeters = convert_delta_vector_to_unit_vector(unit_vec);
-					motion_block->acceleration = limit_value_by_axis_maximum(mtn_cfg::Controller.Settings.hardware.acceleration, unit_vec);
-					motion_block->rapid_rate = limit_value_by_axis_maximum(mtn_cfg::Controller.Settings.hardware.max_rate, unit_vec);
+					motion_block->acceleration = __limit_value_by_axis_maximum(mtn_cfg::Controller.Settings.hardware.acceleration, unit_vec);
+					motion_block->rapid_rate = __limit_value_by_axis_maximum(mtn_cfg::Controller.Settings.hardware.max_rate, unit_vec);
 
 					__configure_feedrate(view, motion_block);
 
-					__plan_buffer_line(motion_block, mtn_cfg::Controller.Settings, last_planned_position, unit_vec, target_steps);
+					__plan_buffer_line(motion_block, mtn_cfg::Controller.Settings, __last_planned_position, unit_vec, target_steps);
 
 					block_buffer.put(*motion_block);
 
-					planner_recalculate();
+					__planner_recalculate();
 
 					return 1;
 				}
@@ -274,7 +274,7 @@ namespace Talos
 					return (magnitude);
 				}
 
-				float Block::limit_value_by_axis_maximum(float* max_value, float* unit_vec)
+				float Block::__limit_value_by_axis_maximum(float* max_value, float* unit_vec)
 				{
 					uint8_t idx;
 					float limit_value = SOME_LARGE_VALUE;
@@ -311,8 +311,8 @@ namespace Talos
 						float junction_cos_theta = 0.0;
 						for (idx = 0; idx < MACHINE_AXIS_COUNT; idx++)
 						{
-							junction_cos_theta -= previous_unit_vec[idx] * unit_vectors[idx];
-							junction_unit_vec[idx] = unit_vectors[idx] - previous_unit_vec[idx];
+							junction_cos_theta -= __previous_unit_vec[idx] * unit_vectors[idx];
+							junction_unit_vec[idx] = unit_vectors[idx] - __previous_unit_vec[idx];
 						}
 
 						// NOTE: Computed without any expensive trig, sin() or acos(), by trig half angle identity of cos(theta).
@@ -331,7 +331,7 @@ namespace Talos
 							else
 							{
 								convert_delta_vector_to_unit_vector(junction_unit_vec);
-								float junction_acceleration = limit_value_by_axis_maximum(hw_settings.hardware.acceleration, junction_unit_vec);
+								float junction_acceleration = __limit_value_by_axis_maximum(hw_settings.hardware.acceleration, junction_unit_vec);
 								float sin_theta_d2 = sqrt(0.5 * (1.0 - junction_cos_theta)); // Trig half angle identity. Always positive.
 								motion_block->max_junction_speed_sqr = max(mtn_cfg::Controller.Settings.internals.MINIMUM_JUNCTION_SPEED_SQ,
 									(junction_acceleration * hw_settings.tolerance.junction_deviation * sin_theta_d2) / (1.0 - sin_theta_d2));
@@ -343,19 +343,19 @@ namespace Talos
 					//if (!(planning_block->condition & PL_COND_FLAG_SYSTEM_MOTION))
 					{
 						float nominal_speed = plan_compute_profile_nominal_speed(motion_block);
-						plan_compute_profile_parameters(motion_block, nominal_speed, previous_nominal_speed);
-						previous_nominal_speed = nominal_speed;
+						plan_compute_profile_parameters(motion_block, nominal_speed, __previous_nominal_speed);
+						__previous_nominal_speed = nominal_speed;
 
 						// Update previous path unit_vector and planner position.
-						memcpy(previous_unit_vec, unit_vectors, sizeof(unit_vectors)); // pl.previous_unit_vec[] = unit_vec[]
-						memcpy(last_planned_position, target_steps, sizeof(last_planned_position)); // pl.position[] = target_steps[]
+						memcpy(__previous_unit_vec, unit_vectors, sizeof(unit_vectors)); // pl.previous_unit_vec[] = unit_vec[]
+						memcpy(__last_planned_position, target_steps, sizeof(__last_planned_position)); // pl.position[] = target_steps[]
 
 
 					}
 					return (1);
 				}
 
-				void Block::planner_recalculate()
+				void Block::__planner_recalculate()
 				{
 					//// Initialize block index to the last block in the planner buffer.
 					////what was the newest block item added to the plan buffer...
@@ -420,7 +420,7 @@ namespace Talos
 						}
 					}
 					
-					forward_plan();
+					__forward_plan();
 
 					//// Forward Pass: Forward plan the acceleration curve from the planned pointer onward.
 					//// Also scans for optimal plan breakpoints and appropriately updates the planned pointer.
@@ -458,7 +458,7 @@ namespace Talos
 					//}
 				}
 
-				void Block::forward_plan()
+				void Block::__forward_plan()
 				{
 					__s_motion_block* previous_block;
 					float entry_speed_sqr = 0.0;
