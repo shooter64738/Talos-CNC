@@ -19,7 +19,7 @@
     <ClCompile Include="..\..\..\..\Motion\motion_main.cpp" />
     <ClCompile Include="..\..\..\..\Motion\NewCore\c_ngc_to_block.cpp" />
     <ClCompile Include="..\..\..\..\Motion\NewCore\c_block_to_segment.cpp" />
-    <ClCompile Include="..\..\..\..\Motion\NewCore\c_controller.cpp" />
+    <ClCompile Include="..\..\..\..\Motion\NewCore\c_state_control.cpp" />
     <ClCompile Include="..\..\..\..\Motion\Processing\Main\Main_Process.cpp" />
     <ClCompile Include="..\..\..\..\Motion\Processing\Planner\Canned Cycles\x_c_canned_cycle.cpp" />
     <ClCompile Include="..\..\..\..\Motion\Processing\Planner\c_event_control.cpp" />
@@ -60,7 +60,7 @@
     <ClInclude Include="..\..\..\..\Motion\NewCore\s_segment_base.h" />
     <ClInclude Include="..\..\..\..\Motion\NewCore\s_segment_timer_common.h" />
     <ClInclude Include="..\..\..\..\Motion\NewCore\s_timer_item.h" />
-    <ClInclude Include="..\..\..\..\Motion\NewCore\c_controller.h" />
+    <ClInclude Include="..\..\..\..\Motion\NewCore\c_state_control.h" />
     <ClInclude Include="..\..\..\..\Motion\Processing\Main\Main_Process.h" />
     <ClInclude Include="..\..\..\..\Motion\Processing\Planner\Canned Cycles\x_c_canned_cycle.h" />
     <ClInclude Include="..\..\..\..\Motion\Processing\Planner\c_event_control.h" />

@@ -91,6 +91,9 @@
     <Filter Include="Configuration\Interpreter">
       <UniqueIdentifier>{eea33a2c-9b16-4a6a-a72b-749aa6edd46e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Motion\NewCore\Supporting_Items">
+      <UniqueIdentifier>{a7cc0e30-7229-439e-90eb-71ec61c7e44d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\..\Motion\motion_main.cpp">
@@ -180,7 +183,7 @@
     <ClCompile Include="..\..\..\..\Motion\NewCore\c_block_to_segment.cpp">
       <Filter>Motion\NewCore</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\Motion\NewCore\c_controller.cpp">
+    <ClCompile Include="..\..\..\..\Motion\NewCore\c_state_control.cpp">
       <Filter>Motion\NewCore</Filter>
     </ClCompile>
   </ItemGroup>
@@ -353,31 +356,10 @@
     <ClInclude Include="..\..\..\..\Configuration\Interpreter\c_start_block_gmcode.h">
       <Filter>Configuration\Interpreter</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Motion\NewCore\s_motion_block.h">
-      <Filter>Motion\NewCore</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\..\Motion\NewCore\c_ngc_to_block.h">
       <Filter>Motion\NewCore</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\Motion\NewCore\c_block_to_segment.h">
-      <Filter>Motion\NewCore</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Motion\NewCore\s_segment_base.h">
-      <Filter>Motion\NewCore</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Motion\NewCore\e_ramp_states.h">
-      <Filter>Motion\NewCore</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Motion\NewCore\s_bresenham_item.h">
-      <Filter>Motion\NewCore</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Motion\NewCore\s_timer_item.h">
-      <Filter>Motion\NewCore</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Motion\NewCore\e_block_state.h">
-      <Filter>Motion\NewCore</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Motion\NewCore\s_segment_timer_common.h">
       <Filter>Motion\NewCore</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\Shared_Data\Settings\Motion\_s_motion_axis_options.h">
@@ -398,7 +380,28 @@
     <ClInclude Include="..\..\..\..\Shared_Data\Settings\Motion\_s_motion_internal.h">
       <Filter>Shared data\Settings\Motion</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Motion\NewCore\c_controller.h">
+    <ClInclude Include="..\..\..\..\Motion\NewCore\s_timer_item.h">
+      <Filter>Motion\NewCore\Supporting_Items</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Motion\NewCore\s_segment_timer_common.h">
+      <Filter>Motion\NewCore\Supporting_Items</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Motion\NewCore\s_segment_base.h">
+      <Filter>Motion\NewCore\Supporting_Items</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Motion\NewCore\s_motion_block.h">
+      <Filter>Motion\NewCore\Supporting_Items</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Motion\NewCore\s_bresenham_item.h">
+      <Filter>Motion\NewCore\Supporting_Items</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Motion\NewCore\e_ramp_states.h">
+      <Filter>Motion\NewCore\Supporting_Items</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Motion\NewCore\e_block_state.h">
+      <Filter>Motion\NewCore\Supporting_Items</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Motion\NewCore\c_state_control.h">
       <Filter>Motion\NewCore</Filter>
     </ClInclude>
   </ItemGroup>

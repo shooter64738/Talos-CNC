@@ -19,7 +19,7 @@ namespace Talos
 	{
 		namespace Core
 		{
-			namespace Controller
+			namespace States
 			{
 
 				class Motion

@@ -22,7 +22,7 @@ namespace Talos
 	{
 		namespace Core
 		{
-			namespace Controller
+			namespace States
 			{
 				s_bit_flag_controller<uint32_t> Motion::states;
 			
