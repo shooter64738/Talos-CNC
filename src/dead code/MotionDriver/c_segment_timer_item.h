@@ -1,6 +1,6 @@
 #include <stdint.h>
 #include "c_segment_timer_bresenham.h"
-#include "..\Common\Serial\records_def.h"
+//#include "..\Common\Serial\records_def.h"
 namespace Motion_Core
 {
 	namespace Segment

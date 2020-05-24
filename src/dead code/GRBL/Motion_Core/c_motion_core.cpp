@@ -1,5 +1,6 @@
 #include "c_motion_core.h"
 
+uint16_t Motion_Core::Settings::pulse_length;
 int16_t Motion_Core::Settings::steps_per_mm[N_AXIS]{160};
 float Motion_Core::Settings::acceleration[N_AXIS]{ (100.0 * 60 * 60)};
 float Motion_Core::Settings::max_rate [N_AXIS]{ 5000};

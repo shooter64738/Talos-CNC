@@ -17,7 +17,7 @@ namespace Motion_Core
 		public:
 
 
-			//static int32_t position[N_AXIS];          // The planner position of the tool in absolute steps. Kept separate
+			static int32_t position[N_AXIS];          // The planner position of the tool in absolute steps. Kept separate
 													  // from g-code position for movements requiring multiple line motions,
 													  // i.e. arcs, canned cycles, and backlash compensation.
 			static float previous_unit_vec[N_AXIS];   // Unit vector of previous path line segment

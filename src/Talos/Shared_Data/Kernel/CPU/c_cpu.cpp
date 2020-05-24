@@ -292,7 +292,7 @@ uint8_t c_cpu::cdh_r_get_message_type(c_ring_buffer<char>* buffer)
 {
 	dvc_source = &__rcving_buffers[SERIAL];
 
-	char peek_tail = buffer->peek(buffer->_tail);
+	char peek_tail = *buffer->peek(buffer->_tail);
 
 	//Printable data is ngc method_or_line data. We need to check cr or lf because those are
 	//special method_or_line ending characters for ngc data. We will NEVER use 10 or 13 as a
@@ -360,7 +360,7 @@ bool c_cpu::cdh_r_read()
 
 	while (this->__active_hw_buffer->has_data())
 	{
-		char byte = this->__active_hw_buffer->get();
+		char byte = *this->__active_hw_buffer->get();
 
 		__read_size--;
 

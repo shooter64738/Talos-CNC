@@ -28,19 +28,19 @@
 #include <math.h>
 #include <string.h>
 #include <ctype.h>
-#include "..\..\Talos\ARM_3X8E\Talos_ARM3X8E\communication_def.h"
+//#include "..\..\Talos\ARM_3X8E\Talos_ARM3X8E\communication_def.h"
 #include <stdlib.h>
-#include "..\..\Talos\ARM_3X8E\Talos_ARM3X8E\bit_manipulation.h"
+#include "..//..//..//Talos/_bit_manipulation.h"
 #include <stdlib.h>
 
-//char NGC_RS274::Interpreter::Processor::Line[CYCLE_LINE_LENGTH];
-char * NGC_RS274::Interpreter::Processor::Line;
+char NGC_RS274::Interpreter::Processor::_Line[CYCLE_LINE_LENGTH];
+char * NGC_RS274::Interpreter::Processor::Line = NGC_RS274::Interpreter::Processor::_Line;
 int NGC_RS274::Interpreter::Processor::HasErrors = 0;
 NGC_RS274::NGC_Binary_Block NGC_RS274::Interpreter::Processor::local_block;
 NGC_RS274::NGC_Binary_Block*NGC_RS274::Interpreter::Processor::stager_block;
 bool NGC_RS274::Interpreter::Processor::normalize_distance_units_to_mm = true;
 uint16_t ngc_working_group = 0;
-c_Serial *NGC_RS274::Interpreter::local_serial;
+//c_Serial *NGC_RS274::Interpreter::local_serial;
 
 void NGC_RS274::Interpreter::Processor::initialize()
 {
@@ -1125,7 +1125,7 @@ int NGC_RS274::Interpreter::Processor::_gWord(float Address)
 	group is on the line again, the logic above will catch it and return an error
 	*/
 	NGC_RS274::Interpreter::Processor::local_block.g_code_defined_in_block =
-	BitSet(NGC_RS274::Interpreter::Processor::local_block.g_code_defined_in_block, ngc_working_group);
+	BitSet_(NGC_RS274::Interpreter::Processor::local_block.g_code_defined_in_block, ngc_working_group);
 	return  NGC_RS274::Interpreter::Errors::OK;
 }
 
@@ -1217,7 +1217,7 @@ int NGC_RS274::Interpreter::Processor::_mWord(float Address)
 	group is on the line again, the logic above will catch it and return an error
 	*/
 	NGC_RS274::Interpreter::Processor::local_block.m_code_defined_in_block =
-	BitSet(NGC_RS274::Interpreter::Processor::local_block.m_code_defined_in_block, ngc_working_group);
+	BitSet_(NGC_RS274::Interpreter::Processor::local_block.m_code_defined_in_block, ngc_working_group);
 	return  NGC_RS274::Interpreter::Errors::OK;
 
 }
@@ -1298,7 +1298,7 @@ int NGC_RS274::Interpreter::Processor::process_word_values(char Word, float iAdd
 	catch it when it comes in again with the code above.
 	*/
 
-	NGC_RS274::Interpreter::Processor::local_block.word_defined_in_block_A_Z = BitSet(NGC_RS274::Interpreter::Processor::local_block.word_defined_in_block_A_Z, WordNumber);
+	NGC_RS274::Interpreter::Processor::local_block.word_defined_in_block_A_Z = BitSet_(NGC_RS274::Interpreter::Processor::local_block.word_defined_in_block_A_Z, WordNumber);
 
 	/*
 	Almost all letters of the alphabet are used as words. The easiest and simplest way

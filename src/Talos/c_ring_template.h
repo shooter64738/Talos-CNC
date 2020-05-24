@@ -16,7 +16,7 @@ public:
 		initialize(pointer, buf_size);
 	}
 
-	bool initialize(TN *pointer, uint16_t buf_size)
+	bool initialize(TN* pointer, uint16_t buf_size)
 	{
 		if (pointer == NULL)
 			return false;
@@ -27,7 +27,7 @@ public:
 		return true;
 	}
 
-	void attach(TN *pointer, uint16_t buf_size)
+	void attach(TN* pointer, uint16_t buf_size)
 	{
 
 		this->_storage_pointer = pointer;
@@ -63,7 +63,7 @@ public:
 	{
 		if ((this->_head == this->_tail) && !this->_full)
 			return false;
-		
+
 		return true;
 	}
 
@@ -84,7 +84,7 @@ public:
 		//if head==tail and not full, buffer is empty, no data to provide
 		if ((this->_head == this->_peek_stepper) && !this->_full)
 			return 0;
-		
+
 		//get the byte at the peek position
 		TN data = this->_storage_pointer[this->_peek_stepper++];
 		//if we are at the size of the buffer, wrap back to zero
@@ -95,176 +95,154 @@ public:
 		return data;
 	}
 
-	TN peek(uint16_t position)
+	TN* peek(uint16_t position)
 	{
-		return this->_storage_pointer[this->_tail];
+		return (this->_storage_pointer + position);
 	}
-	
 
 	void shift(int16_t shift_size)
 	{
-		this->_tail +=shift_size;
+		this->_tail += shift_size;
 	}
-
+	uint16_t count()
+	{
+		return _data_size;
+	}
 	//Return the specified type
-	TN get()
+	TN* get()
 	{
 		//caller should check has_data before calling this. 
 
-		//if head==tail and not full, buffer is empty, no data to provide
-		//if ((this->_head == this->_tail) && !this->_full)
-		//	return 0;
+		TN* data = (this->_storage_pointer + this->_tail);
+		_move_tail();
 
-		//since we are pulling a byte off the buffer, it can not be full
-		this->_full = false;
-		//get the byte at the tail
-		//TN data = this->_storage_pointer[this->_tail];
-		TN data = *(this->_storage_pointer+ this->_tail);
-		//clear this byte. keeps the storage buffered 'nulled'
-		//_storage_pointer[_tail] = 0;
-		//increment tail
-		this->_last_read = this->_tail;
-		this->_tail++;
-		//if we are at the size of the buffer, wrap back to zero
-		if (this->_tail == this->_buffer_size)
-		{
-			this->_tail = 0;
-		}
 		return data;
 	}
 
+	//return the item that was at the tail NOW
 	TN* cur(bool* last)
 	{
+		*last = true;
+
 		if (!this->has_data())
 			return NULL;
 
-		*last = false;
-		if (this->_tail == this->_head)
-			* last = true;
+		if (_my_tail(1) < this->_head)
+			* last = false;
 
 		return (this->_storage_pointer + this->_last_read);
 	}
 
-	TN *cur_tail(bool * last)
+	//return the item that was at the tail BEFORE the last get
+	TN* cur_tail(bool* last)
 	{
+		*last = true;
 		if (!this->has_data())
 			return NULL;
 
-		*last = false;
-		if (this->_tail == this->_head)
-			* last = true;
+		if (_my_tail(1) < this->_head)
+			* last = false;
 
 		return (this->_storage_pointer + this->_last_read);
 	}
-	
-	TN *cur_head(bool* last)
+
+	//return the item that was at the head BEFORE the last put
+	TN* cur_head(bool* last)
 	{
+		//this one will be the 'last record' because it is at head position
+		*last = true;
 		if (!this->has_data())
 			return NULL;
-
-		*last = false;
-		if (this->_tail == this->_head)
-			* last = true;
 
 		return (this->_storage_pointer + this->_last_write);
 	}
 
-	TN * get_h()
+	TN* step_rev()
 	{
-		//caller should check has_data before calling this. 
+		uint16_t index = 0;
 
-		//if head==tail and not full, buffer is empty, no data to provide
-		//if ((this->_head == this->_tail) && !this->_full)
-		//	return 0;
+		//first time
+		if (_stepper < 0)
+			index = _last_write + (++_stepper);
+		else
+			index = _last_write - (++_stepper);
 
-		//since we are pulling a byte off the buffer, it can not be full
-		this->_full = false;
-		//get the byte at the tail
-		TN data = &this->_storage_pointer[this->_tail];
-		//clear this byte. keeps the storage buffered 'nulled'
-		//_storage_pointer[_tail] = 0;
-		//increment tail
-		this->_tail++;
-		//if we are at the size of the buffer, wrap back to zero
-		if (this->_tail == this->_buffer_size)
+
+		if (index < this->_tail)
 		{
-			this->_tail = 0;
+			_stepper = -1;
+			return NULL;
 		}
-		return data;
+
+		if (index < 0)
+		{
+			index = _buffer_size - 1;
+		}
+
+		return this->_storage_pointer + index;
 	}
-	
-	TN * writer_for_insert()
+
+	TN* step_fwd()
+	{
+		uint16_t index = 0;
+
+		//first time
+		if (_stepper < 0)
+			index = _last_read + (++_stepper);
+		else
+			index = _last_read + (++_stepper);
+
+
+		if (index > this->_head)
+		{
+			_stepper = -1;
+			return NULL;
+		}
+
+		if (index > _buffer_size)
+		{
+			index = 0;
+		}
+
+		return this->_storage_pointer + index;
+	}
+
+	void step_rst()
+	{
+		_stepper = -1;
+	}
+
+	TN* writer_for_insert()
 	{
 		//caller should check has_data before calling this.
-
-		//if head==tail and not full, buffer is empty, no data to provide
-		//if ((this->_head == this->_tail) && !this->_full)
-		//	return 0;
 
 		//get the a handle for the object at the head position
 		this->_newest = this->_head;
-		TN * data = &this->_storage_pointer[this->_head];
+		TN* data = &this->_storage_pointer[this->_head];
 
-		//if (this->_head == this->_buffer_size)
-		//{
-		//	this->_head = 0;
-		//}
-		////if head is equal to tail after a write, we are full
-		//if (this->_head == this->_tail)
-		//	this->_full = true;	
-		
 		return data;
 	}
-	
-	TN * writer_for_last_added()
-	{
-		//caller should check has_data before calling this.
 
-		//if head==tail and not full, buffer is empty, no data to provide
-		//if ((this->_head == this->_tail) && !this->_full)
-		//	return 0;
+	TN* writer_for_last_added()
+	{
 
 		//get the a handle for the object at the head position
-		TN * data = &this->_storage_pointer[this->_newest];
-		
+		TN* data = &this->_storage_pointer[this->_newest];
+
 		return data;
 	}
-	
+
 	void advance()
 	{
-		//caller should check has_data before calling this.
-		this->_head++;
-
-		if (this->_head >= this->_buffer_size)
-		{
-			this->_head = 0;
-		}
-		//if head is equal to tail after a write, we are full
-		if (this->_head == this->_tail)
-			this->_full = true;
+		_move_head();
 	}
 
 	//Add as the type, but copied from a byte stream
-	uint8_t put(char * data)
+	uint8_t put(char* data)
 	{
 		//caller should check for full before calling this
-
-		//buffer is full cant add
-		//if (this->_full)
-		//	return 0;
-		//convert byte stream to type,place data at head position, increment head
-		//memcpy(&this->_storage_pointer[this->_head], data, sizeof(TN));
-		this->_last_write = this->_head;
-		*(this->_storage_pointer+this->_head) = data;
-		this->_head++;
-		//if we are at the size of the buffer, wrap back to zero
-		if (this->_head == this->_buffer_size)
-		{
-			this->_head = 0;
-		}
-		//if head is equal to tail after a write, we are full
-		if (this->_head == this->_tail)
-			this->_full = true;
+		*(this->_storage_pointer + this->_head) = data;
+		_move_head();
 
 		return 1;
 	}
@@ -273,16 +251,31 @@ public:
 	uint8_t put(TN data)
 	{
 		//caller should check for full before calling this
+		*(this->_storage_pointer + this->_head) = data;
+		_move_head();
 
-		//buffer is full cant add
-		//if (this->_full)
-		//	return 0;
+		return 1;
+	}
 
-		//place the byte at the head position, increment head
+	void _move_tail()
+	{
+		_data_size--;
+		this->_last_read = this->_tail;
+		//since we are pulling a byte off the buffer, it can not be full
+		this->_full = false;
+		this->_tail++;
+		//if we are at the size of the buffer, wrap back to zero
+		if (this->_tail == this->_buffer_size)
+		{
+			this->_tail = 0;
+		}
+	}
+
+	void _move_head()
+	{
+		_data_size++;
 		this->_last_write = this->_head;
-		//memcpy(this->_storage_pointer[this->_head++], (char*)data, sizeof(data));
-		//this->_storage_pointer[this->_head++] = data;
-		*(this->_storage_pointer+this->_head) = data;
+
 		this->_head++;
 		//if we are at the size of the buffer, wrap back to zero
 		if (this->_head == this->_buffer_size)
@@ -292,18 +285,21 @@ public:
 		//if head is equal to tail after a write, we are full
 		if (this->_head == this->_tail)
 			this->_full = true;
-
-		return 1;
 	}
 
-	
-
-	//uint8_t(*pntr_device_write)(uint8_t port, char byte);
-	//uint8_t(*pntr_device_read)(uint8_t port, char byte);
+	uint16_t _my_tail(int16_t val)
+	{
+		//I wouldnt recommend sending in a value larger than the buffer... 
+		if (this->_tail + val >= this->_buffer_size)
+		{
+			return val -= (this->_tail + val) - this->_buffer_size;
+		}
+		return val;
+	}
 
 public:
 
-	TN * _storage_pointer = NULL;
+	TN* _storage_pointer = NULL;
 	bool _full = false;
 	uint16_t _buffer_size = 0;
 	uint16_t _head = 0;
@@ -311,5 +307,7 @@ public:
 	uint16_t _last_read = 0;
 	uint16_t _last_write = 0;
 	uint16_t _peek_stepper = 0;
+	int16_t _stepper = 0;
+	uint16_t _data_size = 0;
 };
 

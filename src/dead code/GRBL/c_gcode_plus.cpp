@@ -67,6 +67,9 @@ NGC_RS274::NGC_Binary_Block c_gcode::test_block = NGC_RS274::NGC_Binary_Block();
 uint32_t c_gcode::gc_internal_line_Number = 0;
 
 #define FAIL(status) do { return (status); } while (0)
+void c_gcode::gc_sync_position()
+{
+}
 
 void c_gcode::gc_init()
 {

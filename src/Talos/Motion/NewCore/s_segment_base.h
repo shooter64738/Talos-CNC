@@ -9,7 +9,7 @@
 
 struct s_segment_base
 {
-	uint8_t recalculate_flag = 0;
+	//uint8_t recalculate_flag = 0;
 	e_ramp_type ramp_type = e_ramp_type::Accel;
 	float dt_remainder = 0;
 	float steps_remaining = 0;

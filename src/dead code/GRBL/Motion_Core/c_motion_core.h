@@ -32,6 +32,8 @@ namespace Motion_Core
 		static int16_t steps_per_mm[N_AXIS];
 		static float junction_deviation;
 		static float arc_tolerance;
+		static uint16_t pulse_length;
+
 	};
 	#endif
 

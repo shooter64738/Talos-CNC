@@ -4,11 +4,11 @@
 #include "c_motion_core.h"
 #include "..\..\common\NGC_RS274\NGC_G_Groups.h"
 #include "..\..\common\NGC_RS274\NGC_G_Codes.h"
-
+#include <string.h>
 
 
 Motion_Core::Planner::Block_Item *Motion_Core::Planner::Calculator::block_buffer_planned = Motion_Core::Planner::Buffer::Get(0);
-//int32_t Motion_Core::Planner::Calculator::position[N_AXIS];
+int32_t Motion_Core::Planner::Calculator::position[N_AXIS];
 float Motion_Core::Planner::Calculator::previous_unit_vec[N_AXIS];
 float Motion_Core::Planner::Calculator::previous_nominal_speed;
 
@@ -35,10 +35,10 @@ uint8_t Motion_Core::Planner::Calculator::_plan_buffer_line(NGC_RS274::NGC_Binar
 		// Also, compute individual axes distance for move and prep unit vector calculations.
 		// NOTE: Computes true distance from converted step values.
 
-		target_steps[idx] = lround(*target_block->axis_values.Loop[idx] * Motion_Core::Settings::steps_per_mm[idx]);
+		target_steps[idx] = lround(*target_block->axis_values.Loop[idx] * 160);
 		planning_block->steps[idx] = labs(target_steps[idx] );
 		planning_block->step_event_count = max(planning_block->step_event_count, planning_block->steps[idx]);
-		delta_mm = (target_steps[idx]) / Motion_Core::Settings::steps_per_mm[idx];
+		delta_mm = (target_steps[idx] - Motion_Core::Planner::Calculator::position[idx]) / Motion_Core::Settings::steps_per_mm[idx];
 
 		unit_vec[idx] = delta_mm; // Store unit vector numerator
 
@@ -152,7 +152,7 @@ uint8_t Motion_Core::Planner::Calculator::_plan_buffer_line(NGC_RS274::NGC_Binar
 
 		// Update previous path unit_vector and planner position.
 		memcpy(Motion_Core::Planner::Calculator::previous_unit_vec, unit_vec, sizeof(unit_vec)); // pl.previous_unit_vec[] = unit_vec[]
-		//memcpy(Motion_Core::Planner::Calculator::position, target_steps, sizeof(target_steps)); // pl.position[] = target_steps[]
+		memcpy(Motion_Core::Planner::Calculator::position, target_steps, sizeof(target_steps)); // pl.position[] = target_steps[]
 
 		// New block is all set. Update buffer head and next buffer head indices.
 		// Finish up by recalculating the plan with the new block.

@@ -2,7 +2,7 @@
 #include "c_segment_timer_bresenham.h"
 #include "c_segment_timer_item.h"
 #include "c_motion_core.h"
-#include "..\Common\Serial\records_def.h"
+//#include "..\Common\Serial\records_def.h"
 
 namespace Motion_Core
 {
@@ -33,7 +33,7 @@ namespace Motion_Core
 			static uint32_t Step_Pulse_Length;  // Step pulse reset time after step rise
 			static uint32_t Current_Sequence;
 			static uint32_t Last_Completed_Sequence;
-			static BinaryRecords::e_feed_modes drive_mode;
+			//static BinaryRecords::e_feed_modes drive_mode;
 			static void step_tick();
 			static uint8_t is_active();
 			static void Initialize();

@@ -62,8 +62,8 @@ uint8_t c_controller::load_defaults()
 	for (uint8_t i = 0; i < MACHINE_AXIS_COUNT; i++)
 	{
 		Settings.hardware.steps_per_mm[i] = 160;
-		Settings.hardware.acceleration[i] = (150.0 * 60 * 60);
-		Settings.hardware.max_rate[i] = 12000;
+		Settings.hardware.acceleration[i] = (100.0 * 60 * 60);
+		Settings.hardware.max_rate[i] = 5000;
 		Settings.hardware.distance_per_rotation[i] = 5;
 
 		Settings.hardware.back_lash_comp_distance[i] = 55;
@@ -84,8 +84,9 @@ uint8_t c_controller::load_defaults()
 	Settings.internals.ARC_ANGULAR_TRAVEL_EPSILON = 5E-7;
 	Settings.internals.N_ARC_CORRECTION = 12;
 	Settings.internals.MINIMUM_JUNCTION_SPEED = 0.0;
+	Settings.internals.MINIMUM_JUNCTION_SPEED_SQ = Settings.internals.MINIMUM_JUNCTION_SPEED * Settings.internals.MINIMUM_JUNCTION_SPEED;
 	Settings.internals.MINIMUM_FEED_RATE = 1.0;
-	Settings.internals.ACCELERATION_TICKS_PER_SECOND = 1000;
+	Settings.internals.ACCELERATION_TICKS_PER_SECOND = 100;
 	Settings.internals.REQ_MM_INCREMENT_SCALAR = 1.25;
 
 	Settings.crc = 0;

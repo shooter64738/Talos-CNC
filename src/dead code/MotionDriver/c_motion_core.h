@@ -2,7 +2,7 @@
 #include <math.h>
 #include <stdint.h>
 #include <stddef.h>
-#include "..\Common\Serial\records_def.h"
+//#include "..\Common\Serial\records_def.h"
 #include "hardware_def.h"
 
 
@@ -38,8 +38,7 @@ namespace Motion_Core
 	class Settings
 	{
 	public:
-
-		static BinaryRecords::s_motion_control_settings _Settings;
+		//static BinaryRecords::s_motion_control_settings _Settings;
 		
 	};
 #endif

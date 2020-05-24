@@ -10,7 +10,7 @@
 #include "../../c_ring_template.h"
 #include "s_motion_block.h"
 
-#define BLOCK_BUFFER_SIZE 10
+#define BLOCK_BUFFER_SIZE 36
 
 namespace Talos
 {
@@ -25,6 +25,7 @@ namespace Talos
 					//variables
 				public:
 					static c_ring_buffer<__s_motion_block> block_buffer;
+					static __s_motion_block* planned_block;
 				protected:
 				private:
 
@@ -79,7 +80,10 @@ namespace Talos
 						, float* unit_vectors
 						, int32_t* target_steps);
 
-					
+					static void Block::planner_recalculate();
+
+					static void Block::forward_plan();
+
 				};
 
 			};

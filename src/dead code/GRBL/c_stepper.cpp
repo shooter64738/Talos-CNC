@@ -363,10 +363,10 @@ void c_stepper::step_tick()
 			// Segment buffer empty. Shutdown.
 			c_stepper::st_go_idle();
 			// Ensure pwm is set properly upon completion of rate-controlled motion.
-			if (st.Exec_Timer_Bresenham->is_pwm_rate_adjusted)
+			/*if (st.Exec_Timer_Bresenham->is_pwm_rate_adjusted)
 			{
 				c_spindle::spindle_set_speed(SPINDLE_PWM_OFF_VALUE);
-			}
+			}*/
 			c_system::system_set_exec_state_flag(EXEC_CYCLE_STOP); // Flag main program for cycle end
 
 			c_planner::block_complete = true;

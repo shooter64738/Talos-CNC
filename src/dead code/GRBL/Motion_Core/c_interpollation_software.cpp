@@ -121,128 +121,128 @@ void Motion_Core::Software::Interpollation::_mc_line(NGC_RS274::NGC_Binary_Block
 
 void Motion_Core::Software::Interpollation::_mc_arc(uint8_t is_clockwise_arc, NGC_RS274::NGC_Binary_Block *target_block)
 {
-	float center_axis0 ;//= *Motion_Core::Software::Interpollation::previous_state.plane_axis.horizontal_axis.value
-	//+ *target_block->arc_values.horizontal_center.value;
-	float center_axis1; //= *Motion_Core::Software::Interpollation::previous_state.plane_axis.vertical_axis.value
-	//+ *target_block->arc_values.vertical_center.value;
+	//float center_axis0 ;//= *Motion_Core::Software::Interpollation::previous_state.plane_axis.horizontal_axis.value
+	////+ *target_block->arc_values.horizontal_center.value;
+	//float center_axis1; //= *Motion_Core::Software::Interpollation::previous_state.plane_axis.vertical_axis.value
+	////+ *target_block->arc_values.vertical_center.value;
 
-	float r_axis0 = -*target_block->arc_values.horizontal_center.value;
-	float r_axis1 = -*target_block->arc_values.vertical_center.value;
-	float rt_axis0 = *target_block->plane_axis.horizontal_axis.value - center_axis0;
-	float rt_axis1 = *target_block->plane_axis.vertical_axis.value - center_axis1;
+	//float r_axis0 = -*target_block->arc_values.horizontal_center.value;
+	//float r_axis1 = -*target_block->arc_values.vertical_center.value;
+	//float rt_axis0 = *target_block->plane_axis.horizontal_axis.value - center_axis0;
+	//float rt_axis1 = *target_block->plane_axis.vertical_axis.value - center_axis1;
 
-	// CCW angle between position and target from circle center. Only one atan2() trig computation required.
-	float angular_travel = atan2(r_axis0 * rt_axis1 - r_axis1 * rt_axis0, r_axis0 * rt_axis0 + r_axis1 * rt_axis1);
-	if (is_clockwise_arc)
-	{ // Correct atan2 output per direction
-		if (angular_travel >= -ARC_ANGULAR_TRAVEL_EPSILON)
-		{
-			angular_travel -= 2 * M_PI;
-		}
-	}
-	else
-	{
-		if (angular_travel <= ARC_ANGULAR_TRAVEL_EPSILON)
-		{
-			angular_travel += 2 * M_PI;
-		}
-	}
+	//// CCW angle between position and target from circle center. Only one atan2() trig computation required.
+	//float angular_travel = atan2(r_axis0 * rt_axis1 - r_axis1 * rt_axis0, r_axis0 * rt_axis0 + r_axis1 * rt_axis1);
+	//if (is_clockwise_arc)
+	//{ // Correct atan2 output per direction
+	//	if (angular_travel >= -ARC_ANGULAR_TRAVEL_EPSILON)
+	//	{
+	//		angular_travel -= 2 * M_PI;
+	//	}
+	//}
+	//else
+	//{
+	//	if (angular_travel <= ARC_ANGULAR_TRAVEL_EPSILON)
+	//	{
+	//		angular_travel += 2 * M_PI;
+	//	}
+	//}
 
-	// NOTE: Segment end points are on the arc, which can lead to the arc diameter being smaller by up to
-	// (2x) settings.arc_tolerance. For 99% of users, this is just fine. If a different arc segment fit
-	// is desired, i.e. least-squares, midpoint on arc, just change the mm_per_arc_segment calculation.
-	// For the intended uses of Grbl, this value shouldn't exceed 2000 for the strictest of cases.
-	uint16_t segments = floor(fabs(0.5 * angular_travel * (*target_block->arc_values.Radius))
-	/ sqrt(Motion_Core::Settings::arc_tolerance * (2 * (*target_block->arc_values.Radius) -Motion_Core::Settings::arc_tolerance)));
+	//// NOTE: Segment end points are on the arc, which can lead to the arc diameter being smaller by up to
+	//// (2x) settings.arc_tolerance. For 99% of users, this is just fine. If a different arc segment fit
+	//// is desired, i.e. least-squares, midpoint on arc, just change the mm_per_arc_segment calculation.
+	//// For the intended uses of Grbl, this value shouldn't exceed 2000 for the strictest of cases.
+	//uint16_t segments = floor(fabs(0.5 * angular_travel * (*target_block->arc_values.Radius))
+	/// sqrt(Motion_Core::Settings::arc_tolerance * (2 * (*target_block->arc_values.Radius) -Motion_Core::Settings::arc_tolerance)));
 
-	if (segments)
-	{
-		// Multiply inverse feed_rate to compensate for the fact that this movement is approximated
-		// by a number of discrete segments. The inverse feed_rate should be correct for the sum of
-		// all segments.
-		//if (target_block->get_g_code_value_x(NGC_RS274::Groups::G::FEED_RATE_MODE) == NGC_RS274::G_codes::FEED_RATE_MINUTES_PER_UNIT_MODE)
+	//if (segments)
+	//{
+	//	// Multiply inverse feed_rate to compensate for the fact that this movement is approximated
+	//	// by a number of discrete segments. The inverse feed_rate should be correct for the sum of
+	//	// all segments.
+	//	//if (target_block->get_g_code_value_x(NGC_RS274::Groups::G::FEED_RATE_MODE) == NGC_RS274::G_codes::FEED_RATE_MINUTES_PER_UNIT_MODE)
 
-		//if (pl_data->condition & PL_COND_FLAG_INVERSE_TIME)
-		//{
-		//	pl_data->feed_rate *= segments;
-		//	//bit_false(pl_data->condition, PL_COND_FLAG_INVERSE_TIME); // Force as feed absolute mode over arc segments.
-		//}
+	//	//if (pl_data->condition & PL_COND_FLAG_INVERSE_TIME)
+	//	//{
+	//	//	pl_data->feed_rate *= segments;
+	//	//	//bit_false(pl_data->condition, PL_COND_FLAG_INVERSE_TIME); // Force as feed absolute mode over arc segments.
+	//	//}
 
-		float theta_per_segment = angular_travel / segments;
-		float linear_per_segment ;//= (target_block->plane_axis.horizontal_axis.value -
-		//Motion_Core::Software::Interpollation::previous_state.plane_axis.normal_axis.value) / segments;
+	//	float theta_per_segment = angular_travel / segments;
+	//	float linear_per_segment ;//= (target_block->plane_axis.horizontal_axis.value -
+	//	//Motion_Core::Software::Interpollation::previous_state.plane_axis.normal_axis.value) / segments;
 
-		/* Vector rotation by transformation matrix: r is the original vector, r_T is the rotated vector,
-		and phi is the angle of rotation. Solution approach by Jens Geisler.
-		r_T = [cos(phi) -sin(phi);
-		sin(phi)  cos(phi] * r ;
+	//	/* Vector rotation by transformation matrix: r is the original vector, r_T is the rotated vector,
+	//	and phi is the angle of rotation. Solution approach by Jens Geisler.
+	//	r_T = [cos(phi) -sin(phi);
+	//	sin(phi)  cos(phi] * r ;
 
-		For arc generation, the center of the circle is the axis of rotation and the radius vector is
-		defined from the circle center to the initial position. Each line segment is formed by successive
-		vector rotations. Single precision values can accumulate error greater than tool precision in rare
-		cases. So, exact arc path correction is implemented. This approach avoids the problem of too many very
-		expensive trig operations [sin(),cos(),tan()] which can take 100-200 usec each to compute.
+	//	For arc generation, the center of the circle is the axis of rotation and the radius vector is
+	//	defined from the circle center to the initial position. Each line segment is formed by successive
+	//	vector rotations. Single precision values can accumulate error greater than tool precision in rare
+	//	cases. So, exact arc path correction is implemented. This approach avoids the problem of too many very
+	//	expensive trig operations [sin(),cos(),tan()] which can take 100-200 usec each to compute.
 
-		Small angle approximation may be used to reduce computation overhead further. A third-order approximation
-		(second order sin() has too much error) holds for most, if not, all CNC applications. Note that this
-		approximation will begin to accumulate a numerical drift error when theta_per_segment is greater than
-		~0.25 rad(14 deg) AND the approximation is successively used without correction several dozen times. This
-		scenario is extremely unlikely, since segment lengths and theta_per_segment are automatically generated
-		and scaled by the arc tolerance setting. Only a very large arc tolerance setting, unrealistic for CNC
-		applications, would cause this numerical drift error. However, it is best to set N_ARC_CORRECTION from a
-		low of ~4 to a high of ~20 or so to avoid trig operations while keeping arc generation accurate.
+	//	Small angle approximation may be used to reduce computation overhead further. A third-order approximation
+	//	(second order sin() has too much error) holds for most, if not, all CNC applications. Note that this
+	//	approximation will begin to accumulate a numerical drift error when theta_per_segment is greater than
+	//	~0.25 rad(14 deg) AND the approximation is successively used without correction several dozen times. This
+	//	scenario is extremely unlikely, since segment lengths and theta_per_segment are automatically generated
+	//	and scaled by the arc tolerance setting. Only a very large arc tolerance setting, unrealistic for CNC
+	//	applications, would cause this numerical drift error. However, it is best to set N_ARC_CORRECTION from a
+	//	low of ~4 to a high of ~20 or so to avoid trig operations while keeping arc generation accurate.
 
-		This approximation also allows mc_arc to immediately insert a line segment into the planner
-		without the initial overhead of computing cos() or sin(). By the time the arc needs to be applied
-		a correction, the planner should have caught up to the lag caused by the initial mc_arc overhead.
-		This is important when there are successive arc motions.
-		*/
-		// Computes: cos_T = 1 - theta_per_segment^2/2, sin_T = theta_per_segment - theta_per_segment^3/6) in ~52usec
-		float cos_T = 2.0 - theta_per_segment * theta_per_segment;
-		float sin_T = theta_per_segment * 0.16666667 * (cos_T + 4.0);
-		cos_T *= 0.5;
+	//	This approximation also allows mc_arc to immediately insert a line segment into the planner
+	//	without the initial overhead of computing cos() or sin(). By the time the arc needs to be applied
+	//	a correction, the planner should have caught up to the lag caused by the initial mc_arc overhead.
+	//	This is important when there are successive arc motions.
+	//	*/
+	//	// Computes: cos_T = 1 - theta_per_segment^2/2, sin_T = theta_per_segment - theta_per_segment^3/6) in ~52usec
+	//	float cos_T = 2.0 - theta_per_segment * theta_per_segment;
+	//	float sin_T = theta_per_segment * 0.16666667 * (cos_T + 4.0);
+	//	cos_T *= 0.5;
 
-		float sin_Ti;
-		float cos_Ti;
-		float r_axisi;
-		uint16_t i;
-		uint8_t count = 0;
+	//	float sin_Ti;
+	//	float cos_Ti;
+	//	float r_axisi;
+	//	uint16_t i;
+	//	uint8_t count = 0;
 
-		for (i = 1; i < segments; i++)
-		{ // Increment (segments-1).
+	//	for (i = 1; i < segments; i++)
+	//	{ // Increment (segments-1).
 
-			if (count < N_ARC_CORRECTION)
-			{
-				// Apply vector rotation matrix. ~40 usec
-				r_axisi = r_axis0 * sin_T + r_axis1 * cos_T;
-				r_axis0 = r_axis0 * cos_T - r_axis1 * sin_T;
-				r_axis1 = r_axisi;
-				count++;
-			}
-			else
-			{
-				// Arc correction to radius vector. Computed only every N_ARC_CORRECTION increments. ~375 usec
-				// Compute exact location by applying transformation matrix from initial radius vector(=-offset).
-				cos_Ti = cos(i * theta_per_segment);
-				sin_Ti = sin(i * theta_per_segment);
-				r_axis0 = -*target_block->arc_values.horizontal_center.value * cos_Ti
-				+ *target_block->arc_values.vertical_center.value * sin_Ti;
-				r_axis1 = -*target_block->arc_values.horizontal_center.value * sin_Ti
-				- *target_block->arc_values.vertical_center.value * cos_Ti;
-				count = 0;
-			}
+	//		if (count < N_ARC_CORRECTION)
+	//		{
+	//			// Apply vector rotation matrix. ~40 usec
+	//			r_axisi = r_axis0 * sin_T + r_axis1 * cos_T;
+	//			r_axis0 = r_axis0 * cos_T - r_axis1 * sin_T;
+	//			r_axis1 = r_axisi;
+	//			count++;
+	//		}
+	//		else
+	//		{
+	//			// Arc correction to radius vector. Computed only every N_ARC_CORRECTION increments. ~375 usec
+	//			// Compute exact location by applying transformation matrix from initial radius vector(=-offset).
+	//			cos_Ti = cos(i * theta_per_segment);
+	//			sin_Ti = sin(i * theta_per_segment);
+	//			r_axis0 = -*target_block->arc_values.horizontal_center.value * cos_Ti
+	//			+ *target_block->arc_values.vertical_center.value * sin_Ti;
+	//			r_axis1 = -*target_block->arc_values.horizontal_center.value * sin_Ti
+	//			- *target_block->arc_values.vertical_center.value * cos_Ti;
+	//			count = 0;
+	//		}
 
-			// Update arc_target location
-			//*Motion_Core::Software::Interpollation::previous_state.plane_axis.horizontal_axis.value = center_axis0 + r_axis0;
-			//*Motion_Core::Software::Interpollation::previous_state.plane_axis.vertical_axis.value = center_axis1 + r_axis1;
-			//*Motion_Core::Software::Interpollation::previous_state.plane_axis.normal_axis.value = linear_per_segment;
+	//		// Update arc_target location
+	//		//*Motion_Core::Software::Interpollation::previous_state.plane_axis.horizontal_axis.value = center_axis0 + r_axis0;
+	//		//*Motion_Core::Software::Interpollation::previous_state.plane_axis.vertical_axis.value = center_axis1 + r_axis1;
+	//		//*Motion_Core::Software::Interpollation::previous_state.plane_axis.normal_axis.value = linear_per_segment;
 
 
-			//Motion_Core::Software::Interpollation::_mc_line(&Motion_Core::Software::Interpollation::previous_state);
-		}
-	}
-	// Ensure last segment arrives at target location.
-	Motion_Core::Software::Interpollation::_mc_line(target_block);
+	//		//Motion_Core::Software::Interpollation::_mc_line(&Motion_Core::Software::Interpollation::previous_state);
+	//	}
+	//}
+	//// Ensure last segment arrives at target location.
+	//Motion_Core::Software::Interpollation::_mc_line(target_block);
 }
 
 //void Motion_Core::Software::Interpollation::mc_arc(float *target, c_planner::plan_line_data_t *pl_data, float *position, float *offset, float radius, uint8_t axis_0, uint8_t axis_1, uint8_t axis_linear,

@@ -14,6 +14,7 @@
 testing
 */
 #include "../../NewCore/c_ngc_to_block.h"
+#include "../../NewCore/c_block_to_segment.h"
 
 c_Serial Talos::Motion::Main_Process::host_serial;
 c_Serial Talos::Motion::Main_Process::coordinator_serial;
@@ -56,6 +57,7 @@ void Talos::Motion::Main_Process::run()
 	while(1)
 	{
 		Motion::Core::Input::Block::load_ngc_test();
+		Motion::Core::Process::Segment::fill_step_segment_buffer();
 	}
 		
 	Talos::Motion::Main_Process::host_serial.print_string("\r\n** System halted **");

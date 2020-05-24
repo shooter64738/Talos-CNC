@@ -61,9 +61,9 @@
 #define X_WORD_BIT 23
 #define Y_WORD_BIT 24
 #define Z_WORD_BIT 25
-
+#define MACHINE_AXIS_COUNT 6
 #include <stdint.h>
-#include "..\..\Talos\ARM_3X8E\Talos_ARM3X8E\physical_machine_parameters.h"
+//#include "..\..\Talos\ARM_3X8E\Talos_ARM3X8E\physical_machine_parameters.h"
 #define COMP_SET_BIT 1
 #define BLOCK_STATE_PLANNED 0
 #define BLOCK_STATE_HELD 1

@@ -211,6 +211,8 @@ uint8_t Motion_Core::Segment::Arbitrator::Base_Calculate()
 			Motion_Core::Segment::Arbitrator::maximum_speed = Motion_Core::Segment::Arbitrator::exit_speed;
 		}
 	}
+
+	return 1;
 }
 
 void Motion_Core::Segment::Arbitrator::Fil_Step_Segment_Buffer()

@@ -180,6 +180,9 @@
     <ClCompile Include="..\..\..\..\Motion\NewCore\c_block_to_segment.cpp">
       <Filter>Motion\NewCore</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\..\Motion\NewCore\c_controller.cpp">
+      <Filter>Motion\NewCore</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\Shared Data\_peripheral_overide_enums.h">
@@ -394,6 +397,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\Shared_Data\Settings\Motion\_s_motion_internal.h">
       <Filter>Shared data\Settings\Motion</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Motion\NewCore\c_controller.h">
+      <Filter>Motion\NewCore</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -21,7 +21,7 @@
 
 #include "NGC_Block.h"
 #include <string.h>
-#include "..\..\Talos\ARM_3X8E\Talos_ARM3X8E\bit_manipulation.h"
+#include "..//..//..//Talos/_bit_manipulation.h"
 
 
 NGC_RS274::NGC_Binary_Block::NGC_Binary_Block()
@@ -94,6 +94,14 @@ void NGC_RS274::NGC_Binary_Block::initialize()
 	this->active_plane.inc_horizontal_axis.name = 'U';
 	this->active_plane.inc_vertical_axis.name = 'V';
 	this->active_plane.inc_normal_axis.name = 'W';
+	this->axis_values.Loop[0] = &this->block_word_values[X_WORD_BIT];
+	this->axis_values.Loop[1] = &this->block_word_values[Y_WORD_BIT];
+	this->axis_values.Loop[2] = &this->block_word_values[Z_WORD_BIT];
+	this->axis_values.Loop[3] = &this->block_word_values[A_WORD_BIT];
+	this->axis_values.Loop[4] = &this->block_word_values[B_WORD_BIT];
+	this->axis_values.Loop[5] = &this->block_word_values[C_WORD_BIT];
+	this->axis_values.Loop[6] = &this->block_word_values[U_WORD_BIT];
+	this->axis_values.Loop[7] = &this->block_word_values[V_WORD_BIT];
 }
 
 NGC_RS274::NGC_Binary_Block::~NGC_Binary_Block()
@@ -297,7 +305,7 @@ void NGC_RS274::NGC_Binary_Block::define_value(char Word, float Value)
 	| Set the value in the Word array, DOES mark it as defined.                           |
 	|***************************************************************************************|
 	*/
-	this->word_defined_in_block_A_Z = BitSet(this->word_defined_in_block_A_Z, Word - 65);
+	this->word_defined_in_block_A_Z = BitSet_(this->word_defined_in_block_A_Z, Word - 65);
 	this->block_word_values[Word - 65] = Value;
 }
 
@@ -312,7 +320,7 @@ void NGC_RS274::NGC_Binary_Block::clear_defined(char Word)
 	| Clear the value in the Word array.                          |
 	|***************************************************************************************|
 	*/
-	this->word_defined_in_block_A_Z = BitClr(this->word_defined_in_block_A_Z, Word - 65);
+	this->word_defined_in_block_A_Z = BitClr_(this->word_defined_in_block_A_Z, Word - 65);
 }
 
 /*
@@ -368,7 +376,7 @@ void NGC_RS274::NGC_Binary_Block::clear_defined_gcode(uint8_t gcode_group)
 	| Clear the value in the G Group array.                          |
 	|***************************************************************************************|
 	*/
-	this->g_code_defined_in_block = BitClr(this->g_code_defined_in_block,gcode_group);
+	this->g_code_defined_in_block = BitClr_(this->g_code_defined_in_block,gcode_group);
 }
 
 /*
@@ -382,7 +390,7 @@ void NGC_RS274::NGC_Binary_Block::set_defined_gcode(uint8_t gcode_group)
 	| Clear the value in the G Group array.                          |
 	|***************************************************************************************|
 	*/
-	this->g_code_defined_in_block = BitSet(this->g_code_defined_in_block,gcode_group);
+	this->g_code_defined_in_block = BitSet_(this->g_code_defined_in_block,gcode_group);
 }
 
 /*
@@ -437,7 +445,7 @@ uint8_t NGC_RS274::NGC_Binary_Block::any_rotational_axis_was_defined()
 
 void NGC_RS274::NGC_Binary_Block::set_state(uint8_t bit_flag)
 {
-	this->state= BitSet(this->state,bit_flag);
+	this->state= BitSet_(this->state,bit_flag);
 }
 
 NGC_RS274::NGC_Binary_Block::s_axis_property::s_axis_property()

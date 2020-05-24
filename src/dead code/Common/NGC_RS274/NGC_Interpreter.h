@@ -21,7 +21,8 @@
 
 #ifndef __C_NGC_INTERPRETER_H__
 #define __C_NGC_INTERPRETER_H__
-
+#define CR 13
+#define LF 10
 #define CYCLE_LINE_LENGTH 256
 #include "..\NGC_RS274\NGC_Block.h"
 #ifdef MSVC
@@ -35,7 +36,7 @@ namespace NGC_RS274
 		{
 			//variables
 		public:
-			//static char Line[CYCLE_LINE_LENGTH];
+			static char _Line[CYCLE_LINE_LENGTH];
 			static char * Line;
 			static int HasErrors;
 			static NGC_RS274::NGC_Binary_Block local_block;

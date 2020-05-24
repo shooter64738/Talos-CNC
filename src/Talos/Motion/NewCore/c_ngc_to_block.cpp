@@ -13,9 +13,9 @@
 #include <math.h>
 #include <string.h>
 
-#define SOME_LARGE_VALUE 1.0E+38
-#define MINIMUM_JUNCTION_SPEED 0.0
-#define MINIMUM_FEED_RATE 1.0
+//#define SOME_LARGE_VALUE 1.0E+38
+//#define MINIMUM_JUNCTION_SPEED 0.0
+//#define MINIMUM_FEED_RATE 1.0
 
 namespace mtn_cfg = Talos::Configuration::Motion;
 namespace int_cfg = Talos::Configuration::Interpreter;
@@ -37,6 +37,8 @@ namespace Talos
 				__s_motion_block Block::block_buffer_store[BLOCK_BUFFER_SIZE]{ 0 };
 				c_ring_buffer<__s_motion_block> Block::block_buffer(Block::block_buffer_store, BLOCK_BUFFER_SIZE);
 
+				//Set the planned block to the first block by default.
+				__s_motion_block* Block::planned_block = Block::block_buffer.peek(0);
 
 				void Block::load_ngc_test()
 				{
@@ -51,27 +53,33 @@ namespace Talos
 					//create a work motion block
 					__s_motion_block motion_block1{ 0 }; motion_block1.Station = 0;
 					load_ngc(&int_cfg::DefaultBlock.Settings, &motion_block1);
-					block_buffer.put(motion_block1);
+					Process::Segment::fill_step_segment_buffer();
+
+					int_cfg::DefaultBlock.Settings.target_motion_position[0] = 20;
+					//create a work motion block
+					__s_motion_block motion_block2{ 0 }; motion_block2.Station = 1;
+					load_ngc(&int_cfg::DefaultBlock.Settings, &motion_block2);
+					Process::Segment::fill_step_segment_buffer();
+
+					int_cfg::DefaultBlock.Settings.target_motion_position[0] = 30;
+					//create a work motion block
+					__s_motion_block motion_block3{ 0 }; motion_block3.Station = 2;
+					load_ngc(&int_cfg::DefaultBlock.Settings, &motion_block3);
+					Process::Segment::fill_step_segment_buffer();
+
+					int_cfg::DefaultBlock.Settings.target_motion_position[0] = 40;
+					//create a work motion block
+					__s_motion_block motion_block4{ 0 }; motion_block4.Station = 3;
+					load_ngc(&int_cfg::DefaultBlock.Settings, &motion_block4);
+					Process::Segment::fill_step_segment_buffer();
 
 					int_cfg::DefaultBlock.Settings.target_motion_position[0] = 50;
 					//create a work motion block
-					__s_motion_block motion_block2{ 0 };; motion_block2.Station = 1;
-					load_ngc(&int_cfg::DefaultBlock.Settings, &motion_block2);
-					block_buffer.put(motion_block2);
+					__s_motion_block motion_block5{ 0 }; motion_block5.Station = 4;
+					load_ngc(&int_cfg::DefaultBlock.Settings, &motion_block5);
+					Process::Segment::fill_step_segment_buffer();
 
-					int_cfg::DefaultBlock.Settings.target_motion_position[0] = 0;
-					//create a work motion block
-					__s_motion_block motion_block3{ 0 };; motion_block3.Station = 2;
-					load_ngc(&int_cfg::DefaultBlock.Settings, &motion_block3);
-					block_buffer.put(motion_block3);
-
-					int_cfg::DefaultBlock.Settings.target_motion_position[0] = -100;
-					//create a work motion block
-					__s_motion_block motion_block4{ 0 };; motion_block4.Station = 3;
-					load_ngc(&int_cfg::DefaultBlock.Settings, &motion_block4);
-					block_buffer.put(motion_block4);
-
-					Talos::Motion::Core::Process::Segment::fill_step_segment_buffer();
+					Process::Segment::fill_step_segment_buffer();
 				}
 
 				uint8_t Block::load_ngc(s_ngc_block* ngc_block, __s_motion_block* motion_block)
@@ -150,6 +158,10 @@ namespace Talos
 
 					__plan_buffer_line(motion_block, mtn_cfg::Controller.Settings, last_planned_position, unit_vec, target_steps);
 
+					block_buffer.put(*motion_block);
+
+					planner_recalculate();
+
 					return 1;
 				}
 
@@ -221,7 +233,7 @@ namespace Talos
 				{
 					motion_block->common.flag.clear((int)e_block_flags::feed_on_spindle);
 					// Store programmed rate.
-					if (*ngc_view.current_g_codes.Feed_rate_mode == NGC_RS274::G_codes::FEED_RATE_UNITS_PER_MINUTE_MODE)
+					if (*ngc_view.current_g_codes.Motion == NGC_RS274::G_codes::RAPID_POSITIONING)
 					{
 						motion_block->programmed_rate = motion_block->rapid_rate;
 					}
@@ -285,22 +297,21 @@ namespace Talos
 				{
 					uint8_t idx = 0;
 					// TODO: Need to check this method handling zero junction speeds when starting from rest.
-					//if (Motion_Core::Planner::Buffer::Available() == 0)
-					//{
-
-					//	// Initialize block entry speed as zero. Assume it will be starting from rest. Planner will correct this later.
-					//	// If system motion, the system motion block always is assumed to start from rest and end at a complete stop.
-					//	motion_block->entry_speed_sqr = 0.0;
-					//	motion_block->max_junction_speed_sqr = 0.0; // Starting from rest. Enforce start from zero velocity.
-
-					//}
-					//else
+					if (!Block::block_buffer.has_data())
 					{
-						float junction_unit_vec[MACHINE_AXIS_COUNT];
+						// Initialize block entry speed as zero. Assume it will be starting from rest. Planner will correct this later.
+						// If system motion, the system motion block always is assumed to start from rest and end at a complete stop.
+						motion_block->entry_speed_sqr = 0.0;
+						motion_block->max_junction_speed_sqr = 0.0; // Starting from rest. Enforce start from zero velocity.
+
+					}
+					else
+					{
+						float junction_unit_vec[MACHINE_AXIS_COUNT]{ 0 };
 						float junction_cos_theta = 0.0;
 						for (idx = 0; idx < MACHINE_AXIS_COUNT; idx++)
 						{
-							junction_cos_theta -= unit_vectors[idx];
+							junction_cos_theta -= previous_unit_vec[idx] * unit_vectors[idx];
 							junction_unit_vec[idx] = unit_vectors[idx] - previous_unit_vec[idx];
 						}
 
@@ -308,7 +319,7 @@ namespace Talos
 						if (junction_cos_theta > 0.999999)
 						{
 							//  For a 0 degree acute junction, just set minimum junction speed.
-							motion_block->max_junction_speed_sqr = MINIMUM_JUNCTION_SPEED * MINIMUM_JUNCTION_SPEED;
+							motion_block->max_junction_speed_sqr = mtn_cfg::Controller.Settings.internals.MINIMUM_JUNCTION_SPEED_SQ;
 						}
 						else
 						{
@@ -322,7 +333,7 @@ namespace Talos
 								convert_delta_vector_to_unit_vector(junction_unit_vec);
 								float junction_acceleration = limit_value_by_axis_maximum(hw_settings.hardware.acceleration, junction_unit_vec);
 								float sin_theta_d2 = sqrt(0.5 * (1.0 - junction_cos_theta)); // Trig half angle identity. Always positive.
-								motion_block->max_junction_speed_sqr = max(MINIMUM_JUNCTION_SPEED * MINIMUM_JUNCTION_SPEED,
+								motion_block->max_junction_speed_sqr = max(mtn_cfg::Controller.Settings.internals.MINIMUM_JUNCTION_SPEED_SQ,
 									(junction_acceleration * hw_settings.tolerance.junction_deviation * sin_theta_d2) / (1.0 - sin_theta_d2));
 							}
 						}
@@ -339,11 +350,141 @@ namespace Talos
 						memcpy(previous_unit_vec, unit_vectors, sizeof(unit_vectors)); // pl.previous_unit_vec[] = unit_vec[]
 						memcpy(last_planned_position, target_steps, sizeof(last_planned_position)); // pl.position[] = target_steps[]
 
-						// New block is all set. Update buffer head and next buffer head indices.
-						// Finish up by recalculating the plan with the new block.
-						//Motion_Core::Planner::Calculator::planner_recalculate();
+
 					}
 					return (1);
+				}
+
+				void Block::planner_recalculate()
+				{
+					//// Initialize block index to the last block in the planner buffer.
+					////what was the newest block item added to the plan buffer...
+					//block_buffer.step_rst();
+
+					bool is_last;
+					
+					__s_motion_block* block_index = block_buffer.cur_head(&is_last);
+
+					// Bail. Can't do anything with one only one plan-able block.
+					if (block_index == planned_block)
+					{
+						return;
+					}
+
+					// Reverse Pass: Coarsely maximize all possible deceleration curves back-planning from the last
+					// block in buffer. Cease planning when the last optimal planned or tail pointer is reached.
+					// NOTE: Forward pass will later refine and correct the reverse pass to create an optimal plan.
+					float entry_speed_sqr;
+					__s_motion_block* next;
+					__s_motion_block* current_block_from_index = block_buffer.peek(block_index->Station);
+
+					// Calculate maximum entry speed for last block in buffer, where the exit speed is always zero.
+					current_block_from_index->entry_speed_sqr = min(current_block_from_index->max_entry_speed_sqr, 2 * current_block_from_index->acceleration * current_block_from_index->millimeters);
+
+					block_index = block_buffer.peek(block_index->Station - 1);
+					if (block_index == planned_block)
+					{ // Only two plannable blocks in buffer. Reverse pass complete.
+						// Check if the first block is the tail. If so, notify stepper to update its current parameters.
+						if (block_index == block_buffer.cur_tail(&is_last))
+						{
+							Process::Segment::st_update_plan_block_parameters();
+						}
+					}
+					else
+					{ // Three or more plan-able blocks
+						while (block_index != planned_block)
+						{
+							next = current_block_from_index;
+							current_block_from_index = block_buffer.peek(block_index->Station);
+							block_index = block_buffer.peek(block_index->Station - 1);
+
+							// Check if next block is the tail block(=planned block). If so, update current stepper parameters.
+							if (block_index == block_buffer.cur_tail(&is_last))
+							{
+								Process::Segment::st_update_plan_block_parameters();
+							}
+
+							// Compute maximum entry speed decelerating over the current block from its exit speed.
+							if (current_block_from_index->entry_speed_sqr != current_block_from_index->max_entry_speed_sqr)
+							{
+								entry_speed_sqr = next->entry_speed_sqr + 2 * current_block_from_index->acceleration * current_block_from_index->millimeters;
+								if (entry_speed_sqr < current_block_from_index->max_entry_speed_sqr)
+								{
+									current_block_from_index->entry_speed_sqr = entry_speed_sqr;
+								}
+								else
+								{
+									current_block_from_index->entry_speed_sqr = current_block_from_index->max_entry_speed_sqr;
+								}
+							}
+						}
+					}
+					
+					forward_plan();
+
+					//// Forward Pass: Forward plan the acceleration curve from the planned pointer onward.
+					//// Also scans for optimal plan breakpoints and appropriately updates the planned pointer.
+					//__s_motion_block* next_fwd = planned_block;
+					////next = planned_block; // Begin at buffer planned pointer
+					//__s_motion_block * fwd_block_index = block_buffer.peek(planned_block->Station);
+					//while (fwd_block_index != block_buffer.cur_head(&is_last))
+					//{
+					//	current_block_from_index = next;
+					//	next_fwd = block_buffer.peek(fwd_block_index->Station);
+
+					//	// Any acceleration detected in the forward pass automatically moves the optimal planned
+					//	// pointer forward, since everything before this is all optimal. In other words, nothing
+					//	// can improve the plan from the buffer tail to the planned pointer by logic.
+					//	if (current_block_from_index->entry_speed_sqr < next_fwd->entry_speed_sqr)
+					//	{
+					//		entry_speed_sqr = current_block_from_index->entry_speed_sqr + 2 * current_block_from_index->acceleration * current_block_from_index->millimeters;
+					//		// If true, current block is full-acceleration and we can move the planned pointer forward.
+					//		if (entry_speed_sqr < next_fwd->entry_speed_sqr)
+					//		{
+					//			next_fwd->entry_speed_sqr = entry_speed_sqr; // Always <= max_entry_speed_sqr. Backward pass sets this.
+					//			planned_block = fwd_block_index; // Set optimal plan pointer.
+					//		}
+					//	}
+
+					//	// Any block set at its maximum entry speed also creates an optimal plan up to this
+					//	// point in the buffer. When the plan is bracketed by either the beginning of the
+					//	// buffer and a maximum entry speed or two maximum entry speeds, every block in between
+					//	// cannot logically be further improved. Hence, we don't have to recompute them anymore.
+					//	if (next_fwd->entry_speed_sqr == next_fwd->max_entry_speed_sqr)
+					//	{
+					//		planned_block = fwd_block_index;
+					//	}
+					//	fwd_block_index = block_buffer.peek(fwd_block_index->Station + 1);
+					//}
+				}
+
+				void Block::forward_plan()
+				{
+					__s_motion_block* previous_block;
+					float entry_speed_sqr = 0.0;
+					bool is_last = false;
+
+					__s_motion_block* next_fwd = planned_block;
+					__s_motion_block* fwd_block_index = block_buffer.peek(planned_block->Station);
+					while (fwd_block_index != block_buffer.cur_head(&is_last))
+					{
+						previous_block = next_fwd;
+						next_fwd = block_buffer.peek(fwd_block_index->Station);
+						if (previous_block->entry_speed_sqr < next_fwd->entry_speed_sqr)
+						{
+							entry_speed_sqr = previous_block->entry_speed_sqr + 2 * previous_block->acceleration * previous_block->millimeters;
+							if (entry_speed_sqr < next_fwd->entry_speed_sqr)
+							{
+								next_fwd->entry_speed_sqr = entry_speed_sqr; // Always <= max_entry_speed_sqr. Backward pass sets this.
+								planned_block = fwd_block_index; // Set optimal plan pointer.
+							}
+						}
+						if (next_fwd->entry_speed_sqr == next_fwd->max_entry_speed_sqr)
+						{
+							planned_block = fwd_block_index;
+						}
+						fwd_block_index = block_buffer.peek(fwd_block_index->Station + 1);
+					}
 				}
 
 				void Block::plan_compute_profile_parameters(
@@ -387,11 +528,11 @@ namespace Talos
 							nominal_speed = motion_block->rapid_rate;
 						}
 					}
-					if (nominal_speed > MINIMUM_FEED_RATE)
+					if (nominal_speed > mtn_cfg::Controller.Settings.internals.MINIMUM_FEED_RATE)
 					{
 						return (nominal_speed);
 					}
-					return (MINIMUM_FEED_RATE);
+					return (mtn_cfg::Controller.Settings.internals.MINIMUM_FEED_RATE);
 				}
 
 				float Block::plan_get_exec_block_exit_speed_sqr()
