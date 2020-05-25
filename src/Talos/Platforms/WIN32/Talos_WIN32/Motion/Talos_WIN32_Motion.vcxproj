@@ -60,10 +60,12 @@
     <ClInclude Include="..\..\..\..\Motion\NewCore\support_items\d_buffer_size_defs.h" />
     <ClInclude Include="..\..\..\..\Motion\NewCore\support_items\e_block_state.h" />
     <ClInclude Include="..\..\..\..\Motion\NewCore\support_items\e_ramp_states.h" />
+    <ClInclude Include="..\..\..\..\Motion\NewCore\support_items\e_spindle_state.h" />
     <ClInclude Include="..\..\..\..\Motion\NewCore\support_items\s_bresenham_item.h" />
     <ClInclude Include="..\..\..\..\Motion\NewCore\support_items\s_motion_block.h" />
     <ClInclude Include="..\..\..\..\Motion\NewCore\support_items\s_segment_base.h" />
     <ClInclude Include="..\..\..\..\Motion\NewCore\support_items\s_segment_timer_common.h" />
+    <ClInclude Include="..\..\..\..\Motion\NewCore\support_items\s_spindle_block.h" />
     <ClInclude Include="..\..\..\..\Motion\NewCore\support_items\s_timer_item.h" />
     <ClInclude Include="..\..\..\..\Motion\Processing\Main\Main_Process.h" />
     <ClInclude Include="..\..\..\..\Motion\Processing\Planner\Canned Cycles\x_c_canned_cycle.h" />

@@ -419,5 +419,11 @@
     <ClInclude Include="..\..\..\..\Shared_Data\Settings\Motion\_s_motion_spindle_struct.h">
       <Filter>Shared data\Settings\Motion</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\..\Motion\NewCore\support_items\s_spindle_block.h">
+      <Filter>Motion\NewCore\Supporting_Items</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Motion\NewCore\support_items\e_spindle_state.h">
+      <Filter>Motion\NewCore\Supporting_Items</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

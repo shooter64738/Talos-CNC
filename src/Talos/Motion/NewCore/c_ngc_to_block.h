@@ -9,6 +9,7 @@
 #include "../../_bit_flag_control.h"
 #include "../../c_ring_template.h"
 #include "support_items/s_motion_block.h"
+#include "support_items/s_spindle_block.h"
 #include "support_items/d_buffer_size_defs.h"
 
 
@@ -25,21 +26,24 @@ namespace Talos
 					//variables
 				public:
 					static c_ring_buffer<__s_motion_block> motion_buffer;
+					static c_ring_buffer<__s_spindle_block> spindle_buffer;
 					static c_ring_buffer<s_ngc_block> ngc_buffer;
 					static __s_motion_block* planned_block;
 				protected:
 				private:
-					struct s_prev_values
+					struct s_persisting_values
 					{
-						//Keeps track of last comp directions
-						s_bit_flag_controller<uint16_t> bl_comp;
+						s_bit_flag_controller<uint16_t> bl_comp{ 0 };
 						float unit_vectors[MACHINE_AXIS_COUNT];
 						int32_t system_position[MACHINE_AXIS_COUNT];
 						float nominal_speed;
+						__s_spindle_block spindle_block;
+						s_bit_flag_controller<e_block_state> motion_block_states{ 0 };
 					};
-					static s_prev_values prior_values;
+					static s_persisting_values persisted_values;
 
 					static __s_motion_block Block::motion_buffer_store[MOTION_BUFFER_SIZE];
+					static __s_spindle_block Block::spindle_buffer_store[SPINDLE_BUFFER_SIZE];
 					static s_ngc_block Block::ngc_buffer_store[NGC_BUFFER_SIZE];
 
 					//functions
@@ -60,11 +64,15 @@ namespace Talos
 				private:
 					static uint8_t __load_ngc(s_ngc_block* ngc_block);
 
+					static uint8_t __load_spindle(NGC_RS274::Block_View view);
+
+					static uint8_t __load_motion(NGC_RS274::Block_View view);
+
 					static uint8_t __convert_ngc_distance(
 						s_ngc_block* ngc_block
 						, __s_motion_block* motion_block
 						, s_motion_hardware hw_settings
-						, s_prev_values *prev_values
+						, s_persisting_values *prev_values
 						, float* unit_vectors
 						, int32_t* target_steps);
 
@@ -85,7 +93,7 @@ namespace Talos
 					static uint8_t __plan_buffer_line(
 						__s_motion_block* motion_block
 						, s_motion_control_settings_encapsulation hw_settings
-						, s_prev_values* prev_values
+						, s_persisting_values* prev_values
 						, float* unit_vectors
 						, int32_t* target_steps);
 

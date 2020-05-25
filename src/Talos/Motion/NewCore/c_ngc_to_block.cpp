@@ -33,13 +33,16 @@ namespace Talos
 			namespace Input
 			{
 
-				Block::s_prev_values Block::prior_values{ 0 };
+				Block::s_persisting_values Block::persisted_values{ 0 };
 
 				s_ngc_block Block::ngc_buffer_store[NGC_BUFFER_SIZE]{ 0 };
 				c_ring_buffer<s_ngc_block> Block::ngc_buffer(Block::ngc_buffer_store, NGC_BUFFER_SIZE);
 
 				__s_motion_block Block::motion_buffer_store[MOTION_BUFFER_SIZE]{ 0 };
 				c_ring_buffer<__s_motion_block> Block::motion_buffer(Block::motion_buffer_store, MOTION_BUFFER_SIZE);
+
+				__s_spindle_block Block::spindle_buffer_store[SPINDLE_BUFFER_SIZE]{ 0 };
+				c_ring_buffer<__s_spindle_block> Block::spindle_buffer(Block::spindle_buffer_store, SPINDLE_BUFFER_SIZE);
 
 				//Set the planned block to the first block by default.
 				__s_motion_block* Block::planned_block = Block::motion_buffer.peek(0);
@@ -84,8 +87,6 @@ namespace Talos
 				uint8_t Block::__load_ngc(s_ngc_block* ngc_block)
 
 				{
-					__s_motion_block motion_block{ 0 };
-
 					/*
 					Things to consider:
 
@@ -111,12 +112,81 @@ namespace Talos
 					//use the view to organize the ngc data
 					NGC_RS274::Block_View view = NGC_RS274::Block_View(ngc_block);
 
+					__load_motion(view);
+					__load_spindle(view);
+					return 0;
+
+				}
+
+				uint8_t Block::__load_spindle(NGC_RS274::Block_View view)
+				{
+					//check to see if spindle parameters are changing. If they are not we dont need to do anything
+					//for this new block. we can jsut keep using the old block. 
+					__s_spindle_block spindle_block{ 0 };
+
+					bool has_changes = false;
+
+					spindle_block.rpm = *view.persisted_values.active_spindle_speed_S;
+					spindle_block.m_code = *view.current_m_codes.SPINDLE;
+
+					if ((spindle_block.m_code != persisted_values.spindle_block.m_code)
+						|| (spindle_block.rpm != persisted_values.spindle_block.rpm)
+						)
+						has_changes = true;
+
+					//if a change is found
+					if (has_changes)
+					{
+						if (spindle_block.m_code == NGC_RS274::M_codes::SPINDLE_ON_CCW)
+						{
+							spindle_block.states.set(e_spindle_state::turning_on);
+							spindle_block.states.set(e_spindle_state::direction_ccw);
+						}
+						else if (spindle_block.m_code == NGC_RS274::M_codes::SPINDLE_ON_CW)
+						{
+							spindle_block.states.set(e_spindle_state::turning_on);
+							spindle_block.states.set(e_spindle_state::direction_cw);
+						}
+						else if (spindle_block.m_code == NGC_RS274::M_codes::SPINDLE_STOP)
+						{
+							spindle_block.states.set(e_spindle_state::turning_off);
+						}
+						else if (spindle_block.m_code == NGC_RS274::M_codes::ORIENT_SPINDLE)
+						{
+							spindle_block.states.set(e_spindle_state::indexing);
+						}
+						//store off these values
+						memcpy(&persisted_values.spindle_block, &spindle_block, sizeof(__s_spindle_block));
+						
+						spindle_buffer.put(spindle_block);
+						return 1;
+					}
+					else
+					{
+						//even if the spindle hasnt changed, we will need a spindle record to
+						//go with the motion record if its a feed per rotation motion. since
+						//the motion block was processed first, we can look at the persisted
+						//values that were stored and determine if its a feed per rotation
+						//motion
+						if (previous_block_states.get(e_block_state::feed_mode_units_per_rotation))
+						{
+							//just add the previous spindle record values since there are no changes.
+							spindle_buffer.put(persisted_values.spindle_block);
+						}
+						return 0;
+					}
+				}
+
+				uint8_t Block::__load_motion(NGC_RS274::Block_View view)
+				{
 					//If motion is canceled there is nothing for us to do.
 					if (*view.current_g_codes.Motion == NGC_RS274::G_codes::MOTION_CANCELED)
 					{
 						return 0;
 					}
 
+					//init a new block for motion
+					__s_motion_block motion_block{ 0 };
 
 					//create an array to hold our unit distances
 					float unit_vec[MACHINE_AXIS_COUNT]{ 0.0 };
@@ -126,10 +196,10 @@ namespace Talos
 
 					//convert ngc block info to steps
 					uint8_t ret = __convert_ngc_distance(
-						ngc_block
+						view.active_view_block
 						, &motion_block
 						, mtn_cfg::Controller.Settings.hardware
-						, &prior_values
+						, &persisted_values
 						, unit_vec
 						, target_steps);
 
@@ -139,7 +209,7 @@ namespace Talos
 
 					//First moves after start up dont get compensation so dont set this flag until after the first axis
 					//moves are calculated.
-					if (!prior_values.bl_comp.get(15))
+					if (!persisted_values.bl_comp.get(15))
 					{
 						//clear the comp bits that might have been set on this block
 						motion_block.bl_comp_bits._flag = 0;
@@ -147,7 +217,7 @@ namespace Talos
 					//set bit 15 so we know that motion has ran once and any more motions need backlash
 					//(motions that dont actually cause motion will have already been ignored)
 					//Save the direction bits for when the next block is processed. (set the 15th bit always)
-					prior_values.bl_comp._flag = motion_block.direction_bits._flag | 0X8000;
+					persisted_values.bl_comp._flag = motion_block.direction_bits._flag | 0X8000;
 
 					motion_block.millimeters = convert_delta_vector_to_unit_vector(unit_vec);
 					motion_block.acceleration = __limit_value_by_axis_maximum(mtn_cfg::Controller.Settings.hardware.acceleration, unit_vec);
@@ -155,10 +225,9 @@ namespace Talos
 
 					__configure_feeds(view, &motion_block);
 
-					__plan_buffer_line(&motion_block, mtn_cfg::Controller.Settings, &prior_values, unit_vec, target_steps);
+					__plan_buffer_line(&motion_block, mtn_cfg::Controller.Settings, &persisted_values, unit_vec, target_steps);
 
-					motion_block.Station = ngc_block->__station__;
-					motion_block.spindle_rate = *view.persisted_values.active_spindle_speed_S;
+					motion_block.Station = view.active_view_block->__station__;
 					motion_block.common.sequence = block_station++;
 					motion_buffer.put(motion_block);
 
@@ -171,7 +240,7 @@ namespace Talos
 					s_ngc_block* ngc_block
 					, __s_motion_block* motion_block
 					, s_motion_hardware hw_settings
-					, s_prev_values * prev_values
+					, s_persisting_values* prev_values
 					, float* unit_vectors
 					, int32_t* target_steps)
 
@@ -265,7 +334,7 @@ namespace Talos
 					case NGC_RS274::G_codes::FEED_RATE_UNITS_PER_ROTATION:
 					{
 						//not sure this is right.. we will see
-						motion_block->programmed_rate *= motion_block->millimeters * motion_block->programmed_spindle_speed;
+						//motion_block->programmed_rate *= motion_block->millimeters * motion_block->programmed_spindle_speed;
 						new_feed_mode = e_block_state::feed_mode_units_per_rotation;
 						break;
 					}
@@ -333,7 +402,7 @@ namespace Talos
 				uint8_t Block::__plan_buffer_line(
 					__s_motion_block* motion_block
 					, s_motion_control_settings_encapsulation hw_settings
-					, s_prev_values* prev_values
+					, s_persisting_values* prev_values
 					, float* unit_vectors
 					, int32_t* target_steps)
 				{
@@ -554,17 +623,17 @@ namespace Talos
 					uint8_t over_ride = 100;
 					float nominal_speed = motion_block->programmed_rate;
 					//if (block->condition & (PL_COND_FLAG_RAPID_MOTION))
-					if (motion_block->condition & (1 << 0))
+					if (motion_block->states.get(e_block_state::motion_rapid))
 					{
 						nominal_speed *= (0.01 * over_ride);
 					}
 					else
 					{
 						//if (!(block->condition & PL_COND_FLAG_NO_FEED_OVERRIDE))
-						if (!(motion_block->condition & (1 << 2)))
+						/*if (!motion_block->states.get(e_block_state::motion_rapid))
 						{
 							nominal_speed *= (0.01 * over_ride);
-						}
+						}*/
 						if (nominal_speed > motion_block->rapid_rate)
 						{
 							nominal_speed = motion_block->rapid_rate;

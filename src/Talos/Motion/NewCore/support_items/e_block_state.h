@@ -16,6 +16,9 @@ enum class e_block_state : uint8_t
 	feed_mode_minutes_per_unit = 10,
 	reinitialize_segment = 11,
 	axis_has_brake = 12,
+	spindle_change = 13,
+	motion_rapid = 14,
+	motion_feed = 15,
 
 };
 #endif

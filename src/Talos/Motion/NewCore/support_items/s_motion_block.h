@@ -1,10 +1,10 @@
-#ifndef C_SEGMENTED_BLOCK_H
-#define C_SEGMENTED_BLOCK_H
+#ifndef C_SEGMENTED_MOTION_BLOCK_H
+#define C_SEGMENTED_MOTION_BLOCK_H
 
 #include <stdint.h>
 #include "s_segment_timer_common.h"
-#include "../../physical_machine_parameters.h"
-#include "../../_bit_flag_control.h"
+#include "../../../physical_machine_parameters.h"
+#include "../../../_bit_flag_control.h"
 
 
 struct __s_motion_block
@@ -15,11 +15,8 @@ struct __s_motion_block
 	uint32_t step_event_count; // The maximum step axis count and number of steps required to complete this block.
 	s_bit_flag_controller<uint16_t> direction_bits;    // The direction bit set for this block (refers to *_DIRECTION_BIT in config.h)
 	s_bit_flag_controller<uint16_t> bl_comp_bits;//Direction changes are tracked and bit flags are set per axis for bl comp.
+	s_bit_flag_controller<e_block_state> states;//Direction changes are tracked and bit flags are set per axis for bl comp.
 
-						  // Block condition data to ensure correct execution depending on states and overrides.
-	uint8_t condition;    // Block bitflag variable defining block run conditions. Copied from pl_line_data.
-						  // Fields used by the motion planner to manage acceleration. Some of these values may be updated
-						  // by the stepper module during execution of special motion cases for replanning purposes.
 	float entry_speed_sqr;     // The current planned entry speed at block junction in (mm/min)^2
 	float max_entry_speed_sqr; // Maximum allowable entry speed based on the minimum of junction limit and
 							   //   neighboring nominal speeds with overrides in (mm/min)^2
@@ -31,13 +28,10 @@ struct __s_motion_block
 	float max_junction_speed_sqr; // Junction entry speed limit based on direction vectors in (mm/min)^2
 	float rapid_rate;             // Axis-limit adjusted maximum rate for this block direction in (mm/min)
 	float programmed_rate;        // Programmed rate of this block (mm/min).
-
-								  // Stored spindle speed data used by spindle overrides and resuming methods.
 	uint8_t Station;
-	int32_t spindle_rate;
+	
 	s_common_segment_items common;
-	float programmed_spindle_speed;
-	uint8_t spindle_state;
+	
 
 };
 
