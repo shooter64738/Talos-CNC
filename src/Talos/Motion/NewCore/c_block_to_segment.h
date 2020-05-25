@@ -1,5 +1,5 @@
-#ifndef __C_MOTION_CORE_INPUT_SEGMENT2_H
-#define __C_MOTION_CORE_INPUT_SEGMENT2_H
+#ifndef __C_MOTION_CORE_PROCESS_SEGMENT_H
+#define __C_MOTION_CORE_PROCESS_SEGMENT_H
 #include <stdint.h>
 
 #include "support_items/s_bresenham_item.h"
@@ -25,13 +25,10 @@ namespace Talos
 					//variables
 				public:
 					static c_ring_buffer<__s_motion_block> buffer;
+					static c_ring_buffer<s_timer_item> timer_buffer;
+					
 				protected:
 				private:
-
-					/*enum class e_seg_op_flag
-					{
-						reinitialize_segment = 0,
-					};*/
 
 					struct s_fragment_vars
 					{
@@ -46,13 +43,11 @@ namespace Talos
 
 					static __s_motion_block* active_block;
 					
-					//volatile static __s_motion_block buffer_store[SEGMENT_BUFFER_SIZE];
 
 					static c_ring_buffer<s_bresenham> bresenham_buffer;
 					static s_bresenham bresenham_buffer_store[BRESENHAM_BUFFER_SIZE];
-
-					static c_ring_buffer<s_timer_item> timer_buffer;
 					static s_timer_item timer_buffer_store[TIMER_BUFFER_SIZE];
+					
 
 					static s_segment_base seg_base;
 

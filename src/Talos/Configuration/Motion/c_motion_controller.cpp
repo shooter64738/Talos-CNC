@@ -67,6 +67,7 @@ uint8_t c_controller::load_defaults()
 		Settings.hardware.distance_per_rotation[i] = 5;
 
 		Settings.hardware.back_lash_comp_distance[i] = 55;
+		Settings.hardware.break_release_time[i] = 30;
 	}
 
 	Settings.hardware.pulse_length = 5;

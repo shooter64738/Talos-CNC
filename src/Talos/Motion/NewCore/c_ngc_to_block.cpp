@@ -60,6 +60,7 @@ namespace Talos
 
 						view = NGC_RS274::Block_View(&testblock);
 						*view.axis_array[0] = ((i + 1) * 10);
+						*view.persisted_values.active_spindle_speed_S = 1234;
 						testblock.target_motion_position[0] = ((i + 1) * 10);
 						testblock.__station__ = i;
 						Block::ngc_buffer.put(testblock);
@@ -156,6 +157,7 @@ namespace Talos
 					__plan_buffer_line(&motion_block, mtn_cfg::Controller.Settings, __last_planned_position, unit_vec, target_steps);
 
 					motion_block.Station = ngc_block->__station__;
+					motion_block.spindle_rate = *view.persisted_values.active_spindle_speed_S;
 
 					motion_buffer.put(motion_block);
 

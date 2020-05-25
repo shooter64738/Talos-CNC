@@ -34,6 +34,7 @@ struct __s_motion_block
 
 								  // Stored spindle speed data used by spindle overrides and resuming methods.
 	uint8_t Station;
+	int32_t spindle_rate;
 	s_common_segment_items common;
 	float programmed_spindle_speed;
 	uint8_t spindle_state;

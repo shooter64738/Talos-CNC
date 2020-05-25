@@ -58,7 +58,7 @@ void Talos::Motion::Main_Process::run()
 	Motion::Core::Input::Block::load_ngc_test();
 	while(1)
 	{
-		Motion::Core::States::states_execute();
+		Motion::Core::States::execute();
 	}
 		
 	Talos::Motion::Main_Process::host_serial.print_string("\r\n** System halted **");

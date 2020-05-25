@@ -19,6 +19,7 @@
     <ClCompile Include="..\..\..\..\Motion\motion_main.cpp" />
     <ClCompile Include="..\..\..\..\Motion\NewCore\c_ngc_to_block.cpp" />
     <ClCompile Include="..\..\..\..\Motion\NewCore\c_block_to_segment.cpp" />
+    <ClCompile Include="..\..\..\..\Motion\NewCore\c_segment_to_hardware.cpp" />
     <ClCompile Include="..\..\..\..\Motion\NewCore\c_state_control.cpp" />
     <ClCompile Include="..\..\..\..\Motion\Processing\Main\Main_Process.cpp" />
     <ClCompile Include="..\..\..\..\Motion\Processing\Planner\Canned Cycles\x_c_canned_cycle.cpp" />
@@ -53,6 +54,7 @@
     <ClInclude Include="..\..\..\..\Motion\motion_hardware_def.h" />
     <ClInclude Include="..\..\..\..\Motion\NewCore\c_ngc_to_block.h" />
     <ClInclude Include="..\..\..\..\Motion\NewCore\c_block_to_segment.h" />
+    <ClInclude Include="..\..\..\..\Motion\NewCore\c_segment_to_hardware.h" />
     <ClInclude Include="..\..\..\..\Motion\NewCore\c_state_control.h" />
     <ClInclude Include="..\..\..\..\Motion\NewCore\support_items\c_state_control.h" />
     <ClInclude Include="..\..\..\..\Motion\NewCore\support_items\d_buffer_size_defs.h" />
