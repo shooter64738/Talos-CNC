@@ -8,9 +8,9 @@
 #include "../../NGC_RS274/ngc_block_view.h"
 #include "../../_bit_flag_control.h"
 #include "../../c_ring_template.h"
-#include "s_motion_block.h"
+#include "support_items/s_motion_block.h"
+#include "support_items/d_buffer_size_defs.h"
 
-#define BLOCK_BUFFER_SIZE 36
 
 namespace Talos
 {
@@ -24,7 +24,8 @@ namespace Talos
 				{
 					//variables
 				public:
-					static c_ring_buffer<__s_motion_block> block_buffer;
+					static c_ring_buffer<__s_motion_block> motion_buffer;
+					static c_ring_buffer<s_ngc_block> ngc_buffer;
 					static __s_motion_block* planned_block;
 				protected:
 				private:
@@ -35,13 +36,15 @@ namespace Talos
 					static int32_t __last_planned_position[MACHINE_AXIS_COUNT];
 					static float __previous_nominal_speed;
 					
-					static __s_motion_block Block::block_buffer_store[BLOCK_BUFFER_SIZE];
+					static __s_motion_block Block::motion_buffer_store[MOTION_BUFFER_SIZE];
+					static s_ngc_block Block::ngc_buffer_store[NGC_BUFFER_SIZE];
 
 					//functions
 				public:
 					
 					static void load_ngc_test();
-					static uint8_t load_ngc(s_ngc_block* ngc_block, __s_motion_block * motion_block);
+					
+					static bool ngc_buffer_process();
 
 					static float plan_compute_profile_nominal_speed(__s_motion_block* motion_block);
 
@@ -52,6 +55,8 @@ namespace Talos
 
 				protected:
 				private:
+					static uint8_t __load_ngc(s_ngc_block* ngc_block);
+
 					static uint8_t __convert_ngc_distance(
 						s_ngc_block* ngc_block
 						, __s_motion_block* motion_block

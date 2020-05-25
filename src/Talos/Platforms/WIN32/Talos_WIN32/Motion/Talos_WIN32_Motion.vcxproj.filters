@@ -380,29 +380,35 @@
     <ClInclude Include="..\..\..\..\Shared_Data\Settings\Motion\_s_motion_internal.h">
       <Filter>Shared data\Settings\Motion</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Motion\NewCore\s_timer_item.h">
-      <Filter>Motion\NewCore\Supporting_Items</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Motion\NewCore\s_segment_timer_common.h">
-      <Filter>Motion\NewCore\Supporting_Items</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Motion\NewCore\s_segment_base.h">
-      <Filter>Motion\NewCore\Supporting_Items</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Motion\NewCore\s_motion_block.h">
-      <Filter>Motion\NewCore\Supporting_Items</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Motion\NewCore\s_bresenham_item.h">
-      <Filter>Motion\NewCore\Supporting_Items</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Motion\NewCore\e_ramp_states.h">
-      <Filter>Motion\NewCore\Supporting_Items</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Motion\NewCore\e_block_state.h">
-      <Filter>Motion\NewCore\Supporting_Items</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\..\Motion\NewCore\c_state_control.h">
       <Filter>Motion\NewCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Motion\NewCore\support_items\c_state_control.h">
+      <Filter>Motion\NewCore\Supporting_Items</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Motion\NewCore\support_items\d_buffer_size_defs.h">
+      <Filter>Motion\NewCore\Supporting_Items</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Motion\NewCore\support_items\e_block_state.h">
+      <Filter>Motion\NewCore\Supporting_Items</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Motion\NewCore\support_items\e_ramp_states.h">
+      <Filter>Motion\NewCore\Supporting_Items</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Motion\NewCore\support_items\s_bresenham_item.h">
+      <Filter>Motion\NewCore\Supporting_Items</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Motion\NewCore\support_items\s_motion_block.h">
+      <Filter>Motion\NewCore\Supporting_Items</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Motion\NewCore\support_items\s_segment_base.h">
+      <Filter>Motion\NewCore\Supporting_Items</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Motion\NewCore\support_items\s_segment_timer_common.h">
+      <Filter>Motion\NewCore\Supporting_Items</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Motion\NewCore\support_items\s_timer_item.h">
+      <Filter>Motion\NewCore\Supporting_Items</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

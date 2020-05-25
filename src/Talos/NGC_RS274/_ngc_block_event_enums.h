@@ -1,5 +1,8 @@
+#ifndef C_NGC_BLOCK_EVENT_ENUMS_
+#define C_NGC_BLOCK_EVENT_ENUMS_
+
 #include <stdint.h>
-enum class e_block_event : uint8_t
+enum class e_block_event : uint32_t
 {
 	Motion = 0,
 	Cutter_radius_compensation = 1,
@@ -28,3 +31,4 @@ enum class e_block_event : uint8_t
 	HoldBlockForCRC = 27
 
 };
+#endif // !

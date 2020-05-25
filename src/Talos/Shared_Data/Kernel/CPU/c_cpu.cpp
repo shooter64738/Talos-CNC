@@ -130,18 +130,18 @@ bool c_cpu::Synch(
 	}
 
 	//Since we set events to handle and we processed those internally, clear all event flags here
-	this->host_events.Critical._flag = 0;
-	this->host_events.Data._flag = 0;
-	this->host_events.Informal._flag = 0;
-	this->host_events.Inquiry._flag = 0;
-	this->host_events.Warning._flag = 0;
-	this->system_events._flag = 0;
+	this->host_events.Critical.reset();
+	this->host_events.Data.reset();
+	this->host_events.Informal.reset();
+	this->host_events.Inquiry.reset();
+	this->host_events.Warning.reset();
+	this->system_events.reset();
 
 	//And now we should be done.
 	Talos::Kernel::Comm::pntr_string_writer(Talos::Kernel::CPU::host_id, "mCU synch complete!!\r\n");
 
 	//set this active_cpu as 'on method_or_line'
-	this->system_events.set((int)c_cpu::e_event_type::OnLine);
+	this->system_events.set(c_cpu::e_event_type::OnLine);
 
 	Talos::Kernel::Comm::pntr_string_writer(Talos::Kernel::CPU::host_id, "value end =");
 	/*Talos::Kernel::Comm::USART0._int32_writer(
@@ -177,7 +177,7 @@ bool c_cpu::__wait_formatted_message(uint8_t init_message, uint8_t init_type)
 		//Talos::Shared::FrameWork::Events::Router::process();
 
 		//see if host responded with a message, and if so does it match the message and record type we expected
-		if (this->system_events.get_clr((int)c_cpu::e_event_type::SystemRecord))
+		if (this->system_events.get_clr(c_cpu::e_event_type::SystemRecord))
 		{
 			Talos::Kernel::Error::framework_error.sys_message = this->sys_message.message;
 			Talos::Kernel::Error::framework_error.sys_type = this->sys_message.type;
@@ -217,13 +217,13 @@ bool c_cpu::service_events(int32_t* position, uint16_t rpm)
 
 
 	//if NoState and OnLine is false, theres no need to process events.
-	if (this->system_events.get((int)c_cpu::e_event_type::NoState)
-		|| !this->system_events.get((int)c_cpu::e_event_type::OnLine))
+	if (this->system_events.get(c_cpu::e_event_type::NoState)
+		|| !this->system_events.get(c_cpu::e_event_type::OnLine))
 		return true;
 
 	//If active_cpu is in error set it offline
-	if (this->system_events.get((int)c_cpu::e_event_type::Error))
-		this->system_events.clear((int)c_cpu::e_event_type::OnLine);
+	if (this->system_events.get(c_cpu::e_event_type::Error))
+		this->system_events.clear(c_cpu::e_event_type::OnLine);
 
 	if (position != NULL)
 		memcpy(&this->sys_message.position, position, sizeof(int32_t) * MACHINE_AXIS_COUNT);
@@ -277,9 +277,9 @@ bool c_cpu::__check_health()
 	{
 		this->next_cycle_check_time = *(pntr_cycle_count_ms)+HEALTH_CHECK_TIME_MS;
 		if (this->sys_message.time_code == last_time_code)
-			this->system_events.set((int)c_cpu::e_event_type::UnHealthy);
+			this->system_events.set(c_cpu::e_event_type::UnHealthy);
 		else
-			this->system_events.clear((int)c_cpu::e_event_type::UnHealthy);
+			this->system_events.clear(c_cpu::e_event_type::UnHealthy);
 		last_time_code = this->sys_message.time_code;
 	}
 	return true;
@@ -627,7 +627,7 @@ bool c_cpu::__set_entry_mode(char first_byte, char second_byte)
 	}
 	default:
 	{
-		//Talos::Shared::FrameWork::StartUp::CpuCluster[Talos::Shared::FrameWork::StartUp::cpu_type.Host].host_events.Data.set((int)e_system_message::messages::e_data::NgcDataLine);
+		//Talos::Shared::FrameWork::StartUp::CpuCluster[Talos::Shared::FrameWork::StartUp::cpu_type.Host].host_events.Data.set(e_system_message::messages::e_data::NgcDataLine);
 		//assume its plain ngc g code data
 		return false;
 	}
@@ -642,16 +642,16 @@ bool c_cpu::__set_sub_entry_mode(char byte)
 	switch (byte)
 	{
 	case 'G': //block g group status
-		this->host_events.Inquiry.set((int)e_system_message::messages::e_inquiry::GCodeBlockReport);
+		this->host_events.Inquiry.set(e_system_message::messages::e_inquiry::GCodeBlockReport);
 		//pntr_event->set((int)e_system_message::messages::e_inquiry::GCodeBlockReport);
 		break;
 	case 'M': //block m group status
 		//pntr_event->set((int)e_system_message::messages::e_inquiry::MCodeBlockReport);
-		this->host_events.Inquiry.set((int)e_system_message::messages::e_inquiry::MCodeBlockReport);
+		this->host_events.Inquiry.set(e_system_message::messages::e_inquiry::MCodeBlockReport);
 		break;
 	case 'W': //word value status
 		//pntr_event->set((int)e_system_message::messages::e_inquiry::WordStatusReport);
-		this->host_events.Inquiry.set((int)e_system_message::messages::e_inquiry::WordStatusReport);
+		this->host_events.Inquiry.set(e_system_message::messages::e_inquiry::WordStatusReport);
 		break;
 	default:
 		/*__raise_error(NULL, e_error_behavior::Informal, 0, e_error_group::DataHandler, e_error_process::Process

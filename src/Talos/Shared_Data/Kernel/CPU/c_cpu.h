@@ -56,15 +56,15 @@ public:
 		ReBoot = 5,
 		UnHealthy = 6,
 	};
-	s_bit_flag_controller<uint32_t> system_events;
+	s_bit_flag_controller<c_cpu::e_event_type> system_events;
 
 	struct s_event_class
 	{
-		s_bit_flag_controller<uint32_t> Critical;
-		s_bit_flag_controller<uint32_t> Warning;
-		s_bit_flag_controller<uint32_t> Informal;
-		s_bit_flag_controller<uint32_t> Data;
-		s_bit_flag_controller<uint32_t> Inquiry;
+		s_bit_flag_controller<e_system_message::messages::e_critical> Critical;
+		s_bit_flag_controller<e_system_message::messages::e_warning> Warning;
+		s_bit_flag_controller<e_system_message::messages::e_informal> Informal;
+		s_bit_flag_controller<e_system_message::messages::e_data> Data;
+		s_bit_flag_controller<e_system_message::messages::e_inquiry> Inquiry;
 	};
 
 	s_event_class host_events;
@@ -285,7 +285,7 @@ private:
 		//		}
 		//		default:
 		//		{
-		//			//Talos::Shared::FrameWork::StartUp::CpuCluster[Talos::Shared::FrameWork::StartUp::cpu_type.Host].host_events.Data.set((int)e_system_message::messages::e_data::NgcDataLine);
+		//			//Talos::Shared::FrameWork::StartUp::CpuCluster[Talos::Shared::FrameWork::StartUp::cpu_type.Host].host_events.Data.set(e_system_message::messages::e_data::NgcDataLine);
 		//			//assume its plain ngc g code data
 		//		}
 

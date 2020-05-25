@@ -6,12 +6,6 @@
 #include "../../physical_machine_parameters.h"
 #include "../../_bit_flag_control.h"
 
-enum class e_block_flags
-{
-	feedmode_change = 0,
-	feed_on_spindle = 1,
-	
-};
 
 struct __s_motion_block
 {
@@ -41,10 +35,6 @@ struct __s_motion_block
 								  // Stored spindle speed data used by spindle overrides and resuming methods.
 	uint8_t Station;
 	s_common_segment_items common;
-	//int32_t line_number;  // Block line number for real-time reporting. Copied from pl_line_data.
-	//uint32_t sequence;
-	//s_bit_flag_controller<uint32_t> flag;
-	//s_bresenham null; //
 	float programmed_spindle_speed;
 	uint8_t spindle_state;
 

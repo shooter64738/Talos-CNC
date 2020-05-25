@@ -3,13 +3,14 @@
 
 #include <stdint.h>
 #include "s_bresenham_item.h"
+#include "e_block_state.h"
 #include "../../_bit_flag_control.h"
 
 struct s_common_segment_items
 {
 	uint16_t line_number = 0;
 	uint32_t sequence = 0;
-	s_bit_flag_controller<uint32_t> flag;
+	s_bit_flag_controller<e_block_state> flag;
 	s_bresenham* bres_obj;	//<-- This is handled as a pointer so that if the buffer
 							//head or tail are moved it wont matter. We no longer
 							//need to track head and tail values to ensure this item

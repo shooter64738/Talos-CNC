@@ -2,15 +2,15 @@
 #define __C_MOTION_CORE_INPUT_SEGMENT2_H
 #include <stdint.h>
 
-#include "s_bresenham_item.h"
+#include "support_items/s_bresenham_item.h"
 #include "../../c_ring_template.h"
-#include "s_motion_block.h"
-#include "s_segment_base.h"
-#include "e_ramp_states.h"
-#include "s_timer_item.h"
+#include "support_items/s_motion_block.h"
+#include "support_items/s_segment_base.h"
+#include "support_items/e_ramp_states.h"
+#include "support_items/s_timer_item.h"
+#include "support_items/d_buffer_size_defs.h"
 
-#define BRESENHAM_BUFFER_SIZE 10
-#define TIMER_BUFFER_SIZE 10
+
 
 namespace Talos
 {
@@ -27,6 +27,11 @@ namespace Talos
 					static c_ring_buffer<__s_motion_block> buffer;
 				protected:
 				private:
+
+					/*enum class e_seg_op_flag
+					{
+						reinitialize_segment = 0,
+					};*/
 
 					struct s_fragment_vars
 					{
@@ -64,7 +69,8 @@ namespace Talos
 
 				protected:
 				private:
-					static uint8_t	__initialize_segment(s_segment_base* segment);
+					static void __initialize_new_segment(s_segment_base* seg_base_arg);
+					static uint8_t	__calc_seg_base(s_segment_base* segment);
 					static uint8_t	__run_segment_frag(s_segment_base* segment);
 					
 					static void __check_ramp_state(s_fragment_vars* vars, s_segment_base* seg_base_arg, s_timer_item* segment_item);

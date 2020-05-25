@@ -73,7 +73,7 @@
 //	
 //
 //	//Execute non modal changes
-//	if (local_block->event_manager.get((int)NGC_RS274::NGC_Binary_Block::e_block_event::Non_modal))
+//	if (local_block->event_manager.get(NGC_RS274::NGC_Binary_Block::e_block_event::Non_modal))
 //	{
 //		c_stager::update_non_modals(local_block);
 //	}
@@ -84,7 +84,7 @@
 //
 //	//If feed mode change, see if its a spindle synch change and ensure we arent synchronizing to
 //	//a spindle speed thats too fast.
-//	if (local_block->event_manager.get((int)NGC_RS274::NGC_Binary_Block::e_block_event::Feed_rate_mode) //<-- block feed mode changed
+//	if (local_block->event_manager.get(NGC_RS274::NGC_Binary_Block::e_block_event::Feed_rate_mode) //<-- block feed mode changed
 //		&& local_block->g_group[NGC_RS274::Groups::G::Feed_rate_mode] == NGC_RS274::G_codes::FEED_RATE_UNITS_PER_ROTATION) //<--units per rotation mode
 //	{
 //		float travel_speed = local_block->get_value('F') * local_block->get_value('S');
@@ -121,7 +121,7 @@
 //	complexities of cutter radius compensation.
 //	*/
 //
-//	if (local_block->event_manager.get((int)NGC_RS274::NGC_Binary_Block::e_block_event::Cutter_radius_compensation)) //<--block has a compensation command
+//	if (local_block->event_manager.get(NGC_RS274::NGC_Binary_Block::e_block_event::Cutter_radius_compensation)) //<--block has a compensation command
 //	{
 //		//we dont clear this event because we will use it later.
 //		/*
@@ -150,7 +150,7 @@
 //	}
 //
 //
-//	if (local_block->event_manager.get((int)NGC_RS274::NGC_Binary_Block::e_block_event::Tool_length_offset)) //<--block has a tool length command
+//	if (local_block->event_manager.get(NGC_RS274::NGC_Binary_Block::e_block_event::Tool_length_offset)) //<--block has a tool length command
 //	{
 //		//c_stager::local_serial->Write("tool length change...");
 //		//c_stager::local_serial->Write(CR);
@@ -186,14 +186,14 @@
 //	full soon after this, and the controller will stop responding with NGC_Planner_Errors::OK
 //	so that the host will hold transmitting more data until the ngc buffer has space available.
 //	*/
-//	if (local_block->event_manager.get((int)NGC_RS274::NGC_Binary_Block::e_block_event::Motion)) //<--block has a motion command that is different than the previous block
+//	if (local_block->event_manager.get(NGC_RS274::NGC_Binary_Block::e_block_event::Motion)) //<--block has a motion command that is different than the previous block
 //	{
 //		//If motion type has changed and a canned cycle was running, we need to reset it
 //		c_canned_cycle::active_cycle_code = 0; //<--If this is zero when a cycle starts, the cycle will re-initialize.
 //	}
 //
 //	//is the motion a canned cycle? 
-//	if (local_block->event_manager.get((int)NGC_RS274::NGC_Binary_Block::e_block_event::Canned_Cycle_Active))
+//	if (local_block->event_manager.get(NGC_RS274::NGC_Binary_Block::e_block_event::Canned_Cycle_Active))
 //	{
 //		c_canned_cycle::initialize(local_block, *c_stager::previous_block->active_plane.normal_axis.value);
 //	}
@@ -208,17 +208,17 @@
 //		//In order for the machine to execute a block, its state must be set to 'planned'
 //		//If compensation is on, then we let crc manage the plan state. But if its off,
 //		//we need to set the state to planned here.
-//		local_block->event_manager.set((int)NGC_RS274::NGC_Binary_Block::e_block_event::Block_Set_To_Execute);
+//		local_block->event_manager.set(NGC_RS274::NGC_Binary_Block::e_block_event::Block_Set_To_Execute);
 //	}
 //
 //	//see if the motion state requires motion and a non modal was not on the local block.
 //	if (local_block->is_motion_block)
 //	{
-//			Events::Motion::event_manager.set((int)Events::Motion::e_event_type::Motion_enqueue);
+//			Events::Motion::event_manager.set(Events::Motion::e_event_type::Motion_enqueue);
 //	}
 //	else
 //	{
-//		Events::Motion::event_manager.set((int)Events::Motion::e_event_type::Parameter_in_queue);
+//		Events::Motion::event_manager.set(Events::Motion::e_event_type::Parameter_in_queue);
 //	}
 //
 //	////We need to know the position that this block took us too.
@@ -253,17 +253,17 @@
 //
 //	//Does cutter compensation have a block buffered waiting for a motion command?
 //	if (c_Cutter_Comp::previous_block_pointer != NULL
-//	&& c_Cutter_Comp::previous_block_pointer->event_manager.get((int)NGC_RS274::NGC_Binary_Block::e_block_event::Block_Set_To_Execute))
+//	&& c_Cutter_Comp::previous_block_pointer->event_manager.get(NGC_RS274::NGC_Binary_Block::e_block_event::Block_Set_To_Execute))
 //	{
 //		//point the machine block to the previous block in cutter compensation. This block
 //		// is being held for cutter compensation
 //		//c_machine::machine_block = c_Cutter_Comp::previous_block_pointer;
-//		Events::Motion::event_manager.set((int)Events::Motion::e_event_type::Buffered_CRC_Cycle_Waiting);
+//		Events::Motion::event_manager.set(Events::Motion::e_event_type::Buffered_CRC_Cycle_Waiting);
 //	}
 //	
 //	if (c_canned_cycle::active_cycle_code != 0)
 //	{
-//		Events::Motion::event_manager.set((int)Events::Motion::e_event_type::Buffered_Canned_Cycle_Waiting);
+//		Events::Motion::event_manager.set(Events::Motion::e_event_type::Buffered_Canned_Cycle_Waiting);
 //		//point the machine block to the current tail block
 //		//c_machine::machine_block = &c_gcode_buffer::collection[c_gcode_buffer::buffer_tail];
 //	}
@@ -271,7 +271,7 @@
 //	//NO blocks held in compensation buffer
 //	if (c_Cutter_Comp::previous_block_pointer == NULL)
 //	{
-//		Events::Motion::event_manager.set((int)Events::Motion::e_event_type::Buffered_Standard_Cycle_Waiting);
+//		Events::Motion::event_manager.set(Events::Motion::e_event_type::Buffered_Standard_Cycle_Waiting);
 //		//point the machine block to the current tail block
 //		//c_machine::machine_block = &c_gcode_buffer::collection[c_gcode_buffer::buffer_tail];
 //	}
@@ -303,7 +303,7 @@
 //	c_Cutter_Comp::tool_radius = tool_table[(uint16_t)local_block->get_value('D')].diameter;
 //
 //	//was cutter compensation flagged as changed
-//	if (local_block->event_manager.get_clr((int)NGC_RS274::NGC_Binary_Block::e_block_event::Cutter_radius_compensation))
+//	if (local_block->event_manager.get_clr(NGC_RS274::NGC_Binary_Block::e_block_event::Cutter_radius_compensation))
 //	{
 //		if (local_block->g_group[NGC_RS274::Groups::G::Cutter_radius_compensation] ==
 //		NGC_RS274::G_codes::START_CUTTER_RADIUS_COMPENSATION_LEFT)

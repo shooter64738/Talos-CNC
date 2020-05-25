@@ -28,14 +28,14 @@
 #define LEAST_INPUT_INCRIMET_MM 0.001
 #define LEAST_INPUT_INCRIMET_INCH 0.0001
 
-enum class e_config_bit_flags
+enum class e_config_bit_flags:uint32_t
 {
 	DecimalPointInput = 0, //Fanuc parameter 3401 or 2400. 0 = least input, 1 = pocket calculator
 };
 
 struct s_interpreter_input_configuration
 {
-	s_bit_flag_controller<uint32_t> flags;
+	s_bit_flag_controller<e_config_bit_flags> flags;
 	e_dialects dialect;
 
 };

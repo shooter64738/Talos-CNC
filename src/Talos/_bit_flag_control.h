@@ -8,47 +8,53 @@
 template <typename TN> //Provides a centralized bit flag control system
 struct s_bit_flag_controller
 {
-	bool get(int get_value)
+	//template <typename ET> //Provides a centralized bit flag control system
+	bool get(TN get_value)
 	{
-		return (bool)(BitGet(_flag, get_value));
+		return (bool)(BitGet(_flag, (int)get_value));
 	};
 
-	bool get_clr(int get_value)
+	//template <typename ET> //Provides a centralized bit flag control system
+	bool get_clr(TN get_value)
 	{
-		bool ret = (BitGet(_flag, get_value));
+		bool ret = (BitGet(_flag, (int)get_value));
 		clear(get_value);
 		return ret;
 	};
 
-	void flip(int flip_value)
+	//template <typename ET> //Provides a centralized bit flag control system
+	void flip(TN flip_value)
 	{
-		BitFlp(_flag, flip_value);
+		BitFlp(_flag, (int)flip_value);
 	};
 
-	void set(int set_value)
+	//template <typename ET> //Provides a centralized bit flag control system
+	void set(TN set_value)
 	{
-		BitSet_(_flag, set_value);
+		BitSet_(_flag, (int)set_value);
 	};
 
-	void set(bool bit_value, int bit_num)
+	//template <typename ET> //Provides a centralized bit flag control system
+	void set(bool bit_value, TN bit_num)
 	{
 		if (bit_value)
-			BitSet_(_flag, bit_num);
+			BitSet_(_flag, (int)bit_num);
 		else
-			BitClr_(_flag, bit_num);
+			BitClr_(_flag, (int)bit_num);
 	};
 
-	void clear(int clear_value)
+	//template <typename ET> //Provides a centralized bit flag control system
+	void clear(TN clear_value)
 	{
-		BitClr_(_flag, clear_value);
+		BitClr_(_flag, (int)clear_value);
 	};
 
 	void reset()
 	{
 		_flag = 0;
 	};
-
-	volatile TN _flag = 0;//because this can be accessed by interrupts, i am making it volatile
+	//typing this as uint32, but would rather find the enums base type and type it as that.
+	volatile uint32_t _flag;// = 0;//because this can be accessed by interrupts, i am making it volatile
 };
 
 

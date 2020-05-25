@@ -1,6 +1,7 @@
 #include <stdint.h>
 #include "../_bit_manipulation.h"
 #include "../_bit_flag_control.h"
+#include "_ngc_block_event_enums.h"
 #include "_ngc_defines.h"
 
 #ifndef NGC_BLOCK_STRUCT_H
@@ -9,7 +10,7 @@ struct s_ngc_block
 {
 	float word_values[26]; //<--hard code to 26, cuz there are always 26 letters in the alphabet
 	s_bit_flag_controller<uint32_t> word_flags;
-	s_bit_flag_controller<uint32_t> block_events;
+	s_bit_flag_controller<e_block_event> block_events;
 	uint16_t g_group[COUNT_OF_G_CODE_GROUPS_ARRAY]; //There are 14 groups of gcodes (0-13)
 	s_bit_flag_controller<uint32_t> g_code_defined_in_block;
 	uint16_t m_group[COUNT_OF_M_CODE_GROUPS_ARRAY]; //There are 5 groups of mcodes (0-4)

@@ -28,7 +28,7 @@
 class c_controller
 {
 public:
-	enum class e_setting_states
+	enum class e_setting_states:uint32_t
 	{
 		hardware_error_occured = 1,
 		default_settings_loaded_successful = 2,
@@ -40,7 +40,7 @@ public:
 		settings_loaded_wrong_version = 8,
 
 	};
-	static s_bit_flag_controller<uint32_t> states;
+	static s_bit_flag_controller<e_setting_states> states;
 	static uint8_t initialize();
 	static uint8_t load_defaults();
 	static uint8_t load_from_disk();

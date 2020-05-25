@@ -24,7 +24,7 @@
 
 
 s_motion_control_settings_encapsulation c_controller::Settings;
-s_bit_flag_controller<uint32_t> c_controller::states;
+s_bit_flag_controller<c_controller::e_setting_states> c_controller::states;
 const uint16_t rec_size = sizeof(s_motion_control_settings_encapsulation);
 
 uint8_t c_controller::initialize()
@@ -33,7 +33,7 @@ uint8_t c_controller::initialize()
 	//read the settings from disk
 	load_from_disk();
 	//If the settings didnt load, grab the defaults
-	if (!states.get((int)e_setting_states::settings_loaded_successful))
+	if (!states.get(e_setting_states::settings_loaded_successful))
 	{
 		load_defaults();
 		save_to_disk();
@@ -43,7 +43,7 @@ uint8_t c_controller::initialize()
 	//we should check the version this record was written with.
 	if (!Talos::Kernel::Base::check_version(c_controller::Settings.version))
 	{
-		states.set((int)e_setting_states::settings_loaded_wrong_version);
+		states.set(e_setting_states::settings_loaded_wrong_version);
 	}
 
 	//Do any other prep work on settings, or validations here.. I dont know yet what that might be. 		
@@ -90,7 +90,7 @@ uint8_t c_controller::load_defaults()
 	Settings.internals.REQ_MM_INCREMENT_SCALAR = 1.25;
 
 	Settings.crc = 0;
-	states.set((int)e_setting_states::default_settings_loaded_successful);
+	states.set(e_setting_states::default_settings_loaded_successful);
 	return 0;
 }
 
@@ -98,7 +98,7 @@ uint8_t c_controller::load_from_disk()
 {
 	if (Hardware_Abstraction_Layer::Disk::get_motion_control_settings((char*)& Settings, rec_size) != 0)
 	{
-		states.set((int)e_setting_states::settings_load_hardware_error);
+		states.set(e_setting_states::settings_load_hardware_error);
 	}
 	else
 	{
@@ -110,11 +110,11 @@ uint8_t c_controller::load_from_disk()
 		{
 			//Settings invalid clear all and load default
 			memset(&Settings, 0, rec_size);
-			states.set((int)e_setting_states::crc_failed_using_defaults);
+			states.set(e_setting_states::crc_failed_using_defaults);
 		}
 		else
 		{
-			states.set((int)e_setting_states::settings_loaded_successful);
+			states.set(e_setting_states::settings_loaded_successful);
 		}
 	}
 
@@ -126,11 +126,11 @@ uint8_t c_controller::save_to_disk()
 	Settings.crc = Talos::Kernel::Base::kernel_crc::generate((char*)& Settings, rec_size - KERNEL_CRC_BYTE_SIZE);
 
 	if (Hardware_Abstraction_Layer::Disk::put_motion_control_settings((char*)& Settings, rec_size) == 0)
-		states.set((int)c_controller::e_setting_states::settings_saved_successful);
+		states.set(c_controller::e_setting_states::settings_saved_successful);
 	else
-		states.set((int)c_controller::e_setting_states::settings_save_hardware_error);
+		states.set(c_controller::e_setting_states::settings_save_hardware_error);
 
-	states.clear((int)c_controller::e_setting_states::default_settings_loaded_successful);
+	states.clear(c_controller::e_setting_states::default_settings_loaded_successful);
 
 	return 0;
 }

@@ -35,7 +35,7 @@ namespace Talos
 				return;
 			}
 
-			CPU::cluster[event_id].system_events.set((int)c_cpu::e_event_type::Error);
+			CPU::cluster[event_id].system_events.set(c_cpu::e_event_type::Error);
 
 			//Error::framework_error.buffer_head = ((Talos::Shared::FrameWork::Events::Router::inputs.pntr_ring_buffer + (int)event_id)->ring_buffer._head);
 			//Error::framework_error.buffer_tail = ((Talos::Shared::FrameWork::Events::Router::inputs.pntr_ring_buffer + (int)event_id)->ring_buffer._tail);
@@ -58,7 +58,7 @@ namespace Talos
 			Comm::pntr_string_writer(cpu_target, "Err:");
 			if (Error::framework_error.behavior == e_error_behavior::Critical)
 			{
-				CPU::cluster[CPU::host_id].system_events.set((int)c_cpu::e_event_type::Error);
+				CPU::cluster[CPU::host_id].system_events.set(c_cpu::e_event_type::Error);
 				Comm::pntr_string_writer(cpu_target, "{Critical}");
 			}
 			__print_base(cpu_target);
@@ -97,7 +97,7 @@ namespace Talos
 			Comm::pntr_string_writer(cpu_target, "Err:{Ngc}");
 			__write_eol(cpu_target);
 
-			CPU::cluster[CPU::host_id].system_events.set((int)c_cpu::e_event_type::Error);
+			CPU::cluster[CPU::host_id].system_events.set(c_cpu::e_event_type::Error);
 
 			__print_base(cpu_target);
 

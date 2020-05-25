@@ -10,6 +10,8 @@
 #include "c_block_to_segment.h"
 #include "../../_bit_manipulation.h"
 #include "../../Configuration/c_configuration.h"
+#include "c_state_control.h"
+#include "support_items/e_block_state.h"
 #include <math.h>
 #include <string.h>
 
@@ -34,11 +36,14 @@ namespace Talos
 				int32_t Block::__last_planned_position[MACHINE_AXIS_COUNT]{ 0 };
 				float Block::__previous_nominal_speed = 0.0;
 
-				__s_motion_block Block::block_buffer_store[BLOCK_BUFFER_SIZE]{ 0 };
-				c_ring_buffer<__s_motion_block> Block::block_buffer(Block::block_buffer_store, BLOCK_BUFFER_SIZE);
+				s_ngc_block Block::ngc_buffer_store[NGC_BUFFER_SIZE]{ 0 };
+				c_ring_buffer<s_ngc_block> Block::ngc_buffer(Block::ngc_buffer_store, NGC_BUFFER_SIZE);
+
+				__s_motion_block Block::motion_buffer_store[MOTION_BUFFER_SIZE]{ 0 };
+				c_ring_buffer<__s_motion_block> Block::motion_buffer(Block::motion_buffer_store, MOTION_BUFFER_SIZE);
 
 				//Set the planned block to the first block by default.
-				__s_motion_block* Block::planned_block = Block::block_buffer.peek(0);
+				__s_motion_block* Block::planned_block = Block::motion_buffer.peek(0);
 
 				void Block::load_ngc_test()
 				{
@@ -46,45 +51,37 @@ namespace Talos
 					int_cfg::DefaultBlock.load_defaults();
 					s_ngc_block ngc_block{ 0 };
 					NGC_RS274::Block_View view = NGC_RS274::Block_View(&int_cfg::DefaultBlock.Settings);
-
 					*view.current_g_codes.Motion = NGC_RS274::G_codes::RAPID_POSITIONING;
 
-					int_cfg::DefaultBlock.Settings.target_motion_position[0] = 10;
-					//create a work motion block
-					__s_motion_block motion_block1{ 0 }; motion_block1.Station = 0;
-					load_ngc(&int_cfg::DefaultBlock.Settings, &motion_block1);
-					Process::Segment::fill_step_segment_buffer();
+					for (int i = 0; i < NGC_BUFFER_SIZE; i++)
+					{
+						s_ngc_block testblock{ 0 };
+						view.copy_persisted_data(&int_cfg::DefaultBlock.Settings, &testblock);
 
-					int_cfg::DefaultBlock.Settings.target_motion_position[0] = 20;
-					//create a work motion block
-					__s_motion_block motion_block2{ 0 }; motion_block2.Station = 1;
-					load_ngc(&int_cfg::DefaultBlock.Settings, &motion_block2);
-					Process::Segment::fill_step_segment_buffer();
-
-					int_cfg::DefaultBlock.Settings.target_motion_position[0] = 30;
-					//create a work motion block
-					__s_motion_block motion_block3{ 0 }; motion_block3.Station = 2;
-					load_ngc(&int_cfg::DefaultBlock.Settings, &motion_block3);
-					Process::Segment::fill_step_segment_buffer();
-
-					int_cfg::DefaultBlock.Settings.target_motion_position[0] = 40;
-					//create a work motion block
-					__s_motion_block motion_block4{ 0 }; motion_block4.Station = 3;
-					load_ngc(&int_cfg::DefaultBlock.Settings, &motion_block4);
-					Process::Segment::fill_step_segment_buffer();
-
-					int_cfg::DefaultBlock.Settings.target_motion_position[0] = 50;
-					//create a work motion block
-					__s_motion_block motion_block5{ 0 }; motion_block5.Station = 4;
-					load_ngc(&int_cfg::DefaultBlock.Settings, &motion_block5);
-					Process::Segment::fill_step_segment_buffer();
-
-					Process::Segment::fill_step_segment_buffer();
+						view = NGC_RS274::Block_View(&testblock);
+						*view.axis_array[0] = ((i + 1) * 10);
+						testblock.target_motion_position[0] = ((i + 1) * 10);
+						testblock.__station__ = i;
+						Block::ngc_buffer.put(testblock);
+					}
+					States::Process::states.set(States::Process::e_states::ngc_buffer_not_empty);
 				}
 
-				uint8_t Block::load_ngc(s_ngc_block* ngc_block, __s_motion_block* motion_block)
+				bool Block::ngc_buffer_process()
+				{
+					if (Block::ngc_buffer.has_data())
+					{
+						Block::__load_ngc(Block::ngc_buffer.get());
+					}
+
+					return Block::ngc_buffer.has_data();
+				}
+
+				uint8_t Block::__load_ngc(s_ngc_block* ngc_block)
 
 				{
+					__s_motion_block motion_block{ 0 };
+
 					/*
 					Things to consider:
 
@@ -126,7 +123,7 @@ namespace Talos
 					//convert ngc block info to steps
 					uint8_t ret = __convert_ngc_distance(
 						ngc_block
-						, motion_block
+						, &motion_block
 						, mtn_cfg::Controller.Settings.hardware
 						, __last_planned_position
 						, unit_vec
@@ -143,22 +140,24 @@ namespace Talos
 					{
 
 						//clear the comp bits that might have been set on this block
-						motion_block->bl_comp_bits._flag = 0;
+						motion_block.bl_comp_bits._flag = 0;
 					}
 					//set bit 15 so we know that motion has ran once and any more motions need backlash
 					//(motions that dont actually cause motion will have already been ignored)
 					//Save the direction bits for when the next block is processed. (set the 15th bit always)
-					__bl_comp_direction_flags._flag = motion_block->direction_bits._flag | 0X8000;
+					__bl_comp_direction_flags._flag = motion_block.direction_bits._flag | 0X8000;
 
-					motion_block->millimeters = convert_delta_vector_to_unit_vector(unit_vec);
-					motion_block->acceleration = __limit_value_by_axis_maximum(mtn_cfg::Controller.Settings.hardware.acceleration, unit_vec);
-					motion_block->rapid_rate = __limit_value_by_axis_maximum(mtn_cfg::Controller.Settings.hardware.max_rate, unit_vec);
+					motion_block.millimeters = convert_delta_vector_to_unit_vector(unit_vec);
+					motion_block.acceleration = __limit_value_by_axis_maximum(mtn_cfg::Controller.Settings.hardware.acceleration, unit_vec);
+					motion_block.rapid_rate = __limit_value_by_axis_maximum(mtn_cfg::Controller.Settings.hardware.max_rate, unit_vec);
 
-					__configure_feedrate(view, motion_block);
+					__configure_feedrate(view, &motion_block);
 
-					__plan_buffer_line(motion_block, mtn_cfg::Controller.Settings, __last_planned_position, unit_vec, target_steps);
+					__plan_buffer_line(&motion_block, mtn_cfg::Controller.Settings, __last_planned_position, unit_vec, target_steps);
 
-					block_buffer.put(*motion_block);
+					motion_block.Station = ngc_block->__station__;
+
+					motion_buffer.put(motion_block);
 
 					__planner_recalculate();
 
@@ -231,7 +230,7 @@ namespace Talos
 					NGC_RS274::Block_View ngc_view
 					, __s_motion_block* motion_block)
 				{
-					motion_block->common.flag.clear((int)e_block_flags::feed_on_spindle);
+					motion_block->common.flag.clear(e_block_state::feed_on_spindle);
 					// Store programmed rate.
 					if (*ngc_view.current_g_codes.Motion == NGC_RS274::G_codes::RAPID_POSITIONING)
 					{
@@ -247,8 +246,8 @@ namespace Talos
 						else if (*ngc_view.current_g_codes.Feed_rate_mode == NGC_RS274::G_codes::FEED_RATE_UNITS_PER_ROTATION)
 						{
 							motion_block->programmed_rate *= motion_block->millimeters * motion_block->programmed_spindle_speed;
-							motion_block->common.flag.set((int)e_block_flags::feedmode_change);
-							motion_block->common.flag.set((int)e_block_flags::feed_on_spindle);
+							motion_block->common.flag.set(e_block_state::feedmode_change);
+							motion_block->common.flag.set(e_block_state::feed_on_spindle);
 						}
 					}
 				}
@@ -297,7 +296,7 @@ namespace Talos
 				{
 					uint8_t idx = 0;
 					// TODO: Need to check this method handling zero junction speeds when starting from rest.
-					if (!Block::block_buffer.has_data())
+					if (!Block::motion_buffer.has_data())
 					{
 						// Initialize block entry speed as zero. Assume it will be starting from rest. Planner will correct this later.
 						// If system motion, the system motion block always is assumed to start from rest and end at a complete stop.
@@ -362,8 +361,8 @@ namespace Talos
 					//block_buffer.step_rst();
 
 					bool is_last;
-					
-					__s_motion_block* block_index = block_buffer.cur_head(&is_last);
+
+					__s_motion_block* block_index = motion_buffer.cur_head(&is_last);
 
 					// Bail. Can't do anything with one only one plan-able block.
 					if (block_index == planned_block)
@@ -376,16 +375,16 @@ namespace Talos
 					// NOTE: Forward pass will later refine and correct the reverse pass to create an optimal plan.
 					float entry_speed_sqr;
 					__s_motion_block* next;
-					__s_motion_block* current_block_from_index = block_buffer.peek(block_index->Station);
+					__s_motion_block* current_block_from_index = motion_buffer.peek(block_index->Station);
 
 					// Calculate maximum entry speed for last block in buffer, where the exit speed is always zero.
 					current_block_from_index->entry_speed_sqr = min(current_block_from_index->max_entry_speed_sqr, 2 * current_block_from_index->acceleration * current_block_from_index->millimeters);
 
-					block_index = block_buffer.peek(block_index->Station - 1);
+					block_index = motion_buffer.peek(block_index->Station - 1);
 					if (block_index == planned_block)
 					{ // Only two plannable blocks in buffer. Reverse pass complete.
 						// Check if the first block is the tail. If so, notify stepper to update its current parameters.
-						if (block_index == block_buffer.cur_tail(&is_last))
+						if (block_index == motion_buffer.cur_tail(&is_last))
 						{
 							Process::Segment::st_update_plan_block_parameters();
 						}
@@ -395,11 +394,11 @@ namespace Talos
 						while (block_index != planned_block)
 						{
 							next = current_block_from_index;
-							current_block_from_index = block_buffer.peek(block_index->Station);
-							block_index = block_buffer.peek(block_index->Station - 1);
+							current_block_from_index = motion_buffer.peek(block_index->Station);
+							block_index = motion_buffer.peek(block_index->Station - 1);
 
 							// Check if next block is the tail block(=planned block). If so, update current stepper parameters.
-							if (block_index == block_buffer.cur_tail(&is_last))
+							if (block_index == motion_buffer.cur_tail(&is_last))
 							{
 								Process::Segment::st_update_plan_block_parameters();
 							}
@@ -419,7 +418,7 @@ namespace Talos
 							}
 						}
 					}
-					
+
 					__forward_plan();
 
 					//// Forward Pass: Forward plan the acceleration curve from the planned pointer onward.
@@ -465,11 +464,11 @@ namespace Talos
 					bool is_last = false;
 
 					__s_motion_block* next_fwd = planned_block;
-					__s_motion_block* fwd_block_index = block_buffer.peek(planned_block->Station);
-					while (fwd_block_index != block_buffer.cur_head(&is_last))
+					__s_motion_block* fwd_block_index = motion_buffer.peek(planned_block->Station);
+					while (fwd_block_index != motion_buffer.cur_head(&is_last))
 					{
 						previous_block = next_fwd;
-						next_fwd = block_buffer.peek(fwd_block_index->Station);
+						next_fwd = motion_buffer.peek(fwd_block_index->Station);
 						if (previous_block->entry_speed_sqr < next_fwd->entry_speed_sqr)
 						{
 							entry_speed_sqr = previous_block->entry_speed_sqr + 2 * previous_block->acceleration * previous_block->millimeters;
@@ -483,7 +482,7 @@ namespace Talos
 						{
 							planned_block = fwd_block_index;
 						}
-						fwd_block_index = block_buffer.peek(fwd_block_index->Station + 1);
+						fwd_block_index = motion_buffer.peek(fwd_block_index->Station + 1);
 					}
 				}
 
@@ -538,7 +537,7 @@ namespace Talos
 				float Block::plan_get_exec_block_exit_speed_sqr()
 				{
 					bool last_item = false;
-					__s_motion_block* block = Block::block_buffer.cur_tail(&last_item);
+					__s_motion_block* block = Block::motion_buffer.cur_tail(&last_item);
 
 					//Motion_Core::Planner::Block_Item *block_index = Motion_Core::Planner::Buffer::Current();
 					if (last_item)

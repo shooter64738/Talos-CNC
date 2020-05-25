@@ -27,7 +27,7 @@
 
 //Interpreter base G/M code block values
 s_ngc_block c_defaultblock::Settings;
-s_bit_flag_controller<uint32_t> c_defaultblock::states;
+s_bit_flag_controller<c_defaultblock::e_setting_states> c_defaultblock::states;
 
 //ngc blocks do not have crc, or version data, so we need to wrap it with a struct that does.
 //If we dont and teh user laods the default ngc block and due to whatever reason the block
@@ -49,7 +49,7 @@ uint8_t c_defaultblock::initialize()
 	//read the settings from disk
 	load_from_disk();
 	//If the settings didnt load, grab the defaults
-	if (!states.get((int)e_setting_states::settings_loaded_successful))
+	if (!states.get(e_setting_states::settings_loaded_successful))
 	{
 		load_defaults();
 		save_to_disk();
@@ -59,7 +59,7 @@ uint8_t c_defaultblock::initialize()
 	//we should check the version this record was written with.
 	/*if (!Talos::Kernel::Base::check_version(c_defaultblock::Settings.version))
 	{
-		states.set((int)e_control_setting_states::settings_loaded_wrong_version);
+		states.set(e_control_setting_states::settings_loaded_wrong_version);
 	}*/
 
 	//Do any other prep work on settings, or validations here.. I dont know yet what that might be. 	
@@ -101,7 +101,7 @@ uint8_t c_defaultblock::load_defaults()
 	//default coolant mode
 	Settings.m_group[NGC_RS274::Groups::M::COOLANT] = NGC_RS274::M_codes::COOLANT_OFF;
 
-	states.set((int)e_setting_states::default_settings_loaded_successful);
+	states.set(e_setting_states::default_settings_loaded_successful);
 	return 0;
 }
 
@@ -111,7 +111,7 @@ uint8_t c_defaultblock::load_from_disk()
 
 	if (Hardware_Abstraction_Layer::Disk::get_default_block((char*)& Settings_encapsulated, rec_size) != 0)
 	{
-		states.set((int)e_setting_states::settings_load_hardware_error);
+		states.set(e_setting_states::settings_load_hardware_error);
 	}
 	else
 	{
@@ -123,11 +123,11 @@ uint8_t c_defaultblock::load_from_disk()
 		{
 			//Settings invalid clear all and load default
 			memset(&Settings_encapsulated.block, 0, rec_size);
-			states.set((int)e_setting_states::crc_failed_using_defaults);
+			states.set(e_setting_states::crc_failed_using_defaults);
 		}
 		else
 		{
-			states.set((int)e_setting_states::settings_loaded_successful);
+			states.set(e_setting_states::settings_loaded_successful);
 			memcpy(&Settings,&Settings_encapsulated.block, sizeof(s_ngc_block));
 		}
 	}
@@ -144,11 +144,11 @@ uint8_t c_defaultblock::save_to_disk()
 	Settings_encapsulated.crc = Talos::Kernel::Base::kernel_crc::generate((char*)& Settings_encapsulated, rec_size - KERNEL_CRC_BYTE_SIZE);
 
 	if (Hardware_Abstraction_Layer::Disk::put_default_block((char*)& Settings_encapsulated, rec_size) == 0)
-		states.set((int)e_setting_states::settings_saved_successful);
+		states.set(e_setting_states::settings_saved_successful);
 	else
-		states.set((int)e_setting_states::settings_save_hardware_error);
+		states.set(e_setting_states::settings_save_hardware_error);
 
-	states.clear((int)e_setting_states::default_settings_loaded_successful);
+	states.clear(e_setting_states::default_settings_loaded_successful);
 
 	memcpy(&Settings, &Settings_encapsulated.block, sizeof(s_ngc_block));
 

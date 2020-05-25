@@ -29,20 +29,22 @@ namespace Talos
 	{
 		void Report::process(s_ngc_block ngc_block_record)
 		{
-			s_bit_flag_controller<uint32_t>* pntr_event = &Talos::Kernel::CPU::cluster[Talos::Kernel::CPU::host_id].host_events.Inquiry;
-			if (pntr_event->_flag == 0)
+			s_bit_flag_controller<e_system_message::messages::e_inquiry>* pntr_event
+				= &Talos::Kernel::CPU::cluster[Talos::Kernel::CPU::host_id].host_events.Inquiry;
+
+			if ((int)pntr_event->_flag == 0)
 				return;
 
 			//If there are ANY block reporting events we will need a block header
 			__write_header(ngc_block_record);
 
-			if (pntr_event->get_clr((int)e_system_message::messages::e_inquiry::GCodeBlockReport))
+			if (pntr_event->get_clr(e_system_message::messages::e_inquiry::GCodeBlockReport))
 				____group(COUNT_OF_G_CODE_GROUPS_ARRAY, ngc_block_record.g_group, 'G');
 
-			if (pntr_event->get_clr((int)e_system_message::messages::e_inquiry::MCodeBlockReport))
+			if (pntr_event->get_clr(e_system_message::messages::e_inquiry::MCodeBlockReport))
 				____group(COUNT_OF_M_CODE_GROUPS_ARRAY, ngc_block_record.m_group, 'M');
 
-			if (pntr_event->get_clr((int)e_system_message::messages::e_inquiry::WordStatusReport))
+			if (pntr_event->get_clr(e_system_message::messages::e_inquiry::WordStatusReport))
 				____word(COUNT_OF_BLOCK_WORDS_ARRAY, ngc_block_record.word_values);
 
 

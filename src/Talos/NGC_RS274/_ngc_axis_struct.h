@@ -9,7 +9,7 @@ struct s_axis_property
 	char name;
 	bool is_defined(s_ngc_block * block)
 	{
-		return  block->word_flags.get(name - 'A');
+		return  block->word_flags.get(((uint32_t)name - 'A'));
 	}
 };
 #endif

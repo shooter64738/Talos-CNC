@@ -281,7 +281,7 @@ void NGC_RS274::Block_View::__assign_gcode(s_ngc_block * block)
 {
 	this->current_g_codes.Non_Modal = 0;
 	//only set non_modal if a non modal code was set on the line
-	if (block->g_code_defined_in_block.get((int)NGC_RS274::Groups::G::NON_MODAL))
+	if (block->g_code_defined_in_block.get(NGC_RS274::Groups::G::NON_MODAL))
 		this->current_g_codes.Non_Modal = &block->g_group[NGC_RS274::Groups::G::NON_MODAL];
 
 	this->current_g_codes.Motion = &block->g_group[NGC_RS274::Groups::G::Motion];
@@ -333,10 +333,10 @@ void NGC_RS274::Block_View::xset_events(s_ngc_block * local_block, s_ngc_block *
 	uint8_t group = 1;
 
 	//Non modals are not held from block to block. If a non modal is specified it only applies once
-	if (local_block->g_code_defined_in_block.get((int)NGC_RS274::Groups::G::NON_MODAL))
+	if (local_block->g_code_defined_in_block.get(NGC_RS274::Groups::G::NON_MODAL))
 	{
 		x__assign_g_event(local_block, NGC_RS274::Groups::G::NON_MODAL);
-		//Events::NGC_Block::event_manager.set((int)Events::NGC_Block::e_event_type::Non_modal);
+		//Events::NGC_Block::event_manager.set(Events::NGC_Block::e_event_type::Non_modal);
 		//c_stager::update_non_modals(local_block);
 	}
 
@@ -375,36 +375,36 @@ void NGC_RS274::Block_View::x__assign_g_event(s_ngc_block * local_block, uint16_
 	{
 	case NGC_RS274::Groups::G::NON_MODAL:
 	{
-		local_block->block_events.set((int)e_block_event::Non_modal);
+		local_block->block_events.set(e_block_event::Non_modal);
 		break;
 	}
 	case NGC_RS274::Groups::G::Motion:
 	{
 		//we set block assignments when we loaded the code. we dont need to do it here too. 
 		//or maybe this is really a better place because we only flag it if its changed?
-		local_block->block_events.set((int)e_block_event::Motion);
+		local_block->block_events.set(e_block_event::Motion);
 		break;
 	}
 
 	case (int)NGC_RS274::Groups::G::Cutter_radius_compensation:
 	{
-		local_block->block_events.set((int)e_block_event::Cutter_radius_compensation);
+		local_block->block_events.set(e_block_event::Cutter_radius_compensation);
 		break;
 	}
 
 	case (int)NGC_RS274::Groups::G::Tool_length_offset:
 	{
-		local_block->block_events.set((int)e_block_event::Tool_length_offset);
+		local_block->block_events.set(e_block_event::Tool_length_offset);
 		break;
 	}
 	case (int)NGC_RS274::Groups::G::Feed_rate_mode:
 	{
-		local_block->block_events.set((int)e_block_event::Feed_rate_mode);
+		local_block->block_events.set(e_block_event::Feed_rate_mode);
 		break;
 	}
 	case (int)NGC_RS274::Groups::G::Units:
 	{
-		local_block->block_events.set((int)e_block_event::Units);
+		local_block->block_events.set(e_block_event::Units);
 		break;
 	}
 
@@ -421,17 +421,17 @@ void NGC_RS274::Block_View::x__assign_m_event(s_ngc_block * local_block, uint16_
 	{
 	case NGC_RS274::Groups::M::TOOL_CHANGE:
 	{
-		local_block->block_events.set((int)e_block_event::Tool_Change_Request);
+		local_block->block_events.set(e_block_event::Tool_Change_Request);
 		break;
 	}
 	case NGC_RS274::Groups::M::SPINDLE:
 	{
-		local_block->block_events.set((int)e_block_event::Spindle_mode);
+		local_block->block_events.set(e_block_event::Spindle_mode);
 		break;
 	}
 	case NGC_RS274::Groups::M::COOLANT:
 	{
-		local_block->block_events.set((int)e_block_event::Coolant);
+		local_block->block_events.set(e_block_event::Coolant);
 		break;
 	}
 	default:
@@ -448,21 +448,21 @@ void NGC_RS274::Block_View::x__assign_other_event(s_ngc_block * local_block)
 	//Set feed rate
 	if (is_word_defined(local_block, 'F'))
 	{
-		local_block->block_events.set((int)e_block_event::Feed_rate);
+		local_block->block_events.set(e_block_event::Feed_rate);
 		//local_block->persisted_values.feed_rate = local_block->get_value('F');
 	}
 
 	// Set spindle speed
 	if (is_word_defined(local_block, 'S'))
 	{
-		local_block->block_events.set((int)e_block_event::Spindle_rate);
+		local_block->block_events.set(e_block_event::Spindle_rate);
 		//local_block->persisted_values.active_s = local_block->get_value('S');
 	}
 
 	//Select tool
 	if (is_word_defined(local_block, 'T'))
 	{
-		local_block->block_events.set((int)e_block_event::Tool_id);
+		local_block->block_events.set(e_block_event::Tool_id);
 		//local_block->persisted_values.active_t = local_block->get_value('T');
 	}
 
@@ -470,11 +470,11 @@ void NGC_RS274::Block_View::x__assign_other_event(s_ngc_block * local_block)
 	if (local_block->g_group[NGC_RS274::Groups::G::Motion] >= NGC_RS274::G_codes::CANNED_CYCLE_DRILLING
 		&& local_block->g_group[NGC_RS274::Groups::G::Motion] <= NGC_RS274::G_codes::CANNED_CYCLE_BORING_DWELL_FEED_OUT)
 	{
-		local_block->block_events.set((int)e_block_event::Canned_Cycle_Active);
+		local_block->block_events.set(e_block_event::Canned_Cycle_Active);
 	}
 	else
 	{
-		local_block->block_events.clear((int)e_block_event::Canned_Cycle_Active);
+		local_block->block_events.clear(e_block_event::Canned_Cycle_Active);
 	}
 }
 
@@ -565,7 +565,7 @@ char NGC_RS274::Block_View::get_axis_letter(uint8_t axis_index)
 
 bool NGC_RS274::Block_View::non_modal_with_axis_in_block(s_ngc_block * block)
 {
-	if (block->g_code_defined_in_block.get((int)NGC_RS274::Groups::G::NON_MODAL))
+	if (block->g_code_defined_in_block.get(NGC_RS274::Groups::G::NON_MODAL))
 	{
 		//The axis word-using G-codes from group 0 are G10, G28, G30, and G92
 		//Does this non modal require an axis word? If it does we cannot use it for motion
@@ -582,12 +582,12 @@ bool NGC_RS274::Block_View::non_modal_with_axis_in_block(s_ngc_block * block)
 
 bool NGC_RS274::Block_View::axis_rotation_in_block(s_ngc_block * block)
 {
-	return block->g_code_defined_in_block.get((int)NGC_RS274::Groups::G::PLANE_ROTATION)
+	return block->g_code_defined_in_block.get(NGC_RS274::Groups::G::PLANE_ROTATION)
 		&& block->g_group[NGC_RS274::Groups::G::PLANE_ROTATION] == NGC_RS274::G_codes::PLANE_ROTATION_START;
 }
 
 bool NGC_RS274::Block_View::axis_rotation_stopped(s_ngc_block * block)
 {
-	return block->g_code_defined_in_block.get((int)NGC_RS274::Groups::G::PLANE_ROTATION)
+	return block->g_code_defined_in_block.get(NGC_RS274::Groups::G::PLANE_ROTATION)
 		&& block->g_group[NGC_RS274::Groups::G::PLANE_ROTATION] == NGC_RS274::G_codes::PLANE_ROTATION_CANCEL;
 }

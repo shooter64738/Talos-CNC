@@ -249,7 +249,7 @@ uint8_t Hardware_Abstraction_Layer::Disk::read_file(char * filename, char * buff
 		byte_count++;
 	}
 	//if (byte_count)
-	//	Talos::Shared::FrameWork::Events::Router.disk.inbound.event_manager.set((int)c_event_router::ss_inbound_data::e_event_type::DiskDataArrival);
+	//	Talos::Shared::FrameWork::Events::Router.disk.inbound.event_manager.set(c_event_router::ss_inbound_data::e_event_type::DiskDataArrival);
 	return byte_count;
 }
 
