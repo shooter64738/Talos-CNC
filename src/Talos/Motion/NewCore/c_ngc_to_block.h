@@ -29,21 +29,24 @@ namespace Talos
 					static __s_motion_block* planned_block;
 				protected:
 				private:
+					struct s_prev_values
+					{
+						//Keeps track of last comp directions
+						s_bit_flag_controller<uint16_t> bl_comp;
+						float unit_vectors[MACHINE_AXIS_COUNT];
+						int32_t system_position[MACHINE_AXIS_COUNT];
+						float nominal_speed;
+					};
+					static s_prev_values prior_values;
 
-					//Keeps track of last comp directions
-					static s_bit_flag_controller<uint16_t> __bl_comp_direction_flags;
-					static float __previous_unit_vec[MACHINE_AXIS_COUNT];
-					static int32_t __last_planned_position[MACHINE_AXIS_COUNT];
-					static float __previous_nominal_speed;
-					
 					static __s_motion_block Block::motion_buffer_store[MOTION_BUFFER_SIZE];
 					static s_ngc_block Block::ngc_buffer_store[NGC_BUFFER_SIZE];
 
 					//functions
 				public:
-					
+
 					static void load_ngc_test();
-					
+
 					static bool ngc_buffer_process();
 
 					static float plan_compute_profile_nominal_speed(__s_motion_block* motion_block);
@@ -61,10 +64,9 @@ namespace Talos
 						s_ngc_block* ngc_block
 						, __s_motion_block* motion_block
 						, s_motion_hardware hw_settings
-						, int32_t* system_position
+						, s_prev_values *prev_values
 						, float* unit_vectors
-						, int32_t* target_steps
-						, s_bit_flag_controller<uint16_t>* bl_comp);
+						, int32_t* target_steps);
 
 					static void ___set_backlash_control(
 						float distance
@@ -72,7 +74,9 @@ namespace Talos
 						, s_bit_flag_controller<uint16_t>* bl_comp
 						, __s_motion_block* motion_block);
 
-					static void __configure_feedrate(NGC_RS274::Block_View ngc_block, __s_motion_block* motion_block);
+					static void __configure_feeds(NGC_RS274::Block_View ngc_block, __s_motion_block* motion_block);
+
+					static e_block_state Block::__check_ngc_feed_mode(__s_motion_block* motion_block, uint16_t ngc_feed_mode);
 
 					static float convert_delta_vector_to_unit_vector(float* vector);
 
@@ -81,7 +85,7 @@ namespace Talos
 					static uint8_t __plan_buffer_line(
 						__s_motion_block* motion_block
 						, s_motion_control_settings_encapsulation hw_settings
-						, int32_t* system_position
+						, s_prev_values* prev_values
 						, float* unit_vectors
 						, int32_t* target_steps);
 

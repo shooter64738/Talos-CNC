@@ -38,8 +38,6 @@ namespace Talos
 
 				Segment::s_fragment_vars Segment::frag_calc_vars;
 
-				//static s_bit_flag_controller<uint16_t> seg_op_flags;
-
 				/*
 				Things to consider:
 
@@ -53,7 +51,7 @@ namespace Talos
 				so that only the axis needing compensation can be moved. Thsi may cause a stop/start jitter
 				when more than 1 axis is in the interpollation and another axis changes directions. This
 				would be most noticeable when an axis goes around a square. Consider alternate ways of
-				deploying the backlash. It should be deployed at the begiing of the axis direction change
+				deploying the backlash. It should be deployed at the begining of the axis direction change
 				not at the end.
 
 
@@ -76,7 +74,8 @@ namespace Talos
 						{
 							if (Input::Block::motion_buffer.has_data())
 							{
-								Segment::active_block = Input::Block::motion_buffer.get();
+								//this wont really move the data tail until a get is done on the buffer
+								Segment::active_block = Input::Block::motion_buffer.peek();
 								//we will need to 'add' an item for the bresenham buffer
 								s_bresenham new_item{ 0 };
 								new_item.direction_bits._flag = Segment::active_block->direction_bits._flag;
@@ -85,7 +84,7 @@ namespace Talos
 								bresenham_buffer.put(new_item);
 								//The obj in the bres buffer is a memory pointer so even if the bres buffer
 								//tail is moved, the bres data in the segment still wont change
-								Segment::active_block->common.bres_obj = bresenham_buffer.get();
+								Segment::active_block->common.bres_obj = bresenham_buffer.peek();
 								//Segment::__initialize_segment(&seg_base);
 								Segment::__initialize_new_segment(&seg_base);
 								Segment::__calc_seg_base(&seg_base);
@@ -127,13 +126,11 @@ namespace Talos
 									Input::Block::planned_block = Input::Block::motion_buffer.peek(1);
 								}
 
-								Segment::active_block = NULL; // Set pointer to indicate check and load next planner block.
-								//Motion_Core::Planner::Buffer::Advance();
-
-								//Advance the bresenham buffer tail, so when another block is loaded it wont
-								//step on the current bresenham data that the timer MIGHT still be executing
-								//Motion_Core::Segment::Bresenham::Buffer::Advance();
-
+								Segment::active_block = NULL;
+								//done with the block. call 'get' to move the buffer indexes
+								Input::Block::motion_buffer.get();
+								//done with the bresenahm item. call 'get' to move the buffer indexes
+								Segment::bresenham_buffer.get();
 								break;
 
 							}
@@ -143,7 +140,7 @@ namespace Talos
 
 				void Segment::__initialize_new_segment(s_segment_base* seg_base_arg)
 				{
-					seg_base.common = Segment::active_block->common;
+					seg_base_arg->common = Segment::active_block->common;
 					// Check if we need to only recompute the velocity profile or are we loading a new block.
 
 					// Initialize segment buffer data for generating the segments.
@@ -168,7 +165,7 @@ namespace Talos
 
 				uint8_t Segment::__calc_seg_base(s_segment_base* seg_base_arg)
 				{
-					seg_base.common = Segment::active_block->common;
+					seg_base_arg->common = Segment::active_block->common;
 
 					seg_base_arg->mm_complete = 0.0; // Default velocity profile complete at 0.0mm from end of block.
 					float inv_2_accel = 0.5 / Segment::active_block->acceleration;
@@ -281,14 +278,16 @@ namespace Talos
 					return 1;
 				}
 
+				static uint32_t t_seq = 0;
 				uint8_t Segment::__run_segment_frag(s_segment_base* seg_base_arg)
 				{
 					seg_base_arg->mm_remaining = Segment::active_block->millimeters; // New segment distance from end of block.
 
-					s_timer_item timer_item;
+					s_timer_item timer_item{ 0 };
 
 					//copy common data from the segment base to the segment.
-					timer_item.common = seg_base.common;
+					timer_item.common = seg_base_arg->common;
+					timer_item.sequence = ++t_seq;
 
 					__check_ramp_state(&Segment::frag_calc_vars, seg_base_arg, &timer_item);
 
@@ -327,7 +326,7 @@ namespace Talos
 					//Add new segment item to the buffer and return
 					Segment::timer_buffer.put(timer_item);
 
-					return 1;
+ 					return 1;
 				}
 
 				void Segment::__check_ramp_state(s_fragment_vars* vars, s_segment_base* seg_base_arg, s_timer_item* timer_item)
@@ -529,9 +528,9 @@ namespace Talos
 				void Segment::__check_decel_ovr(s_fragment_vars* vars, s_segment_base* seg_base_arg, s_timer_item* timer_item)
 				{
 					{
-						vars->speed_var = Segment::active_block->acceleration * Segment::frag_calc_vars.time_var;
-						Segment::frag_calc_vars.mm_var = vars->time_var * (seg_base_arg->current_speed - 0.5 *
-							Segment::frag_calc_vars.speed_var);
+						vars->speed_var = Segment::active_block->acceleration * vars->time_var;
+						vars->mm_var = vars->time_var * (seg_base_arg->current_speed - 0.5 *
+							vars->speed_var);
 						seg_base_arg->mm_remaining -= vars->mm_var;
 						if ((seg_base_arg->mm_remaining < seg_base_arg->accelerate_until) || (vars->mm_var <= 0))
 						{

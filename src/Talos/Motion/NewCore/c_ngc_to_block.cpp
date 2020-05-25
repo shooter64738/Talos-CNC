@@ -8,6 +8,7 @@
 
 #include "c_ngc_to_block.h"
 #include "c_block_to_segment.h"
+//#include "c_segment_to_hardware.h"
 #include "../../_bit_manipulation.h"
 #include "../../Configuration/c_configuration.h"
 #include "c_state_control.h"
@@ -21,6 +22,7 @@
 
 namespace mtn_cfg = Talos::Configuration::Motion;
 namespace int_cfg = Talos::Configuration::Interpreter;
+//namespace mtn_out = Talos::Motion::Core::Output;
 
 namespace Talos
 {
@@ -30,11 +32,8 @@ namespace Talos
 		{
 			namespace Input
 			{
-				//Keeps track of last comp directions
-				s_bit_flag_controller<uint16_t> Block::__bl_comp_direction_flags;
-				float Block::__previous_unit_vec[MACHINE_AXIS_COUNT]{ 0.0 };
-				int32_t Block::__last_planned_position[MACHINE_AXIS_COUNT]{ 0 };
-				float Block::__previous_nominal_speed = 0.0;
+
+				Block::s_prev_values Block::prior_values{ 0 };
 
 				s_ngc_block Block::ngc_buffer_store[NGC_BUFFER_SIZE]{ 0 };
 				c_ring_buffer<s_ngc_block> Block::ngc_buffer(Block::ngc_buffer_store, NGC_BUFFER_SIZE);
@@ -44,6 +43,10 @@ namespace Talos
 
 				//Set the planned block to the first block by default.
 				__s_motion_block* Block::planned_block = Block::motion_buffer.peek(0);
+
+				static s_bit_flag_controller<e_block_state> previous_block_states{ 0 };
+
+				static uint32_t block_station = 0;
 
 				void Block::load_ngc_test()
 				{
@@ -126,10 +129,9 @@ namespace Talos
 						ngc_block
 						, &motion_block
 						, mtn_cfg::Controller.Settings.hardware
-						, __last_planned_position
+						, &prior_values
 						, unit_vec
-						, target_steps
-						, &__bl_comp_direction_flags);
+						, target_steps);
 
 					//if work block is null, no distance to move
 					if (ret == 0)
@@ -137,28 +139,27 @@ namespace Talos
 
 					//First moves after start up dont get compensation so dont set this flag until after the first axis
 					//moves are calculated.
-					if (!__bl_comp_direction_flags.get(15))
+					if (!prior_values.bl_comp.get(15))
 					{
-
 						//clear the comp bits that might have been set on this block
 						motion_block.bl_comp_bits._flag = 0;
 					}
 					//set bit 15 so we know that motion has ran once and any more motions need backlash
 					//(motions that dont actually cause motion will have already been ignored)
 					//Save the direction bits for when the next block is processed. (set the 15th bit always)
-					__bl_comp_direction_flags._flag = motion_block.direction_bits._flag | 0X8000;
+					prior_values.bl_comp._flag = motion_block.direction_bits._flag | 0X8000;
 
 					motion_block.millimeters = convert_delta_vector_to_unit_vector(unit_vec);
 					motion_block.acceleration = __limit_value_by_axis_maximum(mtn_cfg::Controller.Settings.hardware.acceleration, unit_vec);
 					motion_block.rapid_rate = __limit_value_by_axis_maximum(mtn_cfg::Controller.Settings.hardware.max_rate, unit_vec);
 
-					__configure_feedrate(view, &motion_block);
+					__configure_feeds(view, &motion_block);
 
-					__plan_buffer_line(&motion_block, mtn_cfg::Controller.Settings, __last_planned_position, unit_vec, target_steps);
+					__plan_buffer_line(&motion_block, mtn_cfg::Controller.Settings, &prior_values, unit_vec, target_steps);
 
 					motion_block.Station = ngc_block->__station__;
 					motion_block.spindle_rate = *view.persisted_values.active_spindle_speed_S;
-
+					motion_block.common.sequence = block_station++;
 					motion_buffer.put(motion_block);
 
 					__planner_recalculate();
@@ -170,10 +171,9 @@ namespace Talos
 					s_ngc_block* ngc_block
 					, __s_motion_block* motion_block
 					, s_motion_hardware hw_settings
-					, int32_t* system_position
+					, s_prev_values * prev_values
 					, float* unit_vectors
-					, int32_t* target_steps
-					, s_bit_flag_controller<uint16_t>* bl_comp)
+					, int32_t* target_steps)
 
 				{
 					float delta_mm = 0.0;
@@ -182,14 +182,14 @@ namespace Talos
 					for (idx = 0; idx < MACHINE_AXIS_COUNT; idx++)
 					{
 						target_steps[idx] = lround(ngc_block->target_motion_position[idx] * hw_settings.steps_per_mm[idx]);
-						motion_block->steps[idx] = labs(target_steps[idx] - system_position[idx]);
+						motion_block->steps[idx] = labs(target_steps[idx] - prev_values->system_position[idx]);
 
 						motion_block->step_event_count = max(motion_block->step_event_count, motion_block->steps[idx]);
-						delta_mm = (target_steps[idx] - system_position[idx]) / hw_settings.steps_per_mm[idx];
+						delta_mm = (target_steps[idx] - prev_values->system_position[idx]) / hw_settings.steps_per_mm[idx];
 						unit_vectors[idx] = delta_mm;
 
 						//check for direction change and apply bl comp flag if needed.
-						___set_backlash_control(delta_mm, idx, bl_comp, motion_block);
+						___set_backlash_control(delta_mm, idx, &prev_values->bl_comp, motion_block);
 					}
 
 					if (motion_block->step_event_count == 0)
@@ -228,30 +228,71 @@ namespace Talos
 
 				}
 
-				void Block::__configure_feedrate(
+				void Block::__configure_feeds(
 					NGC_RS274::Block_View ngc_view
 					, __s_motion_block* motion_block)
 				{
-					motion_block->common.flag.clear(e_block_state::feed_on_spindle);
+					__check_ngc_feed_mode(motion_block, *ngc_view.current_g_codes.Feed_rate_mode);
+
 					// Store programmed rate.
+					motion_block->programmed_rate = *ngc_view.persisted_values.feed_rate_F;
 					if (*ngc_view.current_g_codes.Motion == NGC_RS274::G_codes::RAPID_POSITIONING)
-					{
 						motion_block->programmed_rate = motion_block->rapid_rate;
-					}
-					else
+				}
+
+				e_block_state Block::__check_ngc_feed_mode(__s_motion_block* motion_block, uint16_t ngc_feed_mode)
+				{
+					e_block_state new_feed_mode = {};
+
+					switch (ngc_feed_mode)
 					{
-						motion_block->programmed_rate = *ngc_view.persisted_values.feed_rate_F;
-						if (*ngc_view.current_g_codes.Feed_rate_mode == NGC_RS274::G_codes::FEED_RATE_MINUTES_PER_UNIT_MODE)
-						{
-							motion_block->programmed_rate *= motion_block->millimeters;
-						}
-						else if (*ngc_view.current_g_codes.Feed_rate_mode == NGC_RS274::G_codes::FEED_RATE_UNITS_PER_ROTATION)
-						{
-							motion_block->programmed_rate *= motion_block->millimeters * motion_block->programmed_spindle_speed;
-							motion_block->common.flag.set(e_block_state::feedmode_change);
-							motion_block->common.flag.set(e_block_state::feed_on_spindle);
-						}
+					case NGC_RS274::G_codes::FEED_RATE_MINUTES_PER_UNIT_MODE:
+					{
+						motion_block->programmed_rate *= motion_block->millimeters;
+						new_feed_mode = e_block_state::feed_mode_minutes_per_unit;
+						break;
 					}
+					case NGC_RS274::G_codes::FEED_RATE_RPM_MODE:
+					{
+						new_feed_mode = e_block_state::feed_mode_rpm;
+						break;
+					}
+					case NGC_RS274::G_codes::FEED_RATE_UNITS_PER_MINUTE_MODE:
+					{
+						new_feed_mode = e_block_state::feed_mode_minutes_per_unit;
+						break;
+					}
+					case NGC_RS274::G_codes::FEED_RATE_UNITS_PER_ROTATION:
+					{
+						//not sure this is right.. we will see
+						motion_block->programmed_rate *= motion_block->millimeters * motion_block->programmed_spindle_speed;
+						new_feed_mode = e_block_state::feed_mode_units_per_rotation;
+						break;
+					}
+
+					default:
+						//this is bad if we ever get here... 
+						break;
+					}
+
+					if (!previous_block_states.get(new_feed_mode))
+					{
+						//feedmode is changing, clear all the feedmode flags
+						previous_block_states.clear(e_block_state::feed_mode_units_per_rotation);
+						previous_block_states.clear(e_block_state::feed_mode_minutes_per_unit);
+						previous_block_states.clear(e_block_state::feed_mode_units_per_minute);
+						previous_block_states.clear(e_block_state::feed_mode_rpm);
+
+						//set the new feed mode so we can keep track of it
+						previous_block_states.set(new_feed_mode);
+
+						//motion blocks flags should have been cleared on get, so just set it
+						motion_block->common.flag.set(new_feed_mode);
+						//flag this block as changing feed modes. this will effect how the junction
+						//speeds are handled
+						motion_block->common.flag.set(e_block_state::feed_mode_change);
+					}
+					return new_feed_mode;
 				}
 
 				float Block::convert_delta_vector_to_unit_vector(float* vector)
@@ -292,7 +333,7 @@ namespace Talos
 				uint8_t Block::__plan_buffer_line(
 					__s_motion_block* motion_block
 					, s_motion_control_settings_encapsulation hw_settings
-					, int32_t* system_position
+					, s_prev_values* prev_values
 					, float* unit_vectors
 					, int32_t* target_steps)
 				{
@@ -312,8 +353,8 @@ namespace Talos
 						float junction_cos_theta = 0.0;
 						for (idx = 0; idx < MACHINE_AXIS_COUNT; idx++)
 						{
-							junction_cos_theta -= __previous_unit_vec[idx] * unit_vectors[idx];
-							junction_unit_vec[idx] = unit_vectors[idx] - __previous_unit_vec[idx];
+							junction_cos_theta -= prev_values->unit_vectors[idx] * unit_vectors[idx];
+							junction_unit_vec[idx] = unit_vectors[idx] - prev_values->unit_vectors[idx];
 						}
 
 						// NOTE: Computed without any expensive trig, sin() or acos(), by trig half angle identity of cos(theta).
@@ -344,12 +385,12 @@ namespace Talos
 					//if (!(planning_block->condition & PL_COND_FLAG_SYSTEM_MOTION))
 					{
 						float nominal_speed = plan_compute_profile_nominal_speed(motion_block);
-						plan_compute_profile_parameters(motion_block, nominal_speed, __previous_nominal_speed);
-						__previous_nominal_speed = nominal_speed;
+						plan_compute_profile_parameters(motion_block, nominal_speed, prev_values->nominal_speed);
+						prev_values->nominal_speed = nominal_speed;
 
 						// Update previous path unit_vector and planner position.
-						memcpy(__previous_unit_vec, unit_vectors, sizeof(unit_vectors)); // pl.previous_unit_vec[] = unit_vec[]
-						memcpy(__last_planned_position, target_steps, sizeof(__last_planned_position)); // pl.position[] = target_steps[]
+						memcpy(prev_values->unit_vectors, unit_vectors, sizeof(unit_vectors)); // pl.previous_unit_vec[] = unit_vec[]
+						memcpy(prev_values->system_position, target_steps, sizeof(prev_values->system_position)); // pl.position[] = target_steps[]
 
 
 					}

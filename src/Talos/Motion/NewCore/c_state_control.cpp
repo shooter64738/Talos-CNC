@@ -90,14 +90,15 @@ namespace Talos
 
 				void Motion::execute()
 				{
-					if (Motion::states.get(Motion::e_states::cycle_start))
-						__cycle_start();
+					if (!Motion::states.get(Motion::e_states::running))
+						if (Motion::states.get(Motion::e_states::cycle_start))
+							__cycle_start();
 
 					if (Motion::states.get(Motion::e_states::hold))
 						__cycle_hold();
 
 					if (Motion::states.get(Motion::e_states::ready))
-						if (!Motion::states.get(Motion::e_states::running))
+						if (Motion::states.get(Motion::e_states::running))
 							__run();
 
 					if (Motion::states.get(Motion::e_states::wait_for_spindle_at_speed))
@@ -117,19 +118,20 @@ namespace Talos
 					Motion::__internal_states.clear(Motion::e_internal_states::held);
 					Motion::__internal_states.clear(Motion::e_internal_states::release);
 					Motion::states.set(Motion::e_states::ready);
+					
+					//should we just assume running? do we need to check other stuff?
+					Motion::states.set(Motion::e_states::running);
+					
+					//we about to start motion so fill the segment buffer.
+					Core::Process::Segment::fill_step_segment_buffer();
 
-					mtn_out::Segment::init_new_motion();
-
-
+					mtn_out::Segment::gate_keeper();
 				}
 
 				//called when running flag is set. fills segment buffer that is consumed by the 
 				//motion executor
 				void Motion::__run()
 				{
-					//should we jsut assume running? do we need to check other stuff?
-					Motion::states.set(Motion::e_states::running);
-
 					//we are in run mode so we can fill the segement buffer. that does NOT mean
 					//that motion will execute. If hold is active then we are going to get no
 					//motion until it is released
@@ -173,9 +175,9 @@ namespace Talos
 				//called when the spindle activate flags are set. sets up the spindle
 				void Motion::__config_spindle()
 				{
-					//We are here to setup the spindle. the current block record in output director
+					//We are here to setup the spindle. the current timer record in output director
 					//should have the spindle information.
-					Output::spindle_target_speed = Talos::Motion::Core::Output::Segment::active_block->spindle_rate;
+					//Output::spindle_target_speed = Talos::Motion::Core::Output::Segment::active_block->spindle_rate;
 
 					//if the spindle is not on, turn it on.
 					if (!Motion::states.get(Motion::e_states::spindle_on))

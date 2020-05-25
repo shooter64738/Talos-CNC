@@ -9,6 +9,7 @@
 //#include <avr/interrupt.h>
 #include "c_motion_core_win_stepper.h"
 #include "c_core_win.h"
+#include "../../../../../Motion/NewCore/c_segment_to_hardware.h"
 
 uint8_t Hardware_Abstraction_Layer::MotionCore::Stepper::step_port_invert_mask;
 uint8_t Hardware_Abstraction_Layer::MotionCore::Stepper::dir_port_invert_mask;
@@ -74,9 +75,9 @@ void Hardware_Abstraction_Layer::MotionCore::Stepper::timer1_overflow_thread()
 		//only run a step timer tick if the 'timer' is enabled
 		if (Hardware_Abstraction_Layer::MotionCore::Stepper::_TIMSK1 & (1 << OCIE1A))
 		{
-			//Motion_Core::Hardware::Interpolation::step_tick();
+			Talos::Motion::Core::Output::Segment::gate_keeper();
 			//c_stepper::step_tick();
-			std::this_thread::sleep_for(std::chrono::microseconds(1));
+			std::this_thread::sleep_for(std::chrono::microseconds(1500));
 
 		}
 	}

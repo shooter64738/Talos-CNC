@@ -17,17 +17,26 @@ namespace Talos
 				{
 					//variables
 				public:
-					static __s_motion_block* active_block;
+					/*static __s_motion_block* active_block;
+					static c_ring_buffer<__s_motion_block> motion_buffer;*/
 				protected:
 				private:
 					static s_common_segment_items previous_flags;
-
+					static void(*pntr_next_gate)(void);
 					//functions
 				public:
-					static void init_new_motion();
-					static void run();
+					
+					static void gate_keeper();
+					
 				protected:
 				private:
+					static bool __config_timer();
+					static void __new_motion();
+					static void __release_brakes();
+					static void __run_interpolation();
+					static void __end_interpolation();
+					static void __set_brakes();
+					
 
 				};
 

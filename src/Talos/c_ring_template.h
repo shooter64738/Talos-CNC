@@ -38,6 +38,31 @@ public:
 		this->_newest = 0;
 	}
 
+	void synch_for_read(c_ring_buffer<TN> synch_source)
+	{
+		this->_full = synch_source._full;
+		_buffer_size = synch_source._buffer_size;
+		_head = synch_source._head;
+		//_tail = synch_source._tail;
+		//_last_read = synch_source._last_read;
+		_last_write = synch_source._last_write;
+		_peek_stepper = synch_source._peek_stepper;
+		_stepper = synch_source._stepper;
+		_data_size = synch_source._data_size;
+	}
+
+	void synch_for_write(c_ring_buffer<TN> synch_source)
+	{
+		this->_full = synch_source._full;
+		_buffer_size = synch_source._buffer_size;
+		//_head = synch_source._head;
+		_tail = synch_source._tail;
+		_last_read = synch_source._last_read;
+		//_last_write = synch_source._last_write;
+		_peek_stepper = synch_source._peek_stepper;
+		_stepper = synch_source._stepper;
+		_data_size = synch_source._data_size;
+	}
 
 	void reset()
 	{
@@ -67,14 +92,10 @@ public:
 		return true;
 	}
 
-	TN peek()
+	TN* peek()
 	{
-		uint16_t peek_point = this->_tail + 1;
-		if (peek_point == this->_buffer_size)
-		{
-			peek_point = 0;
-		}
-		return this->_storage_pointer[peek_point];
+		
+		return this->_storage_pointer + this->_tail;
 	}
 
 	TN peek_step()
@@ -115,6 +136,15 @@ public:
 
 		TN* data = (this->_storage_pointer + this->_tail);
 		_move_tail();
+
+		return data;
+	}
+	TN* next()
+	{
+		//caller should check has_data before calling this. 
+
+		TN* data = (this->_storage_pointer + this->_nexter);
+		_move_nexter();
 
 		return data;
 	}
@@ -270,6 +300,15 @@ public:
 			this->_tail = 0;
 		}
 	}
+	void _move_nexter()
+	{
+		this->_nexter++;
+		//if we are at the size of the buffer, wrap back to zero
+		if (this->_nexter == this->_buffer_size)
+		{
+			this->_nexter = 0;
+		}
+	}
 
 	void _move_head()
 	{
@@ -309,5 +348,6 @@ public:
 	uint16_t _peek_stepper = 0;
 	int16_t _stepper = 0;
 	uint16_t _data_size = 0;
+	uint16_t _nexter = 0;
 };
 

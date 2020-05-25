@@ -41,7 +41,6 @@ namespace Talos
 					static s_fragment_vars frag_calc_vars;
 
 					static __s_motion_block* active_block;
-					
 
 					static c_ring_buffer<s_bresenham> bresenham_buffer;
 					static s_bresenham bresenham_buffer_store[BRESENHAM_BUFFER_SIZE];
