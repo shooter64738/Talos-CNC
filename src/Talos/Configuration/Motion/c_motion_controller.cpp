@@ -76,7 +76,7 @@ uint8_t c_controller::load_defaults()
 	Settings.hardware.spindle_encoder.ticks_per_revolution = 400;
 	Settings.hardware.spindle_encoder.current_rpm = 0;
 	Settings.hardware.spindle_encoder.target_rpm = 100;
-	Settings.hardware.spindle_encoder.variable_percent = 50;
+	Settings.hardware.spindle_encoder.rpm_tolerance = 50;
 	Settings.hardware.spindle_encoder.samples_per_second = 10;
 
 	Settings.tolerance.arc_tolerance = 0.002;

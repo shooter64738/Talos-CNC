@@ -24,7 +24,6 @@ namespace Talos
 				{
 					//variables
 				public:
-					static c_ring_buffer<__s_motion_block> buffer;
 					static c_ring_buffer<s_timer_item> timer_buffer;
 					
 				protected:

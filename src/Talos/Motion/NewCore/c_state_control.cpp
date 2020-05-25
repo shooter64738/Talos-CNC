@@ -20,6 +20,7 @@ location to control all motion output from.
 #include "c_segment_to_hardware.h"
 #include "../../Configuration/c_configuration.h"
 
+//temporary until I get the hal tied to this.
 #define HAL_SYS_TICK_TIME() 0
 #define HAL_MOTION_ON() 0
 #define HAL_MOTION_OFF() 0
@@ -28,6 +29,7 @@ location to control all motion output from.
 #define HAL_SPINDLE_SPEED() 0
 
 namespace mtn_cfg = Talos::Configuration::Motion;
+namespace mtn_out = Talos::Motion::Core::Output;
 
 namespace Talos
 {
@@ -88,6 +90,9 @@ namespace Talos
 
 				void Motion::execute()
 				{
+					if (Motion::states.get(Motion::e_states::cycle_start))
+						__cycle_start();
+
 					if (Motion::states.get(Motion::e_states::hold))
 						__cycle_hold();
 
@@ -102,6 +107,20 @@ namespace Talos
 						__config_spindle();
 
 					}
+				}
+
+				//called when cycle start bit is set.
+				void Motion::__cycle_start()
+				{
+					//set internal state flags for holding a motion. The mmajor state flag will control
+					//the motion output.
+					Motion::__internal_states.clear(Motion::e_internal_states::held);
+					Motion::__internal_states.clear(Motion::e_internal_states::release);
+					Motion::states.set(Motion::e_states::ready);
+
+					mtn_out::Segment::init_new_motion();
+
+
 				}
 
 				//called when running flag is set. fills segment buffer that is consumed by the 
@@ -171,15 +190,15 @@ namespace Talos
 					else
 					{
 						int32_t target = Output::spindle_target_speed +
-							(Output::spindle_target_speed * (mtn_cfg::Controller.Settings.hardware.spindle_encoder.variable_percent / 100));
+							(Output::spindle_target_speed * (mtn_cfg::Controller.Settings.hardware.spindle_encoder.rpm_tolerance / 100));
 
 						//spindle is on, what is its speed?
 						if ((Output::spindle_last_checked_speed >
 							(Output::spindle_target_speed - mtn_cfg::Controller.Settings
-								.hardware.spindle_encoder.variable_percent))
+								.hardware.spindle_encoder.rpm_tolerance))
 							&& (Output::spindle_last_checked_speed <
 							(Output::spindle_target_speed + mtn_cfg::Controller.Settings
-								.hardware.spindle_encoder.variable_percent)))
+								.hardware.spindle_encoder.rpm_tolerance)))
 						{
 							//spindle is at speed and within the request rpm range. 
 
@@ -197,7 +216,7 @@ namespace Talos
 								.wait_spindle_at_speed - elapsed)
 							{
 								//Out of time. This is a fault
-								
+
 								//request spindle off.
 								Output::states.set(Output::e_states::spindle_requested_off);
 								Output::states.set(Output::e_states::hardware_fault);
@@ -239,7 +258,6 @@ namespace Talos
 
 #pragma endregion
 				/*--------------------------------------------------------------------------*/
-
 #pragma region Output class state control
 				/*
 				This is the data process controller. If ngc data comes in this
@@ -248,6 +266,7 @@ namespace Talos
 				*/
 				s_bit_flag_controller<Output::e_states> Output::states;
 				int32_t Output::spindle_last_checked_speed = 0;
+				int32_t Output::spindle_target_speed = 0;
 
 				void Output::execute()
 				{
@@ -260,6 +279,7 @@ namespace Talos
 						//set motion states
 						Motion::states.set(Motion::e_states::terminate);
 						Motion::states.set(Motion::e_states::hard_fault);
+						Output::states.clear(Output::e_states::interpolation_running);
 					}
 
 					if (Output::states.get_clr(Output::e_states::spindle_requested_on))
@@ -303,10 +323,11 @@ namespace Talos
 				int32_t Output::__spindle_speed()
 				{
 					//call into hardware layer to get spindle speed
-					HAL_SPINDLE_SPEED();
+					return HAL_SPINDLE_SPEED();
 				}
 
 #pragma endregion
+				/*--------------------------------------------------------------------------*/
 			}
 		}
 	}

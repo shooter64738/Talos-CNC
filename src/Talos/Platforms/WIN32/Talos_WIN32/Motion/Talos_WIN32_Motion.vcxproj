@@ -112,6 +112,7 @@
     <ClInclude Include="..\..\..\..\Shared_Data\Settings\Motion\_s_motion_control_settings_encapsulation.h" />
     <ClInclude Include="..\..\..\..\Shared_Data\Settings\Motion\_s_motion_hardware.h" />
     <ClInclude Include="..\..\..\..\Shared_Data\Settings\Motion\_s_motion_internal.h" />
+    <ClInclude Include="..\..\..\..\Shared_Data\Settings\Motion\_s_motion_spindle_struct.h" />
     <ClInclude Include="..\..\..\..\Shared_Data\Settings\Motion\_s_motion_system.h" />
     <ClInclude Include="..\..\..\..\Shared_Data\Settings\Motion\_s_motion_tolerance_struct.h" />
     <ClInclude Include="..\..\..\..\talos_hardware_def.h" />

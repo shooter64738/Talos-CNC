@@ -1,7 +1,7 @@
 #ifndef _C_MOTION_HARDWARE_STRUCT
 #define _C_MOTION_HARDWARE_STRUCT
 #include <stdint.h>
-#include "../../_s_encoder_struct.h"
+#include "_s_motion_spindle_struct.h"
 //#include "../../../Shared Data/Kernel/_e_record_types.h"
 #include "../../../physical_machine_parameters.h"
 

@@ -2,6 +2,9 @@
 #define __C_MOTION_CORE_OUTPUT_SEGMENT_H
 #include <stdint.h>
 
+#include "support_items/s_segment_timer_common.h"
+#include "support_items/s_motion_block.h"
+
 namespace Talos
 {
 	namespace Motion
@@ -22,6 +25,7 @@ namespace Talos
 					//functions
 				public:
 					static void init_new_motion();
+					static void run();
 				protected:
 				private:
 

@@ -48,7 +48,9 @@ namespace Talos
 						hard_fault = 8,
 						spindle_failure = 9,
 						motion_on = 10,
-						motion_off = 11,
+						motion_off = 11,	
+						block_completed = 12,
+						cycle_start = 13,
 					};
 					static s_bit_flag_controller<e_states> states;
 
@@ -70,6 +72,7 @@ namespace Talos
 				protected:
 				private:
 					static void __run();
+					static void __cycle_start();
 					static void __cycle_hold();
 					static void __cycle_release();
 					static void __cycle_reset();
@@ -115,6 +118,7 @@ namespace Talos
 						spindle_requested_off = 1,
 						spindle_get_speed = 2,
 						hardware_fault = 3,
+						interpolation_running = 4,
 
 					};
 					static s_bit_flag_controller<e_states> states;

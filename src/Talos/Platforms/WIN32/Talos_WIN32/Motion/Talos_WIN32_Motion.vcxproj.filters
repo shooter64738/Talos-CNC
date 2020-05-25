@@ -416,5 +416,8 @@
     <ClInclude Include="..\..\..\..\Motion\NewCore\c_segment_to_hardware.h">
       <Filter>Motion\NewCore</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared_Data\Settings\Motion\_s_motion_spindle_struct.h">
+      <Filter>Shared data\Settings\Motion</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

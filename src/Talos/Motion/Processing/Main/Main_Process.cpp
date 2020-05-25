@@ -58,7 +58,9 @@ void Talos::Motion::Main_Process::run()
 	Motion::Core::Input::Block::load_ngc_test();
 	while(1)
 	{
-		Motion::Core::States::execute();
+		//if we set this flag, motion will begin!
+		Core::States::Motion::states.set(Core::States::Motion::e_states::cycle_start);
+		Core::States::execute();
 	}
 		
 	Talos::Motion::Main_Process::host_serial.print_string("\r\n** System halted **");
