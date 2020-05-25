@@ -80,6 +80,7 @@ namespace Talos
 
 				void Segment::__new_motion()
 				{
+					__configure_spindle();
 
 					//if (Segment::active_block == NULL)
 					//	Segment::active_block = Segment::motion_buffer.get();
@@ -100,7 +101,7 @@ namespace Talos
 					//	}
 					//}
 
-					mtn_ctl::Output::states.set(mtn_ctl::Output::e_states::interpolation_running);
+					
 
 					//store off the execution flags for this block.
 					//previous_flags = Segment::active_block->common;
@@ -123,8 +124,63 @@ namespace Talos
 #ifdef MSVC
 					myfile.open("acceleration.txt");
 #endif // MSVC
+					
+				}
+
+				void Segment::__configure_spindle()
+				{
+					//if there is a spindle record in the buffer, it was put there to run with the current
+					//motion block. the same spindle settings may persist over several motion blocks. When
+					//a new record appears in the spindle buffer, that indicates a change to the spindle
+					//configuration was detected whent he block was processed and that spindle record should
+					//be processed before the block motion starts.
+					if (!mot_dat::Block::spindle_buffer.has_data())
+						return;
+
+					__spindle_start();
+				}
+
+				void Segment::__spindle_start()
+				{
+					__s_spindle_block* spindle_block = mot_dat::Block::spindle_buffer.peek();
+
+					//if this motion requires spindle synch, point he gate keepr to the spindle synch waiter
+					if (spindle_block->states.get(e_spindle_state::synch_with_motion))
+					{
+						//call the synch function
+						__spindle_wait_synch();
+						//point the gate keeper to synch function so that it calls over and over until
+						//1. the timeout waiting for spindle synch, and an error occurs
+						//2. the spindle comes on and reaches the target speed.
+						Segment::pntr_next_gate = __spindle_wait_synch;
+					}
+					else
+					{
+						Segment::pntr_next_gate = Segment::__motion_start;
+					}
+					
+				}
+
+				void Segment::__spindle_wait_synch()
+				{
+					//loop until timeout or spindle reaches speed
+					
+					//@speed start motion
+					//Segment::pntr_next_gate = __start_motion;
+
+					//@timeout set error
+					//Segment::pntr_next_gate = __spindle_wait_synch;
+				}
+
+				void Segment::__motion_start()
+				{
+					mtn_ctl::Output::states.set(mtn_ctl::Output::e_states::interpolation_running);
 					//start the timer, this will set all of the wheel in motion
 					Hardware_Abstraction_Layer::MotionCore::Stepper::wake_up();
+					
+					//null gate keeper??? no sure what to do yet... 
+					//Segment::pntr_next_gate = NULL;
+					
 				}
 
 				void Segment::__release_brakes()

@@ -30,6 +30,10 @@ namespace Talos
 					
 				protected:
 				private:
+					static void __configure_spindle();
+					static void __spindle_wait_synch();
+					static void __spindle_start();
+					static void __motion_start();
 					static bool __config_timer();
 					static void __new_motion();
 					static void __release_brakes();

@@ -9,5 +9,6 @@ enum class e_spindle_state : uint8_t
 	direction_ccw = 3,
 	indexing = 4,
 	braking = 5,
+	synch_with_motion = 6,
 };
 #endif

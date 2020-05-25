@@ -47,8 +47,6 @@ namespace Talos
 				//Set the planned block to the first block by default.
 				__s_motion_block* Block::planned_block = Block::motion_buffer.peek(0);
 
-				static s_bit_flag_controller<e_block_state> previous_block_states{ 0 };
-
 				static uint32_t block_station = 0;
 
 				void Block::load_ngc_test()
@@ -155,9 +153,13 @@ namespace Talos
 						{
 							spindle_block.states.set(e_spindle_state::indexing);
 						}
+						
+						if (persisted_values.motion_block_states.get(e_block_state::feed_mode_units_per_rotation))
+							spindle_block.states.set(e_spindle_state::synch_with_motion);
+
 						//store off these values
 						memcpy(&persisted_values.spindle_block, &spindle_block, sizeof(__s_spindle_block));
-						
+
 						spindle_buffer.put(spindle_block);
 						return 1;
 					}
@@ -344,16 +346,16 @@ namespace Talos
 						break;
 					}
 
-					if (!previous_block_states.get(new_feed_mode))
+					if (!persisted_values.motion_block_states.get(new_feed_mode))
 					{
 						//feedmode is changing, clear all the feedmode flags
-						previous_block_states.clear(e_block_state::feed_mode_units_per_rotation);
-						previous_block_states.clear(e_block_state::feed_mode_minutes_per_unit);
-						previous_block_states.clear(e_block_state::feed_mode_units_per_minute);
-						previous_block_states.clear(e_block_state::feed_mode_rpm);
+						persisted_values.motion_block_states.clear(e_block_state::feed_mode_units_per_rotation);
+						persisted_values.motion_block_states.clear(e_block_state::feed_mode_minutes_per_unit);
+						persisted_values.motion_block_states.clear(e_block_state::feed_mode_units_per_minute);
+						persisted_values.motion_block_states.clear(e_block_state::feed_mode_rpm);
 
 						//set the new feed mode so we can keep track of it
-						previous_block_states.set(new_feed_mode);
+						persisted_values.motion_block_states.set(new_feed_mode);
 
 						//motion blocks flags should have been cleared on get, so just set it
 						motion_block->common.flag.set(new_feed_mode);
