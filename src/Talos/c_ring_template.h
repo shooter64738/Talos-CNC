@@ -177,10 +177,8 @@ public:
 	}
 
 	//return the item that was at the head BEFORE the last put
-	TN* cur_head(bool* last)
+	TN* cur_head()
 	{
-		//this one will be the 'last record' because it is at head position
-		*last = true;
 		if (!this->has_data())
 			return NULL;
 

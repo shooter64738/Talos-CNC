@@ -509,41 +509,7 @@ namespace Talos
 					}
 
 					__forward_plan();
-
-					//// Forward Pass: Forward plan the acceleration curve from the planned pointer onward.
-					//// Also scans for optimal plan breakpoints and appropriately updates the planned pointer.
-					//__s_motion_block* next_fwd = planned_block;
-					////next = planned_block; // Begin at buffer planned pointer
-					//__s_motion_block * fwd_block_index = block_buffer.peek(planned_block->Station);
-					//while (fwd_block_index != block_buffer.cur_head(&is_last))
-					//{
-					//	current_block_from_index = next;
-					//	next_fwd = block_buffer.peek(fwd_block_index->Station);
-
-					//	// Any acceleration detected in the forward pass automatically moves the optimal planned
-					//	// pointer forward, since everything before this is all optimal. In other words, nothing
-					//	// can improve the plan from the buffer tail to the planned pointer by logic.
-					//	if (current_block_from_index->entry_speed_sqr < next_fwd->entry_speed_sqr)
-					//	{
-					//		entry_speed_sqr = current_block_from_index->entry_speed_sqr + 2 * current_block_from_index->acceleration * current_block_from_index->millimeters;
-					//		// If true, current block is full-acceleration and we can move the planned pointer forward.
-					//		if (entry_speed_sqr < next_fwd->entry_speed_sqr)
-					//		{
-					//			next_fwd->entry_speed_sqr = entry_speed_sqr; // Always <= max_entry_speed_sqr. Backward pass sets this.
-					//			planned_block = fwd_block_index; // Set optimal plan pointer.
-					//		}
-					//	}
-
-					//	// Any block set at its maximum entry speed also creates an optimal plan up to this
-					//	// point in the buffer. When the plan is bracketed by either the beginning of the
-					//	// buffer and a maximum entry speed or two maximum entry speeds, every block in between
-					//	// cannot logically be further improved. Hence, we don't have to recompute them anymore.
-					//	if (next_fwd->entry_speed_sqr == next_fwd->max_entry_speed_sqr)
-					//	{
-					//		planned_block = fwd_block_index;
-					//	}
-					//	fwd_block_index = block_buffer.peek(fwd_block_index->Station + 1);
-					//}
+					
 				}
 				void Block::__reverse_plan()
 				{
