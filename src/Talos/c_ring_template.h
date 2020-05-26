@@ -94,7 +94,7 @@ public:
 
 	TN* peek()
 	{
-		
+
 		return this->_storage_pointer + this->_tail;
 	}
 
@@ -118,6 +118,9 @@ public:
 
 	TN* peek(uint16_t position)
 	{
+		_check_wrap_value(&position);
+		if (position > this->_last_write)
+			return NULL;
 		return (this->_storage_pointer + position);
 	}
 
@@ -139,6 +142,7 @@ public:
 
 		return data;
 	}
+
 	TN* next()
 	{
 		//caller should check has_data before calling this. 
@@ -170,7 +174,7 @@ public:
 		if (!this->has_data())
 			return NULL;
 
-		if (_data_size >1)
+		if (_data_size > 1)
 			* last = false;
 
 		return (this->_storage_pointer + this->_last_read);
@@ -318,24 +322,30 @@ public:
 
 		this->_head++;
 		//if we are at the size of the buffer, wrap back to zero
-		if (this->_head == this->_buffer_size)
-		{
-			this->_head = 0;
-		}
+		//if (this->_head == this->_buffer_size)
+		//{
+		//	this->_head = 0;
+		//}
+		_check_wrap_value(&this->_head);
+
 		//if head is equal to tail after a write, we are full
 		if (this->_head == this->_tail)
 			this->_full = true;
 	}
 
-	uint16_t _my_tail(int16_t val)
+	void _check_wrap_value(uint16_t* value)
 	{
-		//I wouldnt recommend sending in a value larger than the buffer... 
-		if (this->_tail + val >= this->_buffer_size)
-		{
-			return val -= (this->_tail + val) - this->_buffer_size;
-		}
-		return val;
+		bool neg = false;
+		neg = (*value < 0) ? true : false;
+		(*value) *= (neg ? -1 : 1);
+
+		if (*value == this->_buffer_size)
+			*value = 0;
+
+		(*value) *= (neg ? -1 : 1);
 	}
+
+
 
 public:
 
