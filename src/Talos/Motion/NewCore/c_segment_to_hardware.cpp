@@ -292,6 +292,12 @@ namespace Talos
 					{
 						done = false;
 #ifdef MSVC
+						if (active_timer_item->common.control_bits.feed.get(e_feed_block_state::feed_mode_units_per_rotation)
+							&& active_timer_item->common.control_bits.feed.get(e_feed_block_state::feed_mode_change))
+						{
+							myfile << "feed mode change" << ",";
+						}
+
 						myfile << active_timer_item->steps_to_execute_in_this_segment << ",";
 						myfile << active_timer_item->timer_delay_value << ",";
 						myfile << active_timer_item->common.tracking.line_number << ",";
