@@ -137,11 +137,22 @@ namespace Talos
 						}
 					}
 				}
+				void Segment::st_update_plan_block_parameters()
+				{
+					if (Segment::active_block != NULL)
+					{ // Ignore if at start of a new block.
+						//States::Process::states.set(States::Process::e_states::recalculate_block);
+						//Update the entry speed of the block we jsut loaded in the arbitrator. This should be the same speed we are currently running.
+						Segment::active_block->entry_speed_sqr = seg_base.current_speed * seg_base.current_speed; // Update entry speed.
+						//States::Process::states.set(States::Process::e_states::reinitialize_segment);
+						Segment::active_block->common.control_bits.motion.set(e_motion_block_state::reinitialize_segment);
+					}
+				}
 
 				void Segment::__initialize_new_segment(s_segment_base* seg_base_arg)
 				{
 					seg_base_arg->common.tracking = Segment::active_block->common.tracking;
-					
+
 					// Check if we need to only recompute the velocity profile or are we loading a new block.
 
 					// Initialize segment buffer data for generating the segments.
@@ -163,7 +174,6 @@ namespace Talos
 						seg_base_arg->current_speed = sqrt(Segment::active_block->entry_speed_sqr);
 					}
 				}
-
 				uint8_t Segment::__calc_seg_base(s_segment_base* seg_base_arg)
 				{
 					seg_base_arg->common.tracking = Segment::active_block->common.tracking;
@@ -278,8 +288,6 @@ namespace Talos
 					}
 					return 1;
 				}
-
-				static uint32_t t_seq = 0;
 				uint8_t Segment::__run_segment_frag(s_segment_base* seg_base_arg)
 				{
 					seg_base_arg->mm_remaining = Segment::active_block->millimeters; // New segment distance from end of block.
@@ -289,10 +297,8 @@ namespace Talos
 					//copy common data from the segment base to the timer item.
 					timer_item.common.tracking = seg_base_arg->common.tracking;
 					timer_item.common.bres_obj = seg_base_arg->common.bres_obj;
-					timer_item.common.timer_number = t_seq++;
 
 					__check_ramp_state(&Segment::frag_calc_vars, seg_base_arg, &timer_item);
-
 
 					float step_dist_remaining = seg_base_arg->step_per_mm * seg_base_arg->mm_remaining; // Convert mm_remaining to steps
 					float n_steps_remaining = ceil(step_dist_remaining); // Round-up current steps remaining
@@ -328,9 +334,8 @@ namespace Talos
 					//Add new segment item to the buffer and return
 					Segment::timer_buffer.put(timer_item);
 
- 					return 1;
+					return 1;
 				}
-
 				void Segment::__check_ramp_state(s_fragment_vars* vars, s_segment_base* seg_base_arg, s_timer_item* timer_item)
 				{
 					//always assume acceleration at start
@@ -352,98 +357,23 @@ namespace Talos
 						case e_ramp_type::Decel_Override:
 						{
 							__check_decel_ovr(vars, seg_base_arg, timer_item);
-							//speed_var = Segment::active_block->acceleration * time_var;
-							//mm_var = time_var * (seg_base_arg->current_speed - 0.5 * speed_var);
-							//seg_base_arg->mm_remaining -= mm_var;
-							//if ((seg_base_arg->mm_remaining < seg_base_arg->accelerate_until) || (mm_var <= 0))
-							//{
-							//	// Cruise or cruise-deceleration types only for deceleration override.
-							//	seg_base_arg->mm_remaining = seg_base_arg->accelerate_until; // NOTE: 0.0 at EOB
-							//	time_var = 2.0 * (Segment::active_block->millimeters - seg_base_arg->mm_remaining) / (seg_base_arg->current_speed + seg_base_arg->maximum_speed);
-							//	seg_base_arg->ramp_type = e_ramp_type::Cruise;
-							//	timer_item.common.flag.set(e_block_state::motion_state_cruising);
-							//	seg_base_arg->current_speed = seg_base_arg->maximum_speed;
-							//}
-							//else
-							//{ // Mid-deceleration override ramp.
-							//	seg_base_arg->current_speed -= speed_var;
-							//}
+							break;
 						}
-						break;
 						case e_ramp_type::Accel:
 						{
 							__check_accel(vars, seg_base_arg, timer_item);
-							//// NOTE: Acceleration ramp only computes during first do-while loop.
-							//speed_var = Segment::active_block->acceleration * time_var;
-							//seg_base_arg->mm_remaining -= time_var * (seg_base_arg->current_speed + 0.5 * speed_var);
-							////if (segment->mm_remaining < segment->decelerate_after)
-							//if (seg_base_arg->mm_remaining < seg_base_arg->accelerate_until)
-							//{ // End of acceleration ramp.
-							//	// Acceleration-cruise, acceleration-deceleration ramp junction, or end of block.
-							//	seg_base_arg->mm_remaining = seg_base_arg->accelerate_until; // NOTE: 0.0 at EOB
-							//	time_var = 2.0 * (Segment::active_block->millimeters - seg_base_arg->mm_remaining)
-							//		/ (seg_base_arg->current_speed + seg_base_arg->maximum_speed);
-
-							//	if (seg_base_arg->mm_remaining == seg_base_arg->decelerate_after)
-							//	{
-							//		seg_base_arg->ramp_type = e_ramp_type::Decel;
-							//		timer_item.common.flag.set(e_block_state::motion_state_decelerating);
-							//	}
-							//	else
-							//	{
-							//		seg_base_arg->ramp_type = e_ramp_type::Cruise;
-							//		timer_item.common.flag.set(e_block_state::motion_state_cruising);
-							//	}
-							//	seg_base_arg->current_speed = seg_base_arg->maximum_speed;
-							//}
-							//else
-							//{ // Acceleration only.
-							//	seg_base_arg->current_speed += speed_var;
-							//}
+							break;
 						}
-						break;
+
 						case e_ramp_type::Cruise:
 						{
 							__check_cruise(vars, seg_base_arg, timer_item);
-							//timer_item.common.flag.set(e_block_state::motion_state_cruising);
-							//// NOTE: mm_var used to retain the last mm_remaining for incomplete segment time_var calculations.
-							//// NOTE: If maximum_speed*time_var value is too low, round-off can cause mm_var to not change. To
-							////   prevent this, simply enforce a minimum speed threshold in the planner.
-							//mm_var = seg_base_arg->mm_remaining - seg_base_arg->maximum_speed * time_var;
-							//if (mm_var < seg_base_arg->decelerate_after)
-							//{ // End of cruise.
-							//	// Cruise-deceleration junction or end of block.
-							//	time_var = (seg_base_arg->mm_remaining - seg_base_arg->decelerate_after) / seg_base_arg->maximum_speed;
-							//	seg_base_arg->mm_remaining = seg_base_arg->decelerate_after; // NOTE: 0.0 at EOB
-							//	seg_base_arg->ramp_type = e_ramp_type::Decel;
-							//	timer_item.common.flag.set(e_block_state::motion_state_decelerating);
-							//}
-							//else
-							//{ // Cruising only.
-							//	seg_base_arg->mm_remaining = mm_var;
-							//}
+							break;
 						}
-						break;
+
 						default: // case RAMP_DECEL:
 						{
 							__check_decel(vars, seg_base_arg, timer_item);
-							//// NOTE: mm_var used as a misc worker variable to prevent errors when near zero speed.
-							//speed_var = Segment::active_block->acceleration * time_var; // Used as delta speed (mm/min)
-							//if (seg_base_arg->current_speed > speed_var)
-							//{ // Check if at or below zero speed.
-							//	// Compute distance from end of segment to end of block.
-							//	mm_var = seg_base_arg->mm_remaining - time_var * (seg_base_arg->current_speed - 0.5 * speed_var); // (mm)
-							//	if (mm_var > seg_base_arg->mm_complete)
-							//	{ // Typical case. In deceleration ramp.
-							//		seg_base_arg->mm_remaining = mm_var;
-							//		seg_base_arg->current_speed -= speed_var;
-							//		break; // Segment complete. Exit switch-case statement. Continue do-while loop.
-							//	}
-							//}
-							//// Otherwise, at end of block or end of forced-deceleration.
-							//time_var = 2.0 * (seg_base_arg->mm_remaining - seg_base_arg->mm_complete) / (seg_base_arg->current_speed + seg_base_arg->exit_speed);
-							//seg_base_arg->mm_remaining = seg_base_arg->mm_complete;
-							//seg_base_arg->current_speed = seg_base_arg->exit_speed;
 						}
 						}
 
@@ -576,17 +506,7 @@ namespace Talos
 					}
 				}
 
-				void Segment::st_update_plan_block_parameters()
-				{
-					if (Segment::active_block != NULL)
-					{ // Ignore if at start of a new block.
-						//States::Process::states.set(States::Process::e_states::recalculate_block);
-						//Update the entry speed of the block we jsut loaded in the arbitrator. This should be the same speed we are currently running.
-						Segment::active_block->entry_speed_sqr = seg_base.current_speed * seg_base.current_speed; // Update entry speed.
-						//States::Process::states.set(States::Process::e_states::reinitialize_segment);
-						Segment::active_block->common.control_bits.motion.set(e_motion_block_state::reinitialize_segment);
-					}
-				}
+				
 			}
 		}
 	}

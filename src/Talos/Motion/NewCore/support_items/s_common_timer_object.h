@@ -23,7 +23,5 @@ struct s_common_timer_object
 							//need to track head and tail values to ensure this item
 							//is not over written. DO NOT change this to a ref, 
 							//always a pointer.
-	uint32_t timer_number;
-	
 };
 #endif

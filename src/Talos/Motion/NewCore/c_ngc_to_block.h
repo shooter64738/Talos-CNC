@@ -102,6 +102,7 @@ namespace Talos
 					static void __planner_recalculate();
 
 					static void __forward_plan();
+					static void __reverse_plan();
 
 				};
 

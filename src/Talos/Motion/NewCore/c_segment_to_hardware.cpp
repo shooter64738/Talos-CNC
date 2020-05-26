@@ -168,6 +168,7 @@ namespace Talos
 					
 				}
 
+				static uint32_t total_steps = 0;
 				void Segment::__release_brakes()
 				{
 					//release output drive breaks
@@ -205,6 +206,19 @@ namespace Talos
 						{
 							//shut down the hardware
 							Hardware_Abstraction_Layer::MotionCore::Stepper::st_go_idle();
+
+#ifdef MSVC
+							myfile << 0 << ",";
+							myfile << 0 << ",";
+							myfile << 0 << ",";
+							myfile << active_line_number << ",";
+							myfile << active_sequence << ",";
+							myfile << total_steps << ",";
+							myfile << "\r";
+							myfile.flush();
+#endif
+
+
 							Segment::__end_interpolation();
 							return;
 						}
@@ -235,7 +249,7 @@ namespace Talos
 					}
 
 					active_timer_item->steps_to_execute_in_this_segment--;
-
+					total_steps++;
 					//If feedmode is spindle synch, calculate the correct delay value for
 					//the feedrate, based on spindle current speed
 					//TODO: is there a better way to do this without several if statements?
@@ -282,7 +296,8 @@ namespace Talos
 						myfile << active_timer_item->steps_to_execute_in_this_segment << ",";
 						myfile << active_timer_item->timer_delay_value << ",";
 						myfile << active_timer_item->common.tracking.line_number << ",";
-						myfile << active_timer_item->common.tracking.sequence;
+						myfile << active_timer_item->common.tracking.sequence<< ",";
+						myfile << total_steps << ",";
 						myfile << "\r";
 						myfile.flush();
 #endif

@@ -170,7 +170,7 @@ public:
 		if (!this->has_data())
 			return NULL;
 
-		if (_my_tail(1) < this->_head)
+		if (_data_size >1)
 			* last = false;
 
 		return (this->_storage_pointer + this->_last_read);
@@ -183,6 +183,9 @@ public:
 		*last = true;
 		if (!this->has_data())
 			return NULL;
+
+		//if (_data_size > 1)
+		//	* last = false;
 
 		return (this->_storage_pointer + this->_last_write);
 	}
