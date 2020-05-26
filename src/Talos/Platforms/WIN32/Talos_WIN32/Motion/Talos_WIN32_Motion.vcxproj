@@ -56,6 +56,12 @@
     <ClInclude Include="..\..\..\..\Motion\NewCore\c_block_to_segment.h" />
     <ClInclude Include="..\..\..\..\Motion\NewCore\c_segment_to_hardware.h" />
     <ClInclude Include="..\..\..\..\Motion\NewCore\c_state_control.h" />
+    <ClInclude Include="..\..\..\..\Motion\NewCore\support_items\blank - Copy (2).h" />
+    <ClInclude Include="..\..\..\..\Motion\NewCore\support_items\blank - Copy (3).h" />
+    <ClInclude Include="..\..\..\..\Motion\NewCore\support_items\s_common_segment_block_object.h" />
+    <ClInclude Include="..\..\..\..\Motion\NewCore\support_items\s_common_timer_object.h" />
+    <ClInclude Include="..\..\..\..\Motion\NewCore\support_items\s_common_all_object.h" />
+    <ClInclude Include="..\..\..\..\Motion\NewCore\support_items\s_common_motion_block_object.h" />
     <ClInclude Include="..\..\..\..\Motion\NewCore\support_items\c_state_control.h" />
     <ClInclude Include="..\..\..\..\Motion\NewCore\support_items\d_buffer_size_defs.h" />
     <ClInclude Include="..\..\..\..\Motion\NewCore\support_items\e_state_flag.h" />

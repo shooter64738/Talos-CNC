@@ -416,5 +416,23 @@
     <ClInclude Include="..\..\..\..\Motion\NewCore\support_items\s_common_objects.h">
       <Filter>Motion\NewCore\Supporting_Items</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\..\Motion\NewCore\support_items\blank - Copy (2).h">
+      <Filter>Motion\NewCore\Supporting_Items</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Motion\NewCore\support_items\blank - Copy (3).h">
+      <Filter>Motion\NewCore\Supporting_Items</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Motion\NewCore\support_items\s_common_motion_block_object.h">
+      <Filter>Motion\NewCore\Supporting_Items</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Motion\NewCore\support_items\s_common_all_object.h">
+      <Filter>Motion\NewCore\Supporting_Items</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Motion\NewCore\support_items\s_common_timer_object.h">
+      <Filter>Motion\NewCore\Supporting_Items</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Motion\NewCore\support_items\s_common_segment_block_object.h">
+      <Filter>Motion\NewCore\Supporting_Items</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

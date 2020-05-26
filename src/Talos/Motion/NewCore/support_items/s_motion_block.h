@@ -3,8 +3,8 @@
 
 #include <stdint.h>
 #include "s_motion_axis_detail.h"
-#include "s_common_objects.h"
 #include "e_state_flag.h"
+#include "s_common_motion_block_object.h"
 
 
 
