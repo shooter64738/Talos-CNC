@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 #include "s_motion_axis_detail.h"
-#include "s_segment_timer_common.h"
+#include "s_common_objects.h"
 #include "e_state_flag.h"
 
 
@@ -28,7 +28,7 @@ struct __s_motion_block
 	float programmed_rate;        // Programmed rate of this block (mm/min).
 	uint8_t Station;
 	
-	s_common_segment_items common;
+	s_common_motion_block_object common;
 	
 
 };

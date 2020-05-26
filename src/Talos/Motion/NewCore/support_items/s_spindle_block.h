@@ -2,7 +2,7 @@
 #define C_SEGMENTED_SPINDLE_BLOCK_H
 
 #include <stdint.h>
-#include "s_segment_timer_common.h"
+#include "s_common_objects.h"
 #include "../../../physical_machine_parameters.h"
 #include "../../../_bit_flag_control.h"
 #include "e_spindle_state.h"

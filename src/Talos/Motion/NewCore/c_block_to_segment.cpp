@@ -84,7 +84,7 @@ namespace Talos
 								bresenham_buffer.put(new_item);
 								//The obj in the bres buffer is a memory pointer so even if the bres buffer
 								//tail is moved, the bres data in the segment still wont change
-								Segment::active_block->common.bres_obj = bresenham_buffer.peek();
+								seg_base.common.bres_obj = bresenham_buffer.peek();
 								//Segment::__initialize_segment(&seg_base);
 								Segment::__initialize_new_segment(&seg_base);
 								Segment::__calc_seg_base(&seg_base);
@@ -94,7 +94,7 @@ namespace Talos
 						}
 
 						//If flagged to re init the segment, then do it
-						if (Segment::active_block->common.flag.get_clr(e_motion_block_state::reinitialize_segment))
+						if (Segment::active_block->common.motion.get_clr(e_motion_block_state::reinitialize_segment))
 							Segment::__calc_seg_base(&seg_base);
 
 						//if the timer buffer is full, we gotta wait. 
@@ -140,7 +140,8 @@ namespace Talos
 
 				void Segment::__initialize_new_segment(s_segment_base* seg_base_arg)
 				{
-					seg_base_arg->common = Segment::active_block->common;
+					seg_base_arg->common.tracking = Segment::active_block->common.tracking;
+					
 					// Check if we need to only recompute the velocity profile or are we loading a new block.
 
 					// Initialize segment buffer data for generating the segments.
@@ -165,7 +166,7 @@ namespace Talos
 
 				uint8_t Segment::__calc_seg_base(s_segment_base* seg_base_arg)
 				{
-					seg_base_arg->common = Segment::active_block->common;
+					seg_base_arg->common.tracking = Segment::active_block->common.tracking;
 
 					seg_base_arg->mm_complete = 0.0; // Default velocity profile complete at 0.0mm from end of block.
 					float inv_2_accel = 0.5 / Segment::active_block->acceleration;
@@ -285,9 +286,9 @@ namespace Talos
 
 					s_timer_item timer_item{ 0 };
 
-					//copy common data from the segment base to the segment.
-					timer_item.common = seg_base_arg->common;
-					timer_item.sequence = ++t_seq;
+					//copy common data from the segment base to the timer item.
+					timer_item.common.tracking = seg_base_arg->common.tracking;
+					timer_item.common.bres_obj = seg_base_arg->common.bres_obj;
 
 					__check_ramp_state(&Segment::frag_calc_vars, seg_base_arg, &timer_item);
 
@@ -582,7 +583,7 @@ namespace Talos
 						//Update the entry speed of the block we jsut loaded in the arbitrator. This should be the same speed we are currently running.
 						Segment::active_block->entry_speed_sqr = seg_base.current_speed * seg_base.current_speed; // Update entry speed.
 						//States::Process::states.set(States::Process::e_states::reinitialize_segment);
-						Segment::active_block->common.flag.set(e_motion_block_state::reinitialize_segment);
+						Segment::active_block->common.motion.set(e_motion_block_state::reinitialize_segment);
 					}
 				}
 			}

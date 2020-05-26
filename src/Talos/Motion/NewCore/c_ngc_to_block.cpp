@@ -44,8 +44,6 @@ namespace Talos
 				//Set the planned block to the first block by default.
 				__s_motion_block* Block::planned_block = Block::motion_buffer.peek(0);
 
-				static uint32_t block_station = 0;
-
 				void Block::load_ngc_test()
 				{
 					mtn_cfg::Controller.load_defaults();
@@ -227,7 +225,7 @@ namespace Talos
 					__plan_buffer_line(&motion_block, mtn_cfg::Controller.Settings, &persisted_values, unit_vec, target_steps);
 
 					motion_block.Station = view.active_view_block->__station__;
-					motion_block.common.sequence = block_station++;
+					motion_block.common.tracking.incr_seq();
 					motion_buffer.put(motion_block);
 
 					__planner_recalculate();
@@ -626,7 +624,7 @@ namespace Talos
 					uint8_t over_ride = 100;
 					float nominal_speed = motion_block->programmed_rate;
 					//if (block->condition & (PL_COND_FLAG_RAPID_MOTION))
-					if (motion_block->common.flag.get(e_motion_block_state::motion_rapid))
+					if (motion_block->common.motion.get(e_motion_block_state::motion_rapid))
 					{
 						nominal_speed *= (0.01 * over_ride);
 					}

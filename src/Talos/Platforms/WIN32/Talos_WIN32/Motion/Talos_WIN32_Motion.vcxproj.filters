@@ -356,9 +356,6 @@
     <ClInclude Include="..\..\..\..\Motion\NewCore\support_items\s_segment_base.h">
       <Filter>Motion\NewCore\Supporting_Items</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Motion\NewCore\support_items\s_segment_timer_common.h">
-      <Filter>Motion\NewCore\Supporting_Items</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\..\Motion\NewCore\support_items\s_timer_item.h">
       <Filter>Motion\NewCore\Supporting_Items</Filter>
     </ClInclude>
@@ -415,6 +412,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\Shared_Data\xx_s_motion_data_block.h">
       <Filter>Shared data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Motion\NewCore\support_items\s_common_objects.h">
+      <Filter>Motion\NewCore\Supporting_Items</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

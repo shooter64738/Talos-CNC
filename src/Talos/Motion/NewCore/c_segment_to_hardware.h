@@ -21,7 +21,7 @@ namespace Talos
 					static c_ring_buffer<__s_motion_block> motion_buffer;*/
 				protected:
 				private:
-					static s_common_segment_items previous_flags;
+					//static s_common_segment_items previous_flags;
 					static void(*pntr_next_gate)(void);
 					//functions
 				public:

@@ -51,7 +51,7 @@ namespace Talos
 				Do we have to wait on other hardware? Spindle up to speed, servo brakes released, etc.
 				*/
 
-				s_common_segment_items Segment::previous_flags{ 0 };
+				//s_common_segment_items Segment::previous_flags{ 0 };
 				//__s_motion_block* Segment::active_block = NULL;
 
 				//we are reading/writing to the same buffer in the block_to_segment code
@@ -253,8 +253,8 @@ namespace Talos
 #ifdef MSVC
 						myfile << active_timer_item->steps_to_execute_in_this_segment << ",";
 						myfile << active_timer_item->timer_delay_value << ",";
-						myfile << '0' + active_timer_item->common.line_number << ",";
-						myfile << '0' + active_timer_item->common.sequence;
+						myfile << '0' + active_timer_item->common.tracking.line_number << ",";
+						myfile << '0' + active_timer_item->common.tracking.sequence;
 						myfile << "\r\n";
 						myfile.flush();
 #endif
@@ -271,9 +271,9 @@ namespace Talos
 							//Motion_Core::Hardware::Interpolation::direction_set = 0;
 
 							//New line segment, so this should be the start of a block.
-							active_line_number = active_timer_item->common.line_number;
+							active_line_number = active_timer_item->common.tracking.line_number;
 							last_complete_sequence = active_sequence;
-							active_sequence = active_timer_item->common.sequence;
+							active_sequence = active_timer_item->common.tracking.sequence;
 							active_bresenham = active_timer_item->common.bres_obj;
 
 							// Initialize Bresenham line and distance counters

@@ -2,7 +2,7 @@
 #define __C_MOTION_CORE_SEGMENT_BASE_ITEM_H
 
 #include <stdint.h>
-#include "s_segment_timer_common.h"
+#include "s_common_objects.h"
 #include "../../_bit_flag_control.h"
 #include "e_ramp_states.h"
 
@@ -25,7 +25,7 @@ struct s_segment_base
 	float inv_rate = 0;    // Used by PWM laser mode to speed up segment calculations.
 	uint16_t current_spindle_pwm = 0;
 	s_bit_flag_controller<uint8_t> step_event_control;
-	s_common_segment_items common;
+	s_common_segment_block_object common;
 	
 
 };
