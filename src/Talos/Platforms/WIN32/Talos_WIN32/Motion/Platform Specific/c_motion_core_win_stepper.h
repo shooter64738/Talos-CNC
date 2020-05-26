@@ -5,8 +5,8 @@
 * Author: jeff_d
 */
 #include "../../../../../talos_hardware_def.h"
-#include "../../../../../Motion/Core/c_motion_core.h"
-#include "../../../../../Motion/Core/c_interpollation_hardware.h"
+//#include "../../../../../Motion/Core/c_motion_core.h"
+//#include "../../../../../Motion/Core/c_interpollation_hardware.h"
 #ifdef MSVC
 
 #ifndef __C_MOTION_CORE_WIN_STEPPER_H__

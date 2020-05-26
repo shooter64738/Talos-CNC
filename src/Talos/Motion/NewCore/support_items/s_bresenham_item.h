@@ -2,8 +2,8 @@
 #define __C_MOTION_CORE_BRESENHAM_ITEM_H
 
 #include <stdint.h>
-#include "../../physical_machine_parameters.h"
-#include "../../_bit_flag_control.h"
+#include "../../../physical_machine_parameters.h"
+#include "../../../_bit_flag_control.h"
 
 struct s_bresenham
 {

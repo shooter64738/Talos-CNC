@@ -191,21 +191,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\..\Shared Data\_peripheral_overide_enums.h">
-      <Filter>Shared data</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Shared Data\_s_encoder_struct.h">
-      <Filter>Shared data</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Shared Data\_s_interp_config_struct.h">
-      <Filter>Shared data</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Shared Data\_s_jog_data_struct.h">
-      <Filter>Shared data</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Shared Data\_s_peripheral_panel_struct.h">
-      <Filter>Shared data</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\..\Motion\motion_hardware_def.h">
       <Filter>Motion</Filter>
     </ClInclude>
@@ -252,42 +237,9 @@
     <ClInclude Include="..\..\..\..\NGC_RS274\_ngc_block_struct.h">
       <Filter>Ngc_Rs274</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Shared Data\_e_feed_modes.h">
-      <Filter>Shared data</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Shared Data\_e_feed_types.h">
-      <Filter>Shared data</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\..\c_ring_template.h" />
-    <ClInclude Include="..\..\..\..\Shared Data\_e_record_types.h">
-      <Filter>Shared data</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Shared Data\_s_motion_data_block.h">
-      <Filter>Shared data</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Shared Data\_e_unit_types.h">
-      <Filter>Shared data</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Shared Data\_e_binary_comm_response.h">
-      <Filter>Shared data</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Shared Data\_e_ramp_type.h">
-      <Filter>Shared data</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Shared Data\_e_block_state.h">
-      <Filter>Shared data</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Shared Data\_s_status_record.h">
-      <Filter>Shared data</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Shared Data\x_peripheral_panel_control_enums.h">
-      <Filter>Shared data</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\..\Motion\Processing\Planner\Canned Cycles\x_c_canned_cycle.h">
       <Filter>Motion\Processing\Planner\Canned Cycles</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Shared Data\_s_framework_error.h">
-      <Filter>Shared data</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\Motion\Record Defines\e_all_event_data_types.h">
       <Filter>Motion\Record Defines</Filter>
@@ -392,9 +344,6 @@
     <ClInclude Include="..\..\..\..\Motion\NewCore\support_items\d_buffer_size_defs.h">
       <Filter>Motion\NewCore\Supporting_Items</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Motion\NewCore\support_items\e_block_state.h">
-      <Filter>Motion\NewCore\Supporting_Items</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\..\Motion\NewCore\support_items\e_ramp_states.h">
       <Filter>Motion\NewCore\Supporting_Items</Filter>
     </ClInclude>
@@ -424,6 +373,48 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\Motion\NewCore\support_items\e_spindle_state.h">
       <Filter>Motion\NewCore\Supporting_Items</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Motion\NewCore\support_items\s_motion_axis_detail.h">
+      <Filter>Motion\NewCore\Supporting_Items</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Motion\NewCore\support_items\e_state_flag.h">
+      <Filter>Motion\NewCore\Supporting_Items</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared_Data\_e_binary_comm_response.h">
+      <Filter>Shared data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared_Data\_e_feed_modes.h">
+      <Filter>Shared data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared_Data\_e_ramp_type.h">
+      <Filter>Shared data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared_Data\_e_unit_types.h">
+      <Filter>Shared data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared_Data\_peripheral_overide_enums.h">
+      <Filter>Shared data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared_Data\_s_jog_data_struct.h">
+      <Filter>Shared data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared_Data\_s_ngc_line_record.h">
+      <Filter>Shared data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared_Data\_s_peripheral_panel_struct.h">
+      <Filter>Shared data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared_Data\_s_status_record.h">
+      <Filter>Shared data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared_Data\x_e_record_types.h">
+      <Filter>Shared data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared_Data\xx_e_feed_types.h">
+      <Filter>Shared data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared_Data\xx_s_motion_data_block.h">
+      <Filter>Shared data</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

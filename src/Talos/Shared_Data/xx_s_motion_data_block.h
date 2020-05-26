@@ -6,12 +6,12 @@
 #include "../physical_machine_parameters.h"
 #include "../NGC_RS274/_ngc_arc_struct.h"
 #include "_e_feed_modes.h"
-#include "_e_feed_types.h"
+#include "xx_e_feed_types.h"
 
 struct s_motion_data_block
 {
 	const e_record_types __rec_type__ = e_record_types::Motion;
-	e_feed_modes feed_rate_mode;
+	//e_feed_modes feed_rate_mode;
 	e_motion_type motion_type;
 	s_arc_values arc_values;
 	float axis_values[MACHINE_AXIS_COUNT];

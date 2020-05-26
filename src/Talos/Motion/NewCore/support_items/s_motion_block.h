@@ -2,20 +2,18 @@
 #define C_SEGMENTED_MOTION_BLOCK_H
 
 #include <stdint.h>
+#include "s_motion_axis_detail.h"
 #include "s_segment_timer_common.h"
-#include "../../../physical_machine_parameters.h"
-#include "../../../_bit_flag_control.h"
+#include "e_state_flag.h"
+
 
 
 struct __s_motion_block
 {
 	// Fields used by the bresenham algorithm for tracing the line
 			// NOTE: Used by stepper algorithm to execute the block correctly. Do not alter these values.
-	uint32_t steps[MACHINE_AXIS_COUNT];    // Step count along each axis
-	uint32_t step_event_count; // The maximum step axis count and number of steps required to complete this block.
-	s_bit_flag_controller<uint16_t> direction_bits;    // The direction bit set for this block (refers to *_DIRECTION_BIT in config.h)
-	s_bit_flag_controller<uint16_t> bl_comp_bits;//Direction changes are tracked and bit flags are set per axis for bl comp.
-	s_bit_flag_controller<e_block_state> states;//Direction changes are tracked and bit flags are set per axis for bl comp.
+	s_motion_axis axis_data;
+	//s_bit_flag_controller<e_block_state> states;
 
 	float entry_speed_sqr;     // The current planned entry speed at block junction in (mm/min)^2
 	float max_entry_speed_sqr; // Maximum allowable entry speed based on the minimum of junction limit and

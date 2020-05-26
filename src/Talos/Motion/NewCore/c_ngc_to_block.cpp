@@ -8,11 +8,8 @@
 
 #include "c_ngc_to_block.h"
 #include "c_block_to_segment.h"
-//#include "c_segment_to_hardware.h"
-#include "../../_bit_manipulation.h"
 #include "../../Configuration/c_configuration.h"
 #include "c_state_control.h"
-#include "support_items/e_block_state.h"
 #include <math.h>
 #include <string.h>
 
@@ -153,8 +150,8 @@ namespace Talos
 						{
 							spindle_block.states.set(e_spindle_state::indexing);
 						}
-						
-						if (persisted_values.motion_block_states.get(e_block_state::feed_mode_units_per_rotation))
+
+						if (persisted_values.feed.get(e_feed_block_state::feed_mode_units_per_rotation))
 							spindle_block.states.set(e_spindle_state::synch_with_motion);
 
 						//store off these values
@@ -170,7 +167,7 @@ namespace Talos
 						//the motion block was processed first, we can look at the persisted
 						//values that were stored and determine if its a feed per rotation
 						//motion
-						if (previous_block_states.get(e_block_state::feed_mode_units_per_rotation))
+						if (persisted_values.feed.get(e_feed_block_state::feed_mode_units_per_rotation))
 						{
 							//just add the previous spindle record values since there are no changes.
 							spindle_buffer.put(persisted_values.spindle_block);
@@ -214,12 +211,12 @@ namespace Talos
 					if (!persisted_values.bl_comp.get(15))
 					{
 						//clear the comp bits that might have been set on this block
-						motion_block.bl_comp_bits._flag = 0;
+						motion_block.axis_data.bl_comp_bits._flag = 0;
 					}
 					//set bit 15 so we know that motion has ran once and any more motions need backlash
 					//(motions that dont actually cause motion will have already been ignored)
 					//Save the direction bits for when the next block is processed. (set the 15th bit always)
-					persisted_values.bl_comp._flag = motion_block.direction_bits._flag | 0X8000;
+					persisted_values.bl_comp._flag = motion_block.axis_data.direction_bits._flag | 0X8000;
 
 					motion_block.millimeters = convert_delta_vector_to_unit_vector(unit_vec);
 					motion_block.acceleration = __limit_value_by_axis_maximum(mtn_cfg::Controller.Settings.hardware.acceleration, unit_vec);
@@ -253,17 +250,21 @@ namespace Talos
 					for (idx = 0; idx < MACHINE_AXIS_COUNT; idx++)
 					{
 						target_steps[idx] = lround(ngc_block->target_motion_position[idx] * hw_settings.steps_per_mm[idx]);
-						motion_block->steps[idx] = labs(target_steps[idx] - prev_values->system_position[idx]);
+						motion_block->axis_data.steps[idx] = labs(target_steps[idx] - prev_values->system_position[idx]);
 
-						motion_block->step_event_count = max(motion_block->step_event_count, motion_block->steps[idx]);
+						motion_block->axis_data.step_event_count = max(motion_block->axis_data.step_event_count, motion_block->axis_data.steps[idx]);
 						delta_mm = (target_steps[idx] - prev_values->system_position[idx]) / hw_settings.steps_per_mm[idx];
 						unit_vectors[idx] = delta_mm;
+
+						//IF axis has a brake and there is movement, set the break flag.
+						if (mtn_cfg::Controller.Settings.hardware.break_release_time[idx] > 0)
+							(delta_mm != 0 ? motion_block->axis_data.brake_bits.set(idx) : motion_block->axis_data.brake_bits.clear(idx));
 
 						//check for direction change and apply bl comp flag if needed.
 						___set_backlash_control(delta_mm, idx, &prev_values->bl_comp, motion_block);
 					}
 
-					if (motion_block->step_event_count == 0)
+					if (motion_block->axis_data.step_event_count == 0)
 					{
 						return 0;
 					}
@@ -280,21 +281,21 @@ namespace Talos
 					if (distance > 0.0)
 					{
 						//If axis is moving positive set the low bit for the axis					
-						motion_block->direction_bits.clear(axis_id);
+						motion_block->axis_data.direction_bits.clear(axis_id);
 
 					}
 					// Set direction bits. Bit enabled always means direction is negative.
 					else if (distance < 0.0)
 					{
 						//If axis is moving negative clear the low bit for the axis			
-						motion_block->direction_bits.set(axis_id);
+						motion_block->axis_data.direction_bits.set(axis_id);
 					}
 
 					//If axis direction is different than previous direction, it needs bl comp
-					if ((motion_block->direction_bits.get(axis_id) != bl_comp->get(axis_id)))
+					if ((motion_block->axis_data.direction_bits.get(axis_id) != bl_comp->get(axis_id)))
 					{
 						//The direction for this axis is different than the previous direction. We need a bl comp move
-						motion_block->bl_comp_bits.set(axis_id);
+						motion_block->axis_data.bl_comp_bits.set(axis_id);
 					}
 
 				}
@@ -311,33 +312,33 @@ namespace Talos
 						motion_block->programmed_rate = motion_block->rapid_rate;
 				}
 
-				e_block_state Block::__check_ngc_feed_mode(__s_motion_block* motion_block, uint16_t ngc_feed_mode)
+				e_feed_block_state Block::__check_ngc_feed_mode(__s_motion_block* motion_block, uint16_t ngc_feed_mode)
 				{
-					e_block_state new_feed_mode = {};
+					e_feed_block_state new_feed_mode = {};
 
 					switch (ngc_feed_mode)
 					{
 					case NGC_RS274::G_codes::FEED_RATE_MINUTES_PER_UNIT_MODE:
 					{
 						motion_block->programmed_rate *= motion_block->millimeters;
-						new_feed_mode = e_block_state::feed_mode_minutes_per_unit;
+						new_feed_mode = e_feed_block_state::feed_mode_minutes_per_unit;
 						break;
 					}
 					case NGC_RS274::G_codes::FEED_RATE_RPM_MODE:
 					{
-						new_feed_mode = e_block_state::feed_mode_rpm;
+						new_feed_mode = e_feed_block_state::feed_mode_rpm;
 						break;
 					}
 					case NGC_RS274::G_codes::FEED_RATE_UNITS_PER_MINUTE_MODE:
 					{
-						new_feed_mode = e_block_state::feed_mode_minutes_per_unit;
+						new_feed_mode = e_feed_block_state::feed_mode_minutes_per_unit;
 						break;
 					}
 					case NGC_RS274::G_codes::FEED_RATE_UNITS_PER_ROTATION:
 					{
 						//not sure this is right.. we will see
 						//motion_block->programmed_rate *= motion_block->millimeters * motion_block->programmed_spindle_speed;
-						new_feed_mode = e_block_state::feed_mode_units_per_rotation;
+						new_feed_mode = e_feed_block_state::feed_mode_units_per_rotation;
 						break;
 					}
 
@@ -346,22 +347,22 @@ namespace Talos
 						break;
 					}
 
-					if (!persisted_values.motion_block_states.get(new_feed_mode))
+					if (!persisted_values.feed.get(new_feed_mode))
 					{
 						//feedmode is changing, clear all the feedmode flags
-						persisted_values.motion_block_states.clear(e_block_state::feed_mode_units_per_rotation);
-						persisted_values.motion_block_states.clear(e_block_state::feed_mode_minutes_per_unit);
-						persisted_values.motion_block_states.clear(e_block_state::feed_mode_units_per_minute);
-						persisted_values.motion_block_states.clear(e_block_state::feed_mode_rpm);
+						persisted_values.feed.clear(e_feed_block_state::feed_mode_units_per_rotation);
+						persisted_values.feed.clear(e_feed_block_state::feed_mode_minutes_per_unit);
+						persisted_values.feed.clear(e_feed_block_state::feed_mode_units_per_minute);
+						persisted_values.feed.clear(e_feed_block_state::feed_mode_rpm);
 
 						//set the new feed mode so we can keep track of it
-						persisted_values.motion_block_states.set(new_feed_mode);
+						persisted_values.feed.set(new_feed_mode);
 
 						//motion blocks flags should have been cleared on get, so just set it
-						motion_block->common.flag.set(new_feed_mode);
+						motion_block->common.feed.set(new_feed_mode);
 						//flag this block as changing feed modes. this will effect how the junction
 						//speeds are handled
-						motion_block->common.flag.set(e_block_state::feed_mode_change);
+						motion_block->common.feed.set(e_feed_block_state::feed_mode_change);
 					}
 					return new_feed_mode;
 				}
@@ -625,7 +626,7 @@ namespace Talos
 					uint8_t over_ride = 100;
 					float nominal_speed = motion_block->programmed_rate;
 					//if (block->condition & (PL_COND_FLAG_RAPID_MOTION))
-					if (motion_block->states.get(e_block_state::motion_rapid))
+					if (motion_block->common.flag.get(e_motion_block_state::motion_rapid))
 					{
 						nominal_speed *= (0.01 * over_ride);
 					}

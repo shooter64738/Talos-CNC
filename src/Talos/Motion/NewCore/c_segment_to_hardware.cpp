@@ -9,7 +9,7 @@
 #include "../../talos_hardware_def.h"
 #include "c_segment_to_hardware.h"
 #include "c_ngc_to_block.h"
-#include "support_items/e_block_state.h"
+#include "support_items/e_state_flag.h"
 #include "c_block_to_segment.h"
 #include "c_state_control.h"
 #include <math.h>
@@ -80,51 +80,11 @@ namespace Talos
 
 				void Segment::__new_motion()
 				{
-					__configure_spindle();
-
-					//if (Segment::active_block == NULL)
-					//	Segment::active_block = Segment::motion_buffer.get();
-
-					////go ahead and set the direction pins for the output drivers
-					//HAL_SET_DIRECTION_PINS();
-
-					////does this block depend on the spindle running and being at a certain speed?
-					//if (Segment::active_block->common.flag.get(e_block_state::feed_on_spindle))
-					//{
-					//	//does the controller say spindle is at speed?
-					//	if (!mtn_ctl::Motion::states.get(mtn_ctl::Motion::e_states::spindle_at_speed))
-					//	{
-					//		//set the flag. it may already be set, but thats alright.
-					//		mtn_ctl::Motion::states.set(mtn_ctl::Motion::e_states::wait_for_spindle_at_speed);
-					//		//cant do anythign until spindle is up to speed
-					//		return;
-					//	}
-					//}
-
 					
-
-					//store off the execution flags for this block.
-					//previous_flags = Segment::active_block->common;
-
-					//if we get passed all the checking above, we are ready to actually do something
-
-					/*
-					ultimately need to decide if a timer starts here and calls the 'run' function
-					or if run gets called in a main loop..... decisions...
-					*/
-
-					//first assume we are going to go right into running motion
-					Segment::pntr_next_gate = Segment::__run_interpolation;
-
-					//does any axis have a break?
-					//if (Segment::active_block->common.flag.get(e_block_state::axis_has_brake))
-					//	Segment::pntr_next_gate = Segment::__release_brakes; //<-- point gate keeper to release brake
-
-
 #ifdef MSVC
 					myfile.open("acceleration.txt");
 #endif // MSVC
-					
+					__configure_spindle();
 				}
 
 				void Segment::__configure_spindle()
@@ -156,6 +116,7 @@ namespace Talos
 					}
 					else
 					{
+						__release_brakes();
 						Segment::pntr_next_gate = Segment::__motion_start;
 					}
 					
@@ -238,7 +199,7 @@ namespace Talos
 								active_timer_item->common.bres_obj->step_event_count;
 
 							//We arent changing system position on a backlash comp motion.
-							if (!active_timer_item->common.flag.get(e_block_state::block_state_skip_sys_pos_update))
+							if (!active_timer_item->common.system.get(e_system_block_state::block_state_skip_sys_pos_update))
 							{
 								/*if (active_timer_item->common.bres_obj->direction_bits._flag & (1 << i))
 									Motion_Core::Hardware::Interpolation::system_position[i]--;
@@ -253,14 +214,14 @@ namespace Talos
 					//If feedmode is spindle synch, calculate the correct delay value for
 					//the feedrate, based on spindle current speed
 					//TODO: is there a better way to do this without several if statements?
-					if (active_timer_item->common.flag.get(e_block_state::feed_mode_units_per_rotation))
+					if (active_timer_item->common.feed.get(e_feed_block_state::feed_mode_units_per_rotation))
 					{
 						//only adjust the delay value if we are in 'cruise' state.
 						//The arbitrator still controls motion during accel and decel
-						if (active_timer_item->common.flag.get(e_block_state::motion_state_cruising))
+						if (active_timer_item->common.speed.get(e_speed_block_state::motion_state_cruising))
 						{
-							Hardware_Abstraction_Layer::MotionCore::Stepper::OCR1A_set
-							(Hardware_Abstraction_Layer::MotionCore::Spindle::spindle_encoder->feedrate_delay);
+							//Hardware_Abstraction_Layer::MotionCore::Stepper::OCR1A_set
+							//(Hardware_Abstraction_Layer::MotionCore::Spindle::spindle_encoder->feedrate_delay);
 						}
 					}
 
