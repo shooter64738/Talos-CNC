@@ -62,6 +62,8 @@ namespace Talos
 
 					static float get_next_block_exit_speed();
 
+					static bool feed_mode_zero_start(s_bit_flag_controller<e_feed_block_state> feed);
+
 				protected:
 				private:
 					static uint8_t __load_ngc(s_ngc_block* ngc_block);
@@ -74,7 +76,7 @@ namespace Talos
 						s_ngc_block* ngc_block
 						, __s_motion_block* motion_block
 						, s_motion_hardware hw_settings
-						, s_persisting_values *prev_values
+						, s_persisting_values* prev_values
 						, float* unit_vectors
 						, int32_t* target_steps);
 

@@ -143,9 +143,11 @@ namespace Talos
 					{ // Ignore if at start of a new block.
 						//States::Process::states.set(States::Process::e_states::recalculate_block);
 						//Update the entry speed of the block we jsut loaded in the arbitrator. This should be the same speed we are currently running.
-						Segment::active_block->entry_speed_sqr = seg_base.current_speed * seg_base.current_speed; // Update entry speed.
-						//States::Process::states.set(States::Process::e_states::reinitialize_segment);
-						Segment::active_block->common.control_bits.motion.set(e_motion_block_state::reinitialize_segment);
+						if (!Input::Block::feed_mode_zero_start(active_block->common.control_bits.feed))
+						{
+							Segment::active_block->entry_speed_sqr = seg_base.current_speed * seg_base.current_speed; // Update entry speed.
+							Segment::active_block->common.control_bits.motion.set(e_motion_block_state::reinitialize_segment);
+						}
 					}
 				}
 

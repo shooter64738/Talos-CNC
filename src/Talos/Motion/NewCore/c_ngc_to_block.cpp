@@ -64,10 +64,10 @@ namespace Talos
 						*view.axis_array[0] = ((i + 1) * 10);
 						*view.persisted_values.active_spindle_speed_S = 1234;
 
-						if (i < 3 || i>4)
+						//if (i < 3 || i>4)
 							* view.current_g_codes.Feed_rate_mode = NGC_RS274::G_codes::FEED_RATE_UNITS_PER_MINUTE_MODE;
-						if (i == 3 || i == 4)
-							* view.current_g_codes.Feed_rate_mode = NGC_RS274::G_codes::FEED_RATE_UNITS_PER_ROTATION;
+						/*if (i == 3 || i == 4)
+							* view.current_g_codes.Feed_rate_mode = NGC_RS274::G_codes::FEED_RATE_UNITS_PER_ROTATION;*/
 
 						testblock.target_motion_position[0] = ((i + 1) * 10);
 						testblock.__station__ = i;
@@ -422,10 +422,7 @@ namespace Talos
 					//If there is no data in the buffer we are assuming a start from rest.
 					//Also if there is a feedmode change to units per rotation that wasnt 
 					//there before we need to start from rest. 
-					if (!Block::motion_buffer.has_data()
-						/*|| (motion_block->common.control_bits.feed.get(e_feed_block_state::feed_mode_units_per_rotation)
-							&& motion_block->common.control_bits.feed.get(e_feed_block_state::feed_mode_change))*/
-						)
+					if (!Block::motion_buffer.has_data() || feed_mode_zero_start(motion_block->common.control_bits.feed))
 					{
 						// Initialize block entry speed as zero. Assume it will be starting from rest. Planner will correct this later.
 						// If system motion, the system motion block always is assumed to start from rest and end at a complete stop.
@@ -524,7 +521,6 @@ namespace Talos
 				}
 				void Block::__reverse_plan()
 				{
-					bool is_last = true;
 					uint8_t block_buffer_planned = planned_block->Station;
 					uint8_t block_index = motion_buffer.cur_head()->Station;
 					uint8_t block_buffer_tail = motion_buffer._tail;
@@ -545,12 +541,11 @@ namespace Talos
 						// Check if next block is the tail block(=planned block). If so, update current stepper parameters.
 						if (block_index == block_buffer_tail) { Process::Segment::st_update_plan_block_parameters(); }
 						// Compute maximum entry speed decelerating over the current block from its exit speed.
-					/*	if (!(current->common.control_bits.feed.get(e_feed_block_state::feed_mode_units_per_rotation)
-							&& current->common.control_bits.feed.get(e_feed_block_state::feed_mode_change)))
+						if (feed_mode_zero_start(current->common.control_bits.feed))
 						{
 							int x = 0;
 						}
-						else*/
+						else
 						{
 							if (current->entry_speed_sqr != current->max_entry_speed_sqr)
 							{
@@ -590,12 +585,11 @@ namespace Talos
 						// Any acceleration detected in the forward pass automatically moves the optimal planned
 						// pointer forward, since everything before this is all optimal. In other words, nothing
 						// can improve the plan from the buffer tail to the planned pointer by logic.
-						/*if (!(next->common.control_bits.feed.get(e_feed_block_state::feed_mode_units_per_rotation)
-							&& next->common.control_bits.feed.get(e_feed_block_state::feed_mode_change)))
+						if (feed_mode_zero_start(current->common.control_bits.feed))
 						{
 							int x = 0;
 						}
-						else*/
+						else
 						{
 							if (current->entry_speed_sqr < next->entry_speed_sqr)
 							{
@@ -682,18 +676,29 @@ namespace Talos
 						exit_speed = block->entry_speed_sqr;
 
 						//if feedmode is changing to units per rev, we have to exit at zero
-						/*if ((block->common.control_bits.feed.get(e_feed_block_state::feed_mode_units_per_rotation)
-							&& block->common.control_bits.feed.get(e_feed_block_state::feed_mode_change)))
-							exit_speed = 0.0;*/
+						if (feed_mode_zero_start(block->common.control_bits.feed))
+							exit_speed = 0.0;
 					}
 
 					//if its the last item in the buffer, we have to exit at zero
 					if (last_item)
 					{
-						return (0.0);
+						exit_speed = 0.0;
 					}
 
 					return exit_speed;
+				}
+
+				bool Block::feed_mode_zero_start(s_bit_flag_controller<e_feed_block_state> feed)
+				{
+					bool requires_zero_start = false;
+
+					if ((feed.get(e_feed_block_state::feed_mode_units_per_rotation)
+						&& feed.get(e_feed_block_state::feed_mode_change)))
+						requires_zero_start = true;
+
+					return requires_zero_start;
+
 				}
 
 			}

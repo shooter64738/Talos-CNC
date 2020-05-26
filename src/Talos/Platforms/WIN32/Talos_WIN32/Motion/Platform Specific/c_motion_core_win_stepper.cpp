@@ -77,7 +77,7 @@ void Hardware_Abstraction_Layer::MotionCore::Stepper::timer1_overflow_thread()
 		{
 			Talos::Motion::Core::Output::Segment::pntr_driver();
 			//c_stepper::step_tick();
-			std::this_thread::sleep_for(std::chrono::microseconds(2));
+			std::this_thread::sleep_for(std::chrono::microseconds(5));
 
 		}
 	}
