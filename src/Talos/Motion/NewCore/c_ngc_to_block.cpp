@@ -44,6 +44,8 @@ namespace Talos
 				//Set the planned block to the first block by default.
 				__s_motion_block* Block::planned_block = Block::motion_buffer.peek(0);
 
+				static uint32_t running_sequence = 0;
+
 				void Block::load_ngc_test()
 				{
 					mtn_cfg::Controller.load_defaults();
@@ -52,7 +54,8 @@ namespace Talos
 					NGC_RS274::Block_View view = NGC_RS274::Block_View(&int_cfg::DefaultBlock.Settings);
 					*view.current_g_codes.Motion = NGC_RS274::G_codes::RAPID_POSITIONING;
 
-					for (int i = 0; i < NGC_BUFFER_SIZE; i++)
+					uint8_t recs = 2; //NGC_BUFFER_SIZE
+					for (int i = 0; i < recs ; i++)
 					{
 						s_ngc_block testblock{ 0 };
 						view.copy_persisted_data(&int_cfg::DefaultBlock.Settings, &testblock);
@@ -225,7 +228,9 @@ namespace Talos
 					__plan_buffer_line(&motion_block, mtn_cfg::Controller.Settings, &persisted_values, unit_vec, target_steps);
 
 					motion_block.Station = view.active_view_block->__station__;
-					motion_block.common.tracking.incr_seq();
+					motion_block.common.tracking.sequence = running_sequence++;
+					motion_block.common.tracking.line_number = *view.persisted_values.active_line_number_N;
+
 					motion_buffer.put(motion_block);
 
 					__planner_recalculate();
@@ -357,10 +362,10 @@ namespace Talos
 						persisted_values.feed.set(new_feed_mode);
 
 						//motion blocks flags should have been cleared on get, so just set it
-						motion_block->common.feed.set(new_feed_mode);
+						motion_block->common.control_bits.feed.set(new_feed_mode);
 						//flag this block as changing feed modes. this will effect how the junction
 						//speeds are handled
-						motion_block->common.feed.set(e_feed_block_state::feed_mode_change);
+						motion_block->common.control_bits.feed.set(e_feed_block_state::feed_mode_change);
 					}
 					return new_feed_mode;
 				}
@@ -475,24 +480,23 @@ namespace Talos
 
 					bool is_last;
 
-					__s_motion_block* block_index = motion_buffer.cur_head(&is_last);
+					//last written item
+					__s_motion_block* last_added = motion_buffer.cur_head(&is_last);
 
 					// Bail. Can't do anything with one only one plan-able block.
-					if (block_index == planned_block)
+					if (last_added == planned_block)
 					{
 						return;
 					}
 
-					// Reverse Pass: Coarsely maximize all possible deceleration curves back-planning from the last
-					// block in buffer. Cease planning when the last optimal planned or tail pointer is reached.
-					// NOTE: Forward pass will later refine and correct the reverse pass to create an optimal plan.
-					float entry_speed_sqr;
-					__s_motion_block* next;
-					__s_motion_block* current_block_from_index = motion_buffer.peek(block_index->Station);
+					
+					float entry_speed_sqr = 0.0;
+					__s_motion_block* next = NULL;
 
 					// Calculate maximum entry speed for last block in buffer, where the exit speed is always zero.
-					current_block_from_index->entry_speed_sqr = min(current_block_from_index->max_entry_speed_sqr, 2 * current_block_from_index->acceleration * current_block_from_index->millimeters);
-
+					last_added->entry_speed_sqr = 
+						min(last_added->max_entry_speed_sqr, 2 * last_added->acceleration * last_added->millimeters);
+					//grbl is stepping back again
 					block_index = motion_buffer.peek(block_index->Station - 1);
 					if (block_index == planned_block)
 					{ // Only two plannable blocks in buffer. Reverse pass complete.
@@ -506,8 +510,8 @@ namespace Talos
 					{ // Three or more plan-able blocks
 						while (block_index != planned_block)
 						{
-							next = current_block_from_index;
-							current_block_from_index = motion_buffer.peek(block_index->Station);
+							next = last_added;
+							last_added = motion_buffer.peek(block_index->Station);
 							block_index = motion_buffer.peek(block_index->Station - 1);
 
 							// Check if next block is the tail block(=planned block). If so, update current stepper parameters.
@@ -517,16 +521,16 @@ namespace Talos
 							}
 
 							// Compute maximum entry speed decelerating over the current block from its exit speed.
-							if (current_block_from_index->entry_speed_sqr != current_block_from_index->max_entry_speed_sqr)
+							if (last_added->entry_speed_sqr != last_added->max_entry_speed_sqr)
 							{
-								entry_speed_sqr = next->entry_speed_sqr + 2 * current_block_from_index->acceleration * current_block_from_index->millimeters;
-								if (entry_speed_sqr < current_block_from_index->max_entry_speed_sqr)
+								entry_speed_sqr = next->entry_speed_sqr + 2 * last_added->acceleration * last_added->millimeters;
+								if (entry_speed_sqr < last_added->max_entry_speed_sqr)
 								{
-									current_block_from_index->entry_speed_sqr = entry_speed_sqr;
+									last_added->entry_speed_sqr = entry_speed_sqr;
 								}
 								else
 								{
-									current_block_from_index->entry_speed_sqr = current_block_from_index->max_entry_speed_sqr;
+									last_added->entry_speed_sqr = last_added->max_entry_speed_sqr;
 								}
 							}
 						}
@@ -624,7 +628,7 @@ namespace Talos
 					uint8_t over_ride = 100;
 					float nominal_speed = motion_block->programmed_rate;
 					//if (block->condition & (PL_COND_FLAG_RAPID_MOTION))
-					if (motion_block->common.motion.get(e_motion_block_state::motion_rapid))
+					if (motion_block->common.control_bits.motion.get(e_motion_block_state::motion_rapid))
 					{
 						nominal_speed *= (0.01 * over_ride);
 					}
@@ -647,7 +651,7 @@ namespace Talos
 					return (mtn_cfg::Controller.Settings.internals.MINIMUM_FEED_RATE);
 				}
 
-				float Block::plan_get_exec_block_exit_speed_sqr()
+				float Block::get_next_block_exit_speed()
 				{
 					bool last_item = false;
 					__s_motion_block* block = Block::motion_buffer.cur_tail(&last_item);
@@ -658,8 +662,8 @@ namespace Talos
 						return (0.0);
 					}
 					//Get the block ahead of our current block
-					//return (Motion_Core::Planner::Buffer::Get(Motion_Core::Segment::Arbitrator::Active_Block->Station + 1)->entry_speed_sqr);
-					return (block->entry_speed_sqr);
+					return Block::motion_buffer.peek(block->Station + 1)->entry_speed_sqr;
+					//return (block->entry_speed_sqr);
 
 				}
 

@@ -60,7 +60,7 @@ namespace Talos
 					static void plan_compute_profile_parameters(
 						__s_motion_block* motion_block, float nominal_speed, float prev_nominal_speed);
 
-					static float plan_get_exec_block_exit_speed_sqr();
+					static float get_next_block_exit_speed();
 
 				protected:
 				private:

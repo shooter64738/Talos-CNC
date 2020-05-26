@@ -94,7 +94,7 @@ namespace Talos
 						}
 
 						//If flagged to re init the segment, then do it
-						if (Segment::active_block->common.motion.get_clr(e_motion_block_state::reinitialize_segment))
+						if (Segment::active_block->common.control_bits.motion.get_clr(e_motion_block_state::reinitialize_segment))
 							Segment::__calc_seg_base(&seg_base);
 
 						//if the timer buffer is full, we gotta wait. 
@@ -201,7 +201,7 @@ namespace Talos
 						float exit_speed_sqr;
 						float nominal_speed;
 
-						exit_speed_sqr = Input::Block::plan_get_exec_block_exit_speed_sqr();
+						exit_speed_sqr = Input::Block::get_next_block_exit_speed();
 						seg_base_arg->exit_speed = sqrt(exit_speed_sqr);
 
 						nominal_speed = Input::Block::plan_compute_profile_nominal_speed(Segment::active_block);
@@ -289,6 +289,7 @@ namespace Talos
 					//copy common data from the segment base to the timer item.
 					timer_item.common.tracking = seg_base_arg->common.tracking;
 					timer_item.common.bres_obj = seg_base_arg->common.bres_obj;
+					timer_item.common.timer_number = t_seq++;
 
 					__check_ramp_state(&Segment::frag_calc_vars, seg_base_arg, &timer_item);
 
@@ -333,7 +334,7 @@ namespace Talos
 				void Segment::__check_ramp_state(s_fragment_vars* vars, s_segment_base* seg_base_arg, s_timer_item* timer_item)
 				{
 					//always assume acceleration at start
-					timer_item->common.speed.set(e_speed_block_state::motion_state_accelerating);
+					timer_item->common.control_bits.speed.set(e_speed_block_state::motion_state_accelerating);
 					//setup some base values
 					vars->dt_max = mtn_cfg::Controller.Settings.internals.DT_SEGMENT(); // Maximum segment time
 					vars->dt = 0.0; // Initialize segment time
@@ -485,12 +486,12 @@ namespace Talos
 							if (seg_base_arg->mm_remaining == seg_base_arg->decelerate_after)
 							{
 								seg_base_arg->ramp_type = e_ramp_type::Decel;
-								timer_item->common.speed.set(e_speed_block_state::motion_state_decelerating);
+								timer_item->common.control_bits.speed.set(e_speed_block_state::motion_state_decelerating);
 							}
 							else
 							{
 								seg_base_arg->ramp_type = e_ramp_type::Cruise;
-								timer_item->common.speed.set(e_speed_block_state::motion_state_cruising);
+								timer_item->common.control_bits.speed.set(e_speed_block_state::motion_state_cruising);
 							}
 							seg_base_arg->current_speed = seg_base_arg->maximum_speed;
 						}
@@ -541,7 +542,7 @@ namespace Talos
 								(seg_base_arg->current_speed + seg_base_arg->maximum_speed);
 
 							seg_base_arg->ramp_type = e_ramp_type::Cruise;
-							timer_item->common.speed.set(e_speed_block_state::motion_state_cruising);
+							timer_item->common.control_bits.speed.set(e_speed_block_state::motion_state_cruising);
 							seg_base_arg->current_speed = seg_base_arg->maximum_speed;
 						}
 						else
@@ -553,7 +554,7 @@ namespace Talos
 				void Segment::__check_cruise(s_fragment_vars* vars, s_segment_base* seg_base_arg, s_timer_item* timer_item)
 				{
 					{
-						timer_item->common.speed.set(e_speed_block_state::motion_state_cruising);
+						timer_item->common.control_bits.speed.set(e_speed_block_state::motion_state_cruising);
 						// NOTE: mm_var used to retain the last mm_remaining for incomplete segment time_var calculations.
 						// NOTE: If maximum_speed*time_var value is too low, round-off can cause mm_var to not change. To
 						//   prevent this, simply enforce a minimum speed threshold in the planner.
@@ -566,7 +567,7 @@ namespace Talos
 
 							seg_base_arg->mm_remaining = seg_base_arg->decelerate_after; // NOTE: 0.0 at EOB
 							seg_base_arg->ramp_type = e_ramp_type::Decel;
-							timer_item->common.speed.set(e_speed_block_state::motion_state_decelerating);
+							timer_item->common.control_bits.speed.set(e_speed_block_state::motion_state_decelerating);
 						}
 						else
 						{ // Cruising only.
@@ -583,7 +584,7 @@ namespace Talos
 						//Update the entry speed of the block we jsut loaded in the arbitrator. This should be the same speed we are currently running.
 						Segment::active_block->entry_speed_sqr = seg_base.current_speed * seg_base.current_speed; // Update entry speed.
 						//States::Process::states.set(States::Process::e_states::reinitialize_segment);
-						Segment::active_block->common.motion.set(e_motion_block_state::reinitialize_segment);
+						Segment::active_block->common.control_bits.motion.set(e_motion_block_state::reinitialize_segment);
 					}
 				}
 			}

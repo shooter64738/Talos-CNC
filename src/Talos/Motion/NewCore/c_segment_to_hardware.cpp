@@ -62,6 +62,7 @@ namespace Talos
 
 				//default the gate to new motion.
 				void(*Segment::pntr_next_gate)(void) = Segment::__new_motion;
+				void(*Segment::pntr_driver)(void) = NULL;
 
 				static s_timer_item* active_timer_item = NULL;
 				static s_bresenham* active_bresenham = NULL;
@@ -84,7 +85,9 @@ namespace Talos
 #ifdef MSVC
 					myfile.open("acceleration.txt");
 #endif // MSVC
-					__configure_spindle();
+					//__configure_spindle();
+					//__release_brakes();
+					__motion_start();
 				}
 
 				void Segment::__configure_spindle()
@@ -104,6 +107,8 @@ namespace Talos
 				{
 					__s_spindle_block* spindle_block = mot_dat::Block::spindle_buffer.peek();
 
+					//make hardware calls to start the spindle up.
+
 					//if this motion requires spindle synch, point he gate keepr to the spindle synch waiter
 					if (spindle_block->states.get(e_spindle_state::synch_with_motion))
 					{
@@ -114,11 +119,7 @@ namespace Talos
 						//2. the spindle comes on and reaches the target speed.
 						Segment::pntr_next_gate = __spindle_wait_synch;
 					}
-					else
-					{
-						__release_brakes();
-						Segment::pntr_next_gate = Segment::__motion_start;
-					}
+					
 					
 				}
 
@@ -135,11 +136,34 @@ namespace Talos
 
 				void Segment::__motion_start()
 				{
+					/*
+					Clear the gate keeper so that no new calls come in here.
+					The motion will execute everything thats coming in, as it
+					comes in. We do not need to 'start' motion again until:
+					1. The feed mode changes to something requiring a different
+					drive mode. Such as spindle synch. Motion will appear to
+					just continue to the operator, but in reality we have:
+						a.'stopped'
+						b. 'reconfigured the spindle for the new feed mode
+						c. started the motion again, alwithin about 5us
+					2. All motion is executed and the interpollation 'stops'.
+					At the stop point, the gatekeeper is reset so that new motions
+					can be started again.
+
+					Effectively this will run as one continuous motion until 1 of
+					the 2 conditions above are met.
+					*/
+
+					Segment::pntr_next_gate = NULL;
+
+					//The timer isr will call 'driver' 
+					Segment::pntr_driver = __run_interpolation;
+
 					mtn_ctl::Output::states.set(mtn_ctl::Output::e_states::interpolation_running);
 					//start the timer, this will set all of the wheel in motion
 					Hardware_Abstraction_Layer::MotionCore::Stepper::wake_up();
 					
-					//null gate keeper??? no sure what to do yet... 
+					//null gate keeper??? not sure what to do yet... 
 					//Segment::pntr_next_gate = NULL;
 					
 				}
@@ -179,9 +203,10 @@ namespace Talos
 						//were there any more segments? if not we are done.
 						if (end)
 						{
-							//set this to null in case the timer fires will we are in here.
-							Segment::pntr_next_gate = NULL;
+							//shut down the hardware
+							Hardware_Abstraction_Layer::MotionCore::Stepper::st_go_idle();
 							Segment::__end_interpolation();
+							return;
 						}
 					}
 					//seems stable to here.
@@ -199,7 +224,7 @@ namespace Talos
 								active_timer_item->common.bres_obj->step_event_count;
 
 							//We arent changing system position on a backlash comp motion.
-							if (!active_timer_item->common.system.get(e_system_block_state::block_state_skip_sys_pos_update))
+							if (!active_timer_item->common.control_bits.system.get(e_system_block_state::block_state_skip_sys_pos_update))
 							{
 								/*if (active_timer_item->common.bres_obj->direction_bits._flag & (1 << i))
 									Motion_Core::Hardware::Interpolation::system_position[i]--;
@@ -214,11 +239,11 @@ namespace Talos
 					//If feedmode is spindle synch, calculate the correct delay value for
 					//the feedrate, based on spindle current speed
 					//TODO: is there a better way to do this without several if statements?
-					if (active_timer_item->common.feed.get(e_feed_block_state::feed_mode_units_per_rotation))
+					if (active_timer_item->common.control_bits.feed.get(e_feed_block_state::feed_mode_units_per_rotation))
 					{
 						//only adjust the delay value if we are in 'cruise' state.
 						//The arbitrator still controls motion during accel and decel
-						if (active_timer_item->common.speed.get(e_speed_block_state::motion_state_cruising))
+						if (active_timer_item->common.control_bits.speed.get(e_speed_block_state::motion_state_cruising))
 						{
 							//Hardware_Abstraction_Layer::MotionCore::Stepper::OCR1A_set
 							//(Hardware_Abstraction_Layer::MotionCore::Spindle::spindle_encoder->feedrate_delay);
@@ -237,6 +262,8 @@ namespace Talos
 
 				bool Segment::__config_timer()
 				{
+					bool done = true;
+
 					if (seg_dat::Segment::timer_buffer.has_data())
 					{
 						//dont 'get' here otherwise the item we are pointing at will get over written
@@ -246,16 +273,17 @@ namespace Talos
 					else
 						int x = 0;
 
-					bool done = true;
+					
 					if (active_timer_item != NULL)
 					{
 						done = false;
 #ifdef MSVC
+						myfile << active_timer_item->common.timer_number << ",";
 						myfile << active_timer_item->steps_to_execute_in_this_segment << ",";
 						myfile << active_timer_item->timer_delay_value << ",";
-						myfile << '0' + active_timer_item->common.tracking.line_number << ",";
-						myfile << '0' + active_timer_item->common.tracking.sequence;
-						myfile << "\r\n";
+						myfile << active_timer_item->common.tracking.line_number << ",";
+						myfile << active_timer_item->common.tracking.sequence;
+						myfile << "\r";
 						myfile.flush();
 #endif
 
@@ -294,11 +322,16 @@ namespace Talos
 					myfile.flush();
 					myfile.close();
 #endif // MSVC
+					
+
 					__set_brakes();
 				}
 
 				void Segment::__set_brakes()
 				{
+					//set this to null in case the timer fires will we are in here.
+					Segment::pntr_driver = NULL;
+
 					Segment::pntr_next_gate = Segment::__new_motion;
 				}
 			}

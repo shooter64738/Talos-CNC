@@ -23,11 +23,13 @@ namespace Talos
 				private:
 					//static s_common_segment_items previous_flags;
 					static void(*pntr_next_gate)(void);
+					
 					//functions
 				public:
-					
 					static void gate_keeper();
-					
+					static void(*pntr_driver)(void);
+
+
 				protected:
 				private:
 					static void __configure_spindle();

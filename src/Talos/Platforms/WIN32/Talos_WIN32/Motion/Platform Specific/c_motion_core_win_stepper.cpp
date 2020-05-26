@@ -75,9 +75,9 @@ void Hardware_Abstraction_Layer::MotionCore::Stepper::timer1_overflow_thread()
 		//only run a step timer tick if the 'timer' is enabled
 		if (Hardware_Abstraction_Layer::MotionCore::Stepper::_TIMSK1 & (1 << OCIE1A))
 		{
-			Talos::Motion::Core::Output::Segment::gate_keeper();
+			Talos::Motion::Core::Output::Segment::pntr_driver();
 			//c_stepper::step_tick();
-			std::this_thread::sleep_for(std::chrono::microseconds(1500));
+			std::this_thread::sleep_for(std::chrono::microseconds(2));
 
 		}
 	}
