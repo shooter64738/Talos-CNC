@@ -54,7 +54,7 @@ namespace Talos
 					NGC_RS274::Block_View view = NGC_RS274::Block_View(&int_cfg::DefaultBlock.Settings);
 					*view.current_g_codes.Motion = NGC_RS274::G_codes::RAPID_POSITIONING;
 
-					uint8_t recs = 5; //NGC_BUFFER_SIZE
+					uint8_t recs = 6; //NGC_BUFFER_SIZE
 					for (int i = 0; i < recs; i++)
 					{
 						s_ngc_block testblock{ 0 };
@@ -63,6 +63,12 @@ namespace Talos
 						view = NGC_RS274::Block_View(&testblock);
 						*view.axis_array[0] = ((i + 1) * 10);
 						*view.persisted_values.active_spindle_speed_S = 1234;
+
+						if (i < 3 || i>4)
+							* view.current_g_codes.Feed_rate_mode = NGC_RS274::G_codes::FEED_RATE_UNITS_PER_MINUTE_MODE;
+						if (i == 3 || i == 4)
+							* view.current_g_codes.Feed_rate_mode = NGC_RS274::G_codes::FEED_RATE_UNITS_PER_ROTATION;
+
 						testblock.target_motion_position[0] = ((i + 1) * 10);
 						testblock.__station__ = i;
 						Block::ngc_buffer.put(testblock);
@@ -417,8 +423,9 @@ namespace Talos
 					//Also if there is a feedmode change to units per rotation that wasnt 
 					//there before we need to start from rest. 
 					if (!Block::motion_buffer.has_data()
-						|| (motion_block->common.control_bits.feed.get(e_feed_block_state::feed_mode_units_per_rotation)
-							&& motion_block->common.control_bits.feed.get(e_feed_block_state::feed_mode_change)))
+						/*|| (motion_block->common.control_bits.feed.get(e_feed_block_state::feed_mode_units_per_rotation)
+							&& motion_block->common.control_bits.feed.get(e_feed_block_state::feed_mode_change))*/
+						)
 					{
 						// Initialize block entry speed as zero. Assume it will be starting from rest. Planner will correct this later.
 						// If system motion, the system motion block always is assumed to start from rest and end at a complete stop.
@@ -538,13 +545,24 @@ namespace Talos
 						// Check if next block is the tail block(=planned block). If so, update current stepper parameters.
 						if (block_index == block_buffer_tail) { Process::Segment::st_update_plan_block_parameters(); }
 						// Compute maximum entry speed decelerating over the current block from its exit speed.
-						if (current->entry_speed_sqr != current->max_entry_speed_sqr) {
-							entry_speed_sqr = next->entry_speed_sqr + 2 * current->acceleration * current->millimeters;
-							if (entry_speed_sqr < current->max_entry_speed_sqr) {
-								current->entry_speed_sqr = entry_speed_sqr;
-							}
-							else {
-								current->entry_speed_sqr = current->max_entry_speed_sqr;
+					/*	if (!(current->common.control_bits.feed.get(e_feed_block_state::feed_mode_units_per_rotation)
+							&& current->common.control_bits.feed.get(e_feed_block_state::feed_mode_change)))
+						{
+							int x = 0;
+						}
+						else*/
+						{
+							if (current->entry_speed_sqr != current->max_entry_speed_sqr)
+							{
+								entry_speed_sqr = next->entry_speed_sqr + 2 * current->acceleration * current->millimeters;
+								if (entry_speed_sqr < current->max_entry_speed_sqr)
+								{
+									current->entry_speed_sqr = entry_speed_sqr;
+								}
+								else
+								{
+									current->entry_speed_sqr = current->max_entry_speed_sqr;
+								}
 							}
 						}
 					}
@@ -572,13 +590,21 @@ namespace Talos
 						// Any acceleration detected in the forward pass automatically moves the optimal planned
 						// pointer forward, since everything before this is all optimal. In other words, nothing
 						// can improve the plan from the buffer tail to the planned pointer by logic.
-						if (current->entry_speed_sqr < next->entry_speed_sqr)
+						/*if (!(next->common.control_bits.feed.get(e_feed_block_state::feed_mode_units_per_rotation)
+							&& next->common.control_bits.feed.get(e_feed_block_state::feed_mode_change)))
 						{
-							entry_speed_sqr = current->entry_speed_sqr + 2 * current->acceleration * current->millimeters;
-							// If true, current block is full-acceleration and we can move the planned pointer forward.
-							if (entry_speed_sqr < next->entry_speed_sqr) {
-								next->entry_speed_sqr = entry_speed_sqr; // Always <= max_entry_speed_sqr. Backward pass sets this.
-								block_buffer_planned = block_index; // Set optimal plan pointer.
+							int x = 0;
+						}
+						else*/
+						{
+							if (current->entry_speed_sqr < next->entry_speed_sqr)
+							{
+								entry_speed_sqr = current->entry_speed_sqr + 2 * current->acceleration * current->millimeters;
+								// If true, current block is full-acceleration and we can move the planned pointer forward.
+								if (entry_speed_sqr < next->entry_speed_sqr) {
+									next->entry_speed_sqr = entry_speed_sqr; // Always <= max_entry_speed_sqr. Backward pass sets this.
+									block_buffer_planned = block_index; // Set optimal plan pointer.
+								}
 							}
 						}
 
@@ -648,14 +674,18 @@ namespace Talos
 					__s_motion_block* block =
 						Block::motion_buffer.peek
 						(Block::motion_buffer.cur_tail(&last_item)->Station + 1);
+					float exit_speed = 0.0;
 
 					//the entry speed for the NEXT block, is the exist speed for the current block
-					float exit_speed = block->entry_speed_sqr;
+					if (block != NULL)
+					{
+						exit_speed = block->entry_speed_sqr;
 
-					//if feedmode is changing to units per rev, we have to exit at zero
-					if ((block->common.control_bits.feed.get(e_feed_block_state::feed_mode_units_per_rotation)
-						&& block->common.control_bits.feed.get(e_feed_block_state::feed_mode_change)))
-						exit_speed = 0.0;
+						//if feedmode is changing to units per rev, we have to exit at zero
+						/*if ((block->common.control_bits.feed.get(e_feed_block_state::feed_mode_units_per_rotation)
+							&& block->common.control_bits.feed.get(e_feed_block_state::feed_mode_change)))
+							exit_speed = 0.0;*/
+					}
 
 					//if its the last item in the buffer, we have to exit at zero
 					if (last_item)
