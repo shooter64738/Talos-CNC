@@ -177,6 +177,7 @@ namespace Talos
 				uint8_t Segment::__calc_seg_base(s_segment_base* seg_base_arg)
 				{
 					seg_base_arg->common.tracking = Segment::active_block->common.tracking;
+					seg_base_arg->common.control_bits.feed = Segment::active_block->common.control_bits.feed;
 
 					seg_base_arg->mm_complete = 0.0; // Default velocity profile complete at 0.0mm from end of block.
 					float inv_2_accel = 0.5 / Segment::active_block->acceleration;
@@ -297,6 +298,9 @@ namespace Talos
 					//copy common data from the segment base to the timer item.
 					timer_item.common.tracking = seg_base_arg->common.tracking;
 					timer_item.common.bres_obj = seg_base_arg->common.bres_obj;
+					timer_item.common.control_bits.feed = seg_base_arg->common.control_bits.feed;
+					timer_item.common.control_bits.speed = seg_base_arg->common.control_bits.speed;
+					timer_item.common.control_bits.system = seg_base_arg->common.control_bits.system;
 
 					__check_ramp_state(&Segment::frag_calc_vars, seg_base_arg, &timer_item);
 
