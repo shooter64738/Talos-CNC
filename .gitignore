@@ -357,3 +357,4 @@ src/Talos/Platforms/STM32/Talos_STM32H745_Coordinator/xxxxSTM32H7xxxx/BSP/Compon
 src/Talos/Platforms/STM32/Talos_STM32H745_Motion/Talos_STM32H745_Motion-Debug.vgdbsettings
 src/Talos/Platforms/STM32/Talos_STM32H745_Motion/Talos_STM32H745_Motion-Release.vgdbsettings
 src/Talos/Platforms/WIN32/Talos_WIN32/Coordinator/cache.dat
+src/Talos/Platforms/WIN32/Talos_WIN32/Motion/acceleration.txt

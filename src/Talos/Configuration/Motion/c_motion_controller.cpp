@@ -61,9 +61,9 @@ uint8_t c_controller::load_defaults()
 
 	for (uint8_t i = 0; i < MACHINE_AXIS_COUNT; i++)
 	{
-		Settings.hardware.steps_per_mm[i] = 400;
-		Settings.hardware.acceleration[i] = (45.0 * 60 * 60);
-		Settings.hardware.max_rate[i] = 600;
+		Settings.hardware.steps_per_mm[i] = 160;
+		Settings.hardware.acceleration[i] = (100.0 * 60 * 60);
+		Settings.hardware.max_rate[i] = 5000;
 		Settings.hardware.distance_per_rotation[i] = 5;
 
 		Settings.hardware.back_lash_comp_distance[i] = 55;

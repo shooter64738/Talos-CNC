@@ -292,7 +292,6 @@ namespace Talos
 					{
 						done = false;
 #ifdef MSVC
-						myfile << active_timer_item->common.timer_number << ",";
 						myfile << active_timer_item->steps_to_execute_in_this_segment << ",";
 						myfile << active_timer_item->timer_delay_value << ",";
 						myfile << active_timer_item->common.tracking.line_number << ",";

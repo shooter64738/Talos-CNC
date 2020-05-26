@@ -55,7 +55,7 @@ namespace Talos
 					*view.current_g_codes.Motion = NGC_RS274::G_codes::RAPID_POSITIONING;
 
 					uint8_t recs = 5; //NGC_BUFFER_SIZE
-					for (int i = 0; i < recs ; i++)
+					for (int i = 0; i < recs; i++)
 					{
 						s_ngc_block testblock{ 0 };
 						view.copy_persisted_data(&int_cfg::DefaultBlock.Settings, &testblock);
@@ -413,8 +413,12 @@ namespace Talos
 					, int32_t* target_steps)
 				{
 					uint8_t idx = 0;
-					// TODO: Need to check this method handling zero junction speeds when starting from rest.
-					if (!Block::motion_buffer.has_data())
+					//If there is no data in the buffer we are assuming a start from rest.
+					//Also if there is a feedmode change to units per rotation that wasnt 
+					//there before we need to start from rest. 
+					if (!Block::motion_buffer.has_data()
+						|| (motion_block->common.control_bits.feed.get(e_feed_block_state::feed_mode_units_per_rotation)
+							&& motion_block->common.control_bits.feed.get(e_feed_block_state::feed_mode_change)))
 					{
 						// Initialize block entry speed as zero. Assume it will be starting from rest. Planner will correct this later.
 						// If system motion, the system motion block always is assumed to start from rest and end at a complete stop.
@@ -481,18 +485,18 @@ namespace Talos
 					bool is_last;
 
 					//last written block
-					__s_motion_block* last_added = motion_buffer.cur_head(&is_last);
+					__s_motion_block* last_added = motion_buffer.cur_head();
 
 					//there is only one block and no optimizations can occur
-					if (last_added == planned_block){return;}
-										
+					if (last_added == planned_block) { return; }
+
 					float entry_speed_sqr = 0.0;
 					__s_motion_block* next = NULL;
 
 					// Calculate maximum entry speed for last block in buffer, where the exit speed is always zero.
-					last_added->entry_speed_sqr = 
+					last_added->entry_speed_sqr =
 						min(last_added->max_entry_speed_sqr, 2 * last_added->acceleration * last_added->millimeters);
-					
+
 					//move back 1 from teh last added item
 					__s_motion_block* block_index = motion_buffer.peek(last_added->Station - 1);
 					if (block_index == planned_block)
@@ -509,32 +513,30 @@ namespace Talos
 					}
 
 					__forward_plan();
-					
+
 				}
 				void Block::__reverse_plan()
 				{
 					bool is_last = true;
 					uint8_t block_buffer_planned = planned_block->Station;
-					uint8_t block_index = motion_buffer.cur_head(&is_last)->Station; 
+					uint8_t block_index = motion_buffer.cur_head()->Station;
 					uint8_t block_buffer_tail = motion_buffer._tail;
-					
-					__s_motion_block* current = motion_buffer.cur_head(&is_last);
+
+					__s_motion_block* current = motion_buffer.cur_head();
 					__s_motion_block* block_buffer;
 					block_buffer = motion_buffer._storage_pointer;
 					__s_motion_block* next = NULL;
 
-
 					float entry_speed_sqr = 0.0;
 
-
-					while (block_index != block_buffer_planned) {
+					while (block_index != block_buffer_planned)
+					{
 						next = current;
 						current = &block_buffer[block_index];
-						block_index --;// plan_prev_block_index(block_index);
+						block_index--;// plan_prev_block_index(block_index);
 
 						// Check if next block is the tail block(=planned block). If so, update current stepper parameters.
 						if (block_index == block_buffer_tail) { Process::Segment::st_update_plan_block_parameters(); }
-
 						// Compute maximum entry speed decelerating over the current block from its exit speed.
 						if (current->entry_speed_sqr != current->max_entry_speed_sqr) {
 							entry_speed_sqr = next->entry_speed_sqr + 2 * current->acceleration * current->millimeters;
@@ -553,23 +555,25 @@ namespace Talos
 					uint8_t block_buffer_planned = planned_block->Station;
 					uint8_t block_index = planned_block->Station + 1;
 					uint8_t block_buffer_head = motion_buffer._head;
-					bool is_last = true;
-					__s_motion_block * current = motion_buffer.cur_head(&is_last);
-					__s_motion_block * block_buffer;
+
+					__s_motion_block* current = motion_buffer.cur_head();
+					__s_motion_block* block_buffer;
 					block_buffer = motion_buffer._storage_pointer;
 					float entry_speed_sqr = 0.0;
 					// Forward Pass: Forward plan the acceleration curve from the planned pointer onward.
- // Also scans for optimal plan breakpoints and appropriately updates the planned pointer.
-					__s_motion_block * next = &block_buffer[block_buffer_planned]; // Begin at buffer planned pointer
+					// Also scans for optimal plan breakpoints and appropriately updates the planned pointer.
+					__s_motion_block* next = &block_buffer[block_buffer_planned]; // Begin at buffer planned pointer
 					block_index = planned_block->Station + 1;
-					while (block_index != block_buffer_head) {
+					while (block_index != block_buffer_head)
+					{
 						current = next;
 						next = &block_buffer[block_index];
 
 						// Any acceleration detected in the forward pass automatically moves the optimal planned
 						// pointer forward, since everything before this is all optimal. In other words, nothing
 						// can improve the plan from the buffer tail to the planned pointer by logic.
-						if (current->entry_speed_sqr < next->entry_speed_sqr) {
+						if (current->entry_speed_sqr < next->entry_speed_sqr)
+						{
 							entry_speed_sqr = current->entry_speed_sqr + 2 * current->acceleration * current->millimeters;
 							// If true, current block is full-acceleration and we can move the planned pointer forward.
 							if (entry_speed_sqr < next->entry_speed_sqr) {
@@ -641,17 +645,25 @@ namespace Talos
 				float Block::get_next_block_exit_speed()
 				{
 					bool last_item = false;
-					__s_motion_block* block = Block::motion_buffer.cur_tail(&last_item);
+					__s_motion_block* block =
+						Block::motion_buffer.peek
+						(Block::motion_buffer.cur_tail(&last_item)->Station + 1);
 
-					//Motion_Core::Planner::Block_Item *block_index = Motion_Core::Planner::Buffer::Current();
+					//the entry speed for the NEXT block, is the exist speed for the current block
+					float exit_speed = block->entry_speed_sqr;
+
+					//if feedmode is changing to units per rev, we have to exit at zero
+					if ((block->common.control_bits.feed.get(e_feed_block_state::feed_mode_units_per_rotation)
+						&& block->common.control_bits.feed.get(e_feed_block_state::feed_mode_change)))
+						exit_speed = 0.0;
+
+					//if its the last item in the buffer, we have to exit at zero
 					if (last_item)
 					{
 						return (0.0);
 					}
-					//Get the block ahead of our current block
-					return Block::motion_buffer.peek(block->Station + 1)->entry_speed_sqr;
-					//return (block->entry_speed_sqr);
 
+					return exit_speed;
 				}
 
 			}
