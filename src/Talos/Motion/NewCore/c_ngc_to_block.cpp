@@ -20,6 +20,7 @@
 namespace mtn_cfg = Talos::Configuration::Motion;
 namespace int_cfg = Talos::Configuration::Interpreter;
 //namespace mtn_out = Talos::Motion::Core::Output;
+namespace mtn_ctl_sta = Talos::Motion::Core::States;
 
 namespace Talos
 {
@@ -64,26 +65,34 @@ namespace Talos
 						*view.axis_array[0] = ((i + 1) * 10);
 						*view.persisted_values.active_spindle_speed_S = 1234;
 
-						//if (i < 3 || i>4)
+						if (i < 1 || i>4)
 						*view.current_g_codes.Feed_rate_mode = NGC_RS274::G_codes::FEED_RATE_UNITS_PER_MINUTE_MODE;
-						/*if (i == 3 || i == 4)
-							* view.current_g_codes.Feed_rate_mode = NGC_RS274::G_codes::FEED_RATE_UNITS_PER_ROTATION;*/
+						if (i == 2 || i == 4)
+							* view.current_g_codes.Feed_rate_mode = NGC_RS274::G_codes::FEED_RATE_UNITS_PER_ROTATION;
 
 						testblock.target_motion_position[0] = ((i + 1) * 10);
 						testblock.__station__ = i;
 						Block::ngc_buffer.put(testblock);
 					}
-					States::Process::states.set(States::Process::e_states::ngc_buffer_not_empty);
+					mtn_ctl_sta::Process::states.set(mtn_ctl_sta::Process::e_states::ngc_buffer_not_empty);
 				}
 
 				bool Block::ngc_buffer_process()
 				{
-					if (Block::ngc_buffer.has_data())
+					if (!mtn_ctl_sta::Process::states.get(mtn_ctl_sta::Process::e_states::motion_buffer_full))
 					{
-						Block::__load_ngc(Block::ngc_buffer.get());
+						if (!mtn_ctl_sta::Process::states.get(mtn_ctl_sta::Process::e_states::ngc_buffer_not_empty))
+						{
+							Block::__load_ngc(Block::ngc_buffer.get());
+							if (Block::ngc_buffer.has_data())
+								mtn_ctl_sta::Process::states.set(mtn_ctl_sta::Process::e_states::ngc_buffer_not_empty);
+							else
+								mtn_ctl_sta::Process::states.clear(mtn_ctl_sta::Process::e_states::ngc_buffer_not_empty);
+
+						}
 					}
 
-					return Block::ngc_buffer.has_data();
+					return mtn_ctl_sta::Process::states.get(mtn_ctl_sta::Process::e_states::ngc_buffer_not_empty);
 				}
 
 				uint8_t Block::__load_ngc(s_ngc_block* ngc_block)
@@ -243,6 +252,11 @@ namespace Talos
 
 					__planner_recalculate();
 
+					mtn_ctl_sta::Process::states.set(mtn_ctl_sta::Process::e_states::motion_buffer_not_empty);
+
+					if (motion_buffer._full)
+						mtn_ctl_sta::Process::states.set(mtn_ctl_sta::Process::e_states::motion_buffer_full);
+
 					return 1;
 				}
 
@@ -342,7 +356,7 @@ namespace Talos
 					}
 					case NGC_RS274::G_codes::FEED_RATE_UNITS_PER_MINUTE_MODE:
 					{
-						new_feed_mode = e_feed_block_state::feed_mode_minutes_per_unit;
+						new_feed_mode = e_feed_block_state::feed_mode_units_per_minute;
 						break;
 					}
 					case NGC_RS274::G_codes::FEED_RATE_UNITS_PER_ROTATION:
@@ -368,13 +382,13 @@ namespace Talos
 
 						//set the new feed mode so we can keep track of it
 						persisted_values.feed.set(new_feed_mode);
-
-						//motion blocks flags should have been cleared on get, so just set it
-						motion_block->common.control_bits.feed.set(new_feed_mode);
+						
 						//flag this block as changing feed modes. this will effect how the junction
 						//speeds are handled
 						motion_block->common.control_bits.feed.set(e_feed_block_state::feed_mode_change);
 					}
+					//motion blocks flags should have been cleared on get, so just set it
+					motion_block->common.control_bits.feed.set(new_feed_mode);
 					return new_feed_mode;
 				}
 
@@ -489,7 +503,7 @@ namespace Talos
 
 					//there is only one block and no optimizations can occur
 					if (last_added == planned_block) { return; }
-					
+
 					// Calculate maximum entry speed for last block in buffer, where the exit speed is always zero.
 					last_added->entry_speed_sqr =
 						min(last_added->max_entry_speed_sqr, 2 * last_added->acceleration * last_added->millimeters);
@@ -519,7 +533,7 @@ namespace Talos
 					float entry_speed_sqr = 0.0;
 
 					//loop backwards through the blocks.
-					__s_motion_block* previous = motion_buffer.peek(motion_buffer.cur_head()->Station-1);
+					__s_motion_block* previous = motion_buffer.peek(motion_buffer.cur_head()->Station - 1);
 					__s_motion_block* current = previous;
 					uint16_t stepper = current->Station;
 					while (previous != planned_block)

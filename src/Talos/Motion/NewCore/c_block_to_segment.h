@@ -64,7 +64,7 @@ namespace Talos
 				private:
 					static void __initialize_new_segment(s_segment_base* seg_base_arg);
 					static uint8_t	__calc_seg_base(s_segment_base* segment);
-					static uint8_t	__run_segment_frag(s_segment_base* segment);
+					static uint8_t	__set_hw_timer(s_segment_base* segment);
 					
 					static void __check_ramp_state(s_fragment_vars* vars, s_segment_base* seg_base_arg, s_timer_item* segment_item);
 					static void __check_accel(s_fragment_vars* vars, s_segment_base* seg_base_arg, s_timer_item* segment_item);

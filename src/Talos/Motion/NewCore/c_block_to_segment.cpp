@@ -15,7 +15,7 @@
 
 namespace mtn_cfg = Talos::Configuration::Motion;
 namespace int_cfg = Talos::Configuration::Interpreter;
-namespace mtn_ctl = Talos::Motion::Core::States;
+namespace mtn_ctl_sta = Talos::Motion::Core::States;
 
 
 namespace Talos
@@ -61,7 +61,7 @@ namespace Talos
 				{
 					uint16_t return_value = 0;
 
-					if (mtn_ctl::Motion::states.get(mtn_ctl::Motion::e_states::terminate))
+					if (mtn_ctl_sta::Motion::states.get(mtn_ctl_sta::Motion::e_states::terminate))
 					{
 						return;
 					}
@@ -90,7 +90,10 @@ namespace Talos
 								Segment::__calc_seg_base(&seg_base);
 							}
 							else
+							{								
+								mtn_ctl_sta::Process::states.clear(mtn_ctl_sta::Process::e_states::motion_buffer_not_empty);
 								break; //<--there was not a block we could pull and calculate at this time.
+							}
 						}
 
 						//If flagged to re init the segment, then do it
@@ -104,7 +107,7 @@ namespace Talos
 						if (Segment::timer_buffer._full)
 							break;
 
-						Segment::__run_segment_frag(&seg_base);
+						Segment::__set_hw_timer(&seg_base);
 
 						// Check for exit conditions and flag to load next planner block.
 						if (seg_base.mm_remaining == seg_base.mm_complete)
@@ -116,7 +119,7 @@ namespace Talos
 								// the segment queue, where realtime protocol will set new state upon receiving the
 								// cycle stop flag from the ISR. Prep_segment is blocked until then.
 
-								mtn_ctl::Motion::states.set(mtn_ctl::Motion::e_states::terminate);
+								mtn_ctl_sta::Motion::states.set(mtn_ctl_sta::Motion::e_states::terminate);
 
 
 								break; // Bail!
@@ -134,6 +137,11 @@ namespace Talos
 								Input::Block::motion_buffer.get();
 								//done with the bresenahm item. call 'get' to move the buffer indexes
 								Segment::bresenham_buffer.get();
+
+								if (Input::Block::motion_buffer.has_data())
+									mtn_ctl_sta::Process::states.set(mtn_ctl_sta::Process::e_states::motion_buffer_not_empty);
+								else
+									mtn_ctl_sta::Process::states.clear(mtn_ctl_sta::Process::e_states::motion_buffer_not_empty);
 								break;
 
 							}
@@ -169,8 +177,8 @@ namespace Talos
 					seg_base_arg->req_mm_increment = mtn_cfg::Controller.Settings.internals.REQ_MM_INCREMENT_SCALAR / seg_base_arg->step_per_mm;
 					seg_base_arg->dt_remainder = 0.0; // Reset for new segment block
 
-					if ((mtn_ctl::Motion::states.get(mtn_ctl::Motion::e_states::hold))
-						|| (mtn_ctl::Process::states.get_clr(mtn_ctl::Process::e_states::decel_override)))
+					if ((mtn_ctl_sta::Motion::states.get(mtn_ctl_sta::Motion::e_states::hold))
+						|| (mtn_ctl_sta::Process::states.get_clr(mtn_ctl_sta::Process::e_states::decel_override)))
 					{
 						// New block loaded mid-hold. Override planner block entry speed to enforce deceleration.
 						seg_base_arg->current_speed = seg_base_arg->exit_speed;
@@ -190,7 +198,7 @@ namespace Talos
 					seg_base_arg->mm_complete = 0.0; // Default velocity profile complete at 0.0mm from end of block.
 					float inv_2_accel = 0.5 / Segment::active_block->acceleration;
 
-					if (mtn_ctl::Motion::states.get(mtn_ctl::Motion::e_states::hold))
+					if (mtn_ctl_sta::Motion::states.get(mtn_ctl_sta::Motion::e_states::hold))
 					{ // [Forced Deceleration to Zero Velocity]
 						// Compute velocity profile parameters for a feed hold in-progress. This profile overrides
 						// the planner block profile, enforcing a deceleration to zero speed.
@@ -245,7 +253,7 @@ namespace Talos
 										* Segment::active_block->acceleration * Segment::active_block->millimeters);
 
 								//set decel over ride
-								mtn_ctl::Process::states.set(mtn_ctl::Process::e_states::decel_override);
+								mtn_ctl_sta::Process::states.set(mtn_ctl_sta::Process::e_states::decel_override);
 
 							}
 							else
@@ -297,7 +305,7 @@ namespace Talos
 					}
 					return 1;
 				}
-				uint8_t Segment::__run_segment_frag(s_segment_base* seg_base_arg)
+				uint8_t Segment::__set_hw_timer(s_segment_base* seg_base_arg)
 				{
 					seg_base_arg->mm_remaining = Segment::active_block->millimeters; // New segment distance from end of block.
 
@@ -307,6 +315,10 @@ namespace Talos
 					timer_item.common.tracking = seg_base_arg->common.tracking;
 					timer_item.common.bres_obj = seg_base_arg->common.bres_obj;
 					timer_item.common.control_bits.feed = seg_base_arg->common.control_bits.feed;
+					//we dont need to persist the feed mode change on every tiem item in the segment
+					//we've marked it here by copying the flag. Lets clear the persisted setting
+					seg_base_arg->common.control_bits.feed.clear(e_feed_block_state::feed_mode_change);
+
 					timer_item.common.control_bits.speed = seg_base_arg->common.control_bits.speed;
 					timer_item.common.control_bits.system = seg_base_arg->common.control_bits.system;
 
@@ -320,11 +332,11 @@ namespace Talos
 
 					if (timer_item.steps_to_execute_in_this_segment == 0)
 					{
-						if (mtn_ctl::Motion::states.get(mtn_ctl::Motion::e_states::hold))
+						if (mtn_ctl_sta::Motion::states.get(mtn_ctl_sta::Motion::e_states::hold))
 						{
 							// Less than one step to decelerate to zero speed, but already very close. AMASS
 							// requires full steps to execute. So, just bail.
-							mtn_ctl::Motion::states.set(mtn_ctl::Motion::e_states::terminate);
+							mtn_ctl_sta::Motion::states.set(mtn_ctl_sta::Motion::e_states::terminate);
 							return 0; // Segment not generated, but current step data still retained.
 						}
 					}

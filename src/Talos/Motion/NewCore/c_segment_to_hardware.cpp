@@ -6,10 +6,8 @@
 */
 
 #include "..//..//Configuration/c_configuration.h"
-#include "../../talos_hardware_def.h"
 #include "c_segment_to_hardware.h"
 #include "c_ngc_to_block.h"
-#include "support_items/e_state_flag.h"
 #include "c_block_to_segment.h"
 #include "c_state_control.h"
 #include <math.h>
@@ -25,7 +23,7 @@ static ofstream myfile;
 
 namespace mtn_cfg = Talos::Configuration::Motion;
 namespace int_cfg = Talos::Configuration::Interpreter;
-namespace mtn_ctl = Talos::Motion::Core::States;
+namespace mtn_ctl_sta = Talos::Motion::Core::States;
 namespace mot_dat = Talos::Motion::Core::Input;
 namespace seg_dat = Talos::Motion::Core::Process;
 
@@ -64,13 +62,15 @@ namespace Talos
 				void(*Segment::pntr_next_gate)(void) = Segment::__new_motion;
 				void(*Segment::pntr_driver)(void) = NULL;
 
-				static s_timer_item* active_timer_item = NULL;
+				/*static s_timer_item* active_timer_item = NULL;
 				static s_bresenham* active_bresenham = NULL;
 				static uint32_t active_line_number = 0;
 				static uint32_t last_complete_sequence = 0;
 				static uint32_t active_sequence = 0;
 				static uint16_t step_outbits = 0;
-				static int32_t bresenham_counter[MACHINE_AXIS_COUNT]{ 0 };
+				static int32_t bresenham_counter[MACHINE_AXIS_COUNT]{ 0 };*/
+
+				Segment::s_persisted Segment::_persisted{};
 
 				void Segment::gate_keeper()
 				{
@@ -159,7 +159,7 @@ namespace Talos
 					//The timer isr will call 'driver' 
 					Segment::pntr_driver = __run_interpolation;
 
-					mtn_ctl::Output::states.set(mtn_ctl::Output::e_states::interpolation_running);
+					mtn_ctl_sta::Output::states.set(mtn_ctl_sta::Output::e_states::interpolation_running);
 					//start the timer, this will set all of the wheel in motion
 					Hardware_Abstraction_Layer::MotionCore::Stepper::wake_up();
 					
@@ -198,7 +198,7 @@ namespace Talos
 
 					// If there is no step segment, attempt to pop one from the stepper buffer
 
-					if (active_timer_item == NULL)
+					if (Segment::_persisted.active_timer_item == NULL)
 					{
 						bool end = __config_timer();
 						//were there any more segments? if not we are done.
@@ -211,34 +211,34 @@ namespace Talos
 							myfile << 0 << ",";
 							myfile << 0 << ",";
 							myfile << 0 << ",";
-							myfile << active_line_number << ",";
-							myfile << active_sequence << ",";
+							myfile << _persisted.active_line_number << ",";
+							myfile << _persisted.active_sequence << ",";
 							myfile << total_steps << ",";
 							myfile << "\r";
 							myfile.flush();
 #endif
 
 
-							Segment::__end_interpolation();
+							__end_interpolation();
 							return;
 						}
 					}
 					//seems stable to here.
 					// Reset step out bits.
-					step_outbits = 0;
+					_persisted.step_outbits = 0;
 					for (int i = 0; i < MACHINE_AXIS_COUNT; i++)
 					{
 						// Execute step displacement profile by Bresenham line algorithm
-						bresenham_counter[i] += active_timer_item->common.bres_obj->steps[i];
-						if (bresenham_counter[i] >
-							active_timer_item->common.bres_obj->step_event_count)
+						_persisted.bresenham_counter[i] += _persisted.active_timer_item->common.bres_obj->steps[i];
+						if (_persisted.bresenham_counter[i] >
+							_persisted.active_timer_item->common.bres_obj->step_event_count)
 						{
-							step_outbits |= (1 << i);
-							bresenham_counter[i] -=
-								active_timer_item->common.bres_obj->step_event_count;
+							_persisted.step_outbits |= (1 << i);
+							_persisted.bresenham_counter[i] -=
+								_persisted.active_timer_item->common.bres_obj->step_event_count;
 
 							//We arent changing system position on a backlash comp motion.
-							if (!active_timer_item->common.control_bits.system.get(e_system_block_state::block_state_skip_sys_pos_update))
+							if (!_persisted.active_timer_item->common.control_bits.system.get(e_system_block_state::block_state_skip_sys_pos_update))
 							{
 								/*if (active_timer_item->common.bres_obj->direction_bits._flag & (1 << i))
 									Motion_Core::Hardware::Interpolation::system_position[i]--;
@@ -248,28 +248,28 @@ namespace Talos
 						}
 					}
 
-					active_timer_item->steps_to_execute_in_this_segment--;
+					_persisted.active_timer_item->steps_to_execute_in_this_segment--;
 					total_steps++;
 					//If feedmode is spindle synch, calculate the correct delay value for
 					//the feedrate, based on spindle current speed
 					//TODO: is there a better way to do this without several if statements?
-					if (active_timer_item->common.control_bits.feed.get(e_feed_block_state::feed_mode_units_per_rotation))
+					if (_persisted.active_timer_item->common.control_bits.feed.get(e_feed_block_state::feed_mode_units_per_rotation))
 					{
 						//only adjust the delay value if we are in 'cruise' state.
 						//The arbitrator still controls motion during accel and decel
-						if (active_timer_item->common.control_bits.speed.get(e_speed_block_state::motion_state_cruising))
+						if (_persisted.active_timer_item->common.control_bits.speed.get(e_speed_block_state::motion_state_cruising))
 						{
 							//Hardware_Abstraction_Layer::MotionCore::Stepper::OCR1A_set
 							//(Hardware_Abstraction_Layer::MotionCore::Spindle::spindle_encoder->feedrate_delay);
 						}
 					}
 
-					if (active_timer_item->steps_to_execute_in_this_segment == 0)
+					if (_persisted.active_timer_item->steps_to_execute_in_this_segment == 0)
 					{
 						//We are done with this timer item. Calling a get will move the indexes so the 
 						//buffer is empty if it was full before.
 						seg_dat::Segment::timer_buffer.get();
-						active_timer_item = NULL;
+						_persisted.active_timer_item = NULL;
 					}
 					//step_outbits ^= Motion_Core::Hardware::Interpolation::step_port_invert_mask;  // Apply step port invert mask
 				}
@@ -282,27 +282,45 @@ namespace Talos
 					{
 						//dont 'get' here otherwise the item we are pointing at will get over written
 						//by the segment loader in block_to_segment
-						active_timer_item = seg_dat::Segment::timer_buffer.peek();
+						_persisted.active_timer_item = seg_dat::Segment::timer_buffer.peek();
 					}
 					else
 						int x = 0;
 
 					
-					if (active_timer_item != NULL)
+					if (_persisted.active_timer_item != NULL)
 					{
 						done = false;
-#ifdef MSVC
-						//mot_dat::Block::feed_mode_zero_start(active_timer_item->common.control_bits.feed)
-						if (active_timer_item->common.control_bits.feed.get_clr(e_feed_block_state::feed_mode_units_per_rotation)
-							&& active_timer_item->common.control_bits.feed.get_clr(e_feed_block_state::feed_mode_change))
+						//does this new timer indicate a feed mode change
+						if (_persisted.active_timer_item->common.control_bits.feed.get(e_feed_block_state::feed_mode_change))
 						{
-							myfile << "feed mode change" << "\r";
+#ifdef MSVC
+							myfile << "*****feed mode change*****" << "\r";
+#endif
+							//does the change require spindle synch
+							if (_persisted.active_timer_item->common.control_bits.feed.get(
+								e_feed_block_state::feed_mode_units_per_rotation))
+							{
+#ifdef MSVC
+								myfile << "*****units per rotation*****" << "\r";
+#endif
+								//configure for new feed mode
+							}
+							else
+							{
+#ifdef MSVC
+								myfile << "*****normal*****" << "\r";
+#endif
+							}
+							//save off flags
+							_persisted.control_bits.feed._flag =
+								_persisted.active_timer_item->common.control_bits.feed._flag;
 						}
-
-						myfile << active_timer_item->steps_to_execute_in_this_segment << ",";
-						myfile << active_timer_item->timer_delay_value << ",";
-						myfile << active_timer_item->common.tracking.line_number << ",";
-						myfile << active_timer_item->common.tracking.sequence<< ",";
+#ifdef MSVC
+						myfile << _persisted.active_timer_item->steps_to_execute_in_this_segment << ",";
+						myfile << _persisted.active_timer_item->timer_delay_value << ",";
+						myfile << _persisted.active_timer_item->common.tracking.line_number << ",";
+						myfile << _persisted.active_timer_item->common.tracking.sequence<< ",";
 						myfile << total_steps << ",";
 						myfile << "\r";
 						myfile.flush();
@@ -314,20 +332,21 @@ namespace Talos
 
 						// If the new segment starts a new planner block, initialize stepper variables and counters.
 						// NOTE: When the segment data index changes, this indicates a new planner block.
-						if (active_bresenham != active_timer_item->common.bres_obj)
+						if (_persisted.active_bresenham != _persisted.active_timer_item->common.bres_obj)
 						{
 							//if we are loading a new block directions MIGHT change, so clear the set flag
 							//Motion_Core::Hardware::Interpolation::direction_set = 0;
 
 							//New line segment, so this should be the start of a block.
-							active_line_number = active_timer_item->common.tracking.line_number;
-							last_complete_sequence = active_sequence;
-							active_sequence = active_timer_item->common.tracking.sequence;
-							active_bresenham = active_timer_item->common.bres_obj;
+							_persisted.active_line_number = _persisted.active_timer_item->common.tracking.line_number;
+							_persisted.last_complete_sequence = _persisted.active_sequence;
+							_persisted.active_sequence = _persisted.active_timer_item->common.tracking.sequence;
+							_persisted.active_bresenham = _persisted.active_timer_item->common.bres_obj;
 
 							// Initialize Bresenham line and distance counters
 							for (int i = 0; i < MACHINE_AXIS_COUNT; i++)
-								bresenham_counter[i] = active_timer_item->common.bres_obj->step_event_count;
+								_persisted.bresenham_counter[i]
+								= _persisted.active_timer_item->common.bres_obj->step_event_count;
 						}
 
 						/*Motion_Core::Hardware::Interpolation::dir_outbits

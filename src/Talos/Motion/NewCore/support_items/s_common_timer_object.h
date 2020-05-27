@@ -5,6 +5,7 @@
 #include "e_state_flag.h"
 #include "../../../_bit_flag_control.h"
 #include "s_common_all_object.h"
+#include "s_bresenham_item.h"
 
 struct s_timer_control_bits
 {

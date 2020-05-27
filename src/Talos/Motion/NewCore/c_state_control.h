@@ -48,7 +48,7 @@ namespace Talos
 						hard_fault = 8,
 						spindle_failure = 9,
 						motion_on = 10,
-						motion_off = 11,	
+						motion_off = 11,
 						block_completed = 12,
 						cycle_start = 13,
 					};
@@ -86,10 +86,11 @@ namespace Talos
 				public:
 					enum class e_states :uint32_t
 					{
-						//recalculate_block = 0,
-						//reinitialize_segment = 1,
-						decel_override = 3,
-						ngc_buffer_not_empty = 4,
+						decel_override = 0,
+						ngc_buffer_not_empty = 1,
+						ngc_buffer_empty = 2,
+						motion_buffer_not_empty = 3,
+						motion_buffer_full = 4,
 
 					};
 					static s_bit_flag_controller<e_states> states;
