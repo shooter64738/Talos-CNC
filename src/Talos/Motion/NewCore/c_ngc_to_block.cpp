@@ -54,7 +54,7 @@ namespace Talos
 					NGC_RS274::Block_View view = NGC_RS274::Block_View(&int_cfg::DefaultBlock.Settings);
 					*view.current_g_codes.Motion = NGC_RS274::G_codes::RAPID_POSITIONING;
 
-					uint8_t recs = 6; //NGC_BUFFER_SIZE
+					uint8_t recs = 3; //NGC_BUFFER_SIZE
 					for (int i = 0; i < recs; i++)
 					{
 						s_ngc_block testblock{ 0 };
@@ -236,6 +236,8 @@ namespace Talos
 					motion_block.Station = view.active_view_block->__station__;
 					motion_block.common.tracking.sequence = running_sequence++;
 					motion_block.common.tracking.line_number = *view.persisted_values.active_line_number_N;
+
+					motion_block.Station = motion_buffer._head;
 
 					motion_buffer.put(motion_block);
 
@@ -493,10 +495,7 @@ namespace Talos
 
 					//there is only one block and no optimizations can occur
 					if (last_added == planned_block) { return; }
-
-					float entry_speed_sqr = 0.0;
-					__s_motion_block* next = NULL;
-
+					
 					// Calculate maximum entry speed for last block in buffer, where the exit speed is always zero.
 					last_added->entry_speed_sqr =
 						min(last_added->max_entry_speed_sqr, 2 * last_added->acceleration * last_added->millimeters);
@@ -521,25 +520,25 @@ namespace Talos
 				}
 				void Block::__reverse_plan()
 				{
-					uint8_t block_buffer_planned = planned_block->Station;
-					uint8_t block_index = motion_buffer.cur_head()->Station;
-					uint8_t block_buffer_tail = motion_buffer._tail;
-
-					__s_motion_block* current = motion_buffer.cur_head();
-					__s_motion_block* block_buffer;
-					block_buffer = motion_buffer._storage_pointer;
-					__s_motion_block* next = NULL;
+					//starting at newest record -1. do NOT start at newest record or the exit speed
+					//will be updated andthe motion profile will appear to stop abruptly.
 
 					float entry_speed_sqr = 0.0;
 
-					while (block_index != block_buffer_planned)
+					//loop backwards through the blocks.
+					__s_motion_block* previous = motion_buffer.peek(motion_buffer.cur_head()->Station-1);
+					__s_motion_block* current = previous;
+					uint16_t stepper = current->Station;
+					while (previous != planned_block)
 					{
-						next = current;
-						current = &block_buffer[block_index];
-						block_index--;// plan_prev_block_index(block_index);
+						current = previous;
+						previous = motion_buffer.read_r(&stepper);
 
-						// Check if next block is the tail block(=planned block). If so, update current stepper parameters.
-						if (block_index == block_buffer_tail) { Process::Segment::st_update_plan_block_parameters(); }
+						// Check if previous block is the tail block(=planned block). If so, update current stepper parameters.
+						if (previous == planned_block)
+						{
+							Process::Segment::st_update_plan_block_parameters();
+						}
 						// Compute maximum entry speed decelerating over the current block from its exit speed.
 						if (feed_mode_zero_start(current->common.control_bits.feed))
 						{
@@ -547,15 +546,20 @@ namespace Talos
 						}
 						else
 						{
+							//if current speed is not max speed
 							if (current->entry_speed_sqr != current->max_entry_speed_sqr)
 							{
-								entry_speed_sqr = next->entry_speed_sqr + 2 * current->acceleration * current->millimeters;
+								//get new speed of the block BEFORE current
+								entry_speed_sqr = previous->entry_speed_sqr + 2 * current->acceleration * current->millimeters;
+								//if new entry speed is less than current entry speed
 								if (entry_speed_sqr < current->max_entry_speed_sqr)
 								{
+									//set current blocks entry speed to the previous blocks new entry speed
 									current->entry_speed_sqr = entry_speed_sqr;
 								}
 								else
 								{
+									// if new entry speed is not < less than current speed, set current to max
 									current->entry_speed_sqr = current->max_entry_speed_sqr;
 								}
 							}
@@ -565,22 +569,14 @@ namespace Talos
 
 				void Block::__forward_plan()
 				{
-					uint8_t block_buffer_planned = planned_block->Station;
-					uint8_t block_index = planned_block->Station + 1;
-					uint8_t block_buffer_head = motion_buffer._head;
-
-					__s_motion_block* current = motion_buffer.cur_head();
-					__s_motion_block* block_buffer;
-					block_buffer = motion_buffer._storage_pointer;
+					__s_motion_block* next = planned_block;
+					__s_motion_block* current = planned_block;
+					uint16_t stepper = planned_block->Station;
 					float entry_speed_sqr = 0.0;
-					// Forward Pass: Forward plan the acceleration curve from the planned pointer onward.
-					// Also scans for optimal plan breakpoints and appropriately updates the planned pointer.
-					__s_motion_block* next = &block_buffer[block_buffer_planned]; // Begin at buffer planned pointer
-					block_index = planned_block->Station + 1;
-					while (block_index != block_buffer_head)
+					while (next != motion_buffer.cur_head())
 					{
 						current = next;
-						next = &block_buffer[block_index];
+						next = motion_buffer.read_f(&stepper);
 
 						// Any acceleration detected in the forward pass automatically moves the optimal planned
 						// pointer forward, since everything before this is all optimal. In other words, nothing
@@ -591,13 +587,17 @@ namespace Talos
 						}
 						else
 						{
+							//is the current block entry speed slower than the next block entry speed
 							if (current->entry_speed_sqr < next->entry_speed_sqr)
 							{
+								//get a new entry speed based on the current block velocity
 								entry_speed_sqr = current->entry_speed_sqr + 2 * current->acceleration * current->millimeters;
-								// If true, current block is full-acceleration and we can move the planned pointer forward.
-								if (entry_speed_sqr < next->entry_speed_sqr) {
+								//is this new entry speed slower than the entry speed of the next block
+								if (entry_speed_sqr < next->entry_speed_sqr)
+								{
+									//set the next block entry speed to this new slower value
 									next->entry_speed_sqr = entry_speed_sqr; // Always <= max_entry_speed_sqr. Backward pass sets this.
-									block_buffer_planned = block_index; // Set optimal plan pointer.
+									planned_block = next;
 								}
 							}
 						}
@@ -608,9 +608,8 @@ namespace Talos
 						// cannot logically be further improved. Hence, we don't have to recompute them anymore.
 						if (next->entry_speed_sqr == next->max_entry_speed_sqr)
 						{
-							planned_block = &block_buffer[block_index];
+							planned_block = next;
 						}
-						block_index++;// = plan_next_block_index(block_index);
 					}
 				}
 

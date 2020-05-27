@@ -190,6 +190,14 @@ public:
 		return (this->_storage_pointer + this->_last_read);
 	}
 
+	TN* cur_tail()
+	{
+		if (!this->has_data())
+			return NULL;
+
+		return (this->_storage_pointer + this->_last_read);
+	}
+
 	//return the item that was at the head BEFORE the last put
 	TN* cur_head()
 	{
@@ -200,6 +208,33 @@ public:
 		//	* last = false;
 
 		return (this->_storage_pointer + this->_last_write);
+	}
+
+	TN* read_f(uint16_t *position)
+	{
+		if (!this->has_data())
+			return NULL;
+		uint16_t val = *position + 1;
+		_check_wrap_value(&val); *position = val;
+		
+		if (*position > this->_last_write)
+			return NULL;
+		
+		return (this->_storage_pointer + *position);
+	}
+
+	TN* read_r(uint16_t* position)
+	{
+		if (!this->has_data())
+			return NULL;
+		
+		uint16_t val = *position - 1;
+		_check_wrap_value(&val); *position = val;
+
+		if (*position < this->_last_read)
+			return NULL;
+
+		return (this->_storage_pointer + *position);
 	}
 
 	TN* step_rev()

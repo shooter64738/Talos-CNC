@@ -95,7 +95,10 @@ namespace Talos
 
 						//If flagged to re init the segment, then do it
 						if (Segment::active_block->common.control_bits.motion.get_clr(e_motion_block_state::reinitialize_segment))
+						{
 							Segment::__calc_seg_base(&seg_base);
+							Segment::active_block->common.control_bits.motion.set(e_motion_block_state::segment_reinitialized);
+						}
 
 						//if the timer buffer is full, we gotta wait. 
 						if (Segment::timer_buffer._full)
@@ -139,7 +142,10 @@ namespace Talos
 				}
 				void Segment::st_update_plan_block_parameters()
 				{
-					if (Segment::active_block != NULL)
+					//if segment has be re-initialized there no point in doing it again, and again everytime the planner
+					//is called.
+					if (Segment::active_block != NULL &&
+						!Segment::active_block->common.control_bits.motion.get(e_motion_block_state::reinitialize_segment))
 					{ // Ignore if at start of a new block.
 						//States::Process::states.set(States::Process::e_states::recalculate_block);
 						//Update the entry speed of the block we jsut loaded in the arbitrator. This should be the same speed we are currently running.
