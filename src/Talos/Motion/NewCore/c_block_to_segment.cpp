@@ -145,7 +145,7 @@ namespace Talos
 					//if segment has be re-initialized there no point in doing it again, and again everytime the planner
 					//is called.
 					if (Segment::active_block != NULL &&
-						!Segment::active_block->common.control_bits.motion.get(e_motion_block_state::reinitialize_segment))
+						!Segment::active_block->common.control_bits.motion.get(e_motion_block_state::segment_reinitialized))
 					{ // Ignore if at start of a new block.
 						//States::Process::states.set(States::Process::e_states::recalculate_block);
 						//Update the entry speed of the block we jsut loaded in the arbitrator. This should be the same speed we are currently running.

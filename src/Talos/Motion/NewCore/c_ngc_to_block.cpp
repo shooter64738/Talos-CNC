@@ -54,7 +54,7 @@ namespace Talos
 					NGC_RS274::Block_View view = NGC_RS274::Block_View(&int_cfg::DefaultBlock.Settings);
 					*view.current_g_codes.Motion = NGC_RS274::G_codes::RAPID_POSITIONING;
 
-					uint8_t recs = 3; //NGC_BUFFER_SIZE
+					uint8_t recs = NGC_BUFFER_SIZE;
 					for (int i = 0; i < recs; i++)
 					{
 						s_ngc_block testblock{ 0 };
@@ -484,12 +484,6 @@ namespace Talos
 
 				void Block::__planner_recalculate()
 				{
-					//// Initialize block index to the last block in the planner buffer.
-					////what was the newest block item added to the plan buffer...
-					//block_buffer.step_rst();
-
-					bool is_last;
-
 					//last written block
 					__s_motion_block* last_added = motion_buffer.cur_head();
 
@@ -503,9 +497,8 @@ namespace Talos
 					//move back 1 from teh last added item
 					__s_motion_block* block_index = motion_buffer.peek(last_added->Station - 1);
 					if (block_index == planned_block)
-					{ // Only two plannable blocks in buffer. Reverse pass complete.
-						// Check if the first block is the tail. If so, notify stepper to update its current parameters.
-						if (block_index == motion_buffer.cur_tail(&is_last))
+					{
+						if (block_index == motion_buffer.cur_tail())
 						{
 							Process::Segment::st_update_plan_block_parameters();
 						}
