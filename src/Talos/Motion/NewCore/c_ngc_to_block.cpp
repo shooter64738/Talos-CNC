@@ -65,7 +65,7 @@ namespace Talos
 						*view.persisted_values.active_spindle_speed_S = 1234;
 
 						//if (i < 3 || i>4)
-							* view.current_g_codes.Feed_rate_mode = NGC_RS274::G_codes::FEED_RATE_UNITS_PER_MINUTE_MODE;
+						*view.current_g_codes.Feed_rate_mode = NGC_RS274::G_codes::FEED_RATE_UNITS_PER_MINUTE_MODE;
 						/*if (i == 3 || i == 4)
 							* view.current_g_codes.Feed_rate_mode = NGC_RS274::G_codes::FEED_RATE_UNITS_PER_ROTATION;*/
 
@@ -662,12 +662,12 @@ namespace Talos
 					return (mtn_cfg::Controller.Settings.internals.MINIMUM_FEED_RATE);
 				}
 
-				float Block::get_next_block_exit_speed()
+				float Block::get_next_block_exit_speed(uint16_t current_station)
 				{
-					bool last_item = false;
-					__s_motion_block* block =
-						Block::motion_buffer.peek
-						(Block::motion_buffer.cur_tail(&last_item)->Station + 1);
+					//find the next block ahead of the one we are processing in segment		
+					bool last_item = Block::motion_buffer._data_size == 1;
+					__s_motion_block* block = Block::motion_buffer.peek(current_station + 1);
+
 					float exit_speed = 0.0;
 
 					//the entry speed for the NEXT block, is the exist speed for the current block

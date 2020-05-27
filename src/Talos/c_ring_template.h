@@ -124,6 +124,16 @@ public:
 		return (this->_storage_pointer + position);
 	}
 
+	TN* peek(uint16_t position, bool* last)
+	{
+		_check_wrap_value(&position);
+		*last = position >= this->_last_write;
+		if (position > this->_last_write)
+			return NULL;
+
+		return (this->_storage_pointer + position);
+	}
+
 	void shift(int16_t shift_size)
 	{
 		this->_tail += shift_size;
@@ -153,18 +163,18 @@ public:
 		return data;
 	}
 
-	//return the item that was at the tail NOW
-	TN* cur(bool* last)
+	bool is_last(uint16_t position)
 	{
-		*last = true;
+		bool last = true;
 
 		if (!this->has_data())
-			return NULL;
+			return true;
 
-		if (_my_tail(1) < this->_head)
-			* last = false;
+		uint16_t temp = position;
+		_check_wrap_value(&temp);
+		last = position >= this->_last_write;
 
-		return (this->_storage_pointer + this->_last_read);
+		return last;
 	}
 
 	//return the item that was at the tail BEFORE the last get
@@ -300,10 +310,11 @@ public:
 		this->_full = false;
 		this->_tail++;
 		//if we are at the size of the buffer, wrap back to zero
-		if (this->_tail == this->_buffer_size)
+		_check_wrap_value(&this->_tail);
+		/*if (this->_tail == this->_buffer_size)
 		{
 			this->_tail = 0;
-		}
+		}*/
 	}
 	void _move_nexter()
 	{
@@ -340,7 +351,7 @@ public:
 		(*value) *= (neg ? -1 : 1);
 
 		if (*value == this->_buffer_size)
-			*value = 0;
+			* value = 0;
 
 		(*value) *= (neg ? -1 : 1);
 	}

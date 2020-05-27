@@ -214,7 +214,7 @@ namespace Talos
 						float exit_speed_sqr;
 						float nominal_speed;
 
-						exit_speed_sqr = Input::Block::get_next_block_exit_speed();
+						exit_speed_sqr = Input::Block::get_next_block_exit_speed(Segment::active_block->Station);
 						seg_base_arg->exit_speed = sqrt(exit_speed_sqr);
 
 						nominal_speed = Input::Block::plan_compute_profile_nominal_speed(Segment::active_block);

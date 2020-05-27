@@ -60,7 +60,7 @@ namespace Talos
 					static void plan_compute_profile_parameters(
 						__s_motion_block* motion_block, float nominal_speed, float prev_nominal_speed);
 
-					static float get_next_block_exit_speed();
+					static float get_next_block_exit_speed(uint16_t current_station);
 
 					static bool feed_mode_zero_start(s_bit_flag_controller<e_feed_block_state> feed);
 
