@@ -159,7 +159,7 @@ namespace Talos
 						//Update the entry speed of the block we jsut loaded in the arbitrator. This should be the same speed we are currently running.
 						if (!Input::Block::feed_mode_zero_start(active_block->common.control_bits.feed))
 						{
-							Segment::active_block->entry_speed_sqr = seg_base.current_speed * seg_base.current_speed; // Update entry speed.
+							Segment::active_block->speed.entry_sqr = seg_base.current_speed * seg_base.current_speed; // Update entry speed.
 							Segment::active_block->common.control_bits.motion.set(e_motion_block_state::reinitialize_segment);
 						}
 					}
@@ -182,12 +182,12 @@ namespace Talos
 					{
 						// New block loaded mid-hold. Override planner block entry speed to enforce deceleration.
 						seg_base_arg->current_speed = seg_base_arg->exit_speed;
-						Segment::active_block->entry_speed_sqr = seg_base_arg->exit_speed * seg_base_arg->exit_speed;
+						Segment::active_block->speed.entry_sqr = seg_base_arg->exit_speed * seg_base_arg->exit_speed;
 					}
 					else
 
 					{
-						seg_base_arg->current_speed = sqrt(Segment::active_block->entry_speed_sqr);
+						seg_base_arg->current_speed = sqrt(Segment::active_block->speed.entry_sqr);
 					}
 				}
 				uint8_t Segment::__calc_seg_base(s_segment_base* seg_base_arg)
@@ -204,12 +204,12 @@ namespace Talos
 						// the planner block profile, enforcing a deceleration to zero speed.
 						seg_base_arg->ramp_type = e_ramp_type::Decel;
 						// Compute decelerate distance relative to end of block.
-						float decel_dist = Segment::active_block->millimeters - inv_2_accel * Segment::active_block->entry_speed_sqr;
+						float decel_dist = Segment::active_block->millimeters - inv_2_accel * Segment::active_block->speed.entry_sqr;
 						if (decel_dist < 0.0)
 						{
 							// Deceleration through entire planner block. End of feed hold is not in this block.
 							seg_base_arg->exit_speed =
-								sqrt(Segment::active_block->entry_speed_sqr - 2 *
+								sqrt(Segment::active_block->speed.entry_sqr - 2 *
 									Segment::active_block->acceleration * Segment::active_block->millimeters);
 						}
 						else
@@ -228,20 +228,20 @@ namespace Talos
 						float exit_speed_sqr;
 						float nominal_speed;
 
-						exit_speed_sqr = Input::Block::get_next_block_exit_speed(Segment::active_block->Station);
+						exit_speed_sqr = Input::Block::get_next_block_exit_speed(Segment::active_block->__station__);
 						seg_base_arg->exit_speed = sqrt(exit_speed_sqr);
 
-						nominal_speed = Input::Block::plan_compute_profile_nominal_speed(Segment::active_block);
+						nominal_speed = Input::Block::get_nominal_speed(Segment::active_block);
 						float nominal_speed_sqr = nominal_speed * nominal_speed;
 
 						float intersect_distance = 0.5 *
 							(Segment::active_block->millimeters + inv_2_accel *
-							(Segment::active_block->entry_speed_sqr - exit_speed_sqr));
+							(Segment::active_block->speed.entry_sqr - exit_speed_sqr));
 
-						if (Segment::active_block->entry_speed_sqr > nominal_speed_sqr)
+						if (Segment::active_block->speed.entry_sqr > nominal_speed_sqr)
 						{ // Only occurs during override reductions.
 							seg_base_arg->accelerate_until =
-								Segment::active_block->millimeters - inv_2_accel * (Segment::active_block->entry_speed_sqr - nominal_speed_sqr);
+								Segment::active_block->millimeters - inv_2_accel * (Segment::active_block->speed.entry_sqr - nominal_speed_sqr);
 
 							if (seg_base_arg->accelerate_until <= 0.0)
 							{ // Deceleration-only.
@@ -249,7 +249,7 @@ namespace Talos
 
 								// Compute override block exit speed since it doesn't match the planner exit speed.
 								seg_base_arg->exit_speed =
-									sqrt(Segment::active_block->entry_speed_sqr - 2
+									sqrt(Segment::active_block->speed.entry_sqr - 2
 										* Segment::active_block->acceleration * Segment::active_block->millimeters);
 
 								//set decel over ride
@@ -273,7 +273,7 @@ namespace Talos
 								if (seg_base_arg->decelerate_after < intersect_distance)
 								{ // Trapezoid type
 									seg_base_arg->maximum_speed = nominal_speed;
-									if (Segment::active_block->entry_speed_sqr == nominal_speed_sqr)
+									if (Segment::active_block->speed.entry_sqr == nominal_speed_sqr)
 									{
 										// Cruise-deceleration or cruise-only type.
 										seg_base_arg->ramp_type = e_ramp_type::Cruise;
@@ -281,7 +281,8 @@ namespace Talos
 									else
 									{
 										// Full-trapezoid or acceleration-cruise types
-										seg_base_arg->accelerate_until -= inv_2_accel * (nominal_speed_sqr - Segment::active_block->entry_speed_sqr);
+										seg_base_arg->accelerate_until -= inv_2_accel *
+											(nominal_speed_sqr - Segment::active_block->speed.entry_sqr);
 									}
 								}
 								else
@@ -289,7 +290,8 @@ namespace Talos
 									seg_base_arg->accelerate_until = intersect_distance;
 									seg_base_arg->decelerate_after = intersect_distance;
 									seg_base_arg->maximum_speed =
-										sqrt(2.0 * Segment::active_block->acceleration * intersect_distance + exit_speed_sqr);
+										sqrt(2.0 * Segment::active_block->acceleration * intersect_distance
+											+ exit_speed_sqr);
 								}
 							}
 							else

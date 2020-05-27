@@ -42,7 +42,7 @@ namespace Talos
 						s_bit_flag_controller<e_motion_block_state> motion_block_states{ 0 };
 						s_bit_flag_controller<e_feed_block_state> feed{ 0 };
 					};
-					static s_persisting_values persisted_values;
+					static s_persisting_values _persisted;
 
 					static __s_motion_block Block::motion_buffer_store[MOTION_BUFFER_SIZE];
 					static __s_spindle_block Block::spindle_buffer_store[SPINDLE_BUFFER_SIZE];
@@ -55,17 +55,16 @@ namespace Talos
 
 					static bool ngc_buffer_process();
 
-					static float plan_compute_profile_nominal_speed(__s_motion_block* motion_block);
-
-					static void plan_compute_profile_parameters(
-						__s_motion_block* motion_block, float nominal_speed, float prev_nominal_speed);
-
-					static float get_next_block_exit_speed(uint16_t current_station);
-
 					static bool feed_mode_zero_start(s_bit_flag_controller<e_feed_block_state> feed);
+					static float get_next_block_exit_speed(uint16_t current_station);
+					static float get_nominal_speed(__s_motion_block* motion_block);
 
 				protected:
 				private:
+
+					static void __get_junction_speed(
+						__s_motion_block* motion_block, float nominal, float prev_nominal);
+
 					static uint8_t __load_ngc(s_ngc_block* ngc_block);
 
 					static uint8_t __load_spindle(NGC_RS274::Block_View view);
@@ -105,7 +104,7 @@ namespace Talos
 
 					static void __forward_plan();
 					static void __reverse_plan();
-
+					static void __copy_persisted(__s_motion_block* motion_block);
 				};
 
 			};

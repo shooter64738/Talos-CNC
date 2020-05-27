@@ -31,7 +31,7 @@ namespace Talos
 			namespace Input
 			{
 
-				Block::s_persisting_values Block::persisted_values{ 0 };
+				Block::s_persisting_values Block::_persisted{ 0 };
 
 				s_ngc_block Block::ngc_buffer_store[NGC_BUFFER_SIZE]{ 0 };
 				c_ring_buffer<s_ngc_block> Block::ngc_buffer(Block::ngc_buffer_store, NGC_BUFFER_SIZE);
@@ -66,7 +66,7 @@ namespace Talos
 						*view.persisted_values.active_spindle_speed_S = 1234;
 
 						if (i < 1 || i>4)
-						*view.current_g_codes.Feed_rate_mode = NGC_RS274::G_codes::FEED_RATE_UNITS_PER_MINUTE_MODE;
+							* view.current_g_codes.Feed_rate_mode = NGC_RS274::G_codes::FEED_RATE_UNITS_PER_MINUTE_MODE;
 						if (i == 2 || i == 4)
 							* view.current_g_codes.Feed_rate_mode = NGC_RS274::G_codes::FEED_RATE_UNITS_PER_ROTATION;
 
@@ -140,8 +140,8 @@ namespace Talos
 					spindle_block.rpm = *view.persisted_values.active_spindle_speed_S;
 					spindle_block.m_code = *view.current_m_codes.SPINDLE;
 
-					if ((spindle_block.m_code != persisted_values.spindle_block.m_code)
-						|| (spindle_block.rpm != persisted_values.spindle_block.rpm)
+					if ((spindle_block.m_code != _persisted.spindle_block.m_code)
+						|| (spindle_block.rpm != _persisted.spindle_block.rpm)
 						)
 						has_changes = true;
 
@@ -167,11 +167,11 @@ namespace Talos
 							spindle_block.states.set(e_spindle_state::indexing);
 						}
 
-						if (persisted_values.feed.get(e_feed_block_state::feed_mode_units_per_rotation))
+						if (_persisted.feed.get(e_feed_block_state::feed_mode_units_per_rotation))
 							spindle_block.states.set(e_spindle_state::synch_with_motion);
 
 						//store off these values
-						memcpy(&persisted_values.spindle_block, &spindle_block, sizeof(__s_spindle_block));
+						memcpy(&_persisted.spindle_block, &spindle_block, sizeof(__s_spindle_block));
 
 						spindle_buffer.put(spindle_block);
 						return 1;
@@ -183,10 +183,10 @@ namespace Talos
 						//the motion block was processed first, we can look at the persisted
 						//values that were stored and determine if its a feed per rotation
 						//motion
-						if (persisted_values.feed.get(e_feed_block_state::feed_mode_units_per_rotation))
+						if (_persisted.feed.get(e_feed_block_state::feed_mode_units_per_rotation))
 						{
 							//just add the previous spindle record values since there are no changes.
-							spindle_buffer.put(persisted_values.spindle_block);
+							spindle_buffer.put(_persisted.spindle_block);
 						}
 						return 0;
 					}
@@ -203,6 +203,8 @@ namespace Talos
 					//init a new block for motion
 					__s_motion_block motion_block{ 0 };
 
+					__copy_persisted(&motion_block);
+
 					//create an array to hold our unit distances
 					float unit_vec[MACHINE_AXIS_COUNT]{ 0.0 };
 
@@ -214,7 +216,7 @@ namespace Talos
 						view.active_view_block
 						, &motion_block
 						, mtn_cfg::Controller.Settings.hardware
-						, &persisted_values
+						, &_persisted
 						, unit_vec
 						, target_steps);
 
@@ -224,7 +226,7 @@ namespace Talos
 
 					//First moves after start up dont get compensation so dont set this flag until after the first axis
 					//moves are calculated.
-					if (!persisted_values.bl_comp.get(15))
+					if (!_persisted.bl_comp.get(15))
 					{
 						//clear the comp bits that might have been set on this block
 						motion_block.axis_data.bl_comp_bits._flag = 0;
@@ -232,7 +234,7 @@ namespace Talos
 					//set bit 15 so we know that motion has ran once and any more motions need backlash
 					//(motions that dont actually cause motion will have already been ignored)
 					//Save the direction bits for when the next block is processed. (set the 15th bit always)
-					persisted_values.bl_comp._flag = motion_block.axis_data.direction_bits._flag | 0X8000;
+					_persisted.bl_comp._flag = motion_block.axis_data.direction_bits._flag | 0X8000;
 
 					motion_block.millimeters = convert_delta_vector_to_unit_vector(unit_vec);
 					motion_block.acceleration = __limit_value_by_axis_maximum(mtn_cfg::Controller.Settings.hardware.acceleration, unit_vec);
@@ -240,13 +242,13 @@ namespace Talos
 
 					__configure_feeds(view, &motion_block);
 
-					__plan_buffer_line(&motion_block, mtn_cfg::Controller.Settings, &persisted_values, unit_vec, target_steps);
+					__plan_buffer_line(&motion_block, mtn_cfg::Controller.Settings, &_persisted, unit_vec, target_steps);
 
-					motion_block.Station = view.active_view_block->__station__;
+					motion_block.__station__ = view.active_view_block->__station__;
 					motion_block.common.tracking.sequence = running_sequence++;
 					motion_block.common.tracking.line_number = *view.persisted_values.active_line_number_N;
 
-					motion_block.Station = motion_buffer._head;
+					motion_block.__station__ = motion_buffer._head;
 
 					motion_buffer.put(motion_block);
 
@@ -372,17 +374,17 @@ namespace Talos
 						break;
 					}
 
-					if (!persisted_values.feed.get(new_feed_mode))
+					if (!_persisted.feed.get(new_feed_mode))
 					{
 						//feedmode is changing, clear all the feedmode flags
-						persisted_values.feed.clear(e_feed_block_state::feed_mode_units_per_rotation);
-						persisted_values.feed.clear(e_feed_block_state::feed_mode_minutes_per_unit);
-						persisted_values.feed.clear(e_feed_block_state::feed_mode_units_per_minute);
-						persisted_values.feed.clear(e_feed_block_state::feed_mode_rpm);
+						_persisted.feed.clear(e_feed_block_state::feed_mode_units_per_rotation);
+						_persisted.feed.clear(e_feed_block_state::feed_mode_minutes_per_unit);
+						_persisted.feed.clear(e_feed_block_state::feed_mode_units_per_minute);
+						_persisted.feed.clear(e_feed_block_state::feed_mode_rpm);
 
 						//set the new feed mode so we can keep track of it
-						persisted_values.feed.set(new_feed_mode);
-						
+						_persisted.feed.set(new_feed_mode);
+
 						//flag this block as changing feed modes. this will effect how the junction
 						//speeds are handled
 						motion_block->common.control_bits.feed.set(e_feed_block_state::feed_mode_change);
@@ -442,8 +444,8 @@ namespace Talos
 					{
 						// Initialize block entry speed as zero. Assume it will be starting from rest. Planner will correct this later.
 						// If system motion, the system motion block always is assumed to start from rest and end at a complete stop.
-						motion_block->entry_speed_sqr = 0.0;
-						motion_block->max_junction_speed_sqr = 0.0; // Starting from rest. Enforce start from zero velocity.
+						motion_block->speed.entry_sqr = 0.0;
+						motion_block->speed.mx_junc_sqr = 0.0; // Starting from rest. Enforce start from zero velocity.
 
 					}
 					else
@@ -460,22 +462,25 @@ namespace Talos
 						if (junction_cos_theta > 0.999999)
 						{
 							//  For a 0 degree acute junction, just set minimum junction speed.
-							motion_block->max_junction_speed_sqr = mtn_cfg::Controller.Settings.internals.MINIMUM_JUNCTION_SPEED_SQ;
+							motion_block->speed.mx_junc_sqr =
+								mtn_cfg::Controller.Settings.internals.MINIMUM_JUNCTION_SPEED_SQ;
 						}
 						else
 						{
 							if (junction_cos_theta < -0.999999)
 							{
 								// Junction is a straight line or 180 degrees. Junction speed is infinite.
-								motion_block->max_junction_speed_sqr = SOME_LARGE_VALUE;
+								motion_block->speed.mx_junc_sqr = SOME_LARGE_VALUE;
 							}
 							else
 							{
 								convert_delta_vector_to_unit_vector(junction_unit_vec);
 								float junction_acceleration = __limit_value_by_axis_maximum(hw_settings.hardware.acceleration, junction_unit_vec);
 								float sin_theta_d2 = sqrt(0.5 * (1.0 - junction_cos_theta)); // Trig half angle identity. Always positive.
-								motion_block->max_junction_speed_sqr = max(mtn_cfg::Controller.Settings.internals.MINIMUM_JUNCTION_SPEED_SQ,
-									(junction_acceleration * hw_settings.tolerance.junction_deviation * sin_theta_d2) / (1.0 - sin_theta_d2));
+								motion_block->speed.mx_junc_sqr = 
+									max(mtn_cfg::Controller.Settings.internals.MINIMUM_JUNCTION_SPEED_SQ,
+									(junction_acceleration * hw_settings.tolerance.junction_deviation * sin_theta_d2)
+										/ (1.0 - sin_theta_d2));
 							}
 						}
 					}
@@ -483,8 +488,8 @@ namespace Talos
 					// Block system motion from updating this data to ensure next g-code motion is computed correctly.
 					//if (!(planning_block->condition & PL_COND_FLAG_SYSTEM_MOTION))
 					{
-						float nominal_speed = plan_compute_profile_nominal_speed(motion_block);
-						plan_compute_profile_parameters(motion_block, nominal_speed, prev_values->nominal_speed);
+						float nominal_speed = get_nominal_speed(motion_block);
+						__get_junction_speed(motion_block, nominal_speed, prev_values->nominal_speed);
 						prev_values->nominal_speed = nominal_speed;
 
 						// Update previous path unit_vector and planner position.
@@ -505,11 +510,11 @@ namespace Talos
 					if (last_added == planned_block) { return; }
 
 					// Calculate maximum entry speed for last block in buffer, where the exit speed is always zero.
-					last_added->entry_speed_sqr =
-						min(last_added->max_entry_speed_sqr, 2 * last_added->acceleration * last_added->millimeters);
+					last_added->speed.entry_sqr =
+						min(last_added->speed.mx_entry_sqr, 2 * last_added->acceleration * last_added->millimeters);
 
 					//move back 1 from teh last added item
-					__s_motion_block* block_index = motion_buffer.peek(last_added->Station - 1);
+					__s_motion_block* block_index = motion_buffer.peek(last_added->__station__ - 1);
 					if (block_index == planned_block)
 					{
 						if (block_index == motion_buffer.cur_tail())
@@ -533,9 +538,9 @@ namespace Talos
 					float entry_speed_sqr = 0.0;
 
 					//loop backwards through the blocks.
-					__s_motion_block* previous = motion_buffer.peek(motion_buffer.cur_head()->Station - 1);
+					__s_motion_block* previous = motion_buffer.peek(motion_buffer.cur_head()->__station__ - 1);
 					__s_motion_block* current = previous;
-					uint16_t stepper = current->Station;
+					uint16_t stepper = current->__station__;
 					while (previous != planned_block)
 					{
 						current = previous;
@@ -554,20 +559,21 @@ namespace Talos
 						else
 						{
 							//if current speed is not max speed
-							if (current->entry_speed_sqr != current->max_entry_speed_sqr)
+							if (current->speed.entry_sqr != current->speed.mx_entry_sqr)
 							{
 								//get new speed of the block BEFORE current
-								entry_speed_sqr = previous->entry_speed_sqr + 2 * current->acceleration * current->millimeters;
+								entry_speed_sqr = previous->speed.entry_sqr
+									+ 2 * current->acceleration * current->millimeters;
 								//if new entry speed is less than current entry speed
-								if (entry_speed_sqr < current->max_entry_speed_sqr)
+								if (entry_speed_sqr < current->speed.mx_entry_sqr)
 								{
 									//set current blocks entry speed to the previous blocks new entry speed
-									current->entry_speed_sqr = entry_speed_sqr;
+									current->speed.entry_sqr = entry_speed_sqr;
 								}
 								else
 								{
 									// if new entry speed is not < less than current speed, set current to max
-									current->entry_speed_sqr = current->max_entry_speed_sqr;
+									current->speed.entry_sqr = current->speed.mx_entry_sqr;
 								}
 							}
 						}
@@ -578,7 +584,7 @@ namespace Talos
 				{
 					__s_motion_block* next = planned_block;
 					__s_motion_block* current = planned_block;
-					uint16_t stepper = planned_block->Station;
+					uint16_t stepper = planned_block->__station__;
 					float entry_speed_sqr = 0.0;
 					while (next != motion_buffer.cur_head())
 					{
@@ -595,15 +601,16 @@ namespace Talos
 						else
 						{
 							//is the current block entry speed slower than the next block entry speed
-							if (current->entry_speed_sqr < next->entry_speed_sqr)
+							if (current->speed.entry_sqr < next->speed.entry_sqr)
 							{
 								//get a new entry speed based on the current block velocity
-								entry_speed_sqr = current->entry_speed_sqr + 2 * current->acceleration * current->millimeters;
+								entry_speed_sqr = current->speed.entry_sqr 
+									+ 2 * current->acceleration * current->millimeters;
 								//is this new entry speed slower than the entry speed of the next block
-								if (entry_speed_sqr < next->entry_speed_sqr)
+								if (entry_speed_sqr < next->speed.entry_sqr)
 								{
 									//set the next block entry speed to this new slower value
-									next->entry_speed_sqr = entry_speed_sqr; // Always <= max_entry_speed_sqr. Backward pass sets this.
+									next->speed.entry_sqr = entry_speed_sqr; // Always <= max_entry_speed_sqr. Backward pass sets this.
 									planned_block = next;
 								}
 							}
@@ -613,20 +620,29 @@ namespace Talos
 						// point in the buffer. When the plan is bracketed by either the beginning of the
 						// buffer and a maximum entry speed or two maximum entry speeds, every block in between
 						// cannot logically be further improved. Hence, we don't have to recompute them anymore.
-						if (next->entry_speed_sqr == next->max_entry_speed_sqr)
+						if (next->speed.entry_sqr == next->speed.mx_entry_sqr)
 						{
 							planned_block = next;
 						}
 					}
 				}
 
-				void Block::plan_compute_profile_parameters(
+				void Block::__get_junction_speed(
 					__s_motion_block* motion_block
-					, float nominal_speed
-					, float prev_nominal_speed)
+					, float nominal
+					, float prev_nominal)
 				{
-					// Compute the junction maximum entry based on the minimum of the junction speed and neighboring nominal speeds.
-					if (nominal_speed > prev_nominal_speed)
+					
+					motion_block->speed.mx_entry_sqr =
+						(nominal > prev_nominal) ? prev_nominal * prev_nominal
+						: nominal * nominal;
+
+					motion_block->speed.mx_entry_sqr =
+						(motion_block->speed.mx_entry_sqr > motion_block->speed.mx_junc_sqr)
+						? motion_block->speed.mx_entry_sqr = motion_block->speed.mx_junc_sqr
+						: motion_block->speed.mx_entry_sqr;
+
+					/*if (nominal_speed > prev_nominal_speed)
 					{
 						motion_block->max_entry_speed_sqr = prev_nominal_speed * prev_nominal_speed;
 					}
@@ -637,10 +653,10 @@ namespace Talos
 					if (motion_block->max_entry_speed_sqr > motion_block->max_junction_speed_sqr)
 					{
 						motion_block->max_entry_speed_sqr = motion_block->max_junction_speed_sqr;
-					}
+					}*/
 				}
 
-				float Block::plan_compute_profile_nominal_speed(__s_motion_block* motion_block)
+				float Block::get_nominal_speed(__s_motion_block* motion_block)
 				{
 					uint8_t over_ride = 100;
 					float nominal_speed = motion_block->programmed_rate;
@@ -679,7 +695,7 @@ namespace Talos
 					//the entry speed for the NEXT block, is the exist speed for the current block
 					if (block != NULL)
 					{
-						exit_speed = block->entry_speed_sqr;
+						exit_speed = block->speed.entry_sqr;
 
 						//if feedmode is changing to units per rev, we have to exit at zero
 						if (feed_mode_zero_start(block->common.control_bits.feed))
@@ -707,6 +723,14 @@ namespace Talos
 
 				}
 
+				void Block::__copy_persisted(__s_motion_block* motion_block)
+				{
+					//so p[ersisted data is not spread all over the place, im copying all data
+					//that persists from motion to motion in here.
+
+					motion_block->common.control_bits.feed = _persisted.feed;
+
+				}
 			}
 		}
 	}
