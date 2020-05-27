@@ -189,6 +189,9 @@
     <ClCompile Include="..\..\..\..\Motion\NewCore\c_segment_to_hardware.cpp">
       <Filter>Motion\NewCore</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\..\Motion\NewCore\c_hardware_out.cpp">
+      <Filter>Motion\NewCore</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\Motion\motion_hardware_def.h">
@@ -421,6 +424,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\Motion\NewCore\support_items\s_timer_item.h">
       <Filter>Motion\NewCore\Supporting_Items</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Motion\NewCore\c_hardware_out.h">
+      <Filter>Motion\NewCore</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
