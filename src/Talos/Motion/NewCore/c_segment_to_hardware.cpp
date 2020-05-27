@@ -5,11 +5,12 @@
 * Author: Family
 */
 
-#include "..//..//Configuration/c_configuration.h"
+#include "../../Configuration/c_configuration.h"
 #include "c_segment_to_hardware.h"
 #include "c_ngc_to_block.h"
 #include "c_block_to_segment.h"
 #include "c_state_control.h"
+#include "c_hardware_out.h"
 #include <math.h>
 
 #ifdef MSVC
@@ -26,6 +27,7 @@ namespace int_cfg = Talos::Configuration::Interpreter;
 namespace mtn_ctl_sta = Talos::Motion::Core::States;
 namespace mot_dat = Talos::Motion::Core::Input;
 namespace seg_dat = Talos::Motion::Core::Process;
+namespace hrd_out = Talos::Motion::Core::Output;
 
 
 #define HAL_SET_DIRECTION_PINS()
@@ -95,22 +97,16 @@ namespace Talos
 					//if there is a spindle record in the buffer, it was put there to run with the current
 					//motion block. the same spindle settings may persist over several motion blocks. When
 					//a new record appears in the spindle buffer, that indicates a change to the spindle
-					//configuration was detected whent he block was processed and that spindle record should
-					//be processed before the block motion starts.
+					//configuration was detected when the block was processed and that spindle record should
+					//be processed before the motion block.
 					if (!mot_dat::Block::spindle_buffer.has_data())
 						return;
 
-					__spindle_start();
-				}
+					memcpy(&_persisted.spindle_block, mot_dat::Block::spindle_buffer.get(), sizeof(__s_spindle_block));
 
-				void Segment::__spindle_start()
-				{
-					__s_spindle_block* spindle_block = mot_dat::Block::spindle_buffer.peek();
-
-					//make hardware calls to start the spindle up.
-
-					//if this motion requires spindle synch, point he gate keepr to the spindle synch waiter
-					if (spindle_block->states.get(e_spindle_state::synch_with_motion))
+					hrd_out::Hardware::Spindle::start(_persisted.spindle_block);
+					
+					if (_persisted.spindle_block.states.get(e_spindle_state::synch_with_motion))
 					{
 						//call the synch function
 						__spindle_wait_synch();
@@ -119,8 +115,6 @@ namespace Talos
 						//2. the spindle comes on and reaches the target speed.
 						Segment::pntr_next_gate = __spindle_wait_synch;
 					}
-					
-					
 				}
 
 				void Segment::__spindle_wait_synch()
@@ -128,7 +122,11 @@ namespace Talos
 					//loop until timeout or spindle reaches speed
 					
 					//@speed start motion
-					//Segment::pntr_next_gate = __start_motion;
+					uint32_t rpm = hrd_out::Hardware::Spindle::get_speed(_persisted.spindle_block);
+					if (rpm = _persisted.spindle_block.rpm)
+					{
+						//Segment::pntr_next_gate = __start_motion;
+					}
 
 					//@timeout set error
 					//Segment::pntr_next_gate = __spindle_wait_synch;
@@ -145,7 +143,7 @@ namespace Talos
 					just continue to the operator, but in reality we have:
 						a.'stopped'
 						b. 'reconfigured the spindle for the new feed mode
-						c. started the motion again, alwithin about 5us
+						c. started the motion again, all within about 5us
 					2. All motion is executed and the interpollation 'stops'.
 					At the stop point, the gatekeeper is reset so that new motions
 					can be started again.
@@ -161,7 +159,8 @@ namespace Talos
 
 					mtn_ctl_sta::Output::states.set(mtn_ctl_sta::Output::e_states::interpolation_running);
 					//start the timer, this will set all of the wheel in motion
-					Hardware_Abstraction_Layer::MotionCore::Stepper::wake_up();
+					hrd_out::Hardware::Motion::initialize();
+					
 					
 					//null gate keeper??? not sure what to do yet... 
 					//Segment::pntr_next_gate = NULL;
@@ -172,7 +171,7 @@ namespace Talos
 				void Segment::__release_brakes()
 				{
 					//release output drive breaks
-					HAL_RELEASE_DRIVE_BREAKS();
+					hrd_out::Hardware::Motion::brakes(0);
 
 					//The breaks usually have some kind of delay. we need to determine
 					//how long the delay should be, set the timer to that period and
@@ -186,6 +185,7 @@ namespace Talos
 
 					//Send outputs to physical hardware
 					//Motion_Core::Hardware::Interpolation::send_hardware_outputs();
+					hrd_out::Hardware::Motion::step(0);
 
 					// Enable step pulse reset timer so that The Stepper Port Reset Interrupt can reset the signal after
 					// exactly settings.pulse_microseconds microseconds, independent of the main Timer1 prescaler.
@@ -205,7 +205,8 @@ namespace Talos
 						if (end)
 						{
 							//shut down the hardware
-							Hardware_Abstraction_Layer::MotionCore::Stepper::st_go_idle();
+							hrd_out::Hardware::Motion::stop();
+							
 
 #ifdef MSVC
 							myfile << 0 << ",";
@@ -271,7 +272,7 @@ namespace Talos
 						seg_dat::Segment::timer_buffer.get();
 						_persisted.active_timer_item = NULL;
 					}
-					//step_outbits ^= Motion_Core::Hardware::Interpolation::step_port_invert_mask;  // Apply step port invert mask
+					//_persisted.step_outbits ^= Motion_Core::Hardware::Interpolation::step_port_invert_mask;  // Apply step port invert mask
 				}
 
 				bool Segment::__config_timer()
@@ -363,7 +364,7 @@ namespace Talos
 					myfile.close();
 #endif // MSVC
 					
-
+					hrd_out::Hardware::Motion::brakes(0);
 					__set_brakes();
 				}
 

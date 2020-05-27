@@ -4,6 +4,7 @@
 
 #include "support_items/s_timer_item.h"
 #include "support_items/s_motion_block.h"
+#include "support_items/s_spindle_block.h"
 #include "../../talos_hardware_def.h"
 
 namespace Talos
@@ -37,6 +38,7 @@ namespace Talos
 						uint16_t step_outbits;
 						int32_t bresenham_counter[MACHINE_AXIS_COUNT];
 						s_timer_control_bits control_bits;
+						__s_spindle_block spindle_block;
 					};
 					static s_persisted _persisted;
 					static void(*pntr_next_gate)(void);

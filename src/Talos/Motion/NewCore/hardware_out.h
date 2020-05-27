@@ -1,7 +1,6 @@
 #ifndef __C_MOTION_CORE_OUTPUT_HARDWARE_H
 #define __C_MOTION_CORE_OUTPUT_HARDWARE_H
 #include <stdint.h>
-#include "support_items/s_spindle_block.h"
 #include "../../talos_hardware_def.h"
 
 namespace Talos
@@ -24,20 +23,19 @@ namespace Talos
 					class Spindle
 					{
 					public:
-						static void start(__s_spindle_block spindle_block);
-						static void stop(__s_spindle_block spindle_block);
-						static bool synch_wait(__s_spindle_block spindle_block);
-						static uint32_t get_speed(__s_spindle_block spindle_block);
+						static void start(uint32_t speed);
+						static void stop();
+						static bool synch_wait();
+						static uint32_t get_speed();
 					};
 
 					class Motion
 					{
 					public:
-						static void initialize();
+						static void start();
 						static void stop();
-						static void direction(uint16_t* directions);
-						static void brakes(uint16_t* brakes);;
-						static void step(uint16_t *outputs);
+						static bool synch_wait();
+						static uint32_t get_speed();
 					};
 				protected:
 				private:

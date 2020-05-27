@@ -7,6 +7,7 @@
 
 
 #include "c_hardware_out.h"
+namespace hal_mtn = Hardware_Abstraction_Layer::MotionCore;
 
 namespace Talos
 {
@@ -16,22 +17,58 @@ namespace Talos
 		{
 			namespace Output
 			{
-				void Hardware::Spindle::start(uint32_t speed)
-				{
-				}
-
-				void Hardware::Spindle::stop()
-				{
-				}
-
-				void Hardware::Spindle::synch_wait()
+//-------------------------------------------------------------------
+#pragma region Spindle driver
+				void Hardware::Spindle::start(__s_spindle_block spindle_block)
 				{
 
 				}
 
-				uint32_t Hardware::Spindle::get_speed()
+				void Hardware::Spindle::stop(__s_spindle_block spindle_block)
+				{
+
+				}
+
+				bool Hardware::Spindle::synch_wait(__s_spindle_block spindle_block)
+				{
+					return false;
+				}
+
+				uint32_t Hardware::Spindle::get_speed(__s_spindle_block spindle_block)
+				{
+
+					return 0;
+				}
+
+#pragma endregion
+//-------------------------------------------------------------------
+#pragma region Motion driver
+
+				void Hardware::Motion::initialize()
+				{
+					hal_mtn::Stepper::wake_up();
+				}
+
+				void Hardware::Motion::stop()
+				{
+					hal_mtn::Stepper::st_go_idle();
+				}
+
+				void  Hardware::Motion::direction(uint16_t* directions)
+				{
+
+				}
+
+				void Hardware::Motion::brakes(uint16_t* brake_pins)
+				{
+
+				}
+				void Hardware::Motion::step(uint16_t* outputs)
 				{
 				}
+
+#pragma endregion
+//-------------------------------------------------------------------
 			}
 		}
 	}

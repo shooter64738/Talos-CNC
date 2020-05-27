@@ -1,4 +1,4 @@
-#ifndef C_SEGMENTED_SPINDLEBLOCK_H
+#ifndef C_SEGMENTED_SPINDLE_BLOCK_H
 #define C_SEGMENTED_SPINDLE_BLOCK_H
 
 #include <stdint.h>
