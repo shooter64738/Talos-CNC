@@ -17,7 +17,7 @@
 *  You should have received a copy of the GNU General Public License
 *  along with Talos.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "../../../../Coordinator/coordinator_hardware_def.h"
+#include "../../../../talos_hardware_def.h"
 #include "c_core_stm32h745.h"
 #include <stm32h7xx_hal.h>
 #include <stm32_hal_legacy.h>
@@ -28,7 +28,7 @@ extern "C"
 
 void SysTick_Handler(void)
 {
-//	*(Hardware_Abstraction_Layer::Core::cpu_tick_ms)++;
+	*(Hardware_Abstraction_Layer::Core::cpu_tick_ms)++;
 	HAL_IncTick();
 	HAL_SYSTICK_IRQHandler();
 }

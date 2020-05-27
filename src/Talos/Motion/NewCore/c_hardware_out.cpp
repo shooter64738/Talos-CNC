@@ -7,6 +7,7 @@
 
 
 #include "c_hardware_out.h"
+#include "../../talos_hardware_def.h"
 namespace hal_mtn = Hardware_Abstraction_Layer::MotionCore;
 
 namespace Talos

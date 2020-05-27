@@ -13,6 +13,7 @@
 #include "c_state_control.h"
 #include <math.h>
 #include <string.h>
+#include "../../_bit_manipulation.h"
 
 //#define SOME_LARGE_VALUE 1.0E+38
 //#define MINIMUM_JUNCTION_SPEED 0.0

@@ -6,7 +6,7 @@
 */
 
 
-#include "../../../../Coordinator/coordinator_hardware_def.h"
+#include "../../../../talos_hardware_def.h"
 #include "c_serial_stm32h745.h"
 #include <stm32h7xx_hal.h>
 #include <stm32_hal_legacy.h>

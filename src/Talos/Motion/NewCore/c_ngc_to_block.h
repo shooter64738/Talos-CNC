@@ -44,9 +44,9 @@ namespace Talos
 					};
 					static s_persisting_values _persisted;
 
-					static __s_motion_block Block::motion_buffer_store[MOTION_BUFFER_SIZE];
-					static __s_spindle_block Block::spindle_buffer_store[SPINDLE_BUFFER_SIZE];
-					static s_ngc_block Block::ngc_buffer_store[NGC_BUFFER_SIZE];
+					static __s_motion_block motion_buffer_store[MOTION_BUFFER_SIZE];
+					static __s_spindle_block spindle_buffer_store[SPINDLE_BUFFER_SIZE];
+					static s_ngc_block ngc_buffer_store[NGC_BUFFER_SIZE];
 
 					//functions
 				public:
@@ -55,7 +55,7 @@ namespace Talos
 
 					static bool ngc_buffer_process();
 
-					static bool Block::__motion_requires_zero_start(
+					static bool __motion_requires_zero_start(
 						s_bit_flag_controller<e_feed_block_state> feed,
 						s_bit_flag_controller<e_motion_block_state> speed);
 
@@ -92,7 +92,7 @@ namespace Talos
 
 					static void __configure_feeds(NGC_RS274::Block_View ngc_block, __s_motion_block* motion_block);
 
-					static e_feed_block_state Block::__check_ngc_feed_mode(__s_motion_block* motion_block
+					static e_feed_block_state __check_ngc_feed_mode(__s_motion_block* motion_block
 						, uint16_t ngc_feed_mode);
 
 					static e_feed_block_state __ngc_feed_to_flag(uint16_t);
