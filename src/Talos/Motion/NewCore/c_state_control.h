@@ -126,6 +126,8 @@ namespace Talos
 					static s_bit_flag_controller<e_states> states;
 					static int32_t spindle_last_checked_speed;
 					static int32_t spindle_target_speed;
+					static uint32_t complete_block_station;
+					static uint32_t complete_block_line;
 				protected:
 				private:
 

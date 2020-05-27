@@ -221,11 +221,13 @@ namespace Talos
 					//If feedmode is spindle synch, calculate the correct delay value for
 					//the feedrate, based on spindle current speed
 					//TODO: is there a better way to do this without several if statements?
-					if (_persisted.active_timer_item->common.control_bits.feed.get(e_feed_block_state::feed_mode_units_per_rotation))
+					if (_persisted.active_timer_item->common.control_bits.feed.get(
+						e_feed_block_state::feed_mode_units_per_rotation))
 					{
 						//only adjust the delay value if we are in 'cruise' state.
 						//The arbitrator still controls motion during accel and decel
-						if (_persisted.active_timer_item->common.control_bits.speed.get(e_speed_block_state::motion_state_cruising))
+						if (_persisted.active_timer_item->common.control_bits.speed.get(
+							e_speed_block_state::motion_state_cruising))
 						{
 							//Hardware_Abstraction_Layer::MotionCore::Stepper::OCR1A_set
 							//(Hardware_Abstraction_Layer::MotionCore::Spindle::spindle_encoder->feedrate_delay);
@@ -235,7 +237,7 @@ namespace Talos
 					if (_persisted.active_timer_item->steps_to_execute_in_this_segment == 0)
 					{
 						//We are done with this timer item. Calling a get will move the indexes so the 
-						//buffer is empty if it was full before.
+						//buffer is not full if it was full before.
 						seg_dat::Segment::timer_buffer.get();
 						_persisted.active_timer_item = NULL;
 					}
@@ -302,7 +304,19 @@ namespace Talos
 						// NOTE: When the segment data index changes, this indicates a new planner block.
 						if (_persisted.active_bresenham != _persisted.active_timer_item->common.bres_obj)
 						{
+							//New line segment, so this should be the start of a block.
 							mtn_ctl_sta::Output::states.set(mtn_ctl_sta::Output::e_states::ngc_block_done);
+							_persisted.active_line_number = _persisted.active_timer_item->common.tracking.line_number;
+							_persisted.last_complete_sequence = _persisted.active_sequence;
+														
+							mtn_ctl_sta::Output::complete_block_station = _persisted.last_complete_sequence;
+							mtn_ctl_sta::Output::complete_block_line = _persisted.active_line_number;
+
+							_persisted.active_sequence = _persisted.active_timer_item->common.tracking.sequence;
+							_persisted.active_bresenham = _persisted.active_timer_item->common.bres_obj;
+
+							
+
 							//a new block has been detected. that means there is a potential for new ngc settings
 							//for the spindle. better go check
 							Segment::__configure_spindle();
@@ -310,11 +324,7 @@ namespace Talos
 							//if we are loading a new block directions MIGHT change, so clear the set flag
 							//Motion_Core::Hardware::Interpolation::direction_set = 0;
 
-							//New line segment, so this should be the start of a block.
-							_persisted.active_line_number = _persisted.active_timer_item->common.tracking.line_number;
-							_persisted.last_complete_sequence = _persisted.active_sequence;
-							_persisted.active_sequence = _persisted.active_timer_item->common.tracking.sequence;
-							_persisted.active_bresenham = _persisted.active_timer_item->common.bres_obj;
+							
 
 							// Initialize Bresenham line and distance counters
 							for (int i = 0; i < MACHINE_AXIS_COUNT; i++)
