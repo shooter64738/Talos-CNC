@@ -7,6 +7,17 @@ enum class e_system_block_state : uint8_t
 	block_state_skip_sys_pos_update = 1,
 };
 
+enum class e_spindle_state : uint8_t
+{
+	turning_on = 0,
+	turning_off = 1,
+	direction_cw = 2,
+	direction_ccw = 3,
+	indexing = 4,
+	braking = 5,
+	synch_with_motion = 6,
+};
+
 enum class e_feed_block_state : uint8_t
 {
 	feed_mode_change = 0,
@@ -29,6 +40,7 @@ enum class e_motion_block_state : uint8_t
 	reinitialize_segment = 0,
 	segment_reinitialized =1,
 	motion_rapid = 2,
+	motion_exact_path = 3,
 	//motion_feed = 15,
 };
 #endif

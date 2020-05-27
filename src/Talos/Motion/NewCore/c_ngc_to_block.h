@@ -55,7 +55,10 @@ namespace Talos
 
 					static bool ngc_buffer_process();
 
-					static bool feed_mode_zero_start(s_bit_flag_controller<e_feed_block_state> feed);
+					static bool Block::__motion_requires_zero_start(
+						s_bit_flag_controller<e_feed_block_state> feed,
+						s_bit_flag_controller<e_motion_block_state> speed);
+
 					static float get_next_block_exit_speed(uint16_t current_station);
 					static float get_nominal_speed(__s_motion_block* motion_block);
 
@@ -85,9 +88,14 @@ namespace Talos
 						, s_bit_flag_controller<uint16_t>* bl_comp
 						, __s_motion_block* motion_block);
 
+					static void __configure_motions(NGC_RS274::Block_View ngc_block, __s_motion_block* motion_block);
+
 					static void __configure_feeds(NGC_RS274::Block_View ngc_block, __s_motion_block* motion_block);
 
-					static e_feed_block_state Block::__check_ngc_feed_mode(__s_motion_block* motion_block, uint16_t ngc_feed_mode);
+					static e_feed_block_state Block::__check_ngc_feed_mode(__s_motion_block* motion_block
+						, uint16_t ngc_feed_mode);
+
+					static e_feed_block_state __ngc_feed_to_flag(uint16_t);
 
 					static float convert_delta_vector_to_unit_vector(float* vector);
 

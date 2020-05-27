@@ -55,7 +55,7 @@ namespace Talos
 					static void __spindle_wait_synch();
 					static void __spindle_start();
 					static void __motion_start();
-					static bool __config_timer();
+					static bool __load_segment();
 					static void __new_motion();
 					static void __release_brakes();
 					static void __run_interpolation();

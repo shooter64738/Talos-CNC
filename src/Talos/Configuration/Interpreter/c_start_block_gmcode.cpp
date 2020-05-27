@@ -91,7 +91,7 @@ uint8_t c_defaultblock::load_defaults()
 	//default coordinate system selection
 	Settings.g_group[NGC_RS274::Groups::G::COORDINATE_SYSTEM_SELECTION] = NGC_RS274::G_codes::MOTION_IN_MACHINE_COORDINATE_SYSTEM;
 	//default path control mode
-	Settings.g_group[NGC_RS274::Groups::G::PATH_CONTROL_MODE] = NGC_RS274::G_codes::PATH_CONTROL_EXACT_PATH;
+	Settings.g_group[NGC_RS274::Groups::G::PATH_CONTROL_MODE] = NGC_RS274::G_codes::PATH_CONTROL_CONTINUOUS_WITH_TOLERANCE;
 	//default coordinate system type
 	Settings.g_group[NGC_RS274::Groups::G::RECTANGLAR_POLAR_COORDS_SELECTION] = NGC_RS274::G_codes::RECTANGULAR_COORDINATE_SYSTEM;
 	//default canned cycle return mode

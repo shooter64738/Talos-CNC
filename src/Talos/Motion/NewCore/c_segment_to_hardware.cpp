@@ -30,8 +30,8 @@ namespace seg_dat = Talos::Motion::Core::Process;
 namespace hrd_out = Talos::Motion::Core::Output;
 
 
-#define HAL_SET_DIRECTION_PINS()
-#define HAL_RELEASE_DRIVE_BREAKS()
+//#define HAL_SET_DIRECTION_PINS()
+//#define HAL_RELEASE_DRIVE_BREAKS()
 
 
 namespace Talos
@@ -51,26 +51,10 @@ namespace Talos
 				Do we have to wait on other hardware? Spindle up to speed, servo brakes released, etc.
 				*/
 
-				//s_common_segment_items Segment::previous_flags{ 0 };
-				//__s_motion_block* Segment::active_block = NULL;
-
-				//we are reading/writing to the same buffer in the block_to_segment code
-				//so we can use the same storage pointer but we need a new ring buffer to
-				//'wrap' around it
-				/*c_ring_buffer<__s_motion_block> Segment::motion_buffer
-				(mot_dat::Block::motion_buffer._storage_pointer , MOTION_BUFFER_SIZE);*/
-
 				//default the gate to new motion.
 				void(*Segment::pntr_next_gate)(void) = Segment::__new_motion;
 				void(*Segment::pntr_driver)(void) = NULL;
-
-				/*static s_timer_item* active_timer_item = NULL;
-				static s_bresenham* active_bresenham = NULL;
-				static uint32_t active_line_number = 0;
-				static uint32_t last_complete_sequence = 0;
-				static uint32_t active_sequence = 0;
-				static uint16_t step_outbits = 0;
-				static int32_t bresenham_counter[MACHINE_AXIS_COUNT]{ 0 };*/
+				static uint32_t total_steps = 0;
 
 				Segment::s_persisted Segment::_persisted{};
 
@@ -166,8 +150,7 @@ namespace Talos
 					//Segment::pntr_next_gate = NULL;
 					
 				}
-
-				static uint32_t total_steps = 0;
+				
 				void Segment::__release_brakes()
 				{
 					//release output drive breaks
@@ -200,26 +183,10 @@ namespace Talos
 
 					if (Segment::_persisted.active_timer_item == NULL)
 					{
-						bool end = __config_timer();
+						bool end = __load_segment();
 						//were there any more segments? if not we are done.
 						if (end)
-						{
-							//shut down the hardware
-							hrd_out::Hardware::Motion::stop();
-							
-
-#ifdef MSVC
-							myfile << 0 << ",";
-							myfile << 0 << ",";
-							myfile << 0 << ",";
-							myfile << _persisted.active_line_number << ",";
-							myfile << _persisted.active_sequence << ",";
-							myfile << total_steps << ",";
-							myfile << "\r";
-							myfile.flush();
-#endif
-
-
+						{							
 							__end_interpolation();
 							return;
 						}
@@ -275,7 +242,7 @@ namespace Talos
 					//_persisted.step_outbits ^= Motion_Core::Hardware::Interpolation::step_port_invert_mask;  // Apply step port invert mask
 				}
 
-				bool Segment::__config_timer()
+				bool Segment::__load_segment()
 				{
 					bool done = true;
 
@@ -335,6 +302,11 @@ namespace Talos
 						// NOTE: When the segment data index changes, this indicates a new planner block.
 						if (_persisted.active_bresenham != _persisted.active_timer_item->common.bres_obj)
 						{
+							mtn_ctl_sta::Output::states.set(mtn_ctl_sta::Output::e_states::ngc_block_done);
+							//a new block has been detected. that means there is a potential for new ngc settings
+							//for the spindle. better go check
+							Segment::__configure_spindle();
+
 							//if we are loading a new block directions MIGHT change, so clear the set flag
 							//Motion_Core::Hardware::Interpolation::direction_set = 0;
 
@@ -359,17 +331,26 @@ namespace Talos
 
 				void Segment::__end_interpolation()
 				{
+					//shut down the hardware
+					hrd_out::Hardware::Motion::stop();
 #ifdef MSVC
+					myfile << 0 << ",";
+					myfile << 0 << ",";
+					myfile << 0 << ",";
+					myfile << _persisted.active_line_number << ",";
+					myfile << _persisted.active_sequence << ",";
+					myfile << total_steps << ",";
+					myfile << "\r";
 					myfile.flush();
 					myfile.close();
 #endif // MSVC
-					
-					hrd_out::Hardware::Motion::brakes(0);
 					__set_brakes();
 				}
 
 				void Segment::__set_brakes()
 				{
+					hrd_out::Hardware::Motion::brakes(0);
+
 					//set this to null in case the timer fires will we are in here.
 					Segment::pntr_driver = NULL;
 

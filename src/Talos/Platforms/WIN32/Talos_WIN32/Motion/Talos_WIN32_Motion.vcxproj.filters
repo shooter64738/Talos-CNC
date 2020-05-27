@@ -389,9 +389,6 @@
     <ClInclude Include="..\..\..\..\Motion\NewCore\support_items\e_ramp_states.h">
       <Filter>Motion\NewCore\Supporting_Items</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Motion\NewCore\support_items\e_spindle_state.h">
-      <Filter>Motion\NewCore\Supporting_Items</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\..\Motion\NewCore\support_items\e_state_flag.h">
       <Filter>Motion\NewCore\Supporting_Items</Filter>
     </ClInclude>
@@ -419,14 +416,14 @@
     <ClInclude Include="..\..\..\..\Motion\NewCore\support_items\s_segment_base.h">
       <Filter>Motion\NewCore\Supporting_Items</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Motion\NewCore\support_items\s_spindle_block.h">
-      <Filter>Motion\NewCore\Supporting_Items</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\..\Motion\NewCore\support_items\s_timer_item.h">
       <Filter>Motion\NewCore\Supporting_Items</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\Motion\NewCore\c_hardware_out.h">
       <Filter>Motion\NewCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Motion\NewCore\support_items\s_spindle_block.h">
+      <Filter>Motion\NewCore\Supporting_Items</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

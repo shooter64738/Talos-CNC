@@ -120,6 +120,7 @@ namespace Talos
 						spindle_get_speed = 2,
 						hardware_fault = 3,
 						interpolation_running = 4,
+						ngc_block_done = 5,
 
 					};
 					static s_bit_flag_controller<e_states> states;

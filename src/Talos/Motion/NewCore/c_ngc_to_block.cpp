@@ -7,6 +7,7 @@
 
 
 #include "c_ngc_to_block.h"
+#include "../../NGC_RS274/_ngc_g_groups.h";
 #include "c_block_to_segment.h"
 #include "../../Configuration/c_configuration.h"
 #include "c_state_control.h"
@@ -51,6 +52,13 @@ namespace Talos
 				{
 					mtn_cfg::Controller.load_defaults();
 					int_cfg::DefaultBlock.load_defaults();
+
+					//set the persisted value for feed mode so we dont detect a change
+					//in feed mode on the first motion
+					e_feed_block_state def_feed = __ngc_feed_to_flag(
+						int_cfg::DefaultBlock.Settings.g_group[NGC_RS274::Groups::G::Feed_rate_mode]);
+					_persisted.feed.set(def_feed);
+
 					s_ngc_block ngc_block{ 0 };
 					NGC_RS274::Block_View view = NGC_RS274::Block_View(&int_cfg::DefaultBlock.Settings);
 					*view.current_g_codes.Motion = NGC_RS274::G_codes::RAPID_POSITIONING;
@@ -137,9 +145,11 @@ namespace Talos
 
 					bool has_changes = false;
 
+					//get the values from the ngc data
 					spindle_block.rpm = *view.persisted_values.active_spindle_speed_S;
 					spindle_block.m_code = *view.current_m_codes.SPINDLE;
 
+					//are these values different than what we had before
 					if ((spindle_block.m_code != _persisted.spindle_block.m_code)
 						|| (spindle_block.rpm != _persisted.spindle_block.rpm)
 						)
@@ -168,28 +178,35 @@ namespace Talos
 						}
 
 						if (_persisted.feed.get(e_feed_block_state::feed_mode_units_per_rotation))
+						{
 							spindle_block.states.set(e_spindle_state::synch_with_motion);
+						}
 
-						//store off these values
-						memcpy(&_persisted.spindle_block, &spindle_block, sizeof(__s_spindle_block));
-
+						spindle_block.feed._flag = _persisted.feed._flag;
+						//add the changes to the spindle rec buffer
 						spindle_buffer.put(spindle_block);
-						return 1;
+
 					}
+					//no changes in the ngc data for spindle. lets check
+					//if a block change effected the spindle
 					else
 					{
-						//even if the spindle hasnt changed, we will need a spindle record to
-						//go with the motion record if its a feed per rotation motion. since
-						//the motion block was processed first, we can look at the persisted
-						//values that were stored and determine if its a feed per rotation
-						//motion
-						if (_persisted.feed.get(e_feed_block_state::feed_mode_units_per_rotation))
+						//is the feed mode from teh block different than the feed mode currently
+						//set for the spindle
+						if (_persisted.feed._flag != _persisted.spindle_block.feed._flag)
 						{
-							//just add the previous spindle record values since there are no changes.
+							//something is different. add this spindle record to the buffer.
+							//output will do what it needs to with it
 							spindle_buffer.put(_persisted.spindle_block);
 						}
+						//return here because no changes were made we dont need to bother
+						//updating persisted data
 						return 0;
 					}
+
+					//store off these values
+					memcpy(&_persisted.spindle_block, &spindle_block, sizeof(__s_spindle_block));
+					return 1;
 				}
 
 				uint8_t Block::__load_motion(NGC_RS274::Block_View view)
@@ -241,6 +258,8 @@ namespace Talos
 					motion_block.rapid_rate = __limit_value_by_axis_maximum(mtn_cfg::Controller.Settings.hardware.max_rate, unit_vec);
 
 					__configure_feeds(view, &motion_block);
+
+					__configure_motions(view, &motion_block);
 
 					__plan_buffer_line(&motion_block, mtn_cfg::Controller.Settings, &_persisted, unit_vec, target_steps);
 
@@ -327,6 +346,18 @@ namespace Talos
 
 				}
 
+				void Block::__configure_motions(
+					NGC_RS274::Block_View ngc_view
+					, __s_motion_block* motion_block)
+				{
+					if (*ngc_view.current_g_codes.Motion == NGC_RS274::G_codes::RAPID_POSITIONING)
+						motion_block->common.control_bits.motion.set(e_motion_block_state::motion_rapid);
+
+					if (*ngc_view.current_g_codes.PATH_CONTROL_MODE == NGC_RS274::G_codes::PATH_CONTROL_EXACT_STOP
+						|| *ngc_view.current_g_codes.PATH_CONTROL_MODE == NGC_RS274::G_codes::PATH_CONTROL_EXACT_PATH)
+						motion_block->common.control_bits.motion.set(e_motion_block_state::motion_exact_path);
+				}
+
 				void Block::__configure_feeds(
 					NGC_RS274::Block_View ngc_view
 					, __s_motion_block* motion_block)
@@ -341,13 +372,41 @@ namespace Talos
 
 				e_feed_block_state Block::__check_ngc_feed_mode(__s_motion_block* motion_block, uint16_t ngc_feed_mode)
 				{
-					e_feed_block_state new_feed_mode = {};
+					e_feed_block_state new_feed_mode = __ngc_feed_to_flag(ngc_feed_mode);
 
-					switch (ngc_feed_mode)
+					if (new_feed_mode == e_feed_block_state::feed_mode_units_per_minute)
+						motion_block->programmed_rate *= motion_block->millimeters;
+
+					if (!_persisted.feed.get(new_feed_mode))
+					{
+						//feedmode is changing, clear all the feedmode flags
+						_persisted.feed.clear(e_feed_block_state::feed_mode_units_per_rotation);
+						_persisted.feed.clear(e_feed_block_state::feed_mode_minutes_per_unit);
+						_persisted.feed.clear(e_feed_block_state::feed_mode_units_per_minute);
+						_persisted.feed.clear(e_feed_block_state::feed_mode_rpm);
+
+						//set the new feed mode so we can keep track of it
+						_persisted.feed.set(new_feed_mode);
+
+						//flag this block as changing feed modes. this will effect how the junction
+						//speeds are handled
+
+						motion_block->common.control_bits.feed.set(e_feed_block_state::feed_mode_change);
+					}
+					//motion blocks flags should have been cleared on get, so just set it
+
+					motion_block->common.control_bits.feed.set(new_feed_mode);
+
+					return new_feed_mode;
+				}
+
+				e_feed_block_state Block::__ngc_feed_to_flag(uint16_t feed_mode)
+				{
+					e_feed_block_state new_feed_mode = {};
+					switch (feed_mode)
 					{
 					case NGC_RS274::G_codes::FEED_RATE_MINUTES_PER_UNIT_MODE:
 					{
-						motion_block->programmed_rate *= motion_block->millimeters;
 						new_feed_mode = e_feed_block_state::feed_mode_minutes_per_unit;
 						break;
 					}
@@ -363,8 +422,6 @@ namespace Talos
 					}
 					case NGC_RS274::G_codes::FEED_RATE_UNITS_PER_ROTATION:
 					{
-						//not sure this is right.. we will see
-						//motion_block->programmed_rate *= motion_block->millimeters * motion_block->programmed_spindle_speed;
 						new_feed_mode = e_feed_block_state::feed_mode_units_per_rotation;
 						break;
 					}
@@ -374,23 +431,6 @@ namespace Talos
 						break;
 					}
 
-					if (!_persisted.feed.get(new_feed_mode))
-					{
-						//feedmode is changing, clear all the feedmode flags
-						_persisted.feed.clear(e_feed_block_state::feed_mode_units_per_rotation);
-						_persisted.feed.clear(e_feed_block_state::feed_mode_minutes_per_unit);
-						_persisted.feed.clear(e_feed_block_state::feed_mode_units_per_minute);
-						_persisted.feed.clear(e_feed_block_state::feed_mode_rpm);
-
-						//set the new feed mode so we can keep track of it
-						_persisted.feed.set(new_feed_mode);
-
-						//flag this block as changing feed modes. this will effect how the junction
-						//speeds are handled
-						motion_block->common.control_bits.feed.set(e_feed_block_state::feed_mode_change);
-					}
-					//motion blocks flags should have been cleared on get, so just set it
-					motion_block->common.control_bits.feed.set(new_feed_mode);
 					return new_feed_mode;
 				}
 
@@ -440,7 +480,9 @@ namespace Talos
 					//If there is no data in the buffer we are assuming a start from rest.
 					//Also if there is a feedmode change to units per rotation that wasnt 
 					//there before we need to start from rest. 
-					if (!Block::motion_buffer.has_data() || feed_mode_zero_start(motion_block->common.control_bits.feed))
+					if (!Block::motion_buffer.has_data() ||
+						__motion_requires_zero_start(motion_block->common.control_bits.feed
+							, motion_block->common.control_bits.motion))
 					{
 						// Initialize block entry speed as zero. Assume it will be starting from rest. Planner will correct this later.
 						// If system motion, the system motion block always is assumed to start from rest and end at a complete stop.
@@ -477,7 +519,7 @@ namespace Talos
 								convert_delta_vector_to_unit_vector(junction_unit_vec);
 								float junction_acceleration = __limit_value_by_axis_maximum(hw_settings.hardware.acceleration, junction_unit_vec);
 								float sin_theta_d2 = sqrt(0.5 * (1.0 - junction_cos_theta)); // Trig half angle identity. Always positive.
-								motion_block->speed.mx_junc_sqr = 
+								motion_block->speed.mx_junc_sqr =
 									max(mtn_cfg::Controller.Settings.internals.MINIMUM_JUNCTION_SPEED_SQ,
 									(junction_acceleration * hw_settings.tolerance.junction_deviation * sin_theta_d2)
 										/ (1.0 - sin_theta_d2));
@@ -552,7 +594,8 @@ namespace Talos
 							Process::Segment::st_update_plan_block_parameters();
 						}
 						// Compute maximum entry speed decelerating over the current block from its exit speed.
-						if (feed_mode_zero_start(current->common.control_bits.feed))
+						if (__motion_requires_zero_start(current->common.control_bits.feed
+							, current->common.control_bits.motion))
 						{
 							int x = 0;
 						}
@@ -594,7 +637,8 @@ namespace Talos
 						// Any acceleration detected in the forward pass automatically moves the optimal planned
 						// pointer forward, since everything before this is all optimal. In other words, nothing
 						// can improve the plan from the buffer tail to the planned pointer by logic.
-						if (feed_mode_zero_start(current->common.control_bits.feed))
+						if (__motion_requires_zero_start(current->common.control_bits.feed
+							, current->common.control_bits.motion))
 						{
 							int x = 0;
 						}
@@ -604,7 +648,7 @@ namespace Talos
 							if (current->speed.entry_sqr < next->speed.entry_sqr)
 							{
 								//get a new entry speed based on the current block velocity
-								entry_speed_sqr = current->speed.entry_sqr 
+								entry_speed_sqr = current->speed.entry_sqr
 									+ 2 * current->acceleration * current->millimeters;
 								//is this new entry speed slower than the entry speed of the next block
 								if (entry_speed_sqr < next->speed.entry_sqr)
@@ -632,7 +676,7 @@ namespace Talos
 					, float nominal
 					, float prev_nominal)
 				{
-					
+
 					motion_block->speed.mx_entry_sqr =
 						(nominal > prev_nominal) ? prev_nominal * prev_nominal
 						: nominal * nominal;
@@ -698,7 +742,8 @@ namespace Talos
 						exit_speed = block->speed.entry_sqr;
 
 						//if feedmode is changing to units per rev, we have to exit at zero
-						if (feed_mode_zero_start(block->common.control_bits.feed))
+						if (__motion_requires_zero_start(block->common.control_bits.feed
+						, block->common.control_bits.motion))
 							exit_speed = 0.0;
 					}
 
@@ -711,13 +756,27 @@ namespace Talos
 					return exit_speed;
 				}
 
-				bool Block::feed_mode_zero_start(s_bit_flag_controller<e_feed_block_state> feed)
+				bool Block::__motion_requires_zero_start(
+					s_bit_flag_controller<e_feed_block_state> feed,
+					s_bit_flag_controller<e_motion_block_state> speed)
+
 				{
 					bool requires_zero_start = false;
 
-					if ((feed.get(e_feed_block_state::feed_mode_units_per_rotation)
-						&& feed.get(e_feed_block_state::feed_mode_change)))
+					//must leave the feed mode change flag until AFTER the planner has ran this motion.
+					//segment loader will clear this on the timer objects for me.
+					if (feed.get(e_feed_block_state::feed_mode_change)
+						|| speed.get(e_motion_block_state::motion_exact_path))
+					{
+						//__ngc_feed_to_flag()
+						//after checking with source on the net, it seems that motion should decel to a stop
+						//when feed modes change. which simplifies this a great deal. 
+
+						//e_feed_block_state current_mode = _persisted.feed.get(e_feed_block_state::)
+						/////*&& feed.get(e_feed_block_state::feed_mode_change)))
+
 						requires_zero_start = true;
+					}
 
 					return requires_zero_start;
 
@@ -728,7 +787,7 @@ namespace Talos
 					//so p[ersisted data is not spread all over the place, im copying all data
 					//that persists from motion to motion in here.
 
-					motion_block->common.control_bits.feed = _persisted.feed;
+					//motion_block->common.control_bits.feed = _persisted.feed;
 
 				}
 			}
