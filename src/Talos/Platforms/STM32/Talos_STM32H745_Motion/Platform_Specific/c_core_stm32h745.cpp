@@ -22,10 +22,8 @@
 #include <stm32h7xx_hal.h>
 #include <stm32_hal_legacy.h>
 #include "sys_clock_configs.h"
-#ifdef __cplusplus
-extern "C"
-#endif
 
+__C
 void SysTick_Handler(void)
 {
 	*(Hardware_Abstraction_Layer::Core::cpu_tick_ms)++;

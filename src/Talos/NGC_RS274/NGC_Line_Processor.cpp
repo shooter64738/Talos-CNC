@@ -80,7 +80,7 @@ e_parsing_errors NGC_RS274::LineProcessor::_process_buffer(char * buffer, s_ngc_
 	//on we will go ahead and skip it. If it is off, we can execute it. 
 	if (buffer[read_pos] == '/')
 	{
-		block->block_events.set((int)e_block_event::BlockSkipOptionActive);
+		block->block_events.set(e_block_event::BlockSkipOptionActive);
 		read_pos++;
 	}
 

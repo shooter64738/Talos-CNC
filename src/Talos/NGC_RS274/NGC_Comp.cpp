@@ -38,7 +38,7 @@ e_compensation_errors NGC_RS274::Compensation::process(NGC_RS274::Block_View * v
 	{
 		__first_motion(v_new_block);
 		//Set this block to a held state. We cant execute it until we have the next motion block
-		v_new_block->active_view_block->block_events.set((int)e_block_event::HoldBlockForCRC);
+		v_new_block->active_view_block->block_events.set(e_block_event::HoldBlockForCRC);
 		//Set crc state to active on
 		NGC_RS274::Compensation::comp_control.state = e_compensation_states::CurrentCompensationOnActive;
 
@@ -51,7 +51,7 @@ e_compensation_errors NGC_RS274::Compensation::process(NGC_RS274::Block_View * v
 		v_held_block.load(&releasing_block);
 		__continuous_motion(v_new_block);
 		//Set this block to a held state. We cant execute it until we have the next motion block
-		v_new_block->active_view_block->block_events.set((int)e_block_event::HoldBlockForCRC);
+		v_new_block->active_view_block->block_events.set(e_block_event::HoldBlockForCRC);
 	}
 	else if (NGC_RS274::Compensation::comp_control.state == e_compensation_states::CurrentCompensationOnDeactivating)
 	{
@@ -228,7 +228,7 @@ uint8_t NGC_RS274::Compensation::__update_locked_block(s_point new_target, uint3
 {
 	
 	
-	releasing_block.block_events.clear((int)e_block_event::HoldBlockForCRC);
+	releasing_block.block_events.clear(e_block_event::HoldBlockForCRC);
 	
 	v_held_block.active_view_block->target_motion_position[HORIZONTAL_MOTION_AXIS] = new_target.X;
 	v_held_block.active_view_block->target_motion_position[VERTICAL_MOTION_AXIS] = new_target.Y;

@@ -108,7 +108,7 @@ e_parsing_errors NGC_RS274::Error_Check::__error_check_main(NGC_RS274::Block_Vie
 		case NGC_RS274::Groups::G::COORDINATE_SYSTEM_SELECTION: //<--G54,G55,G56,G57,G58,G59,G59.1,G59.2,G59.3
 		{
 			//see if the group value has been changed
-			if (!v_new_block->active_view_block->block_events.get((int)NGC_RS274::Groups::G::COORDINATE_SYSTEM_SELECTION))
+			if (!v_new_block->active_view_block->block_events.get((e_block_event)NGC_RS274::Groups::G::COORDINATE_SYSTEM_SELECTION))
 				continue;
 			//pntr_error_check = __chk_COORDINATE_SYSTEM_SELECTION;
 
@@ -118,7 +118,7 @@ e_parsing_errors NGC_RS274::Error_Check::__error_check_main(NGC_RS274::Block_Vie
 		case NGC_RS274::Groups::G::Cutter_radius_compensation: //<--G40,G41,G42
 		{
 			//see if the group value has been changed
-			if (!v_new_block->active_view_block->block_events.get((int)NGC_RS274::Groups::G::Cutter_radius_compensation))
+			if (!v_new_block->active_view_block->block_events.get((e_block_event)NGC_RS274::Groups::G::Cutter_radius_compensation))
 				continue;
 
 			//pntr_error_check = __chk_Cutter_radius_compensation;
@@ -134,7 +134,7 @@ e_parsing_errors NGC_RS274::Error_Check::__error_check_main(NGC_RS274::Block_Vie
 		case NGC_RS274::Groups::G::DISTANCE_MODE: //<--G90,G91
 		{
 			//see if the group value has been changed
-			if (!v_new_block->active_view_block->block_events.get((int)NGC_RS274::Groups::G::DISTANCE_MODE))
+			if (!v_new_block->active_view_block->block_events.get((e_block_event)NGC_RS274::Groups::G::DISTANCE_MODE))
 				continue;
 			//pntr_error_check = __chk_DISTANCE_MODE;
 
@@ -144,7 +144,7 @@ e_parsing_errors NGC_RS274::Error_Check::__error_check_main(NGC_RS274::Block_Vie
 		case NGC_RS274::Groups::G::Feed_rate_mode: //<--G93,G94,G95
 		{
 			//see if the group value has been changed
-			if (!v_new_block->active_view_block->block_events.get((int)NGC_RS274::Groups::G::Feed_rate_mode))
+			if (!v_new_block->active_view_block->block_events.get((e_block_event)NGC_RS274::Groups::G::Feed_rate_mode))
 				continue;
 			//pntr_error_check = __chk_Feed_rate_mode;
 
@@ -154,7 +154,7 @@ e_parsing_errors NGC_RS274::Error_Check::__error_check_main(NGC_RS274::Block_Vie
 		case NGC_RS274::Groups::G::Motion: //<--G0,G1,G02,G03,G38.2,G80,G81,G82,G83,G84,G85,G86,G87.G88.G89
 		{
 			//see if the group value has been changed
-			if (!v_new_block->active_view_block->block_events.get((int)NGC_RS274::Groups::G::Motion))
+			if (!v_new_block->active_view_block->block_events.get((e_block_event)NGC_RS274::Groups::G::Motion))
 				continue;
 
 			//ReturnValue = NGC_RS274::Dialect::Group1::linear_traverse(v_new_block, e_dialects::Fanuc);
@@ -165,7 +165,7 @@ e_parsing_errors NGC_RS274::Error_Check::__error_check_main(NGC_RS274::Block_Vie
 		case NGC_RS274::Groups::G::NON_MODAL: //<--G4,G10,G28,G28.1,G30,G30.1,G53,G92,G92.1,G92.2,G92.3
 		{
 			//see if the group value has been changed
-			if (!v_new_block->active_view_block->block_events.get((int)NGC_RS274::Groups::G::NON_MODAL))
+			if (!v_new_block->active_view_block->block_events.get((e_block_event)NGC_RS274::Groups::G::NON_MODAL))
 				continue;
 			//pntr_error_check = __chk_NON_MODAL;
 
@@ -180,7 +180,7 @@ e_parsing_errors NGC_RS274::Error_Check::__error_check_main(NGC_RS274::Block_Vie
 
 		case NGC_RS274::Groups::G::PATH_CONTROL_MODE: //<--G61,G61.1,G64
 		{
-			if (!v_new_block->active_view_block->block_events.get((int)NGC_RS274::Groups::G::PATH_CONTROL_MODE))
+			if (!v_new_block->active_view_block->block_events.get((e_block_event)NGC_RS274::Groups::G::PATH_CONTROL_MODE))
 				continue;
 			//pntr_error_check = __chk_PATH_CONTROL_MODE;
 
@@ -190,7 +190,7 @@ e_parsing_errors NGC_RS274::Error_Check::__error_check_main(NGC_RS274::Block_Vie
 		case NGC_RS274::Groups::G::PLANE_SELECTION: //<--G17,G18,G19
 		{
 
-			if (!v_new_block->active_view_block->block_events.get((int)NGC_RS274::Groups::G::PLANE_SELECTION))
+			if (!v_new_block->active_view_block->block_events.get((e_block_event)NGC_RS274::Groups::G::PLANE_SELECTION))
 				continue;
 			//pntr_error_check = __chk_PLANE_SELECTION;
 
@@ -199,7 +199,7 @@ e_parsing_errors NGC_RS274::Error_Check::__error_check_main(NGC_RS274::Block_Vie
 
 		case NGC_RS274::Groups::G::RETURN_MODE_CANNED_CYCLE: //<--G98,G99
 		{
-			if (!v_new_block->active_view_block->block_events.get((int)NGC_RS274::Groups::G::RETURN_MODE_CANNED_CYCLE))
+			if (!v_new_block->active_view_block->block_events.get((e_block_event)NGC_RS274::Groups::G::RETURN_MODE_CANNED_CYCLE))
 				continue;
 			//pntr_error_check = __chk_RETURN_MODE_CANNED_CYCLE;
 
@@ -208,7 +208,7 @@ e_parsing_errors NGC_RS274::Error_Check::__error_check_main(NGC_RS274::Block_Vie
 
 		case NGC_RS274::Groups::G::Tool_length_offset: //<--G43,G44,G49
 		{
-			if (!v_new_block->active_view_block->block_events.get((int)NGC_RS274::Groups::G::Tool_length_offset))
+			if (!v_new_block->active_view_block->block_events.get((e_block_event)NGC_RS274::Groups::G::Tool_length_offset))
 				continue;
 			//pntr_error_check = __chk_Tool_length_offset;
 
@@ -217,7 +217,7 @@ e_parsing_errors NGC_RS274::Error_Check::__error_check_main(NGC_RS274::Block_Vie
 
 		case NGC_RS274::Groups::G::Units: //<--G20,G21
 		{
-			if (!v_new_block->active_view_block->block_events.get((int)NGC_RS274::Groups::G::Units))
+			if (!v_new_block->active_view_block->block_events.get((e_block_event)NGC_RS274::Groups::G::Units))
 				continue;
 			//pntr_error_check = __chk_Units;
 
@@ -226,7 +226,7 @@ e_parsing_errors NGC_RS274::Error_Check::__error_check_main(NGC_RS274::Block_Vie
 
 		case NGC_RS274::Groups::G::PLANE_ROTATION: //<--G20,G21
 		{
-			if (!v_new_block->active_view_block->block_events.get((int)NGC_RS274::Groups::G::PLANE_ROTATION))
+			if (!v_new_block->active_view_block->block_events.get((e_block_event)NGC_RS274::Groups::G::PLANE_ROTATION))
 				continue;
 
 			ReturnValue = NGC_RS274::Dialect::Group16::rotation_validate(v_new_block, e_dialects::Fanuc_A);
@@ -260,7 +260,7 @@ uint8_t NGC_RS274::Error_Check::__has_motion(NGC_RS274::Block_View *v_new_block,
 	float nr = (v_new_block->active_plane.rotary_normal_axis.value - v_previous_block->active_plane.rotary_normal_axis.value);
 
 	if ((h + v + n + hi + vi + ni + hr + vr + nr) != 0)
-		v_new_block->active_view_block->block_events.set((int)e_block_event::BlockHasMotion);
+		v_new_block->active_view_block->block_events.set(e_block_event::BlockHasMotion);
 
 	return 0;
 }

@@ -23,6 +23,10 @@
 #define __C_CORE_STM32H745_H__
 #include <stdint.h>
 
+#ifdef __cplusplus
+#define __C extern "C"
+#endif
+
 namespace Hardware_Abstraction_Layer
 {
 	class Core

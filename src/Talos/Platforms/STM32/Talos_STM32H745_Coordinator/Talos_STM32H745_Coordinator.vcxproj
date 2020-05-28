@@ -95,7 +95,7 @@
     <ClCompile Include="..\..\..\Shared_Data\Kernel\Base\c_kernel_base.cpp" />
     <ClCompile Include="..\..\..\Shared_Data\Kernel\Comm\c_kernel_comm.cpp" />
     <ClCompile Include="..\..\..\Shared_Data\Kernel\CPU\c_cpu.cpp" />
-    <ClCompile Include="..\..\..\Shared_Data\Kernel\CPU\c_data_handler_write.cpp" />
+    <ClCompile Include="..\..\..\Shared_Data\Kernel\CPU\c_data_handler.cpp" />
     <ClCompile Include="..\..\..\Shared_Data\Kernel\CPU\c_kernel_cpu.cpp" />
     <ClCompile Include="..\..\..\Shared_Data\Kernel\Error\c_kernel_error.cpp" />
     <ClCompile Include="..\..\..\Shared_Data\Kernel\Event\c_kernel_software_event.cpp" />
@@ -292,7 +292,7 @@
     <ClInclude Include="..\..\..\Shared_Data\Kernel\Base\c_kernel_base.h" />
     <ClInclude Include="..\..\..\Shared_Data\Kernel\Comm\c_kernel_comm.h" />
     <ClInclude Include="..\..\..\Shared_Data\Kernel\CPU\c_cpu.h" />
-    <ClInclude Include="..\..\..\Shared_Data\Kernel\CPU\c_data_handler_write.h" />
+    <ClInclude Include="..\..\..\Shared_Data\Kernel\CPU\c_data_handler.h" />
     <ClInclude Include="..\..\..\Shared_Data\Kernel\CPU\c_kernel_cpu.h" />
     <ClInclude Include="..\..\..\Shared_Data\Kernel\CPU\u_data_overlay.h" />
     <ClInclude Include="..\..\..\Shared_Data\Kernel\c_kernel_utils.h" />

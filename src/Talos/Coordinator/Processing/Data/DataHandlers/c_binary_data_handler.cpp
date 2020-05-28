@@ -42,7 +42,7 @@ void(*c_binary_data_handler::pntr_data_handler_release)();
 //Determine which handler to use and return it to the caller.
 xret_pointer c_binary_data_handler::assign_handler(c_ring_buffer <char> * buffer)
 {
-	e_record_types __rec_type__ = (e_record_types)buffer->peek(buffer->_tail);
+	e_record_types __rec_type__ = (e_record_types)*buffer->peek(buffer->_tail);
 	
 	switch (__rec_type__)
 	{
@@ -68,7 +68,7 @@ void c_binary_data_handler::motion_control_setting_handler(c_ring_buffer <char> 
 void c_binary_data_handler::unkown_data_handler(c_ring_buffer <char> * buffer)
 {
 	//this was some unknown type of data.
-	char peek_newest = buffer->peek(buffer->_newest);
+	char peek_newest = *buffer->cur_head();
 	Talos::Coordinator::Main_Process::host_serial.print_string("UKNOWN:");
 	Talos::Coordinator::Main_Process::host_serial.print_int32(peek_newest);
 	c_binary_data_handler::__release();

@@ -32,6 +32,7 @@ void Talos::Motion::Main_Process::initialize()
 	}
 #endif
 	Hardware_Abstraction_Layer::Core::initialize();
+	Hardware_Abstraction_Layer::MotionCore::Stepper::initialize();
 
 	//Create a serial 'wrapper' to make writing strings and numbers easier.
 	//Assign the handle for the cpu's hardware buffer to a specific serial usart on the hardware.

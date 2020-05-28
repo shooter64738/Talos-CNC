@@ -8,7 +8,7 @@
   </ToolchainVersion>
   <BspID>com.sysprogs.arm.stm32</BspID>
   <BspVersion>2020.01</BspVersion>
-  <McuID>STM32H745ZI_M4</McuID>
+  <McuID>STM32H745ZI</McuID>
   <MCUDefinitionFile>STM32H7xxxx/DeviceDefinitions/stm32h745xx.xml</MCUDefinitionFile>
   <MCUProperties>
     <Entries>

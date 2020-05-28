@@ -605,9 +605,6 @@
     <ClCompile Include="..\..\..\Shared_Data\Kernel\CPU\c_kernel_cpu.cpp">
       <Filter>Shared_Data\Kernel\CPU</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Shared_Data\Kernel\CPU\c_data_handler_write.cpp">
-      <Filter>Shared_Data\Kernel\CPU</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\Shared_Data\Kernel\CPU\c_cpu.cpp">
       <Filter>Shared_Data\Kernel\CPU</Filter>
     </ClCompile>
@@ -664,6 +661,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\Configuration\Interpreter\c_start_block_gmcode.cpp">
       <Filter>Configuration\Interpreter</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Shared_Data\Kernel\CPU\c_data_handler.cpp">
+      <Filter>Shared_Data\Kernel\CPU</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1356,9 +1356,6 @@
     <ClInclude Include="..\..\..\Shared_Data\Kernel\CPU\c_cpu.h">
       <Filter>Shared_Data\Kernel\CPU</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Shared_Data\Kernel\CPU\c_data_handler_write.h">
-      <Filter>Shared_Data\Kernel\CPU</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\Shared_Data\Kernel\Error\_s_kernel_error.h">
       <Filter>Shared_Data\Kernel\Error</Filter>
     </ClInclude>
@@ -1421,6 +1418,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\Shared_Data\Settings\Motion\_s_motion_system.h">
       <Filter>Shared_Data\Settings\Motion</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared_Data\Kernel\CPU\c_data_handler.h">
+      <Filter>Shared_Data\Kernel\CPU</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

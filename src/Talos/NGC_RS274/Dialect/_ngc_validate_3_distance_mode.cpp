@@ -23,7 +23,7 @@ e_parsing_errors NGC_RS274::Dialect::Group3::_G090(NGC_RS274::Block_View * v_blo
 	//since all coordiantes are already in absolute, and the motion controller exects absolute
 	//there is nothing to do here. 
 	if (NGC_RS274::System::Position.update(&v_block->active_plane, true))
-		v_block->active_view_block->block_events.set((int)e_block_event::BlockHasMotion);
+		v_block->active_view_block->block_events.set(e_block_event::BlockHasMotion);
 
 	return e_parsing_errors::OK;
 }
@@ -33,7 +33,7 @@ e_parsing_errors NGC_RS274::Dialect::Group3::_G091(NGC_RS274::Block_View * v_blo
 	//position mode. We need to modify the values to convert it to an absolute machine position.
 	
 	if (NGC_RS274::System::Position.update(&v_block->active_plane, false))
-		v_block->active_view_block->block_events.set((int)e_block_event::BlockHasMotion);
+		v_block->active_view_block->block_events.set(e_block_event::BlockHasMotion);
 
 	return e_parsing_errors::OK;
 }
