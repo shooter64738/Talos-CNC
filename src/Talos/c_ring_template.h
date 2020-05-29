@@ -11,12 +11,12 @@ public:
 	c_ring_buffer()
 	{}
 
-	c_ring_buffer(TN* pointer, uint16_t buf_size)
+	c_ring_buffer(TN* pointer, int buf_size)
 	{
 		initialize(pointer, buf_size);
 	}
 
-	bool initialize(TN* pointer, uint16_t buf_size)
+	bool initialize(TN* pointer, int buf_size)
 	{
 		if (pointer == NULL)
 			return false;
@@ -27,7 +27,7 @@ public:
 		return true;
 	}
 
-	void attach(TN* pointer, uint16_t buf_size)
+	void attach(TN* pointer, int buf_size)
 	{
 
 		this->_storage_pointer = pointer;
@@ -86,7 +86,7 @@ public:
 	//Return true if contains data, false if not
 	bool has_data()
 	{
-		if ((this->_head == this->_tail) && !this->_full)
+		if (_data_size == 0)
 			return false;
 
 		return true;
@@ -116,7 +116,7 @@ public:
 		return data;
 	}
 
-	TN* peek(uint16_t position)
+	TN* peek(int position)
 	{
 		_check_wrap_value(&position);
 		if (position > this->_last_write)
@@ -124,7 +124,7 @@ public:
 		return (this->_storage_pointer + position);
 	}
 
-	TN* peek(uint16_t position, bool* last)
+	TN* peek(int position, bool* last)
 	{
 		_check_wrap_value(&position);
 		*last = position >= this->_last_write;
@@ -134,11 +134,11 @@ public:
 		return (this->_storage_pointer + position);
 	}
 
-	void shift(int16_t shift_size)
+	void shift(int shift_size)
 	{
 		this->_tail += shift_size;
 	}
-	uint16_t count()
+	int count()
 	{
 		return _data_size;
 	}
@@ -156,21 +156,32 @@ public:
 	TN* next()
 	{
 		//caller should check has_data before calling this. 
-
-		TN* data = (this->_storage_pointer + this->_nexter);
-		_move_nexter();
+		int val = this->_tail + 1;
+		_check_wrap_value(&val);
+		TN* data = (this->_storage_pointer + val);
 
 		return data;
 	}
 
-	bool is_last(uint16_t position)
+	TN* previous()
+	{
+		//caller should check has_data before calling this. 
+		int val = this->_tail - 1;
+		_check_wrap_value(&val);
+		TN* data = (this->_storage_pointer + val);
+
+		return data;
+	}
+
+
+	bool is_last(int position)
 	{
 		bool last = true;
 
 		if (!this->has_data())
 			return true;
 
-		uint16_t temp = position;
+		int temp = position;
 		_check_wrap_value(&temp);
 		last = position >= this->_last_write;
 
@@ -210,25 +221,25 @@ public:
 		return (this->_storage_pointer + this->_last_write);
 	}
 
-	TN* read_f(uint16_t *position)
+	TN* read_f(int32_t* position)
 	{
 		if (!this->has_data())
 			return NULL;
-		uint16_t val = *position + 1;
+		int val = *position + 1;
 		_check_wrap_value(&val); *position = val;
-		
+
 		if (*position > this->_last_write)
 			return NULL;
-		
+
 		return (this->_storage_pointer + *position);
 	}
 
-	TN* read_r(uint16_t* position)
+	TN* read_r(int32_t* position)
 	{
 		if (!this->has_data())
 			return NULL;
-		
-		uint16_t val = *position - 1;
+
+		int val = *position - 1;
 		_check_wrap_value(&val); *position = val;
 
 		if (*position < this->_last_read)
@@ -239,7 +250,7 @@ public:
 
 	TN* step_rev()
 	{
-		uint16_t index = 0;
+		int index = 0;
 
 		//first time
 		if (_stepper < 0)
@@ -264,7 +275,7 @@ public:
 
 	TN* step_fwd()
 	{
-		uint16_t index = 0;
+		int index = 0;
 
 		//first time
 		if (_stepper < 0)
@@ -318,7 +329,7 @@ public:
 	}
 
 	//Add as the type, but copied from a byte stream
-	uint8_t put(char* data)
+	int8_t put(char* data)
 	{
 		//caller should check for full before calling this
 		*(this->_storage_pointer + this->_head) = data;
@@ -328,7 +339,7 @@ public:
 	}
 
 	//Add as the type
-	uint8_t put(TN data)
+	int8_t put(TN data)
 	{
 		//caller should check for full before calling this
 		*(this->_storage_pointer + this->_head) = data;
@@ -351,15 +362,6 @@ public:
 			this->_tail = 0;
 		}*/
 	}
-	void _move_nexter()
-	{
-		this->_nexter++;
-		//if we are at the size of the buffer, wrap back to zero
-		if (this->_nexter == this->_buffer_size)
-		{
-			this->_nexter = 0;
-		}
-	}
 
 	void _move_head()
 	{
@@ -379,7 +381,7 @@ public:
 			this->_full = true;
 	}
 
-	void _check_wrap_value(uint16_t* value)
+	void _check_wrap_value(int* value)
 	{
 		bool neg = false;
 		neg = (*value < 0) ? true : false;
@@ -397,14 +399,13 @@ public:
 
 	TN* _storage_pointer = NULL;
 	bool _full = false;
-	uint16_t _buffer_size = 0;
-	uint16_t _head = 0;
-	uint16_t _tail = 0;
-	uint16_t _last_read = 0;
-	uint16_t _last_write = 0;
-	uint16_t _peek_stepper = 0;
-	int16_t _stepper = 0;
-	uint16_t _data_size = 0;
-	uint16_t _nexter = 0;
+	int _buffer_size = 0;
+	int _head = 0;
+	int _tail = 0;
+	int _last_read = 0;
+	int _last_write = 0;
+	int _peek_stepper = 0;
+	int _stepper = 0;
+	int _data_size = 0;
 };
 

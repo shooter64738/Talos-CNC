@@ -46,7 +46,7 @@ namespace Talos
 					//functions
 				public:
 					static void gate_keeper();
-					static void(*pntr_driver)(void);
+					static void (*pntr_driver)(void);
 
 
 				protected:

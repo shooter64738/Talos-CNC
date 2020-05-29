@@ -62,11 +62,13 @@ namespace Talos
 					case e_state_class::Process:
 					{
 						Process::execute();
+						//Motion::execute(); //<--adding a motion executor to keep the buffer full
 						break;
 					}
 					case e_state_class::Output:
 					{
 						Output::execute();
+						//Motion::execute(); //<--adding a motion executor to keep the buffer full
 						break;
 					}
 					default:
@@ -118,11 +120,11 @@ namespace Talos
 					Motion::__internal_states.clear(Motion::e_internal_states::held);
 					Motion::__internal_states.clear(Motion::e_internal_states::release);
 					Motion::states.set(Motion::e_states::ready);
-					
+
 					//should we just assume running? do we need to check other stuff?
 					Motion::states.set(Motion::e_states::running);
-					
-					//we about to start motion so fill the segment buffer.
+
+					//we are about to start motion so fill the segment buffer.
 					Core::Process::Segment::fill_step_segment_buffer();
 
 					mtn_out::Segment::gate_keeper();
@@ -135,7 +137,8 @@ namespace Talos
 					//we are in run mode so we can fill the segement buffer. that does NOT mean
 					//that motion will execute. If hold is active then we are going to get no
 					//motion until it is released
-					Core::Process::Segment::fill_step_segment_buffer();
+					//if (Process::states.get(Process::e_states::motion_buffer_not_empty))
+						Core::Process::Segment::fill_step_segment_buffer();
 				}
 
 				//called when feed hold bit is set. running bit is not cleared.
@@ -246,16 +249,14 @@ namespace Talos
 						__load_ngc();
 
 					//if there is data in the segment buffer we are 'running'
-					if (Talos::Motion::Core::Input::Block::motion_buffer.has_data())
+					if (Process::states.get(Process::e_states::motion_buffer_not_empty))
 						Motion::states.set(Motion::e_states::ready);
 				}
 
 				void Process::__load_ngc()
 				{
-					//load ngc buffer it into segment buffer
+					//load ngc buffer into segment buffer
 					bool more_data = Talos::Motion::Core::Input::Block::ngc_buffer_process();
-					if (more_data)
-						Process::states.set(Process::e_states::ngc_buffer_not_empty);
 				}
 
 #pragma endregion

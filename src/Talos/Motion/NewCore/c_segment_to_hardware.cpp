@@ -67,7 +67,7 @@ namespace Talos
 
 				void Segment::__new_motion()
 				{
-					
+
 #ifdef MSVC
 					myfile.open("acceleration.txt");
 #endif // MSVC
@@ -89,7 +89,7 @@ namespace Talos
 					memcpy(&_persisted.spindle_block, mot_dat::Block::spindle_buffer.get(), sizeof(__s_spindle_block));
 
 					hrd_out::Hardware::Spindle::start(_persisted.spindle_block);
-					
+
 					if (_persisted.spindle_block.states.get(e_spindle_state::synch_with_motion))
 					{
 						//call the synch function
@@ -104,7 +104,7 @@ namespace Talos
 				void Segment::__spindle_wait_synch()
 				{
 					//loop until timeout or spindle reaches speed
-					
+
 					//@speed start motion
 					uint32_t rpm = hrd_out::Hardware::Spindle::get_speed(_persisted.spindle_block);
 					if (rpm = _persisted.spindle_block.rpm)
@@ -143,14 +143,15 @@ namespace Talos
 
 					mtn_ctl_sta::Output::states.set(mtn_ctl_sta::Output::e_states::interpolation_running);
 					//start the timer, this will set all of the wheel in motion
-					hrd_out::Hardware::Motion::initialize();
-					
-					
+					//hrd_out::Hardware::Motion::initialize();
+					Hardware_Abstraction_Layer::MotionCore::Stepper::wake_up();
+
+
 					//null gate keeper??? not sure what to do yet... 
 					//Segment::pntr_next_gate = NULL;
-					
+
 				}
-				
+
 				void Segment::__release_brakes()
 				{
 					//release output drive breaks
@@ -159,7 +160,7 @@ namespace Talos
 					//The breaks usually have some kind of delay. we need to determine
 					//how long the delay should be, set the timer to that period and
 					//re-point the next gate to the next logical step.
-					Segment::pntr_next_gate = Segment::__run_interpolation;
+					//Segment::pntr_next_gate = Segment::__run_interpolation;
 				}
 
 				void Segment::__run_interpolation()
@@ -185,8 +186,10 @@ namespace Talos
 					{
 						bool end = __load_segment();
 						//were there any more segments? if not we are done.
+						//seems we can empty the buffer faster than we can fill it
+						//optimize processing code to reduce this!
 						if (end)
-						{							
+						{
 							__end_interpolation();
 							return;
 						}
@@ -240,8 +243,10 @@ namespace Talos
 						//buffer is not full if it was full before.
 						seg_dat::Segment::timer_buffer.get();
 						_persisted.active_timer_item = NULL;
+
 					}
 					//_persisted.step_outbits ^= Motion_Core::Hardware::Interpolation::step_port_invert_mask;  // Apply step port invert mask
+
 				}
 
 				bool Segment::__load_segment()
@@ -257,7 +262,7 @@ namespace Talos
 					else
 						int x = 0;
 
-					
+
 					if (_persisted.active_timer_item != NULL)
 					{
 						done = false;
@@ -290,11 +295,13 @@ namespace Talos
 						myfile << _persisted.active_timer_item->steps_to_execute_in_this_segment << ",";
 						myfile << _persisted.active_timer_item->timer_delay_value << ",";
 						myfile << _persisted.active_timer_item->common.tracking.line_number << ",";
-						myfile << _persisted.active_timer_item->common.tracking.sequence<< ",";
+						myfile << _persisted.active_timer_item->common.tracking.sequence << ",";
 						myfile << total_steps << ",";
 						myfile << "\r";
 						myfile.flush();
 #endif
+						Hardware_Abstraction_Layer::MotionCore::Stepper::set_delay(
+							_persisted.active_timer_item->timer_delay_value);
 
 						//set timer delay value to the active_timer objects delay time
 						/*Hardware_Abstraction_Layer::MotionCore::Stepper::OCR1A_set
@@ -303,19 +310,24 @@ namespace Talos
 						// If the new segment starts a new planner block, initialize stepper variables and counters.
 						// NOTE: When the segment data index changes, this indicates a new planner block.
 						if (_persisted.active_bresenham != _persisted.active_timer_item->common.bres_obj)
-						{
+						{							
+
 							//New line segment, so this should be the start of a block.
 							mtn_ctl_sta::Output::states.set(mtn_ctl_sta::Output::e_states::ngc_block_done);
 							_persisted.active_line_number = _persisted.active_timer_item->common.tracking.line_number;
 							_persisted.last_complete_sequence = _persisted.active_sequence;
-														
+
 							mtn_ctl_sta::Output::complete_block_station = _persisted.last_complete_sequence;
 							mtn_ctl_sta::Output::complete_block_line = _persisted.active_line_number;
 
 							_persisted.active_sequence = _persisted.active_timer_item->common.tracking.sequence;
 							_persisted.active_bresenham = _persisted.active_timer_item->common.bres_obj;
 
-							
+							//directions may have changed here
+							if (_persisted.active_bresenham->direction_bits.get(0))
+								Hardware_Abstraction_Layer::MotionCore::Stepper::step_dir_high();
+							else
+								Hardware_Abstraction_Layer::MotionCore::Stepper::step_dir_low();
 
 							//a new block has been detected. that means there is a potential for new ngc settings
 							//for the spindle. better go check
@@ -324,7 +336,7 @@ namespace Talos
 							//if we are loading a new block directions MIGHT change, so clear the set flag
 							//Motion_Core::Hardware::Interpolation::direction_set = 0;
 
-							
+
 
 							// Initialize Bresenham line and distance counters
 							for (int i = 0; i < MACHINE_AXIS_COUNT; i++)
@@ -335,9 +347,9 @@ namespace Talos
 						/*Motion_Core::Hardware::Interpolation::dir_outbits
 							= Motion_Core::Hardware::Interpolation::Exec_Timer_Item->bresenham_in_item->direction_bits
 							^ Motion_Core::Hardware::Interpolation::dir_port_invert_mask;*/
-					}
+							}
 					return done;
-				}
+						}
 
 				void Segment::__end_interpolation()
 				{
@@ -355,7 +367,7 @@ namespace Talos
 					myfile.close();
 #endif // MSVC
 					__set_brakes();
-				}
+					}
 
 				void Segment::__set_brakes()
 				{
@@ -366,7 +378,7 @@ namespace Talos
 
 					Segment::pntr_next_gate = Segment::__new_motion;
 				}
+				}
 			}
 		}
 	}
-}

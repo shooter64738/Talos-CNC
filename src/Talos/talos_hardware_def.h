@@ -59,7 +59,7 @@
 #endif
 
 #ifdef __STM32H745ZIQ__
-#define F_CPU 460000000UL
+#define F_CPU 64000000UL //<-- not CPU speed but TIMER speed.
 #define HOST_CPU_ID 0
 #define CORD_CPU_ID 1
 #define MACH_CPU_ID 2

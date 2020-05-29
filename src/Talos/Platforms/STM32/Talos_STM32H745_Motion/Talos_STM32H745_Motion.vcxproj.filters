@@ -135,6 +135,9 @@
     <Filter Include="Configuration\Interpreter">
       <UniqueIdentifier>{a5cfcdb1-c47b-4bf2-a252-a76336d59d86}</UniqueIdentifier>
     </Filter>
+    <Filter Include="VisualGDB settings">
+      <UniqueIdentifier>{65f44e77-42a5-4a49-817a-4bef2ed2a359}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="system_stm32h7xx.c">
@@ -143,9 +146,135 @@
     <None Include="stm32.props">
       <Filter>_VisualGDB Info\Source files\Device-specific files</Filter>
     </None>
-    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\StartupFiles\startup_stm32h745xx.c">
-      <Filter>_VisualGDB Info\Source files\Device-specific files</Filter>
+    <ClInclude Include="stm32h7xx_hal_conf.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
+    <None Include="Talos_STM32H745_Motion-Debug.vgdbsettings">
+      <Filter>_VisualGDB Info\VisualGDB settings</Filter>
+    </None>
+    <None Include="Talos_STM32H745_Motion-Release.vgdbsettings">
+      <Filter>_VisualGDB Info\VisualGDB settings</Filter>
+    </None>
+    <None Include="stm32.xml">
+      <Filter>_VisualGDB Info\VisualGDB settings</Filter>
+    </None>
+    <ClCompile Include="..\..\..\Motion\Serial\c_Serial.cpp">
+      <Filter>Motion\Serial</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\Motion\motion_main.cpp">
+      <Filter>Motion</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Motion\Processing\Planner\c_event_control.cpp">
+      <Filter>Motion\Processing\Planner</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Motion\Processing\Planner\c_mirror.cpp">
+      <Filter>Motion\Processing\Planner</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Motion\Processing\Planner\c_stager.cpp">
+      <Filter>Motion\Processing\Planner</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Motion\Processing\Planner\Canned Cycles\x_c_canned_cycle.cpp">
+      <Filter>Motion\Processing\Planner\CannedCycles</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Motion\Processing\Main\Main_Process.cpp">
+      <Filter>Motion\Processing\Main</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\NGC_RS274\NGC_Block_View.cpp">
+      <Filter>Ngc_Rs274</Filter>
+    </ClCompile>
+    <ClCompile Include="Platform_Specific\disk_support\SPI\FatFs\diskio.c">
+      <Filter>PlatformSpecific\disk_support\SDMMC\FatFs</Filter>
+    </ClCompile>
+    <ClCompile Include="Platform_Specific\disk_support\SPI\FatFs\ff.c">
+      <Filter>PlatformSpecific\disk_support\SDMMC\FatFs</Filter>
+    </ClCompile>
+    <ClCompile Include="Platform_Specific\disk_support\SPI\FatFs\ffsystem.c">
+      <Filter>PlatformSpecific\disk_support\SDMMC\FatFs</Filter>
+    </ClCompile>
+    <ClCompile Include="Platform_Specific\disk_support\SPI\FatFs\ffunicode.c">
+      <Filter>PlatformSpecific\disk_support\SDMMC\FatFs</Filter>
+    </ClCompile>
+    <ClCompile Include="Platform_Specific\disk_support\SPI\Hardware\hardware_config.c">
+      <Filter>PlatformSpecific\disk_support\SDMMC\Hardware</Filter>
+    </ClCompile>
+    <ClCompile Include="Platform_Specific\disk_support\SPI\Hardware\hardware_io.c">
+      <Filter>PlatformSpecific\disk_support\SDMMC\Hardware</Filter>
+    </ClCompile>
+    <ClCompile Include="Platform_Specific\disk_support\SPI\Hardware\sd_card.c">
+      <Filter>PlatformSpecific\disk_support\SDMMC\Hardware</Filter>
+    </ClCompile>
+    <ClCompile Include="Platform_Specific\c_core_stm32h745.cpp">
+      <Filter>PlatformSpecific</Filter>
+    </ClCompile>
+    <ClCompile Include="Platform_Specific\c_disk_stm32h745.cpp">
+      <Filter>PlatformSpecific</Filter>
+    </ClCompile>
+    <ClCompile Include="Platform_Specific\c_serial_stm32h745.cpp">
+      <Filter>PlatformSpecific</Filter>
+    </ClCompile>
+    <ClCompile Include="Platform_Specific\c_spi_stm32h745.cpp">
+      <Filter>PlatformSpecific</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Motion\NewCore\c_block_to_segment.cpp">
+      <Filter>Motion\NewCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Motion\NewCore\c_hardware_out.cpp">
+      <Filter>Motion\NewCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Motion\NewCore\c_ngc_to_block.cpp">
+      <Filter>Motion\NewCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Motion\NewCore\c_segment_to_hardware.cpp">
+      <Filter>Motion\NewCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Motion\NewCore\c_state_control.cpp">
+      <Filter>Motion\NewCore</Filter>
+    </ClCompile>
+    <ClCompile Include="Platform_Specific\c_stepper_stm32h745.cpp">
+      <Filter>PlatformSpecific</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Shared_Data\Kernel\Base\c_kernel_base.cpp">
+      <Filter>SharedData\Kernel\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Shared_Data\Kernel\Start\c_kernel_start.cpp">
+      <Filter>SharedData\Kernel\Start</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Shared_Data\Kernel\Report\c_kernel_report.cpp">
+      <Filter>SharedData\Kernel\Report</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Shared_Data\Kernel\Error\c_kernel_error.cpp">
+      <Filter>SharedData\Kernel\Error</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Shared_Data\Kernel\CPU\c_cpu.cpp">
+      <Filter>SharedData\Kernel\CPU</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Shared_Data\Kernel\CPU\c_data_handler.cpp">
+      <Filter>SharedData\Kernel\CPU</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Shared_Data\Kernel\CPU\c_kernel_cpu.cpp">
+      <Filter>SharedData\Kernel\CPU</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Shared_Data\Kernel\Comm\c_kernel_comm.cpp">
+      <Filter>SharedData\Kernel\Comm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Configuration\c_configuration.cpp">
+      <Filter>Configuration</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Configuration\Motion\c_motion_controller.cpp">
+      <Filter>Configuration\Motion</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Configuration\Motion\c_motion_system.cpp">
+      <Filter>Configuration\Motion</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Configuration\Interpreter\c_interpreter_input.cpp">
+      <Filter>Configuration\Interpreter</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Configuration\Interpreter\c_start_block_gmcode.cpp">
+      <Filter>Configuration\Interpreter</Filter>
+    </ClCompile>
+    <ClInclude Include="stm32f4xx_hal_conf.h">
+      <Filter>_VisualGDB Info\Header files</Filter>
+    </ClInclude>
     <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal.c">
       <Filter>_VisualGDB Info\Source files\Device-specific files\HAL</Filter>
     </ClCompile>
@@ -491,9 +620,6 @@
     <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_ll_utils.c">
       <Filter>_VisualGDB Info\Source files\Device-specific files\LL</Filter>
     </ClCompile>
-    <ClInclude Include="stm32h7xx_hal_conf.h">
-      <Filter>_VisualGDB Info\Header files</Filter>
-    </ClInclude>
     <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h">
       <Filter>_VisualGDB Info\Header files\Device-specific files\HAL</Filter>
     </ClInclude>
@@ -953,128 +1079,8 @@
     <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_wwdg.h">
       <Filter>_VisualGDB Info\Header files\Device-specific files\LL</Filter>
     </ClInclude>
-    <None Include="Talos_STM32H745_Motion-Debug.vgdbsettings">
-      <Filter>_VisualGDB Info\VisualGDB settings</Filter>
-    </None>
-    <None Include="Talos_STM32H745_Motion-Release.vgdbsettings">
-      <Filter>_VisualGDB Info\VisualGDB settings</Filter>
-    </None>
-    <None Include="stm32.xml">
-      <Filter>_VisualGDB Info\VisualGDB settings</Filter>
-    </None>
-    <ClCompile Include="..\..\..\Motion\Serial\c_Serial.cpp">
-      <Filter>Motion\Serial</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Motion\motion_main.cpp">
-      <Filter>Motion</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Motion\Processing\Planner\c_event_control.cpp">
-      <Filter>Motion\Processing\Planner</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Motion\Processing\Planner\c_mirror.cpp">
-      <Filter>Motion\Processing\Planner</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Motion\Processing\Planner\c_stager.cpp">
-      <Filter>Motion\Processing\Planner</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Motion\Processing\Planner\Canned Cycles\x_c_canned_cycle.cpp">
-      <Filter>Motion\Processing\Planner\CannedCycles</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Motion\Processing\Main\Main_Process.cpp">
-      <Filter>Motion\Processing\Main</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\NGC_RS274\NGC_Block_View.cpp">
-      <Filter>Ngc_Rs274</Filter>
-    </ClCompile>
-    <ClCompile Include="Platform_Specific\disk_support\SPI\FatFs\diskio.c">
-      <Filter>PlatformSpecific\disk_support\SDMMC\FatFs</Filter>
-    </ClCompile>
-    <ClCompile Include="Platform_Specific\disk_support\SPI\FatFs\ff.c">
-      <Filter>PlatformSpecific\disk_support\SDMMC\FatFs</Filter>
-    </ClCompile>
-    <ClCompile Include="Platform_Specific\disk_support\SPI\FatFs\ffsystem.c">
-      <Filter>PlatformSpecific\disk_support\SDMMC\FatFs</Filter>
-    </ClCompile>
-    <ClCompile Include="Platform_Specific\disk_support\SPI\FatFs\ffunicode.c">
-      <Filter>PlatformSpecific\disk_support\SDMMC\FatFs</Filter>
-    </ClCompile>
-    <ClCompile Include="Platform_Specific\disk_support\SPI\Hardware\hardware_config.c">
-      <Filter>PlatformSpecific\disk_support\SDMMC\Hardware</Filter>
-    </ClCompile>
-    <ClCompile Include="Platform_Specific\disk_support\SPI\Hardware\hardware_io.c">
-      <Filter>PlatformSpecific\disk_support\SDMMC\Hardware</Filter>
-    </ClCompile>
-    <ClCompile Include="Platform_Specific\disk_support\SPI\Hardware\sd_card.c">
-      <Filter>PlatformSpecific\disk_support\SDMMC\Hardware</Filter>
-    </ClCompile>
-    <ClCompile Include="Platform_Specific\c_core_stm32h745.cpp">
-      <Filter>PlatformSpecific</Filter>
-    </ClCompile>
-    <ClCompile Include="Platform_Specific\c_disk_stm32h745.cpp">
-      <Filter>PlatformSpecific</Filter>
-    </ClCompile>
-    <ClCompile Include="Platform_Specific\c_serial_stm32h745.cpp">
-      <Filter>PlatformSpecific</Filter>
-    </ClCompile>
-    <ClCompile Include="Platform_Specific\c_spi_stm32h745.cpp">
-      <Filter>PlatformSpecific</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Motion\NewCore\c_block_to_segment.cpp">
-      <Filter>Motion\NewCore</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Motion\NewCore\c_hardware_out.cpp">
-      <Filter>Motion\NewCore</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Motion\NewCore\c_ngc_to_block.cpp">
-      <Filter>Motion\NewCore</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Motion\NewCore\c_segment_to_hardware.cpp">
-      <Filter>Motion\NewCore</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Motion\NewCore\c_state_control.cpp">
-      <Filter>Motion\NewCore</Filter>
-    </ClCompile>
-    <ClCompile Include="Platform_Specific\c_stepper_stm32h745.cpp">
-      <Filter>PlatformSpecific</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Shared_Data\Kernel\Base\c_kernel_base.cpp">
-      <Filter>SharedData\Kernel\Base</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Shared_Data\Kernel\Start\c_kernel_start.cpp">
-      <Filter>SharedData\Kernel\Start</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Shared_Data\Kernel\Report\c_kernel_report.cpp">
-      <Filter>SharedData\Kernel\Report</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Shared_Data\Kernel\Error\c_kernel_error.cpp">
-      <Filter>SharedData\Kernel\Error</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Shared_Data\Kernel\CPU\c_cpu.cpp">
-      <Filter>SharedData\Kernel\CPU</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Shared_Data\Kernel\CPU\c_data_handler.cpp">
-      <Filter>SharedData\Kernel\CPU</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Shared_Data\Kernel\CPU\c_kernel_cpu.cpp">
-      <Filter>SharedData\Kernel\CPU</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Shared_Data\Kernel\Comm\c_kernel_comm.cpp">
-      <Filter>SharedData\Kernel\Comm</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Configuration\c_configuration.cpp">
-      <Filter>Configuration</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Configuration\Motion\c_motion_controller.cpp">
-      <Filter>Configuration\Motion</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Configuration\Motion\c_motion_system.cpp">
-      <Filter>Configuration\Motion</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Configuration\Interpreter\c_interpreter_input.cpp">
-      <Filter>Configuration\Interpreter</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Configuration\Interpreter\c_start_block_gmcode.cpp">
-      <Filter>Configuration\Interpreter</Filter>
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\StartupFiles\startup_stm32h745xx.c">
+      <Filter>_VisualGDB Info\Source files\Device-specific files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1281,6 +1287,12 @@
     </ClInclude>
     <ClInclude Include="..\..\..\Configuration\Interpreter\c_start_block_gmcode.h">
       <Filter>Configuration\Interpreter</Filter>
+    </ClInclude>
+    <ClInclude Include="Platform_Specific\sys_timer_configs.h">
+      <Filter>PlatformSpecific</Filter>
+    </ClInclude>
+    <ClInclude Include="Platform_Specific\sys_gpio_configs.h">
+      <Filter>PlatformSpecific</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

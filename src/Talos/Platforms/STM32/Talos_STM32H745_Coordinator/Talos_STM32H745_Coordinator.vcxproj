@@ -44,6 +44,7 @@
       <AdditionalIncludeDirectories>STM32H7xxxx;%(ClCompile.AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>DEBUG=1;__STM32H745ZIQ__;DEBUG_DEFAULT_INTERRUPT_HANDLERS;TALOS_COORDINATOR;%(ClCompile.PreprocessorDefinitions)</PreprocessorDefinitions>
       <Optimization>O0</Optimization>
+      <CPPLanguageStandard>CPP14</CPPLanguageStandard>
     </ClCompile>
     <Link>
       <AdditionalLinkerInputs>;%(Link.AdditionalLinkerInputs)</AdditionalLinkerInputs>

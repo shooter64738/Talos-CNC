@@ -129,7 +129,7 @@ namespace Talos
 								if (Segment::active_block == Input::Block::planned_block)
 								{
 									//set planned block to the NEXT block
-									Input::Block::planned_block = Input::Block::motion_buffer.peek(1);
+									Input::Block::planned_block = Input::Block::motion_buffer.next();
 								}
 
 								Segment::active_block = NULL;

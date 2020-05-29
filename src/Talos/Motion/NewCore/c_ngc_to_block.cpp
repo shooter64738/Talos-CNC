@@ -64,7 +64,7 @@ namespace Talos
 					NGC_RS274::Block_View view = NGC_RS274::Block_View(&int_cfg::DefaultBlock.Settings);
 					*view.current_g_codes.Motion = NGC_RS274::G_codes::RAPID_POSITIONING;
 
-					uint8_t recs = NGC_BUFFER_SIZE;
+					uint8_t recs = 12;// NGC_BUFFER_SIZE;
 					for (int i = 0; i < recs; i++)
 					{
 						s_ngc_block testblock{ 0 };
@@ -73,13 +73,16 @@ namespace Talos
 						view = NGC_RS274::Block_View(&testblock);
 						*view.axis_array[0] = ((i + 1) * 10);
 						*view.persisted_values.active_spindle_speed_S = 1234;
-
+						testblock.target_motion_position[0] = ((i + 1) * 10);
 						if (i < 1 || i>4)
 							* view.current_g_codes.Feed_rate_mode = NGC_RS274::G_codes::FEED_RATE_UNITS_PER_MINUTE_MODE;
 						if (i == 2 || i == 4)
 							* view.current_g_codes.Feed_rate_mode = NGC_RS274::G_codes::FEED_RATE_UNITS_PER_ROTATION;
+						if (i == 3 || i == 4 || i == 8)
+							testblock.target_motion_position[0] = testblock.target_motion_position[0] * -1;
+						if (i == 11)
+							testblock.target_motion_position[0] = 1000* -1;
 
-						testblock.target_motion_position[0] = ((i + 1) * 10);
 						testblock.__station__ = i;
 						Block::ngc_buffer.put(testblock);
 					}
@@ -88,18 +91,14 @@ namespace Talos
 
 				bool Block::ngc_buffer_process()
 				{
-					if (!mtn_ctl_sta::Process::states.get(mtn_ctl_sta::Process::e_states::motion_buffer_full))
+					while (!mtn_ctl_sta::Process::states.get(mtn_ctl_sta::Process::e_states::motion_buffer_full))
 					{
+						Block::__load_ngc(Block::ngc_buffer.get());
+						
 						if (!mtn_ctl_sta::Process::states.get(mtn_ctl_sta::Process::e_states::ngc_buffer_not_empty))
-						{
-							Block::__load_ngc(Block::ngc_buffer.get());
-							if (Block::ngc_buffer.has_data())
-								mtn_ctl_sta::Process::states.set(mtn_ctl_sta::Process::e_states::ngc_buffer_not_empty);
-							else
-								mtn_ctl_sta::Process::states.clear(mtn_ctl_sta::Process::e_states::ngc_buffer_not_empty);
-
-						}
+							break;
 					}
+
 
 					return mtn_ctl_sta::Process::states.get(mtn_ctl_sta::Process::e_states::ngc_buffer_not_empty);
 				}
@@ -134,6 +133,13 @@ namespace Talos
 
 					__load_motion(view);
 					__load_spindle(view);
+
+					if (Block::ngc_buffer.has_data())
+						mtn_ctl_sta::Process::states.set(mtn_ctl_sta::Process::e_states::ngc_buffer_not_empty);
+					else
+						mtn_ctl_sta::Process::states.clear(mtn_ctl_sta::Process::e_states::ngc_buffer_not_empty);
+
+
 					return 0;
 
 				}
@@ -583,7 +589,7 @@ namespace Talos
 					//loop backwards through the blocks.
 					__s_motion_block* previous = motion_buffer.peek(motion_buffer.cur_head()->__station__ - 1);
 					__s_motion_block* current = previous;
-					uint16_t stepper = current->__station__;
+					int32_t stepper = current->__station__;
 					while (previous != planned_block)
 					{
 						current = previous;
@@ -628,7 +634,7 @@ namespace Talos
 				{
 					__s_motion_block* next = planned_block;
 					__s_motion_block* current = planned_block;
-					uint16_t stepper = planned_block->__station__;
+					int32_t stepper = planned_block->__station__;
 					float entry_speed_sqr = 0.0;
 					while (next != motion_buffer.cur_head())
 					{
@@ -744,7 +750,7 @@ namespace Talos
 
 						//if feedmode is changing to units per rev, we have to exit at zero
 						if (__motion_requires_zero_start(block->common.control_bits.feed
-						, block->common.control_bits.motion))
+							, block->common.control_bits.motion))
 							exit_speed = 0.0;
 					}
 

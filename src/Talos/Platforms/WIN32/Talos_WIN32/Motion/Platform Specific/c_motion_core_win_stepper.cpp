@@ -31,6 +31,9 @@ uint16_t Hardware_Abstraction_Layer::MotionCore::Stepper::set_delay_from_hardwar
 	return 0;
 }
 
+void Hardware_Abstraction_Layer::MotionCore::Stepper::set_delay(uint32_t delay)
+{}
+
 void Hardware_Abstraction_Layer::MotionCore::Stepper::initialize()
 {
 	Hardware_Abstraction_Layer::MotionCore::Stepper::timer1_overflow.detach();
