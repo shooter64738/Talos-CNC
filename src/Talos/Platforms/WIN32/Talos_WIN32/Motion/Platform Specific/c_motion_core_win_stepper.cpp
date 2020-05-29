@@ -115,7 +115,7 @@ namespace Hardware_Abstraction_Layer
 			//DIRECTION_PORT = (DIRECTION_PORT & ~DIRECTION_MASK) | (directions & DIRECTION_MASK);
 		}
 
-		void Stepper::port_step(uint8_t steps)
+		void Stepper::step_port(uint8_t steps)
 		{
 			//STEP_PORT = (STEP_PORT & ~STEP_MASK) | steps;
 		}

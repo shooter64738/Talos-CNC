@@ -18,7 +18,7 @@ namespace Talos
 		{
 			namespace Output
 			{
-//-------------------------------------------------------------------
+				//-------------------------------------------------------------------
 #pragma region Spindle driver
 				void Hardware::Spindle::start(__s_spindle_block spindle_block)
 				{
@@ -42,22 +42,46 @@ namespace Talos
 				}
 
 #pragma endregion
-//-------------------------------------------------------------------
+				//-------------------------------------------------------------------
 #pragma region Motion driver
 
 				void Hardware::Motion::initialize()
 				{
+					//hal_mtn::Stepper::wake_up();
+				}
+
+				void Hardware::Motion::enable()
+				{
 					hal_mtn::Stepper::wake_up();
 				}
 
-				void Hardware::Motion::stop()
+				void Hardware::Motion::disable()
 				{
 					hal_mtn::Stepper::st_go_idle();
 				}
 
+				void Hardware::Motion::time_adjust(uint32_t* time)
+				{
+					hal_mtn::Stepper::set_delay(*time);
+				}
+
+				void Hardware::Motion::start()
+				{
+					//hal_mtn::Stepper::st_go_idle();
+				}
+
+				void Hardware::Motion::stop()
+				{
+					//hal_mtn::Stepper::st_go_idle();
+				}
+
 				void  Hardware::Motion::direction(uint16_t* directions)
 				{
-
+					//directions may have changed here
+					/*if (_persisted.active_bresenham->direction_bits.get(0))
+						Hardware_Abstraction_Layer::MotionCore::Stepper::step_dir_high();
+					else
+						Hardware_Abstraction_Layer::MotionCore::Stepper::step_dir_low();*/
 				}
 
 				void Hardware::Motion::brakes(uint16_t* brake_pins)
@@ -66,10 +90,11 @@ namespace Talos
 				}
 				void Hardware::Motion::step(uint16_t* outputs)
 				{
+					hal_mtn::Stepper::step_port(*outputs);
 				}
 
 #pragma endregion
-//-------------------------------------------------------------------
+				//-------------------------------------------------------------------
 			}
 		}
 	}

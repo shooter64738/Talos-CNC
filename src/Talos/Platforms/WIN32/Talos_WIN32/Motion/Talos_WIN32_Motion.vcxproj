@@ -65,6 +65,7 @@
     <ClInclude Include="..\..\..\..\Motion\NewCore\support_items\s_common_motion_block_object.h" />
     <ClInclude Include="..\..\..\..\Motion\NewCore\support_items\s_common_segment_block_object.h" />
     <ClInclude Include="..\..\..\..\Motion\NewCore\support_items\s_common_timer_object.h" />
+    <ClInclude Include="..\..\..\..\Motion\NewCore\support_items\s_complete_block_stats.h" />
     <ClInclude Include="..\..\..\..\Motion\NewCore\support_items\s_motion_axis_detail.h" />
     <ClInclude Include="..\..\..\..\Motion\NewCore\support_items\s_motion_block.h" />
     <ClInclude Include="..\..\..\..\Motion\NewCore\support_items\s_segment_base.h" />

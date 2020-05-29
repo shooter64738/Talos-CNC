@@ -5,7 +5,7 @@
 #include "support_items/s_timer_item.h"
 #include "support_items/s_motion_block.h"
 #include "support_items/s_spindle_block.h"
-#include "../../talos_hardware_def.h"
+//#include "../../talos_hardware_def.h"
 
 namespace Talos
 {

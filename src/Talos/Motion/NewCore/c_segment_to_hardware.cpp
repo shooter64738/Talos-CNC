@@ -144,9 +144,9 @@ namespace Talos
 					mtn_ctl_sta::Output::states.set(mtn_ctl_sta::Output::e_states::interpolation_running);
 					//start the timer, this will set all of the wheel in motion
 					//hrd_out::Hardware::Motion::initialize();
-					Hardware_Abstraction_Layer::MotionCore::Stepper::wake_up();
 
-
+					hrd_out::Hardware::Motion::enable();
+					hrd_out::Hardware::Motion::start();
 					//null gate keeper??? not sure what to do yet... 
 					//Segment::pntr_next_gate = NULL;
 
@@ -168,26 +168,12 @@ namespace Talos
 					//this has been called from an ISR or thread
 
 					//Send outputs to physical hardware
-					//Motion_Core::Hardware::Interpolation::send_hardware_outputs();
-					hrd_out::Hardware::Motion::step(0);
-
-					// Enable step pulse reset timer so that The Stepper Port Reset Interrupt can reset the signal after
-					// exactly settings.pulse_microseconds microseconds, independent of the main Timer1 prescaler.
-					//Hardware_Abstraction_Layer::MotionCore::Stepper::pulse_reset_timer();
-					//c_processor::debug_serial.print_string("t\r");
-					//Motion_Core::Hardware::Interpolation::Step_Active = 1;
-
-					//sei();
-					//Hardware_Abstraction_Layer::Core::start_interrupts();
-
-					// If there is no step segment, attempt to pop one from the stepper buffer
+					hrd_out::Hardware::Motion::step(&_persisted.step_outbits);
 
 					if (Segment::_persisted.active_timer_item == NULL)
 					{
 						bool end = __load_segment();
 						//were there any more segments? if not we are done.
-						//seems we can empty the buffer faster than we can fill it
-						//optimize processing code to reduce this!
 						if (end)
 						{
 							__end_interpolation();
@@ -224,18 +210,18 @@ namespace Talos
 					//If feedmode is spindle synch, calculate the correct delay value for
 					//the feedrate, based on spindle current speed
 					//TODO: is there a better way to do this without several if statements?
-					if (_persisted.active_timer_item->common.control_bits.feed.get(
-						e_feed_block_state::feed_mode_units_per_rotation))
-					{
-						//only adjust the delay value if we are in 'cruise' state.
-						//The arbitrator still controls motion during accel and decel
-						if (_persisted.active_timer_item->common.control_bits.speed.get(
-							e_speed_block_state::motion_state_cruising))
-						{
-							//Hardware_Abstraction_Layer::MotionCore::Stepper::OCR1A_set
-							//(Hardware_Abstraction_Layer::MotionCore::Spindle::spindle_encoder->feedrate_delay);
-						}
-					}
+					//if (_persisted.active_timer_item->common.control_bits.feed.get(
+					//	e_feed_block_state::feed_mode_units_per_rotation))
+					//{
+					//	//only adjust the delay value if we are in 'cruise' state.
+					//	//The arbitrator still controls motion during accel and decel
+					//	if (_persisted.active_timer_item->common.control_bits.speed.get(
+					//		e_speed_block_state::motion_state_cruising))
+					//	{
+					//		//Hardware_Abstraction_Layer::MotionCore::Stepper::OCR1A_set
+					//		//(Hardware_Abstraction_Layer::MotionCore::Spindle::spindle_encoder->feedrate_delay);
+					//	}
+					//}
 
 					if (_persisted.active_timer_item->steps_to_execute_in_this_segment == 0)
 					{
@@ -300,60 +286,44 @@ namespace Talos
 						myfile << "\r";
 						myfile.flush();
 #endif
-						Hardware_Abstraction_Layer::MotionCore::Stepper::set_delay(
-							_persisted.active_timer_item->timer_delay_value);
-
-						//set timer delay value to the active_timer objects delay time
-						/*Hardware_Abstraction_Layer::MotionCore::Stepper::OCR1A_set
-						(Motion_Core::Hardware::Interpolation::Exec_Timer_Item->timer_delay_value);*/
+						//set timer delay value to the active_timer objects delay time						
+						hrd_out::Hardware::Motion::time_adjust(&_persisted.active_timer_item->timer_delay_value);
 
 						// If the new segment starts a new planner block, initialize stepper variables and counters.
 						// NOTE: When the segment data index changes, this indicates a new planner block.
 						if (_persisted.active_bresenham != _persisted.active_timer_item->common.bres_obj)
-						{							
-
+						{
 							//New line segment, so this should be the start of a block.
 							mtn_ctl_sta::Output::states.set(mtn_ctl_sta::Output::e_states::ngc_block_done);
 							_persisted.active_line_number = _persisted.active_timer_item->common.tracking.line_number;
 							_persisted.last_complete_sequence = _persisted.active_sequence;
 
-							mtn_ctl_sta::Output::complete_block_station = _persisted.last_complete_sequence;
-							mtn_ctl_sta::Output::complete_block_line = _persisted.active_line_number;
+							mtn_ctl_sta::Output::block_stats.common.sequence = _persisted.last_complete_sequence;
+							mtn_ctl_sta::Output::block_stats.common.line_number = _persisted.active_line_number;
+							//mtn_ctl_sta::Output::block_stats.start_time = *Hardware_Abstraction_Layer::Core::cpu_tick_ms;
 
 							_persisted.active_sequence = _persisted.active_timer_item->common.tracking.sequence;
 							_persisted.active_bresenham = _persisted.active_timer_item->common.bres_obj;
 
-							//directions may have changed here
-							if (_persisted.active_bresenham->direction_bits.get(0))
-								Hardware_Abstraction_Layer::MotionCore::Stepper::step_dir_high();
-							else
-								Hardware_Abstraction_Layer::MotionCore::Stepper::step_dir_low();
+							//if we are loading a new block directions MIGHT change, so clear the set flag
+							uint16_t non_vol = _persisted.active_timer_item->common.bres_obj->direction_bits._flag;
+							hrd_out::Hardware::Motion::direction(&non_vol);
 
 							//a new block has been detected. that means there is a potential for new ngc settings
 							//for the spindle. better go check
 							Segment::__configure_spindle();
-
-							//if we are loading a new block directions MIGHT change, so clear the set flag
-							//Motion_Core::Hardware::Interpolation::direction_set = 0;
-
-
 
 							// Initialize Bresenham line and distance counters
 							for (int i = 0; i < MACHINE_AXIS_COUNT; i++)
 								_persisted.bresenham_counter[i]
 								= _persisted.active_timer_item->common.bres_obj->step_event_count;
 						}
-
-						/*Motion_Core::Hardware::Interpolation::dir_outbits
-							= Motion_Core::Hardware::Interpolation::Exec_Timer_Item->bresenham_in_item->direction_bits
-							^ Motion_Core::Hardware::Interpolation::dir_port_invert_mask;*/
-							}
+					}
 					return done;
-						}
+				}
 
 				void Segment::__end_interpolation()
 				{
-					//shut down the hardware
 					hrd_out::Hardware::Motion::stop();
 #ifdef MSVC
 					myfile << 0 << ",";
@@ -367,18 +337,19 @@ namespace Talos
 					myfile.close();
 #endif // MSVC
 					__set_brakes();
-					}
+					hrd_out::Hardware::Motion::disable();
+				}
 
 				void Segment::__set_brakes()
 				{
 					hrd_out::Hardware::Motion::brakes(0);
 
-					//set this to null in case the timer fires will we are in here.
+					//set this to null in case the timer fires while we are in here.
 					Segment::pntr_driver = NULL;
 
 					Segment::pntr_next_gate = Segment::__new_motion;
 				}
-				}
 			}
 		}
 	}
+}

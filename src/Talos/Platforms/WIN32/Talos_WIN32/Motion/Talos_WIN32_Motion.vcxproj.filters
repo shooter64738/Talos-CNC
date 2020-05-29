@@ -425,6 +425,9 @@
     <ClInclude Include="..\..\..\..\Motion\NewCore\support_items\s_spindle_block.h">
       <Filter>Motion\NewCore\Supporting_Items</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\..\Motion\NewCore\support_items\s_complete_block_stats.h">
+      <Filter>Motion\NewCore\Supporting_Items</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\..\..\..\Motion\NewCore\description.txt">

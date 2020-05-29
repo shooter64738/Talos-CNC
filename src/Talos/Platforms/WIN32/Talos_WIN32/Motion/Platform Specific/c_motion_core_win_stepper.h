@@ -106,7 +106,7 @@ namespace Hardware_Abstraction_Layer
 			static void OCR1A_set(uint8_t delay);
 			static void port_disable(uint8_t inverted);
 			static void port_direction(uint8_t directions);
-			static void port_step(uint8_t steps);
+			static void step_port(uint8_t steps);
 			static uint16_t set_delay_from_hardware(uint32_t calculed_delay, uint32_t * delay, uint8_t * prescale);
 			static void set_delay(uint32_t delay);
 			static void step_pul_high();

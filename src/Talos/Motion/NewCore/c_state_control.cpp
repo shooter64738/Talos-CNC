@@ -218,8 +218,8 @@ namespace Talos
 				s_bit_flag_controller<Output::e_states> Output::states;
 				int32_t Output::spindle_last_checked_speed = 0;
 				int32_t Output::spindle_target_speed = 0;
-				uint32_t Output::complete_block_station = 0;
-				uint32_t Output::complete_block_line = 0;
+				
+				s_complete_block_stats Output::block_stats;
 
 				void Output::execute()
 				{

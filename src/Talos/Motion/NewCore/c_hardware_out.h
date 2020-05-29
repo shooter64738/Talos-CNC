@@ -35,9 +35,13 @@ namespace Talos
 					public:
 						static void initialize();
 						static void stop();
+						static void start();
+						static void enable();
+						static void disable();
+						static void time_adjust(uint32_t* time);
 						static void direction(uint16_t* directions);
 						static void brakes(uint16_t* brakes);;
-						static void step(uint16_t *outputs);
+						static void step(uint16_t* outputs);
 					};
 				protected:
 				private:

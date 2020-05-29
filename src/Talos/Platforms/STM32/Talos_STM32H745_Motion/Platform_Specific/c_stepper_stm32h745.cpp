@@ -73,19 +73,18 @@ namespace Hardware_Abstraction_Layer
 		{
 			if (busy)return;
 			busy = true;
-			
 
 			if (TIM2->SR & TIM_SR_UIF)
 			{
 				TIM2->SR &= ~(TIM_SR_UIF);
 				if (Talos::Motion::Core::Output::Segment::pntr_driver == NULL)
 				{
-					Stepper::step_pul_low();
+					//Stepper::step_pul_low();
 					busy = false;
 					return;
 				}
 				Talos::Motion::Core::Output::Segment::pntr_driver();
-				Stepper::step_pul_high();
+				//Stepper::step_pul_high();
 				
 			}
 			//get status registers
@@ -93,7 +92,8 @@ namespace Hardware_Abstraction_Layer
 			{
 				//STEP_TIMER->SR = ~TIM_FLAG_CC1;
 				STEP_TIMER->SR = ~TIM_SR_CC1IF;
-				Stepper::step_pul_low();
+				//Stepper::step_pul_low();
+				Stepper::step_port(0);
 			}
 			busy = false;
 		}
@@ -101,6 +101,12 @@ namespace Hardware_Abstraction_Layer
 		void Stepper::step_pul_high()
 		{
 			HAL_GPIO_WritePin(STEPPER_PUL_PORT, STEPPER_PUL_PIN_0, GPIO_PIN_SET);
+		}
+
+		void Stepper::step_port(uint16_t output)
+		{
+			STEPPER_PUL_PORT->ODR = (STEPPER_PUL_PORT->ODR & ~STEP_MASK) | output;
+			
 		}
 
 		void Stepper::step_pul_low()

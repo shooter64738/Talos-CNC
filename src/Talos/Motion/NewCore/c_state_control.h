@@ -4,6 +4,7 @@
 
 #include "../../physical_machine_parameters.h"
 #include "../../_bit_flag_control.h"
+#include "support_items/s_complete_block_stats.h"
 
 /*
 
@@ -124,8 +125,9 @@ namespace Talos
 					static s_bit_flag_controller<e_states> states;
 					static int32_t spindle_last_checked_speed;
 					static int32_t spindle_target_speed;
-					static uint32_t complete_block_station;
-					static uint32_t complete_block_line;
+					
+					static s_complete_block_stats block_stats;
+					
 				protected:
 				private:
 
