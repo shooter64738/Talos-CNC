@@ -91,15 +91,19 @@ namespace Talos
 
 				bool Block::ngc_buffer_process()
 				{
-					while (!mtn_ctl_sta::Process::states.get(mtn_ctl_sta::Process::e_states::motion_buffer_full))
+					//in keeping with the limited loop rules we cant stay here forever loading data.
+					//lets load 5 at most and then return. we can come back and get the rest, but it
+					//is dangerous to set in a loop for too long, since we are controlling a machine
+					for (uint8_t looper = 0; looper < 5; looper++)
 					{
-						Block::__load_ngc(Block::ngc_buffer.get());
-						
-						if (!mtn_ctl_sta::Process::states.get(mtn_ctl_sta::Process::e_states::ngc_buffer_not_empty))
-							break;
+						if (!mtn_ctl_sta::Process::states.get(mtn_ctl_sta::Process::e_states::motion_buffer_full))
+						{
+							Block::__load_ngc(Block::ngc_buffer.get());
+							//if the ngc buffer is empty, no more to load.
+							if (!mtn_ctl_sta::Process::states.get(mtn_ctl_sta::Process::e_states::ngc_buffer_not_empty))
+								break;
+						}
 					}
-
-
 					return mtn_ctl_sta::Process::states.get(mtn_ctl_sta::Process::e_states::ngc_buffer_not_empty);
 				}
 

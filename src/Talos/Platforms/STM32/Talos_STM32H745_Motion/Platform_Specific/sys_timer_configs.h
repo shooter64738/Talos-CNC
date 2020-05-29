@@ -11,13 +11,7 @@
 
 static void step_timer_config(void)
 {
-	/* Peripheral clock enable */
-	STEP_TIMER_CLK_ENABLE;
-	TIM2->CR1 &= ~(TIM_CR1_CEN);
-	RCC->APB1LENR |= (RCC_APB1LENR_TIM2EN);
 	
-
-
 	//STEP_TIMER->CR1 = 0;
 	//STEP_TIMER->DIER = 0;
 	//STEP_TIMER->CCR2 = 0;
@@ -54,11 +48,6 @@ static void step_timer_config(void)
 	////and when there is a match on ccr2
 	//STEP_TIMER->DIER |= TIM_IT_CC1;
 	//STEP_TIMER->DIER |= TIM_IT_CC2;
-
-	//
-
-	//return;
-
 
 
 	////reference manual says:
@@ -126,24 +115,40 @@ static void step_timer_config(void)
 	// and the repetition counter (only for advanced timer) value immediately */
 	// //TIM2->EGR = TIM_EGR_UG;
 
-	///*HAL_NVIC_SetPriority(STEP_TIMER_INTERRUPT, 0, 0);
-	//HAL_NVIC_EnableIRQ(STEP_TIMER_INTERRUPT);*/
+	/* Peripheral clock enable */
+	STEP_TIMER_CLK_ENABLE;
+	STEP_TIMER->CR1 &= ~(TIM_CR1_CEN);
+	RCC->APB1LENR |= (RCC_APB1LENR_TIM2EN);
 
-	/* set the Timer prescaler to get 1MHz as counter clock */
-	//uint16_t Tim1Prescaler = (uint16_t)(SystemCoreClock / 10000000) - 1;
-	//uint16_t Tim1Prescaler = (uint16_t)(SystemCoreClock / 23000000) - 1;
+	//STEP_TIMER->CR1 = 0;
+	//STEP_TIMER->DIER = 0;
+	//STEP_TIMER->CCR2 = 0;
+	//STEP_TIMER->CCR1 = 0;
+	//STEP_TIMER->ARR = 0;
+	//STEP_TIMER->CCMR1 = 0;
+	//STEP_TIMER->PSC = 0;
+
+	///* TIM2 clock enable */
+	////RCC->APB1ENR |= RCC_APB1ENR_TIM2EN; //from timer cookbook
+	////RCC->APB1LENR |= RCC_APB1LENR_TIM2EN; //from hal_enable
+
 	uint16_t Tim1Prescaler = (uint16_t)(SystemCoreClock / 5000000) - 1;
 	uint32_t sys = SystemCoreClock;
-	//TIM2->CR1 |= TIM_CLOCKDIVISION_DIV2;
-	TIM2->CR1 |= TIM_CLOCKDIVISION_DIV1;
-	TIM2->PSC = 0;// Tim1Prescaler;
-	TIM2->ARR = 10000;
-	TIM2->CCR1 = 1000;//500
+
+	STEP_TIMER->CR1 |= TIM_CLOCKDIVISION_DIV1;//<--clock divisor
+	STEP_TIMER->PSC = 0; //<--prescaler
+	STEP_TIMER->ARR = 10000; //<--wait time
+	STEP_TIMER->CCR1 = 1000;//<--'on' time
 	// Send an update event to reset the timer and apply settings.
-	TIM2->EGR |= TIM_EGR_UG;
-	// Enable the hardware interrupt.
-	TIM2->DIER |= TIM_DIER_UIE;
-	TIM2->DIER |= TIM_IT_CC1;
+	STEP_TIMER->EGR |= TIM_EGR_UG;
+	// Enable an interrupt for update, and cc1 match
+	STEP_TIMER->DIER |= TIM_DIER_UIE;
+	STEP_TIMER->DIER |= TIM_IT_CC1;
+
+	STEP_TIMER->CCMR1 &= ~TIM_CCMR1_OC1M;
+	STEP_TIMER->CCMR1 &= ~TIM_CCMR1_CC1S;
+	///* Select the Output Compare Mode */
+	STEP_TIMER->CCMR1 |= TIM_OCMODE_TIMING; //aka frozen?
 	// Enable the timer.
-	TIM2->CR1 |= TIM_CR1_CEN;
+	//STEP_TIMER->CR1 |= TIM_CR1_CEN;
 }

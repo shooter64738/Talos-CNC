@@ -92,53 +92,47 @@ namespace Talos
 
 				void Motion::execute()
 				{
+					//are we already running?
 					if (!Motion::states.get(Motion::e_states::running))
+						//has cycle start been set
 						if (Motion::states.get(Motion::e_states::cycle_start))
-							__cycle_start();
+							//is the motion state ready?
+							if (Motion::states.get(Motion::e_states::ready))
+								__run();
+
 
 					if (Motion::states.get(Motion::e_states::hold))
 						__cycle_hold();
-
-					if (Motion::states.get(Motion::e_states::ready))
-						if (Motion::states.get(Motion::e_states::running))
-							__run();
-
-					if (Motion::states.get(Motion::e_states::wait_for_spindle_at_speed))
-					{
-						//the output director has requested the spindle come on, and run at a
-						//certain speed.
-						__config_spindle();
-
-					}
 				}
 
 				//called when cycle start bit is set.
 				void Motion::__cycle_start()
 				{
-					//set internal state flags for holding a motion. The mmajor state flag will control
-					//the motion output.
-					Motion::__internal_states.clear(Motion::e_internal_states::held);
-					Motion::__internal_states.clear(Motion::e_internal_states::release);
-					Motion::states.set(Motion::e_states::ready);
 
-					//should we just assume running? do we need to check other stuff?
-					Motion::states.set(Motion::e_states::running);
-
-					//we are about to start motion so fill the segment buffer.
-					Core::Process::Segment::fill_step_segment_buffer();
-
-					mtn_out::Segment::gate_keeper();
 				}
 
 				//called when running flag is set. fills segment buffer that is consumed by the 
 				//motion executor
 				void Motion::__run()
 				{
-					//we are in run mode so we can fill the segement buffer. that does NOT mean
-					//that motion will execute. If hold is active then we are going to get no
-					//motion until it is released
-					//if (Process::states.get(Process::e_states::motion_buffer_not_empty))
-						Core::Process::Segment::fill_step_segment_buffer();
+					//set internal state flags for holding a motion. The major state flag will control
+					//the motion output.
+					Motion::__internal_states.clear(Motion::e_internal_states::held);
+					Motion::__internal_states.clear(Motion::e_internal_states::release);
+
+					//should we just assume running? do we need to check other stuff?
+					Motion::states.set(Motion::e_states::running);
+
+					/*
+					Moved this because I feel like its a process, not a motion
+					buffer should be pre-filled for us
+					
+					//we are about to start motion so fill the segment buffer.
+					Core::Process::Segment::fill_step_segment_buffer();
+					*/
+
+					//call the output director
+					mtn_out::Segment::gate_keeper();
 				}
 
 				//called when feed hold bit is set. running bit is not cleared.
@@ -174,64 +168,7 @@ namespace Talos
 					Motion::__internal_states.clear(Motion::e_internal_states::held);
 					Motion::states.clear(Motion::e_states::running);
 				}
-
-				//called when the spindle activate flags are set. sets up the spindle
-				void Motion::__config_spindle()
-				{
-					//We are here to setup the spindle. the current timer record in output director
-					//should have the spindle information.
-					//Output::spindle_target_speed = Talos::Motion::Core::Output::Segment::active_block->spindle_rate;
-
-					//if the spindle is not on, turn it on.
-					if (!Motion::states.get(Motion::e_states::spindle_on))
-					{
-						//flag output to turn the spindle on.
-						Output::states.set(Output::e_states::spindle_requested_on);
-
-						//record the time when the wait for speed began
-						//call into hardware layer here and get a sys tick timer.
-						spindle_request_time = HAL_SYS_TICK_TIME();
-					}
-					else
-					{
-						int32_t target = Output::spindle_target_speed +
-							(Output::spindle_target_speed * (mtn_cfg::Controller.Settings.hardware.spindle_encoder.rpm_tolerance / 100));
-
-						//spindle is on, what is its speed?
-						if ((Output::spindle_last_checked_speed >
-							(Output::spindle_target_speed - mtn_cfg::Controller.Settings
-								.hardware.spindle_encoder.rpm_tolerance))
-							&& (Output::spindle_last_checked_speed <
-							(Output::spindle_target_speed + mtn_cfg::Controller.Settings
-								.hardware.spindle_encoder.rpm_tolerance)))
-						{
-							//spindle is at speed and within the request rpm range. 
-
-							//Clear the wait flag
-							Motion::states.clear(Motion::e_states::wait_for_spindle_at_speed);
-							//set the at speed flag
-							Motion::states.clear(Motion::e_states::spindle_at_speed);
-						}
-						else
-						{
-							//still waiting on the spindle. 
-							//have we timed out yet?
-							uint32_t elapsed = (HAL_SYS_TICK_TIME() - spindle_request_time);
-							if (mtn_cfg::Controller.Settings.hardware.spindle_encoder
-								.wait_spindle_at_speed - elapsed)
-							{
-								//Out of time. This is a fault
-
-								//request spindle off.
-								Output::states.set(Output::e_states::spindle_requested_off);
-								Output::states.set(Output::e_states::hardware_fault);
-
-								Motion::states.set(Motion::e_states::spindle_failure);
-							}
-						}
-					}
-
-				}
+				
 #pragma endregion
 				/*--------------------------------------------------------------------------*/
 #pragma region Process class state control
@@ -248,15 +185,26 @@ namespace Talos
 					if (Process::states.get_clr(Process::e_states::ngc_buffer_not_empty))
 						__load_ngc();
 
-					//if there is data in the segment buffer we are 'running'
+					//if there is data in the segment buffer set motion::ready
 					if (Process::states.get(Process::e_states::motion_buffer_not_empty))
 						Motion::states.set(Motion::e_states::ready);
+
+					//see if the motion state is ready
+					if (Motion::states.get(Motion::e_states::ready))
+						Process::__load_segments();
+						//Core::Process::Segment::fill_step_segment_buffer();
 				}
 
 				void Process::__load_ngc()
 				{
 					//load ngc buffer into segment buffer
 					bool more_data = Talos::Motion::Core::Input::Block::ngc_buffer_process();
+				}
+
+				void Process::__load_segments()
+				{
+					//add segments to the segment buffer
+					Core::Process::Segment::fill_step_segment_buffer();
 				}
 
 #pragma endregion
@@ -275,61 +223,61 @@ namespace Talos
 
 				void Output::execute()
 				{
-					//if we have a hardware failure, shut it all down.
-					if (Output::states.get(Output::e_states::hardware_fault))
-					{
-						__spindle_off();
-						__motion_off();
+					////if we have a hardware failure, shut it all down.
+					//if (Output::states.get(Output::e_states::hardware_fault))
+					//{
+					//	__spindle_off();
+					//	__motion_off();
 
-						//set motion states
-						Motion::states.set(Motion::e_states::terminate);
-						Motion::states.set(Motion::e_states::hard_fault);
-						Output::states.clear(Output::e_states::interpolation_running);
-					}
+					//	//set motion states
+					//	Motion::states.set(Motion::e_states::terminate);
+					//	Motion::states.set(Motion::e_states::hard_fault);
+					//	Output::states.clear(Output::e_states::interpolation_running);
+					//}
 
-					if (Output::states.get_clr(Output::e_states::spindle_requested_on))
-						__spindle_on();
+					//if (Output::states.get_clr(Output::e_states::spindle_requested_on))
+					//	__spindle_on();
 
-					if (Output::states.get_clr(Output::e_states::spindle_requested_off))
-						__spindle_off();
+					//if (Output::states.get_clr(Output::e_states::spindle_requested_off))
+					//	__spindle_off();
 
-					if (Output::states.get_clr(Output::e_states::spindle_get_speed))
-						Output::spindle_last_checked_speed = __spindle_speed();
+					//if (Output::states.get_clr(Output::e_states::spindle_get_speed))
+					//	Output::spindle_last_checked_speed = __spindle_speed();
 				}
 
-				void Output::__motion_off()
-				{
-					Motion::states.set(Motion::e_states::motion_off);
-					//call into the hardware layer here and turn the spindle on
-					HAL_MOTION_OFF();
-				}
+				//void Output::__motion_off()
+				//{
+				//	Motion::states.set(Motion::e_states::motion_off);
+				//	//call into the hardware layer here and turn the spindle on
+				//	HAL_MOTION_OFF();
+				//}
 
-				void Output::__motion_on()
-				{
-					Motion::states.set(Motion::e_states::motion_on);
-					//call into the hardware layer here and turn the spindle on
-					HAL_MOTION_ON();
-				}
+				//void Output::__motion_on()
+				//{
+				//	Motion::states.set(Motion::e_states::motion_on);
+				//	//call into the hardware layer here and turn the spindle on
+				//	HAL_MOTION_ON();
+				//}
 
-				void Output::__spindle_on()
-				{
-					Motion::states.set(Motion::e_states::spindle_on);
-					//call into the hardware layer here and turn the spindle on
-					HAL_SPINDLE_ON();
-				}
+				//void Output::__spindle_on()
+				//{
+				//	Motion::states.set(Motion::e_states::spindle_on);
+				//	//call into the hardware layer here and turn the spindle on
+				//	HAL_SPINDLE_ON();
+				//}
 
-				void Output::__spindle_off()
-				{
-					Motion::states.set(Motion::e_states::spindle_off);
-					//call into the hardware layer here and turn the spindle off
-					HAL_SPINDLE_OFF();
-				}
+				//void Output::__spindle_off()
+				//{
+				//	Motion::states.set(Motion::e_states::spindle_off);
+				//	//call into the hardware layer here and turn the spindle off
+				//	HAL_SPINDLE_OFF();
+				//}
 
-				int32_t Output::__spindle_speed()
-				{
-					//call into hardware layer to get spindle speed
-					return HAL_SPINDLE_SPEED();
-				}
+				//int32_t Output::__spindle_speed()
+				//{
+				//	//call into hardware layer to get spindle speed
+				//	return HAL_SPINDLE_SPEED();
+				//}
 
 #pragma endregion
 				/*--------------------------------------------------------------------------*/

@@ -426,4 +426,9 @@
       <Filter>Motion\NewCore\Supporting_Items</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\..\..\..\Motion\NewCore\description.txt">
+      <Filter>Motion\NewCore</Filter>
+    </Text>
+  </ItemGroup>
 </Project>

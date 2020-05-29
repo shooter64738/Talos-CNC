@@ -81,6 +81,7 @@ namespace Hardware_Abstraction_Layer
 				if (Talos::Motion::Core::Output::Segment::pntr_driver == NULL)
 				{
 					Stepper::step_pul_low();
+					busy = false;
 					return;
 				}
 				Talos::Motion::Core::Output::Segment::pntr_driver();
@@ -132,12 +133,14 @@ namespace Hardware_Abstraction_Layer
 		{
 			//disable interrupts for timer
 			HAL_NVIC_DisableIRQ(STEP_TIMER_INTERRUPT);
-
 			STEP_TIMER->CR1 &= ~TIM_CR1_CEN;
+			Stepper::step_pul_low();
 		}
 		
 		void Stepper::set_delay(uint32_t delay)
-		{			
+		{
+			//use 50% duty cycle on outputs. this should give the longest
+			//possible on time for a driver
 			STEP_TIMER->ARR = delay;
 		}
 	}

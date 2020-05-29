@@ -30,6 +30,33 @@ namespace Talos
 				extern void execute();
 				extern void execute(e_state_class st_class);
 
+				class Process
+				{
+					//variables
+				public:
+					enum class e_states :uint32_t
+					{
+						decel_override = 0,
+						ngc_buffer_not_empty = 1,
+						ngc_buffer_empty = 2,
+						motion_buffer_not_empty = 3,
+						motion_buffer_full = 4,
+
+					};
+					static s_bit_flag_controller<e_states> states;
+
+				protected:
+				private:
+
+					//functions
+				public:
+					static void execute();
+				protected:
+				private:
+					static void __load_ngc();
+					static void __load_segments();
+
+				};
 
 				class Motion
 				{
@@ -41,15 +68,15 @@ namespace Talos
 						hold = 1,
 						terminate = 2,
 						running = 3,
-						wait_for_spindle_at_speed = 4,
-						spindle_at_speed = 5,
-						spindle_on = 6,
-						spindle_off = 7,
+						//wait_for_spindle_at_speed = 4,
+						//spindle_at_speed = 5,
+						//spindle_on = 6,
+						//spindle_off = 7,
 						hard_fault = 8,
 						spindle_failure = 9,
-						motion_on = 10,
-						motion_off = 11,
-						block_completed = 12,
+						//motion_on = 10,
+						//motion_off = 11,
+						//block_completed = 12,
 						cycle_start = 13,
 					};
 					static s_bit_flag_controller<e_states> states;
@@ -77,35 +104,6 @@ namespace Talos
 					static void __cycle_release();
 					static void __cycle_reset();
 					static void __config_spindle();
-
-				};
-
-				class Process
-				{
-					//variables
-				public:
-					enum class e_states :uint32_t
-					{
-						decel_override = 0,
-						ngc_buffer_not_empty = 1,
-						ngc_buffer_empty = 2,
-						motion_buffer_not_empty = 3,
-						motion_buffer_full = 4,
-
-					};
-					static s_bit_flag_controller<e_states> states;
-
-				protected:
-				private:
-
-					//functions
-				public:
-					static void execute();
-				protected:
-				private:
-					static void __load_ngc();
-					static void __cycle_hold();
-					static void __cycle_release();
 
 				};
 

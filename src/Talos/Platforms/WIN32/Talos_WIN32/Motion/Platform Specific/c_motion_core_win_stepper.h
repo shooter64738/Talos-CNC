@@ -109,6 +109,10 @@ namespace Hardware_Abstraction_Layer
 			static void port_step(uint8_t steps);
 			static uint16_t set_delay_from_hardware(uint32_t calculed_delay, uint32_t * delay, uint8_t * prescale);
 			static void set_delay(uint32_t delay);
+			static void step_pul_high();
+			static void step_pul_low();
+			static void step_dir_high();
+			static void step_dir_low();
 			protected:
 			private:
 				static void timer1_overflow_thread();

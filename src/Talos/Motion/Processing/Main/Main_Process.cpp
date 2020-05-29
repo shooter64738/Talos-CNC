@@ -57,11 +57,13 @@ void Talos::Motion::Main_Process::initialize()
 
 void Talos::Motion::Main_Process::run()
 {
+	//load the testing block
 	Motion::Core::Input::Block::load_ngc_test();
+	//if we set this flag, motion will begin!
+	Core::States::Motion::states.set(Core::States::Motion::e_states::cycle_start);
 	while(1)
 	{
-		//if we set this flag, motion will begin!
-		Core::States::Motion::states.set(Core::States::Motion::e_states::cycle_start);
+		
 		Core::States::execute();
 	}
 		

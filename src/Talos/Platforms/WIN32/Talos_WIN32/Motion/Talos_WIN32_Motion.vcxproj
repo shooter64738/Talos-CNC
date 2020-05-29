@@ -127,6 +127,9 @@
     <ClInclude Include="Platform Specific\c_motion_core_win_stepper.h" />
     <ClInclude Include="Platform Specific\c_serial_win.h" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\..\..\..\Motion\NewCore\description.txt" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{842D3902-7944-4D31-868D-EDAD55DD8A7E}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
