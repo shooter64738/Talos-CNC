@@ -74,6 +74,7 @@ namespace Talos
 						*view.axis_array[0] = ((i + 1) * 10);
 						*view.persisted_values.active_spindle_speed_S = 1234;
 						testblock.target_motion_position[0] = ((i + 1) * 10);
+						testblock.target_motion_position[1] = ((i + 1) );
 						if (i < 1 || i>4)
 							* view.current_g_codes.Feed_rate_mode = NGC_RS274::G_codes::FEED_RATE_UNITS_PER_MINUTE_MODE;
 						if (i == 2 || i == 4)

@@ -59,7 +59,7 @@
 #define STEPPERS_DISABLE_MASK (1 << STEPPERS_DISABLE_BIT)
 
 #define STEP_DDR      dummy0
-#define STEP_PORT     dummy0
+static uint16_t STEP_PORT;
 #define STEP_PIN      PINA
 #define X_STEP_BIT        0 // MEGA2560 Digital Pin 22
 #define Y_STEP_BIT        1 // MEGA2560 Digital Pin 23

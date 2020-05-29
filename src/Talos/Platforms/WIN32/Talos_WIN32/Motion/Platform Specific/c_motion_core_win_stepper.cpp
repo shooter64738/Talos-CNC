@@ -117,7 +117,7 @@ namespace Hardware_Abstraction_Layer
 
 		void Stepper::step_port(uint8_t steps)
 		{
-			//STEP_PORT = (STEP_PORT & ~STEP_MASK) | steps;
+			STEP_PORT = (STEP_PORT & ~STEP_MASK) | steps;
 		}
 
 		void Stepper::pulse_reset_timer()
