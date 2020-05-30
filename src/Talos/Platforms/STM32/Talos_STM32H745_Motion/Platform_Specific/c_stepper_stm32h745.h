@@ -31,7 +31,7 @@ namespace Hardware_Abstraction_Layer
 			static void step_pul_low();
 			static void step_dir_high();
 			static void step_dir_low();
-			static void step_port(uint16_t output)
+			static void step_port(uint16_t output);
 			
 			protected:
 			private:

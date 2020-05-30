@@ -293,6 +293,7 @@ namespace Talos
 						// NOTE: When the segment data index changes, this indicates a new planner block.
 						if (_persisted.active_bresenham != _persisted.active_timer_item->common.bres_obj)
 						{
+							/*
 							//New line segment, so this should be the start of a block.
 							mtn_ctl_sta::Output::states.set(mtn_ctl_sta::Output::e_states::ngc_block_done);
 							_persisted.active_line_number = _persisted.active_timer_item->common.tracking.line_number;
@@ -301,7 +302,7 @@ namespace Talos
 							mtn_ctl_sta::Output::block_stats.common.sequence = _persisted.last_complete_sequence;
 							mtn_ctl_sta::Output::block_stats.common.line_number = _persisted.active_line_number;
 							//mtn_ctl_sta::Output::block_stats.start_time = *Hardware_Abstraction_Layer::Core::cpu_tick_ms;
-
+							*/
 							_persisted.active_sequence = _persisted.active_timer_item->common.tracking.sequence;
 							_persisted.active_bresenham = _persisted.active_timer_item->common.bres_obj;
 
@@ -311,7 +312,7 @@ namespace Talos
 
 							//a new block has been detected. that means there is a potential for new ngc settings
 							//for the spindle. better go check
-							Segment::__configure_spindle();
+							//Segment::__configure_spindle();
 
 							// Initialize Bresenham line and distance counters
 							for (int i = 0; i < MACHINE_AXIS_COUNT; i++)
@@ -319,6 +320,8 @@ namespace Talos
 								= _persisted.active_timer_item->common.bres_obj->step_event_count;
 						}
 					}
+					else
+						int x = 0;
 					return done;
 				}
 

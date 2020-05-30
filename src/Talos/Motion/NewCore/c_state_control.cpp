@@ -57,18 +57,19 @@ namespace Talos
 					case e_state_class::Motion:
 					{
 						Motion::execute();
+						Process::execute(); //<--adding a process executor to keep the buffer full
 						break;
 					}
 					case e_state_class::Process:
 					{
 						Process::execute();
-						//Motion::execute(); //<--adding a motion executor to keep the buffer full
+						
 						break;
 					}
 					case e_state_class::Output:
 					{
 						Output::execute();
-						//Motion::execute(); //<--adding a motion executor to keep the buffer full
+						Process::execute(); //<--adding a process executor to keep the buffer full
 						break;
 					}
 					default:

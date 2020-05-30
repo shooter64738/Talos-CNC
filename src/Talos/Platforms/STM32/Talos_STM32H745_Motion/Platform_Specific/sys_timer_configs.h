@@ -9,6 +9,10 @@
 #define STEP_TIMER_CLK_ENABLE __HAL_RCC_TIM2_CLK_ENABLE()
 #define STEP_TIMER_INTERRUPT TIM2_IRQn
 
+#define STEP_RST_TIMER TIM1
+#define STEP_RST_TIMER_CLK_ENABLE __HAL_RCC_TIM1_CLK_ENABLE()
+#define STEP_RST_TIMER_INTERRUPT TIM1_UP_IRQn
+
 static void step_timer_config(void)
 {
 	
@@ -67,7 +71,7 @@ static void step_timer_config(void)
 	//STEP_TIMER->PSC = 10;
 	////1.4
 	///* Reset the TS Bits */
-	//STEP_TIMER->SMCR &= ~TIM_SMCR_TS;
+	
 	///* Set the Input Trigger source and the slave mode*/
 	////appears internal clock just leaves all bits zero
 	////TIM2->SMCR |= (TIM_CLOCKSOURCE_INTERNAL | TIM_SLAVEMODE_EXTERNAL1);
@@ -84,10 +88,9 @@ static void step_timer_config(void)
 	////4. select output mode
 	// /* Disable the Channel 1: Reset the CC1E Bit */
 	////4.0
-	//STEP_TIMER->CCER &= ~TIM_CCER_CC1E;
+	
 	////4.4
 	///* Reset the Output Polarity level */
-	//STEP_TIMER->CCER &= ~TIM_CCER_CC1P;
 	////3. set CCxIE bits for interrupts to be generated
 	////interrupt on match for cc1
 	////TIM2->CCER |= TIM_IT_CC1;
@@ -97,9 +100,7 @@ static void step_timer_config(void)
 	////TIM2->DIER |= TIM_IT_CC4;
 	////4.1
 	///* Reset the Output Compare Mode Bits */
-	//STEP_TIMER->CCMR1 &= ~TIM_CCMR1_OC1M;
 	////4.2
-	//STEP_TIMER->CCMR1 &= ~TIM_CCMR1_CC1S;
 	////4.3
 	///* Select the Output Compare Mode */
 	//STEP_TIMER->CCMR1 |= TIM_OCMODE_TIMING; //aka frozen?
@@ -117,8 +118,19 @@ static void step_timer_config(void)
 
 	/* Peripheral clock enable */
 	STEP_TIMER_CLK_ENABLE;
+	STEP_RST_TIMER_CLK_ENABLE;
+
 	STEP_TIMER->CR1 &= ~(TIM_CR1_CEN);
-	RCC->APB1LENR |= (RCC_APB1LENR_TIM2EN);
+	STEP_TIMER->CR1 &= ~TIM_CR1_CKD;
+	STEP_TIMER->SMCR &= ~TIM_SMCR_TS;
+	STEP_TIMER->CCER &= ~TIM_CCER_CC1P;
+	STEP_TIMER->CCMR1 &= ~TIM_CCMR1_OC1M;
+
+	STEP_RST_TIMER->CR1 &= ~(TIM_CR1_CEN);
+	STEP_RST_TIMER->CR1 &= ~TIM_CR1_CKD;
+	STEP_RST_TIMER->SMCR &= ~TIM_SMCR_TS;
+	STEP_RST_TIMER->CCER &= ~TIM_CCER_CC1P;
+	STEP_RST_TIMER->CCMR1 &= ~TIM_CCMR1_OC1M;
 
 	//STEP_TIMER->CR1 = 0;
 	//STEP_TIMER->DIER = 0;
@@ -132,23 +144,24 @@ static void step_timer_config(void)
 	////RCC->APB1ENR |= RCC_APB1ENR_TIM2EN; //from timer cookbook
 	////RCC->APB1LENR |= RCC_APB1LENR_TIM2EN; //from hal_enable
 
-	uint16_t Tim1Prescaler = (uint16_t)(SystemCoreClock / 5000000) - 1;
-	uint32_t sys = SystemCoreClock;
-
-	STEP_TIMER->CR1 |= TIM_CLOCKDIVISION_DIV1;//<--clock divisor
+	uint16_t Tim1Prescaler = (uint16_t)(SystemCoreClock / 1000000) - 1;
+	uint32_t sys = SystemCoreClock/1000000;
+	uint16_t ms_delay = 10;
+	STEP_TIMER->CR1 |= TIM_CLOCKDIVISION_DIV4;//<--clock divisor
 	STEP_TIMER->PSC = 0; //<--prescaler
-	STEP_TIMER->ARR = 10000; //<--wait time
-	STEP_TIMER->CCR1 = 1000;//<--'on' time
-	// Send an update event to reset the timer and apply settings.
-	STEP_TIMER->EGR |= TIM_EGR_UG;
-	// Enable an interrupt for update, and cc1 match
-	STEP_TIMER->DIER |= TIM_DIER_UIE;
-	STEP_TIMER->DIER |= TIM_IT_CC1;
+	STEP_TIMER->ARR = 1; //<--wait time
 
-	STEP_TIMER->CCMR1 &= ~TIM_CCMR1_OC1M;
-	STEP_TIMER->CCMR1 &= ~TIM_CCMR1_CC1S;
-	///* Select the Output Compare Mode */
-	STEP_TIMER->CCMR1 |= TIM_OCMODE_TIMING; //aka frozen?
-	// Enable the timer.
+	STEP_TIMER->DIER |= (TIM_DIER_UIE);
+	
+
+	STEP_RST_TIMER->CR1 |= TIM_CLOCKDIVISION_DIV4;//<--clock divisor
+	STEP_RST_TIMER->PSC = 0; //<--prescaler
+	STEP_RST_TIMER->ARR = 0; //<--wait time
+	STEP_RST_TIMER->DIER |= (TIM_DIER_UIE);
+
+	//make timer 2 stop if I break 
+	DBGMCU->APB1LFZ1 |= DBGMCU_APB1LFZ1_DBG_TIM2;
+											
+// Enable the timer.
 	//STEP_TIMER->CR1 |= TIM_CR1_CEN;
 }

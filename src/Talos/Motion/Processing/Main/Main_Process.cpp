@@ -31,6 +31,7 @@ void Talos::Motion::Main_Process::initialize()
 		int c = 0;
 	}
 #endif
+
 	Hardware_Abstraction_Layer::Core::initialize();
 
 	//Create a serial 'wrapper' to make writing strings and numbers easier.
@@ -50,7 +51,7 @@ void Talos::Motion::Main_Process::initialize()
 	Kernel::CPU::f_initialize(
 		HOST_CPU_ID, CORD_CPU_ID, MACH_CPU_ID, SPDL_CPU_ID, PRPH_CPU_ID, Hardware_Abstraction_Layer::Core::cpu_tick_ms);
 
-	Hardware_Abstraction_Layer::Disk::initialize(Motion::Main_Process::debug_string);
+	//Hardware_Abstraction_Layer::Disk::initialize(Motion::Main_Process::debug_string);
 
 	Hardware_Abstraction_Layer::MotionCore::Stepper::initialize();
 }

@@ -63,6 +63,7 @@ namespace Talos
 					s_ngc_block ngc_block{ 0 };
 					NGC_RS274::Block_View view = NGC_RS274::Block_View(&int_cfg::DefaultBlock.Settings);
 					*view.current_g_codes.Motion = NGC_RS274::G_codes::RAPID_POSITIONING;
+					*view.persisted_values.feed_rate_F = 10;
 
 					uint8_t recs = 12;// NGC_BUFFER_SIZE;
 					for (int i = 0; i < recs; i++)
@@ -74,7 +75,7 @@ namespace Talos
 						*view.axis_array[0] = ((i + 1) * 10);
 						*view.persisted_values.active_spindle_speed_S = 1234;
 						testblock.target_motion_position[0] = ((i + 1) * 10);
-						testblock.target_motion_position[1] = ((i + 1) );
+						//testblock.target_motion_position[1] = ((i + 1) );
 						if (i < 1 || i>4)
 							* view.current_g_codes.Feed_rate_mode = NGC_RS274::G_codes::FEED_RATE_UNITS_PER_MINUTE_MODE;
 						if (i == 2 || i == 4)

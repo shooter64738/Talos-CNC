@@ -58,44 +58,37 @@ namespace Hardware_Abstraction_Layer
 		{
 			step_pulse_config();
 			step_timer_config();
-
-			/*Stepper::wake_up();
-
-			while (1)
-			{
-
-			}*/
-
 		}
 
 		volatile static bool  busy = false;
+		volatile static uint32_t count1 = 0;
+		volatile static uint32_t count2 = 0;
 		__C void TIM2_IRQHandler(void)
 		{
-			if (busy)return;
-			busy = true;
+			count1++;
 
-			if (TIM2->SR & TIM_SR_UIF)
+			if ((STEP_TIMER->SR & 0x0001) != 0)                  // check interrupt source
 			{
-				TIM2->SR &= ~(TIM_SR_UIF);
-				if (Talos::Motion::Core::Output::Segment::pntr_driver == NULL)
-				{
-					//Stepper::step_pul_low();
-					busy = false;
-					return;
-				}
+				count2++;
+				STEP_RST_TIMER->ARR = 10;
+				STEP_RST_TIMER->CNT = 8;
+				STEP_TIMER->SR &= ~(1 << 0);                          // clear UIF flag
+				STEP_TIMER->CNT = 0;
 				Talos::Motion::Core::Output::Segment::pntr_driver();
-				//Stepper::step_pul_high();
-				
 			}
-			//get status registers
-			if (STEP_TIMER->SR & TIM_SR_CC1IF)
+		}
+
+		__C void TIM1_UP_IRQHandler(void)
+		{
+			if ((STEP_RST_TIMER->SR & 0x0001) != 0)                  // check interrupt source
 			{
-				//STEP_TIMER->SR = ~TIM_FLAG_CC1;
-				STEP_TIMER->SR = ~TIM_SR_CC1IF;
-				//Stepper::step_pul_low();
+				//NVIC_DisableIRQ(STEP_RST_TIMER_INTERRUPT);
+				//STEP_RST_TIMER->CR1 &= ~TIM_CR1_CEN;
+				STEP_RST_TIMER->ARR = 0;
+				STEP_RST_TIMER->SR &= ~(1 << 0);                          // clear UIF flag
+				STEP_RST_TIMER->CNT = 0;
 				Stepper::step_port(0);
 			}
-			busy = false;
 		}
 
 		void Stepper::step_pul_high()
@@ -128,11 +121,18 @@ namespace Hardware_Abstraction_Layer
 
 		void Stepper::wake_up()
 		{
-			//enable interrupts for timer
-			HAL_NVIC_SetPriority(STEP_TIMER_INTERRUPT, 0, 0);
-			HAL_NVIC_EnableIRQ(STEP_TIMER_INTERRUPT);
+			STEP_TIMER->SR = 0;
+			STEP_RST_TIMER->SR = 0;
+			
 
-			STEP_TIMER->CR1 |= TIM_CR1_CEN;
+			NVIC_ClearPendingIRQ(STEP_TIMER_INTERRUPT);
+			NVIC_EnableIRQ(STEP_TIMER_INTERRUPT);      // Enable TIM2 Interrupt
+			STEP_TIMER->CR1 |= TIM_CR1_CEN;   // Enable timer
+
+			NVIC_ClearPendingIRQ(STEP_RST_TIMER_INTERRUPT);
+			NVIC_EnableIRQ(STEP_RST_TIMER_INTERRUPT);
+			STEP_RST_TIMER->CR1 |= TIM_CR1_CEN;
+			
 		}
 
 		void Stepper::st_go_idle()
@@ -140,13 +140,15 @@ namespace Hardware_Abstraction_Layer
 			//disable interrupts for timer
 			HAL_NVIC_DisableIRQ(STEP_TIMER_INTERRUPT);
 			STEP_TIMER->CR1 &= ~TIM_CR1_CEN;
+			STEP_TIMER->SR = 0;
 			Stepper::step_pul_low();
 		}
-		
+
 		void Stepper::set_delay(uint32_t delay)
 		{
-			//use 50% duty cycle on outputs. this should give the longest
-			//possible on time for a driver
+			/*if (delay + 10 < STEP_RST_TIMER->ARR)
+				delay = 10 + STEP_RST_TIMER->ARR;*/
+			
 			STEP_TIMER->ARR = delay;
 		}
 	}
