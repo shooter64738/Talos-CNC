@@ -183,7 +183,8 @@ namespace Talos
 					//seems stable to here.
 					// Reset step out bits.
 					_persisted.step_outbits = 0;
-					for (int i = 0; i < MACHINE_AXIS_COUNT; i++)
+					//for (int i = 0; i < MACHINE_AXIS_COUNT; i++)
+					for (int i = 0; i < 2; i++)
 					{
 						// Execute step displacement profile by Bresenham line algorithm
 						_persisted.bresenham_counter[i] += _persisted.active_timer_item->common.bres_obj->steps[i];
@@ -266,13 +267,13 @@ namespace Talos
 								myfile << "*****units per rotation*****" << "\r";
 #endif
 								//configure for new feed mode
-							}
+					}
 							else
 							{
 #ifdef MSVC
 								myfile << "*****normal*****" << "\r";
 #endif
-							}
+				}
 							//save off flags
 							_persisted.control_bits.feed._flag =
 								_persisted.active_timer_item->common.control_bits.feed._flag;
@@ -319,11 +320,11 @@ namespace Talos
 								_persisted.bresenham_counter[i]
 								= _persisted.active_timer_item->common.bres_obj->step_event_count;
 						}
-					}
+			}
 					else
 						int x = 0;
 					return done;
-				}
+		}
 
 				void Segment::__end_interpolation()
 				{
@@ -341,7 +342,7 @@ namespace Talos
 #endif // MSVC
 					__set_brakes();
 					hrd_out::Hardware::Motion::disable();
-				}
+	}
 
 				void Segment::__set_brakes()
 				{
@@ -352,7 +353,7 @@ namespace Talos
 
 					Segment::pntr_next_gate = Segment::__new_motion;
 				}
-			}
+}
 		}
 	}
 }
