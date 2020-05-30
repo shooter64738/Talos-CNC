@@ -28,6 +28,15 @@ namespace mtn_ctl_sta = Talos::Motion::Core::States;
 namespace mot_dat = Talos::Motion::Core::Input;
 namespace seg_dat = Talos::Motion::Core::Process;
 namespace hrd_out = Talos::Motion::Core::Output;
+namespace hal_mtn = Hardware_Abstraction_Layer::MotionCore;
+
+#define AXIS1 0
+#define AXIS2 1
+#define AXIS3 2
+#define AXIS4 3
+#define AXIS5 4
+#define AXIS6 5
+
 
 
 //#define HAL_SET_DIRECTION_PINS()
@@ -54,7 +63,6 @@ namespace Talos
 				//default the gate to new motion.
 				void(*Segment::pntr_next_gate)(void) = Segment::__new_motion;
 				void(*Segment::pntr_driver)(void) = NULL;
-				static uint32_t total_steps = 0;
 
 				Segment::s_persisted Segment::_persisted{};
 
@@ -167,9 +175,6 @@ namespace Talos
 				{
 					//this has been called from an ISR or thread
 
-					//Send outputs to physical hardware
-					hrd_out::Hardware::Motion::step(&_persisted.step_outbits);
-
 					if (Segment::_persisted.active_timer_item == NULL)
 					{
 						bool end = __load_segment();
@@ -183,56 +188,63 @@ namespace Talos
 					//seems stable to here.
 					// Reset step out bits.
 					_persisted.step_outbits = 0;
-					//for (int i = 0; i < MACHINE_AXIS_COUNT; i++)
-					for (int i = 0; i < 2; i++)
-					{
-						// Execute step displacement profile by Bresenham line algorithm
-						_persisted.bresenham_counter[i] += _persisted.active_timer_item->common.bres_obj->steps[i];
-						if (_persisted.bresenham_counter[i] >
-							_persisted.active_timer_item->common.bres_obj->step_event_count)
-						{
-							_persisted.step_outbits |= (1 << i);
-							_persisted.bresenham_counter[i] -=
-								_persisted.active_timer_item->common.bres_obj->step_event_count;
 
-							//We arent changing system position on a backlash comp motion.
-							if (!_persisted.active_timer_item->common.control_bits.system.get(e_system_block_state::block_state_skip_sys_pos_update))
-							{
-								/*if (active_timer_item->common.bres_obj->direction_bits._flag & (1 << i))
-									Motion_Core::Hardware::Interpolation::system_position[i]--;
-								else
-									Motion_Core::Hardware::Interpolation::system_position[i]++;*/
-							}
-						}
+					//This is ugly because its all single line, but its twice as fast as a for loop
+					_persisted.bresenham_counter[AXIS1] += _persisted.active_timer_item->common.bres_obj->steps[AXIS1];
+					if (_persisted.bresenham_counter[AXIS1] > _persisted.active_timer_item->common.bres_obj->step_event_count)
+					{
+						_persisted.step_outbits |= (1 << AXIS1);
+						_persisted.bresenham_counter[AXIS1] -= _persisted.active_timer_item->common.bres_obj->step_event_count;
+					}
+
+					_persisted.bresenham_counter[AXIS2] += _persisted.active_timer_item->common.bres_obj->steps[AXIS2];
+					if (_persisted.bresenham_counter[AXIS2] > _persisted.active_timer_item->common.bres_obj->step_event_count)
+					{
+						_persisted.step_outbits |= (1 << AXIS2);
+						_persisted.bresenham_counter[AXIS2] -= _persisted.active_timer_item->common.bres_obj->step_event_count;
+					}
+
+					_persisted.bresenham_counter[AXIS3] += _persisted.active_timer_item->common.bres_obj->steps[AXIS3];
+					if (_persisted.bresenham_counter[AXIS3] > _persisted.active_timer_item->common.bres_obj->step_event_count)
+					{
+						_persisted.step_outbits |= (1 << AXIS3);
+						_persisted.bresenham_counter[AXIS3] -= _persisted.active_timer_item->common.bres_obj->step_event_count;
+					}
+
+					_persisted.bresenham_counter[AXIS4] += _persisted.active_timer_item->common.bres_obj->steps[AXIS4];
+					if (_persisted.bresenham_counter[AXIS4] > _persisted.active_timer_item->common.bres_obj->step_event_count)
+					{
+						_persisted.step_outbits |= (1 << AXIS4);
+						_persisted.bresenham_counter[AXIS4] -= _persisted.active_timer_item->common.bres_obj->step_event_count;
+					}
+					_persisted.bresenham_counter[AXIS5] += _persisted.active_timer_item->common.bres_obj->steps[AXIS5];
+					if (_persisted.bresenham_counter[AXIS5] > _persisted.active_timer_item->common.bres_obj->step_event_count)
+					{
+						_persisted.step_outbits |= (1 << AXIS5);
+						_persisted.bresenham_counter[AXIS5] -= _persisted.active_timer_item->common.bres_obj->step_event_count;
+					}
+
+					_persisted.bresenham_counter[AXIS6] += _persisted.active_timer_item->common.bres_obj->steps[AXIS6];
+					if (_persisted.bresenham_counter[AXIS6] > _persisted.active_timer_item->common.bres_obj->step_event_count)
+					{
+						_persisted.step_outbits |= (1 << AXIS6);
+						_persisted.bresenham_counter[AXIS6] -= _persisted.active_timer_item->common.bres_obj->step_event_count;
 					}
 
 					_persisted.active_timer_item->steps_to_execute_in_this_segment--;
-					total_steps++;
-					//If feedmode is spindle synch, calculate the correct delay value for
-					//the feedrate, based on spindle current speed
-					//TODO: is there a better way to do this without several if statements?
-					//if (_persisted.active_timer_item->common.control_bits.feed.get(
-					//	e_feed_block_state::feed_mode_units_per_rotation))
-					//{
-					//	//only adjust the delay value if we are in 'cruise' state.
-					//	//The arbitrator still controls motion during accel and decel
-					//	if (_persisted.active_timer_item->common.control_bits.speed.get(
-					//		e_speed_block_state::motion_state_cruising))
-					//	{
-					//		//Hardware_Abstraction_Layer::MotionCore::Stepper::OCR1A_set
-					//		//(Hardware_Abstraction_Layer::MotionCore::Spindle::spindle_encoder->feedrate_delay);
-					//	}
-					//}
 
 					if (_persisted.active_timer_item->steps_to_execute_in_this_segment == 0)
 					{
 						//We are done with this timer item. Calling a get will move the indexes so the 
 						//buffer is not full if it was full before.
 						seg_dat::Segment::timer_buffer.get();
+						//seg_dat::Segment::bres_offload_buffer.get();
 						_persisted.active_timer_item = NULL;
 
 					}
-					//_persisted.step_outbits ^= Motion_Core::Hardware::Interpolation::step_port_invert_mask;  // Apply step port invert mask
+					//Send outputs to physical hardware
+					//hrd_out::Hardware::Motion::step(&_persisted.step_outbits);
+					hal_mtn::Stepper::step_port(_persisted.step_outbits);
 
 				}
 
@@ -267,13 +279,13 @@ namespace Talos
 								myfile << "*****units per rotation*****" << "\r";
 #endif
 								//configure for new feed mode
-					}
+							}
 							else
 							{
 #ifdef MSVC
 								myfile << "*****normal*****" << "\r";
 #endif
-				}
+							}
 							//save off flags
 							_persisted.control_bits.feed._flag =
 								_persisted.active_timer_item->common.control_bits.feed._flag;
@@ -294,7 +306,7 @@ namespace Talos
 						// NOTE: When the segment data index changes, this indicates a new planner block.
 						if (_persisted.active_bresenham != _persisted.active_timer_item->common.bres_obj)
 						{
-							/*
+
 							//New line segment, so this should be the start of a block.
 							mtn_ctl_sta::Output::states.set(mtn_ctl_sta::Output::e_states::ngc_block_done);
 							_persisted.active_line_number = _persisted.active_timer_item->common.tracking.line_number;
@@ -303,7 +315,7 @@ namespace Talos
 							mtn_ctl_sta::Output::block_stats.common.sequence = _persisted.last_complete_sequence;
 							mtn_ctl_sta::Output::block_stats.common.line_number = _persisted.active_line_number;
 							//mtn_ctl_sta::Output::block_stats.start_time = *Hardware_Abstraction_Layer::Core::cpu_tick_ms;
-							*/
+
 							_persisted.active_sequence = _persisted.active_timer_item->common.tracking.sequence;
 							_persisted.active_bresenham = _persisted.active_timer_item->common.bres_obj;
 
@@ -315,16 +327,24 @@ namespace Talos
 							//for the spindle. better go check
 							//Segment::__configure_spindle();
 
-							// Initialize Bresenham line and distance counters
-							for (int i = 0; i < MACHINE_AXIS_COUNT; i++)
-								_persisted.bresenham_counter[i]
+							_persisted.bresenham_counter[AXIS1]
+								= _persisted.active_timer_item->common.bres_obj->step_event_count;
+							_persisted.bresenham_counter[AXIS2]
+								= _persisted.active_timer_item->common.bres_obj->step_event_count;
+							_persisted.bresenham_counter[AXIS3]
+								= _persisted.active_timer_item->common.bres_obj->step_event_count;
+							_persisted.bresenham_counter[AXIS4]
+								= _persisted.active_timer_item->common.bres_obj->step_event_count;
+							_persisted.bresenham_counter[AXIS5]
+								= _persisted.active_timer_item->common.bres_obj->step_event_count;
+							_persisted.bresenham_counter[AXIS6]
 								= _persisted.active_timer_item->common.bres_obj->step_event_count;
 						}
-			}
+					}
 					else
 						int x = 0;
 					return done;
-		}
+				}
 
 				void Segment::__end_interpolation()
 				{
@@ -342,7 +362,7 @@ namespace Talos
 #endif // MSVC
 					__set_brakes();
 					hrd_out::Hardware::Motion::disable();
-	}
+				}
 
 				void Segment::__set_brakes()
 				{
@@ -353,7 +373,7 @@ namespace Talos
 
 					Segment::pntr_next_gate = Segment::__new_motion;
 				}
-}
+			}
 		}
 	}
 }

@@ -6,5 +6,6 @@
 #define SPINDLE_BUFFER_SIZE 5//<--Number of spindle control records. Probably doesnt need to be a high value
 #define BRESENHAM_BUFFER_SIZE 100 //<--number of bresenham items, shoudl be MOTION_BUFFER_SIZE-1
 #define TIMER_BUFFER_SIZE 400//<--Number of timer segment items we can hold. As large as permitted.
+#define BRES_OFFLOAD_BUFFER_SIZE 100//<--Number of timer segment items we can hold. As large as permitted.
 
 #endif

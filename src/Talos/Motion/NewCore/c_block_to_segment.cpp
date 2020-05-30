@@ -33,6 +33,9 @@ namespace Talos
 				s_timer_item Segment::timer_buffer_store[TIMER_BUFFER_SIZE]{ 0 };
 				c_ring_buffer<s_timer_item> Segment::timer_buffer(Segment::timer_buffer_store, TIMER_BUFFER_SIZE);
 
+				/*uint16_t Segment::bres_offload_buffer_store[BRES_OFFLOAD_BUFFER_SIZE]{ 0 };
+				c_ring_buffer<uint16_t> Segment::bres_offload_buffer(Segment::bres_offload_buffer_store, BRES_OFFLOAD_BUFFER_SIZE);*/
+
 				s_bresenham Segment::bresenham_buffer_store[BRESENHAM_BUFFER_SIZE]{ 0 };
 				c_ring_buffer<s_bresenham> Segment::bresenham_buffer(Segment::bresenham_buffer_store, BRESENHAM_BUFFER_SIZE);
 
@@ -88,9 +91,10 @@ namespace Talos
 								//Segment::__initialize_segment(&seg_base);
 								Segment::__initialize_new_segment(&seg_base);
 								Segment::__calc_seg_base(&seg_base);
+								
 							}
 							else
-							{								
+							{
 								mtn_ctl_sta::Process::states.clear(mtn_ctl_sta::Process::e_states::motion_buffer_not_empty);
 								break; //<--there was not a block we could pull and calculate at this time.
 							}
@@ -107,7 +111,8 @@ namespace Talos
 						if (Segment::timer_buffer._full)
 							break;
 
-						Segment::__set_hw_timer(&seg_base);
+
+						s_timer_item* new_timer_item = Segment::__set_hw_timer(&seg_base, Segment::active_block->axis_data);
 
 						// Check for exit conditions and flag to load next planner block.
 						if (seg_base.mm_remaining == seg_base.mm_complete)
@@ -147,6 +152,27 @@ namespace Talos
 							}
 						}
 					}
+
+					//if (!Segment::bres_offload_buffer._full && Segment::timer_buffer.has_data())
+					//{
+					//	//because we dont have infinite ram, I am only offloading
+					//	//the bresenham pre-calculations for some of the  buffer 
+					//	//items and im not going beyond 500. Long loops are bad.
+					//	for (uint16_t i = 0; i < BRES_OFFLOAD_BUFFER_SIZE; i++)
+					//	{
+					//		s_timer_item* timer_item = Segment::timer_buffer.peek(i);
+					//		if (timer_item != NULL)
+					//		{
+					//			if (timer_item->pntr_bres_loader != NULL)
+					//			{
+					//				timer_item->pntr_bres_loader(timer_item);
+					//			}
+					//		}
+					//		if (Segment::bres_offload_buffer._full)
+					//			break;
+					//	}
+
+					//}
 				}
 				void Segment::st_update_plan_block_parameters()
 				{
@@ -169,7 +195,6 @@ namespace Talos
 				void Segment::__initialize_new_segment(s_segment_base* seg_base_arg)
 				{
 					seg_base_arg->common.tracking = Segment::active_block->common.tracking;
-
 					// Check if we need to only recompute the velocity profile or are we loading a new block.
 
 					// Initialize segment buffer data for generating the segments.
@@ -308,15 +333,17 @@ namespace Talos
 					}
 					return 1;
 				}
-				uint8_t Segment::__set_hw_timer(s_segment_base* seg_base_arg)
+				s_timer_item* Segment::__set_hw_timer(s_segment_base* seg_base_arg, s_motion_axis axis_data)
 				{
 					seg_base_arg->mm_remaining = Segment::active_block->millimeters; // New segment distance from end of block.
 
 					s_timer_item timer_item{ 0 };
-
+					
 					//copy common data from the segment base to the timer item.
 					timer_item.common.tracking = seg_base_arg->common.tracking;
 					timer_item.common.bres_obj = seg_base_arg->common.bres_obj;
+					timer_item.axis_data = axis_data;
+					
 					timer_item.common.control_bits.feed = seg_base_arg->common.control_bits.feed;
 					//we dont need to persist the feed mode change on every tiem item in the segment
 					//we've marked it here by copying the flag. Lets clear the persisted setting
@@ -359,9 +386,7 @@ namespace Talos
 					seg_base_arg->dt_remainder = (n_steps_remaining - step_dist_remaining) * inv_rate;
 
 					//Add new segment item to the buffer and return
-					Segment::timer_buffer.put(timer_item);
-
-					return 1;
+					return Segment::timer_buffer.put(timer_item);
 				}
 				void Segment::__check_ramp_state(s_fragment_vars* vars, s_segment_base* seg_base_arg, s_timer_item* timer_item)
 				{
@@ -533,7 +558,62 @@ namespace Talos
 					}
 				}
 
-				
+				//static int32_t bresenham_counter[MACHINE_AXIS_COUNT];
+				//static s_bresenham* last_bres_obj = NULL;
+				//static uint16_t last_calculated_step = 0;
+				//static uint32_t step = 0;
+				//void Segment::__offload_bresenham(s_timer_item* timer_item)
+				//{
+
+				//	//This value was copied to all axis index id's
+				//	if (last_bres_obj != timer_item->common.bres_obj)
+				//	{
+				//		last_bres_obj = timer_item->common.bres_obj;
+
+				//		uint8_t axis_id = 0;
+				//		bresenham_counter[axis_id++] = timer_item->common.bres_obj->step_event_count;
+				//		bresenham_counter[axis_id++] = timer_item->common.bres_obj->step_event_count;
+				//		bresenham_counter[axis_id++] = timer_item->common.bres_obj->step_event_count;
+				//		bresenham_counter[axis_id++] = timer_item->common.bres_obj->step_event_count;
+				//		bresenham_counter[axis_id++] = timer_item->common.bres_obj->step_event_count;
+				//		bresenham_counter[axis_id++] = timer_item->common.bres_obj->step_event_count;
+				//	}
+
+				//	//timer_item->pntr_off_load_bres = NULL;
+				//	//timer_item->pntr_off_load_bres = Segment::bres_offload_buffer.get_head();
+				//	for (uint16_t steps_in_segment = last_calculated_step; steps_in_segment
+				//		< timer_item->steps_to_execute_in_this_segment; steps_in_segment++)
+				//	{
+				//		uint16_t new_step_bits = 0;
+
+				//		for (uint16_t i = 0; i < MACHINE_AXIS_COUNT; i++)
+				//		{
+				//			bresenham_counter[i] += timer_item->common.bres_obj->steps[i];
+				//			if (bresenham_counter[i] > timer_item->common.bres_obj->step_event_count)
+				//			{
+				//				new_step_bits |= (1 << i);
+				//				bresenham_counter[i] -= timer_item->common.bres_obj->step_event_count;
+				//			}
+				//		}
+
+				//		//timer_item->steps_to_execute_in_this_segment--;
+				//		if (new_step_bits == 1)
+				//		{
+				//			int x = 0;
+				//		}
+				//		
+				//		last_calculated_step++;
+				//		Segment::bres_offload_buffer.put(new_step_bits);
+				//		if (Segment::bres_offload_buffer._full)
+				//			return;
+				//		
+				//		timer_item->bres_id = step;
+				//		step++;
+				//		new_step_bits = 0;
+				//	}
+				//	last_calculated_step = 0;
+				//	timer_item->pntr_bres_loader = NULL;
+				//}
 			}
 		}
 	}

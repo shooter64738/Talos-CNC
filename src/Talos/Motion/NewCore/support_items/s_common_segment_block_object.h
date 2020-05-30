@@ -9,7 +9,7 @@ struct s_segment_control_bits
 {
 	s_bit_flag_controller<e_system_block_state> system;
 	s_bit_flag_controller<e_feed_block_state> feed;
-	s_bit_flag_controller<e_speed_block_state> speed;
+	s_bit_flag_controller<e_speed_block_state> speed;	
 };
 
 struct s_common_segment_block_object
@@ -21,5 +21,6 @@ struct s_common_segment_block_object
 							//need to track head and tail values to ensure this item
 							//is not over written. DO NOT change this to a ref, 
 							//always a pointer.
+	s_motion_axis axis_data;
 };
 #endif 

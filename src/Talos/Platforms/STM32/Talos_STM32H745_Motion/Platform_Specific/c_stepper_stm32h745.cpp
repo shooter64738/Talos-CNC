@@ -17,43 +17,7 @@ namespace Hardware_Abstraction_Layer
 {
 	namespace MotionCore
 	{
-		__C void tim2_oc()
-		{
-			TIM_HandleTypeDef htim2;
-			/* USER CODE BEGIN TIM2_Init 0 */
-
-			/* USER CODE END TIM2_Init 0 */
-
-			TIM_ClockConfigTypeDef sClockSourceConfig = { 0 };
-			TIM_MasterConfigTypeDef sMasterConfig = { 0 };
-			TIM_OC_InitTypeDef sConfigOC = { 0 };
-
-
-			/* TIM2 interrupt Init */
-			HAL_NVIC_SetPriority(TIM2_IRQn, 0, 0);
-			HAL_NVIC_EnableIRQ(TIM2_IRQn);
-
-			htim2.Instance = TIM2;
-			htim2.Init.Prescaler = 1;
-			htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
-			htim2.Init.Period = 20;
-			htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV4;
-			htim2.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
-			HAL_TIM_Base_Init(&htim2);
-			sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
-			HAL_TIM_ConfigClockSource(&htim2, &sClockSourceConfig);
-			HAL_TIM_OC_Init(&htim2);
-			sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
-			sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
-			HAL_TIMEx_MasterConfigSynchronization(&htim2, &sMasterConfig);
-			sConfigOC.OCMode = TIM_OCMODE_TIMING;
-			sConfigOC.Pulse = 10;
-			sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
-			sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
-			HAL_TIM_OC_ConfigChannel(&htim2, &sConfigOC, TIM_CHANNEL_1);
-
-		}
-
+		
 		void Stepper::initialize()
 		{
 			step_pulse_config();
@@ -71,10 +35,12 @@ namespace Hardware_Abstraction_Layer
 			{
 				count2++;
 				STEP_RST_TIMER->ARR = 10;
-				STEP_RST_TIMER->CNT = 8;
+				//STEP_RST_TIMER->CNT = 8;
 				STEP_TIMER->SR &= ~(1 << 0);                          // clear UIF flag
 				STEP_TIMER->CNT = 0;
+				
 				Talos::Motion::Core::Output::Segment::pntr_driver();
+
 			}
 		}
 
@@ -146,9 +112,6 @@ namespace Hardware_Abstraction_Layer
 
 		void Stepper::set_delay(uint32_t delay)
 		{
-			/*if (delay + 10 < STEP_RST_TIMER->ARR)
-				delay = 10 + STEP_RST_TIMER->ARR;*/
-			
 			STEP_TIMER->ARR = delay;
 		}
 	}

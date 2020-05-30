@@ -65,7 +65,7 @@ namespace Talos
 					*view.current_g_codes.Motion = NGC_RS274::G_codes::RAPID_POSITIONING;
 					*view.persisted_values.feed_rate_F = 10;
 
-					uint8_t recs = 12;// NGC_BUFFER_SIZE;
+					uint8_t recs = 1;// NGC_BUFFER_SIZE;
 					for (int i = 0; i < recs; i++)
 					{
 						s_ngc_block testblock{ 0 };
@@ -74,8 +74,12 @@ namespace Talos
 						view = NGC_RS274::Block_View(&testblock);
 						*view.axis_array[0] = ((i + 1) * 10);
 						*view.persisted_values.active_spindle_speed_S = 1234;
-						testblock.target_motion_position[0] = ((i + 1) * 10);
-						//testblock.target_motion_position[1] = ((i + 1) );
+						testblock.target_motion_position[0] = ((i + 1) * 500);
+						testblock.target_motion_position[1] = ((i + 1) +8);
+						testblock.target_motion_position[2] = ((i + 1) +4);
+						testblock.target_motion_position[3] = ((i + 1) * 2);
+						testblock.target_motion_position[4] = ((i + 1) *1.8);
+						testblock.target_motion_position[5] = ((i + 1) + 13*1.2);
 						if (i < 1 || i>4)
 							* view.current_g_codes.Feed_rate_mode = NGC_RS274::G_codes::FEED_RATE_UNITS_PER_MINUTE_MODE;
 						if (i == 2 || i == 4)
@@ -83,7 +87,10 @@ namespace Talos
 						if (i == 3 || i == 4 || i == 8)
 							testblock.target_motion_position[0] = testblock.target_motion_position[0] * -1;
 						if (i == 11)
-							testblock.target_motion_position[0] = 1000* -1;
+							testblock.target_motion_position[0] = 2000* -1;
+
+						if (i==2 || i == 4 || i == 5 || i == 7 || i == 10 || i == 12 )
+							testblock.target_motion_position[0] *= -1;
 
 						testblock.__station__ = i;
 						Block::ngc_buffer.put(testblock);

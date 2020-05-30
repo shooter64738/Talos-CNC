@@ -153,6 +153,14 @@ public:
 		return data;
 	}
 
+	TN* get_head()
+	{
+		//caller should check has_data before calling this. 
+
+		TN* data = (this->_storage_pointer + this->_head);
+		return data;
+	}
+
 	TN* next()
 	{
 		//caller should check has_data before calling this. 
@@ -339,13 +347,15 @@ public:
 	}
 
 	//Add as the type
-	int8_t put(TN data)
+	TN* put(TN data)
 	{
 		//caller should check for full before calling this
+		TN* rtn_data;
 		*(this->_storage_pointer + this->_head) = data;
+		rtn_data = (this->_storage_pointer + this->_head);
 		_move_head();
 
-		return 1;
+		return rtn_data;
 	}
 
 	void _move_tail()
