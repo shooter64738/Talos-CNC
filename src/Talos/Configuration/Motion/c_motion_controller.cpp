@@ -63,7 +63,7 @@ uint8_t c_controller::load_defaults()
 	{
 		Settings.hardware.steps_per_mm[i] = 640;
 		Settings.hardware.acceleration[i] = (100.0 * 60 * 60);
-		Settings.hardware.max_rate[i] = 18000;
+		Settings.hardware.max_rate[i] = 15000;
 		Settings.hardware.distance_per_rotation[i] = 5;
 
 		Settings.hardware.back_lash_comp_distance[i] = 55;

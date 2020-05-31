@@ -24,23 +24,30 @@ namespace Hardware_Abstraction_Layer
 			step_timer_config();
 		}
 
-		volatile static bool  busy = false;
-		volatile static uint32_t count1 = 0;
-		volatile static uint32_t count2 = 0;
+		volatile static uint16_t on_time = 1000;
 		__C void TIM2_IRQHandler(void)
 		{
-			count1++;
 
 			if ((STEP_TIMER->SR & 0x0001) != 0)                  // check interrupt source
 			{
-				count2++;
-				STEP_RST_TIMER->ARR = 10;
-				//STEP_RST_TIMER->CNT = 8;
 				STEP_TIMER->SR &= ~(1 << 0);                          // clear UIF flag
 				STEP_TIMER->CNT = 0;
 				
+				//prep the step reset timer values
+				STEP_RST_TIMER->CNT = 0;
+				STEP_RST_TIMER->ARR = on_time;
+				
 				Talos::Motion::Core::Output::Segment::pntr_driver();
 
+				//uint32_t pending = __NVIC_GetPendingIRQ(STEP_RST_TIMER_INTERRUPT);
+				//if (pending != 0)                  // check interrupt source
+				//{
+				//	//__NVIC_ClearPendingIRQ(STEP_RST_TIMER_INTERRUPT); 
+				//	Stepper::step_port(0);
+				//	int x = 0;
+				//}
+				
+				//STEP_RST_TIMER->CNT = 8;
 			}
 		}
 
@@ -52,7 +59,7 @@ namespace Hardware_Abstraction_Layer
 				//STEP_RST_TIMER->CR1 &= ~TIM_CR1_CEN;
 				STEP_RST_TIMER->ARR = 0;
 				STEP_RST_TIMER->SR &= ~(1 << 0);                          // clear UIF flag
-				STEP_RST_TIMER->CNT = 0;
+				
 				Stepper::step_port(0);
 			}
 		}
@@ -92,10 +99,13 @@ namespace Hardware_Abstraction_Layer
 			
 
 			NVIC_ClearPendingIRQ(STEP_TIMER_INTERRUPT);
+			__NVIC_SetPriority(STEP_TIMER_INTERRUPT, 1);
 			NVIC_EnableIRQ(STEP_TIMER_INTERRUPT);      // Enable TIM2 Interrupt
+			
 			STEP_TIMER->CR1 |= TIM_CR1_CEN;   // Enable timer
 
 			NVIC_ClearPendingIRQ(STEP_RST_TIMER_INTERRUPT);
+			__NVIC_SetPriority(STEP_TIMER_INTERRUPT, 0);
 			NVIC_EnableIRQ(STEP_RST_TIMER_INTERRUPT);
 			STEP_RST_TIMER->CR1 |= TIM_CR1_CEN;
 			

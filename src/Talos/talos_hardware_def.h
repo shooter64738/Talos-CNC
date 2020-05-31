@@ -73,7 +73,11 @@
 #include "Platforms/STM32/Talos_STM32H745_Motion/Platform_Specific/c_serial_stm32h745.h"
 #include "Platforms/STM32/Talos_STM32H745_Motion/Platform_Specific/c_disk_stm32h745.h"
 #include "Platforms/STM32/Talos_STM32H745_Motion/Platform_Specific/c_stepper_stm32h745.h"
+#include "Platforms/STM32/Talos_STM32H745_Motion/Platform_Specific/sys_gpio_configs.h"
+#include "Platforms/STM32/Talos_STM32H745_Motion/Platform_Specific/sys_timer_configs.h"
+
 #include "Platforms/WIN32/Talos_WIN32/Motion/Platform Specific/c_motion_core_win_inputs.h"
+#include "Platforms/WIN32/Talos_WIN32/Motion/Platform Specific/c_motion_core_win_spindle.h"
 #include "Platforms/WIN32/Talos_WIN32/Motion/Platform Specific/c_motion_core_win_spindle.h"
 
 #endif

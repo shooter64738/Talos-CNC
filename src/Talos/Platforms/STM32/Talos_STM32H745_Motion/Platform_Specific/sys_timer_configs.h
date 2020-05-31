@@ -1,6 +1,5 @@
-//putting all the timer configs in here 'unguarded' so if you accidently
-//include this file twice you will get an error. also with all timers
-//plainly obvious in one spot you wont mix a timer up for something else. 
+#ifndef _C_SYS_TIMER_CONFIG_
+#define _C_SYS_TIMER_CONFIG_
 
 #include <stm32h7xx_hal.h>
 #include <stm32_hal_legacy.h>
@@ -15,7 +14,7 @@
 
 static void step_timer_config(void)
 {
-	
+
 	/* Peripheral clock enable */
 	STEP_TIMER_CLK_ENABLE;
 	STEP_RST_TIMER_CLK_ENABLE;
@@ -33,12 +32,12 @@ static void step_timer_config(void)
 	STEP_RST_TIMER->SMCR &= ~TIM_SMCR_TS;
 	STEP_RST_TIMER->CCER &= ~TIM_CCER_CC1P;
 	STEP_RST_TIMER->CCMR1 &= ~TIM_CCMR1_OC1M;
-	
+
 	STEP_TIMER->CR1 |= TIM_CLOCKDIVISION_DIV1;//<--clock divisor
 	STEP_TIMER->PSC = 0; //<--prescaler
 	STEP_TIMER->ARR = 1; //<--wait time
 	STEP_TIMER->DIER |= (TIM_DIER_UIE);
-	
+
 
 	STEP_RST_TIMER->CR1 |= TIM_CLOCKDIVISION_DIV1;//<--clock divisor
 	STEP_RST_TIMER->PSC = 0; //<--prescaler
@@ -48,3 +47,4 @@ static void step_timer_config(void)
 	//make timer 2 stop if I break 
 	//DBGMCU->APB1LFZ1 |= DBGMCU_APB1LFZ1_DBG_TIM2;
 }
+#endif
