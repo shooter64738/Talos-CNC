@@ -283,7 +283,7 @@ namespace Talos
 						_persisted.step_outbits |= (1 << AXIS6);
 						_persisted.bresenham_counter[AXIS6] -= _persisted.seg->common.bres_obj->major_axis;
 					}
-
+					
 					_persisted.seg->major_axis--;
 
 					if (_persisted.seg->major_axis == 0)
