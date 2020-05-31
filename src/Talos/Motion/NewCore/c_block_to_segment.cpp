@@ -83,7 +83,7 @@ namespace Talos
 								s_bresenham new_item{ 0 };
 								new_item.direction_bits._flag = Segment::active_block->axis_data.direction_bits._flag;
 								memcpy(&new_item, Segment::active_block->axis_data.steps, sizeof(Segment::active_block->axis_data.steps));
-								new_item.step_event_count = Segment::active_block->axis_data.step_event_count;
+								new_item.major_axis = Segment::active_block->axis_data.step_event_count;
 								bresenham_buffer.put(new_item);
 								//The obj in the bres buffer is a memory pointer so even if the bres buffer
 								//tail is moved, the bres data in the segment still wont change
@@ -357,10 +357,10 @@ namespace Talos
 					float step_dist_remaining = seg_base_arg->step_per_mm * seg_base_arg->mm_remaining; // Convert mm_remaining to steps
 					float n_steps_remaining = ceil(step_dist_remaining); // Round-up current steps remaining
 					float last_n_steps_remaining = ceil(seg_base_arg->steps_remaining); // Round-up last steps remaining
-					timer_item.steps_to_execute_in_this_segment = last_n_steps_remaining - n_steps_remaining; // Compute number of steps to execute.
+					timer_item.major_axis = last_n_steps_remaining - n_steps_remaining; // Compute number of steps to execute.
 
 
-					if (timer_item.steps_to_execute_in_this_segment == 0)
+					if (timer_item.major_axis == 0)
 					{
 						if (mtn_ctl_sta::Motion::states.get(mtn_ctl_sta::Motion::e_states::hold))
 						{

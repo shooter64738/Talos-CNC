@@ -38,6 +38,7 @@ namespace Hardware_Abstraction_Layer
 				STEP_RST_TIMER->ARR = on_time;
 				
 				Talos::Motion::Core::Output::Segment::pntr_driver();
+				//STEPPER_PUL_PORT_DIRECT_REGISTER = 1;
 
 				//uint32_t pending = __NVIC_GetPendingIRQ(STEP_RST_TIMER_INTERRUPT);
 				//if (pending != 0)                  // check interrupt source
@@ -60,7 +61,7 @@ namespace Hardware_Abstraction_Layer
 				STEP_RST_TIMER->ARR = 0;
 				STEP_RST_TIMER->SR &= ~(1 << 0);                          // clear UIF flag
 				
-				Stepper::step_port(0);
+				STEPPER_PUL_PORT_DIRECT_REGISTER = 0;
 			}
 		}
 

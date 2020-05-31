@@ -30,7 +30,7 @@ namespace Talos
 					};*/
 					struct s_persisted
 					{
-						s_timer_item* active_timer_item;
+						s_timer_item* seg;
 						s_bresenham* active_bresenham;
 						uint32_t active_line_number;
 						uint32_t last_complete_sequence;

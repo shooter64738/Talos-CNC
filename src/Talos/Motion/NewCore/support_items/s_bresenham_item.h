@@ -8,7 +8,7 @@
 struct s_bresenham
 {
 	uint32_t steps[MACHINE_AXIS_COUNT];
-	uint32_t step_event_count;
+	uint32_t major_axis;
 	s_bit_flag_controller<uint16_t> direction_bits;
 };
 #endif
