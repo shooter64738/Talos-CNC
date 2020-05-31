@@ -249,17 +249,17 @@ namespace Talos
 					}
 					//return; //8.00us here ~0.87
 
-					/* each axis takes ~0.9us to run.
-					this code takes 0.13us to run*/
-					pending_pin_shutoff = __NVIC_GetPendingIRQ(STEP_RST_TIMER_INTERRUPT);
-					if (pending_pin_shutoff != 0)
-					{
-						__NVIC_ClearPendingIRQ(STEP_RST_TIMER_INTERRUPT);
-						STEP_RST_TIMER->ARR = 0;
-						STEP_RST_TIMER->SR &= ~(1 << 0);
-						STEPPER_PUL_PORT_DIRECT_REGISTER = 0;
-					}
-					//----------------------------------
+					///* each axis takes ~0.9us to run.
+					//this code takes 0.13us to run*/
+					//pending_pin_shutoff = __NVIC_GetPendingIRQ(STEP_RST_TIMER_INTERRUPT);
+					//if (pending_pin_shutoff != 0)
+					//{
+					//	__NVIC_ClearPendingIRQ(STEP_RST_TIMER_INTERRUPT);
+					//	STEP_RST_TIMER->ARR = 0;
+					//	STEP_RST_TIMER->SR &= ~(1 << 0);
+					//	STEPPER_PUL_PORT_DIRECT_REGISTER = 0;
+					//}
+					////----------------------------------
 
 					//return; //6.20us here ~1.03
 
@@ -350,7 +350,11 @@ namespace Talos
 						myfile.flush();
 #endif
 						//set timer delay value to the active_timer objects delay time						
-						hrd_out::Hardware::Motion::time_adjust(&_persisted.seg->timer_delay_value);
+						//hrd_out::Hardware::Motion::time_adjust(&_persisted.seg->timer_delay_value);
+						STEP_TIMER_DELAY_DIRECT_REGISTER = _persisted.seg->timer_delay_value;
+						////We need to reset this when we change the delay time because if it gets
+						////ahead of the ARR time we have to wait for it to wrap around which is about 30 seconds
+						//STEP_TIMER_COUNT_DIRECT_REGISTER = 0;
 
 						// If the new segment starts a new planner block, initialize stepper variables and counters.
 						// NOTE: When the segment data index changes, this indicates a new planner block.
@@ -391,8 +395,6 @@ namespace Talos
 								= _persisted.seg->common.bres_obj->major_axis;
 						}
 			}
-					else
-						int x = 0;
 					return done;
 		}
 

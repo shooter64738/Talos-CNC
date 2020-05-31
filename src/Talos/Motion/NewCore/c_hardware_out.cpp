@@ -62,7 +62,7 @@ namespace Talos
 
 				void Hardware::Motion::time_adjust(uint32_t* time)
 				{
-					hal_mtn::Stepper::set_delay(*time);
+					
 				}
 
 				void Hardware::Motion::start()

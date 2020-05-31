@@ -26,7 +26,6 @@ namespace Hardware_Abstraction_Layer
 			static void initialize();
 			static void wake_up();
 			static void st_go_idle();
-			static void set_delay(uint32_t delay);
 			static void step_pul_high();
 			static void step_pul_low();
 			static void step_dir_high();

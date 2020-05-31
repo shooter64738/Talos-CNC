@@ -17,38 +17,39 @@ namespace Hardware_Abstraction_Layer
 {
 	namespace MotionCore
 	{
-		
+
 		void Stepper::initialize()
 		{
 			step_pulse_config();
 			step_timer_config();
 		}
 
-		volatile static uint16_t on_time = 1000;
+		volatile static uint16_t on_time = 0;
+		volatile static bool busy = false;
 		__C void TIM2_IRQHandler(void)
 		{
 
 			if ((STEP_TIMER->SR & 0x0001) != 0)                  // check interrupt source
 			{
+				if (busy)
+				{
+					return;
+				}
+				busy = true;
+				//STEP_TIMER->ARR = 0;
 				STEP_TIMER->SR &= ~(1 << 0);                          // clear UIF flag
 				STEP_TIMER->CNT = 0;
-				
-				//prep the step reset timer values
-				STEP_RST_TIMER->CNT = 0;
-				STEP_RST_TIMER->ARR = on_time;
-				
 				Talos::Motion::Core::Output::Segment::pntr_driver();
+				STEPPER_PUL_PORT_DIRECT_REGISTER = 0;
 				//STEPPER_PUL_PORT_DIRECT_REGISTER = 1;
 
-				//uint32_t pending = __NVIC_GetPendingIRQ(STEP_RST_TIMER_INTERRUPT);
-				//if (pending != 0)                  // check interrupt source
-				//{
-				//	//__NVIC_ClearPendingIRQ(STEP_RST_TIMER_INTERRUPT); 
-				//	Stepper::step_port(0);
-				//	int x = 0;
-				//}
+				//prep the step reset timer values
+				//STEP_RST_TIMER->CNT = 0;
+				//STEP_RST_TIMER->ARR = on_time;
 				
-				//STEP_RST_TIMER->CNT = 8;
+				//if (__NVIC_GetPendingIRQ(STEP_TIMER_INTERRUPT))
+				//__NVIC_ClearPendingIRQ(STEP_TIMER_INTERRUPT);
+				busy = false;
 			}
 		}
 
@@ -60,8 +61,8 @@ namespace Hardware_Abstraction_Layer
 				//STEP_RST_TIMER->CR1 &= ~TIM_CR1_CEN;
 				STEP_RST_TIMER->ARR = 0;
 				STEP_RST_TIMER->SR &= ~(1 << 0);                          // clear UIF flag
-				
-				STEPPER_PUL_PORT_DIRECT_REGISTER = 0;
+
+				//STEPPER_PUL_PORT_DIRECT_REGISTER = 0;
 			}
 		}
 
@@ -73,7 +74,7 @@ namespace Hardware_Abstraction_Layer
 		void Stepper::step_port(uint16_t output)
 		{
 			STEPPER_PUL_PORT->ODR = (STEPPER_PUL_PORT->ODR & ~STEP_MASK) | output;
-			
+
 		}
 
 		void Stepper::step_pul_low()
@@ -97,19 +98,19 @@ namespace Hardware_Abstraction_Layer
 		{
 			STEP_TIMER->SR = 0;
 			STEP_RST_TIMER->SR = 0;
-			
+
 
 			NVIC_ClearPendingIRQ(STEP_TIMER_INTERRUPT);
 			__NVIC_SetPriority(STEP_TIMER_INTERRUPT, 1);
 			NVIC_EnableIRQ(STEP_TIMER_INTERRUPT);      // Enable TIM2 Interrupt
-			
+
 			STEP_TIMER->CR1 |= TIM_CR1_CEN;   // Enable timer
 
 			NVIC_ClearPendingIRQ(STEP_RST_TIMER_INTERRUPT);
 			__NVIC_SetPriority(STEP_TIMER_INTERRUPT, 0);
 			NVIC_EnableIRQ(STEP_RST_TIMER_INTERRUPT);
 			STEP_RST_TIMER->CR1 |= TIM_CR1_CEN;
-			
+
 		}
 
 		void Stepper::st_go_idle()
@@ -121,9 +122,5 @@ namespace Hardware_Abstraction_Layer
 			Stepper::step_pul_low();
 		}
 
-		void Stepper::set_delay(uint32_t delay)
-		{
-			STEP_TIMER->ARR = delay;
-		}
 	}
 }
