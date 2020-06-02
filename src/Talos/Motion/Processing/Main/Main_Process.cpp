@@ -64,7 +64,6 @@ void Talos::Motion::Main_Process::run()
 	Core::States::Motion::states.set(Core::States::Motion::e_states::cycle_start);
 	while(1)
 	{
-		
 		Core::States::execute();
 	}
 		

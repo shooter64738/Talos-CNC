@@ -63,7 +63,7 @@ namespace Talos
 
 				//default the gate to new motion.
 				void(*Segment::pntr_next_gate)(void) = Segment::__new_motion;
-				void(*Segment::pntr_driver)(void) = NULL;
+				uint16_t(*Segment::pntr_driver)(void) = NULL;
 
 				Segment::s_persisted Segment::_persisted{};
 
@@ -172,7 +172,10 @@ namespace Talos
 					//Segment::pntr_next_gate = Segment::__run_interpolation;
 				}
 				
-				void Segment::__run_interpolation()
+				static uint32_t holdit = 0;
+				static uint32_t axis_loop = MACHINE_AXIS_COUNT;
+				
+				uint16_t Segment::__run_interpolation()
 				{
 					uint32_t pending_pin_shutoff;
 
@@ -180,8 +183,8 @@ namespace Talos
 					//Send outputs to physical hardware
 					//hrd_out::Hardware::Motion::step(&_persisted.step_outbits);
 					//hal_mtn::Stepper::step_port(_persisted.step_outbits);
-					STEPPER_PUL_PORT_DIRECT_REGISTER =
-						(STEPPER_PUL_PORT_DIRECT_REGISTER & ~STEP_MASK) | _persisted.step_outbits;
+					/*STEPPER_PUL_PORT_DIRECT_REGISTER =
+						(STEPPER_PUL_PORT_DIRECT_REGISTER & ~STEP_MASK) | _persisted.step_outbits;*/
 
 					if (Segment::_persisted.seg == NULL)
 					{
@@ -190,101 +193,70 @@ namespace Talos
 						if (end)
 						{
 							__end_interpolation();
-							return;
+							return 0;
 						}
 					}
 					//seems stable to here.
 					// Reset step out bits.
-					_persisted.step_outbits = 0;
-
-					//this will turn all the pins off. rather early... going for super speed testing.
-					/*STEPPER_PUL_PORT_DIRECT_REGISTER =
-						(STEPPER_PUL_PORT_DIRECT_REGISTER & ~STEP_MASK) | _persisted.step_outbits;*/
-					
-					//doing this in a reverse loop because after looking at the assembly code
-					//counting down is fater than counting up.
-					int8_t axis_id = MACHINE_AXIS_COUNT-1;
-					
-					//for (; axis_id >-1; axis_id--)
-					//{
-					//	//since we are already within one interrupt, we cant run another. but we
-					//	//can check pendings so we turn the pins off at the right time.
-					//	pending_pin_shutoff = __NVIC_GetPendingIRQ(STEP_RST_TIMER_INTERRUPT);
-					//	if (pending_pin_shutoff != 0)
-					//	{
-					//		__NVIC_ClearPendingIRQ(STEP_RST_TIMER_INTERRUPT); 
-					//		STEP_RST_TIMER->ARR = 0;
-					//		STEP_RST_TIMER->SR &= ~(1 << 0);
-					//		STEPPER_PUL_PORT_DIRECT_REGISTER = 0;
-					//	}
-					//	_persisted.bresenham_counter[axis_id] += _persisted.seg->common.bres_obj->steps[axis_id];
-					//	if (_persisted.bresenham_counter[axis_id] > _persisted.seg->common.bres_obj->major_axis)
-					//	{
-					//		_persisted.step_outbits |= (1 << axis_id);
-					//		_persisted.bresenham_counter[axis_id] -= _persisted.seg->common.bres_obj->major_axis;
-					//	}
-					//}
+					_persisted.step_outbits = 1;
 
 					//This is ugly because its all single line, but its twice as fast as a for loop
-					_persisted.bresenham_counter[AXIS1] += _persisted.seg->common.bres_obj->steps[AXIS1];
+
+					/*STEPPER_PUL_PORT_DIRECT_REGISTER =
+						(STEPPER_PUL_PORT_DIRECT_REGISTER & ~STEP_MASK) | 1;*/
+					
+
+					/*_persisted.bresenham_counter[AXIS1] += _persisted.seg->common.bres_obj->steps[AXIS1];
 					if (_persisted.bresenham_counter[AXIS1] > _persisted.seg->common.bres_obj->major_axis)
 					{
 						_persisted.step_outbits |= (1 << AXIS1);
 						_persisted.bresenham_counter[AXIS1] -= _persisted.seg->common.bres_obj->major_axis;
-					}
+					}*/
 					//return; //5.47us here
-					
-					_persisted.bresenham_counter[AXIS2] += _persisted.seg->common.bres_obj->steps[AXIS2];
-					if (_persisted.bresenham_counter[AXIS2] > _persisted.seg->common.bres_obj->major_axis)
-					{
-						_persisted.step_outbits |= (1 << AXIS2);
-						_persisted.bresenham_counter[AXIS2] -= _persisted.seg->common.bres_obj->major_axis;
-					}
-					//return; //7.13us here ~0.93
-					_persisted.bresenham_counter[AXIS3] += _persisted.seg->common.bres_obj->steps[AXIS3];
-					if (_persisted.bresenham_counter[AXIS3] > _persisted.seg->common.bres_obj->major_axis)
-					{
-						_persisted.step_outbits |= (1 << AXIS3);
-						_persisted.bresenham_counter[AXIS3] -= _persisted.seg->common.bres_obj->major_axis;
-					}
-					//return; //8.00us here ~0.87
 
-					///* each axis takes ~0.9us to run.
-					//this code takes 0.13us to run*/
-					//pending_pin_shutoff = __NVIC_GetPendingIRQ(STEP_RST_TIMER_INTERRUPT);
-					//if (pending_pin_shutoff != 0)
+					//_persisted.bresenham_counter[AXIS2] += _persisted.seg->common.bres_obj->steps[AXIS2];
+					//if (_persisted.bresenham_counter[AXIS2] > _persisted.seg->common.bres_obj->major_axis)
 					//{
-					//	__NVIC_ClearPendingIRQ(STEP_RST_TIMER_INTERRUPT);
-					//	STEP_RST_TIMER->ARR = 0;
-					//	STEP_RST_TIMER->SR &= ~(1 << 0);
-					//	STEPPER_PUL_PORT_DIRECT_REGISTER = 0;
+					//	_persisted.step_outbits |= (1 << AXIS2);
+					//	_persisted.bresenham_counter[AXIS2] -= _persisted.seg->common.bres_obj->major_axis;
 					//}
-					////----------------------------------
+					////return; //7.13us here ~0.93
+					//_persisted.bresenham_counter[AXIS3] += _persisted.seg->common.bres_obj->steps[AXIS3];
+					//if (_persisted.bresenham_counter[AXIS3] > _persisted.seg->common.bres_obj->major_axis)
+					//{
+					//	_persisted.step_outbits |= (1 << AXIS3);
+					//	_persisted.bresenham_counter[AXIS3] -= _persisted.seg->common.bres_obj->major_axis;
+					//}
 
-					//return; //6.20us here ~1.03
+					//_persisted.bresenham_counter[AXIS4] += _persisted.seg->common.bres_obj->steps[AXIS4];
+					//if (_persisted.bresenham_counter[AXIS4] > _persisted.seg->common.bres_obj->major_axis)
+					//{
+					//	_persisted.step_outbits |= (1 << AXIS4);
+					//	_persisted.bresenham_counter[AXIS4] -= _persisted.seg->common.bres_obj->major_axis;
+					//}
 
-					_persisted.bresenham_counter[AXIS4] += _persisted.seg->common.bres_obj->steps[AXIS4];
-					if (_persisted.bresenham_counter[AXIS4] > _persisted.seg->common.bres_obj->major_axis)
+					//_persisted.bresenham_counter[AXIS5] += _persisted.seg->common.bres_obj->steps[AXIS5];
+					//if (_persisted.bresenham_counter[AXIS5] > _persisted.seg->common.bres_obj->major_axis)
+					//{
+					//	_persisted.step_outbits |= (1 << AXIS5);
+					//	_persisted.bresenham_counter[AXIS5] -= _persisted.seg->common.bres_obj->major_axis;
+					//}
+
+					//_persisted.bresenham_counter[AXIS6] += _persisted.seg->common.bres_obj->steps[AXIS6];
+					//if (_persisted.bresenham_counter[AXIS6] > _persisted.seg->common.bres_obj->major_axis)
+					//{
+					//	_persisted.step_outbits |= (1 << AXIS6);
+					//	_persisted.bresenham_counter[AXIS6] -= _persisted.seg->common.bres_obj->major_axis;
+					//}
+
+					if (holdit > 101594)
 					{
-						_persisted.step_outbits |= (1 << AXIS4);
-						_persisted.bresenham_counter[AXIS4] -= _persisted.seg->common.bres_obj->major_axis;
 					}
-
-					_persisted.bresenham_counter[AXIS5] += _persisted.seg->common.bres_obj->steps[AXIS5];
-					if (_persisted.bresenham_counter[AXIS5] > _persisted.seg->common.bres_obj->major_axis)
+					else
 					{
-						_persisted.step_outbits |= (1 << AXIS5);
-						_persisted.bresenham_counter[AXIS5] -= _persisted.seg->common.bres_obj->major_axis;
-					}		
-
-					_persisted.bresenham_counter[AXIS6] += _persisted.seg->common.bres_obj->steps[AXIS6];
-					if (_persisted.bresenham_counter[AXIS6] > _persisted.seg->common.bres_obj->major_axis)
-					{
-						_persisted.step_outbits |= (1 << AXIS6);
-						_persisted.bresenham_counter[AXIS6] -= _persisted.seg->common.bres_obj->major_axis;
+						holdit++;
+						_persisted.seg->major_axis--;
 					}
-					
-					_persisted.seg->major_axis--;
 
 					if (_persisted.seg->major_axis == 0)
 					{
@@ -295,7 +267,7 @@ namespace Talos
 						_persisted.seg = NULL;
 
 					}
-
+					return _persisted.step_outbits;
 				}
 
 				bool Segment::__load_segment()
@@ -329,13 +301,13 @@ namespace Talos
 								myfile << "*****units per rotation*****" << "\r";
 #endif
 								//configure for new feed mode
-					}
+							}
 							else
 							{
 #ifdef MSVC
 								myfile << "*****normal*****" << "\r";
 #endif
-				}
+							}
 							//save off flags
 							_persisted.control_bits.feed._flag =
 								_persisted.seg->common.control_bits.feed._flag;
@@ -351,10 +323,10 @@ namespace Talos
 #endif
 						//set timer delay value to the active_timer objects delay time						
 						//hrd_out::Hardware::Motion::time_adjust(&_persisted.seg->timer_delay_value);
-						STEP_TIMER_DELAY_DIRECT_REGISTER = _persisted.seg->timer_delay_value;
-						////We need to reset this when we change the delay time because if it gets
-						////ahead of the ARR time we have to wait for it to wrap around which is about 30 seconds
-						//STEP_TIMER_COUNT_DIRECT_REGISTER = 0;
+						STEP_TIMER_DELAY_DIRECT_REGISTER = max(_persisted.seg->timer_delay_value, LOWEST_STEP_DELAY_VALUE);
+						//We need to reset this when we change the delay time because if it gets
+						//ahead of the ARR time we have to wait for it to wrap around which is about 30 seconds
+						//STEP_STP_TIMER_COUNT_DIRECT_REGISTER = 0;
 
 						// If the new segment starts a new planner block, initialize stepper variables and counters.
 						// NOTE: When the segment data index changes, this indicates a new planner block.
@@ -394,9 +366,9 @@ namespace Talos
 							_persisted.bresenham_counter[AXIS6]
 								= _persisted.seg->common.bres_obj->major_axis;
 						}
-			}
+					}
 					return done;
-		}
+				}
 
 				void Segment::__end_interpolation()
 				{
@@ -425,7 +397,7 @@ namespace Talos
 
 					Segment::pntr_next_gate = Segment::__new_motion;
 				}
-	}
-}
+			}
+		}
 	}
 }

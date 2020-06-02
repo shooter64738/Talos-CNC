@@ -46,7 +46,7 @@ namespace Talos
 					//functions
 				public:
 					static void gate_keeper();
-					static void (*pntr_driver)(void);
+					static uint16_t (*pntr_driver)(void);
 
 
 				protected:
@@ -58,7 +58,7 @@ namespace Talos
 					static bool __load_segment();
 					static void __new_motion();
 					static void __release_brakes();
-					static void __run_interpolation();
+					static uint16_t __run_interpolation();
 					static void __end_interpolation();
 					static void __set_brakes();
 

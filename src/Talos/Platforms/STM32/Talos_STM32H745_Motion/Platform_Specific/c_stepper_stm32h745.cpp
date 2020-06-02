@@ -24,32 +24,28 @@ namespace Hardware_Abstraction_Layer
 			step_timer_config();
 		}
 
-		volatile static uint16_t on_time = 0;
-		volatile static bool busy = false;
+		volatile static uint16_t on_time = 180;
+		volatile static uint32_t delay_time = 100;
+		volatile static bool serviced = false;
+		volatile static uint16_t port_bits;
 		__C void TIM2_IRQHandler(void)
 		{
 
 			if ((STEP_TIMER->SR & 0x0001) != 0)                  // check interrupt source
 			{
-				if (busy)
+				if (serviced)
 				{
-					return;
+					STEPPER_PUL_PORT_DIRECT_REGISTER = port_bits;
+					serviced = false;
 				}
-				busy = true;
-				//STEP_TIMER->ARR = 0;
+
+				STEP_RST_TIMER->ARR = on_time;
+				//STEPPER_PUL_PORT_DIRECT_REGISTER = 0;
 				STEP_TIMER->SR &= ~(1 << 0);                          // clear UIF flag
 				STEP_TIMER->CNT = 0;
-				Talos::Motion::Core::Output::Segment::pntr_driver();
-				STEPPER_PUL_PORT_DIRECT_REGISTER = 0;
-				//STEPPER_PUL_PORT_DIRECT_REGISTER = 1;
+				//STEP_TIMER->ARR = delay_time;
+				//Talos::Motion::Core::Output::Segment::pntr_driver();
 
-				//prep the step reset timer values
-				//STEP_RST_TIMER->CNT = 0;
-				//STEP_RST_TIMER->ARR = on_time;
-				
-				//if (__NVIC_GetPendingIRQ(STEP_TIMER_INTERRUPT))
-				//__NVIC_ClearPendingIRQ(STEP_TIMER_INTERRUPT);
-				busy = false;
 			}
 		}
 
@@ -57,12 +53,17 @@ namespace Hardware_Abstraction_Layer
 		{
 			if ((STEP_RST_TIMER->SR & 0x0001) != 0)                  // check interrupt source
 			{
-				//NVIC_DisableIRQ(STEP_RST_TIMER_INTERRUPT);
-				//STEP_RST_TIMER->CR1 &= ~TIM_CR1_CEN;
+				STEPPER_PUL_PORT_DIRECT_REGISTER = 0;
 				STEP_RST_TIMER->ARR = 0;
 				STEP_RST_TIMER->SR &= ~(1 << 0);                          // clear UIF flag
+				STEP_RST_TIMER->CNT = 0;
 
-				//STEPPER_PUL_PORT_DIRECT_REGISTER = 0;
+				if (!serviced)
+				{
+					port_bits = Talos::Motion::Core::Output::Segment::pntr_driver();
+					serviced = true;
+				}
+
 			}
 		}
 
