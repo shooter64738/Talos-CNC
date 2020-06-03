@@ -24,6 +24,67 @@ namespace Talos
 		{
 			namespace Kin
 			{
+
+				Numbers::s_integrator_control Numbers::int_ctrl{ };
+				
+
+				float programmed_unit_minute_rate = 1; //<--how fast are we supposed to go
+				float major_unit_distance = 1; //<-- one of the axis has the longest distance, (or all have same distance) what distance is greatest?
+				float axis1_unit_distance = 50; //<--axis 1 distance
+				float axis2_unit_distance = 1; //<--axis 2 distance
+				float axis3_unit_distance = 1; //<--axis 3 distance
+				
+				void Numbers::init()
+				{
+					Numbers::int_ctrl.axis[0].setup(major_unit_distance, axis1_unit_distance, programmed_unit_minute_rate, int_ctrl.accel_rate);
+					Numbers::int_ctrl.axis[1].setup(major_unit_distance, axis1_unit_distance, programmed_unit_minute_rate, int_ctrl.accel_rate);
+					Numbers::int_ctrl.axis[2].setup(major_unit_distance, axis1_unit_distance, programmed_unit_minute_rate, int_ctrl.accel_rate);
+				}
+
+				void Numbers::test3(uint32_t clocks)
+				{
+					
+					
+					//assume axis1 is the major axis, is runs the fastest and has the shortest ms step time
+					//Numbers::int_ctrl.axis[0].check_pos(clocks);
+					Numbers::int_ctrl.axis[0].check_pos(clocks);
+					
+					
+					//assume axis2 is a subortinate axis, it runs slower than axis1 but faster than axis 3.
+					//Numbers::int_ctrl.axis[1].check_pos(clocks);
+					//Numbers::int_ctrl.axis[1].get_cur_spd(clocks);
+					//Numbers::int_ctrl.axis[1].get_cur_pos(clocks);
+					//
+					////assume axis2 is a subortinate axis, it runs slower than axis2 and is the slowest
+					//Numbers::int_ctrl.axis[2].check_pos(clocks);
+					//Numbers::int_ctrl.axis[2].get_cur_spd(clocks);
+					//Numbers::int_ctrl.axis[2].get_cur_pos(clocks);
+					
+					
+
+
+				}
+				/*
+				Hardware:
+				Main cpu creates a PWM clock signal.
+				Each axis controller is connected to main clock signal
+				Clock signal regulates the speed of the 'master' axis
+				Each axis may or may not move at different speeds
+				The 'master' axis will move the fastest
+				Each axis control will issue its own PWM driver signal to a stepper/servo control
+
+				Software:
+				When a motion block is loaded each axis control will recieve parameters for its axis
+				After all axis controls are updated motion can start
+				Each axis controller will read the master clock time and determine the output
+					frequency needed to move at a proportional rate
+				Adjusting the master clock speed will cause ALL axis controllers to speed up or slow down
+				Each axis controller will adjust its own output to determine if its rate is correct to move
+					at the programed rate
+
+				*/
+
+
 				//inegrator
 				/* basics
 				200 steps per turn
