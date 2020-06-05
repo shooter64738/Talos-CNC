@@ -154,6 +154,12 @@
     <Filter Include="Ngc_Rs274\MachineSpecific\Lathe">
       <UniqueIdentifier>{6e04f265-7323-4004-ab62-d410e34654a7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Motion\Processing\State_Control">
+      <UniqueIdentifier>{5cdf7474-5429-4048-967e-05a0440227e9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Coordinator\Processing\State_Control">
+      <UniqueIdentifier>{4a75306a-1b10-4fc0-a99e-eff9e80d947a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="system_stm32h7xx.c">
@@ -1036,9 +1042,6 @@
     <ClCompile Include="..\..\..\Motion\NewCore\c_segment_to_hardware.cpp">
       <Filter>Motion\NewCore</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Motion\NewCore\c_state_control.cpp">
-      <Filter>Motion\NewCore</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\Coordinator\Processing\Events\EventHandlers\c_ancillary_event_handler.cpp">
       <Filter>Coordinator\Processing\Events</Filter>
     </ClCompile>
@@ -1161,6 +1164,12 @@
     </ClCompile>
     <ClCompile Include="..\..\..\Coordinator\Processing\Main\Coordinator_Process.cpp">
       <Filter>Coordinator\Processing\Main</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Motion\Processing\State_Control\c_motion_state_control.cpp">
+      <Filter>Motion\Processing\State_Control</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Coordinator\Processing\State_Control\c_coordinator_state_control.cpp">
+      <Filter>Coordinator\Processing\State_Control</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1285,9 +1294,6 @@
       <Filter>Motion\NewCore</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Motion\NewCore\c_segment_to_hardware.h">
-      <Filter>Motion\NewCore</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Motion\NewCore\c_state_control.h">
       <Filter>Motion\NewCore</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Motion\NewCore\support_items\d_buffer_size_defs.h">
@@ -1530,8 +1536,20 @@
     <ClInclude Include="..\..\..\Coordinator\Processing\Main\Coordinator_Process.h">
       <Filter>Coordinator\Processing\Main</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\Motion\Processing\State_Control\c_motion_state_control.h">
+      <Filter>Motion\Processing\State_Control</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Coordinator\Processing\State_Control\c_coordinator_state_control.h">
+      <Filter>Coordinator\Processing\State_Control</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\..\..\..\Motion\NewCore\description.txt" />
+    <Text Include="..\..\..\Motion\Processing\State_Control\description.txt">
+      <Filter>Motion\Processing\State_Control</Filter>
+    </Text>
+    <Text Include="..\..\..\Coordinator\Processing\State_Control\description.txt">
+      <Filter>Coordinator\Processing\State_Control</Filter>
+    </Text>
   </ItemGroup>
 </Project>
