@@ -25,185 +25,234 @@ namespace Talos
 			namespace Kin
 			{
 
-				Numbers::s_integrator_control Numbers::int_ctrl{ };
-				
+#include <math.h>
+#define PI 3.14142
+#define pwm_pin 2
+#define F_BUS 50
+#define ftm 3
+#define alt 4
+#define FTM_CHANCFG(chan) FTM_CHANCFG2(chan)
+#define FTM_CHANCFG2(chan) FTM ## chan ## _C0V
+#define FTM_PINCFG(pin) FTM_PINCFG2(pin)
+#define FTM_PINCFG2(pin) CORE_PIN ## pin ## _CONFIG
 
-				float programmed_unit_minute_rate = 1; //<--how fast are we supposed to go
-				float major_unit_distance = 1; //<-- one of the axis has the longest distance, (or all have same distance) what distance is greatest?
-				float axis1_unit_distance = 50; //<--axis 1 distance
-				float axis2_unit_distance = 1; //<--axis 2 distance
-				float axis3_unit_distance = 1; //<--axis 3 distance
-				
-				void Numbers::init()
-				{
-					Numbers::int_ctrl.axis[0].setup(major_unit_distance, axis1_unit_distance, programmed_unit_minute_rate, int_ctrl.accel_rate);
-					Numbers::int_ctrl.axis[1].setup(major_unit_distance, axis1_unit_distance, programmed_unit_minute_rate, int_ctrl.accel_rate);
-					Numbers::int_ctrl.axis[2].setup(major_unit_distance, axis1_unit_distance, programmed_unit_minute_rate, int_ctrl.accel_rate);
+				// input values:
+				double delta_t_ms = 0.2;                        // ramp stage duration in ms
+				double f_min = 3000.0;                          // start frequency in steps/s: if too slow for delta_t f_min will be increased in init()
+				double a_f_max_ms = 500.0;                      // max possible frequency increment per ms in steps/ms
+				double steps_R = 200.0;                         // steps per motor revolution
+				double microsteps = 16.0;                       // microstepping in microsteps per step
+
+				// timing belt or rack & pinion:
+				const double diameter_mm = 40.0;                // diameter of pinion in mm
+				const double ratio = 1.0;                       // gear ratio (> 1 = slower speed)
+
+				// or lead screw:
+				const double threadpitch_mm = 8.0;              // thread pitch in mm: set to zero if pinion driven
+
+				// desired:
+				double s_wanted_cm = 16.0;                      // desired travel in cm
+				double v_wanted_cms = 25.0;                     // desired speed in cm/s
+				double s_c_min = 0.001;                         // minimum travel with constant speed in m
+
+				double delta_t;                                 // ramp stage duration (derived from delta_t_ms) in s
+				double delta_t_us;                              // ramp stage duration (derived from delta_t_ms) in µs
+				double delta_f;                                 // frequency increment per ramp stage
+				double a_f_max;                                 // max possible frequency increment per ms (derived from a_f_max_ms) in steps/ms
+				double s_wanted;                                // desired travel (derived from s_wanted_cm) in m
+				double v_wanted;                                // desired speed (derived from v_wanted_cms) in m/s
+				double a_f;                                     // actual acceleration in steps/s^2
+				double t_a;                                     // duration of acceleration in s
+				double t_c;                                     // duration of travel with constant speed v_wanted in s
+				double t_c_ms;                                  // duration of travel with constant speed v_wanted in ms
+				double t_c_us;                                  // duration of travel with constant speed v_wanted in µs
+				double N;                                       // total number of ramp stages
+				double n;                                       // actual ramp stage
+				double u;                                       // conversion factor frequency to speed v/f in m/steps
+				double f;                                       // actual frequency in steps/s
+				double f_wanted;                                // desired frequency in steps/s
+				double t_n_us;                                  // time stamp of ramp stage in µs
+
+				double t_total;                                 // total time = 2 * t_a + t_c
+				double s_c;                                     // travel with constant speed in m
+				double a;                                       // acceleration in m/s^2
+				double v;                                       // achievable max speed in m/s
+				double s_a;                                     // travel of ramp in m
+
+				uint32_t mck = F_BUS;                           // PWM source frequency
+				const uint8_t duty_percent = 50;                // 50% duty cycle
+				const uint8_t resolution_pwm = 12;              // PWM resolution
+				uint8_t prescaler;                              // smallest possible divider will be calced
+				uint16_t duty;                                  // duty cicle value
+
+			
+
+				void Numbers::setup() {
+					/*pinMode(pwm_pin, OUTPUT);
+					analogWriteResolution(resolution_pwm);*/
+					init();
 				}
 
-				void Numbers::test3(uint32_t clocks)
-				{
-					
-					
-					//assume axis1 is the major axis, is runs the fastest and has the shortest ms step time
-					//Numbers::int_ctrl.axis[0].check_pos(clocks);
-					Numbers::int_ctrl.axis[0].check_pos(clocks);
-					
-					
-					//assume axis2 is a subortinate axis, it runs slower than axis1 but faster than axis 3.
-					//Numbers::int_ctrl.axis[1].check_pos(clocks);
-					//Numbers::int_ctrl.axis[1].get_cur_spd(clocks);
-					//Numbers::int_ctrl.axis[1].get_cur_pos(clocks);
-					//
-					////assume axis2 is a subortinate axis, it runs slower than axis2 and is the slowest
-					//Numbers::int_ctrl.axis[2].check_pos(clocks);
-					//Numbers::int_ctrl.axis[2].get_cur_spd(clocks);
-					//Numbers::int_ctrl.axis[2].get_cur_pos(clocks);
-					
-					
-
-
+				void Numbers::loop() {
+					start();
+					//delay(1000);
 				}
-				/*
-				Hardware:
-				Main cpu creates a PWM clock signal.
-				Each axis controller is connected to main clock signal
-				Clock signal regulates the speed of the 'master' axis
-				Each axis may or may not move at different speeds
-				The 'master' axis will move the fastest
-				Each axis control will issue its own PWM driver signal to a stepper/servo control
 
-				Software:
-				When a motion block is loaded each axis control will recieve parameters for its axis
-				After all axis controls are updated motion can start
-				Each axis controller will read the master clock time and determine the output
-					frequency needed to move at a proportional rate
-				Adjusting the master clock speed will cause ALL axis controllers to speed up or slow down
-				Each axis controller will adjust its own output to determine if its rate is correct to move
-					at the programed rate
+				double Numbers::calc_freq(double freq) {
+					uint16_t period = calc_period(freq);
+					return (double)(mck >> prescaler) / (double)(period + 1);
+				}
 
-				*/
+				uint32_t Numbers::calc_period(double freq) {
+					for (prescaler = 0; prescaler < 7; prescaler++) {
+						double freq_min = (double)(mck >> prescaler) / 65536.0;
+						if (freq >= freq_min) break;
+					}
+					return (double)(mck >> prescaler) / ((double)freq) - 0.5;
+				}
 
+				double Numbers::simul_ramp(double f_min, double a_f, double delta_t, uint32_t N) {
+					// simulation of ramp in order to obtain accurate travel
+					double delta_f = a_f * delta_t;
+					double f = f_min;
+					double s_f = 0.0;                                                         // travel / u, where u = v / f
+					uint32_t n = 0;
+					while (n < N) {
+						s_f += floor(delta_t * calc_freq(f));
+						f += delta_f;
+						n += 1;
+					}
+					return (double)u * s_f;
+				}
 
-				//inegrator
-				/* basics
-				200 steps per turn
-				axis 1 turn per mm
-				micro step is 16
-				step per mm is 200x16x1 = 3200
-				speed is 100mm/s
-				320,000 steps/s
-				step seperation is 1/320,000 = 3.125us
-				*/
+				void Numbers::init() {
+					delta_t = delta_t_ms / 1000.0;                                            // time increment in s
+					a_f_max = a_f_max_ms * 1000.0;                                            // frequency increment in steps/s^2
+					s_wanted = s_wanted_cm / 100.0;                                           // desired travel in m
+					v_wanted = v_wanted_cms / 100.0;                                          // desired speed in m/s
 
-				/*
-				speed = speed + accleration
-				position = position + speed
-				accel by +1 5 clocks (accelerate)
-				accel by +0 for 5 clocks (maintian speed)
-				accel by -1 for 5 clocks (decelerate)
-
-				after 15 clocks we arrive at position +50
-				*/
-
-				float t_pos = 0; //<--pos in X seconds
-				float t_spd = 0; //<--speed in X seconds
-				float mm_accel = 150; //mm/s //<--mm/s/s acceleration
-				uint32_t stp_accel = mm_accel * 200; //step/s/s //<--step/s/s acceleration
-				float stp_accel_ms = stp_accel / 1000; //step/s/s //<--step/s/s acceleration
-				float stp_accel_mc = stp_accel_ms / 1000; //step/s/s //<--step/s/s acceleration
-				void Numbers::test(uint32_t delta_time)
-				{
-					uint32_t steps_per_milli = stp_accel / 1000;
-					uint32_t steps_per_micro = stp_accel / 1000000;
-
-					//mm/s
-					t_spd = (delta_time)* mm_accel;
-					t_pos = (mm_accel * (delta_time * (delta_time + 1)) / 2) + delta_time * t_spd;
-
-					//stp/ms
-					t_spd = (delta_time)* stp_accel_ms;
-					t_pos = (stp_accel_ms * (delta_time * (delta_time + 1)) / 2) + delta_time * t_spd;
-
-					//stp/mc
-					t_spd = (delta_time)* stp_accel_mc;
-					t_pos = (stp_accel_mc * (delta_time * (delta_time + 1)) / 2) + delta_time * t_spd;
-					if (t_pos > 1)
-					{
-						int x = 0;
+					if (threadpitch_mm == 0) {
+						u = (PI * (diameter_mm / 1000.0) / ratio) / (steps_R * microsteps);     // in m/steps
+					}
+					else {
+						u = threadpitch_mm / 1000.0 / (steps_R * microsteps);                   // in m/steps
 					}
 
+					// calculations with the presumption that speed is the limiting factor
+					f_wanted = v_wanted / u;                                                  // in steps/s
 
-					/*generate
-						for (i = 0; i < nbaxes; i = i + 1)
-							begin:motion
-							always @(posedge clk) axes_S[i] <= axes_S[i] + axes_A[i];
-					always @(posedge clk) axes_P[i] <= axes_P[i] + axes_S[i];
-					end
-						endgenerate
+					// corrections for frequencys
+					f_wanted = calc_freq(f_wanted);
+					if (f_min < ceil(1000.0 / delta_t_ms)) f_min = ceil(1000.0 / delta_t_ms); // update f_min if too slow for delta_t
+					f_min = calc_freq(f_min);
 
-						position = ((a*(t^2))/2)+t*s
-						*/
+					a_f = a_f_max;                                                            // in steps/s^2
+					t_a = (f_wanted - f_min) / a_f;                                           // in s
+					N = floor(t_a / delta_t) + 1;
 
-						/*
-						all values in steps per second
-						begin at start speed
-						accel up to speed limit
-						decel back to start speed
-						triangle (avg speed) = (speedlimit+startspeed)/2
-						distance in time = availabletime * average speed
-						if distance >=desired_position then triangle
-						required avg speed = desired position/available time
-						required max speed = (required avg speed*2)-start speed
-						make sure required max speed does nto exceed speed limits
+					// correction of a_f in order to obtain equal ramp stages of f for N ramp stages of delta_t
+					a_f = (f_wanted - f_min) / (N * delta_t);
 
-						assuming triangle profile
-						required acceleration = (required max speed-start speed)*2/available time
-						make sure required acceleration does nto exceed speed limits
+					// re-calculation with new a_f
+					t_a = N * delta_t;
 
-						T1= 1/start speed
-						speed at T1 = start speed+ required acceleration *T1
-						T2= 1/(start speed+(required acceleartion *T1)
+					// predict minimum needed travel to reach v_wanted
+					s_a = simul_ramp(f_min, a_f, delta_t, N);
 
-						//new way
-						check time
-						multiply by speed
-						if current position< calculated position, move ahead X steps.
+					// in case s_wanted is the limiting factor
+					if (2 * s_a + s_c_min > s_wanted) {
 
-						Assume .2 steps/sec
-						assume T=0
-						speed-time product = time * .2
-						after 5 seconds 5*.2, speed-time = 1 and we can step
-						after 10 second 10*.2 speed-time = 2 and we can step.
-						using delta time, every time speed gets to 5, we can step.
-						every time we step add 1 to current position
-						we can leave out multiplcation and use speed-time += speed
+						// calculations with the presumption that travel is the limiting factor
+						// s_wanted/2 is limiting the duration of the ramp
+						a_f = a_f_max;
+						s_a = s_wanted / 2 - s_c_min;
+						t_a = sqrt((2 * s_a / (u * a_f)) + ((f_min / a_f) * (f_min / a_f))) - (f_min / a_f);
 
-						To do the calculation in milliseconds
-						speed-time += speed/1000
+						// recalculate max possible speed
+						f_wanted = calc_freq(a_f * t_a);
 
-						To do the calculation in microseconds
-						speed-time += speed/1000000
-						*/
-					void test2(uint32_t delta_time);
+						// re-calculate number of ramp stages
+						N = floor(t_a / delta_t) + 1;
+
+						// correction of a_f in order to obtain equal ramp stages of f for N ramp stages of delta_t
+						a_f = (f_wanted - f_min) / (N * delta_t);
+
+						// re-calculation with new a_f
+						t_a = N * delta_t;
+
+						// re-predict travel
+						s_a = simul_ramp(f_min, a_f, delta_t, N);
+					}
+
+					s_c = s_wanted - 2 * s_a;                                                              // travel with constant speed in m
+					v = u * f_wanted;                                                                      // reached speed (v <= v_wanted) in m/s
+					a = u * a_f;                                                                           // acceleration in m/s^2
+					t_c = s_c / v;                                                                         // duration of travel with constant speed in s
+					t_total = 2 * t_a + t_c;                                                               // total duration in s
+
+					// preparations:
+					delta_f = a_f * delta_t;
+					delta_t_us = delta_t_ms * 1000.0;
+					t_c_us = t_c * 1000000.0;
+					duty = ((uint32_t)((duty_percent << resolution_pwm) * 0.01) * (uint32_t)(calc_period(f_wanted + 1))) >> resolution_pwm;
+				}
+
+				void Numbers::start() {
+					// ramp-up
+					double t_pulse_us;
+					f = f_min;
+					n = 0;
+					t_n_us = 0.0;
+					//if (FTM_CHANCFG(ftm) == 0) (t_n_us += round(1000000 / f_min));
+					t_n_us += micros();
+					while (n < N)
 					{
-						static float req_speed = 5;
-						static float req_speed_micro = req_speed / 1000000; //mm/s
-						static float speed_time = 0;
-						static uint32_t step_pos = 0;
-						t_spd = (delta_time)* mm_accel;
-						speed_time += req_speed_micro;
-
-						if (speed_time > 1)
+						//analogWriteFrequency(pwm_pin, f);
+						if (n == 0)//<--first step sets up HW pwm out at start freq
 						{
-							step_pos++;
+							//FTM_CHANCFG(ftm) = duty;
+							//FTM_PINCFG(pwm_pin) = PORT_PCR_MUX(alt) | PORT_PCR_DSE | PORT_PCR_SRE;
 						}
-
-
-
+						n += 1;
+						// calculate next time stamp:
+						t_pulse_us = 1000000.0 / calc_freq(f);
+						t_n_us += round(floor(delta_t_us / t_pulse_us) * t_pulse_us);
+						f += delta_f;
+						// needed waiting time = next time stamp minus last time stamp:
+						while (micros() <= t_n_us);
 					}
+
+					// travel with constant speed
+					//analogWriteFrequency(pwm_pin, f_wanted);
+					n = 0;
+					t_pulse_us = 1000000.0 / calc_freq(f);
+					t_n_us += round(floor(t_c_us / t_pulse_us) * t_pulse_us);
+					f -= delta_f;
+					while (micros() <= t_n_us);
+
+					// ramp-down
+					while (n < N) {
+						//analogWriteFrequency(pwm_pin, f);
+						n += 1;
+						//if (n == N) t_n_us -= 500000 / f;
+						if (n == N) t_n_us -= a_f_max / f;
+						// calculate next time stamp:
+						t_pulse_us = 1000000.0 / calc_freq(f);
+						t_n_us += round(floor(delta_t_us / t_pulse_us) * t_pulse_us);
+						f -= delta_f;
+						// needed waiting time = next time stamp minus last time stamp:
+						while (micros() <= t_n_us);
+					}
+					//pinMode(pwm_pin, OUTPUT);
+				}
+
+				uint32_t Numbers::micros()
+				{
+					return 2;
 				}
 			}
 		}
 	}
 }
+
+
