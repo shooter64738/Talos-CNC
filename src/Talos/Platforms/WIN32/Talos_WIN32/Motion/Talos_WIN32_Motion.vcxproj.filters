@@ -102,9 +102,6 @@
     <ClCompile Include="..\..\..\..\Motion\Serial\c_Serial.cpp">
       <Filter>Motion\Serial</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\Motion\Processing\Main\Main_Process.cpp">
-      <Filter>Motion\Processing\Main</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\..\Motion\Processing\Planner\c_event_control.cpp">
       <Filter>Motion\Processing\Planner</Filter>
     </ClCompile>
@@ -192,6 +189,9 @@
     <ClCompile Include="..\..\..\..\Motion\NewCore\c_hardware_out.cpp">
       <Filter>Motion\NewCore</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\..\Motion\Processing\Main\Motion_Process.cpp">
+      <Filter>Motion\Processing\Main</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\Motion\motion_hardware_def.h">
@@ -199,9 +199,6 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\Motion\Serial\c_Serial.h">
       <Filter>Motion\Serial</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Motion\Processing\Main\Main_Process.h">
-      <Filter>Motion\Processing\Main</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\Motion\Processing\Planner\c_event_control.h">
       <Filter>Motion\Processing\Planner</Filter>
@@ -427,6 +424,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\Motion\NewCore\support_items\s_complete_block_stats.h">
       <Filter>Motion\NewCore\Supporting_Items</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Motion\Processing\Main\Motion_Process.h">
+      <Filter>Motion\Processing\Main</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

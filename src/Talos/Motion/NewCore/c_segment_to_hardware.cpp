@@ -306,11 +306,11 @@ namespace Talos
 								_persisted.seg->common.control_bits.feed._flag;
 						}
 #ifdef MSVC
-						myfile << _persisted.active_timer_item->steps_to_execute_in_this_segment << ",";
-						myfile << _persisted.active_timer_item->timer_delay_value << ",";
-						myfile << _persisted.active_timer_item->common.tracking.line_number << ",";
-						myfile << _persisted.active_timer_item->common.tracking.sequence << ",";
-						myfile << total_steps << ",";
+						myfile << _persisted.seg->major_axis << ",";
+						myfile << _persisted.seg->timer_delay_value << ",";
+						myfile << _persisted.seg->common.tracking.line_number << ",";
+						myfile << _persisted.seg->common.tracking.sequence << ",";
+						//myfile << total_steps << ",";
 						myfile << "\r";
 						myfile.flush();
 #endif
@@ -372,7 +372,7 @@ namespace Talos
 					myfile << 0 << ",";
 					myfile << _persisted.active_line_number << ",";
 					myfile << _persisted.active_sequence << ",";
-					myfile << total_steps << ",";
+					//myfile << total_steps << ",";
 					myfile << "\r";
 					myfile.flush();
 					myfile.close();

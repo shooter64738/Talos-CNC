@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Talos_WIN_Combined", "Talos_WIN_Combined.vcxproj", "{ADA69009-99FA-4BB5-B54F-5209E46224A3}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{ADA69009-99FA-4BB5-B54F-5209E46224A3}.Debug|x64.ActiveCfg = Debug|x64
+		{ADA69009-99FA-4BB5-B54F-5209E46224A3}.Debug|x64.Build.0 = Debug|x64
+		{ADA69009-99FA-4BB5-B54F-5209E46224A3}.Debug|x86.ActiveCfg = Debug|Win32
+		{ADA69009-99FA-4BB5-B54F-5209E46224A3}.Debug|x86.Build.0 = Debug|Win32
+		{ADA69009-99FA-4BB5-B54F-5209E46224A3}.Release|x64.ActiveCfg = Release|x64
+		{ADA69009-99FA-4BB5-B54F-5209E46224A3}.Release|x64.Build.0 = Release|x64
+		{ADA69009-99FA-4BB5-B54F-5209E46224A3}.Release|x86.ActiveCfg = Release|Win32
+		{ADA69009-99FA-4BB5-B54F-5209E46224A3}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

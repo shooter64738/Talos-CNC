@@ -18,35 +18,31 @@
 #define SPDL_CPU_ID 3
 #define PRPH_CPU_ID 4
 
-#define STARTUP_CLASS_WARNING 0
-#define STARTUP_CLASS_CRITICAL 1
-#define STARTUP_CLASS_OPTIONAL 2
-
-#define HARDWARE_COM_PORTS_USED 2
-
-#define MAX_STEP_RATE 172000 //<--This doe not limit anything. It is only for a safety check.
-#define F_CPU 460000000
-#define F_CPU_2 F_CPU/2
-#define _TICKS_PER_MICROSECOND (F_CPU/1000000)
-#include "Platforms/STM32/Talos_STM32H7_Combined/Platform_Specific/c_core_stm32h7.h"
-#include "Platforms/STM32/Talos_STM32H7_Combined/Platform_Specific/c_serial_stm32h7.h"
-#include "Platforms/STM32/Talos_STM32H7_Combined/Platform_Specific/c_disk_stm32h7.h"
-#include "Platforms/STM32/Talos_STM32H7_Combined/Platform_Specific/c_stepper_stm32h7.h"
-#include "Platforms/STM32/Talos_STM32H7_Combined/Platform_Specific/sys_gpio_configs.h"
-#include "Platforms/STM32/Talos_STM32H7_Combined/Platform_Specific/sys_timer_configs.h"
-#endif
-
 #ifdef MSVC
 #define F_CPU 16000000
 #define _TICKS_PER_MICROSECOND (F_CPU/1000000)
-#define HOST_CPU_ID 0
-#define CORD_CPU_ID 1
-#define MACH_CPU_ID 2
-#define SPDL_CPU_ID 3
-#define PRPH_CPU_ID 4
-#include "Platforms/WIN32/Talos_WIN32/Coordinator/Platform Specific/c_serial_win.h"
-#include "Platforms/WIN32/Talos_WIN32/Coordinator/Platform Specific/c_core_win.h"
-#include "Platforms/WIN32/Talos_WIN32/Coordinator/Platform Specific/c_spi_win.h"
-#include "Platforms/WIN32/Talos_WIN32/Coordinator/Platform Specific/c_disk_win.h"
+
+#include "Platforms/WIN32/Talos_WIN32/Combined/Platform_Specific/c_serial_win.h"
+#include "Platforms/WIN32/Talos_WIN32/Combined/Platform_Specific/c_core_win.h"
+#include "Platforms/WIN32/Talos_WIN32/Combined/Platform_Specific/c_disk_win.h"
+#include "Platforms/WIN32/Talos_WIN32/Combined/Platform_Specific/c_stepper_win.h"
+#include "Platforms/WIN32/Talos_WIN32/Combined/Platform_Specific/sys_gpio_configs.h"
+#include "Platforms/WIN32/Talos_WIN32/Combined/Platform_Specific/sys_timer_configs.h"
 #endif
+
+//#ifdef __STM32H7__
+//
+//#define MAX_STEP_RATE 172000 //<--This doe not limit anything. It is only for a safety check.
+//#define F_CPU 460000000
+//#define F_CPU_2 F_CPU/2
+//#define _TICKS_PER_MICROSECOND (F_CPU/1000000)
+//#include "Platforms/STM32/Talos_STM32H7_Combined/Platform_Specific/c_core_stm32h7.h"
+//#include "Platforms/STM32/Talos_STM32H7_Combined/Platform_Specific/c_serial_stm32h7.h"
+//#include "Platforms/STM32/Talos_STM32H7_Combined/Platform_Specific/c_disk_stm32h7.h"
+//#include "Platforms/STM32/Talos_STM32H7_Combined/Platform_Specific/c_stepper_stm32h7.h"
+//#include "Platforms/STM32/Talos_STM32H7_Combined/Platform_Specific/sys_gpio_configs.h"
+//#include "Platforms/STM32/Talos_STM32H7_Combined/Platform_Specific/sys_timer_configs.h"
+//#endif
+#endif
+
 

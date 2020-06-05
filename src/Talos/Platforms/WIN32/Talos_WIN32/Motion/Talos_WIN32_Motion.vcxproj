@@ -22,7 +22,7 @@
     <ClCompile Include="..\..\..\..\Motion\NewCore\c_segment_to_hardware.cpp" />
     <ClCompile Include="..\..\..\..\Motion\NewCore\c_state_control.cpp" />
     <ClCompile Include="..\..\..\..\Motion\NewCore\c_hardware_out.cpp" />
-    <ClCompile Include="..\..\..\..\Motion\Processing\Main\Main_Process.cpp" />
+    <ClCompile Include="..\..\..\..\Motion\Processing\Main\Motion_Process.cpp" />
     <ClCompile Include="..\..\..\..\Motion\Processing\Planner\Canned Cycles\x_c_canned_cycle.cpp" />
     <ClCompile Include="..\..\..\..\Motion\Processing\Planner\c_event_control.cpp" />
     <ClCompile Include="..\..\..\..\Motion\Processing\Planner\c_mirror.cpp" />
@@ -72,7 +72,7 @@
     <ClInclude Include="..\..\..\..\Motion\NewCore\support_items\s_spindle_block.h" />
     <ClInclude Include="..\..\..\..\Motion\NewCore\support_items\s_timer_item.h" />
     <ClInclude Include="..\..\..\..\Motion\NewCore\c_hardware_out.h" />
-    <ClInclude Include="..\..\..\..\Motion\Processing\Main\Main_Process.h" />
+    <ClInclude Include="..\..\..\..\Motion\Processing\Main\Motion_Process.h" />
     <ClInclude Include="..\..\..\..\Motion\Processing\Planner\Canned Cycles\x_c_canned_cycle.h" />
     <ClInclude Include="..\..\..\..\Motion\Processing\Planner\c_event_control.h" />
     <ClInclude Include="..\..\..\..\Motion\Processing\Planner\c_mirror.h" />

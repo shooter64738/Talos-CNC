@@ -8,7 +8,6 @@
 
 #include "Motion_Process.h"
 #include "../../../talos_hardware_def.h"
-//#include "../../../Shared_Data/Kernel/Base/c_kernel_base.h"
 
 /*
 testing
@@ -16,9 +15,6 @@ testing
 #include "../../NewCore/c_ngc_to_block.h"
 //#include "../../NewCore/c_block_to_segment.h"
 #include "../../NewCore/c_state_control.h"
-
-volatile uint8_t safe21 = 1;
-volatile uint8_t safe22 = 1;
 
 void Talos::Motion::Main_Process::mot_initialize()
 {
