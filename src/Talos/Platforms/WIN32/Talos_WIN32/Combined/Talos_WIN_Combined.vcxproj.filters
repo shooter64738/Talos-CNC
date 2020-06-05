@@ -20,9 +20,6 @@
     <ClCompile Include="..\..\..\..\Shared_Data\Kernel\CPU\c_cpu.cpp">
       <Filter>Shared_Data\Kernel\CPU</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\Shared_Data\Kernel\CPU\c_data_handler.cpp">
-      <Filter>Shared_Data\Kernel\CPU</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\..\Shared_Data\Kernel\CPU\c_kernel_cpu.cpp">
       <Filter>Shared_Data\Kernel\CPU</Filter>
     </ClCompile>
@@ -198,9 +195,6 @@
     <ClInclude Include="..\..\..\..\Shared_Data\Kernel\CPU\c_cpu.h">
       <Filter>Shared_Data\Kernel\CPU</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Shared_Data\Kernel\CPU\c_data_handler.h">
-      <Filter>Shared_Data\Kernel\CPU</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\..\Shared_Data\Kernel\CPU\c_kernel_cpu.h">
       <Filter>Shared_Data\Kernel\CPU</Filter>
     </ClInclude>
@@ -335,6 +329,21 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\Coordinator\Processing\State_Control\c_coordinator_state_control.h">
       <Filter>Coordinator\Processing\State_Control</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared_Data\Kernel\_e_record_types.h">
+      <Filter>Shared_Data\Kernel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared_Data\Kernel\_e_system_messages.h">
+      <Filter>Shared_Data\Kernel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared_Data\Kernel\_s_system_record.h">
+      <Filter>Shared_Data\Kernel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared_Data\Kernel\c_kernel_utils.h">
+      <Filter>Shared_Data\Kernel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared_Data\Kernel\kernel_configuration.h">
+      <Filter>Shared_Data\Kernel</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

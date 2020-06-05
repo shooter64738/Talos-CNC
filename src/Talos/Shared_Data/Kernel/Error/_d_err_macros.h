@@ -20,14 +20,13 @@ if (Nullable_Object == NULL) \
 {Talos::Kernel::Error::raise_error(BASE , Mthd_We_Are_In , Mthd_Or_Line_Code , CPUID); \
 return false; }
 
-/*
-Use this when reporting an error but you are NOT calling another function and need to return false
-*/
+
+//Use this when reporting an error but you are NOT calling another function and need to return false
 #define ADD_2_STK_RTN_FALSE(CPUID , BASE , Mthd_We_Are_In , Mthd_Or_Line_Code)\
 {Talos::Kernel::Error::raise_error(BASE , Mthd_We_Are_In , Mthd_Or_Line_Code , CPUID); \
 return false; }
 
-#define ADD_2_STK(CPUID , BASE , Mthd_We_Are_In , Mthd_Or_Line_Code)\
-{Talos::Kernel::Error::raise_error(BASE , Mthd_We_Are_In , Mthd_Or_Line_Code , CPUID);}
+//#define ADD_2_STK(CPUID , BASE , Mthd_We_Are_In , Mthd_Or_Line_Code)\
+//{Talos::Kernel::Error::raise_error(BASE , Mthd_We_Are_In , Mthd_Or_Line_Code , CPUID);}
 
 #endif

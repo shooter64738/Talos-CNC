@@ -16,6 +16,10 @@ location to control all motion output from.
 
 #include "c_coordinator_state_control.h"
 #include "../../../Configuration/c_configuration.h"
+#include "../../../Shared_Data/Kernel/Base/c_kernel_base.h"
+#include "../Data/DataHandlers/c_ngc_data_handler.h"
+#include "../../../Motion/NewCore/c_ngc_to_block.h"
+#include "../../../Motion/Processing/State_Control/c_motion_state_control.h"
 
 //temporary until I get the hal tied to this.
 #define HAL_SYS_TICK_TIME() 0
@@ -39,24 +43,24 @@ namespace Talos
 				/*--------------------------------------------------------------------------*/
 #pragma region Global/All state control wrapper
 
-				void execute()
+				void cexecute()
 				{
-					execute(e_state_class::Process);
-					execute(e_state_class::Motion);
-					execute(e_state_class::Output);
+					cexecute(e_state_class::Process);
+					//cexecute(e_state_class::Motion);
+					cexecute(e_state_class::Output);
 
 				}
 
-				void execute(e_state_class st_class)
+				void cexecute(e_state_class st_class)
 				{
 					switch (st_class)
 					{
-					case e_state_class::Motion:
-					{
-						Motion::execute();
-						Process::execute(); //<--adding a process executor to keep the buffer full
-						break;
-					}
+					//case e_state_class::Motion:
+					//{
+					//	Motion::execute();
+					//	Process::execute(); //<--adding a process executor to keep the buffer full
+					//	break;
+					//}
 					case e_state_class::Process:
 					{
 						Process::execute();
@@ -83,6 +87,25 @@ namespace Talos
 				/*--------------------------------------------------------------------------*/
 #pragma region Process class state control
 				
+				void Process::execute()
+				{
+					if (Kernel::CPU::cluster[Kernel::CPU::host_id].host_events.Data.get(e_system_message::messages::e_data::NgcDataLine))
+						__read_ngc_line(Kernel::CPU::cluster[Kernel::CPU::host_id].hw_data_buffer);
+				}
+
+				void Process::__read_ngc_line(c_ring_buffer<char> *source)
+				{
+					//the flag for ngc data in the serial buffer is set. we need to load that data
+					//and run it through the interpreter.
+					//Also this should be the only place where motion, kernel, and coordinator connect.
+					Talos::Coordinator::Data::Ngc::load_block_from_cache(source);
+					if (Talos::Motion::Core::Input::Block::ngc_buffer._full)
+					{
+						Talos::Kernel::Comm::print(0,"ngc buffer full\r\n");
+						
+					}
+					
+				}
 
 #pragma endregion
 				/*--------------------------------------------------------------------------*/

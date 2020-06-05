@@ -1,8 +1,7 @@
 #ifndef __C_MOTION_CORE_CONTROLLER_H
 #define __C_MOTION_CORE_CONTROLLER_H
 #include <stdint.h>
-
-#include "../../../physical_machine_parameters.h"
+#include "../../../c_ring_template.h"
 #include "../../../_bit_flag_control.h"
 
 /*
@@ -15,7 +14,7 @@ location to control all coordinator processing from.
 
 namespace Talos
 {
-	namespace Coordiantor
+	namespace Coordinator
 	{
 		namespace Core
 		{
@@ -23,8 +22,7 @@ namespace Talos
 			{
 				enum class e_state_class :uint32_t
 				{
-					Motion = 0,
-					Process = 1,
+					Process = 1, //<--Process handles gcode inbound buffering
 					Output = 2,
 				};
 				extern void execute();
@@ -36,6 +34,8 @@ namespace Talos
 				public:
 					enum class e_states :uint32_t
 					{
+						//ngc_data_available = 0,
+
 					};
 					static s_bit_flag_controller<e_states> states;
 
@@ -45,6 +45,7 @@ namespace Talos
 					//functions
 				public:
 					static void execute();
+					static void __read_ngc_line(c_ring_buffer<char>* source);
 				protected:
 				private:
 
@@ -84,7 +85,7 @@ namespace Talos
 
 					};
 					static s_bit_flag_controller<e_states> states;
-					
+
 				protected:
 				private:
 
@@ -93,7 +94,7 @@ namespace Talos
 					static void execute();
 				protected:
 				private:
-					
+
 
 				};
 			};

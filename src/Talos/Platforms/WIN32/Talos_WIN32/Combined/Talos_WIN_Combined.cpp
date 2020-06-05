@@ -27,4 +27,17 @@ int main(void)
 	Kernel::Comm::print(0, "Hello\r\n");
 	Coordinator::Main_Process::cord_initialize();
 	Motion::Main_Process::mot_initialize();
+
+	run();
+}
+
+void run(void)
+{
+	uint8_t state = 0;
+
+	while (state == 0)
+	{
+		Coordinator::Main_Process::cord_run();
+		Motion::Main_Process::mot_run();
+	}
 }

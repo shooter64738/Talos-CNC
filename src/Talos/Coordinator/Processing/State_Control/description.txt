@@ -1,0 +1,15 @@
+Process:
+	1. Do we have ngc data to load?
+		Yes:
+			1. is ngc buffer buffer full?
+				Yes: wait
+				No: load data from source to ngc buffer
+					1. Convert text into an ngc block
+					2. Process options specified ont eh line of ngc data
+					3. Validate the ngc line can be processed and has no errors
+					4. is ngc motion buffer full?
+					Yes:wait
+					No:add ngc item to the motion buffer
+						1. Set ngc_buffer_not_empty flag for motion
+		No:
+		1. Nothing to do.

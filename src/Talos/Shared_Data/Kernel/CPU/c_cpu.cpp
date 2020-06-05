@@ -29,12 +29,11 @@ bool c_cpu::initialize(uint8_t id, volatile uint32_t* tick_timer_ms)
 	if (pntr_cycle_count_ms != NULL)
 		this->next_cycle_check_time = *(pntr_cycle_count_ms)+HEALTH_CHECK_TIME_MS;
 
-	//Setup the ring buffer so it points to the storage array.
-	if (!hw_data_buffer.initialize(this->hw_data_container, RING_BUFFER_SIZE))
-	{
-		Talos::Kernel::Error::raise_error(ERR_CPU::BASE, ERR_CPU::METHOD::initialize, ERR_CPU::METHOD::LINE::buffer_init_failed_pointer_null, id);
-		return false;
-	}
+	//The ring buffer for comms should already be configured and pointed to the correct
+	//hw buffer. if it is not, comms should have been inisitialzed before 'cpu'
+	hw_data_buffer = &Talos::Kernel::Comm::host_ring_buffer;
+
+	
 
 	return true;
 }
@@ -206,41 +205,22 @@ bool c_cpu::__wait_formatted_message(uint8_t init_message, uint8_t init_type)
 bool c_cpu::service_events(int32_t* position, uint16_t rpm)
 {
 	//This should get called frequently from the main method_or_line. 
-	ADD_2_STK_RTN_FALSE_IF_CALL_FALSE(
-		__check_data()
-		, this->ID, ERR_CPU::BASE, ERR_CPU::METHOD::service_events, ERR_CPU::METHOD::__check_data);
+	
+	__check_data();
 
-	ADD_2_STK_RTN_FALSE_IF_CALL_FALSE(
-		__check_health()
-		, this->ID, ERR_CPU::BASE, ERR_CPU::METHOD::service_events, ERR_CPU::METHOD::__check_health);
-
-
-
-	//if NoState and OnLine is false, theres no need to process events.
-	if (this->system_events.get(c_cpu::e_event_type::NoState)
-		|| !this->system_events.get(c_cpu::e_event_type::OnLine))
-		return true;
-
-	//If active_cpu is in error set it offline
-	if (this->system_events.get(c_cpu::e_event_type::Error))
-		this->system_events.clear(c_cpu::e_event_type::OnLine);
-
-	if (position != NULL)
-		memcpy(&this->sys_message.position, position, sizeof(int32_t) * MACHINE_AXIS_COUNT);
-
-	memcpy(&this->sys_message.rpm, &rpm, sizeof(uint16_t));
+	__check_health();
 
 	return true;
 }
 
 bool c_cpu::__check_data()
 {
-	//If not conencted to any data just return
-	if (this->hw_data_buffer._storage_pointer == NULL)
+	//If not connected to any data just return
+	if (this->hw_data_buffer->_storage_pointer == NULL)
 		return true;
 
 	//TODO:neeed an indicator to determine when data has arrived for this cpu
-	if (!this->hw_data_buffer.has_data())
+	if (!this->hw_data_buffer->has_data())
 		return true;
 
 
@@ -629,6 +609,8 @@ bool c_cpu::__set_entry_mode(char first_byte, char second_byte)
 	{
 		//Talos::Shared::FrameWork::StartUp::CpuCluster[Talos::Shared::FrameWork::StartUp::cpu_type.Host].host_events.Data.set(e_system_message::messages::e_data::NgcDataLine);
 		//assume its plain ngc g code data
+		this->host_events.Data.set(e_system_message::messages::e_data::NgcDataLine);
+		
 		return false;
 	}
 

@@ -44,7 +44,7 @@ namespace Talos
 
 				//functions
 			public:
-				static void load_block_from_cache();
+				static void load_block_from_cache(c_ring_buffer<char> *source);
 
 			protected:
 			private:

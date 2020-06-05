@@ -162,7 +162,6 @@
     <ClCompile Include="..\..\..\..\Shared_Data\Kernel\Base\c_kernel_base.cpp" />
     <ClCompile Include="..\..\..\..\Shared_Data\Kernel\Comm\c_kernel_comm.cpp" />
     <ClCompile Include="..\..\..\..\Shared_Data\Kernel\CPU\c_cpu.cpp" />
-    <ClCompile Include="..\..\..\..\Shared_Data\Kernel\CPU\c_data_handler.cpp" />
     <ClCompile Include="..\..\..\..\Shared_Data\Kernel\CPU\c_kernel_cpu.cpp" />
     <ClCompile Include="..\..\..\..\Shared_Data\Kernel\Error\c_kernel_error.cpp" />
     <ClCompile Include="..\..\..\..\Shared_Data\Kernel\Report\c_kernel_report.cpp" />
@@ -212,9 +211,9 @@
     <ClInclude Include="..\..\..\..\Shared_Data\Kernel\Base\c_kernel_base.h" />
     <ClInclude Include="..\..\..\..\Shared_Data\Kernel\Comm\c_kernel_comm.h" />
     <ClInclude Include="..\..\..\..\Shared_Data\Kernel\CPU\c_cpu.h" />
-    <ClInclude Include="..\..\..\..\Shared_Data\Kernel\CPU\c_data_handler.h" />
     <ClInclude Include="..\..\..\..\Shared_Data\Kernel\CPU\c_kernel_cpu.h" />
     <ClInclude Include="..\..\..\..\Shared_Data\Kernel\CPU\u_data_overlay.h" />
+    <ClInclude Include="..\..\..\..\Shared_Data\Kernel\c_kernel_utils.h" />
     <ClInclude Include="..\..\..\..\Shared_Data\Kernel\Error\c_kernel_error.h" />
     <ClInclude Include="..\..\..\..\Shared_Data\Kernel\Error\kernel_error_codes_base.h" />
     <ClInclude Include="..\..\..\..\Shared_Data\Kernel\Error\kernel_error_codes_cpu.h" />
@@ -223,8 +222,12 @@
     <ClInclude Include="..\..\..\..\Shared_Data\Kernel\Error\kernel_error_codes_writer.h" />
     <ClInclude Include="..\..\..\..\Shared_Data\Kernel\Error\_d_err_macros.h" />
     <ClInclude Include="..\..\..\..\Shared_Data\Kernel\Error\_s_kernel_error.h" />
+    <ClInclude Include="..\..\..\..\Shared_Data\Kernel\kernel_configuration.h" />
     <ClInclude Include="..\..\..\..\Shared_Data\Kernel\Report\c_kernel_report.h" />
     <ClInclude Include="..\..\..\..\Shared_Data\Kernel\Start\c_kernel_start.h" />
+    <ClInclude Include="..\..\..\..\Shared_Data\Kernel\_e_record_types.h" />
+    <ClInclude Include="..\..\..\..\Shared_Data\Kernel\_e_system_messages.h" />
+    <ClInclude Include="..\..\..\..\Shared_Data\Kernel\_s_system_record.h" />
     <ClInclude Include="..\..\..\..\talos_hardware_def.h" />
     <ClInclude Include="..\..\..\..\_bit_flag_control.h" />
     <ClInclude Include="..\..\..\..\_bit_manipulation.h" />

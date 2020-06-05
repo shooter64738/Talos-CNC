@@ -27,7 +27,7 @@
 static uint32_t ngc_block_cache_count = 0;
 s_ngc_block Talos::Coordinator::Data::Ngc::active_block;
 
-void Talos::Coordinator::Data::Ngc::load_block_from_cache()
+void Talos::Coordinator::Data::Ngc::load_block_from_cache(c_ring_buffer<char> *source)
 {
 //	Talos::Shared::c_cache_data::txt_record.pntr_record = Talos::Shared::c_cache_data::txt_record.record;
 //

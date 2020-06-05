@@ -29,12 +29,6 @@ namespace Talos
 			CPU::peripheral_id = peripheral_id;
 
 			CPU::cluster[host_id].initialize(host_id, cpu_tick_timer_ms);
-			CPU::cluster[coordinator_id].initialize(host_id, cpu_tick_timer_ms);
-			CPU::cluster[motion_id].initialize(host_id, cpu_tick_timer_ms);
-			CPU::cluster[spindle_id].initialize(host_id, cpu_tick_timer_ms);
-			CPU::cluster[peripheral_id].initialize(host_id, cpu_tick_timer_ms);
-
-
 			return true;
 		}
 
@@ -52,7 +46,7 @@ namespace Talos
 			uint16_t rpm = cluster[spindle_id].sys_message.rpm;
 			for (uint8_t i = 0; i < CPU_CLUSTER_COUNT; i++)
 			{
-				ADD_2_STK_RTN_FALSE_IF_CALL_FALSE(cluster[i].service_events(position, rpm)
+				cluster[i].service_events(position, rpm)
 					, cluster[i].ID, ERR_CPU_CLUSTER::BASE, ERR_CPU_CLUSTER::METHOD::service_events, ERR_CPU_CLUSTER::METHOD::child_service_events);
 			}
 			return true;
