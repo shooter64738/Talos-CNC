@@ -19,7 +19,6 @@
 */
 
 #include "c_spi_data_events.h"
-#include "../../Main/Main_Process.h"
 
 // default constructor
 c_spi_data_events::c_spi_data_events()

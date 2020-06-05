@@ -171,10 +171,10 @@ namespace Talos
 					//re-point the next gate to the next logical step.
 					//Segment::pntr_next_gate = Segment::__run_interpolation;
 				}
-				
+
 				static uint32_t holdit = 0;
 				static uint32_t axis_loop = MACHINE_AXIS_COUNT;
-				
+
 				uint16_t Segment::__run_interpolation()
 				{
 					uint32_t pending_pin_shutoff;
@@ -204,59 +204,52 @@ namespace Talos
 
 					/*STEPPER_PUL_PORT_DIRECT_REGISTER =
 						(STEPPER_PUL_PORT_DIRECT_REGISTER & ~STEP_MASK) | 1;*/
-					
 
-					/*_persisted.bresenham_counter[AXIS1] += _persisted.seg->common.bres_obj->steps[AXIS1];
-					if (_persisted.bresenham_counter[AXIS1] > _persisted.seg->common.bres_obj->major_axis)
-					{
-						_persisted.step_outbits |= (1 << AXIS1);
-						_persisted.bresenham_counter[AXIS1] -= _persisted.seg->common.bres_obj->major_axis;
-					}*/
-					//return; //5.47us here
 
-					//_persisted.bresenham_counter[AXIS2] += _persisted.seg->common.bres_obj->steps[AXIS2];
-					//if (_persisted.bresenham_counter[AXIS2] > _persisted.seg->common.bres_obj->major_axis)
-					//{
-					//	_persisted.step_outbits |= (1 << AXIS2);
-					//	_persisted.bresenham_counter[AXIS2] -= _persisted.seg->common.bres_obj->major_axis;
-					//}
-					////return; //7.13us here ~0.93
-					//_persisted.bresenham_counter[AXIS3] += _persisted.seg->common.bres_obj->steps[AXIS3];
-					//if (_persisted.bresenham_counter[AXIS3] > _persisted.seg->common.bres_obj->major_axis)
-					//{
-					//	_persisted.step_outbits |= (1 << AXIS3);
-					//	_persisted.bresenham_counter[AXIS3] -= _persisted.seg->common.bres_obj->major_axis;
-					//}
+						_persisted.bresenham_counter[AXIS1] += _persisted.seg->common.bres_obj->steps[AXIS1];
+						if (_persisted.bresenham_counter[AXIS1] > _persisted.seg->common.bres_obj->major_axis)
+						{
+							_persisted.step_outbits |= (1 << AXIS1);
+							_persisted.bresenham_counter[AXIS1] -= _persisted.seg->common.bres_obj->major_axis;
+						}
+						//return; //5.47us here
 
-					//_persisted.bresenham_counter[AXIS4] += _persisted.seg->common.bres_obj->steps[AXIS4];
-					//if (_persisted.bresenham_counter[AXIS4] > _persisted.seg->common.bres_obj->major_axis)
-					//{
-					//	_persisted.step_outbits |= (1 << AXIS4);
-					//	_persisted.bresenham_counter[AXIS4] -= _persisted.seg->common.bres_obj->major_axis;
-					//}
+						_persisted.bresenham_counter[AXIS2] += _persisted.seg->common.bres_obj->steps[AXIS2];
+						if (_persisted.bresenham_counter[AXIS2] > _persisted.seg->common.bres_obj->major_axis)
+						{
+							_persisted.step_outbits |= (1 << AXIS2);
+							_persisted.bresenham_counter[AXIS2] -= _persisted.seg->common.bres_obj->major_axis;
+						}
+						//return; //7.13us here ~0.93
+						_persisted.bresenham_counter[AXIS3] += _persisted.seg->common.bres_obj->steps[AXIS3];
+						if (_persisted.bresenham_counter[AXIS3] > _persisted.seg->common.bres_obj->major_axis)
+						{
+							_persisted.step_outbits |= (1 << AXIS3);
+							_persisted.bresenham_counter[AXIS3] -= _persisted.seg->common.bres_obj->major_axis;
+						}
 
-					//_persisted.bresenham_counter[AXIS5] += _persisted.seg->common.bres_obj->steps[AXIS5];
-					//if (_persisted.bresenham_counter[AXIS5] > _persisted.seg->common.bres_obj->major_axis)
-					//{
-					//	_persisted.step_outbits |= (1 << AXIS5);
-					//	_persisted.bresenham_counter[AXIS5] -= _persisted.seg->common.bres_obj->major_axis;
-					//}
+						_persisted.bresenham_counter[AXIS4] += _persisted.seg->common.bres_obj->steps[AXIS4];
+						if (_persisted.bresenham_counter[AXIS4] > _persisted.seg->common.bres_obj->major_axis)
+						{
+							_persisted.step_outbits |= (1 << AXIS4);
+							_persisted.bresenham_counter[AXIS4] -= _persisted.seg->common.bres_obj->major_axis;
+						}
 
-					//_persisted.bresenham_counter[AXIS6] += _persisted.seg->common.bres_obj->steps[AXIS6];
-					//if (_persisted.bresenham_counter[AXIS6] > _persisted.seg->common.bres_obj->major_axis)
-					//{
-					//	_persisted.step_outbits |= (1 << AXIS6);
-					//	_persisted.bresenham_counter[AXIS6] -= _persisted.seg->common.bres_obj->major_axis;
-					//}
+						_persisted.bresenham_counter[AXIS5] += _persisted.seg->common.bres_obj->steps[AXIS5];
+						if (_persisted.bresenham_counter[AXIS5] > _persisted.seg->common.bres_obj->major_axis)
+						{
+							_persisted.step_outbits |= (1 << AXIS5);
+							_persisted.bresenham_counter[AXIS5] -= _persisted.seg->common.bres_obj->major_axis;
+						}
 
-					if (holdit > 101594)
-					{
-					}
-					else
-					{
-						holdit++;
-						_persisted.seg->major_axis--;
-					}
+						_persisted.bresenham_counter[AXIS6] += _persisted.seg->common.bres_obj->steps[AXIS6];
+						if (_persisted.bresenham_counter[AXIS6] > _persisted.seg->common.bres_obj->major_axis)
+						{
+							_persisted.step_outbits |= (1 << AXIS6);
+							_persisted.bresenham_counter[AXIS6] -= _persisted.seg->common.bres_obj->major_axis;
+						}
+
+					_persisted.seg->major_axis--;
 
 					if (_persisted.seg->major_axis == 0)
 					{

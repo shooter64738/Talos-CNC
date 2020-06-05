@@ -10,7 +10,7 @@ then move to their respective modules.
 
 
 
-#include "Main_Process.h"
+#include "Coordinator_Process.h"
 #include "../../../NGC_RS274/NGC_Line_Processor.h"
 #include "../../../NGC_RS274/NGC_Tool.h"
 #include "../../../NGC_RS274/NGC_Coordinates.h"
@@ -23,48 +23,28 @@ then move to their respective modules.
 #include "../../../Shared_Data/_s_status_record.h"
 #include "../../../Shared_Data/Settings/Motion/_s_motion_control_settings_encapsulation.h"
 #include "../../../Configuration/c_configuration.h"
+#include "../../../talos_hardware_def.h"
 
 
 #include "../../../Shared_Data/Kernel/Base/c_kernel_base.h"
 
 using namespace Talos;
 
-c_Serial Coordinator::Main_Process::host_serial;
-c_Serial Coordinator::Main_Process::motion_serial;
-
-volatile uint8_t safe1 = 1;
-volatile uint8_t safe2 = 1;
-void Coordinator::Main_Process::initialize()
+volatile uint8_t safe11 = 1;
+volatile uint8_t safe12 = 1;
+void Coordinator::Main_Process::cord_initialize()
 {
-	while (safe1 == safe2)
+	while (safe11 == safe12)
 	{
 		int c = 0;
 	}
-	Hardware_Abstraction_Layer::Core::initialize();
 	
-	//Create a serial 'wrapper' to make writing strings and numbers easier.
-	//Assign the handle for the cpu's hardware buffer to a specific serial usart on the hardware.
-	Coordinator::Main_Process::host_serial = c_Serial(Kernel::CPU::host_id, 115200, &Kernel::CPU::cluster[Kernel::CPU::host_id].hw_data_buffer); //<--Connect to host
-	Coordinator::Main_Process::host_serial.print_string("Boot CPU 0:\r\n");
-	
-	Kernel::Base::f_initialize();
-	//init framework comms (not much going on in here yet)
-	Kernel::Comm::f_initialize(
-		Coordinator::Main_Process::debug_string,
-		Coordinator::Main_Process::debug_byte,
-		Coordinator::Main_Process::debug_int,
-		Coordinator::Main_Process::debug_float,
-		Coordinator::Main_Process::debug_float_dec);
-	//init framwork cpus (assign an ID number to each cpu object. Init the data buffers
-	Kernel::CPU::f_initialize(
-		HOST_CPU_ID, CORD_CPU_ID, MACH_CPU_ID, SPDL_CPU_ID, PRPH_CPU_ID, Hardware_Abstraction_Layer::Core::cpu_tick_ms);
-	
-	Hardware_Abstraction_Layer::Disk::initialize(Coordinator::Main_Process::debug_string);
+	Hardware_Abstraction_Layer::Disk::initialize(NULL);
 
-	Coordinator::Main_Process::host_serial.print_string("Settings load.\r\n");
+//	Coordinator::Main_Process::host_serial.print_string("Settings load.\r\n");
 	Talos::Configuration::initialize();
 	
-	Coordinator::Main_Process::host_serial.print_string("Ready to process:\r\n");
+//	Coordinator::Main_Process::host_serial.print_string("Ready to process:\r\n");
 	
 																																				 //Coordinator::Main_Process::host_serial.print_string("hello world!\r\n");
 	while (1)
@@ -191,51 +171,7 @@ void Coordinator::Main_Process::initialize()
 
 }
 
-void Talos::Coordinator::Main_Process::__critical_initialization(const char* message, init_function initialization_pointer, uint8_t critical)
-{
-	Talos::Coordinator::Main_Process::host_serial.print_string(message);
-	Talos::Coordinator::Main_Process::host_serial.print_string("...");
-	if (initialization_pointer)
-	{
-		__initialization_response(initialization_pointer(), critical);
-	}
-	else
-	{
-		Talos::Coordinator::Main_Process::host_serial.print_string("Not Available\r\n");
-	}
-
-}
-
-void Talos::Coordinator::Main_Process::__initialization_response(uint8_t response_code, uint8_t critical)
-{
-	//response codes that are not 0, are fatal at start up
-	if (response_code)
-	{
-		Talos::Coordinator::Main_Process::host_serial.print_string("FAILED! Err Cd:");
-		Talos::Coordinator::Main_Process::host_serial.print_int32(response_code);
-		Talos::Coordinator::Main_Process::host_serial.print_string("\r\n");
-
-		if (critical)
-		{
-			Talos::Coordinator::Main_Process::host_serial.print_string("** System halted **");
-			while (1) {}
-		}
-		Talos::Coordinator::Main_Process::host_serial.print_string("\t** System warning **\r\n");
-	}
-	else
-	{
-		Talos::Coordinator::Main_Process::host_serial.print_string("OK.\r\n");
-	}
-}
-volatile uint32_t tick_at_time = 0;
-
-//ISR (TIMER5_COMPA_vect)
-//{
-//UDR0='A';
-//Talos::Shared::FrameWork::Events::Router.ready.event_manager.set((int)c_event_router::ss_ready_data::e_event_type::Testsignal);
-//}
-
-void Talos::Coordinator::Main_Process::run()
+void Talos::Coordinator::Main_Process::cord_run()
 {
 	//	Talos::Coordinator::Main_Process::host_serial.print_string("\r\n** System ready **\r\n");
 	//	
@@ -298,25 +234,4 @@ void Talos::Coordinator::Main_Process::run()
 	//
 	//	Talos::Coordinator::Main_Process::host_serial.print_string("\r\n** System halted **");
 	//	while (1) {}
-}
-
-void Talos::Coordinator::Main_Process::debug_string(int port, const char* data)
-{
-	Talos::Coordinator::Main_Process::host_serial.print_string(data);
-}
-void Talos::Coordinator::Main_Process::debug_int(int port, long data)
-{
-	Talos::Coordinator::Main_Process::host_serial.print_int32(data);
-}
-void Talos::Coordinator::Main_Process::debug_byte(int port, const char data)
-{
-	Talos::Coordinator::Main_Process::host_serial.Write(data);
-}
-void Talos::Coordinator::Main_Process::debug_float(int port, float data)
-{
-	Talos::Coordinator::Main_Process::host_serial.print_float(data);
-}
-void Talos::Coordinator::Main_Process::debug_float_dec(int port, float data, uint8_t decimals)
-{
-	Talos::Coordinator::Main_Process::host_serial.print_float(data, decimals);
 }

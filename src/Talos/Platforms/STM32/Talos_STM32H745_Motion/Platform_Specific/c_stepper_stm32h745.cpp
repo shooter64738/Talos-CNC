@@ -24,7 +24,7 @@ namespace Hardware_Abstraction_Layer
 			step_timer_config();
 		}
 
-		volatile static uint16_t on_time = 180;
+		volatile static uint16_t on_time = 300;
 		volatile static uint32_t delay_time = 100;
 		volatile static bool serviced = false;
 		volatile static uint16_t port_bits;

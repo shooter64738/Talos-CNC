@@ -33,6 +33,8 @@ namespace Talos
 			CPU::cluster[motion_id].initialize(host_id, cpu_tick_timer_ms);
 			CPU::cluster[spindle_id].initialize(host_id, cpu_tick_timer_ms);
 			CPU::cluster[peripheral_id].initialize(host_id, cpu_tick_timer_ms);
+
+
 			return true;
 		}
 

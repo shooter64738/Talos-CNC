@@ -19,7 +19,6 @@
 */
 
 #include "c_network_data_events.h"
-#include "../../Main/Main_Process.h"
 
 // default constructor
 c_network_data_events::c_network_data_events()

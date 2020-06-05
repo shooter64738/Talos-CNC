@@ -19,12 +19,7 @@
 */
 
 #include "c_ancillary_event_handler.h"
-#include "../../Main/Main_Process.h"
-//#include "../../../../Shared_Data/FrameWork/extern_events_types.h"
 #include "../../../../communication_def.h"
-
-//#include "../../../../Motion/Processing/GCode/c_gcode_buffer.h"
-
 
 void c_ancillary_event_handler::process()
 {
