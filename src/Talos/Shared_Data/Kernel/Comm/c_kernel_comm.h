@@ -31,6 +31,7 @@ namespace Talos
 
 			static void put(uint8_t port, uint8_t byte);
 			static void write(uint8_t port, uint8_t* byte);
+			static void print(uint8_t port, char* byte);
 			static void print_int32(uint8_t port, int32_t value);
 			static void print_float(uint8_t port, float n, uint8_t decimal_places);
 			//static void print(uint8_t port, uint8_t* byte);

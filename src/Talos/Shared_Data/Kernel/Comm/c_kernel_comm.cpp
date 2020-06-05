@@ -49,6 +49,16 @@ namespace Talos
 			//Write(Buffer[i]);
 		}
 
+		void Comm::print(uint8_t port, char* Buffer)
+		{
+			while (*Buffer != 0)
+				put(port, *Buffer++);
+
+			//int size =256;
+			//for (int i=0;i<size;i++)
+			//Write(Buffer[i]);
+		}
+
 		void Comm::__print_uint32_base10(uint8_t port, uint32_t n)
 		{
 			if (n == 0)

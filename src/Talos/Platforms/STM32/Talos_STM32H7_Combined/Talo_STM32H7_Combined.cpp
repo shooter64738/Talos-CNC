@@ -47,7 +47,7 @@ int main(void)
 		//init framwork cpus (assign an ID number to each cpu object. Init the data buffers
 		Kernel::CPU::f_initialize(
 			HOST_CPU_ID, CORD_CPU_ID, MACH_CPU_ID, SPDL_CPU_ID, PRPH_CPU_ID, Hardware_Abstraction_Layer::Core::cpu_tick_ms);
-
+		Kernel::Comm::print(0,"Hello\r\n");
 	Coordinator::Main_Process::cord_initialize();
 	Motion::Main_Process::mot_initialize();
 }

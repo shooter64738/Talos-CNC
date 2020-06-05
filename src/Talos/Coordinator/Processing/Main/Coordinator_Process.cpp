@@ -34,17 +34,12 @@ volatile uint8_t safe11 = 1;
 volatile uint8_t safe12 = 1;
 void Coordinator::Main_Process::cord_initialize()
 {
-	while (safe11 == safe12)
-	{
-		int c = 0;
-	}
 	
 	Hardware_Abstraction_Layer::Disk::initialize(NULL);
 
-//	Coordinator::Main_Process::host_serial.print_string("Settings load.\r\n");
-	Talos::Configuration::initialize();
+
+	//Talos::Configuration::initialize();
 	
-//	Coordinator::Main_Process::host_serial.print_string("Ready to process:\r\n");
 	
 																																				 //Coordinator::Main_Process::host_serial.print_string("hello world!\r\n");
 	while (1)

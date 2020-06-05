@@ -22,12 +22,6 @@ volatile uint8_t safe22 = 1;
 
 void Talos::Motion::Main_Process::mot_initialize()
 {
-#ifndef MSVC
-	while (safe21 == safe22)
-	{
-		int c = 0;
-	}
-#endif
 
 	Hardware_Abstraction_Layer::MotionCore::Stepper::initialize();
 }

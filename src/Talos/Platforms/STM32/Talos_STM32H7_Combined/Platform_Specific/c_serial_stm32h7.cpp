@@ -11,6 +11,7 @@
 #include <stm32h7xx_hal.h>
 #include <stm32_hal_legacy.h>
 
+#define HOST_USART USART1
 
 namespace Hardware_Abstraction_Layer
 {
@@ -46,20 +47,20 @@ namespace Hardware_Abstraction_Layer
 
 	void Serial::__init_host_gpio()
 	{
-		__GPIOD_CLK_ENABLE();
+		__GPIOA_CLK_ENABLE();
 
 		GPIO_InitTypeDef GPIO_InitStructure;
 
-		GPIO_InitStructure.Pin = GPIO_PIN_8;
+		GPIO_InitStructure.Pin = GPIO_PIN_9;
 		GPIO_InitStructure.Mode = GPIO_MODE_AF_PP;
 		GPIO_InitStructure.Alternate = GPIO_AF7_USART3;
 		GPIO_InitStructure.Speed = GPIO_SPEED_HIGH;
 		GPIO_InitStructure.Pull = GPIO_NOPULL;
-		HAL_GPIO_Init(GPIOD, &GPIO_InitStructure);
+		HAL_GPIO_Init(GPIOA, &GPIO_InitStructure);
 
-		GPIO_InitStructure.Pin = GPIO_PIN_9;
+		GPIO_InitStructure.Pin = GPIO_PIN_10;
 		GPIO_InitStructure.Mode = GPIO_MODE_AF_OD;
-		HAL_GPIO_Init(GPIOD, &GPIO_InitStructure);
+		HAL_GPIO_Init(GPIOA, &GPIO_InitStructure);
 	}
 	static uint8_t byte = 0;
 	void Serial::__init_host_comm(c_ring_buffer<char>* buffer)
@@ -69,8 +70,8 @@ namespace Hardware_Abstraction_Layer
 
 		__init_host_gpio();
 
-		__USART3_CLK_ENABLE();
-		s_HostUARTHandle.Instance = USART3;
+		__USART1_CLK_ENABLE();
+		s_HostUARTHandle.Instance = HOST_USART;
 		s_HostUARTHandle.Init.BaudRate = 115200;
 		s_HostUARTHandle.Init.WordLength = UART_WORDLENGTH_8B;
 		s_HostUARTHandle.Init.StopBits = UART_STOPBITS_1;
@@ -90,7 +91,7 @@ namespace Hardware_Abstraction_Layer
 
 		//HAL_UART_Receive_IT(&s_UARTHandle, &byte, 1);
 
-		SET_BIT(USART3->CR1, USART_CR1_PEIE | USART_CR1_RXNEIE_RXFNEIE);
+		SET_BIT(HOST_USART->CR1, USART_CR1_PEIE | USART_CR1_RXNEIE_RXFNEIE);
 	}
 
 
@@ -145,11 +146,11 @@ extern "C"
 void USART3_IRQHandler()
 {
 	//HAL_UART_IRQHandler(&s_UARTHandle);
-	uint32_t IIR = USART3->ISR;   //<--flag clears when we read the ISR
+	uint32_t IIR = HOST_USART->ISR;   //<--flag clears when we read the ISR
 	if (IIR & USART_FLAG_RXNE) //<-- check to see if this is an RXNE (read data register not empty
 	{
 		// read interrupt
-		char byte = USART3->RDR;
+		char byte = HOST_USART->RDR;
 		Hardware_Abstraction_Layer::Serial::host_ring_buffer->put(byte);
 		////USART3->ISR &= ~USART_FLAG_RXNE;	          // clear interrupt
 		//uint8_t buffer[] = "XX";
