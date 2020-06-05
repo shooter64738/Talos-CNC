@@ -77,14 +77,17 @@
     <ClCompile Include="..\..\..\..\Motion\NewCore\c_segment_to_hardware.cpp">
       <Filter>Motion\NewCore</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\Motion\NewCore\c_state_control.cpp">
-      <Filter>Motion\NewCore</Filter>
-    </ClCompile>
     <ClCompile Include="Platform_Specific\c_stepper_win.cpp">
       <Filter>Platform_Specific</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\..\NGC_RS274\NGC_Block_View.cpp">
       <Filter>Ngc_Rs274</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Motion\Processing\State_Control\c_motion_state_control.cpp">
+      <Filter>Motion\Processing\State_Control</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Coordinator\Processing\State_Control\c_coordinator_state_control.cpp">
+      <Filter>Coordinator\Processing\State_Control</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -151,14 +154,14 @@
     <Filter Include="Motion\Processing\Main">
       <UniqueIdentifier>{d4307aef-bfae-49b8-8bdc-1cbad100bb01}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Motion\Processing\Events">
-      <UniqueIdentifier>{e3022e98-6262-448f-adc3-2b166b564553}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Motion\Processing\Data">
-      <UniqueIdentifier>{8f727894-f450-4285-a2f7-c484184a5253}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Ngc_Rs274">
       <UniqueIdentifier>{1db3fccf-bc42-43f0-ba7c-4d78db81d750}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Motion\Processing\State_Control">
+      <UniqueIdentifier>{b70d93c8-5a64-4932-b505-988a982c45d1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Coordinator\Processing\State_Control">
+      <UniqueIdentifier>{3ce4a244-669d-4947-9268-65a9da2a5f52}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -276,9 +279,6 @@
     <ClInclude Include="..\..\..\..\Motion\NewCore\c_segment_to_hardware.h">
       <Filter>Motion\NewCore</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Motion\NewCore\c_state_control.h">
-      <Filter>Motion\NewCore</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\..\Motion\NewCore\support_items\d_buffer_size_defs.h">
       <Filter>Motion\NewCore\support_items</Filter>
     </ClInclude>
@@ -330,10 +330,19 @@
     <ClInclude Include="..\..\..\..\NGC_RS274\ngc_block_view.h">
       <Filter>Ngc_Rs274</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\..\Motion\Processing\State_Control\c_motion_state_control.h">
+      <Filter>Motion\Processing\State_Control</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Coordinator\Processing\State_Control\c_coordinator_state_control.h">
+      <Filter>Coordinator\Processing\State_Control</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="..\..\..\..\Motion\NewCore\description.txt">
-      <Filter>Motion\NewCore</Filter>
+    <Text Include="..\..\..\..\Motion\Processing\State_Control\description.txt">
+      <Filter>Motion\Processing\State_Control</Filter>
+    </Text>
+    <Text Include="..\..\..\..\Coordinator\Processing\State_Control\description.txt">
+      <Filter>Coordinator\Processing\State_Control</Filter>
     </Text>
   </ItemGroup>
 </Project>

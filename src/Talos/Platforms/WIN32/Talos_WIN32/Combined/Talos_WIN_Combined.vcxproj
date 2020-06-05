@@ -150,13 +150,14 @@
     <ClCompile Include="..\..\..\..\Coordinator\Processing\Data\DataHandlers\c_ngc_data_handler.cpp" />
     <ClCompile Include="..\..\..\..\Coordinator\Processing\Data\DataHandlers\c_system_data_handler.cpp" />
     <ClCompile Include="..\..\..\..\Coordinator\Processing\Main\Coordinator_Process.cpp" />
+    <ClCompile Include="..\..\..\..\Coordinator\Processing\State_Control\c_coordinator_state_control.cpp" />
     <ClCompile Include="..\..\..\..\Motion\NewCore\c_block_to_segment.cpp" />
     <ClCompile Include="..\..\..\..\Motion\NewCore\c_hardware_out.cpp" />
     <ClCompile Include="..\..\..\..\Motion\NewCore\c_kin.cpp" />
     <ClCompile Include="..\..\..\..\Motion\NewCore\c_ngc_to_block.cpp" />
     <ClCompile Include="..\..\..\..\Motion\NewCore\c_segment_to_hardware.cpp" />
-    <ClCompile Include="..\..\..\..\Motion\NewCore\c_state_control.cpp" />
     <ClCompile Include="..\..\..\..\Motion\Processing\Main\Motion_Process.cpp" />
+    <ClCompile Include="..\..\..\..\Motion\Processing\State_Control\c_motion_state_control.cpp" />
     <ClCompile Include="..\..\..\..\NGC_RS274\NGC_Block_View.cpp" />
     <ClCompile Include="..\..\..\..\Shared_Data\Kernel\Base\c_kernel_base.cpp" />
     <ClCompile Include="..\..\..\..\Shared_Data\Kernel\Comm\c_kernel_comm.cpp" />
@@ -182,13 +183,13 @@
     <ClInclude Include="..\..\..\..\Coordinator\Processing\Data\DataHandlers\c_ngc_data_handler.h" />
     <ClInclude Include="..\..\..\..\Coordinator\Processing\Data\DataHandlers\c_system_data_handler.h" />
     <ClInclude Include="..\..\..\..\Coordinator\Processing\Main\Coordinator_Process.h" />
+    <ClInclude Include="..\..\..\..\Coordinator\Processing\State_Control\c_coordinator_state_control.h" />
     <ClInclude Include="..\..\..\..\c_ring_template.h" />
     <ClInclude Include="..\..\..\..\Motion\NewCore\c_block_to_segment.h" />
     <ClInclude Include="..\..\..\..\Motion\NewCore\c_hardware_out.h" />
     <ClInclude Include="..\..\..\..\Motion\NewCore\c_kin.h" />
     <ClInclude Include="..\..\..\..\Motion\NewCore\c_ngc_to_block.h" />
     <ClInclude Include="..\..\..\..\Motion\NewCore\c_segment_to_hardware.h" />
-    <ClInclude Include="..\..\..\..\Motion\NewCore\c_state_control.h" />
     <ClInclude Include="..\..\..\..\Motion\NewCore\support_items\d_buffer_size_defs.h" />
     <ClInclude Include="..\..\..\..\Motion\NewCore\support_items\e_ramp_states.h" />
     <ClInclude Include="..\..\..\..\Motion\NewCore\support_items\e_state_flag.h" />
@@ -204,6 +205,7 @@
     <ClInclude Include="..\..\..\..\Motion\NewCore\support_items\s_spindle_block.h" />
     <ClInclude Include="..\..\..\..\Motion\NewCore\support_items\s_timer_item.h" />
     <ClInclude Include="..\..\..\..\Motion\Processing\Main\Motion_Process.h" />
+    <ClInclude Include="..\..\..\..\Motion\Processing\State_Control\c_motion_state_control.h" />
     <ClInclude Include="..\..\..\..\NGC_RS274\ngc_block_view.h" />
     <ClInclude Include="..\..\..\..\NGC_RS274\_ngc_block_struct.h" />
     <ClInclude Include="..\..\..\..\physical_machine_parameters.h" />
@@ -235,7 +237,8 @@
     <ClInclude Include="Platform_Specific\sys_timer_configs.h" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="..\..\..\..\Motion\NewCore\description.txt" />
+    <Text Include="..\..\..\..\Coordinator\Processing\State_Control\description.txt" />
+    <Text Include="..\..\..\..\Motion\Processing\State_Control\description.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

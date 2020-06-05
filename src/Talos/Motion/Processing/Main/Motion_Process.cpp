@@ -14,7 +14,7 @@ testing
 */
 #include "../../NewCore/c_ngc_to_block.h"
 //#include "../../NewCore/c_block_to_segment.h"
-#include "../../NewCore/c_state_control.h"
+#include "../State_Control/c_state_control.h"
 
 void Talos::Motion::Main_Process::mot_initialize()
 {
