@@ -10,7 +10,7 @@
 #include "../../NGC_RS274/_ngc_g_groups.h";
 #include "c_block_to_segment.h"
 #include "../../Configuration/c_configuration.h"
-#include "c_state_control.h"
+#include "..//Processing/State_Control/c_motion_state_control.h"
 #include <math.h>
 #include <string.h>
 #include "../../_bit_manipulation.h"

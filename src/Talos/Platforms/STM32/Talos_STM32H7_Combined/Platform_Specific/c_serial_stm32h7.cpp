@@ -53,9 +53,9 @@ namespace Hardware_Abstraction_Layer
 
 		GPIO_InitStructure.Pin = GPIO_PIN_9;
 		GPIO_InitStructure.Mode = GPIO_MODE_AF_PP;
-		GPIO_InitStructure.Alternate = GPIO_AF7_USART3;
+		GPIO_InitStructure.Alternate = GPIO_AF7_USART1;
 		GPIO_InitStructure.Speed = GPIO_SPEED_HIGH;
-		GPIO_InitStructure.Pull = GPIO_NOPULL;
+		GPIO_InitStructure.Pull = GPIO_PULLUP;
 		HAL_GPIO_Init(GPIOA, &GPIO_InitStructure);
 
 		GPIO_InitStructure.Pin = GPIO_PIN_10;
@@ -71,7 +71,9 @@ namespace Hardware_Abstraction_Layer
 		__init_host_gpio();
 
 		__USART1_CLK_ENABLE();
-		s_HostUARTHandle.Instance = HOST_USART;
+	
+
+		/*s_HostUARTHandle.Instance = HOST_USART;
 		s_HostUARTHandle.Init.BaudRate = 115200;
 		s_HostUARTHandle.Init.WordLength = UART_WORDLENGTH_8B;
 		s_HostUARTHandle.Init.StopBits = UART_STOPBITS_1;
@@ -81,32 +83,55 @@ namespace Hardware_Abstraction_Layer
 		s_HostUARTHandle.Init.OverSampling = UART_OVERSAMPLING_16;
 
 		if (HAL_UART_Init(&s_HostUARTHandle) != HAL_OK)
-			asm("bkpt 255");
+			asm("bkpt 255");*/
+
+		//set word length. 2 bits
+		USART1->CR1 &= ~(USART_CR1_M0);	//00 = 1s,8d,Ns
+		USART1->CR1 &= ~(USART_CR1_M1);	//01 = 1s,9d,Ns
+										//10 = 1s,7d,Ns
+		//set stop bits
+		USART1->CR2 &= ~(USART_CR2_STOP_0 | USART_CR2_STOP_1);	//00=1 stop bit
+																//01=.5 stop bit
+																//10=2 stop bit
+																//11=1.5 stop bit
+		//set parity
+		USART1->CR1 &= ~(USART_CR1_PCE);	//0=parity control disabled
+											//1=parity control enabled
+		
+		//set msb/lsb
+		USART1->CR2 &= ~(USART_CR2_MSBFIRST);	//0=0 bit first
+												//1=7/8 bit first
+		
+		//set flow hw control
+		USART1->CR3 &= ~(USART_CR3_RTSE | USART_CR3_CTSE); //0=turn of ready to send and clear to send
+
+		//set tx/rx enable
+		USART1->CR1 |= (USART_CR1_RE | USART_CR1_TE);	//enable transmit and receive
+
+		//set over sampling
+		USART1->CR1 &= ~(USART_CR1_OVER8);	//0=over sample by 16
+											//1=over sample by 8
+
+		//set interrupts
+		USART1->CR1 |= (USART_CR1_RXNEIE_RXFNEIE); //enable interrupts
+
+		//set FIFO
+		USART1->CR1 &= ~(USART_CR1_FIFOEN);
+		
+		uint32_t Baud = 9600;
+		//set baud rate
+		//((clkspeed/prescaler) + (baudrate/2))/baudrate
+		USART1->BRR = ((HAL_RCC_GetPCLK2Freq() / 1) + (Baud / 2U)) / Baud;
+		USART1->CR1 |= (USART_CR1_UE);
 
 		/* Peripheral interrupt init*/
-		HAL_NVIC_SetPriority(USART3_IRQn, 0, 0);
-		HAL_NVIC_EnableIRQ(USART3_IRQn);
+		HAL_NVIC_SetPriority(USART1_IRQn, 0, 0);
+		HAL_NVIC_EnableIRQ(USART1_IRQn);
 
 		host_com_init = true;
 
-		//HAL_UART_Receive_IT(&s_UARTHandle, &byte, 1);
-
-		SET_BIT(HOST_USART->CR1, USART_CR1_PEIE | USART_CR1_RXNEIE_RXFNEIE);
+		//SET_BIT(HOST_USART->CR1, USART_CR1_PEIE | USART_CR1_RXNEIE_RXFNEIE);
 	}
-
-
-	/////* This callback is called by the HAL_UART_IRQHandler when the given number of bytes are received */
-	//void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart)
-	//{
-	//	if (huart->Instance == USART3)
-	//	{
-	//		/* Transmit one byte with 100 ms timeout */
-	//		//HAL_UART_Transmit(&s_UARTHandle, &byte, 1, 100);
-	//
-	//		/* Receive one byte in interrupt mode */
-	//		HAL_UART_Receive_IT(&s_HostUARTHandle, &byte, 1);
-	//	}
-	//}
 
 	uint8_t Serial::send(uint8_t Port, uint8_t* byte)
 	{
@@ -117,8 +142,8 @@ namespace Hardware_Abstraction_Layer
 			if (host_com_init)
 			{
 				//Wait until we are not transmitting
-				while (!(s_HostUARTHandle.Instance->ISR & UART_FLAG_TC));
-				s_HostUARTHandle.Instance->TDR = (uint8_t)(*byte);
+				while (!(HOST_USART->ISR & UART_FLAG_TC));
+				HOST_USART->TDR = (uint8_t)(*byte);
 			}
 			break;
 		case CORD_CPU_ID:
@@ -143,18 +168,13 @@ namespace Hardware_Abstraction_Layer
 #ifdef __cplusplus
 extern "C"
 #endif
-void USART3_IRQHandler()
+void USART1_IRQHandler()
 {
-	//HAL_UART_IRQHandler(&s_UARTHandle);
 	uint32_t IIR = HOST_USART->ISR;   //<--flag clears when we read the ISR
-	if (IIR & USART_FLAG_RXNE) //<-- check to see if this is an RXNE (read data register not empty
+	if ((IIR & USART_FLAG_RXNE)!=0) //<-- check to see if this is an RXNE (read data register not empty
 	{
-		// read interrupt
-		char byte = HOST_USART->RDR;
+		uint8_t byte = (uint8_t)(HOST_USART->RDR & 0x1FF);
 		Hardware_Abstraction_Layer::Serial::host_ring_buffer->put(byte);
-		////USART3->ISR &= ~USART_FLAG_RXNE;	          // clear interrupt
-		//uint8_t buffer[] = "XX";
-		//HAL_UART_Transmit(&s_HostUARTHandle, buffer, sizeof(buffer), HAL_MAX_DELAY);
+		Hardware_Abstraction_Layer::Serial::send(0, &byte);
 	}
-
 }

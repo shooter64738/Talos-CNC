@@ -51,7 +51,8 @@ uint8_t Core::initialize()
 {
 	*Hardware_Abstraction_Layer::Core::cpu_tick_ms = 0;
 	HAL_Init();
-	SystemClock_Config_SPI_USART3();
+	//SystemClock_Config_SPI_USART3();
+	SystemClock_Config_Again();
 	return 0;
 }
 uint8_t Core::start_interrupts()

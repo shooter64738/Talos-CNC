@@ -46,8 +46,8 @@ namespace Talos
 			uint16_t rpm = cluster[spindle_id].sys_message.rpm;
 			for (uint8_t i = 0; i < CPU_CLUSTER_COUNT; i++)
 			{
-				cluster[i].service_events(position, rpm)
-					, cluster[i].ID, ERR_CPU_CLUSTER::BASE, ERR_CPU_CLUSTER::METHOD::service_events, ERR_CPU_CLUSTER::METHOD::child_service_events);
+				cluster[i].service_events(position, rpm);
+					//, cluster[i].ID, ERR_CPU_CLUSTER::BASE, ERR_CPU_CLUSTER::METHOD::service_events, ERR_CPU_CLUSTER::METHOD::child_service_events);
 			}
 			return true;
 		}

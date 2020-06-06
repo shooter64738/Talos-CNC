@@ -997,9 +997,6 @@
     <ClCompile Include="..\..\..\Shared_Data\Kernel\CPU\c_cpu.cpp">
       <Filter>Shared_Data\Kernel\CPU</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Shared_Data\Kernel\CPU\c_data_handler.cpp">
-      <Filter>Shared_Data\Kernel\CPU</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\Shared_Data\Kernel\CPU\c_kernel_cpu.cpp">
       <Filter>Shared_Data\Kernel\CPU</Filter>
     </ClCompile>
@@ -1210,9 +1207,6 @@
       <Filter>Shared_Data\Kernel\Comm</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Shared_Data\Kernel\CPU\c_cpu.h">
-      <Filter>Shared_Data\Kernel\CPU</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Shared_Data\Kernel\CPU\c_data_handler.h">
       <Filter>Shared_Data\Kernel\CPU</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Shared_Data\Kernel\CPU\c_kernel_cpu.h">

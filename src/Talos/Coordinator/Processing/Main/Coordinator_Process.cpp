@@ -27,6 +27,7 @@ then move to their respective modules.
 
 
 #include "../../../Shared_Data/Kernel/Base/c_kernel_base.h"
+#include "../State_Control/c_coordinator_state_control.h"
 
 using namespace Talos;
 
@@ -34,139 +35,16 @@ volatile uint8_t safe11 = 1;
 volatile uint8_t safe12 = 1;
 void Coordinator::Main_Process::cord_initialize()
 {
-	
-	Hardware_Abstraction_Layer::Disk::initialize(NULL);
-
-
-	//Talos::Configuration::initialize();
-	
-	
-																																				 //Coordinator::Main_Process::host_serial.print_string("hello world!\r\n");
-	while (1)
-	{
-		//check the error stack
-		if (!Kernel::CPU::service_events())
-		{
-			Kernel::Error::report_stack_trace();
-			s_error_stack stack = Kernel::Error::error_stack[0].stack;
-			int x = 0;
-
-		}
-		if (Kernel::CPU::cluster[HOST_CPU_ID].host_events.Inquiry._flag > 0)
-		{
-			Kernel::Report::process(Talos::Coordinator::Data::Ngc::active_block);
-		}
-		
-
-	}
-	//	//Setup the ports and function pointers so we know which cpu is talking and we can report back debug data
-	//	Talos::Shared::FrameWork::StartUp::initialize(0, 0, 1, 2, 3
-	//	, Talos::Coordinator::Main_Process::debug_string
-	//	, Talos::Coordinator::Main_Process::debug_byte
-	//	, Talos::Coordinator::Main_Process::debug_int
-	//	, Talos::Coordinator::Main_Process::debug_float
-	//	, Talos::Coordinator::Main_Process::debug_float_dec
-	//	, &Hardware_Abstraction_Layer::Core::cpu_tick_ms );
-	//	
-	//	//Talos::Coordinator::Main_Process::__configure_ports();
-	//	Talos::Coordinator::Main_Process::host_serial = c_Serial(Talos::Shared::FrameWork::StartUp::cpu_type.Host, 500000); //<--Connect to host
-	//	Talos::Coordinator::Main_Process::motion_serial = c_Serial(Talos::Shared::FrameWork::StartUp::cpu_type.Motion, 500000); //<--Connect to motion
-	//	Talos::Coordinator::Main_Process::host_serial.print_string("Coordinator initializing\r\n");
-	//		
-	//	__critical_initialization("Core", Hardware_Abstraction_Layer::Core::initialize, STARTUP_CLASS_CRITICAL);//<--core start up
-	//	__critical_initialization("Interrupts", Hardware_Abstraction_Layer::Core::start_interrupts, STARTUP_CLASS_CRITICAL);//<--start interrupts on hardware
-	//	__critical_initialization("Disk", Hardware_Abstraction_Layer::Disk::initialize, STARTUP_CLASS_CRITICAL);//<--drive/eprom storage
-	//	__critical_initialization("\tSettings", Hardware_Abstraction_Layer::Disk::load_configuration, STARTUP_CLASS_WARNING);//<--drive/eprom storage
-	//	__critical_initialization("\tConfiguration", Talos::Confguration::initialize, STARTUP_CLASS_CRITICAL);//<--g code buffer
-	//	
-	//	
-	//	//__critical_initialization("Events", Talos::Shared::Events::initialize, STARTUP_CLASS_CRITICAL);//<--init system_events
-	//	//__critical_initialization("Data Buffer", Talos::Motion::NgcBuffer::initialize,STARTUP_CLASS_CRITICAL);//<--g code buffer
-	//	//__critical_initialization("Data Startup", c_ngc_data_handler::initialize, STARTUP_CLASS_CRITICAL);//<--g code buffer
-	//	//__critical_initialization("Data Line", NGC_RS274::LineProcessor::initialize,STARTUP_CLASS_CRITICAL);//<--g code interpreter
-	//
-	//	//Load the motion control settings from disk
-	//	Hardware_Abstraction_Layer::Disk::load_motion_control_settings(&Talos::Shared::c_cache_data::motion_configuration_record);
-	//	//Now try to comm with the motion controller so we can give it operatng parameters.
-	//	//__critical_initialization("Motion Control Comms", Talos::Coordinator::Main_Process::motion_initialize, STARTUP_CLASS_WARNING);//<--motion controller card
-	//
-	//	//__critical_initialization("Spindle Control Comms", NULL, STARTUP_CLASS_WARNING);//<--spindle controller card
-	//
-	//	//Talos::Shared::FrameWork::StartUp::print_rx_diagnostic = true;
-	//	//Talos::Shared::FrameWork::StartUp::print_tx_diagnostic = true;
-	//	
-	//	Talos::Shared::FrameWork::StartUp::CpuCluster[Talos::Shared::FrameWork::StartUp::cpu_type.Motion].Synch(
-	//	e_system_message::messages::e_data::MotionConfiguration
-	//	, e_system_message::e_status_type::Inquiry
-	//	, (int)e_system_message::messages::e_data::SystemRecord
-	//	, e_system_message::e_status_type::Data, true);
-	//	
-	//	//Hardware_Abstraction_Layer::Core::delay_ms(2000);
-	//	//Talos::Shared::FrameWork::Data::System::send((int)e_system_message::messages::e_informal::SpindleAvailable //message id #
-	//	//, (int)e_system_message::e_status_type::Informal //data type id #
-	//	//, Talos::Shared::FrameWork::StartUp::cpu_type.Host //origin of the message
-	//	//, Talos::Shared::FrameWork::StartUp::cpu_type.Motion //destination of the message
-	//	//, (int)e_system_message::e_status_state::motion::e_state::Idle //state
-	//	//, (int)e_system_message::e_status_state::motion::e_sub_state::OK //sub state
-	//	//, NULL //position data
-	//	//);
-	//	//
-	//	//Hardware_Abstraction_Layer::Core::delay_ms(2000);
-	//	//Talos::Shared::FrameWork::Data::System::send((int)e_system_message::messages::e_informal::Reboot //message id #
-	//	//, (int)e_system_message::e_status_type::Informal //data type id #
-	//	//, Talos::Shared::FrameWork::StartUp::cpu_type.Host //origin of the message
-	//	//, Talos::Shared::FrameWork::StartUp::cpu_type.Motion //destination of the message
-	//	//, (int)e_system_message::e_status_state::motion::e_state::Idle //state
-	//	//, (int)e_system_message::e_status_state::motion::e_sub_state::OK //sub state
-	//	//, NULL //position data
-	//	//);
-	//
-	//	//Load the initialize block from settings. These values are the 'initial' values of the gcode blocks
-	//	//that are processed.
-	//	Hardware_Abstraction_Layer::Disk::load_initialize_block(&Talos::Shared::c_cache_data::ngc_block_record);
-	//
-	//
-	//	//Assign the read,write function pointers. These assignments must take place outside the
-	//	//block buffer control. The block buffer control system must not know anything about the HAL it
-	//	//is servicing.
-	//	Talos::Shared::c_cache_data::pntr_write_ngc_block_record = Hardware_Abstraction_Layer::Disk::put_block;
-	//	Talos::Shared::c_cache_data::pntr_read_ngc_block_record = Hardware_Abstraction_Layer::Disk::get_block;
-	//	//Write the start up block to cache
-	//	Talos::Shared::c_cache_data::pntr_write_ngc_block_record(&Talos::Shared::c_cache_data::ngc_block_record);
-	//
-	//	//setup the tool table controller
-	//	NGC_RS274::Tool_Control::Table::pntr_tool_table_read = Hardware_Abstraction_Layer::Disk::get_tool;
-	//	NGC_RS274::Tool_Control::Table::pntr_tool_table_write = Hardware_Abstraction_Layer::Disk::put_tool;
-	//
-	//	//setup the wcs controller
-	//	NGC_RS274::Coordinate_Control::WCS::pntr_wcs_read = Hardware_Abstraction_Layer::Disk::get_wcs;
-	//	NGC_RS274::Coordinate_Control::WCS::pntr_wcs_write = Hardware_Abstraction_Layer::Disk::put_wcs;
-	//
-	//	#ifdef MSVC
-	//	//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "g68x5.y5.R28.\r\ng0x6\r\n f4g1y1.\r\nx5\r\n");
-	//	//cutter comp line 1 left comp test
-	//	//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "p.25 g1 f1 g41 x1 y0\r\n g2 x1.5y0.5 i1.5 j0\r\n g1 x1.5y1.5\r\ng1 x3.5 y1.5\r\n");
-	//	//cutter comp line 2 right comp test
-	//	//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "p.25 g1 f1 g42 x1 y0\r\n g2 x2y0 i1.5 j0\r\n g1 x3y0\r\ng1 x4 y0\r\n");
-	//	//cutter comp line 3 left comp start comp with arc
-	//	//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "p.25 f1 g41 g2 x0.5 y0.5 i0.5 j0.0\r\n g1 x0.5y1.5\r\ng1 x0.5 y2.5\r\n");
-	//
-	//	//simple gcode line
-	//	//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "g01y5x5g91g20\r\n");
-	//	//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "g01y10x10g91g20\r\n");
-	//	//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "g01y0x0g91g20\r\n");
-	//	//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "g01y0x0g90g20\r\n");
-	//	//purposely bad g code line
-	//	//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "g01 y7 g10x3 \r\n");//here axis words are used for motion and non modal. Thats an error
-	//	//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "g0y#525r#<test>[1.0-[5.0+10]]\r\ng1x3\r\n");
-	//	//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "g99 y [ #777 - [#<test> + #<_glob> +-sqrt[2]] ] \r\n\r\n\r\n\r\n");// /n/ng1x3\r\n");
-	//	//Hardware_Abstraction_Layer::Serial::add_to_buffer(0, "#<tool>=10\r\n");
-	//	#endif
-
-
+	//Hardware_Abstraction_Layer::Disk::initialize(NULL);
+	Talos::Configuration::Interpreter::DefaultBlock.load_defaults();
+	Talos::Coordinator::Data::Ngc::set_start_block(Talos::Configuration::Interpreter::DefaultBlock.Settings);
 }
 
 void Talos::Coordinator::Main_Process::cord_run()
 {
 	//Check state manager for actions that need to run.
+
+	Kernel::CPU::service_events();
+	Talos::Coordinator::Core::States::execute();
+
 }

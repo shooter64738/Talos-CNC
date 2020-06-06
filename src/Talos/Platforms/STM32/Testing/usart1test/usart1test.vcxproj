@@ -12,7 +12,7 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
-    <ProjectGuid>{BD56A127-5B5D-49BF-A5D7-65598654ACFC}</ProjectGuid>
+    <ProjectGuid>{69E49980-9741-4EAE-A806-58EC0EF5A168}</ProjectGuid>
     <BSP_ID>com.sysprogs.arm.stm32</BSP_ID>
     <BSP_VERSION>2020.01</BSP_VERSION>
     <InPlaceBSPSubdir />
@@ -42,15 +42,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|VisualGDB'">
     <ClCompile>
       <CPPLanguageStandard>CPP14</CPPLanguageStandard>
-      <AdditionalIncludeDirectories>;%(ClCompile.AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>DEBUG=1;TALOS_COMBINED;__STM32H7__;%(ClCompile.PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
-    <Link>
-      <AdditionalLinkerInputs>;%(Link.AdditionalLinkerInputs)</AdditionalLinkerInputs>
-      <LibrarySearchDirectories>;%(Link.LibrarySearchDirectories)</LibrarySearchDirectories>
-      <AdditionalLibraryNames>;%(Link.AdditionalLibraryNames)</AdditionalLibraryNames>
-      <LinkerScript />
-    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|VisualGDB'">
     <ClCompile>
@@ -58,75 +50,15 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <Text Include="..\..\..\..\Motion\NewCore\description.txt" />
-    <Text Include="..\..\..\Coordinator\Processing\State_Control\description.txt" />
-    <Text Include="..\..\..\Motion\Processing\State_Control\description.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\Configuration\c_configuration.cpp" />
-    <ClCompile Include="..\..\..\Configuration\Interpreter\c_interpreter_input.cpp" />
-    <ClCompile Include="..\..\..\Configuration\Interpreter\c_start_block_gmcode.cpp" />
-    <ClCompile Include="..\..\..\Configuration\Motion\c_motion_controller.cpp" />
-    <ClCompile Include="..\..\..\Configuration\Motion\c_motion_system.cpp" />
-    <ClCompile Include="..\..\..\Coordinator\Processing\Data\DataHandlers\c_ngc_data_handler.cpp" />
-    <ClCompile Include="..\..\..\Coordinator\Processing\Data\DataHandlers\c_system_data_handler.cpp" />
-    <ClCompile Include="..\..\..\Coordinator\Processing\Events\EventHandlers\c_ancillary_event_handler.cpp" />
-    <ClCompile Include="..\..\..\Coordinator\Processing\Events\EventHandlers\c_network_data_events.cpp" />
-    <ClCompile Include="..\..\..\Coordinator\Processing\Events\EventHandlers\c_ngc_data_events.cpp" />
-    <ClCompile Include="..\..\..\Coordinator\Processing\Events\EventHandlers\c_spi_data_events.cpp" />
-    <ClCompile Include="..\..\..\Coordinator\Processing\Events\EventHandlers\c_system_event_handler.cpp" />
-    <ClCompile Include="..\..\..\Coordinator\Processing\Main\Coordinator_Process.cpp" />
-    <ClCompile Include="..\..\..\Coordinator\Processing\State_Control\c_coordinator_state_control.cpp" />
-    <ClCompile Include="..\..\..\Motion\NewCore\c_block_to_segment.cpp" />
-    <ClCompile Include="..\..\..\Motion\NewCore\c_hardware_out.cpp" />
-    <ClCompile Include="..\..\..\Motion\NewCore\c_ngc_to_block.cpp" />
-    <ClCompile Include="..\..\..\Motion\NewCore\c_segment_to_hardware.cpp" />
-    <ClCompile Include="..\..\..\Motion\Processing\Main\Motion_Process.cpp" />
-    <ClCompile Include="..\..\..\Motion\Processing\State_Control\c_motion_state_control.cpp" />
-    <ClCompile Include="..\..\..\NGC_RS274\Dialect\_ngc_dialect_validate.cpp" />
-    <ClCompile Include="..\..\..\NGC_RS274\Dialect\_ngc_validate_0_nonmodal.cpp" />
-    <ClCompile Include="..\..\..\NGC_RS274\Dialect\_ngc_validate_16_plane_rotation.cpp" />
-    <ClCompile Include="..\..\..\NGC_RS274\Dialect\_ngc_validate_1_motion.cpp" />
-    <ClCompile Include="..\..\..\NGC_RS274\Dialect\_ngc_validate_2_plane_selection.cpp" />
-    <ClCompile Include="..\..\..\NGC_RS274\Dialect\_ngc_validate_3_distance_mode.cpp" />
-    <ClCompile Include="..\..\..\NGC_RS274\Dialect\_ngc_validate_5_feed_rate_mode.cpp" />
-    <ClCompile Include="..\..\..\NGC_RS274\Dialect\_ngc_validate_7_cutter_radius_compensation.cpp" />
-    <ClCompile Include="..\..\..\NGC_RS274\Machine Specific\Lathe\NGC_Lathe.cpp" />
-    <ClCompile Include="..\..\..\NGC_RS274\Machine Specific\Mill\NGC_Mill.cpp" />
-    <ClCompile Include="..\..\..\NGC_RS274\NGC_Block_Assignor.cpp" />
-    <ClCompile Include="..\..\..\NGC_RS274\NGC_Block_View.cpp" />
-    <ClCompile Include="..\..\..\NGC_RS274\NGC_Comp.cpp" />
-    <ClCompile Include="..\..\..\NGC_RS274\NGC_Coordinates.cpp" />
-    <ClCompile Include="..\..\..\NGC_RS274\NGC_Error_Check.cpp" />
-    <ClCompile Include="..\..\..\NGC_RS274\NGC_Line_Processor.cpp" />
-    <ClCompile Include="..\..\..\NGC_RS274\NGC_Parameters.cpp" />
-    <ClCompile Include="..\..\..\NGC_RS274\NGC_Set_Targets.cpp" />
-    <ClCompile Include="..\..\..\NGC_RS274\NGC_System.cpp" />
-    <ClCompile Include="..\..\..\NGC_RS274\NGC_Tool.cpp" />
-    <ClCompile Include="..\..\..\Shared_Data\Kernel\Base\c_kernel_base.cpp" />
-    <ClCompile Include="..\..\..\Shared_Data\Kernel\Comm\c_kernel_comm.cpp" />
-    <ClCompile Include="..\..\..\Shared_Data\Kernel\CPU\c_cpu.cpp" />
-    <ClCompile Include="..\..\..\Shared_Data\Kernel\CPU\c_kernel_cpu.cpp" />
-    <ClCompile Include="..\..\..\Shared_Data\Kernel\Error\c_kernel_error.cpp" />
-    <ClCompile Include="..\..\..\Shared_Data\Kernel\Event\c_kernel_software_event.cpp" />
-    <ClCompile Include="..\..\..\Shared_Data\Kernel\Report\c_kernel_report.cpp" />
-    <ClCompile Include="..\..\..\Shared_Data\Kernel\Start\c_kernel_start.cpp" />
-    <ClCompile Include="Platform_Specific\c_core_stm32h7.cpp" />
-    <ClCompile Include="Platform_Specific\c_disk_stm32h7.cpp" />
-    <ClCompile Include="Platform_Specific\c_serial_stm32h7.cpp" />
-    <ClCompile Include="Platform_Specific\c_spi_stm32h7.cpp" />
-    <ClCompile Include="Platform_Specific\c_stepper_stm32h7.cpp" />
-    <ClCompile Include="Platform_Specific\disk_support\SPI\FatFs\diskio.c" />
-    <ClCompile Include="Platform_Specific\disk_support\SPI\FatFs\ff.c" />
-    <ClCompile Include="Platform_Specific\disk_support\SPI\FatFs\ffsystem.c" />
-    <ClCompile Include="Platform_Specific\disk_support\SPI\FatFs\ffunicode.c" />
-    <ClCompile Include="Platform_Specific\disk_support\SPI\Hardware\hardware_config.c" />
-    <ClCompile Include="Platform_Specific\disk_support\SPI\Hardware\hardware_io.c" />
-    <ClCompile Include="Platform_Specific\disk_support\SPI\Hardware\sd_card.c" />
-    <ClCompile Include="Talo_STM32H7_Combined.cpp" />
+    <ClCompile Include="usart1test.cpp" />
+    <ClCompile Include="usbd_cdc_if.c" />
+    <ClCompile Include="usbd_conf.c" />
+    <ClCompile Include="usbd_desc.c" />
     <ClCompile Include="system_stm32h7xx.c" />
     <None Include="stm32.props" />
     <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\StartupFiles\startup_stm32h750xx.c" />
@@ -245,132 +177,13 @@
     <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_ll_tim.c" />
     <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_ll_usart.c" />
     <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Src\stm32h7xx_ll_utils.c" />
-    <ClInclude Include="..\..\..\communication_def.h" />
-    <ClInclude Include="..\..\..\Configuration\c_configuration.h" />
-    <ClInclude Include="..\..\..\Configuration\Interpreter\c_interpreter_input.h" />
-    <ClInclude Include="..\..\..\Configuration\Interpreter\c_start_block_gmcode.h" />
-    <ClInclude Include="..\..\..\Configuration\Motion\c_motion_controller.h" />
-    <ClInclude Include="..\..\..\Configuration\Motion\c_motion_system.h" />
-    <ClInclude Include="..\..\..\Coordinator\Processing\Data\DataHandlers\c_ngc_data_handler.h" />
-    <ClInclude Include="..\..\..\Coordinator\Processing\Data\DataHandlers\c_system_data_handler.h" />
-    <ClInclude Include="..\..\..\Coordinator\Processing\Events\EventHandlers\c_ancillary_event_handler.h" />
-    <ClInclude Include="..\..\..\Coordinator\Processing\Events\EventHandlers\c_network_data_events.h" />
-    <ClInclude Include="..\..\..\Coordinator\Processing\Events\EventHandlers\c_ngc_data_events.h" />
-    <ClInclude Include="..\..\..\Coordinator\Processing\Events\EventHandlers\c_spi_data_events.h" />
-    <ClInclude Include="..\..\..\Coordinator\Processing\Events\EventHandlers\c_system_event_handler.h" />
-    <ClInclude Include="..\..\..\Coordinator\Processing\Main\Coordinator_Process.h" />
-    <ClInclude Include="..\..\..\Coordinator\Processing\State_Control\c_coordinator_state_control.h" />
-    <ClInclude Include="..\..\..\c_ring_template.h" />
-    <ClInclude Include="..\..\..\Motion\NewCore\c_block_to_segment.h" />
-    <ClInclude Include="..\..\..\Motion\NewCore\c_hardware_out.h" />
-    <ClInclude Include="..\..\..\Motion\NewCore\c_ngc_to_block.h" />
-    <ClInclude Include="..\..\..\Motion\NewCore\c_segment_to_hardware.h" />
-    <ClInclude Include="..\..\..\Motion\NewCore\support_items\d_buffer_size_defs.h" />
-    <ClInclude Include="..\..\..\Motion\NewCore\support_items\e_ramp_states.h" />
-    <ClInclude Include="..\..\..\Motion\NewCore\support_items\e_state_flag.h" />
-    <ClInclude Include="..\..\..\Motion\NewCore\support_items\s_bresenham_item.h" />
-    <ClInclude Include="..\..\..\Motion\NewCore\support_items\s_common_all_object.h" />
-    <ClInclude Include="..\..\..\Motion\NewCore\support_items\s_common_motion_block_object.h" />
-    <ClInclude Include="..\..\..\Motion\NewCore\support_items\s_common_segment_block_object.h" />
-    <ClInclude Include="..\..\..\Motion\NewCore\support_items\s_common_timer_object.h" />
-    <ClInclude Include="..\..\..\Motion\NewCore\support_items\s_complete_block_stats.h" />
-    <ClInclude Include="..\..\..\Motion\NewCore\support_items\s_motion_axis_detail.h" />
-    <ClInclude Include="..\..\..\Motion\NewCore\support_items\s_motion_block.h" />
-    <ClInclude Include="..\..\..\Motion\NewCore\support_items\s_segment_base.h" />
-    <ClInclude Include="..\..\..\Motion\NewCore\support_items\s_spindle_block.h" />
-    <ClInclude Include="..\..\..\Motion\NewCore\support_items\s_timer_item.h" />
-    <ClInclude Include="..\..\..\Motion\Processing\Main\Motion_Process.h" />
-    <ClInclude Include="..\..\..\Motion\Processing\State_Control\c_motion_state_control.h" />
-    <ClInclude Include="..\..\..\NGC_RS274\Dialect\_ngc_dialect_validate.h" />
-    <ClInclude Include="..\..\..\NGC_RS274\Dialect\_ngc_validate_0_nonmodal.h" />
-    <ClInclude Include="..\..\..\NGC_RS274\Dialect\_ngc_validate_16_plane_rotation.h" />
-    <ClInclude Include="..\..\..\NGC_RS274\Dialect\_ngc_validate_1_motion.h" />
-    <ClInclude Include="..\..\..\NGC_RS274\Dialect\_ngc_validate_2_plane_selection.h" />
-    <ClInclude Include="..\..\..\NGC_RS274\Dialect\_ngc_validate_3_distance_mode.h" />
-    <ClInclude Include="..\..\..\NGC_RS274\Dialect\_ngc_validate_5_feed_rate_mode.h" />
-    <ClInclude Include="..\..\..\NGC_RS274\Dialect\_ngc_validate_7_cutter_radius_compensation.h" />
-    <ClInclude Include="..\..\..\NGC_RS274\Machine Specific\Lathe\NGC_G_Codes.h" />
-    <ClInclude Include="..\..\..\NGC_RS274\Machine Specific\Lathe\NGC_Lathe.h" />
-    <ClInclude Include="..\..\..\NGC_RS274\Machine Specific\Lathe\NGC_M_Codes.h" />
-    <ClInclude Include="..\..\..\NGC_RS274\Machine Specific\Mill\NGC_G_Codes.h" />
-    <ClInclude Include="..\..\..\NGC_RS274\Machine Specific\Mill\NGC_Mill.h" />
-    <ClInclude Include="..\..\..\NGC_RS274\Machine Specific\Mill\NGC_M_Codes.h" />
-    <ClInclude Include="..\..\..\NGC_RS274\NGC_Block_Assignor.h" />
-    <ClInclude Include="..\..\..\NGC_RS274\NGC_Block_View.h" />
-    <ClInclude Include="..\..\..\NGC_RS274\NGC_Comp.h" />
-    <ClInclude Include="..\..\..\NGC_RS274\NGC_Coordinates.h" />
-    <ClInclude Include="..\..\..\NGC_RS274\NGC_Errors.h" />
-    <ClInclude Include="..\..\..\NGC_RS274\NGC_Error_Check.h" />
-    <ClInclude Include="..\..\..\NGC_RS274\NGC_Line_Processor.h" />
-    <ClInclude Include="..\..\..\NGC_RS274\NGC_Parameters.h" />
-    <ClInclude Include="..\..\..\NGC_RS274\NGC_Set_Targets.h" />
-    <ClInclude Include="..\..\..\NGC_RS274\NGC_System.h" />
-    <ClInclude Include="..\..\..\NGC_RS274\NGC_Tool.h" />
-    <ClInclude Include="..\..\..\NGC_RS274\_ngc_arc_struct.h" />
-    <ClInclude Include="..\..\..\NGC_RS274\_ngc_axis_struct.h" />
-    <ClInclude Include="..\..\..\NGC_RS274\_ngc_block_event_enums.h" />
-    <ClInclude Include="..\..\..\NGC_RS274\_ngc_block_struct.h" />
-    <ClInclude Include="..\..\..\NGC_RS274\_ngc_compensation_enums.h" />
-    <ClInclude Include="..\..\..\NGC_RS274\_ngc_coordinate_struct.h" />
-    <ClInclude Include="..\..\..\NGC_RS274\_ngc_defines.h" />
-    <ClInclude Include="..\..\..\NGC_RS274\_ngc_dialect_enum.h" />
-    <ClInclude Include="..\..\..\NGC_RS274\_ngc_errors_interpreter.h" />
-    <ClInclude Include="..\..\..\NGC_RS274\_ngc_g_groups.h" />
-    <ClInclude Include="..\..\..\NGC_RS274\_ngc_math_constants.h" />
-    <ClInclude Include="..\..\..\NGC_RS274\_ngc_m_groups.h" />
-    <ClInclude Include="..\..\..\NGC_RS274\_ngc_offset_struct.h" />
-    <ClInclude Include="..\..\..\NGC_RS274\_ngc_plane_struct.h" />
-    <ClInclude Include="..\..\..\NGC_RS274\_ngc_point_definition.h" />
-    <ClInclude Include="..\..\..\NGC_RS274\_ngc_tool_struct.h" />
-    <ClInclude Include="..\..\..\physical_machine_parameters.h" />
-    <ClInclude Include="..\..\..\Shared_Data\Kernel\Base\c_kernel_base.h" />
-    <ClInclude Include="..\..\..\Shared_Data\Kernel\Comm\c_kernel_comm.h" />
-    <ClInclude Include="..\..\..\Shared_Data\Kernel\CPU\c_cpu.h" />
-    <ClInclude Include="..\..\..\Shared_Data\Kernel\CPU\c_kernel_cpu.h" />
-    <ClInclude Include="..\..\..\Shared_Data\Kernel\CPU\u_data_overlay.h" />
-    <ClInclude Include="..\..\..\Shared_Data\Kernel\c_kernel_utils.h" />
-    <ClInclude Include="..\..\..\Shared_Data\Kernel\Error\c_kernel_error.h" />
-    <ClInclude Include="..\..\..\Shared_Data\Kernel\Error\kernel_error_codes_base.h" />
-    <ClInclude Include="..\..\..\Shared_Data\Kernel\Error\kernel_error_codes_cpu.h" />
-    <ClInclude Include="..\..\..\Shared_Data\Kernel\Error\kernel_error_codes_cpu_cluster.h" />
-    <ClInclude Include="..\..\..\Shared_Data\Kernel\Error\kernel_error_codes_reader.h" />
-    <ClInclude Include="..\..\..\Shared_Data\Kernel\Error\kernel_error_codes_writer.h" />
-    <ClInclude Include="..\..\..\Shared_Data\Kernel\Error\_d_err_macros.h" />
-    <ClInclude Include="..\..\..\Shared_Data\Kernel\Error\_s_kernel_error.h" />
-    <ClInclude Include="..\..\..\Shared_Data\Kernel\Event\c_kernel_software_event.h" />
-    <ClInclude Include="..\..\..\Shared_Data\Kernel\kernel_configuration.h" />
-    <ClInclude Include="..\..\..\Shared_Data\Kernel\Report\c_kernel_report.h" />
-    <ClInclude Include="..\..\..\Shared_Data\Kernel\Start\c_kernel_start.h" />
-    <ClInclude Include="..\..\..\Shared_Data\Kernel\_e_record_types.h" />
-    <ClInclude Include="..\..\..\Shared_Data\Kernel\_e_system_messages.h" />
-    <ClInclude Include="..\..\..\Shared_Data\Kernel\_s_system_record.h" />
-    <ClInclude Include="..\..\..\Shared_Data\Settings\Coordinator\xx_s_input_processing.h" />
-    <ClInclude Include="..\..\..\Shared_Data\Settings\Coordinator\_s_interpeter_settings_encapsulation.h" />
-    <ClInclude Include="..\..\..\Shared_Data\Settings\Coordinator\_s_interpreter_input_processing.h" />
-    <ClInclude Include="..\..\..\Shared_Data\Settings\Motion\_s_motion_axis_options.h" />
-    <ClInclude Include="..\..\..\Shared_Data\Settings\Motion\_s_motion_control_settings_encapsulation.h" />
-    <ClInclude Include="..\..\..\Shared_Data\Settings\Motion\_s_motion_hardware.h" />
-    <ClInclude Include="..\..\..\Shared_Data\Settings\Motion\_s_motion_internal.h" />
-    <ClInclude Include="..\..\..\Shared_Data\Settings\Motion\_s_motion_spindle_struct.h" />
-    <ClInclude Include="..\..\..\Shared_Data\Settings\Motion\_s_motion_system.h" />
-    <ClInclude Include="..\..\..\Shared_Data\Settings\Motion\_s_motion_tolerance_struct.h" />
-    <ClInclude Include="..\..\..\talos_hardware_def.h" />
-    <ClInclude Include="..\..\..\_bit_flag_control.h" />
-    <ClInclude Include="..\..\..\_bit_manipulation.h" />
-    <ClInclude Include="Platform_Specific\c_core_stm32h7.h" />
-    <ClInclude Include="Platform_Specific\c_disk_stm32h7.h" />
-    <ClInclude Include="Platform_Specific\c_serial_stm32h7.h" />
-    <ClInclude Include="Platform_Specific\c_spi_stm32h7.h" />
-    <ClInclude Include="Platform_Specific\c_stepper_stm32h7.h" />
-    <ClInclude Include="Platform_Specific\disk_support\SPI\FatFs\diskio.h" />
-    <ClInclude Include="Platform_Specific\disk_support\SPI\FatFs\ff.h" />
-    <ClInclude Include="Platform_Specific\disk_support\SPI\FatFs\ffconf.h" />
-    <ClInclude Include="Platform_Specific\disk_support\SPI\Hardware\hardware_config.h" />
-    <ClInclude Include="Platform_Specific\disk_support\SPI\Hardware\hardware_io.h" />
-    <ClInclude Include="Platform_Specific\disk_support\SPI\Hardware\sd_card.h" />
-    <ClInclude Include="Platform_Specific\sys_clock_configs.h" />
-    <ClInclude Include="Platform_Specific\sys_gpio_configs.h" />
-    <ClInclude Include="Platform_Specific\sys_timer_configs.h" />
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32_USB_Device_Library\Class\CDC\Src\usbd_cdc.c" />
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32_USB_Device_Library\Core\Src\usbd_core.c" />
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32_USB_Device_Library\Core\Src\usbd_ctlreq.c" />
+    <ClCompile Include="$(BSP_ROOT)\STM32H7xxxx\STM32_USB_Device_Library\Core\Src\usbd_ioreq.c" />
+    <ClInclude Include="usbd_cdc_if.h" />
+    <ClInclude Include="usbd_conf.h" />
+    <ClInclude Include="usbd_desc.h" />
     <ClInclude Include="stm32h7xx_hal_conf.h" />
     <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h" />
     <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_adc.h" />
@@ -525,8 +338,13 @@
     <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_usart.h" />
     <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_utils.h" />
     <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_wwdg.h" />
-    <None Include="Talo_STM32H7_Combined-Debug.vgdbsettings" />
-    <None Include="Talo_STM32H7_Combined-Release.vgdbsettings" />
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32_USB_Device_Library\Class\CDC\Inc\usbd_cdc.h" />
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32_USB_Device_Library\Core\Inc\usbd_core.h" />
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32_USB_Device_Library\Core\Inc\usbd_ctlreq.h" />
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32_USB_Device_Library\Core\Inc\usbd_def.h" />
+    <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32_USB_Device_Library\Core\Inc\usbd_ioreq.h" />
+    <None Include="usart1test-Debug.vgdbsettings" />
+    <None Include="usart1test-Release.vgdbsettings" />
     <None Include="stm32.xml" />
   </ItemGroup>
 </Project>

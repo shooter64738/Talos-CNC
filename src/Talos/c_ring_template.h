@@ -339,10 +339,13 @@ public:
 	//Add as the type, but copied from a byte stream
 	int8_t put(char* data)
 	{
-		//caller should check for full before calling this
-		*(this->_storage_pointer + this->_head) = data;
-		_move_head();
-
+		while (*data)
+		{
+			*(this->_storage_pointer + this->_head) = (TN)*data;
+			_move_head();
+			data++;
+		}
+			
 		return 1;
 	}
 

@@ -10,7 +10,7 @@
 #include "c_segment_to_hardware.h"
 #include "c_ngc_to_block.h"
 #include "c_block_to_segment.h"
-#include "c_state_control.h"
+#include "../Processing/State_Control/c_motion_state_control.h"
 #include "c_hardware_out.h"
 #include <math.h>
 
@@ -151,6 +151,8 @@ namespace Talos
 					Segment::pntr_driver = __run_interpolation;
 
 					mtn_ctl_sta::Output::states.set(mtn_ctl_sta::Output::e_states::interpolation_running);
+					mtn_ctl_sta::Output::states.clear(mtn_ctl_sta::Output::e_states::interpolation_complete);
+					
 					//start the timer, this will set all of the wheel in motion
 					//hrd_out::Hardware::Motion::initialize();
 
@@ -379,6 +381,13 @@ namespace Talos
 #endif // MSVC
 					__set_brakes();
 					hrd_out::Hardware::Motion::disable();
+					
+					//if motion is on a gold state we arent 'done' we are just holding.
+					if (!mtn_ctl_sta::Motion::states.get(mtn_ctl_sta::Motion::e_states::hold))
+					{
+						mtn_ctl_sta::Output::states.clear(mtn_ctl_sta::Output::e_states::interpolation_running);
+						mtn_ctl_sta::Output::states.set(mtn_ctl_sta::Output::e_states::interpolation_complete);
+					}
 				}
 
 				void Segment::__set_brakes()

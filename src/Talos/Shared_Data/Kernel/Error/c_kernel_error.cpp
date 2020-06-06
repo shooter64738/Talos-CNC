@@ -128,7 +128,7 @@ namespace Talos
 			__write_eol(cpu_target); Comm::pntr_string_writer(cpu_target, "\t\tLin:");
 			Comm::pntr_int32_writer(cpu_target, (int)Error::framework_error.stack.method_or_line);
 
-			if (Error::framework_error.data != NULL)
+			/*if (Error::framework_error.data != NULL)
 			{
 				__write_eol(cpu_target); Comm::pntr_string_writer(cpu_target, "\tDta:");
 				for (uint16_t i = 0; i < RING_BUFFER_SIZE; i++)
@@ -146,7 +146,7 @@ namespace Talos
 				Comm::pntr_int32_writer(cpu_target, (int)Error::framework_error.read_crc);
 				__write_eol(cpu_target); Comm::pntr_string_writer(cpu_target, "\tNcR:");
 				Comm::pntr_int32_writer(cpu_target, (int)Error::framework_error.new_crc);
-			}
+			}*/
 			__write_eol(cpu_target);
 		}
 

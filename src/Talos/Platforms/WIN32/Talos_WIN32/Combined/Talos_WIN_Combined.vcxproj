@@ -22,32 +22,32 @@
     <ProjectGuid>{ADA69009-99FA-4BB5-B54F-5209E46224A3}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>Talos_WIN_Combined</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -158,7 +158,26 @@
     <ClCompile Include="..\..\..\..\Motion\NewCore\c_segment_to_hardware.cpp" />
     <ClCompile Include="..\..\..\..\Motion\Processing\Main\Motion_Process.cpp" />
     <ClCompile Include="..\..\..\..\Motion\Processing\State_Control\c_motion_state_control.cpp" />
+    <ClCompile Include="..\..\..\..\NGC_RS274\Dialect\_ngc_dialect_validate.cpp" />
+    <ClCompile Include="..\..\..\..\NGC_RS274\Dialect\_ngc_validate_0_nonmodal.cpp" />
+    <ClCompile Include="..\..\..\..\NGC_RS274\Dialect\_ngc_validate_16_plane_rotation.cpp" />
+    <ClCompile Include="..\..\..\..\NGC_RS274\Dialect\_ngc_validate_1_motion.cpp" />
+    <ClCompile Include="..\..\..\..\NGC_RS274\Dialect\_ngc_validate_2_plane_selection.cpp" />
+    <ClCompile Include="..\..\..\..\NGC_RS274\Dialect\_ngc_validate_3_distance_mode.cpp" />
+    <ClCompile Include="..\..\..\..\NGC_RS274\Dialect\_ngc_validate_5_feed_rate_mode.cpp" />
+    <ClCompile Include="..\..\..\..\NGC_RS274\Dialect\_ngc_validate_7_cutter_radius_compensation.cpp" />
+    <ClCompile Include="..\..\..\..\NGC_RS274\Machine Specific\Lathe\NGC_Lathe.cpp" />
+    <ClCompile Include="..\..\..\..\NGC_RS274\Machine Specific\Mill\NGC_Mill.cpp" />
+    <ClCompile Include="..\..\..\..\NGC_RS274\NGC_Block_Assignor.cpp" />
     <ClCompile Include="..\..\..\..\NGC_RS274\NGC_Block_View.cpp" />
+    <ClCompile Include="..\..\..\..\NGC_RS274\NGC_Comp.cpp" />
+    <ClCompile Include="..\..\..\..\NGC_RS274\NGC_Coordinates.cpp" />
+    <ClCompile Include="..\..\..\..\NGC_RS274\NGC_Error_Check.cpp" />
+    <ClCompile Include="..\..\..\..\NGC_RS274\NGC_Line_Processor.cpp" />
+    <ClCompile Include="..\..\..\..\NGC_RS274\NGC_Parameters.cpp" />
+    <ClCompile Include="..\..\..\..\NGC_RS274\NGC_Set_Targets.cpp" />
+    <ClCompile Include="..\..\..\..\NGC_RS274\NGC_System.cpp" />
+    <ClCompile Include="..\..\..\..\NGC_RS274\NGC_Tool.cpp" />
     <ClCompile Include="..\..\..\..\Shared_Data\Kernel\Base\c_kernel_base.cpp" />
     <ClCompile Include="..\..\..\..\Shared_Data\Kernel\Comm\c_kernel_comm.cpp" />
     <ClCompile Include="..\..\..\..\Shared_Data\Kernel\CPU\c_cpu.cpp" />
@@ -205,8 +224,47 @@
     <ClInclude Include="..\..\..\..\Motion\NewCore\support_items\s_timer_item.h" />
     <ClInclude Include="..\..\..\..\Motion\Processing\Main\Motion_Process.h" />
     <ClInclude Include="..\..\..\..\Motion\Processing\State_Control\c_motion_state_control.h" />
+    <ClInclude Include="..\..\..\..\NGC_RS274\Dialect\_ngc_dialect_validate.h" />
+    <ClInclude Include="..\..\..\..\NGC_RS274\Dialect\_ngc_validate_0_nonmodal.h" />
+    <ClInclude Include="..\..\..\..\NGC_RS274\Dialect\_ngc_validate_16_plane_rotation.h" />
+    <ClInclude Include="..\..\..\..\NGC_RS274\Dialect\_ngc_validate_1_motion.h" />
+    <ClInclude Include="..\..\..\..\NGC_RS274\Dialect\_ngc_validate_2_plane_selection.h" />
+    <ClInclude Include="..\..\..\..\NGC_RS274\Dialect\_ngc_validate_3_distance_mode.h" />
+    <ClInclude Include="..\..\..\..\NGC_RS274\Dialect\_ngc_validate_5_feed_rate_mode.h" />
+    <ClInclude Include="..\..\..\..\NGC_RS274\Dialect\_ngc_validate_7_cutter_radius_compensation.h" />
+    <ClInclude Include="..\..\..\..\NGC_RS274\Machine Specific\Lathe\NGC_G_Codes.h" />
+    <ClInclude Include="..\..\..\..\NGC_RS274\Machine Specific\Lathe\NGC_Lathe.h" />
+    <ClInclude Include="..\..\..\..\NGC_RS274\Machine Specific\Lathe\NGC_M_Codes.h" />
+    <ClInclude Include="..\..\..\..\NGC_RS274\Machine Specific\Mill\NGC_G_Codes.h" />
+    <ClInclude Include="..\..\..\..\NGC_RS274\Machine Specific\Mill\NGC_Mill.h" />
+    <ClInclude Include="..\..\..\..\NGC_RS274\Machine Specific\Mill\NGC_M_Codes.h" />
+    <ClInclude Include="..\..\..\..\NGC_RS274\NGC_Block_Assignor.h" />
     <ClInclude Include="..\..\..\..\NGC_RS274\ngc_block_view.h" />
+    <ClInclude Include="..\..\..\..\NGC_RS274\NGC_Comp.h" />
+    <ClInclude Include="..\..\..\..\NGC_RS274\NGC_Coordinates.h" />
+    <ClInclude Include="..\..\..\..\NGC_RS274\NGC_Errors.h" />
+    <ClInclude Include="..\..\..\..\NGC_RS274\NGC_Error_Check.h" />
+    <ClInclude Include="..\..\..\..\NGC_RS274\NGC_Line_Processor.h" />
+    <ClInclude Include="..\..\..\..\NGC_RS274\NGC_Parameters.h" />
+    <ClInclude Include="..\..\..\..\NGC_RS274\NGC_Set_Targets.h" />
+    <ClInclude Include="..\..\..\..\NGC_RS274\NGC_System.h" />
+    <ClInclude Include="..\..\..\..\NGC_RS274\NGC_Tool.h" />
+    <ClInclude Include="..\..\..\..\NGC_RS274\_ngc_arc_struct.h" />
+    <ClInclude Include="..\..\..\..\NGC_RS274\_ngc_axis_struct.h" />
+    <ClInclude Include="..\..\..\..\NGC_RS274\_ngc_block_event_enums.h" />
     <ClInclude Include="..\..\..\..\NGC_RS274\_ngc_block_struct.h" />
+    <ClInclude Include="..\..\..\..\NGC_RS274\_ngc_compensation_enums.h" />
+    <ClInclude Include="..\..\..\..\NGC_RS274\_ngc_coordinate_struct.h" />
+    <ClInclude Include="..\..\..\..\NGC_RS274\_ngc_defines.h" />
+    <ClInclude Include="..\..\..\..\NGC_RS274\_ngc_dialect_enum.h" />
+    <ClInclude Include="..\..\..\..\NGC_RS274\_ngc_errors_interpreter.h" />
+    <ClInclude Include="..\..\..\..\NGC_RS274\_ngc_g_groups.h" />
+    <ClInclude Include="..\..\..\..\NGC_RS274\_ngc_math_constants.h" />
+    <ClInclude Include="..\..\..\..\NGC_RS274\_ngc_m_groups.h" />
+    <ClInclude Include="..\..\..\..\NGC_RS274\_ngc_offset_struct.h" />
+    <ClInclude Include="..\..\..\..\NGC_RS274\_ngc_plane_struct.h" />
+    <ClInclude Include="..\..\..\..\NGC_RS274\_ngc_point_definition.h" />
+    <ClInclude Include="..\..\..\..\NGC_RS274\_ngc_tool_struct.h" />
     <ClInclude Include="..\..\..\..\physical_machine_parameters.h" />
     <ClInclude Include="..\..\..\..\Shared_Data\Kernel\Base\c_kernel_base.h" />
     <ClInclude Include="..\..\..\..\Shared_Data\Kernel\Comm\c_kernel_comm.h" />

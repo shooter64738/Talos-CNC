@@ -38,16 +38,16 @@ bool c_cpu::initialize(uint8_t id, volatile uint32_t* tick_timer_ms)
 	return true;
 }
 
-bool c_cpu::send_message(uint8_t message
-	, uint8_t type
-	, uint8_t origin
-	, uint8_t target
-	, uint8_t state
-	, uint8_t sub_state
-	, int32_t* position_data)
-{
-	return false;
-}
+//bool c_cpu::send_message(uint8_t message
+//	, uint8_t type
+//	, uint8_t origin
+//	, uint8_t target
+//	, uint8_t state
+//	, uint8_t sub_state
+//	, int32_t* position_data)
+//{
+//	return false;
+//}
 
 /*
 init_ready_wait_id - is the event id that we wait for, before we do anything
@@ -56,151 +56,151 @@ init_request_type - is the message type that is sent to the host
 init_response_type - is the event we should get back from the host after
 sending init_message+init_request_type indicating we are communicating and processors are connected
 */
-
-#define __CPU_SYNCH 1
-bool c_cpu::Synch(
-	e_system_message::messages::e_data init_message
-	, e_system_message::e_status_type init_request_type
-	, uint8_t init_ready_wait_id
-	, e_system_message::e_status_type init_response_type
-	, bool is_master_cpu)
-{
-	Talos::Kernel::Comm::pntr_string_writer(Talos::Kernel::CPU::host_id, "value start =");
-	/*Talos::Kernel::Comm::USART0._int32_writer
-		(Talos::Shared::c_cache_data::motion_configuration_record.hardware.steps_per_mm[0]);*/
-	Talos::Kernel::Comm::pntr_string_writer(Talos::Kernel::CPU::host_id, "\r\n");
-
-	//if master_cpu its the controller. so we need to send a 'ReadyToProcess' message to our child
-	if (is_master_cpu)
-	{
-		uint32_t time_start = *this->pntr_cycle_count_ms;
-		//Send ready message to child
-		ADD_2_STK_RTN_FALSE_IF_CALL_FALSE(
-			__send_formatted_message((int)e_system_message::messages::e_informal::ReadyToProcess, (int)e_system_message::e_status_type::Informal)
-			, this->ID, ERR_CPU::BASE, ERR_CPU::METHOD::synch, ERR_CPU::METHOD::__send_formatted_message);
-		//Message is sent. The master now waits for a ready message from the child
-
-		Talos::Kernel::Comm::pntr_string_writer(Talos::Kernel::CPU::host_id, "mCU host ready\r\n");
-
-		//Wait for specified message
-		ADD_2_STK_RTN_FALSE_IF_CALL_FALSE(
-			__wait_formatted_message((int)init_message, (int)init_request_type)
-			, this->ID, ERR_CPU::BASE, ERR_CPU::METHOD::synch, ERR_CPU::METHOD::__wait_formatted_message);
-
-		uint32_t time_end = *this->pntr_cycle_count_ms;
-		this->message_lag_cycles = time_end - time_start;
-
-		ADD_2_STK_RTN_FALSE_IF_CALL_FALSE(
-			__send_formatted_message((int)init_message, (int)init_response_type)
-			, this->ID, ERR_CPU::BASE, ERR_CPU::METHOD::synch, ERR_CPU::METHOD::__send_formatted_message);
-
-		Talos::Kernel::Comm::pntr_string_writer(Talos::Kernel::CPU::host_id, "mCU host specified\r\n");
-
-	}
-	else
-	{
-		Talos::Kernel::Comm::pntr_string_writer(Talos::Kernel::CPU::host_id, "mCU child ready\r\n");
-
-		//Wait for ready message
-		ADD_2_STK_RTN_FALSE_IF_CALL_FALSE(
-			__wait_formatted_message((int)e_system_message::messages::e_informal::ReadyToProcess, (int)e_system_message::e_status_type::Informal)
-			, this->ID, ERR_CPU::BASE, ERR_CPU::METHOD::synch, ERR_CPU::METHOD::__wait_formatted_message);
-
-		Talos::Kernel::Comm::pntr_string_writer(Talos::Kernel::CPU::host_id, "mCU child request\r\n");
-
-		uint32_t time_start = *this->pntr_cycle_count_ms;
-
-		//The child has gotten a ready message from the master. The child now tells the master what it wants
-		ADD_2_STK_RTN_FALSE_IF_CALL_FALSE(
-			__send_formatted_message((int)init_message, (int)init_request_type)
-			, this->ID, ERR_CPU::BASE, ERR_CPU::METHOD::synch, ERR_CPU::METHOD::__send_formatted_message);
-
-
-		//The proper wait to inquiry is data
-		ADD_2_STK_RTN_FALSE_IF_CALL_FALSE(
-			__wait_formatted_message((int)init_message, (int)init_response_type)
-			, this->ID, ERR_CPU::BASE, ERR_CPU::METHOD::synch, ERR_CPU::METHOD::__wait_formatted_message);
-
-		uint32_t time_end = *this->pntr_cycle_count_ms;
-		this->message_lag_cycles = time_end - time_start;
-		//else
-		//IF its not an inquiry wait for the specified message.
-		//__wait_formatted_message((int)init_message, (int)init_request_type);
-	}
-
-	//Since we set events to handle and we processed those internally, clear all event flags here
-	this->host_events.Critical.reset();
-	this->host_events.Data.reset();
-	this->host_events.Informal.reset();
-	this->host_events.Inquiry.reset();
-	this->host_events.Warning.reset();
-	this->system_events.reset();
-
-	//And now we should be done.
-	Talos::Kernel::Comm::pntr_string_writer(Talos::Kernel::CPU::host_id, "mCU synch complete!!\r\n");
-
-	//set this active_cpu as 'on method_or_line'
-	this->system_events.set(c_cpu::e_event_type::OnLine);
-
-	Talos::Kernel::Comm::pntr_string_writer(Talos::Kernel::CPU::host_id, "value end =");
-	/*Talos::Kernel::Comm::USART0._int32_writer(
-		Talos::Shared::c_cache_data::motion_configuration_record.hardware.steps_per_mm[0]);*/
-	Talos::Kernel::Comm::pntr_string_writer(Talos::Kernel::CPU::host_id, "\r\n");
-	Talos::Kernel::Comm::pntr_string_writer(Talos::Kernel::CPU::host_id, "lag =");
-	Talos::Kernel::Comm::pntr_int32_writer(Talos::Kernel::CPU::host_id, this->message_lag_cycles);
-	Talos::Kernel::Comm::pntr_string_writer(Talos::Kernel::CPU::host_id, "\r\n");
-
-	return true;
-}
-
-bool c_cpu::__send_formatted_message(uint8_t init_message, uint8_t init_type)
-{
-	ADD_2_STK_RTN_FALSE_IF_CALL_FALSE(
-		send_message((int)init_message //message id #
-			, (int)init_type //data type id #
-			, Talos::Kernel::CPU::host_id// Shared::FrameWork::StartUp::cpu_type.Host //origin of the message
-			, this->ID //destination of the message
-			, (int)e_system_message::e_status_state::motion::e_state::Idle //state
-			, (int)e_system_message::e_status_state::motion::e_sub_state::OK //sub state
-			, NULL //position data
-		)
-		, this->ID, ERR_CPU::BASE, ERR_CPU::METHOD::__send_formatted_message, ERR_CPU::METHOD::send_message);
-	return true;
-}
-
-bool c_cpu::__wait_formatted_message(uint8_t init_message, uint8_t init_type)
-{
-	while (1)
-	{
-		//keep processing framework system_events
-		//Talos::Shared::FrameWork::Events::Router::process();
-
-		//see if host responded with a message, and if so does it match the message and record type we expected
-		if (this->system_events.get_clr(c_cpu::e_event_type::SystemRecord))
-		{
-			Talos::Kernel::Error::framework_error.sys_message = this->sys_message.message;
-			Talos::Kernel::Error::framework_error.sys_type = this->sys_message.type;
-			Talos::Kernel::Error::framework_error.user_code1 = (int)init_message;
-			Talos::Kernel::Error::framework_error.user_code2 = (int)init_type;
-
-
-			if (this->sys_message.message == (int)init_message //(int)e_system_message::messages::e_informal::ReadyToProcess
-				&& this->sys_message.type == (int)init_type //(int)e_system_message::e_status_type::Informal
-				)
-			{
-				//Proper message has come in, so return
-				return true;
-			}
-			else
-			{
-				Talos::Kernel::Comm::pntr_string_writer(Talos::Kernel::CPU::host_id, "mCU synch unexpected data\r\n");
-				Talos::Kernel::Error::framework_error.behavior = e_error_behavior::Critical;
-				Talos::Kernel::Error::raise_error(ERR_CPU::BASE, ERR_CPU::METHOD::__wait_formatted_message, ERR_CPU::METHOD::LINE::unexpected_data, this->ID);
-				return false;
-			}
-		}
-	}
-}
+//
+//#define __CPU_SYNCH 1
+//bool c_cpu::Synch(
+//	e_system_message::messages::e_data init_message
+//	, e_system_message::e_status_type init_request_type
+//	, uint8_t init_ready_wait_id
+//	, e_system_message::e_status_type init_response_type
+//	, bool is_master_cpu)
+//{
+//	Talos::Kernel::Comm::pntr_string_writer(Talos::Kernel::CPU::host_id, "value start =");
+//	/*Talos::Kernel::Comm::USART0._int32_writer
+//		(Talos::Shared::c_cache_data::motion_configuration_record.hardware.steps_per_mm[0]);*/
+//	Talos::Kernel::Comm::pntr_string_writer(Talos::Kernel::CPU::host_id, "\r\n");
+//
+//	//if master_cpu its the controller. so we need to send a 'ReadyToProcess' message to our child
+//	if (is_master_cpu)
+//	{
+//		uint32_t time_start = *this->pntr_cycle_count_ms;
+//		//Send ready message to child
+//		ADD_2_STK_RTN_FALSE_IF_CALL_FALSE(
+//			__send_formatted_message((int)e_system_message::messages::e_informal::ReadyToProcess, (int)e_system_message::e_status_type::Informal)
+//			, this->ID, ERR_CPU::BASE, ERR_CPU::METHOD::synch, ERR_CPU::METHOD::__send_formatted_message);
+//		//Message is sent. The master now waits for a ready message from the child
+//
+//		Talos::Kernel::Comm::pntr_string_writer(Talos::Kernel::CPU::host_id, "mCU host ready\r\n");
+//
+//		//Wait for specified message
+//		ADD_2_STK_RTN_FALSE_IF_CALL_FALSE(
+//			__wait_formatted_message((int)init_message, (int)init_request_type)
+//			, this->ID, ERR_CPU::BASE, ERR_CPU::METHOD::synch, ERR_CPU::METHOD::__wait_formatted_message);
+//
+//		uint32_t time_end = *this->pntr_cycle_count_ms;
+//		this->message_lag_cycles = time_end - time_start;
+//
+//		ADD_2_STK_RTN_FALSE_IF_CALL_FALSE(
+//			__send_formatted_message((int)init_message, (int)init_response_type)
+//			, this->ID, ERR_CPU::BASE, ERR_CPU::METHOD::synch, ERR_CPU::METHOD::__send_formatted_message);
+//
+//		Talos::Kernel::Comm::pntr_string_writer(Talos::Kernel::CPU::host_id, "mCU host specified\r\n");
+//
+//	}
+//	else
+//	{
+//		Talos::Kernel::Comm::pntr_string_writer(Talos::Kernel::CPU::host_id, "mCU child ready\r\n");
+//
+//		//Wait for ready message
+//		ADD_2_STK_RTN_FALSE_IF_CALL_FALSE(
+//			__wait_formatted_message((int)e_system_message::messages::e_informal::ReadyToProcess, (int)e_system_message::e_status_type::Informal)
+//			, this->ID, ERR_CPU::BASE, ERR_CPU::METHOD::synch, ERR_CPU::METHOD::__wait_formatted_message);
+//
+//		Talos::Kernel::Comm::pntr_string_writer(Talos::Kernel::CPU::host_id, "mCU child request\r\n");
+//
+//		uint32_t time_start = *this->pntr_cycle_count_ms;
+//
+//		//The child has gotten a ready message from the master. The child now tells the master what it wants
+//		ADD_2_STK_RTN_FALSE_IF_CALL_FALSE(
+//			__send_formatted_message((int)init_message, (int)init_request_type)
+//			, this->ID, ERR_CPU::BASE, ERR_CPU::METHOD::synch, ERR_CPU::METHOD::__send_formatted_message);
+//
+//
+//		//The proper wait to inquiry is data
+//		ADD_2_STK_RTN_FALSE_IF_CALL_FALSE(
+//			__wait_formatted_message((int)init_message, (int)init_response_type)
+//			, this->ID, ERR_CPU::BASE, ERR_CPU::METHOD::synch, ERR_CPU::METHOD::__wait_formatted_message);
+//
+//		uint32_t time_end = *this->pntr_cycle_count_ms;
+//		this->message_lag_cycles = time_end - time_start;
+//		//else
+//		//IF its not an inquiry wait for the specified message.
+//		//__wait_formatted_message((int)init_message, (int)init_request_type);
+//	}
+//
+//	//Since we set events to handle and we processed those internally, clear all event flags here
+//	this->host_events.Critical.reset();
+//	this->host_events.Data.reset();
+//	this->host_events.Informal.reset();
+//	this->host_events.Inquiry.reset();
+//	this->host_events.Warning.reset();
+//	this->system_events.reset();
+//
+//	//And now we should be done.
+//	Talos::Kernel::Comm::pntr_string_writer(Talos::Kernel::CPU::host_id, "mCU synch complete!!\r\n");
+//
+//	//set this active_cpu as 'on method_or_line'
+//	this->system_events.set(c_cpu::e_event_type::OnLine);
+//
+//	Talos::Kernel::Comm::pntr_string_writer(Talos::Kernel::CPU::host_id, "value end =");
+//	/*Talos::Kernel::Comm::USART0._int32_writer(
+//		Talos::Shared::c_cache_data::motion_configuration_record.hardware.steps_per_mm[0]);*/
+//	Talos::Kernel::Comm::pntr_string_writer(Talos::Kernel::CPU::host_id, "\r\n");
+//	Talos::Kernel::Comm::pntr_string_writer(Talos::Kernel::CPU::host_id, "lag =");
+//	Talos::Kernel::Comm::pntr_int32_writer(Talos::Kernel::CPU::host_id, this->message_lag_cycles);
+//	Talos::Kernel::Comm::pntr_string_writer(Talos::Kernel::CPU::host_id, "\r\n");
+//
+//	return true;
+//}
+//
+//bool c_cpu::__send_formatted_message(uint8_t init_message, uint8_t init_type)
+//{
+//	ADD_2_STK_RTN_FALSE_IF_CALL_FALSE(
+//		send_message((int)init_message //message id #
+//			, (int)init_type //data type id #
+//			, Talos::Kernel::CPU::host_id// Shared::FrameWork::StartUp::cpu_type.Host //origin of the message
+//			, this->ID //destination of the message
+//			, (int)e_system_message::e_status_state::motion::e_state::Idle //state
+//			, (int)e_system_message::e_status_state::motion::e_sub_state::OK //sub state
+//			, NULL //position data
+//		)
+//		, this->ID, ERR_CPU::BASE, ERR_CPU::METHOD::__send_formatted_message, ERR_CPU::METHOD::send_message);
+//	return true;
+//}
+//
+//bool c_cpu::__wait_formatted_message(uint8_t init_message, uint8_t init_type)
+//{
+//	while (1)
+//	{
+//		//keep processing framework system_events
+//		//Talos::Shared::FrameWork::Events::Router::process();
+//
+//		//see if host responded with a message, and if so does it match the message and record type we expected
+//		if (this->system_events.get_clr(c_cpu::e_event_type::SystemRecord))
+//		{
+//			Talos::Kernel::Error::framework_error.sys_message = this->sys_message.message;
+//			Talos::Kernel::Error::framework_error.sys_type = this->sys_message.type;
+//			Talos::Kernel::Error::framework_error.user_code1 = (int)init_message;
+//			Talos::Kernel::Error::framework_error.user_code2 = (int)init_type;
+//
+//
+//			if (this->sys_message.message == (int)init_message //(int)e_system_message::messages::e_informal::ReadyToProcess
+//				&& this->sys_message.type == (int)init_type //(int)e_system_message::e_status_type::Informal
+//				)
+//			{
+//				//Proper message has come in, so return
+//				return true;
+//			}
+//			else
+//			{
+//				Talos::Kernel::Comm::pntr_string_writer(Talos::Kernel::CPU::host_id, "mCU synch unexpected data\r\n");
+//				Talos::Kernel::Error::framework_error.behavior = e_error_behavior::Critical;
+//				Talos::Kernel::Error::raise_error(ERR_CPU::BASE, ERR_CPU::METHOD::__wait_formatted_message, ERR_CPU::METHOD::LINE::unexpected_data, this->ID);
+//				return false;
+//			}
+//		}
+//	}
+//}
 
 bool c_cpu::service_events(int32_t* position, uint16_t rpm)
 {
@@ -208,7 +208,7 @@ bool c_cpu::service_events(int32_t* position, uint16_t rpm)
 	
 	__check_data();
 
-	__check_health();
+	//__check_health();
 
 	return true;
 }
@@ -231,7 +231,7 @@ bool c_cpu::__check_data()
 	}
 	else
 	{
-		uint8_t ret = cdh_r_get_message_type(&this->hw_data_buffer);
+		uint8_t ret = cdh_r_get_message_type(this->hw_data_buffer);
 		if (ret == 2)
 		{
 			//this just means we read a throw away byte from a text record (cr or lf)
@@ -249,19 +249,19 @@ bool c_cpu::__check_data()
 
 bool c_cpu::__check_health()
 {
-	if (this->pntr_cycle_count_ms == NULL)
-		return true;
-	//If the time code hasn't changed (we havent gotten a system message in X time)
-	//then we will assume the active_cpu is not healthy. Perhaps lost connection or its just lagging
-	if (*(this->pntr_cycle_count_ms) > this->next_cycle_check_time)
-	{
-		this->next_cycle_check_time = *(pntr_cycle_count_ms)+HEALTH_CHECK_TIME_MS;
-		if (this->sys_message.time_code == last_time_code)
-			this->system_events.set(c_cpu::e_event_type::UnHealthy);
-		else
-			this->system_events.clear(c_cpu::e_event_type::UnHealthy);
-		last_time_code = this->sys_message.time_code;
-	}
+	//if (this->pntr_cycle_count_ms == NULL)
+	//	return true;
+	////If the time code hasn't changed (we havent gotten a system message in X time)
+	////then we will assume the active_cpu is not healthy. Perhaps lost connection or its just lagging
+	//if (*(this->pntr_cycle_count_ms) > this->next_cycle_check_time)
+	//{
+	//	this->next_cycle_check_time = *(pntr_cycle_count_ms)+HEALTH_CHECK_TIME_MS;
+	//	if (this->sys_message.time_code == last_time_code)
+	//		this->system_events.set(c_cpu::e_event_type::UnHealthy);
+	//	else
+	//		this->system_events.clear(c_cpu::e_event_type::UnHealthy);
+	//	last_time_code = this->sys_message.time_code;
+	//}
 	return true;
 }
 
@@ -314,6 +314,7 @@ uint8_t c_cpu::cdh_r_get_message_type(c_ring_buffer<char>* buffer)
 	}
 	else
 	{
+		buffer->get();
 		Talos::Kernel::Error::raise_error(ERR_RDR::BASE, ERR_RDR::METHOD::cdh_r_get_message_type, ERR_RDR::METHOD::LINE::record_type_called_on_null_data, 0);
 		cdh_r_is_busy = 0;
 	}
@@ -361,7 +362,7 @@ bool c_cpu::cdh_r_read()
 		}
 
 		*(this->__pntr_active_rcv_buffer + dvc_source->active_rcv_buffer->read_count) = byte;
-		dvc_source->active_rcv_buffer->read_count++;
+		
 
 		if (!__read_size)
 		{
@@ -372,15 +373,28 @@ bool c_cpu::cdh_r_read()
 			if (!__read_size)
 			{
 				cdh_r_is_busy = false;
-				dvc_source->rec_buffer[0].overlays.motion_control_settings;
-				dvc_source->index++;
+				dvc_source->rec_buffer.overlays.motion_control_settings;
+				
 
 				__cdh_r_close_read();
 				return true;
 			}
 		}
+		dvc_source->active_rcv_buffer->read_count++;
 	}
 	return true;
+}
+
+void c_cpu::cdh_r_reset()
+{
+	cdh_r_is_busy = false;
+	memset(dvc_source->active_rcv_buffer->overlays.text, 0, MAX_TEXT_BUFFER_SIZE);
+	dvc_source->active_rcv_buffer->read_count = 0;
+	dvc_source->active_rcv_buffer = NULL;
+	dvc_source = NULL;
+	__pntr_active_rcv_buffer = NULL;
+	__active_hw_buffer = NULL;
+	__read_size = 0;
 }
 
 bool c_cpu::__cdh_r_close_read()
@@ -412,12 +426,7 @@ bool c_cpu::__cdh_r_close_read()
 			}
 		}
 	}
-	cdh_r_is_busy = false;
-	dvc_source->active_rcv_buffer = NULL;
-	dvc_source = NULL;
-	__pntr_active_rcv_buffer = NULL;
-	__active_hw_buffer = NULL;
-	__read_size = 0;
+	
 	return true;
 }
 

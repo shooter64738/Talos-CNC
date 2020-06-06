@@ -26,7 +26,7 @@ return false; }
 {Talos::Kernel::Error::raise_error(BASE , Mthd_We_Are_In , Mthd_Or_Line_Code , CPUID); \
 return false; }
 
-//#define ADD_2_STK(CPUID , BASE , Mthd_We_Are_In , Mthd_Or_Line_Code)\
-//{Talos::Kernel::Error::raise_error(BASE , Mthd_We_Are_In , Mthd_Or_Line_Code , CPUID);}
+#define ADD_2_STK(CPUID , BASE , Mthd_We_Are_In , Mthd_Or_Line_Code)\
+{Talos::Kernel::Error::raise_error(BASE , Mthd_We_Are_In , Mthd_Or_Line_Code , CPUID);}
 
 #endif

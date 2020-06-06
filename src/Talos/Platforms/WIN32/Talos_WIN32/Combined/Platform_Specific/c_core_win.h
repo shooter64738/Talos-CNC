@@ -19,7 +19,6 @@
 *  along with Talos.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifdef MSVC//<--This will stop the multiple ISR definition error
 
 #ifndef __C_CORE_WIN_H__
 #define __C_CORE_WIN_H__
@@ -63,4 +62,4 @@ namespace Hardware_Abstraction_Layer
 	};
 };
 #endif //__C_CORE_WIN_H__
-#endif
+

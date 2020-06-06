@@ -92,6 +92,12 @@ namespace Talos
 
 				void Motion::execute()
 				{
+					if (Output::states.get_clr(Output::e_states::interpolation_complete))
+					{
+						__reset_motion_states();
+
+					}
+
 					//are we already running?
 					if (!Motion::states.get(Motion::e_states::running))
 						//has cycle start been set
@@ -103,6 +109,25 @@ namespace Talos
 
 					if (Motion::states.get(Motion::e_states::hold))
 						__cycle_hold();
+				}
+
+				//called when interpolation is finished
+				void Motion::__reset_motion_states()
+				{
+					if (!Motion::states.get(Motion::e_states::hold))
+					{
+						//if interpolation has stopped and it was NOT due to a feed hold, clear all motion states
+						Motion::states.clear(Motion::e_states::running);
+						Motion::states.clear(Motion::e_states::cycle_start);
+						Motion::states.clear(Motion::e_states::ready);
+						Motion::__internal_states.clear(Motion::e_internal_states::release);
+						Motion::__internal_states.clear(Motion::e_internal_states::held);
+					}
+					else
+					{
+						Motion::__internal_states.set(Motion::e_internal_states::held);
+					}
+					
 				}
 
 				//called when cycle start bit is set.
@@ -223,6 +248,20 @@ namespace Talos
 
 				void Output::execute()
 				{
+					if (Output::states.get_clr(Output::e_states::ngc_block_done))
+					{
+						//a block is done we can report it if we want
+						/*Output::block_stats.common.line_number;
+						Output::block_stats.common.sequence;
+						Output::block_stats.duration;*/
+					}
+					
+					if (Output::states.get_clr(Output::e_states::interpolation_complete))
+					{
+						//interpolation is done, reset all the motion process states
+
+					}
+
 					////if we have a hardware failure, shut it all down.
 					//if (Output::states.get(Output::e_states::hardware_fault))
 					//{

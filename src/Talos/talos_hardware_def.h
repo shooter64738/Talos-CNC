@@ -6,8 +6,6 @@
  */
 
 //To enable compilation and debugging in Microsoft Visual C++ define MSCV
-#ifdef TALOS_COMBINED
-
 #if !defined(__STM32H7__)
 #define MSVC
 #endif
@@ -43,6 +41,6 @@
 #include "Platforms/STM32/Talos_STM32H7_Combined/Platform_Specific/sys_gpio_configs.h"
 #include "Platforms/STM32/Talos_STM32H7_Combined/Platform_Specific/sys_timer_configs.h"
 #endif
-#endif
+
 
 

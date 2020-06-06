@@ -5,6 +5,8 @@ VisualStudioVersion = 16.0.28922.388
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Talo_STM32H7_Combined", "Talo_STM32H7_Combined.vcxproj", "{BD56A127-5B5D-49BF-A5D7-65598654ACFC}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "usart1test", "..\Testing\usart1test\usart1test.vcxproj", "{69E49980-9741-4EAE-A806-58EC0EF5A168}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|VisualGDB = Debug|VisualGDB
@@ -15,6 +17,10 @@ Global
 		{BD56A127-5B5D-49BF-A5D7-65598654ACFC}.Debug|VisualGDB.Build.0 = Debug|VisualGDB
 		{BD56A127-5B5D-49BF-A5D7-65598654ACFC}.Release|VisualGDB.ActiveCfg = Release|VisualGDB
 		{BD56A127-5B5D-49BF-A5D7-65598654ACFC}.Release|VisualGDB.Build.0 = Release|VisualGDB
+		{69E49980-9741-4EAE-A806-58EC0EF5A168}.Debug|VisualGDB.ActiveCfg = Debug|VisualGDB
+		{69E49980-9741-4EAE-A806-58EC0EF5A168}.Debug|VisualGDB.Build.0 = Debug|VisualGDB
+		{69E49980-9741-4EAE-A806-58EC0EF5A168}.Release|VisualGDB.ActiveCfg = Release|VisualGDB
+		{69E49980-9741-4EAE-A806-58EC0EF5A168}.Release|VisualGDB.Build.0 = Release|VisualGDB
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

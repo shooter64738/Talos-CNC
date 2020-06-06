@@ -26,7 +26,7 @@
 #include "../../../../NGC_RS274/_ngc_block_struct.h"
 //#include "../../../../Shared_Data/FrameWork/extern_events_types.h"
 
-typedef void(*ret_pointer)(c_ring_buffer <char> * buffer);
+typedef void(*ret_pointer)(c_ring_buffer <char>* buffer);
 namespace Talos
 {
 	namespace Coordinator
@@ -44,11 +44,12 @@ namespace Talos
 
 				//functions
 			public:
-				static void load_block_from_cache(c_ring_buffer<char> *source);
+				static s_ngc_block* load_block_from_cache(char* data, uint16_t data_size);
+				static void set_start_block(s_ngc_block block);
 
 			protected:
 			private:
-				static void __raise_error(char * ngc_line);
+				static void __raise_error(char* ngc_line);
 				static void __reset();
 			};
 		};

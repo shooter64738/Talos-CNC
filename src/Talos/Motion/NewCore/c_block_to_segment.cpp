@@ -10,7 +10,7 @@
 #include "c_block_to_segment.h"
 #include "c_ngc_to_block.h"
 #include "support_items/e_state_flag.h"
-#include "c_state_control.h"
+#include "../Processing/State_Control/c_motion_state_control.h"
 #include <math.h>
 
 namespace mtn_cfg = Talos::Configuration::Motion;

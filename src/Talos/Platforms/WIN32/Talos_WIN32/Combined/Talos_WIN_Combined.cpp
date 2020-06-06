@@ -5,7 +5,7 @@
 #include "../../../../talos_hardware_def.h"
 
 using namespace Talos;
-
+void run(void);
 int main(void)
 {
 	//Start the 'core'. 
@@ -27,6 +27,8 @@ int main(void)
 	Kernel::Comm::print(0, "Hello\r\n");
 	Coordinator::Main_Process::cord_initialize();
 	Motion::Main_Process::mot_initialize();
+
+	Kernel::Comm::host_ring_buffer.put("g0x10\r\ng0y20\r\n");
 
 	run();
 }

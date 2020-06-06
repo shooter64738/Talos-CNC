@@ -101,6 +101,7 @@ namespace Talos
 				protected:
 				private:
 					static void __run();
+					static void __reset_motion_states();
 					static void __cycle_start();
 					static void __cycle_hold();
 					static void __cycle_release();
@@ -120,7 +121,8 @@ namespace Talos
 						spindle_get_speed = 2,
 						hardware_fault = 3,
 						interpolation_running = 4,
-						ngc_block_done = 5,
+						interpolation_complete = 5,
+						ngc_block_done = 6,
 
 					};
 					static s_bit_flag_controller<e_states> states;

@@ -45,7 +45,7 @@ namespace Talos
 					//functions
 				public:
 					static void execute();
-					static void __read_ngc_line(c_ring_buffer<char>* source);
+					static void __read_ngc_line(char* source, uint16_t data_size);
 				protected:
 				private:
 
