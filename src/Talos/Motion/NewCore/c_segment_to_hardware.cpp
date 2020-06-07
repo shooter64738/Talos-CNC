@@ -385,6 +385,10 @@ namespace Talos
 					//if motion is on a gold state we arent 'done' we are just holding.
 					if (!mtn_ctl_sta::Motion::states.get(mtn_ctl_sta::Motion::e_states::hold))
 					{
+						mtn_ctl_sta::Output::states.set(mtn_ctl_sta::Output::e_states::ngc_block_done);
+						mtn_ctl_sta::Output::block_stats.common.sequence = _persisted.last_complete_sequence;
+						mtn_ctl_sta::Output::block_stats.common.line_number = _persisted.active_line_number;
+
 						mtn_ctl_sta::Output::states.clear(mtn_ctl_sta::Output::e_states::interpolation_running);
 						mtn_ctl_sta::Output::states.set(mtn_ctl_sta::Output::e_states::interpolation_complete);
 					}

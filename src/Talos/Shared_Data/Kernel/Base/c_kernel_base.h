@@ -17,10 +17,10 @@ namespace Talos
 {
 	namespace Kernel
 	{
-//		Talos::Kernel::Error;
-//		Talos::Kernel::Comm;
-//		Talos::Kernel::CPU;
-		//Talos::Kernel::DataHandler::Binary;
+		//		Talos::Kernel::Error;
+		//		Talos::Kernel::Comm;
+		//		Talos::Kernel::CPU;
+				//Talos::Kernel::DataHandler::Binary;
 
 		class Base
 		{
@@ -29,6 +29,7 @@ namespace Talos
 			static bool print_rx_diagnostic;
 			static bool print_tx_diagnostic;
 			static bool check_version(char* check_version);
+			static char* get_version();
 
 			class kernel_crc
 			{
@@ -39,7 +40,7 @@ namespace Talos
 
 		private:
 
-		};	
+		};
 	};
 };
 #endif

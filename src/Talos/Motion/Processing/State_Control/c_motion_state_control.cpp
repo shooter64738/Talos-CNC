@@ -261,12 +261,6 @@ namespace Talos
 					{
 						//interpolation is done, reset all the motion process states
 						Motion::states.set(Motion::e_states::reset);
-
-						//a block is done we can report it if we want
-						/*Output::block_stats.common.line_number;
-						Output::block_stats.common.sequence;
-						Output::block_stats.duration;*/
-
 					}
 
 					////if we have a hardware failure, shut it all down.
