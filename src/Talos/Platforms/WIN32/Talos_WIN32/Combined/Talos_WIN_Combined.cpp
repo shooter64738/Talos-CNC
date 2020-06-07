@@ -28,17 +28,21 @@ int main(void)
 	Coordinator::Main_Process::cord_initialize();
 	Motion::Main_Process::mot_initialize();
 
-	Kernel::Comm::host_ring_buffer.put("g0x10\r\ng0y20\r\n");
+	Kernel::Comm::host_ring_buffer.put("g0x100\r\n\0");
 
 	run();
 }
 
+bool reload = false;
 void run(void)
 {
 	uint8_t state = 0;
 
 	while (state == 0)
 	{
+		if (reload)
+			Kernel::Comm::host_ring_buffer.put("g0x0\r\n\0");
+
 		Coordinator::Main_Process::cord_run();
 		Motion::Main_Process::mot_run();
 	}

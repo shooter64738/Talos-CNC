@@ -1,5 +1,5 @@
-#ifndef __C_MOTION_CORE_CONTROLLER_H
-#define __C_MOTION_CORE_CONTROLLER_H
+#ifndef __C_MOTION_CORE_STATE_CONTROLLER_H
+#define __C_MOTION_CORE_STATE_CONTROLLER_H
 #include <stdint.h>
 
 #include "../../../physical_machine_parameters.h"
@@ -78,7 +78,7 @@ namespace Talos
 						spindle_failure = 9,
 						//motion_on = 10,
 						//motion_off = 11,
-						//block_completed = 12,
+						auto_cycle_start = 12,
 						cycle_start = 13,
 					};
 					static s_bit_flag_controller<e_states> states;

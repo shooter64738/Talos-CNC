@@ -58,6 +58,6 @@ void run(void)
 	while (1)
 	{
 		Coordinator::Main_Process::cord_run();
-		//Motion::Main_Process::mot_run();
+		Motion::Main_Process::mot_run();
 	}
 }

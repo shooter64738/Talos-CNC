@@ -31,6 +31,8 @@ location to control all motion output from.
 
 namespace mtn_inp = Talos::Motion::Core::Input;
 namespace crd_dat = Talos::Coordinator::Data;
+namespace mtn_ctl_sta = Talos::Motion::Core::States;
+
 //namespace mtn_cfg = Talos::Configuration::Motion;
 //namespace mtn_out = Talos::Motion::Core::Output;
 
@@ -91,7 +93,7 @@ namespace Talos
 
 				void Process::execute()
 				{
-					if (Kernel::CPU::cluster[Kernel::CPU::host_id].host_events.Data.get(e_system_message::messages::e_data::NgcDataLine))
+					if (Kernel::CPU::cluster[Kernel::CPU::host_id].host_events.Data.get_clr(e_system_message::messages::e_data::NgcDataLine))
 					{
 
 						__read_ngc_line(
@@ -126,7 +128,10 @@ namespace Talos
 					//into the motion buffer. In the case of it being null, there was an error during processing
 					//and we could not convert it. Check the ngc parser errors to find out why.
 					if (new_block != NULL)
+					{
 						mtn_inp::Block::ngc_buffer.put(*new_block);
+						mtn_ctl_sta::Process::states.set(mtn_ctl_sta::Process::e_states::ngc_buffer_not_empty);
+					}
 
 
 				}

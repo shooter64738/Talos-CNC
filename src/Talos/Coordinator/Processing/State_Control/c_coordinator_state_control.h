@@ -1,5 +1,5 @@
-#ifndef __C_MOTION_CORE_CONTROLLER_H
-#define __C_MOTION_CORE_CONTROLLER_H
+#ifndef __C_COORDINATOR_CORE_STATE_CONTROLLER_H
+#define __C_COORDINATOR_CORE_STATE_CONTROLLER_H
 #include <stdint.h>
 #include "../../../c_ring_template.h"
 #include "../../../_bit_flag_control.h"

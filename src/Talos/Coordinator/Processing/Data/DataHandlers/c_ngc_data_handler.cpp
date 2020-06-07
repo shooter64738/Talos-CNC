@@ -61,14 +61,15 @@ namespace Talos
 					!= e_parsing_errors::OK)
 				{
 					__raise_error(data);
-					return;
+					return NULL;
 				}
 
 				//Now that the line parsing is complete we can run an error check on the line
 			//
 			//	//Create a view of the old and new blocks. The view class is just a helper class
 			//	//to make the data easier to understand
-			//	NGC_RS274::Block_View v_new = NGC_RS274::Block_View(&new_block);
+			NGC_RS274::Block_View v_new = NGC_RS274::Block_View(&new_block);
+			new_block.target_motion_position[0] = *v_new.axis_array[0];
 			//	NGC_RS274::Block_View v_previous = NGC_RS274::Block_View(&Talos::Shared::c_cache_data::ngc_block_record);
 			//	if ((return_value = NGC_RS274::Error_Check::error_check(&v_new, &v_previous))
 			//	!= e_parsing_errors::OK)

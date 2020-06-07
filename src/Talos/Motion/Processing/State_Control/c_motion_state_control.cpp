@@ -108,7 +108,7 @@ namespace Talos
 
 
 					if (Motion::states.get(Motion::e_states::hold))
-						__cycle_hold();
+						__cycle_hold();					
 				}
 
 				//called when interpolation is finished
@@ -118,7 +118,10 @@ namespace Talos
 					{
 						//if interpolation has stopped and it was NOT due to a feed hold, clear all motion states
 						Motion::states.clear(Motion::e_states::running);
-						Motion::states.clear(Motion::e_states::cycle_start);
+						
+						if (!Motion::states.get(Motion::e_states::auto_cycle_start))
+							Motion::states.clear(Motion::e_states::cycle_start);
+						
 						Motion::states.clear(Motion::e_states::ready);
 						Motion::__internal_states.clear(Motion::e_internal_states::release);
 						Motion::__internal_states.clear(Motion::e_internal_states::held);
