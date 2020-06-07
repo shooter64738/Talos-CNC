@@ -92,7 +92,7 @@ namespace Talos
 
 				void Motion::execute()
 				{
-					if (Motion::states.get_clr(Motion::e_states::reset))
+					if (Output::states.get_clr(Output::e_states::interpolation_complete))
 					{
 						__reset_motion_states();
 
@@ -260,12 +260,6 @@ namespace Talos
 					if (Output::states.get_clr(Output::e_states::interpolation_complete))
 					{
 						//interpolation is done, reset all the motion process states
-						Motion::states.set(Motion::e_states::reset);
-
-						//a block is done we can report it if we want
-						/*Output::block_stats.common.line_number;
-						Output::block_stats.common.sequence;
-						Output::block_stats.duration;*/
 
 					}
 

@@ -118,7 +118,7 @@ namespace Hardware_Abstraction_Layer
 		//set FIFO
 		USART1->CR1 &= ~(USART_CR1_FIFOEN);
 		
-		uint32_t Baud = 9600;
+		uint32_t Baud = 115200;
 		//set baud rate
 		//((clkspeed/prescaler) + (baudrate/2))/baudrate
 		USART1->BRR = ((HAL_RCC_GetPCLK2Freq() / 1) + (Baud / 2U)) / Baud;

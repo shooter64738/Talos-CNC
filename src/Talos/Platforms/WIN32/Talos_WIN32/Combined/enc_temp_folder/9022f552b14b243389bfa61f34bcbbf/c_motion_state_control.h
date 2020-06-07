@@ -70,17 +70,16 @@ namespace Talos
 						hold = 1,
 						terminate = 2,
 						running = 3,
-						reset =4,
 						//wait_for_spindle_at_speed = 4,
 						//spindle_at_speed = 5,
 						//spindle_on = 6,
 						//spindle_off = 7,
-						hard_fault = 5,
-						spindle_failure = 6,
+						hard_fault = 8,
+						spindle_failure = 9,
 						//motion_on = 10,
 						//motion_off = 11,
-						auto_cycle_start = 7,
-						cycle_start = 8,
+						auto_cycle_start = 12,
+						cycle_start = 13,
 					};
 					static s_bit_flag_controller<e_states> states;
 

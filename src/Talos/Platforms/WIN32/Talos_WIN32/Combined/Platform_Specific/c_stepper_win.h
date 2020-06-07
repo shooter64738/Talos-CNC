@@ -1,7 +1,10 @@
-#ifndef __C_MOTION_CORE_STM32H745_STEPPER_H__
-#define __C_MOTION_CORE_STM32H745_STEPPER_H__
+#ifndef __C_MOTION_CORE_WIN_STEPPER_H__
+#define __C_MOTION_CORE_WIN_STEPPER_H__
 #include <stdint.h>
 #include "../../../../../talos_hardware_def.h"
+#include <stdint.h>
+#include <thread>
+
 #define X_BIT 0
 #define Y_BIT 1
 #define Z_BIT 2
@@ -34,6 +37,9 @@ namespace Hardware_Abstraction_Layer
 			
 			protected:
 			private:
+				static void timer1_overflow_thread();
+				static std::thread timer1_overflow;
+				static uint8_t _TIMSK1;
 
 		};
 	};

@@ -34,6 +34,7 @@ int main(void)
 }
 
 bool reload = false;
+char test_line[50] = "g0x30\r\n\0";
 void run(void)
 {
 	uint8_t state = 0;
@@ -41,7 +42,7 @@ void run(void)
 	while (state == 0)
 	{
 		if (reload)
-			Kernel::Comm::host_ring_buffer.put("g0x0\r\n\0");
+			Kernel::Comm::host_ring_buffer.put(test_line);
 
 		Coordinator::Main_Process::cord_run();
 		Motion::Main_Process::mot_run();

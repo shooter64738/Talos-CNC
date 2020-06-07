@@ -132,6 +132,10 @@ namespace Talos
 						mtn_inp::Block::ngc_buffer.put(*new_block);
 						mtn_ctl_sta::Process::states.set(mtn_ctl_sta::Process::e_states::ngc_buffer_not_empty);
 					}
+					else
+					{
+						Kernel::Comm::print(0, "parse error\r\n");
+					}
 
 
 				}

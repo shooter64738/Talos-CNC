@@ -17,11 +17,15 @@ namespace Hardware_Abstraction_Layer
 {
 	namespace MotionCore
 	{
+		std::thread Stepper::timer1_overflow(Stepper::timer1_overflow_thread);
+		uint8_t Stepper::_TIMSK1 = 0;
 
 		void Stepper::initialize()
 		{
 			step_pulse_config();
 			step_timer_config();
+
+			Stepper::timer1_overflow.detach();
 		}
 
 		volatile static uint16_t on_time = 300;
@@ -67,6 +71,23 @@ namespace Hardware_Abstraction_Layer
 			//}
 		}
 
+		void Stepper::timer1_overflow_thread()
+		{
+			//put the thread to sleep for 1 second, and 'tick' at 1 second intervals. Thsi simulates the timer interrupt on the avr.
+			while (true)
+			{
+				//only run a step timer tick if the 'timer' is enabled
+				if (Stepper::_TIMSK1 == 1)
+				{
+					Talos::Motion::Core::Output::Segment::pntr_driver();
+					//c_stepper::step_tick();
+					std::this_thread::sleep_for(std::chrono::microseconds(2));
+
+				}
+			}
+
+		}
+
 		void Stepper::step_pul_high()
 		{
 			//HAL_GPIO_WritePin(STEPPER_PUL_PORT, STEPPER_PUL_PIN_0, GPIO_PIN_SET);
@@ -97,6 +118,7 @@ namespace Hardware_Abstraction_Layer
 
 		void Stepper::wake_up()
 		{
+			Stepper::_TIMSK1 = 1;
 			//STEP_TIMER->SR = 0;
 			//STEP_RST_TIMER->SR = 0;
 
@@ -116,6 +138,7 @@ namespace Hardware_Abstraction_Layer
 
 		void Stepper::st_go_idle()
 		{
+			Stepper::_TIMSK1 = 0;
 			////disable interrupts for timer
 			//HAL_NVIC_DisableIRQ(STEP_TIMER_INTERRUPT);
 			//STEP_TIMER->CR1 &= ~TIM_CR1_CEN;
