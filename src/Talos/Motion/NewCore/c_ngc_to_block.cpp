@@ -48,6 +48,8 @@ namespace Talos
 				//Set the planned block to the first block by default.
 				__s_motion_block* Block::planned_block = Block::motion_buffer.peek(0);
 
+				s_plane_axis Block::active_plane;
+
 				static uint32_t running_sequence = 0;
 
 				void Block::load_ngc_test()
@@ -241,24 +243,60 @@ namespace Talos
 						return 0;
 					}
 
+					//The ngc block coming in should have plane rotations handled already. 
+					//However the system doesnt always know a block is in plane rotation
+					//so we need to verify and update position pointers just in case.
+					__set_plane_rotations(*view.current_g_codes.Plane_Rotation);
+
 					//init a new block for motion
 					__s_motion_block motion_block{ 0 };
 
 					__copy_persisted(&motion_block);
 
+					if (*view.current_g_codes.Motion == NGC_RS274::G_codes::CIRCULAR_INTERPOLATION_CW
+						|| *view.current_g_codes.Motion == NGC_RS274::G_codes::CIRCULAR_INTERPOLATION_CCW)
+					{
+						//Set some persisting data for the motion block
+						motion_block.__station__ = view.active_view_block->__station__;
+						motion_block.common.tracking.sequence = ++running_sequence;
+						motion_block.common.tracking.line_number = *view.persisted_values.active_line_number_N;
+						motion_block.__station__ = motion_buffer._head;
+						__plan_buffer_arc(*view.current_g_codes.Motion = NGC_RS274::G_codes::CIRCULAR_INTERPOLATION_CW,
+							&motion_block, mtn_cfg::Controller.Settings, &_persisted, &view);
+					}
+					else if (*view.current_g_codes.Motion == NGC_RS274::G_codes::LINEAR_INTERPOLATION
+						|| *view.current_g_codes.Motion == NGC_RS274::G_codes::RAPID_POSITIONING)
+					{
+						//Set some persisting data for the motion block
+						motion_block.__station__ = view.active_view_block->__station__;
+						motion_block.common.tracking.sequence = ++running_sequence;
+						motion_block.common.tracking.line_number = *view.persisted_values.active_line_number_N;
+						motion_block.__station__ = motion_buffer._head;
+						__plan_buffer_line(&motion_block, mtn_cfg::Controller.Settings, &_persisted, &view);
+					}
+
+					return 1;
+				}
+
+				uint8_t Block::__plan_buffer_line(
+					__s_motion_block* motion_block
+					, s_motion_control_settings_encapsulation hw_settings
+					, s_persisting_values* prev_values
+					, NGC_RS274::Block_View* view)
+				{
 					//create an array to hold our unit distances
-					float unit_vec[MACHINE_AXIS_COUNT]{ 0.0 };
+					float unit_vectors[MACHINE_AXIS_COUNT]{ 0.0 };
 
 					//create a work variable for the target step distance
 					int32_t target_steps[MACHINE_AXIS_COUNT]{ 0 };
 
 					//convert ngc block info to steps
 					uint8_t ret = __convert_ngc_distance(
-						view.active_view_block
-						, &motion_block
+						view->active_view_block
+						, motion_block
 						, mtn_cfg::Controller.Settings.hardware
 						, &_persisted
-						, unit_vec
+						, unit_vectors
 						, target_steps);
 
 					//if work block is null, no distance to move
@@ -273,47 +311,193 @@ namespace Talos
 					if (!_persisted.bl_comp.get(15))
 					{
 						//clear the comp bits that might have been set on this block
-						motion_block.axis_data.bl_comp_bits._flag = 0;
+						motion_block->axis_data.bl_comp_bits._flag = 0;
 					}
 					//set bit 15 so we know that motion has ran once and any more motions need backlash
 					//(motions that dont actually cause motion will have already been ignored)
 					//Save the direction bits for when the next block is processed. (set the 15th bit always)
-					_persisted.bl_comp._flag = motion_block.axis_data.direction_bits._flag | 0X8000;
+					_persisted.bl_comp._flag = motion_block->axis_data.direction_bits._flag | 0X8000;
 
-					motion_block.millimeters = convert_delta_vector_to_unit_vector(unit_vec);
-					motion_block.acceleration = __limit_value_by_axis_maximum(mtn_cfg::Controller.Settings.hardware.acceleration, unit_vec);
-					motion_block.rapid_rate = __limit_value_by_axis_maximum(mtn_cfg::Controller.Settings.hardware.max_rate, unit_vec);
+					motion_block->millimeters = convert_delta_vector_to_unit_vector(unit_vectors);
+					motion_block->acceleration = __limit_value_by_axis_maximum(mtn_cfg::Controller.Settings.hardware.acceleration, unit_vectors);
+					motion_block->rapid_rate = __limit_value_by_axis_maximum(mtn_cfg::Controller.Settings.hardware.max_rate, unit_vectors);
 
-					__configure_feeds(view, &motion_block);
+					__configure_feeds(*view, motion_block);
 
-					__configure_motions(view, &motion_block, &_persisted, mtn_cfg::Controller.Settings);
+					__configure_motions(*view, motion_block, &_persisted, mtn_cfg::Controller.Settings);
 
-					if (motion_block.common.control_bits.motion.get(e_f_motion_block_state::motion_arc_ccw)
-						|| motion_block.common.control_bits.motion.get(e_f_motion_block_state::motion_arc_cw))
+					uint8_t idx = 0;
+					//If there is no data in the buffer we are assuming a start from rest.
+					//Also if there is a feedmode change to units per rotation that wasnt 
+					//there before we need to start from rest. 
+					if (!Block::motion_buffer.has_data() ||
+						__motion_requires_zero_start(motion_block->common.control_bits.feed
+							, motion_block->common.control_bits.motion))
 					{
-						__plan_buffer_arc(&motion_block, mtn_cfg::Controller.Settings, &_persisted, unit_vec, target_steps);
+						// Initialize block entry speed as zero. Assume it will be starting from rest. Planner will correct this later.
+						// If system motion, the system motion block always is assumed to start from rest and end at a complete stop.
+						motion_block->speed.entry_sqr = 0.0;
+						motion_block->speed.mx_junc_sqr = 0.0; // Starting from rest. Enforce start from zero velocity.
+
 					}
 					else
 					{
-						__plan_buffer_line(&motion_block, mtn_cfg::Controller.Settings, &_persisted, unit_vec, target_steps);
+						float junction_unit_vec[MACHINE_AXIS_COUNT]{ 0 };
+						float junction_cos_theta = 0.0;
+						for (idx = 0; idx < MACHINE_AXIS_COUNT; idx++)
+						{
+							junction_cos_theta -= prev_values->unit_vectors[idx] * unit_vectors[idx];
+							junction_unit_vec[idx] = unit_vectors[idx] - prev_values->unit_vectors[idx];
+						}
+
+						// NOTE: Computed without any expensive trig, sin() or acos(), by trig half angle identity of cos(theta).
+						if (junction_cos_theta > 0.999999)
+						{
+							//  For a 0 degree acute junction, just set minimum junction speed.
+							motion_block->speed.mx_junc_sqr =
+								mtn_cfg::Controller.Settings.internals.MINIMUM_JUNCTION_SPEED_SQ;
+						}
+						else
+						{
+							if (junction_cos_theta < -0.999999)
+							{
+								// Junction is a straight line or 180 degrees. Junction speed is infinite.
+								motion_block->speed.mx_junc_sqr = SOME_LARGE_VALUE;
+							}
+							else
+							{
+								convert_delta_vector_to_unit_vector(junction_unit_vec);
+								float junction_acceleration = __limit_value_by_axis_maximum(hw_settings.hardware.acceleration, junction_unit_vec);
+								float sin_theta_d2 = sqrt(0.5 * (1.0 - junction_cos_theta)); // Trig half angle identity. Always positive.
+								motion_block->speed.mx_junc_sqr =
+									max(mtn_cfg::Controller.Settings.internals.MINIMUM_JUNCTION_SPEED_SQ,
+										(junction_acceleration * hw_settings.tolerance.junction_deviation * sin_theta_d2)
+										/ (1.0 - sin_theta_d2));
+							}
+						}
 					}
 
-					motion_block.__station__ = view.active_view_block->__station__;
-					motion_block.common.tracking.sequence = ++running_sequence;
-					motion_block.common.tracking.line_number = *view.persisted_values.active_line_number_N;
+					// Block system motion from updating this data to ensure next g-code motion is computed correctly.
+					//if (!(planning_block->condition & PL_COND_FLAG_SYSTEM_MOTION))
+					{
+						float nominal_speed = get_nominal_speed(motion_block);
+						__get_junction_speed(motion_block, nominal_speed, prev_values->nominal_speed);
+						prev_values->nominal_speed = nominal_speed;
 
-					motion_block.__station__ = motion_buffer._head;
+						// Update previous path unit_vector and planner position.
+						memcpy(prev_values->unit_vectors, unit_vectors, sizeof(unit_vectors)); // pl.previous_unit_vec[] = unit_vec[]
+						memcpy(prev_values->system_position, target_steps, sizeof(prev_values->system_position)); // pl.position[] = target_steps[]
 
-					motion_buffer.put(motion_block);
 
-					__planner_recalculate();
+					}
 
+					motion_buffer.put(*motion_block);
 					mtn_ctl_sta::Process::states.set(mtn_ctl_sta::Process::e_states::motion_buffer_not_empty);
 
 					if (motion_buffer._full)
 						mtn_ctl_sta::Process::states.set(mtn_ctl_sta::Process::e_states::motion_buffer_full);
 
-					return 1;
+					__planner_recalculate();
+
+					return (1);
+				}
+
+				/*uint8_t __plan_buffer_arc(float* target, plan_line_data_t* pl_data, float* position, float* offset, float radius,
+					uint8_t axis_0, uint8_t axis_1, uint8_t axis_linear, uint8_t is_clockwise_arc)*/
+				uint8_t Block::__plan_buffer_arc(bool is_clockwise_arc
+					, __s_motion_block* motion_block
+					, s_motion_control_settings_encapsulation hw_settings
+					, s_persisting_values* prev_values
+					, NGC_RS274::Block_View* view)
+				{
+
+					float center_axis0 = *prev_values->plane_position[0] + *view->arc_values.horizontal_offset.value;
+					float center_axis1 = *prev_values->plane_position[1] + *view->arc_values.vertical_offset.value;
+					float r_axis0 = -*view->arc_values.horizontal_offset.value;  // Radius vector from center to current location
+					float r_axis1 = -*view->arc_values.vertical_offset.value;
+					float rt_axis0 = *view->active_plane.horizontal_axis.value - center_axis0;
+					float rt_axis1 = *view->active_plane.vertical_axis.value - center_axis1;
+
+					// CCW angle between position and target from circle center. Only one atan2() trig computation required.
+					float angular_travel = atan2f(r_axis0 * rt_axis1 - r_axis1 * rt_axis0, r_axis0 * rt_axis0 + r_axis1 * rt_axis1);
+					if (is_clockwise_arc) { // Correct atan2 output per direction
+						if (angular_travel >= -hw_settings.internals.ARC_ANGULAR_TRAVEL_EPSILON) { angular_travel -= 2 * M_PI; }
+					}
+					else {
+						if (angular_travel <= hw_settings.internals.ARC_ANGULAR_TRAVEL_EPSILON) { angular_travel += 2 * M_PI; }
+					}
+
+					// NOTE: Segment end points are on the arc, which can lead to the arc diameter being smaller by up to
+					// (2x) settings.arc_tolerance. For 99% of users, this is just fine. If a different arc segment fit
+					// is desired, i.e. least-squares, midpoint on arc, just change the mm_per_arc_segment calculation.
+					// For the intended uses of Grbl, this value shouldn't exceed 2000 for the strictest of cases.
+					uint16_t segments = (uint16_t)floorf(fabsf(0.5f * angular_travel * *view->arc_values.Radius) /
+						sqrtf(hw_settings.tolerance.arc_tolerance * (2 * *view->arc_values.Radius - hw_settings.tolerance.arc_tolerance)));
+
+					if (segments)
+					{
+						// Multiply inverse feed_rate to compensate for the fact that this movement is approximated
+						// by a number of discrete segments. The inverse feed_rate should be correct for the sum of
+						// all segments.
+						if (*view->current_g_codes.Feed_rate_mode == NGC_RS274::G_codes::FEED_RATE_MINUTES_PER_UNIT_MODE)
+							//if (pl_data->condition & PL_COND_FLAG_INVERSE_TIME)
+						{
+							motion_block->programmed_rate *= segments;
+							//pl_data->feed_rate *= segments;
+							//bit_false(pl_data->condition, PL_COND_FLAG_INVERSE_TIME); // Force as feed absolute mode over arc segments.
+						}
+
+						float theta_per_segment = angular_travel / segments;
+						float linear_per_segment = (*view->active_plane.normal_axis.value
+							- *prev_values->plane_position[2]) / segments;
+
+
+						// Computes: cos_T = 1 - theta_per_segment^2/2, sin_T = theta_per_segment - theta_per_segment^3/6) in ~52usec
+						float cos_T = 2.0f - theta_per_segment * theta_per_segment;
+						float sin_T = theta_per_segment * 0.16666667f * (cos_T + 4.0f);
+						cos_T *= 0.5;
+
+						float sin_Ti;
+						float cos_Ti;
+						float r_axisi;
+						uint32_t i;
+						uint8_t count = 0;
+
+						for (i = 1; i < segments; i++) { // Increment (segments-1).
+
+							if (count < hw_settings.internals.N_ARC_CORRECTION) {
+								// Apply vector rotation matrix. ~40 usec
+								r_axisi = r_axis0 * sin_T + r_axis1 * cos_T;
+								r_axis0 = r_axis0 * cos_T - r_axis1 * sin_T;
+								r_axis1 = r_axisi;
+								count++;
+							}
+							else {
+								// Arc correction to radius vector. Computed only every N_ARC_CORRECTION increments. ~375 usec
+								// Compute exact location by applying transformation matrix from initial radius vector(=-offset).
+								cos_Ti = cosf(i * theta_per_segment);
+								sin_Ti = sinf(i * theta_per_segment);
+								r_axis0 = -*view->arc_values.horizontal_offset.value * cos_Ti + *view->arc_values.vertical_offset.value * sin_Ti;
+								r_axis1 = -*view->arc_values.horizontal_offset.value * sin_Ti - *view->arc_values.vertical_offset.value * cos_Ti;
+								count = 0;
+							}
+
+							// Update arc_target location
+
+							*prev_values->plane_position[0] = center_axis0 + r_axis0;
+							*prev_values->plane_position[1] = center_axis1 + r_axis1;
+							*prev_values->plane_position[2] += linear_per_segment;
+
+							__plan_buffer_line(motion_block, hw_settings, prev_values, view);
+							//mc_line(position, pl_data);
+
+							// Bail mid-circle on system abort. Runtime command check already performed by mc_line.
+							//if (sys.abort) { return; }
+						}
+					}
+					// Ensure last segment arrives at target location.
+					__plan_buffer_line(motion_block, hw_settings, prev_values, view);
+					//mc_line(target, pl_data);
 				}
 
 				uint8_t Block::__convert_ngc_distance(
@@ -430,9 +614,9 @@ namespace Talos
 					motion_block->arc_info.angular_travel = atan2f(r_axis0 * rt_axis1 - r_axis1 * rt_axis0, r_axis0 * rt_axis0 + r_axis1 * rt_axis1);
 					if (motion_block->common.control_bits.motion.get(e_f_motion_block_state::motion_arc_cw))
 					{
-						if (motion_block->arc_info.angular_travel >=-hw_settings.internals.ARC_ANGULAR_TRAVEL_EPSILON)
+						if (motion_block->arc_info.angular_travel >= -hw_settings.internals.ARC_ANGULAR_TRAVEL_EPSILON)
 						{
-							motion_block->arc_info.angular_travel -= 2 * M_PI; 
+							motion_block->arc_info.angular_travel -= 2 * M_PI;
 						}
 					}
 					else
@@ -448,7 +632,7 @@ namespace Talos
 					// is desired, i.e. least-squares, midpoint on arc, just change the mm_per_arc_segment calculation.
 					// For the intended uses of Grbl, this value shouldn't exceed 2000 for the strictest of cases.
 					motion_block->arc_info.segments = (uint16_t)floorf(fabsf(0.5f * motion_block->arc_info.angular_travel * motion_block->arc_info.radius) /
-						sqrtf(hw_settings.tolerance.arc_tolerance 
+						sqrtf(hw_settings.tolerance.arc_tolerance
 							* (2 * motion_block->arc_info.radius - hw_settings.tolerance.arc_tolerance)));
 				}
 
@@ -462,6 +646,11 @@ namespace Talos
 					motion_block->programmed_rate = *ngc_view.persisted_values.feed_rate_F;
 					if (*ngc_view.current_g_codes.Motion == NGC_RS274::G_codes::RAPID_POSITIONING)
 						motion_block->programmed_rate = motion_block->rapid_rate;
+					else if (*ngc_view.current_g_codes.Motion == NGC_RS274::G_codes::CIRCULAR_INTERPOLATION_CCW
+						|| *ngc_view.current_g_codes.Motion == NGC_RS274::G_codes::CIRCULAR_INTERPOLATION_CW)
+						motion_block->programmed_rate = motion_block->programmed_rate;
+					else
+						motion_block->programmed_rate = *ngc_view.persisted_values.feed_rate_F;
 				}
 
 				e_r_feed_block_state Block::__check_ngc_feed_mode(__s_motion_block* motion_block, uint16_t ngc_feed_mode)
@@ -561,181 +750,6 @@ namespace Talos
 						}
 					}
 					return (limit_value);
-				}
-
-
-
-				uint8_t Block::__plan_buffer_line(
-					__s_motion_block* motion_block
-					, s_motion_control_settings_encapsulation hw_settings
-					, s_persisting_values* prev_values
-					, float* unit_vectors
-					, int32_t* target_steps)
-				{
-					uint8_t idx = 0;
-					//If there is no data in the buffer we are assuming a start from rest.
-					//Also if there is a feedmode change to units per rotation that wasnt 
-					//there before we need to start from rest. 
-					if (!Block::motion_buffer.has_data() ||
-						__motion_requires_zero_start(motion_block->common.control_bits.feed
-							, motion_block->common.control_bits.motion))
-					{
-						// Initialize block entry speed as zero. Assume it will be starting from rest. Planner will correct this later.
-						// If system motion, the system motion block always is assumed to start from rest and end at a complete stop.
-						motion_block->speed.entry_sqr = 0.0;
-						motion_block->speed.mx_junc_sqr = 0.0; // Starting from rest. Enforce start from zero velocity.
-
-					}
-					else
-					{
-						float junction_unit_vec[MACHINE_AXIS_COUNT]{ 0 };
-						float junction_cos_theta = 0.0;
-						for (idx = 0; idx < MACHINE_AXIS_COUNT; idx++)
-						{
-							junction_cos_theta -= prev_values->unit_vectors[idx] * unit_vectors[idx];
-							junction_unit_vec[idx] = unit_vectors[idx] - prev_values->unit_vectors[idx];
-						}
-
-						// NOTE: Computed without any expensive trig, sin() or acos(), by trig half angle identity of cos(theta).
-						if (junction_cos_theta > 0.999999)
-						{
-							//  For a 0 degree acute junction, just set minimum junction speed.
-							motion_block->speed.mx_junc_sqr =
-								mtn_cfg::Controller.Settings.internals.MINIMUM_JUNCTION_SPEED_SQ;
-						}
-						else
-						{
-							if (junction_cos_theta < -0.999999)
-							{
-								// Junction is a straight line or 180 degrees. Junction speed is infinite.
-								motion_block->speed.mx_junc_sqr = SOME_LARGE_VALUE;
-							}
-							else
-							{
-								convert_delta_vector_to_unit_vector(junction_unit_vec);
-								float junction_acceleration = __limit_value_by_axis_maximum(hw_settings.hardware.acceleration, junction_unit_vec);
-								float sin_theta_d2 = sqrt(0.5 * (1.0 - junction_cos_theta)); // Trig half angle identity. Always positive.
-								motion_block->speed.mx_junc_sqr =
-									max(mtn_cfg::Controller.Settings.internals.MINIMUM_JUNCTION_SPEED_SQ,
-										(junction_acceleration * hw_settings.tolerance.junction_deviation * sin_theta_d2)
-										/ (1.0 - sin_theta_d2));
-							}
-						}
-					}
-
-					// Block system motion from updating this data to ensure next g-code motion is computed correctly.
-					//if (!(planning_block->condition & PL_COND_FLAG_SYSTEM_MOTION))
-					{
-						float nominal_speed = get_nominal_speed(motion_block);
-						__get_junction_speed(motion_block, nominal_speed, prev_values->nominal_speed);
-						prev_values->nominal_speed = nominal_speed;
-
-						// Update previous path unit_vector and planner position.
-						memcpy(prev_values->unit_vectors, unit_vectors, sizeof(unit_vectors)); // pl.previous_unit_vec[] = unit_vec[]
-						memcpy(prev_values->system_position, target_steps, sizeof(prev_values->system_position)); // pl.position[] = target_steps[]
-
-
-					}
-					return (1);
-				}
-
-
-
-				/*uint8_t __plan_buffer_arc(float* target, plan_line_data_t* pl_data, float* position, float* offset, float radius,
-					uint8_t axis_0, uint8_t axis_1, uint8_t axis_linear, uint8_t is_clockwise_arc)*/
-				uint8_t Block::__plan_buffer_arc(
-					__s_motion_block* motion_block
-					, s_motion_control_settings_encapsulation hw_settings
-					, s_persisting_values* prev_values
-					, float* unit_vectors
-					, int32_t* target_steps)
-				{
-					//float center_axis0 = prev_values->system_position[0] + motion_block->arc_info.offset_horizontal;
-					//float center_axis1 = prev_values->system_position[1] + motion_block->arc_info.offset_vertical;
-					//float r_axis0 = -motion_block->arc_info.offset_horizontal;  // Radius vector from center to current location
-					//float r_axis1 = -motion_block->arc_info.offset_vertical;
-					//float rt_axis0 = target[axis_0] - center_axis0;
-					//float rt_axis1 = target[axis_1] - center_axis1;
-
-					//// CCW angle between position and target from circle center. Only one atan2() trig computation required.
-					//float angular_travel = atan2f(r_axis0 * rt_axis1 - r_axis1 * rt_axis0, r_axis0 * rt_axis0 + r_axis1 * rt_axis1);
-					//if (motion_block.common.control_bits.motion.get(e_f_motion_block_state::motion_arc_cw))
-					//{ 
-					//	if (angular_travel >= -ARC_ANGULAR_TRAVEL_EPSILON) { angular_travel -= 2 * M_PI; }
-					//}
-					//else {
-					//	if (angular_travel <= ARC_ANGULAR_TRAVEL_EPSILON) { angular_travel += 2 * M_PI; }
-					//}
-
-					//// NOTE: Segment end points are on the arc, which can lead to the arc diameter being smaller by up to
-					//// (2x) settings.arc_tolerance. For 99% of users, this is just fine. If a different arc segment fit
-					//// is desired, i.e. least-squares, midpoint on arc, just change the mm_per_arc_segment calculation.
-					//// For the intended uses of Grbl, this value shouldn't exceed 2000 for the strictest of cases.
-					//uint16_t segments = (uint16_t)floorf(fabsf(0.5f * angular_travel * radius) /
-					//	sqrtf(settings.arc_tolerance * (2 * radius - settings.arc_tolerance)));
-
-					float r_axis0 = -motion_block->arc_info.offset_horizontal;  // Radius vector from center to current location
-					float r_axis1 = -motion_block->arc_info.offset_vertical;
-
-					if (motion_block->arc_info.segments)
-					{
-						// Multiply inverse feed_rate to compensate for the fact that this movement is approximated
-						// by a number of discrete segments. The inverse feed_rate should be correct for the sum of
-						// all segments.
-						if (pl_data->condition & PL_COND_FLAG_INVERSE_TIME) {
-							pl_data->feed_rate *= motion_block->arc_info.segments;
-							bit_false(pl_data->condition, PL_COND_FLAG_INVERSE_TIME); // Force as feed absolute mode over arc segments.
-						}
-
-						float theta_per_segment = motion_block->arc_info.angular_travel / motion_block->arc_info.segments;
-						float linear_per_segment = (target[axis_linear] - prev_values->system_position[axis_linear]) / motion_block->arc_info.segments;
-
-
-						// Computes: cos_T = 1 - theta_per_segment^2/2, sin_T = theta_per_segment - theta_per_segment^3/6) in ~52usec
-						float cos_T = 2.0f - theta_per_segment * theta_per_segment;
-						float sin_T = theta_per_segment * 0.16666667f * (cos_T + 4.0f);
-						cos_T *= 0.5;
-
-						float sin_Ti;
-						float cos_Ti;
-						float r_axisi;
-						uint16_t i;
-						uint8_t count = 0;
-
-						for (i = 1; i < motion_block->arc_info.segments; i++) { // Increment (segments-1).
-
-							if (count < hw_settings.internals.N_ARC_CORRECTION) {
-								// Apply vector rotation matrix. ~40 usec
-								r_axisi = r_axis0 * sin_T + r_axis1 * cos_T;
-								r_axis0 = r_axis0 * cos_T - r_axis1 * sin_T;
-								r_axis1 = r_axisi;
-								count++;
-							}
-							else {
-								// Arc correction to radius vector. Computed only every N_ARC_CORRECTION increments. ~375 usec
-								// Compute exact location by applying transformation matrix from initial radius vector(=-offset).
-								cos_Ti = cosf(i * theta_per_segment);
-								sin_Ti = sinf(i * theta_per_segment);
-								r_axis0 = -motion_block->arc_info.offset_horizontal * cos_Ti + motion_block->arc_info.offset_vertical * sin_Ti;
-								r_axis1 = -motion_block->arc_info.offset_horizontal * sin_Ti - motion_block->arc_info.offset_vertical * cos_Ti;
-								count = 0;
-							}
-
-							// Update arc_target location
-							prev_values->system_position[0] = motion_block->arc_info.center_axis0 + r_axis0;
-							prev_values->system_position[1] = motion_block->arc_info.center_axis1 + r_axis1;
-							prev_values->system_position[2] += linear_per_segment;
-
-							//mc_line(position, pl_data);
-
-							__plan_buffer_line(motion_block, hw_settings, prev_values, unit_vectors, target_steps);
-
-							// Bail mid-circle on system abort. Runtime command check already performed by mc_line.
-							if (sys.abort) { return; }
-						}
-					}
-					// Ensure last segment arrives at target location.
-					mc_line(target, pl_data);
 				}
 
 				void Block::__planner_recalculate()
@@ -985,6 +999,94 @@ namespace Talos
 
 					//motion_block->common.control_bits.feed = _persisted.feed;
 
+				}
+
+				void Block::__set_plane_rotations(uint16_t plane)
+				{
+					//System position data and target data cant be based on index values in the array.
+					//When plane rotation is active we have to also rotate teh systems position array.
+
+					switch (plane)
+					{
+					case NGC_RS274::G_codes::XY_PLANE_SELECTION: //G17
+					{
+						_persisted.plane_position[0] = &_persisted.system_position[0]; //X
+						_persisted.plane_position[1] = &_persisted.system_position[1]; //Y
+						_persisted.plane_position[2] = &_persisted.system_position[2]; //Z
+
+						_persisted.plane_position[3] = &_persisted.system_position[3]; //A
+						_persisted.plane_position[4] = &_persisted.system_position[4]; //B
+						_persisted.plane_position[5] = &_persisted.system_position[5]; //C
+
+						_persisted.plane_position[0] = &_persisted.system_position[0]; //U
+						_persisted.plane_position[1] = &_persisted.system_position[1]; //V
+						_persisted.plane_position[2] = &_persisted.system_position[2]; //W
+					}
+					break;
+					case NGC_RS274::G_codes::XZ_PLANE_SELECTION: //G18
+					{
+						_persisted.plane_position[0] = &_persisted.system_position[0]; //X
+						_persisted.plane_position[1] = &_persisted.system_position[2]; //Z
+						_persisted.plane_position[2] = &_persisted.system_position[1]; //Y
+
+						_persisted.plane_position[3] = &_persisted.system_position[3]; //A
+						_persisted.plane_position[4] = &_persisted.system_position[5]; //C
+						_persisted.plane_position[5] = &_persisted.system_position[4]; //B
+
+						_persisted.plane_position[0] = &_persisted.system_position[0]; //U
+						_persisted.plane_position[1] = &_persisted.system_position[2]; //W
+						_persisted.plane_position[2] = &_persisted.system_position[1]; //V
+					}
+					break;
+					case NGC_RS274::G_codes::YZ_PLANE_SELECTION://G19
+					{
+						_persisted.plane_position[0] = &_persisted.system_position[1]; //Y
+						_persisted.plane_position[1] = &_persisted.system_position[2]; //Z
+						_persisted.plane_position[2] = &_persisted.system_position[0]; //X
+
+						_persisted.plane_position[3] = &_persisted.system_position[4]; //B
+						_persisted.plane_position[4] = &_persisted.system_position[5]; //C
+						_persisted.plane_position[5] = &_persisted.system_position[3]; //A
+
+						_persisted.plane_position[0] = &_persisted.system_position[1]; //U
+						_persisted.plane_position[1] = &_persisted.system_position[2]; //W
+						_persisted.plane_position[2] = &_persisted.system_position[0]; //V
+					}
+					break;
+					case NGC_RS274::G_codes::UV_PLANE_SELECTION://G17.1
+					{
+						_persisted.plane_position[3] = &_persisted.system_position[3]; //A
+						_persisted.plane_position[4] = &_persisted.system_position[4]; //B
+						_persisted.plane_position[5] = &_persisted.system_position[5]; //C
+
+						_persisted.plane_position[0] = &_persisted.system_position[0]; //U
+						_persisted.plane_position[1] = &_persisted.system_position[1]; //V
+						_persisted.plane_position[2] = &_persisted.system_position[2]; //W
+					}
+					break;
+					case NGC_RS274::G_codes::UW_PLANE_SELECTION://G18.1
+					{
+						_persisted.plane_position[3] = &_persisted.system_position[3]; //A
+						_persisted.plane_position[4] = &_persisted.system_position[5]; //C
+						_persisted.plane_position[5] = &_persisted.system_position[4]; //B
+
+						_persisted.plane_position[0] = &_persisted.system_position[0]; //U
+						_persisted.plane_position[1] = &_persisted.system_position[2]; //W
+						_persisted.plane_position[2] = &_persisted.system_position[1]; //V
+					}
+					break;
+					case NGC_RS274::G_codes::VW_PLANE_SELECTION://G19.1
+					{
+						_persisted.plane_position[3] = &_persisted.system_position[4]; //B
+						_persisted.plane_position[4] = &_persisted.system_position[5]; //C
+						_persisted.plane_position[5] = &_persisted.system_position[3]; //A
+
+						_persisted.plane_position[0] = &_persisted.system_position[1]; //U
+						_persisted.plane_position[1] = &_persisted.system_position[2]; //W
+						_persisted.plane_position[2] = &_persisted.system_position[0]; //V
+					}
+					break;
+					}
 				}
 			}
 		}

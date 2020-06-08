@@ -6,6 +6,7 @@
 #include "../../physical_machine_parameters.h"
 #include "../../NGC_RS274/_ngc_block_struct.h"
 #include "../../NGC_RS274/ngc_block_view.h"
+//#include "../../NGC_RS274/_ngc_plane_struct.h"
 #include "../../_bit_flag_control.h"
 #include "../../c_ring_template.h"
 #include "../../Shared_Data/e_state_flag.h"
@@ -30,6 +31,8 @@ namespace Talos
 					static c_ring_buffer<__s_spindle_block> spindle_buffer;
 					static c_ring_buffer<s_ngc_block> ngc_buffer;
 					static __s_motion_block* planned_block;
+					static s_plane_axis active_plane;
+
 				protected:
 				private:
 					struct s_persisting_values
@@ -37,6 +40,7 @@ namespace Talos
 						s_bit_flag_controller<uint16_t> bl_comp{ 0 };
 						float unit_vectors[MACHINE_AXIS_COUNT];
 						int32_t system_position[MACHINE_AXIS_COUNT];
+						int32_t* plane_position[MACHINE_AXIS_COUNT];
 						float nominal_speed;
 						__s_spindle_block spindle_block;
 						s_bit_flag_controller<e_f_motion_block_state> motion_block_states{ 0 };
@@ -108,15 +112,14 @@ namespace Talos
 						__s_motion_block* motion_block
 						, s_motion_control_settings_encapsulation hw_settings
 						, s_persisting_values* prev_values
-						, float* unit_vectors
-						, int32_t* target_steps);
+						, NGC_RS274::Block_View* view);
 
 					static uint8_t __plan_buffer_arc(
-						__s_motion_block* motion_block
+						bool is_clockwise_arc
+						, __s_motion_block* motion_block
 						, s_motion_control_settings_encapsulation hw_settings
 						, s_persisting_values* prev_values
-						, float* unit_vectors
-						, int32_t* target_steps);
+						, NGC_RS274::Block_View* view);
 
 					static void ___load_arc_data(
 						NGC_RS274::Block_View ngc_view
@@ -129,6 +132,7 @@ namespace Talos
 					static void __forward_plan();
 					static void __reverse_plan();
 					static void __copy_persisted(__s_motion_block* motion_block);
+					static void __set_plane_rotations(uint16_t plane);
 				};
 
 			};
