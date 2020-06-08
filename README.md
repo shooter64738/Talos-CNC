@@ -7,6 +7,6 @@ After 6 years I am nearing the first rounf of completion. This will no longer fu
 
 This is a HUGE project, capable of running on a Windows platform, or a mCU. I am no longer going to keep all the projects up to date for the various platforms it runs on. The only 2 platforms I will be focusing on for the near future, and possibly forever are WIN32 and STM32.
 
-There seems to be confusion as to what this project is. It is NOT a copy of GRBL, Smoothie, TinyG, etc. I have used elements and features of some of those projects, but this is not a port of one of those projects to a different processor. What is, is a a completley new motion processor system.
+There seems to be confusion as to what this project is. It is NOT a copy of GRBL, Smoothie, TinyG, etc. I have used elements and features of some of those projects, but this is not a port of one of those projects to a different processor. What is, is a completley new motion processor system.
 
 Please see the wiki page for details on features/functions
