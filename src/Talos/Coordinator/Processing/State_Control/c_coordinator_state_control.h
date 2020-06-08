@@ -24,6 +24,7 @@ namespace Talos
 				{
 					Process = 1, //<--Process handles gcode inbound buffering
 					Output = 2,
+					Report = 3,
 				};
 				extern void execute();
 				extern void execute(e_state_class st_class);
@@ -73,6 +74,28 @@ namespace Talos
 					static void execute();
 				protected:
 				private:
+
+				};
+
+				class Report
+				{
+					//variables
+				public:
+					enum class e_states :uint32_t
+					{
+
+					};
+					static s_bit_flag_controller<e_states> states;
+
+				protected:
+				private:
+
+					//functions
+				public:
+					static void execute();
+				protected:
+				private:
+
 
 				};
 

@@ -99,7 +99,7 @@ namespace Talos
 
 					hrd_out::Hardware::Spindle::start(_persisted.spindle_block);
 
-					if (_persisted.spindle_block.states.get(e_spindle_state::synch_with_motion))
+					if (_persisted.spindle_block.states.get(e_f_spindle_state::synch_with_motion))
 					{
 						//call the synch function
 						__spindle_wait_synch();
@@ -150,7 +150,7 @@ namespace Talos
 					//The timer isr will call 'driver' 
 					Segment::pntr_driver = __run_interpolation;
 
-					mtn_ctl_sta::Output::states.set(mtn_ctl_sta::Output::e_states::interpolation_running);
+					//mtn_ctl_sta::Output::states.set(mtn_ctl_sta::Output::e_states::interpolation_running);
 					mtn_ctl_sta::Output::states.clear(mtn_ctl_sta::Output::e_states::interpolation_complete);
 					
 					//start the timer, this will set all of the wheel in motion
@@ -283,14 +283,14 @@ namespace Talos
 					{
 						done = false;
 						//does this new timer indicate a feed mode change
-						if (_persisted.seg->common.control_bits.feed.get(e_feed_block_state::feed_mode_change))
+						if (_persisted.seg->common.control_bits.feed.get(e_r_feed_block_state::feed_mode_change))
 						{
 #ifdef MSVC
 							myfile << "*****feed mode change*****" << "\r";
 #endif
 							//does the change require spindle synch
 							if (_persisted.seg->common.control_bits.feed.get(
-								e_feed_block_state::feed_mode_units_per_rotation))
+								e_r_feed_block_state::feed_mode_units_per_rotation))
 							{
 #ifdef MSVC
 								myfile << "*****units per rotation*****" << "\r";
@@ -327,15 +327,26 @@ namespace Talos
 						// NOTE: When the segment data index changes, this indicates a new planner block.
 						if (_persisted.active_bresenham != _persisted.seg->common.bres_obj)
 						{
-
 							//New line segment, so this should be the start of a block.
-							mtn_ctl_sta::Output::states.set(mtn_ctl_sta::Output::e_states::ngc_block_done);
+
+							//If interpolation is running this is a finished block. If its not running yet, then this
+							//is the very first block we are starting, so dont report it as done yet
+							if (mtn_ctl_sta::Output::states.get(mtn_ctl_sta::Output::e_states::interpolation_running))
+							{
+								mtn_ctl_sta::Output::states.set(mtn_ctl_sta::Output::e_states::ngc_block_done);
+								
+								//determine the blocks duration
+								mtn_ctl_sta::Output::block_stats.common.duration =
+									Hardware_Abstraction_Layer::Core::get_tick_ms() - mtn_ctl_sta::Output::block_stats.common.duration;
+							}
 							_persisted.active_line_number = _persisted.seg->common.tracking.line_number;
 							_persisted.last_complete_sequence = _persisted.active_sequence;
 
 							mtn_ctl_sta::Output::block_stats.common.sequence = _persisted.last_complete_sequence;
 							mtn_ctl_sta::Output::block_stats.common.line_number = _persisted.active_line_number;
-							//mtn_ctl_sta::Output::block_stats.start_time = *Hardware_Abstraction_Layer::Core::cpu_tick_ms;
+							//mark the blocks start time
+							mtn_ctl_sta::Output::block_stats.common.duration = Hardware_Abstraction_Layer::Core::get_tick_ms();
+							
 
 							_persisted.active_sequence = _persisted.seg->common.tracking.sequence;
 							_persisted.active_bresenham = _persisted.seg->common.bres_obj;
@@ -360,6 +371,9 @@ namespace Talos
 								= _persisted.seg->common.bres_obj->major_axis;
 							_persisted.bresenham_counter[AXIS6]
 								= _persisted.seg->common.bres_obj->major_axis;
+
+							//set interpollation to running. 
+							mtn_ctl_sta::Output::states.set(mtn_ctl_sta::Output::e_states::interpolation_running);
 						}
 					}
 					return done;
@@ -386,6 +400,11 @@ namespace Talos
 					if (!mtn_ctl_sta::Motion::states.get(mtn_ctl_sta::Motion::e_states::hold))
 					{
 						mtn_ctl_sta::Output::states.set(mtn_ctl_sta::Output::e_states::ngc_block_done);
+
+						//determine the blocks duration
+						mtn_ctl_sta::Output::block_stats.common.duration =
+							Hardware_Abstraction_Layer::Core::get_tick_ms() - mtn_ctl_sta::Output::block_stats.common.duration;
+
 						mtn_ctl_sta::Output::block_stats.common.sequence = _persisted.last_complete_sequence;
 						mtn_ctl_sta::Output::block_stats.common.line_number = _persisted.active_line_number;
 

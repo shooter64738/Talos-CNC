@@ -43,6 +43,7 @@ namespace Talos
 						ngc_buffer_empty = 2,
 						motion_buffer_not_empty = 3,
 						motion_buffer_full = 4,
+						ngc_block_has_no_motion = 5,
 
 					};
 					static s_bit_flag_controller<e_states> states;

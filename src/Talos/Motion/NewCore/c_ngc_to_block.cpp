@@ -56,7 +56,7 @@ namespace Talos
 
 					//set the persisted value for feed mode so we dont detect a change
 					//in feed mode on the first motion
-					e_feed_block_state def_feed = __ngc_feed_to_flag(
+					e_r_feed_block_state def_feed = __ngc_feed_to_flag(
 						int_cfg::DefaultBlock.Settings.g_group[NGC_RS274::Groups::G::Feed_rate_mode]);
 					_persisted.feed.set(def_feed);
 
@@ -182,26 +182,26 @@ namespace Talos
 					{
 						if (spindle_block.m_code == NGC_RS274::M_codes::SPINDLE_ON_CCW)
 						{
-							spindle_block.states.set(e_spindle_state::turning_on);
-							spindle_block.states.set(e_spindle_state::direction_ccw);
+							spindle_block.states.set(e_f_spindle_state::turning_on);
+							spindle_block.states.set(e_f_spindle_state::direction_ccw);
 						}
 						else if (spindle_block.m_code == NGC_RS274::M_codes::SPINDLE_ON_CW)
 						{
-							spindle_block.states.set(e_spindle_state::turning_on);
-							spindle_block.states.set(e_spindle_state::direction_cw);
+							spindle_block.states.set(e_f_spindle_state::turning_on);
+							spindle_block.states.set(e_f_spindle_state::direction_cw);
 						}
 						else if (spindle_block.m_code == NGC_RS274::M_codes::SPINDLE_STOP)
 						{
-							spindle_block.states.set(e_spindle_state::turning_off);
+							spindle_block.states.set(e_f_spindle_state::turning_off);
 						}
 						else if (spindle_block.m_code == NGC_RS274::M_codes::ORIENT_SPINDLE)
 						{
-							spindle_block.states.set(e_spindle_state::indexing);
+							spindle_block.states.set(e_f_spindle_state::indexing);
 						}
 
-						if (_persisted.feed.get(e_feed_block_state::feed_mode_units_per_rotation))
+						if (_persisted.feed.get(e_r_feed_block_state::feed_mode_units_per_rotation))
 						{
-							spindle_block.states.set(e_spindle_state::synch_with_motion);
+							spindle_block.states.set(e_f_spindle_state::synch_with_motion);
 						}
 
 						spindle_block.feed._flag = _persisted.feed._flag;
@@ -236,6 +236,7 @@ namespace Talos
 					//If motion is canceled there is nothing for us to do.
 					if (*view.current_g_codes.Motion == NGC_RS274::G_codes::MOTION_CANCELED)
 					{
+						mtn_ctl_sta::Process::states.set(mtn_ctl_sta::Process::e_states::ngc_block_has_no_motion);
 						return 0;
 					}
 
@@ -261,7 +262,10 @@ namespace Talos
 
 					//if work block is null, no distance to move
 					if (ret == 0)
+					{
+						mtn_ctl_sta::Process::states.set(mtn_ctl_sta::Process::e_states::ngc_block_has_no_motion);
 						return 0;
+					}
 
 					//First moves after start up dont get compensation so dont set this flag until after the first axis
 					//moves are calculated.
@@ -286,7 +290,7 @@ namespace Talos
 					__plan_buffer_line(&motion_block, mtn_cfg::Controller.Settings, &_persisted, unit_vec, target_steps);
 
 					motion_block.__station__ = view.active_view_block->__station__;
-					motion_block.common.tracking.sequence = running_sequence++;
+					motion_block.common.tracking.sequence = ++running_sequence;
 					motion_block.common.tracking.line_number = *view.persisted_values.active_line_number_N;
 
 					motion_block.__station__ = motion_buffer._head;
@@ -373,11 +377,11 @@ namespace Talos
 					, __s_motion_block* motion_block)
 				{
 					if (*ngc_view.current_g_codes.Motion == NGC_RS274::G_codes::RAPID_POSITIONING)
-						motion_block->common.control_bits.motion.set(e_motion_block_state::motion_rapid);
+						motion_block->common.control_bits.motion.set(e_f_motion_block_state::motion_rapid);
 
 					if (*ngc_view.current_g_codes.PATH_CONTROL_MODE == NGC_RS274::G_codes::PATH_CONTROL_EXACT_STOP
 						|| *ngc_view.current_g_codes.PATH_CONTROL_MODE == NGC_RS274::G_codes::PATH_CONTROL_EXACT_PATH)
-						motion_block->common.control_bits.motion.set(e_motion_block_state::motion_exact_path);
+						motion_block->common.control_bits.motion.set(e_f_motion_block_state::motion_exact_path);
 				}
 
 				void Block::__configure_feeds(
@@ -392,20 +396,20 @@ namespace Talos
 						motion_block->programmed_rate = motion_block->rapid_rate;
 				}
 
-				e_feed_block_state Block::__check_ngc_feed_mode(__s_motion_block* motion_block, uint16_t ngc_feed_mode)
+				e_r_feed_block_state Block::__check_ngc_feed_mode(__s_motion_block* motion_block, uint16_t ngc_feed_mode)
 				{
-					e_feed_block_state new_feed_mode = __ngc_feed_to_flag(ngc_feed_mode);
+					e_r_feed_block_state new_feed_mode = __ngc_feed_to_flag(ngc_feed_mode);
 
-					if (new_feed_mode == e_feed_block_state::feed_mode_units_per_minute)
+					if (new_feed_mode == e_r_feed_block_state::feed_mode_units_per_minute)
 						motion_block->programmed_rate *= motion_block->millimeters;
 
 					if (!_persisted.feed.get(new_feed_mode))
 					{
 						//feedmode is changing, clear all the feedmode flags
-						_persisted.feed.clear(e_feed_block_state::feed_mode_units_per_rotation);
-						_persisted.feed.clear(e_feed_block_state::feed_mode_minutes_per_unit);
-						_persisted.feed.clear(e_feed_block_state::feed_mode_units_per_minute);
-						_persisted.feed.clear(e_feed_block_state::feed_mode_rpm);
+						_persisted.feed.clear(e_r_feed_block_state::feed_mode_units_per_rotation);
+						_persisted.feed.clear(e_r_feed_block_state::feed_mode_minutes_per_unit);
+						_persisted.feed.clear(e_r_feed_block_state::feed_mode_units_per_minute);
+						_persisted.feed.clear(e_r_feed_block_state::feed_mode_rpm);
 
 						//set the new feed mode so we can keep track of it
 						_persisted.feed.set(new_feed_mode);
@@ -413,7 +417,7 @@ namespace Talos
 						//flag this block as changing feed modes. this will effect how the junction
 						//speeds are handled
 
-						motion_block->common.control_bits.feed.set(e_feed_block_state::feed_mode_change);
+						motion_block->common.control_bits.feed.set(e_r_feed_block_state::feed_mode_change);
 					}
 					//motion blocks flags should have been cleared on get, so just set it
 
@@ -422,29 +426,29 @@ namespace Talos
 					return new_feed_mode;
 				}
 
-				e_feed_block_state Block::__ngc_feed_to_flag(uint16_t feed_mode)
+				e_r_feed_block_state Block::__ngc_feed_to_flag(uint16_t feed_mode)
 				{
-					e_feed_block_state new_feed_mode = {};
+					e_r_feed_block_state new_feed_mode = {};
 					switch (feed_mode)
 					{
 					case NGC_RS274::G_codes::FEED_RATE_MINUTES_PER_UNIT_MODE:
 					{
-						new_feed_mode = e_feed_block_state::feed_mode_minutes_per_unit;
+						new_feed_mode = e_r_feed_block_state::feed_mode_minutes_per_unit;
 						break;
 					}
 					case NGC_RS274::G_codes::FEED_RATE_RPM_MODE:
 					{
-						new_feed_mode = e_feed_block_state::feed_mode_rpm;
+						new_feed_mode = e_r_feed_block_state::feed_mode_rpm;
 						break;
 					}
 					case NGC_RS274::G_codes::FEED_RATE_UNITS_PER_MINUTE_MODE:
 					{
-						new_feed_mode = e_feed_block_state::feed_mode_units_per_minute;
+						new_feed_mode = e_r_feed_block_state::feed_mode_units_per_minute;
 						break;
 					}
 					case NGC_RS274::G_codes::FEED_RATE_UNITS_PER_ROTATION:
 					{
-						new_feed_mode = e_feed_block_state::feed_mode_units_per_rotation;
+						new_feed_mode = e_r_feed_block_state::feed_mode_units_per_rotation;
 						break;
 					}
 
@@ -727,7 +731,7 @@ namespace Talos
 					uint8_t over_ride = 100;
 					float nominal_speed = motion_block->programmed_rate;
 					//if (block->condition & (PL_COND_FLAG_RAPID_MOTION))
-					if (motion_block->common.control_bits.motion.get(e_motion_block_state::motion_rapid))
+					if (motion_block->common.control_bits.motion.get(e_f_motion_block_state::motion_rapid))
 					{
 						nominal_speed *= (0.01 * over_ride);
 					}
@@ -779,16 +783,16 @@ namespace Talos
 				}
 
 				bool Block::__motion_requires_zero_start(
-					s_bit_flag_controller<e_feed_block_state> feed,
-					s_bit_flag_controller<e_motion_block_state> speed)
+					s_bit_flag_controller<e_r_feed_block_state> feed,
+					s_bit_flag_controller<e_f_motion_block_state> speed)
 
 				{
 					bool requires_zero_start = false;
 
 					//must leave the feed mode change flag until AFTER the planner has ran this motion.
 					//segment loader will clear this on the timer objects for me.
-					if (feed.get(e_feed_block_state::feed_mode_change)
-						|| speed.get(e_motion_block_state::motion_exact_path))
+					if (feed.get(e_r_feed_block_state::feed_mode_change)
+						|| speed.get(e_f_motion_block_state::motion_exact_path))
 					{
 						//__ngc_feed_to_flag()
 						//after checking with source on the net, it seems that motion should decel to a stop

@@ -50,6 +50,7 @@ namespace Talos
 				void execute()
 				{
 					execute(e_state_class::Process);
+					execute(e_state_class::Report);
 					//cexecute(e_state_class::Motion);
 					execute(e_state_class::Output);
 
@@ -71,10 +72,16 @@ namespace Talos
 
 						break;
 					}
+					case e_state_class::Report:
+					{
+						Report::execute();
+
+						break;
+					}
 					case e_state_class::Output:
 					{
 						Output::execute();
-						Process::execute(); //<--adding a process executor to keep the buffer full
+						//Process::execute(); //<--adding a process executor to keep the buffer full
 						break;
 					}
 					default:
@@ -106,12 +113,12 @@ namespace Talos
 						{
 							//motion buffer is full and if we are going to allow serial streaming we HAVE to tell
 							//the host we are full and they must stop streaming right now.
-							Kernel::Comm::print(0, "ngc buffer full\r\n");
+							Kernel::Report::ngc_status(e_block_process_State::ngc_buffer_full);
 						}
 						else
 						{
 							//if we are allowing serial streaming we should tell the host we have room for more data 
-							Kernel::Comm::print(0, "got it\r\n");
+							Kernel::Report::ngc_status(e_block_process_State::ngc_block_accepted);
 						}
 					}
 
@@ -122,7 +129,7 @@ namespace Talos
 					//the flag for ngc data in the serial buffer is set. we need to load that data
 					//and run it through the interpreter.
 					//Also this should be the only place where motion, kernel, and coordinator connect.
-					s_ngc_block * new_block = crd_dat::Ngc::load_block_from_cache(source, data_size);
+					s_ngc_block* new_block = crd_dat::Ngc::load_block_from_cache(source, data_size);
 
 					//We just processed a block from txt, and now it is binary ngc data. We need to queue it
 					//into the motion buffer. In the case of it being null, there was an error during processing
@@ -134,9 +141,34 @@ namespace Talos
 					}
 					else
 					{
-						Kernel::Comm::print(0, "parse error\r\n");
+						Kernel::Report::ngc_status(e_block_process_State::ngc_block_rejected);
 					}
 
+
+				}
+
+#pragma endregion
+				/*--------------------------------------------------------------------------*/
+#pragma region Report class state control
+				void Report::execute()
+				{
+					if (Kernel::CPU::cluster[Kernel::CPU::host_id].host_events.Inquiry._flag != 0)
+					{
+						//reset the buffer and be ready for the next line.
+						Kernel::CPU::cluster[Kernel::CPU::host_id].cdh_r_reset();
+
+						if (Kernel::CPU::cluster[Kernel::CPU::host_id].host_events.Inquiry.get_clr(e_system_message::messages::e_inquiry::GCodeBlockReport))
+							Kernel::Report::interpreter_status(crd_dat::Ngc::active_block, e_system_message::messages::e_inquiry::GCodeBlockReport);
+
+						if (Kernel::CPU::cluster[Kernel::CPU::host_id].host_events.Inquiry.get_clr(e_system_message::messages::e_inquiry::MCodeBlockReport))
+							Kernel::Report::interpreter_status(crd_dat::Ngc::active_block, e_system_message::messages::e_inquiry::MCodeBlockReport);
+
+						if (Kernel::CPU::cluster[Kernel::CPU::host_id].host_events.Inquiry.get_clr(e_system_message::messages::e_inquiry::WordStatusReport))
+							Kernel::Report::interpreter_status(crd_dat::Ngc::active_block, e_system_message::messages::e_inquiry::WordStatusReport);
+						
+						if (Kernel::CPU::cluster[Kernel::CPU::host_id].host_events.Inquiry.get_clr(e_system_message::messages::e_inquiry::InterpreterConfiguration))
+							Kernel::Report::interpreter_status(crd_dat::Ngc::active_block, e_system_message::messages::e_inquiry::InterpreterConfiguration);
+					}
 
 				}
 

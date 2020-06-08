@@ -267,7 +267,6 @@
     <ClInclude Include="..\..\..\Motion\NewCore\c_segment_to_hardware.h" />
     <ClInclude Include="..\..\..\Motion\NewCore\support_items\d_buffer_size_defs.h" />
     <ClInclude Include="..\..\..\Motion\NewCore\support_items\e_ramp_states.h" />
-    <ClInclude Include="..\..\..\Motion\NewCore\support_items\e_state_flag.h" />
     <ClInclude Include="..\..\..\Motion\NewCore\support_items\s_bresenham_item.h" />
     <ClInclude Include="..\..\..\Motion\NewCore\support_items\s_common_all_object.h" />
     <ClInclude Include="..\..\..\Motion\NewCore\support_items\s_common_motion_block_object.h" />
@@ -323,6 +322,7 @@
     <ClInclude Include="..\..\..\NGC_RS274\_ngc_point_definition.h" />
     <ClInclude Include="..\..\..\NGC_RS274\_ngc_tool_struct.h" />
     <ClInclude Include="..\..\..\physical_machine_parameters.h" />
+    <ClInclude Include="..\..\..\Shared_Data\e_state_flag.h" />
     <ClInclude Include="..\..\..\Shared_Data\Kernel\Base\c_kernel_base.h" />
     <ClInclude Include="..\..\..\Shared_Data\Kernel\Comm\c_kernel_comm.h" />
     <ClInclude Include="..\..\..\Shared_Data\Kernel\CPU\c_cpu.h" />
@@ -342,7 +342,6 @@
     <ClInclude Include="..\..\..\Shared_Data\Kernel\Report\c_kernel_report.h" />
     <ClInclude Include="..\..\..\Shared_Data\Kernel\Start\c_kernel_start.h" />
     <ClInclude Include="..\..\..\Shared_Data\Kernel\_e_record_types.h" />
-    <ClInclude Include="..\..\..\Shared_Data\Kernel\_e_system_messages.h" />
     <ClInclude Include="..\..\..\Shared_Data\Kernel\_s_system_record.h" />
     <ClInclude Include="..\..\..\Shared_Data\Settings\Coordinator\xx_s_input_processing.h" />
     <ClInclude Include="..\..\..\Shared_Data\Settings\Coordinator\_s_interpeter_settings_encapsulation.h" />
@@ -354,6 +353,7 @@
     <ClInclude Include="..\..\..\Shared_Data\Settings\Motion\_s_motion_spindle_struct.h" />
     <ClInclude Include="..\..\..\Shared_Data\Settings\Motion\_s_motion_system.h" />
     <ClInclude Include="..\..\..\Shared_Data\Settings\Motion\_s_motion_tolerance_struct.h" />
+    <ClInclude Include="..\..\..\Shared_Data\_e_system_messages.h" />
     <ClInclude Include="..\..\..\talos_hardware_def.h" />
     <ClInclude Include="..\..\..\_bit_flag_control.h" />
     <ClInclude Include="..\..\..\_bit_manipulation.h" />

@@ -9,7 +9,7 @@
 #include "../../talos_hardware_def.h"
 #include "c_block_to_segment.h"
 #include "c_ngc_to_block.h"
-#include "support_items/e_state_flag.h"
+#include "../../Shared_Data/e_state_flag.h"
 #include "../Processing/State_Control/c_motion_state_control.h"
 #include <math.h>
 
@@ -101,10 +101,10 @@ namespace Talos
 						}
 
 						//If flagged to re init the segment, then do it
-						if (Segment::active_block->common.control_bits.motion.get_clr(e_motion_block_state::reinitialize_segment))
+						if (Segment::active_block->common.control_bits.motion.get_clr(e_f_motion_block_state::reinitialize_segment))
 						{
 							Segment::__calc_seg_base(&seg_base);
-							Segment::active_block->common.control_bits.motion.set(e_motion_block_state::segment_reinitialized);
+							Segment::active_block->common.control_bits.motion.set(e_f_motion_block_state::segment_reinitialized);
 						}
 
 						//if the timer buffer is full, we gotta wait. 
@@ -179,7 +179,7 @@ namespace Talos
 					//if segment has be re-initialized there no point in doing it again, and again everytime the planner
 					//is called.
 					if (Segment::active_block != NULL &&
-						!Segment::active_block->common.control_bits.motion.get(e_motion_block_state::segment_reinitialized))
+						!Segment::active_block->common.control_bits.motion.get(e_f_motion_block_state::segment_reinitialized))
 					{ // Ignore if at start of a new block.
 						//States::Process::states.set(States::Process::e_states::recalculate_block);
 						//Update the entry speed of the block we jsut loaded in the arbitrator. This should be the same speed we are currently running.
@@ -187,7 +187,7 @@ namespace Talos
 							, active_block->common.control_bits.motion))
 						{
 							Segment::active_block->speed.entry_sqr = seg_base.current_speed * seg_base.current_speed; // Update entry speed.
-							Segment::active_block->common.control_bits.motion.set(e_motion_block_state::reinitialize_segment);
+							Segment::active_block->common.control_bits.motion.set(e_f_motion_block_state::reinitialize_segment);
 						}
 					}
 				}
@@ -347,7 +347,7 @@ namespace Talos
 					timer_item.common.control_bits.feed = seg_base_arg->common.control_bits.feed;
 					//we dont need to persist the feed mode change on every tiem item in the segment
 					//we've marked it here by copying the flag. Lets clear the persisted setting
-					seg_base_arg->common.control_bits.feed.clear(e_feed_block_state::feed_mode_change);
+					seg_base_arg->common.control_bits.feed.clear(e_r_feed_block_state::feed_mode_change);
 
 					timer_item.common.control_bits.speed = seg_base_arg->common.control_bits.speed;
 					timer_item.common.control_bits.system = seg_base_arg->common.control_bits.system;
@@ -391,7 +391,7 @@ namespace Talos
 				void Segment::__check_ramp_state(s_fragment_vars* vars, s_segment_base* seg_base_arg, s_timer_item* timer_item)
 				{
 					//always assume acceleration at start
-					timer_item->common.control_bits.speed.set(e_speed_block_state::motion_state_accelerating);
+					timer_item->common.control_bits.speed.set(e_f_speed_block_state::motion_state_accelerating);
 					//setup some base values
 					vars->dt_max = mtn_cfg::Controller.Settings.internals.DT_SEGMENT(); // Maximum segment time
 					vars->dt = 0.0; // Initialize segment time
@@ -468,12 +468,12 @@ namespace Talos
 							if (seg_base_arg->mm_remaining == seg_base_arg->decelerate_after)
 							{
 								seg_base_arg->ramp_type = e_ramp_type::Decel;
-								timer_item->common.control_bits.speed.set(e_speed_block_state::motion_state_decelerating);
+								timer_item->common.control_bits.speed.set(e_f_speed_block_state::motion_state_decelerating);
 							}
 							else
 							{
 								seg_base_arg->ramp_type = e_ramp_type::Cruise;
-								timer_item->common.control_bits.speed.set(e_speed_block_state::motion_state_cruising);
+								timer_item->common.control_bits.speed.set(e_f_speed_block_state::motion_state_cruising);
 							}
 							seg_base_arg->current_speed = seg_base_arg->maximum_speed;
 						}
@@ -524,7 +524,7 @@ namespace Talos
 								(seg_base_arg->current_speed + seg_base_arg->maximum_speed);
 
 							seg_base_arg->ramp_type = e_ramp_type::Cruise;
-							timer_item->common.control_bits.speed.set(e_speed_block_state::motion_state_cruising);
+							timer_item->common.control_bits.speed.set(e_f_speed_block_state::motion_state_cruising);
 							seg_base_arg->current_speed = seg_base_arg->maximum_speed;
 						}
 						else
@@ -536,7 +536,7 @@ namespace Talos
 				void Segment::__check_cruise(s_fragment_vars* vars, s_segment_base* seg_base_arg, s_timer_item* timer_item)
 				{
 					{
-						timer_item->common.control_bits.speed.set(e_speed_block_state::motion_state_cruising);
+						timer_item->common.control_bits.speed.set(e_f_speed_block_state::motion_state_cruising);
 						// NOTE: mm_var used to retain the last mm_remaining for incomplete segment time_var calculations.
 						// NOTE: If maximum_speed*time_var value is too low, round-off can cause mm_var to not change. To
 						//   prevent this, simply enforce a minimum speed threshold in the planner.
@@ -549,7 +549,7 @@ namespace Talos
 
 							seg_base_arg->mm_remaining = seg_base_arg->decelerate_after; // NOTE: 0.0 at EOB
 							seg_base_arg->ramp_type = e_ramp_type::Decel;
-							timer_item->common.control_bits.speed.set(e_speed_block_state::motion_state_decelerating);
+							timer_item->common.control_bits.speed.set(e_f_speed_block_state::motion_state_decelerating);
 						}
 						else
 						{ // Cruising only.

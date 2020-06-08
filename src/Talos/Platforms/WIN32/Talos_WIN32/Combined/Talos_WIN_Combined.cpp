@@ -14,13 +14,10 @@ int main(void)
 	Hardware_Abstraction_Layer::Core::initialize();
 
 	Kernel::Base::f_initialize();
+	
 	//init framework comms (not much going on in here yet)
-	Kernel::Comm::f_initialize(
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL);
+	Kernel::Comm::f_initialize();
+
 	//init framwork cpus (assign an ID number to each cpu object. Init the data buffers
 	Kernel::CPU::f_initialize(
 		HOST_CPU_ID, CORD_CPU_ID, MACH_CPU_ID, SPDL_CPU_ID, PRPH_CPU_ID, Hardware_Abstraction_Layer::Core::cpu_tick_ms);

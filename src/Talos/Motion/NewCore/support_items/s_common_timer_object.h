@@ -2,16 +2,16 @@
 #define __s_common_timer_object__
 
 #include <stdint.h>
-#include "e_state_flag.h"
+#include "../../../Shared_Data/e_state_flag.h"
 #include "../../../_bit_flag_control.h"
 #include "s_common_all_object.h"
 #include "s_bresenham_item.h"
 
 struct s_timer_control_bits
 {
-	s_bit_flag_controller<e_system_block_state> system;
-	s_bit_flag_controller<e_feed_block_state> feed;
-	s_bit_flag_controller<e_speed_block_state> speed;
+	s_bit_flag_controller<e_f_system_block_state> system;
+	s_bit_flag_controller<e_r_feed_block_state> feed;
+	s_bit_flag_controller<e_f_speed_block_state> speed;
 };
 
 //items common to a timer object

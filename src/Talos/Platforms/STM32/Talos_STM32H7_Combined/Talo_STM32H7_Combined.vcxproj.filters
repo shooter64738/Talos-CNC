@@ -1251,9 +1251,6 @@
     <ClInclude Include="..\..\..\Shared_Data\Kernel\_e_record_types.h">
       <Filter>Shared_Data\Kernel</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Shared_Data\Kernel\_e_system_messages.h">
-      <Filter>Shared_Data\Kernel</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\Shared_Data\Kernel\_s_system_record.h">
       <Filter>Shared_Data\Kernel</Filter>
     </ClInclude>
@@ -1294,9 +1291,6 @@
       <Filter>Motion\NewCore\support_items</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Motion\NewCore\support_items\e_ramp_states.h">
-      <Filter>Motion\NewCore\support_items</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Motion\NewCore\support_items\e_state_flag.h">
       <Filter>Motion\NewCore\support_items</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Motion\NewCore\support_items\s_bresenham_item.h">
@@ -1535,6 +1529,12 @@
     </ClInclude>
     <ClInclude Include="..\..\..\Coordinator\Processing\State_Control\c_coordinator_state_control.h">
       <Filter>Coordinator\Processing\State_Control</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared_Data\e_state_flag.h">
+      <Filter>Shared_Data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared_Data\_e_system_messages.h">
+      <Filter>Shared_Data</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

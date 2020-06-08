@@ -20,7 +20,7 @@ then move to their respective modules.
 #include "../Events/EventHandlers/c_system_event_handler.h"
 #include "../Data/DataHandlers/c_system_data_handler.h"
 #include "../Data/DataHandlers/c_ngc_data_handler.h"
-#include "../../../Shared_Data/_s_status_record.h"
+//#include "../../../Shared_Data/_s_status_record.h"
 #include "../../../Shared_Data/Settings/Motion/_s_motion_control_settings_encapsulation.h"
 #include "../../../Configuration/c_configuration.h"
 #include "../../../talos_hardware_def.h"

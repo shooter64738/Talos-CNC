@@ -266,6 +266,7 @@
     <ClInclude Include="..\..\..\..\NGC_RS274\_ngc_point_definition.h" />
     <ClInclude Include="..\..\..\..\NGC_RS274\_ngc_tool_struct.h" />
     <ClInclude Include="..\..\..\..\physical_machine_parameters.h" />
+    <ClInclude Include="..\..\..\..\Shared_Data\e_state_flag.h" />
     <ClInclude Include="..\..\..\..\Shared_Data\Kernel\Base\c_kernel_base.h" />
     <ClInclude Include="..\..\..\..\Shared_Data\Kernel\Comm\c_kernel_comm.h" />
     <ClInclude Include="..\..\..\..\Shared_Data\Kernel\CPU\c_cpu.h" />
@@ -284,8 +285,8 @@
     <ClInclude Include="..\..\..\..\Shared_Data\Kernel\Report\c_kernel_report.h" />
     <ClInclude Include="..\..\..\..\Shared_Data\Kernel\Start\c_kernel_start.h" />
     <ClInclude Include="..\..\..\..\Shared_Data\Kernel\_e_record_types.h" />
-    <ClInclude Include="..\..\..\..\Shared_Data\Kernel\_e_system_messages.h" />
     <ClInclude Include="..\..\..\..\Shared_Data\Kernel\_s_system_record.h" />
+    <ClInclude Include="..\..\..\..\Shared_Data\_e_system_messages.h" />
     <ClInclude Include="..\..\..\..\talos_hardware_def.h" />
     <ClInclude Include="..\..\..\..\_bit_flag_control.h" />
     <ClInclude Include="..\..\..\..\_bit_manipulation.h" />

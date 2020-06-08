@@ -23,6 +23,8 @@
 
 #include <stdint.h>
 #include "../../../NGC_RS274/_ngc_block_struct.h"
+#include "../../_e_system_messages.h"
+#include "../../e_state_flag.h"
 
 namespace Talos
 {
@@ -38,7 +40,9 @@ namespace Talos
 
 				//functions
 			public:
-				static void process(s_ngc_block ngc_block_record);
+				static void interpreter_status(s_ngc_block ngc_block_record, e_system_message::messages::e_inquiry type);
+				static void block_status(uint32_t line, uint32_t sequence, uint32_t duration, e_block_process_State state);
+				static void ngc_status(e_block_process_State state);
 
 			private:
 

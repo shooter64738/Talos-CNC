@@ -20,42 +20,120 @@
 
 #include "c_kernel_report.h"
 #include "../Base/c_kernel_base.h"
-#include <math.h>
 #include "../CPU/c_kernel_cpu.h"
+#include <math.h>
 
 namespace Talos
 {
 	namespace Kernel
 	{
-		void Report::process(s_ngc_block ngc_block_record)
+		void Report::interpreter_status(s_ngc_block ngc_block_record, e_system_message::messages::e_inquiry type)
 		{
-			s_bit_flag_controller<e_system_message::messages::e_inquiry>* pntr_event
-				= &Talos::Kernel::CPU::cluster[Talos::Kernel::CPU::host_id].host_events.Inquiry;
-
-			if ((int)pntr_event->_flag == 0)
-				return;
-
 			//If there are ANY block reporting events we will need a block header
-			__write_header(ngc_block_record);
 
-			if (pntr_event->get_clr(e_system_message::messages::e_inquiry::GCodeBlockReport))
+
+			switch (type)
+			{
+			case e_system_message::messages::e_inquiry::Invalid:
+				break;
+			case e_system_message::messages::e_inquiry::GCodeBlockReport:
+			{
+				__write_header(ngc_block_record);
 				____group(COUNT_OF_G_CODE_GROUPS_ARRAY, ngc_block_record.g_group, 'G');
-
-			if (pntr_event->get_clr(e_system_message::messages::e_inquiry::MCodeBlockReport))
+				break;
+			}
+			case e_system_message::messages::e_inquiry::MCodeBlockReport:
+			{
+				__write_header(ngc_block_record);
 				____group(COUNT_OF_M_CODE_GROUPS_ARRAY, ngc_block_record.m_group, 'M');
-
-			if (pntr_event->get_clr(e_system_message::messages::e_inquiry::WordStatusReport))
+				break;
+			}
+			case e_system_message::messages::e_inquiry::WordStatusReport:
+			{
+				__write_header(ngc_block_record);
 				____word(COUNT_OF_BLOCK_WORDS_ARRAY, ngc_block_record.word_values);
+				break;
+			}
+			case e_system_message::messages::e_inquiry::MotionConfiguration:
+				break;
+			case e_system_message::messages::e_inquiry::InterpreterConfiguration:
+			{
+				__write_header(ngc_block_record);
+				____group(COUNT_OF_G_CODE_GROUPS_ARRAY, ngc_block_record.g_group, 'G');
+				____group(COUNT_OF_M_CODE_GROUPS_ARRAY, ngc_block_record.m_group, 'M');
+				____word(COUNT_OF_BLOCK_WORDS_ARRAY, ngc_block_record.word_values);
+				break;
+			}
+			case e_system_message::messages::e_inquiry::SystemRecord:
+				break;
+			case e_system_message::messages::e_inquiry::NgcDataLine:
+				break;
+			default:
+				break;
+			}
 
+		}
 
+		void Report::block_status(uint32_t line, uint32_t sequence, uint32_t duration, e_block_process_State state)
+		{
+			Kernel::Comm::print(0, "Ln#");
+			//a block is done we can report it if we want
+			Kernel::Comm::print_int32(0, line);
+			Kernel::Comm::print(0, " Seq#");
+			Kernel::Comm::print_int32(0, sequence);
+			Kernel::Comm::print(0, " Time ");
+			float time_sec = 0.0; time_sec = (duration / 1000.0);
+			Kernel::Comm::print_float(0, time_sec, 4);
+
+			if (state == e_block_process_State::ngc_block_done)
+				Kernel::Comm::print(0, " :Complete");
+			else if (state == e_block_process_State::ngc_block_holding)
+				Kernel::Comm::print(0, " :Holding");
+
+			Kernel::Comm::print(0, "\r\n");
+		}
+
+		void Report::ngc_status(e_block_process_State state)
+		{
+			switch (state)
+			{
+			case e_block_process_State::ngc_block_done:
+				break;
+			case e_block_process_State::ngc_block_holding:
+				break;
+			case e_block_process_State::ngc_block_accepted:
+			{
+				Kernel::Comm::print(0, "ok");
+				break;
+			}
+			case e_block_process_State::ngc_block_rejected:
+			{
+				Kernel::Comm::print(0, "err");
+				break;
+			}
+			case e_block_process_State::ngc_buffer_full:
+			{
+				Kernel::Comm::print(0, "ngc full");
+				break;
+			}
+			case e_block_process_State::ngc_buffer_no_motion:
+			{
+				Kernel::Comm::print(0, "ngc no motion");
+				break;
+			}
+			default:
+				break;
+			}
+
+			Kernel::Comm::print(0, "\r\n");
 		}
 
 		void Report::__write_header(s_ngc_block block)
 		{
-			Kernel::Comm::pntr_string_writer(0, "Blk:{Ngc}");
-			Kernel::Comm::pntr_string_writer(0, " Sta:");
-			Kernel::Comm::pntr_int32_writer(0, block.__station__);
-			Kernel::Comm::pntr_string_writer(0, "\r\n");
+			Kernel::Comm::print(0, "Blk:{Ngc}");
+			Kernel::Comm::print(0, " Sta:");
+			Kernel::Comm::print_int32(0, block.__station__);
+			Kernel::Comm::print(0, "\r\n");
 
 		}
 
@@ -65,9 +143,9 @@ namespace Talos
 			//write the name tags
 			for (int i = 0; i < counter; i++)
 			{
-				Kernel::Comm::pntr_byte_writer(0, group_name);
+				Kernel::Comm::put(0, group_name);
 				__pad_left(i, 4, 0, '0');
-				Kernel::Comm::pntr_string_writer(0, " ");
+				Kernel::Comm::put(0, ' ');
 			}
 			__write_eol();
 
@@ -77,7 +155,7 @@ namespace Talos
 				float val = (*(pointer + i));
 				val = val / G_CODE_MULTIPLIER;
 				__pad_left(val, 3, 1, '0');
-				Kernel::Comm::pntr_string_writer(0, " ");
+				Kernel::Comm::print(0, " ");
 			}
 			__write_eol();
 		}
@@ -89,11 +167,11 @@ namespace Talos
 			for (int i = 0; i < counter; i++)
 			{
 				columns--;
-				Kernel::Comm::pntr_byte_writer(0, i + 'A');
-				Kernel::Comm::pntr_byte_writer(0, ':');
+				Kernel::Comm::put(0, i + 'A');
+				Kernel::Comm::put(0, ':');
 				float val = (*(pointer + i));
 				__pad_left(val, 4, 3, '0');
-				Kernel::Comm::pntr_string_writer(0, " ");
+				Kernel::Comm::print(0, " ");
 				if (!columns)
 				{
 					columns = 4;
@@ -108,7 +186,7 @@ namespace Talos
 			uint32_t dec_count = ((pow(10.0, padcount)) / (int)(value > 0 ? value : 1));
 			while (padcount - 1 > 0)
 			{
-				Kernel::Comm::pntr_byte_writer(0, pad_char);
+				Kernel::Comm::put(0, pad_char);
 				dec_count = dec_count / 10;
 				if (dec_count <= 10 && value > 0)
 					break;
@@ -119,19 +197,19 @@ namespace Talos
 			if (pad_char >= '0' && pad_char <= '0')
 			{
 				if (decimals == 0)
-					Kernel::Comm::pntr_int32_writer(0, (int)value);
+					Kernel::Comm::print_int32(0, (int)value);
 				else
-					Kernel::Comm::pntr_float_writer_dec(0, value, decimals);
+					Kernel::Comm::print_float(0, value, decimals);
 			}
 			else
 			{
-				Kernel::Comm::pntr_byte_writer(0, (char)value);
+				Kernel::Comm::put(0, (char)value);
 			}
 		}
 
 		void Report::__write_eol()
 		{
-			Kernel::Comm::pntr_string_writer(0, "\r\n");
+			Kernel::Comm::print(0, "\r\n");
 		}
 	}
 }

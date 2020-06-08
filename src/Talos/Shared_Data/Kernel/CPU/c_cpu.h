@@ -5,7 +5,7 @@
 #include "../../../_bit_flag_control.h"
 #include "../../../c_ring_template.h"
 #include "../_s_system_record.h"
-#include "../_e_system_messages.h"
+#include "../../_e_system_messages.h"
 #include "../kernel_configuration.h"
 #include "../Error/kernel_error_codes_reader.h"
 #include "../Error/c_kernel_error.h"

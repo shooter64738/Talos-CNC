@@ -480,6 +480,14 @@ bool c_cpu::__set_sub_entry_mode(char byte)
 		//pntr_event->set((int)e_system_message::messages::e_inquiry::WordStatusReport);
 		this->host_events.Inquiry.set(e_system_message::messages::e_inquiry::WordStatusReport);
 		break;
+	case 'I': //word value status
+	//pntr_event->set((int)e_system_message::messages::e_inquiry::WordStatusReport);
+		this->host_events.Inquiry.set(e_system_message::messages::e_inquiry::InterpreterConfiguration);
+		break;
+	case 'S': //word value status
+		//pntr_event->set((int)e_system_message::messages::e_inquiry::WordStatusReport);
+		this->host_events.Inquiry.set(e_system_message::messages::e_inquiry::MotionConfiguration);
+		break;
 	default:
 		/*__raise_error(NULL, e_error_behavior::Informal, 0, e_error_group::DataHandler, e_error_process::Process
 			, tracked_read_type, e_error_source::Serial, e_error_code::UnExpectedDataTypeForRecord);*/

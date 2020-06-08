@@ -28,7 +28,7 @@ void SysTick_Handler(void)
 {
 	*(Hardware_Abstraction_Layer::Core::cpu_tick_ms)++;
 	HAL_IncTick();
-	HAL_SYSTICK_IRQHandler();
+	//HAL_SYSTICK_IRQHandler();
 }
 
 using namespace Hardware_Abstraction_Layer;
@@ -59,9 +59,9 @@ uint8_t Core::start_interrupts()
 {
 	return 0;
 }
-void stop_interrupts()
+uint32_t Core::get_tick_ms()
 {
-	
+	return uwTick;
 }
 uint32_t Core::get_cpu_clock_rate()
 {

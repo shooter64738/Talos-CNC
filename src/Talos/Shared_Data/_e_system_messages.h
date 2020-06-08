@@ -48,6 +48,10 @@ public:
 			GCodeBlockReport = 1,
 			MCodeBlockReport = 2,
 			WordStatusReport = 3,
+			MotionConfiguration = 4,
+			InterpreterConfiguration = 5,
+			SystemRecord = 6,
+			NgcDataLine = 7,
 
 		};
 
@@ -106,7 +110,6 @@ public:
 
 			};
 		};
-
 	};
 };
 #endif

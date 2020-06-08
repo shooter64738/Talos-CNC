@@ -40,9 +40,9 @@ uint8_t Hardware_Abstraction_Layer::Core::start_interrupts()
 {
 	return 0;
 }
-void Hardware_Abstraction_Layer::Core::stop_interrupts()
+uint32_t Hardware_Abstraction_Layer::Core::get_tick_ms()
 {
-	
+	return 0;
 }
 uint32_t Hardware_Abstraction_Layer::Core::get_cpu_clock_rate()
 {

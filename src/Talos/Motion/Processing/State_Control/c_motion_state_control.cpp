@@ -15,10 +15,12 @@ location to control all motion output from.
 
 
 #include "c_motion_state_control.h"
+#include "../../../Shared_Data/Kernel/Base/c_kernel_base.h"
 #include "../../../Configuration/c_configuration.h"
 #include "../../NewCore/c_segment_to_hardware.h"
 #include "../../NewCore/c_block_to_segment.h"
 #include "../../NewCore/c_ngc_to_block.h"
+
 
 //temporary until I get the hal tied to this.
 #define HAL_SYS_TICK_TIME() 0
@@ -225,6 +227,8 @@ namespace Talos
 				{
 					//load ngc buffer into segment buffer
 					bool more_data = Talos::Motion::Core::Input::Block::ngc_buffer_process();
+					if (Process::states.get_clr(Process::e_states::ngc_block_has_no_motion))
+						Kernel::Report::ngc_status(e_block_process_State::ngc_buffer_no_motion);
 				}
 
 				void Process::__load_segments()
@@ -251,10 +255,11 @@ namespace Talos
 				{
 					if (Output::states.get_clr(Output::e_states::ngc_block_done))
 					{
-						//a block is done we can report it if we want
-						/*Output::block_stats.common.line_number;
-						Output::block_stats.common.sequence;
-						Output::block_stats.duration;*/
+						Kernel::Report::block_status(
+							Output::block_stats.common.line_number,
+							Output::block_stats.common.sequence,
+							Output::block_stats.common.duration,
+							e_block_process_State::ngc_block_done);
 					}
 
 					if (Output::states.get_clr(Output::e_states::interpolation_complete))

@@ -31,7 +31,7 @@
 #ifdef __STM32H7__
 
 #define MAX_STEP_RATE 172000 //<--This doe not limit anything. It is only for a safety check.
-#define F_CPU 460000000
+#define F_CPU 8000000
 #define F_CPU_2 F_CPU/2
 #define _TICKS_PER_MICROSECOND (F_CPU/1000000)
 #include "Platforms/STM32/Talos_STM32H7_Combined/Platform_Specific/c_core_stm32h7.h"

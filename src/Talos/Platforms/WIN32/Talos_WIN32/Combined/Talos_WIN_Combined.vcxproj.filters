@@ -402,9 +402,6 @@
     <ClInclude Include="..\..\..\..\Shared_Data\Kernel\_e_record_types.h">
       <Filter>Shared_Data\Kernel</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Shared_Data\Kernel\_e_system_messages.h">
-      <Filter>Shared_Data\Kernel</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\..\Shared_Data\Kernel\_s_system_record.h">
       <Filter>Shared_Data\Kernel</Filter>
     </ClInclude>
@@ -530,6 +527,12 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\NGC_RS274\NGC_Tool.h">
       <Filter>Ngc_Rs274</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared_Data\e_state_flag.h">
+      <Filter>Shared_Data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Shared_Data\_e_system_messages.h">
+      <Filter>Shared_Data</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

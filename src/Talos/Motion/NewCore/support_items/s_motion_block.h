@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 #include "s_motion_axis_detail.h"
-#include "e_state_flag.h"
+#include "../../../Shared_Data/e_state_flag.h"
 #include "s_common_motion_block_object.h"
 
 struct s_speeds

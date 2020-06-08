@@ -43,7 +43,7 @@ namespace Hardware_Abstraction_Layer
 		static void critical_shutdown();
 		static void set_time_delay(uint8_t delay);
 		static uint8_t start_interrupts();
-		static void stop_interrupts();
+		static uint32_t get_tick_ms();
 		static void capture_status_register_SREG();
 		static void restore_status_register_SREG();
 		static uint32_t get_cpu_clock_rate();

@@ -8,7 +8,7 @@
 #include "../../NGC_RS274/ngc_block_view.h"
 #include "../../_bit_flag_control.h"
 #include "../../c_ring_template.h"
-#include "support_items/e_state_flag.h"
+#include "../../Shared_Data/e_state_flag.h"
 #include "support_items/s_motion_block.h"
 #include "support_items/s_spindle_block.h"
 #include "support_items/d_buffer_size_defs.h"
@@ -39,8 +39,8 @@ namespace Talos
 						int32_t system_position[MACHINE_AXIS_COUNT];
 						float nominal_speed;
 						__s_spindle_block spindle_block;
-						s_bit_flag_controller<e_motion_block_state> motion_block_states{ 0 };
-						s_bit_flag_controller<e_feed_block_state> feed{ 0 };
+						s_bit_flag_controller<e_f_motion_block_state> motion_block_states{ 0 };
+						s_bit_flag_controller<e_r_feed_block_state> feed{ 0 };
 					};
 					static s_persisting_values _persisted;
 
@@ -56,8 +56,8 @@ namespace Talos
 					static bool ngc_buffer_process();
 
 					static bool __motion_requires_zero_start(
-						s_bit_flag_controller<e_feed_block_state> feed,
-						s_bit_flag_controller<e_motion_block_state> speed);
+						s_bit_flag_controller<e_r_feed_block_state> feed,
+						s_bit_flag_controller<e_f_motion_block_state> speed);
 
 					static float get_next_block_exit_speed(uint16_t current_station);
 					static float get_nominal_speed(__s_motion_block* motion_block);
@@ -92,10 +92,10 @@ namespace Talos
 
 					static void __configure_feeds(NGC_RS274::Block_View ngc_block, __s_motion_block* motion_block);
 
-					static e_feed_block_state __check_ngc_feed_mode(__s_motion_block* motion_block
+					static e_r_feed_block_state __check_ngc_feed_mode(__s_motion_block* motion_block
 						, uint16_t ngc_feed_mode);
 
-					static e_feed_block_state __ngc_feed_to_flag(uint16_t);
+					static e_r_feed_block_state __ngc_feed_to_flag(uint16_t);
 
 					static float convert_delta_vector_to_unit_vector(float* vector);
 

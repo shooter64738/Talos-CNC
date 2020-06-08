@@ -24,7 +24,7 @@ namespace Talos
 				private:
 					/*struct s_timer_control_bits
 					{
-						s_bit_flag_controller<e_system_block_state> system;
+						s_bit_flag_controller<e_f_system_block_state> system;
 						s_bit_flag_controller<e_feed_block_state> feed;
 						s_bit_flag_controller<e_speed_block_state> speed;
 					};*/
