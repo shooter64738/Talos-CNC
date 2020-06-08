@@ -1536,6 +1536,9 @@
     <ClInclude Include="..\..\..\Shared_Data\_e_system_messages.h">
       <Filter>Shared_Data</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\Motion\NewCore\support_items\s_arc_data.h">
+      <Filter>Motion\NewCore\support_items</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\..\..\..\Motion\NewCore\description.txt" />

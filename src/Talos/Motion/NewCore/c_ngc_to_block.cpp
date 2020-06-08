@@ -11,6 +11,7 @@
 #include "c_block_to_segment.h"
 #include "../../Configuration/c_configuration.h"
 #include "..//Processing/State_Control/c_motion_state_control.h"
+#define __BSD_VISIBLE 1
 #include <math.h>
 #include <string.h>
 #include "../../_bit_manipulation.h"
@@ -74,24 +75,24 @@ namespace Talos
 						view = NGC_RS274::Block_View(&testblock);
 						*view.axis_array[0] = ((i + 1) * 1000);
 						*view.persisted_values.active_spindle_speed_S = 1234;
-						
+
 						testblock.target_motion_position[0] = ((i + 1) * 1000);
 
-						testblock.target_motion_position[1] = ((i + 1) +8);
-						testblock.target_motion_position[2] = ((i + 1) +4);
+						testblock.target_motion_position[1] = ((i + 1) + 8);
+						testblock.target_motion_position[2] = ((i + 1) + 4);
 						testblock.target_motion_position[3] = ((i + 1) * 2);
-						testblock.target_motion_position[4] = ((i + 1) *1.8);
-						testblock.target_motion_position[5] = ((i + 1) + 13*1.2);
+						testblock.target_motion_position[4] = ((i + 1) * 1.8);
+						testblock.target_motion_position[5] = ((i + 1) + 13 * 1.2);
 						if (i < 1 || i>4)
-							* view.current_g_codes.Feed_rate_mode = NGC_RS274::G_codes::FEED_RATE_UNITS_PER_MINUTE_MODE;
+							*view.current_g_codes.Feed_rate_mode = NGC_RS274::G_codes::FEED_RATE_UNITS_PER_MINUTE_MODE;
 						if (i == 2 || i == 4)
-							* view.current_g_codes.Feed_rate_mode = NGC_RS274::G_codes::FEED_RATE_UNITS_PER_ROTATION;
+							*view.current_g_codes.Feed_rate_mode = NGC_RS274::G_codes::FEED_RATE_UNITS_PER_ROTATION;
 						if (i == 3 || i == 4 || i == 8)
 							testblock.target_motion_position[0] = testblock.target_motion_position[0] * -1;
 						if (i == 11)
-							testblock.target_motion_position[0] = 2000* -1;
+							testblock.target_motion_position[0] = 2000 * -1;
 
-						if (i==2 || i == 4 || i == 5 || i == 7 || i == 10 || i == 12 )
+						if (i == 2 || i == 4 || i == 5 || i == 7 || i == 10 || i == 12)
 							testblock.target_motion_position[0] *= -1;
 
 						testblock.__station__ = i;
@@ -285,9 +286,17 @@ namespace Talos
 
 					__configure_feeds(view, &motion_block);
 
-					__configure_motions(view, &motion_block);
+					__configure_motions(view, &motion_block, &_persisted, mtn_cfg::Controller.Settings);
 
-					__plan_buffer_line(&motion_block, mtn_cfg::Controller.Settings, &_persisted, unit_vec, target_steps);
+					if (motion_block.common.control_bits.motion.get(e_f_motion_block_state::motion_arc_ccw)
+						|| motion_block.common.control_bits.motion.get(e_f_motion_block_state::motion_arc_cw))
+					{
+						__plan_buffer_arc(&motion_block, mtn_cfg::Controller.Settings, &_persisted, unit_vec, target_steps);
+					}
+					else
+					{
+						__plan_buffer_line(&motion_block, mtn_cfg::Controller.Settings, &_persisted, unit_vec, target_steps);
+					}
 
 					motion_block.__station__ = view.active_view_block->__station__;
 					motion_block.common.tracking.sequence = ++running_sequence;
@@ -374,14 +383,73 @@ namespace Talos
 
 				void Block::__configure_motions(
 					NGC_RS274::Block_View ngc_view
-					, __s_motion_block* motion_block)
+					, __s_motion_block* motion_block
+					, s_persisting_values* prev_values
+					, s_motion_control_settings_encapsulation hw_settings)
 				{
 					if (*ngc_view.current_g_codes.Motion == NGC_RS274::G_codes::RAPID_POSITIONING)
 						motion_block->common.control_bits.motion.set(e_f_motion_block_state::motion_rapid);
 
+					if (*ngc_view.current_g_codes.Motion == NGC_RS274::G_codes::CIRCULAR_INTERPOLATION_CCW)
+					{
+						motion_block->common.control_bits.motion.set(e_f_motion_block_state::motion_arc_ccw);
+						___load_arc_data(ngc_view, motion_block, prev_values, hw_settings);
+					}
+
+					if (*ngc_view.current_g_codes.Motion == NGC_RS274::G_codes::CIRCULAR_INTERPOLATION_CW)
+					{
+						motion_block->common.control_bits.motion.set(e_f_motion_block_state::motion_arc_cw);
+						___load_arc_data(ngc_view, motion_block, prev_values, hw_settings);
+					}
+
 					if (*ngc_view.current_g_codes.PATH_CONTROL_MODE == NGC_RS274::G_codes::PATH_CONTROL_EXACT_STOP
 						|| *ngc_view.current_g_codes.PATH_CONTROL_MODE == NGC_RS274::G_codes::PATH_CONTROL_EXACT_PATH)
 						motion_block->common.control_bits.motion.set(e_f_motion_block_state::motion_exact_path);
+				}
+
+				void Block::___load_arc_data(
+					NGC_RS274::Block_View ngc_view
+					, __s_motion_block* motion_block
+					, s_persisting_values* prev_values
+					, s_motion_control_settings_encapsulation hw_settings)
+				{
+					motion_block->arc_info.radius = *ngc_view.arc_values.Radius;
+					motion_block->arc_info.offset_horizontal = *ngc_view.arc_values.horizontal_offset.value;
+					motion_block->arc_info.offset_vertical = *ngc_view.arc_values.horizontal_offset.value;
+					motion_block->arc_info.offset_normal = *ngc_view.arc_values.horizontal_offset.value;
+
+
+					motion_block->arc_info.center_axis0 = prev_values->system_position[0] + motion_block->arc_info.offset_horizontal;
+					motion_block->arc_info.center_axis1 = prev_values->system_position[1] + motion_block->arc_info.offset_vertical;
+					float r_axis0 = -motion_block->arc_info.offset_horizontal;  // Radius vector from center to current location
+					float r_axis1 = -motion_block->arc_info.offset_vertical;
+					float rt_axis0 = ngc_view.active_view_block->target_motion_position[0] - motion_block->arc_info.center_axis0;
+					float rt_axis1 = ngc_view.active_view_block->target_motion_position[1] - motion_block->arc_info.center_axis1;
+
+					// CCW angle between position and target from circle center. Only one atan2() trig computation required.
+					motion_block->arc_info.angular_travel = atan2f(r_axis0 * rt_axis1 - r_axis1 * rt_axis0, r_axis0 * rt_axis0 + r_axis1 * rt_axis1);
+					if (motion_block->common.control_bits.motion.get(e_f_motion_block_state::motion_arc_cw))
+					{
+						if (motion_block->arc_info.angular_travel >=-hw_settings.internals.ARC_ANGULAR_TRAVEL_EPSILON)
+						{
+							motion_block->arc_info.angular_travel -= 2 * M_PI; 
+						}
+					}
+					else
+					{
+						if (motion_block->arc_info.angular_travel <= hw_settings.internals.ARC_ANGULAR_TRAVEL_EPSILON)
+						{
+							motion_block->arc_info.angular_travel += 2 * M_PI;
+						}
+					}
+
+					// NOTE: Segment end points are on the arc, which can lead to the arc diameter being smaller by up to
+					// (2x) settings.arc_tolerance. For 99% of users, this is just fine. If a different arc segment fit
+					// is desired, i.e. least-squares, midpoint on arc, just change the mm_per_arc_segment calculation.
+					// For the intended uses of Grbl, this value shouldn't exceed 2000 for the strictest of cases.
+					motion_block->arc_info.segments = (uint16_t)floorf(fabsf(0.5f * motion_block->arc_info.angular_travel * motion_block->arc_info.radius) /
+						sqrtf(hw_settings.tolerance.arc_tolerance 
+							* (2 * motion_block->arc_info.radius - hw_settings.tolerance.arc_tolerance)));
 				}
 
 				void Block::__configure_feeds(
@@ -495,6 +563,8 @@ namespace Talos
 					return (limit_value);
 				}
 
+
+
 				uint8_t Block::__plan_buffer_line(
 					__s_motion_block* motion_block
 					, s_motion_control_settings_encapsulation hw_settings
@@ -547,7 +617,7 @@ namespace Talos
 								float sin_theta_d2 = sqrt(0.5 * (1.0 - junction_cos_theta)); // Trig half angle identity. Always positive.
 								motion_block->speed.mx_junc_sqr =
 									max(mtn_cfg::Controller.Settings.internals.MINIMUM_JUNCTION_SPEED_SQ,
-									(junction_acceleration * hw_settings.tolerance.junction_deviation * sin_theta_d2)
+										(junction_acceleration * hw_settings.tolerance.junction_deviation * sin_theta_d2)
 										/ (1.0 - sin_theta_d2));
 							}
 						}
@@ -567,6 +637,105 @@ namespace Talos
 
 					}
 					return (1);
+				}
+
+
+
+				/*uint8_t __plan_buffer_arc(float* target, plan_line_data_t* pl_data, float* position, float* offset, float radius,
+					uint8_t axis_0, uint8_t axis_1, uint8_t axis_linear, uint8_t is_clockwise_arc)*/
+				uint8_t Block::__plan_buffer_arc(
+					__s_motion_block* motion_block
+					, s_motion_control_settings_encapsulation hw_settings
+					, s_persisting_values* prev_values
+					, float* unit_vectors
+					, int32_t* target_steps)
+				{
+					//float center_axis0 = prev_values->system_position[0] + motion_block->arc_info.offset_horizontal;
+					//float center_axis1 = prev_values->system_position[1] + motion_block->arc_info.offset_vertical;
+					//float r_axis0 = -motion_block->arc_info.offset_horizontal;  // Radius vector from center to current location
+					//float r_axis1 = -motion_block->arc_info.offset_vertical;
+					//float rt_axis0 = target[axis_0] - center_axis0;
+					//float rt_axis1 = target[axis_1] - center_axis1;
+
+					//// CCW angle between position and target from circle center. Only one atan2() trig computation required.
+					//float angular_travel = atan2f(r_axis0 * rt_axis1 - r_axis1 * rt_axis0, r_axis0 * rt_axis0 + r_axis1 * rt_axis1);
+					//if (motion_block.common.control_bits.motion.get(e_f_motion_block_state::motion_arc_cw))
+					//{ 
+					//	if (angular_travel >= -ARC_ANGULAR_TRAVEL_EPSILON) { angular_travel -= 2 * M_PI; }
+					//}
+					//else {
+					//	if (angular_travel <= ARC_ANGULAR_TRAVEL_EPSILON) { angular_travel += 2 * M_PI; }
+					//}
+
+					//// NOTE: Segment end points are on the arc, which can lead to the arc diameter being smaller by up to
+					//// (2x) settings.arc_tolerance. For 99% of users, this is just fine. If a different arc segment fit
+					//// is desired, i.e. least-squares, midpoint on arc, just change the mm_per_arc_segment calculation.
+					//// For the intended uses of Grbl, this value shouldn't exceed 2000 for the strictest of cases.
+					//uint16_t segments = (uint16_t)floorf(fabsf(0.5f * angular_travel * radius) /
+					//	sqrtf(settings.arc_tolerance * (2 * radius - settings.arc_tolerance)));
+
+					float r_axis0 = -motion_block->arc_info.offset_horizontal;  // Radius vector from center to current location
+					float r_axis1 = -motion_block->arc_info.offset_vertical;
+
+					if (motion_block->arc_info.segments)
+					{
+						// Multiply inverse feed_rate to compensate for the fact that this movement is approximated
+						// by a number of discrete segments. The inverse feed_rate should be correct for the sum of
+						// all segments.
+						if (pl_data->condition & PL_COND_FLAG_INVERSE_TIME) {
+							pl_data->feed_rate *= motion_block->arc_info.segments;
+							bit_false(pl_data->condition, PL_COND_FLAG_INVERSE_TIME); // Force as feed absolute mode over arc segments.
+						}
+
+						float theta_per_segment = motion_block->arc_info.angular_travel / motion_block->arc_info.segments;
+						float linear_per_segment = (target[axis_linear] - prev_values->system_position[axis_linear]) / motion_block->arc_info.segments;
+
+
+						// Computes: cos_T = 1 - theta_per_segment^2/2, sin_T = theta_per_segment - theta_per_segment^3/6) in ~52usec
+						float cos_T = 2.0f - theta_per_segment * theta_per_segment;
+						float sin_T = theta_per_segment * 0.16666667f * (cos_T + 4.0f);
+						cos_T *= 0.5;
+
+						float sin_Ti;
+						float cos_Ti;
+						float r_axisi;
+						uint16_t i;
+						uint8_t count = 0;
+
+						for (i = 1; i < motion_block->arc_info.segments; i++) { // Increment (segments-1).
+
+							if (count < hw_settings.internals.N_ARC_CORRECTION) {
+								// Apply vector rotation matrix. ~40 usec
+								r_axisi = r_axis0 * sin_T + r_axis1 * cos_T;
+								r_axis0 = r_axis0 * cos_T - r_axis1 * sin_T;
+								r_axis1 = r_axisi;
+								count++;
+							}
+							else {
+								// Arc correction to radius vector. Computed only every N_ARC_CORRECTION increments. ~375 usec
+								// Compute exact location by applying transformation matrix from initial radius vector(=-offset).
+								cos_Ti = cosf(i * theta_per_segment);
+								sin_Ti = sinf(i * theta_per_segment);
+								r_axis0 = -motion_block->arc_info.offset_horizontal * cos_Ti + motion_block->arc_info.offset_vertical * sin_Ti;
+								r_axis1 = -motion_block->arc_info.offset_horizontal * sin_Ti - motion_block->arc_info.offset_vertical * cos_Ti;
+								count = 0;
+							}
+
+							// Update arc_target location
+							prev_values->system_position[0] = motion_block->arc_info.center_axis0 + r_axis0;
+							prev_values->system_position[1] = motion_block->arc_info.center_axis1 + r_axis1;
+							prev_values->system_position[2] += linear_per_segment;
+
+							//mc_line(position, pl_data);
+
+							__plan_buffer_line(motion_block, hw_settings, prev_values, unit_vectors, target_steps);
+
+							// Bail mid-circle on system abort. Runtime command check already performed by mc_line.
+							if (sys.abort) { return; }
+						}
+					}
+					// Ensure last segment arrives at target location.
+					mc_line(target, pl_data);
 				}
 
 				void Block::__planner_recalculate()
@@ -598,6 +767,7 @@ namespace Talos
 					__forward_plan();
 
 				}
+
 				void Block::__reverse_plan()
 				{
 					//starting at newest record -1. do NOT start at newest record or the exit speed

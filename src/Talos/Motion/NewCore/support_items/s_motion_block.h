@@ -5,7 +5,7 @@
 #include "s_motion_axis_detail.h"
 #include "../../../Shared_Data/e_state_flag.h"
 #include "s_common_motion_block_object.h"
-
+#include "s_arc_data.h"
 struct s_speeds
 {
 	float entry_sqr;     // The current planned entry speed at block junction in (mm/min)^2
@@ -25,7 +25,7 @@ struct __s_motion_block
 	float rapid_rate;             // Axis-limit adjusted maximum rate for this block direction in (mm/min)
 	float programmed_rate;        // Programmed rate of this block (mm/min).
 	uint8_t __station__;
-	
+	s_arc_data arc_info;
 	s_common_motion_block_object common;
 	
 

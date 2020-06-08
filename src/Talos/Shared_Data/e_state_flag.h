@@ -41,6 +41,8 @@ enum class e_f_motion_block_state : uint8_t
 	segment_reinitialized = 1,
 	motion_rapid = 2,
 	motion_exact_path = 3,
+	motion_arc_cw = 4,
+	motion_arc_ccw = 5,
 	//motion_feed = 15,
 };
 

@@ -267,6 +267,7 @@
     <ClInclude Include="..\..\..\Motion\NewCore\c_segment_to_hardware.h" />
     <ClInclude Include="..\..\..\Motion\NewCore\support_items\d_buffer_size_defs.h" />
     <ClInclude Include="..\..\..\Motion\NewCore\support_items\e_ramp_states.h" />
+    <ClInclude Include="..\..\..\Motion\NewCore\support_items\s_arc_data.h" />
     <ClInclude Include="..\..\..\Motion\NewCore\support_items\s_bresenham_item.h" />
     <ClInclude Include="..\..\..\Motion\NewCore\support_items\s_common_all_object.h" />
     <ClInclude Include="..\..\..\Motion\NewCore\support_items\s_common_motion_block_object.h" />

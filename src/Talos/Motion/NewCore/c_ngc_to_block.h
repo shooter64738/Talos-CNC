@@ -88,7 +88,10 @@ namespace Talos
 						, s_bit_flag_controller<uint16_t>* bl_comp
 						, __s_motion_block* motion_block);
 
-					static void __configure_motions(NGC_RS274::Block_View ngc_block, __s_motion_block* motion_block);
+					static void __configure_motions(NGC_RS274::Block_View ngc_block
+						, __s_motion_block* motion_block
+						, s_persisting_values* prev_values
+						, s_motion_control_settings_encapsulation hw_settings);
 
 					static void __configure_feeds(NGC_RS274::Block_View ngc_block, __s_motion_block* motion_block);
 
@@ -107,6 +110,19 @@ namespace Talos
 						, s_persisting_values* prev_values
 						, float* unit_vectors
 						, int32_t* target_steps);
+
+					static uint8_t __plan_buffer_arc(
+						__s_motion_block* motion_block
+						, s_motion_control_settings_encapsulation hw_settings
+						, s_persisting_values* prev_values
+						, float* unit_vectors
+						, int32_t* target_steps);
+
+					static void ___load_arc_data(
+						NGC_RS274::Block_View ngc_view
+						, __s_motion_block* motion_block
+						, s_persisting_values* prev_values
+						, s_motion_control_settings_encapsulation hw_settings);
 
 					static void __planner_recalculate();
 
