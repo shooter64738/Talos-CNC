@@ -9,4 +9,4 @@ This is a HUGE project, capable of running on a Windows platform, or a mCU. I am
 
 There seems to be confusion as to what this project is. It is NOT a copy of GRBL, Smoothie, TinyG, etc. I have used elements and features of some of those projects, but this is not a port of one of those projects to a different processor. What is, is a completley new motion processor system.
 
-Please see the wiki page for details on features/functions
+I will be updating the wiki page as I have time. There is a lot of code to be written, and Im working alone, so expect some slow progress..
