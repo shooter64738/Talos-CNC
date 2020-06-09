@@ -18,6 +18,9 @@
 #include <stm32_hal_legacy.h>
 
 #include <string.h>
+#include "sys_gpio_configs.h"
+#include "sys_sdmmc_configs.h"
+
 
 //#include "../../../../../Shared_Data/FrameWork/extern_events_types.h"
 using namespace Hardware_Abstraction_Layer;
@@ -80,12 +83,15 @@ static bool create_file_if_not_exist(const char * filename)
 	}
 }
 
-
+SD_HandleTypeDef hsd1;
 
 uint8_t Disk::initialize(void(*string_writer)(int serial_id, const char* data))
 {
+	sdmmc_gpio_config();
+	sd_mmc1_config();
 
-	((FatResult = (FRESULT)SD_IO_Init(SPI1)) != FR_OK)
+	//((FatResult = (FRESULT)SD_IO_Init(SPI1)) != FR_OK)
+	((FatResult = (FRESULT)SD_IO_Init(NULL)) != FR_OK)
 		? Disk::states.set((int)e_disk_states::drive_start_error) : Disk::states.set((int)e_disk_states::drive_start_success);
 
 	((FatResult = f_mount(&FatFs, "", 1)) != FR_OK)

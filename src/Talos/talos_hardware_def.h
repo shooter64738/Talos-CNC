@@ -40,6 +40,7 @@
 #include "Platforms/STM32/Talos_STM32H7_Combined/Platform_Specific/c_stepper_stm32h7.h"
 #include "Platforms/STM32/Talos_STM32H7_Combined/Platform_Specific/sys_gpio_configs.h"
 #include "Platforms/STM32/Talos_STM32H7_Combined/Platform_Specific/sys_timer_configs.h"
+
 #endif
 
 

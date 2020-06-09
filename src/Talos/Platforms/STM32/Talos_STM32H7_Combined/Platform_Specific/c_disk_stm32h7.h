@@ -13,7 +13,8 @@
 #include "../../../../NGC_RS274/_ngc_tool_struct.h"
 #include "../../../../NGC_RS274/_ngc_coordinate_struct.h"
 
-#include "disk_support/SPI/Hardware/sd_card.h"
+//#include "disk_support/SPI/Hardware/sd_card.h"
+#include "disk_support/SDMMC/Hardware/sd_card.h"
 #include "../../../_bit_flag_control.h"
 
 namespace Hardware_Abstraction_Layer

@@ -10,8 +10,8 @@
 #include "../../NGC_RS274/_ngc_g_groups.h";
 #include "c_block_to_segment.h"
 #include "../../Configuration/c_configuration.h"
-#include "..//Processing/State_Control/c_motion_state_control.h"
-#define __BSD_VISIBLE 1
+#include "../Processing/State_Control/c_motion_state_control.h"
+#define M_PI 3.14159265358979323846
 #include <math.h>
 #include <string.h>
 #include "../../_bit_manipulation.h"
@@ -47,8 +47,6 @@ namespace Talos
 
 				//Set the planned block to the first block by default.
 				__s_motion_block* Block::planned_block = Block::motion_buffer.peek(0);
-
-				s_plane_axis Block::active_plane;
 
 				static uint32_t running_sequence = 0;
 
@@ -577,63 +575,16 @@ namespace Talos
 					if (*ngc_view.current_g_codes.Motion == NGC_RS274::G_codes::CIRCULAR_INTERPOLATION_CCW)
 					{
 						motion_block->common.control_bits.motion.set(e_f_motion_block_state::motion_arc_ccw);
-						___load_arc_data(ngc_view, motion_block, prev_values, hw_settings);
 					}
 
 					if (*ngc_view.current_g_codes.Motion == NGC_RS274::G_codes::CIRCULAR_INTERPOLATION_CW)
 					{
 						motion_block->common.control_bits.motion.set(e_f_motion_block_state::motion_arc_cw);
-						___load_arc_data(ngc_view, motion_block, prev_values, hw_settings);
 					}
 
 					if (*ngc_view.current_g_codes.PATH_CONTROL_MODE == NGC_RS274::G_codes::PATH_CONTROL_EXACT_STOP
 						|| *ngc_view.current_g_codes.PATH_CONTROL_MODE == NGC_RS274::G_codes::PATH_CONTROL_EXACT_PATH)
 						motion_block->common.control_bits.motion.set(e_f_motion_block_state::motion_exact_path);
-				}
-
-				void Block::___load_arc_data(
-					NGC_RS274::Block_View ngc_view
-					, __s_motion_block* motion_block
-					, s_persisting_values* prev_values
-					, s_motion_control_settings_encapsulation hw_settings)
-				{
-					motion_block->arc_info.radius = *ngc_view.arc_values.Radius;
-					motion_block->arc_info.offset_horizontal = *ngc_view.arc_values.horizontal_offset.value;
-					motion_block->arc_info.offset_vertical = *ngc_view.arc_values.horizontal_offset.value;
-					motion_block->arc_info.offset_normal = *ngc_view.arc_values.horizontal_offset.value;
-
-
-					motion_block->arc_info.center_axis0 = prev_values->system_position[0] + motion_block->arc_info.offset_horizontal;
-					motion_block->arc_info.center_axis1 = prev_values->system_position[1] + motion_block->arc_info.offset_vertical;
-					float r_axis0 = -motion_block->arc_info.offset_horizontal;  // Radius vector from center to current location
-					float r_axis1 = -motion_block->arc_info.offset_vertical;
-					float rt_axis0 = ngc_view.active_view_block->target_motion_position[0] - motion_block->arc_info.center_axis0;
-					float rt_axis1 = ngc_view.active_view_block->target_motion_position[1] - motion_block->arc_info.center_axis1;
-
-					// CCW angle between position and target from circle center. Only one atan2() trig computation required.
-					motion_block->arc_info.angular_travel = atan2f(r_axis0 * rt_axis1 - r_axis1 * rt_axis0, r_axis0 * rt_axis0 + r_axis1 * rt_axis1);
-					if (motion_block->common.control_bits.motion.get(e_f_motion_block_state::motion_arc_cw))
-					{
-						if (motion_block->arc_info.angular_travel >= -hw_settings.internals.ARC_ANGULAR_TRAVEL_EPSILON)
-						{
-							motion_block->arc_info.angular_travel -= 2 * M_PI;
-						}
-					}
-					else
-					{
-						if (motion_block->arc_info.angular_travel <= hw_settings.internals.ARC_ANGULAR_TRAVEL_EPSILON)
-						{
-							motion_block->arc_info.angular_travel += 2 * M_PI;
-						}
-					}
-
-					// NOTE: Segment end points are on the arc, which can lead to the arc diameter being smaller by up to
-					// (2x) settings.arc_tolerance. For 99% of users, this is just fine. If a different arc segment fit
-					// is desired, i.e. least-squares, midpoint on arc, just change the mm_per_arc_segment calculation.
-					// For the intended uses of Grbl, this value shouldn't exceed 2000 for the strictest of cases.
-					motion_block->arc_info.segments = (uint16_t)floorf(fabsf(0.5f * motion_block->arc_info.angular_travel * motion_block->arc_info.radius) /
-						sqrtf(hw_settings.tolerance.arc_tolerance
-							* (2 * motion_block->arc_info.radius - hw_settings.tolerance.arc_tolerance)));
 				}
 
 				void Block::__configure_feeds(

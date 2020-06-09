@@ -24,7 +24,7 @@ DSTATUS disk_status(
 	BYTE pdrv		/* Physical drive nmuber to identify the drive */
 )
 {
-	return  pntr_from_link_drvr_SD_status(pdrv);
+	return  pntr_from_link_drvr_SD_status(pdrv); //function resides in sd_card.h
 	//return STA_NOINIT;
 }
 
@@ -38,7 +38,7 @@ DSTATUS disk_initialize(
 	BYTE pdrv				/* Physical drive nmuber to identify the drive */
 )
 {
-	return pntr_from_link_drvr_SD_initialize(pdrv);
+	return pntr_from_link_drvr_SD_initialize(pdrv); //function resides in sd_card.h
 	//return STA_NOINIT;
 }
 
@@ -55,7 +55,7 @@ DRESULT disk_read(
 	UINT count		/* Number of sectors to read */
 )
 {
-	return pntr_from_link_drvr_SD_read(pdrv, buff, sector, count);
+	return pntr_from_link_drvr_SD_read(pdrv, buff, sector, count); //function resides in sd_card.h
 	//return res;
 }
 
@@ -74,7 +74,7 @@ DRESULT disk_write(
 	UINT count			/* Number of sectors to write */
 )
 {
-	return pntr_from_link_drvr_SD_write(pdrv, buff, sector, count);
+	return pntr_from_link_drvr_SD_write(pdrv, buff, sector, count); //function resides in sd_card.h
 	//return res;
 }
 
@@ -91,7 +91,7 @@ DRESULT disk_ioctl(
 	void* buff		/* Buffer to send/receive control data */
 )
 {
-	return pntr_from_link_drvr_SD_io(pdrv, cmd, buff);
+	return pntr_from_link_drvr_SD_io(pdrv, cmd, buff); //function resides in sd_card.h
 	//return RES_PARERR;
 }
 

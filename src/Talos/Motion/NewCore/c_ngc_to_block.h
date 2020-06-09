@@ -31,7 +31,6 @@ namespace Talos
 					static c_ring_buffer<__s_spindle_block> spindle_buffer;
 					static c_ring_buffer<s_ngc_block> ngc_buffer;
 					static __s_motion_block* planned_block;
-					static s_plane_axis active_plane;
 
 				protected:
 				private:
@@ -120,13 +119,7 @@ namespace Talos
 						, s_motion_control_settings_encapsulation hw_settings
 						, s_persisting_values* prev_values
 						, NGC_RS274::Block_View* view);
-
-					static void ___load_arc_data(
-						NGC_RS274::Block_View ngc_view
-						, __s_motion_block* motion_block
-						, s_persisting_values* prev_values
-						, s_motion_control_settings_encapsulation hw_settings);
-
+					
 					static void __planner_recalculate();
 
 					static void __forward_plan();

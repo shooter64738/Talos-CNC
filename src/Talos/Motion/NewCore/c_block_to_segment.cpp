@@ -11,7 +11,7 @@
 #include "c_ngc_to_block.h"
 #include "../../Shared_Data/e_state_flag.h"
 #include "../Processing/State_Control/c_motion_state_control.h"
-#include <math.h>
+//#include <math.h>
 
 namespace mtn_cfg = Talos::Configuration::Motion;
 namespace int_cfg = Talos::Configuration::Interpreter;

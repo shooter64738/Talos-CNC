@@ -35,7 +35,7 @@ volatile uint8_t safe11 = 1;
 volatile uint8_t safe12 = 1;
 void Coordinator::Main_Process::cord_initialize()
 {
-	//Hardware_Abstraction_Layer::Disk::initialize(NULL);
+	
 	Talos::Configuration::Interpreter::DefaultBlock.load_defaults();
 	Talos::Coordinator::Data::Ngc::set_start_block(Talos::Configuration::Interpreter::DefaultBlock.Settings);
 }

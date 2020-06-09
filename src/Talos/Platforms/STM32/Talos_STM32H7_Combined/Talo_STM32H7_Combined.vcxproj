@@ -49,7 +49,7 @@
       <AdditionalLinkerInputs>;%(Link.AdditionalLinkerInputs)</AdditionalLinkerInputs>
       <LibrarySearchDirectories>;%(Link.LibrarySearchDirectories)</LibrarySearchDirectories>
       <AdditionalLibraryNames>;%(Link.AdditionalLibraryNames)</AdditionalLibraryNames>
-      <LinkerScript />
+      <LinkerScript>STM32H750VB_flash.lds</LinkerScript>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|VisualGDB'">
@@ -119,13 +119,15 @@
     <ClCompile Include="Platform_Specific\c_serial_stm32h7.cpp" />
     <ClCompile Include="Platform_Specific\c_spi_stm32h7.cpp" />
     <ClCompile Include="Platform_Specific\c_stepper_stm32h7.cpp" />
-    <ClCompile Include="Platform_Specific\disk_support\SPI\FatFs\diskio.c" />
-    <ClCompile Include="Platform_Specific\disk_support\SPI\FatFs\ff.c" />
-    <ClCompile Include="Platform_Specific\disk_support\SPI\FatFs\ffsystem.c" />
-    <ClCompile Include="Platform_Specific\disk_support\SPI\FatFs\ffunicode.c" />
-    <ClCompile Include="Platform_Specific\disk_support\SPI\Hardware\hardware_config.c" />
-    <ClCompile Include="Platform_Specific\disk_support\SPI\Hardware\hardware_io.c" />
-    <ClCompile Include="Platform_Specific\disk_support\SPI\Hardware\sd_card.c" />
+    <ClCompile Include="Platform_Specific\disk_support\SDMMC\FatFs\bsp_driver_sd.c" />
+    <ClCompile Include="Platform_Specific\disk_support\SDMMC\FatFs\ccsbcs.c" />
+    <ClCompile Include="Platform_Specific\disk_support\SDMMC\FatFs\diskio.c" />
+    <ClCompile Include="Platform_Specific\disk_support\SDMMC\FatFs\fatfs.c" />
+    <ClCompile Include="Platform_Specific\disk_support\SDMMC\FatFs\fatfs_platform.c" />
+    <ClCompile Include="Platform_Specific\disk_support\SDMMC\FatFs\ff.c" />
+    <ClCompile Include="Platform_Specific\disk_support\SDMMC\FatFs\ff_gen_drv.c" />
+    <ClCompile Include="Platform_Specific\disk_support\SDMMC\FatFs\sd_diskio.c" />
+    <ClCompile Include="Platform_Specific\disk_support\SDMMC\Hardware\sd_card.c" />
     <ClCompile Include="Talo_STM32H7_Combined.cpp" />
     <ClCompile Include="system_stm32h7xx.c" />
     <None Include="stm32.props" />
@@ -363,14 +365,19 @@
     <ClInclude Include="Platform_Specific\c_serial_stm32h7.h" />
     <ClInclude Include="Platform_Specific\c_spi_stm32h7.h" />
     <ClInclude Include="Platform_Specific\c_stepper_stm32h7.h" />
-    <ClInclude Include="Platform_Specific\disk_support\SPI\FatFs\diskio.h" />
-    <ClInclude Include="Platform_Specific\disk_support\SPI\FatFs\ff.h" />
-    <ClInclude Include="Platform_Specific\disk_support\SPI\FatFs\ffconf.h" />
-    <ClInclude Include="Platform_Specific\disk_support\SPI\Hardware\hardware_config.h" />
-    <ClInclude Include="Platform_Specific\disk_support\SPI\Hardware\hardware_io.h" />
-    <ClInclude Include="Platform_Specific\disk_support\SPI\Hardware\sd_card.h" />
+    <ClInclude Include="Platform_Specific\disk_support\SDMMC\FatFs\bsp_driver_sd.h" />
+    <ClInclude Include="Platform_Specific\disk_support\SDMMC\FatFs\diskio.h" />
+    <ClInclude Include="Platform_Specific\disk_support\SDMMC\FatFs\fatfs.h" />
+    <ClInclude Include="Platform_Specific\disk_support\SDMMC\FatFs\fatfs_platform.h" />
+    <ClInclude Include="Platform_Specific\disk_support\SDMMC\FatFs\ff.h" />
+    <ClInclude Include="Platform_Specific\disk_support\SDMMC\FatFs\ffconf.h" />
+    <ClInclude Include="Platform_Specific\disk_support\SDMMC\FatFs\ff_gen_drv.h" />
+    <ClInclude Include="Platform_Specific\disk_support\SDMMC\FatFs\integer.h" />
+    <ClInclude Include="Platform_Specific\disk_support\SDMMC\FatFs\sd_diskio.h" />
+    <ClInclude Include="Platform_Specific\disk_support\SDMMC\Hardware\sd_card.h" />
     <ClInclude Include="Platform_Specific\sys_clock_configs.h" />
     <ClInclude Include="Platform_Specific\sys_gpio_configs.h" />
+    <ClInclude Include="Platform_Specific\sys_sdmmc_configs.h" />
     <ClInclude Include="Platform_Specific\sys_timer_configs.h" />
     <ClInclude Include="stm32h7xx_hal_conf.h" />
     <ClInclude Include="$(BSP_ROOT)\STM32H7xxxx\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h" />
@@ -529,5 +536,8 @@
     <None Include="Talo_STM32H7_Combined-Debug.vgdbsettings" />
     <None Include="Talo_STM32H7_Combined-Release.vgdbsettings" />
     <None Include="stm32.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <LinkerScript Include="STM32H750VB_flash.lds" />
   </ItemGroup>
 </Project>

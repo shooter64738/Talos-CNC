@@ -160,6 +160,12 @@
     <Filter Include="Coordinator\Processing\State_Control">
       <UniqueIdentifier>{4a75306a-1b10-4fc0-a99e-eff9e80d947a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Platform_Specific\disk_support\SDMMC\FatFs">
+      <UniqueIdentifier>{167ad29b-fde3-4c9a-a8d2-060a83476d4c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Platform_Specific\disk_support\SDMMC\Hardware">
+      <UniqueIdentifier>{e7e8c454-5fc4-4e5c-a306-867bba9e9fe5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="system_stm32h7xx.c">
@@ -1075,27 +1081,6 @@
     <ClCompile Include="Platform_Specific\c_stepper_stm32h7.cpp">
       <Filter>Platform_Specific</Filter>
     </ClCompile>
-    <ClCompile Include="Platform_Specific\disk_support\SPI\FatFs\diskio.c">
-      <Filter>Platform_Specific\disk_support\SPI\FatFs</Filter>
-    </ClCompile>
-    <ClCompile Include="Platform_Specific\disk_support\SPI\FatFs\ff.c">
-      <Filter>Platform_Specific\disk_support\SPI\FatFs</Filter>
-    </ClCompile>
-    <ClCompile Include="Platform_Specific\disk_support\SPI\FatFs\ffsystem.c">
-      <Filter>Platform_Specific\disk_support\SPI\FatFs</Filter>
-    </ClCompile>
-    <ClCompile Include="Platform_Specific\disk_support\SPI\FatFs\ffunicode.c">
-      <Filter>Platform_Specific\disk_support\SPI\FatFs</Filter>
-    </ClCompile>
-    <ClCompile Include="Platform_Specific\disk_support\SPI\Hardware\hardware_config.c">
-      <Filter>Platform_Specific\disk_support\SPI\Hardware</Filter>
-    </ClCompile>
-    <ClCompile Include="Platform_Specific\disk_support\SPI\Hardware\hardware_io.c">
-      <Filter>Platform_Specific\disk_support\SPI\Hardware</Filter>
-    </ClCompile>
-    <ClCompile Include="Platform_Specific\disk_support\SPI\Hardware\sd_card.c">
-      <Filter>Platform_Specific\disk_support\SPI\Hardware</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\NGC_RS274\Dialect\_ngc_dialect_validate.cpp">
       <Filter>Ngc_Rs274\Dialect</Filter>
     </ClCompile>
@@ -1167,6 +1152,33 @@
     </ClCompile>
     <ClCompile Include="..\..\..\Coordinator\Processing\State_Control\c_coordinator_state_control.cpp">
       <Filter>Coordinator\Processing\State_Control</Filter>
+    </ClCompile>
+    <ClCompile Include="Platform_Specific\disk_support\SDMMC\FatFs\bsp_driver_sd.c">
+      <Filter>Platform_Specific\disk_support\SDMMC\FatFs</Filter>
+    </ClCompile>
+    <ClCompile Include="Platform_Specific\disk_support\SDMMC\FatFs\ccsbcs.c">
+      <Filter>Platform_Specific\disk_support\SDMMC\FatFs</Filter>
+    </ClCompile>
+    <ClCompile Include="Platform_Specific\disk_support\SDMMC\FatFs\diskio.c">
+      <Filter>Platform_Specific\disk_support\SDMMC\FatFs</Filter>
+    </ClCompile>
+    <ClCompile Include="Platform_Specific\disk_support\SDMMC\FatFs\fatfs.c">
+      <Filter>Platform_Specific\disk_support\SDMMC\FatFs</Filter>
+    </ClCompile>
+    <ClCompile Include="Platform_Specific\disk_support\SDMMC\FatFs\fatfs_platform.c">
+      <Filter>Platform_Specific\disk_support\SDMMC\FatFs</Filter>
+    </ClCompile>
+    <ClCompile Include="Platform_Specific\disk_support\SDMMC\FatFs\ff.c">
+      <Filter>Platform_Specific\disk_support\SDMMC\FatFs</Filter>
+    </ClCompile>
+    <ClCompile Include="Platform_Specific\disk_support\SDMMC\FatFs\ff_gen_drv.c">
+      <Filter>Platform_Specific\disk_support\SDMMC\FatFs</Filter>
+    </ClCompile>
+    <ClCompile Include="Platform_Specific\disk_support\SDMMC\FatFs\sd_diskio.c">
+      <Filter>Platform_Specific\disk_support\SDMMC\FatFs</Filter>
+    </ClCompile>
+    <ClCompile Include="Platform_Specific\disk_support\SDMMC\Hardware\sd_card.c">
+      <Filter>Platform_Specific\disk_support\SDMMC\Hardware</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1371,24 +1383,6 @@
     <ClInclude Include="Platform_Specific\sys_timer_configs.h">
       <Filter>Platform_Specific</Filter>
     </ClInclude>
-    <ClInclude Include="Platform_Specific\disk_support\SPI\FatFs\diskio.h">
-      <Filter>Platform_Specific\disk_support\SPI\FatFs</Filter>
-    </ClInclude>
-    <ClInclude Include="Platform_Specific\disk_support\SPI\FatFs\ff.h">
-      <Filter>Platform_Specific\disk_support\SPI\FatFs</Filter>
-    </ClInclude>
-    <ClInclude Include="Platform_Specific\disk_support\SPI\FatFs\ffconf.h">
-      <Filter>Platform_Specific\disk_support\SPI\FatFs</Filter>
-    </ClInclude>
-    <ClInclude Include="Platform_Specific\disk_support\SPI\Hardware\hardware_config.h">
-      <Filter>Platform_Specific\disk_support\SPI\Hardware</Filter>
-    </ClInclude>
-    <ClInclude Include="Platform_Specific\disk_support\SPI\Hardware\hardware_io.h">
-      <Filter>Platform_Specific\disk_support\SPI\Hardware</Filter>
-    </ClInclude>
-    <ClInclude Include="Platform_Specific\disk_support\SPI\Hardware\sd_card.h">
-      <Filter>Platform_Specific\disk_support\SPI\Hardware</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\NGC_RS274\Dialect\_ngc_dialect_validate.h">
       <Filter>Ngc_Rs274\Dialect</Filter>
     </ClInclude>
@@ -1539,6 +1533,39 @@
     <ClInclude Include="..\..\..\Motion\NewCore\support_items\s_arc_data.h">
       <Filter>Motion\NewCore\support_items</Filter>
     </ClInclude>
+    <ClInclude Include="Platform_Specific\sys_sdmmc_configs.h">
+      <Filter>Platform_Specific</Filter>
+    </ClInclude>
+    <ClInclude Include="Platform_Specific\disk_support\SDMMC\FatFs\bsp_driver_sd.h">
+      <Filter>Platform_Specific\disk_support\SDMMC\FatFs</Filter>
+    </ClInclude>
+    <ClInclude Include="Platform_Specific\disk_support\SDMMC\FatFs\diskio.h">
+      <Filter>Platform_Specific\disk_support\SDMMC\FatFs</Filter>
+    </ClInclude>
+    <ClInclude Include="Platform_Specific\disk_support\SDMMC\FatFs\fatfs.h">
+      <Filter>Platform_Specific\disk_support\SDMMC\FatFs</Filter>
+    </ClInclude>
+    <ClInclude Include="Platform_Specific\disk_support\SDMMC\FatFs\fatfs_platform.h">
+      <Filter>Platform_Specific\disk_support\SDMMC\FatFs</Filter>
+    </ClInclude>
+    <ClInclude Include="Platform_Specific\disk_support\SDMMC\FatFs\ff.h">
+      <Filter>Platform_Specific\disk_support\SDMMC\FatFs</Filter>
+    </ClInclude>
+    <ClInclude Include="Platform_Specific\disk_support\SDMMC\FatFs\ff_gen_drv.h">
+      <Filter>Platform_Specific\disk_support\SDMMC\FatFs</Filter>
+    </ClInclude>
+    <ClInclude Include="Platform_Specific\disk_support\SDMMC\FatFs\ffconf.h">
+      <Filter>Platform_Specific\disk_support\SDMMC\FatFs</Filter>
+    </ClInclude>
+    <ClInclude Include="Platform_Specific\disk_support\SDMMC\FatFs\integer.h">
+      <Filter>Platform_Specific\disk_support\SDMMC\FatFs</Filter>
+    </ClInclude>
+    <ClInclude Include="Platform_Specific\disk_support\SDMMC\FatFs\sd_diskio.h">
+      <Filter>Platform_Specific\disk_support\SDMMC\FatFs</Filter>
+    </ClInclude>
+    <ClInclude Include="Platform_Specific\disk_support\SDMMC\Hardware\sd_card.h">
+      <Filter>Platform_Specific\disk_support\SDMMC\Hardware</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\..\..\..\Motion\NewCore\description.txt" />
@@ -1548,5 +1575,10 @@
     <Text Include="..\..\..\Coordinator\Processing\State_Control\description.txt">
       <Filter>Coordinator\Processing\State_Control</Filter>
     </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <LinkerScript Include="STM32H750VB_flash.lds">
+      <Filter>__VIsualGDB\Source files</Filter>
+    </LinkerScript>
   </ItemGroup>
 </Project>
