@@ -9,8 +9,8 @@
 struct __s_spindle_block
 {
 	s_common_all_object tracking;
-	uint32_t rpm = 0;
-	uint16_t m_code = 0;
+	uint32_t rpm;
+	uint16_t m_code;
 	s_bit_flag_controller<e_f_spindle_state> states;
 	s_bit_flag_controller<e_r_feed_block_state> feed;
 };

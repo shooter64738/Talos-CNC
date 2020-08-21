@@ -36,12 +36,13 @@ namespace Talos
 				private:
 					struct s_persisting_values
 					{
+						explicit s_persisting_values(int) {}
 						s_bit_flag_controller<uint16_t> bl_comp{ 0 };
 						float unit_vectors[MACHINE_AXIS_COUNT];
 						int32_t system_position[MACHINE_AXIS_COUNT];
 						int32_t* plane_position[MACHINE_AXIS_COUNT];
 						float nominal_speed;
-						__s_spindle_block spindle_block;
+						__s_spindle_block spindle_block{ 0 };
 						s_bit_flag_controller<e_f_motion_block_state> motion_block_states{ 0 };
 						s_bit_flag_controller<e_r_feed_block_state> feed{ 0 };
 					};

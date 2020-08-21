@@ -10,8 +10,8 @@
 
 struct s_common_all_object
 {
-	uint16_t line_number = 0;
-	uint32_t sequence = 0;
-	uint32_t duration = 0;
+	uint16_t line_number;// = 0;
+	uint32_t sequence;// = 0;
+	uint32_t duration;// = 0;
 };
 #endif
