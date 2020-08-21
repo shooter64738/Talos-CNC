@@ -36,7 +36,7 @@
 
 uint16_t _ngc_working_group = 0;
 
-e_parsing_errors NGC_RS274::Block_Assignor::group_word(char Word, float Address, s_ngc_block *new_block)
+uint32_t NGC_RS274::Block_Assignor::group_word(char Word, float Address, s_ngc_block *new_block)
 {
 	switch (Word)
 	{
@@ -51,13 +51,13 @@ e_parsing_errors NGC_RS274::Block_Assignor::group_word(char Word, float Address,
 		break;
 	}
 
-	return  e_parsing_errors::INTERPRETER_DOES_NOT_UNDERSTAND_CHARACTER_IN_BLOCK;
+	return  c_bit_errors::set(c_bit_errors::e_interpret_error::INTERPRETER_DOES_NOT_UNDERSTAND_CHARACTER_IN_BLOCK);
 }
 
 /*
 Assign the corresponding value to a Group number for an Address
 */
-e_parsing_errors NGC_RS274::Block_Assignor::_gWord(float Address, s_ngc_block *new_block)
+uint32_t NGC_RS274::Block_Assignor::_gWord(float Address, s_ngc_block *new_block)
 {
 	/*
 	|***************************************************************************************|
@@ -234,7 +234,7 @@ e_parsing_errors NGC_RS274::Block_Assignor::_gWord(float Address, s_ngc_block *n
 			break;
 
 		default:
-		return  e_parsing_errors::INTERPRETER_DOES_NOT_UNDERSTAND_G_WORD_VALUE; //<-- -1
+		return c_bit_errors::set(c_bit_errors::e_interpret_error::INTERPRETER_DOES_NOT_UNDERSTAND_G_WORD_VALUE); //<-- -1
 		break;
 	}
 
@@ -244,12 +244,13 @@ e_parsing_errors NGC_RS274::Block_Assignor::_gWord(float Address, s_ngc_block *n
 	was specified more than once.
 	*/
 	if (new_block->g_code_defined_in_block.get((int)_ngc_working_group))
-	/*
-	Since _working_g_group is the 'group' number we can add it to the base error
-	value and give the user a more specific error so they know what needs
-	to be corrected
-	*/
-	return (e_parsing_errors)((int)e_parsing_errors::G_CODE_GROUP_NON_MODAL_ALREADY_SPECIFIED + _ngc_working_group); //<--Start with group 0 and add the Group to it. Never mind, _working_g_group IS the group number
+		/*
+		Since _working_g_group is the 'group' number we can add it to the base error
+		value and give the user a more specific error so they know what needs
+		to be corrected
+		*/
+		return c_bit_errors::set( (c_bit_errors::e_g_error)
+			((int)c_bit_errors::e_g_error::G_CODE_GROUP_NON_MODAL_ALREADY_SPECIFIED + _ngc_working_group));
 
 	/*
 	If we havent already returned from a duplicate group being specified, set the bit flag for this
@@ -258,13 +259,13 @@ e_parsing_errors NGC_RS274::Block_Assignor::_gWord(float Address, s_ngc_block *n
 	*/
 	new_block->g_code_defined_in_block.set(_ngc_working_group);
 	
-	return  e_parsing_errors::OK;
+	return  c_bit_errors::ok;
 }
 
 /*
 Assign the corresponding Group number for an M code
 */
-e_parsing_errors NGC_RS274::Block_Assignor::_mWord(float Address, s_ngc_block *new_block)
+uint32_t NGC_RS274::Block_Assignor::_mWord(float Address, s_ngc_block *new_block)
 {
 	/*
 	|****************************************************************************************|
@@ -318,7 +319,7 @@ e_parsing_errors NGC_RS274::Block_Assignor::_mWord(float Address, s_ngc_block *n
 			new_block->m_group[NGC_RS274::Groups::M::COOLANT] = (iAddress);
 			//Since we DO allow multiple coolant modes at the same time, we are just going to return here
 			//No need to check if this modal group was already set on the line.
-			return  e_parsing_errors::OK;
+			return  c_bit_errors::ok;
 			break;
 		}
 
@@ -340,7 +341,7 @@ e_parsing_errors NGC_RS274::Block_Assignor::_mWord(float Address, s_ngc_block *n
 		}
 		else
 		{
-			return  e_parsing_errors::INTERPRETER_DOES_NOT_UNDERSTAND_M_WORD_VALUE;
+			return c_bit_errors::set(c_bit_errors::e_interpret_error::INTERPRETER_DOES_NOT_UNDERSTAND_M_WORD_VALUE);
 		}
 
 		break;
@@ -351,8 +352,8 @@ e_parsing_errors NGC_RS274::Block_Assignor::_mWord(float Address, s_ngc_block *n
 	We can make the error more meaningful if we tell it WHICH group
 	was specified more than once.
 	*/
-	if (new_block->g_code_defined_in_block.get((int)_ngc_working_group))
-	return (e_parsing_errors)((int)e_parsing_errors::M_CODE_GROUP_STOPPING_ALREADY_SPECIFIED + _ngc_working_group);
+	if (new_block->m_code_defined_in_block.get((int)_ngc_working_group))
+		return c_bit_errors::set(c_bit_errors::e_m_error::M_CODE_GROUP_COOLANT_ALREADY_SPECIFIED);
 
 	/*
 	If we havent already returned from a duplicate group being specified, set the bit flag for this
@@ -360,14 +361,14 @@ e_parsing_errors NGC_RS274::Block_Assignor::_mWord(float Address, s_ngc_block *n
 	group is on the line again, the logic above will catch it and return an error
 	*/
 	new_block->m_code_defined_in_block.set(_ngc_working_group);
-	return  e_parsing_errors::OK;
+	return  c_bit_errors::ok;
 
 }
 
 /*
 Assign the corresponding Address value for a specific G Word
 */
-e_parsing_errors NGC_RS274::Block_Assignor::_pWord(char Word, float iAddress, s_ngc_block *new_block)
+uint32_t NGC_RS274::Block_Assignor::_pWord(char Word, float iAddress, s_ngc_block *new_block)
 {
 	//TODO: I dont recall what I had to do!
 	//We can't just assume these values are usable as is. We have
@@ -379,7 +380,7 @@ e_parsing_errors NGC_RS274::Block_Assignor::_pWord(char Word, float iAddress, s_
 
 	//Convert this to an int so we can store smaller types
 	//float iAddress = atof(Address);
-	e_parsing_errors ReturnValue = e_parsing_errors::OK;
+	uint32_t ReturnValue = c_bit_errors::ok;
 	//If the working group is a motion group, then the x,y,z,a,b,c,u,v,w value is an axis value
 
 	//the NIST standard states it is an error to have an axis word on a line for a motion and a non modal group at the same time (page 20)
@@ -400,7 +401,7 @@ e_parsing_errors NGC_RS274::Block_Assignor::_pWord(char Word, float iAddress, s_
 	return ReturnValue;
 }
 
-e_parsing_errors NGC_RS274::Block_Assignor::_process_word_values
+uint32_t NGC_RS274::Block_Assignor::_process_word_values
 (char Word, float iAddress, s_ngc_block *new_block)
 {
 	/*
@@ -430,7 +431,7 @@ e_parsing_errors NGC_RS274::Block_Assignor::_process_word_values
 	uint8_t WordNumber = (Word - 'A');
 	if (new_block->word_flags.get(WordNumber))
 	//Return the equivalent NGC_Interpreter_Errors number
-	return (e_parsing_errors)(BASE_ERROR_WORD_ERROR + WordNumber);
+	return c_bit_errors::set((c_bit_errors::e_word_error) WordNumber);
 	/*
 	Since this bit was not already set, we can go ahead and set it now
 	If this same word value was specified twice in the same block, we will
@@ -461,7 +462,7 @@ e_parsing_errors NGC_RS274::Block_Assignor::_process_word_values
 	//default:
 	//	break;
 	//}
-	return  e_parsing_errors::OK;
+	return  c_bit_errors::ok;
 }
 
 //bool NGC_RS274::Block_Assignor::_group_value_changed(uint16_t old_value, uint16_t new_value)

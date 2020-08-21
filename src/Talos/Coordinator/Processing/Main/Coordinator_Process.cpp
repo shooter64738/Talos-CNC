@@ -36,7 +36,7 @@ volatile uint8_t safe12 = 1;
 void Coordinator::Main_Process::cord_initialize()
 {
 	
-	Talos::Configuration::Interpreter::DefaultBlock.load_defaults();
+	//Talos::Configuration::Interpreter::DefaultBlock.load_defaults();
 	Talos::Coordinator::Data::Ngc::set_start_block(Talos::Configuration::Interpreter::DefaultBlock.Settings);
 }
 

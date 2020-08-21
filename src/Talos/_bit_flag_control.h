@@ -5,7 +5,7 @@
 #ifndef BIT_FLAG_CONTROL_H
 #define BIT_FLAG_CONTROL_H
 
-template <typename TN> //Provides a centralized bit flag control system
+template <typename TN> //Provides a centralized bit flag control system (32 bit)
 struct s_bit_flag_controller
 {
 	//template <typename ET> //Provides a centralized bit flag control system
@@ -57,15 +57,75 @@ struct s_bit_flag_controller
 	volatile uint32_t _flag;// = 0;//because this can be accessed by interrupts, i am making it volatile
 };
 
+template <typename TN> //Provides a centralized bit flag control system (64 bit)
+struct s_bit_flag_controller_64
+{
+	//template <typename ET> //Provides a centralized bit flag control system
+	bool get(TN get_value)
+	{
+		uint32_t _flag = (int)get_value > 31 ? _64_flag[1] : _64_flag[0];
+		return (bool)(BitGet(_flag, (int)get_value));
+	};
+
+	//template <typename ET> //Provides a centralized bit flag control system
+	bool get_clr(TN get_value)
+	{
+		uint32_t _flag = (int)get_value > 31 ? _64_flag[1] : _64_flag[0];
+		bool ret = (BitGet(_flag, (int)get_value));
+		clear(get_value);
+		return ret;
+	};
+
+	//template <typename ET> //Provides a centralized bit flag control system
+	void flip(TN flip_value)
+	{
+		uint32_t _flag = (int)flip_value > 31 ? _64_flag[1] : _64_flag[0];
+		BitFlp(_flag, (int)flip_value);
+	};
+
+	//template <typename ET> //Provides a centralized bit flag control system
+	void set(TN set_value)
+	{
+		uint32_t _flag = (int)set_value > 31 ? _64_flag[1] : _64_flag[0];
+		BitSet_(_flag, (int)set_value);
+	};
+
+	//template <typename ET> //Provides a centralized bit flag control system
+	void set(bool bit_value, TN bit_num)
+	{
+		uint32_t _flag = (int)bit_num > 31 ? _64_flag[1] : _64_flag[0];
+		if (bit_value)
+			BitSet_(_flag, (int)bit_num);
+		else
+			BitClr_(_flag, (int)bit_num);
+	};
+
+	//template <typename ET> //Provides a centralized bit flag control system
+	void clear(TN clear_value)
+	{
+		uint32_t _flag = (int)clear_value > 31 ? _64_flag[1] : _64_flag[0];
+		BitClr_(_flag, (int)clear_value);
+	};
+
+	void reset()
+	{
+		_64_flag[0] = 0;
+		_64_flag[1] = 0;
+	};
+	//typing this as uint32, but would rather find the enums base type and type it as that.
+	volatile uint32_t _64_flag[2];// = 0;//because this can be accessed by interrupts, i am making it volatile
+};
+
+
+
 
 #define low_bits 0x0000FFFF
 #define high_bits 0xFFFF0000
-
 template <typename TN>//Uses 1/2 the bits in the flag to determine state and compares to the other half
-struct s_bit_flag_controller_ex
+struct s_bit_flag_controller_2
 {
 	uint8_t half_bits = 0;
-	s_bit_flag_controller_ex()
+	s_bit_flag_controller_2()
 	{
 		half_bits = __bit_offset_size();
 	}

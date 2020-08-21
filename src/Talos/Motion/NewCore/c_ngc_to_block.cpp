@@ -12,6 +12,7 @@
 #include "../../Configuration/c_configuration.h"
 #include "../Processing/State_Control/c_motion_state_control.h"
 #define M_PI 3.14159265358979323846
+#define BIT_FOR_COMP_READY 15
 #include <math.h>
 #include <string.h>
 #include "../../_bit_manipulation.h"
@@ -306,7 +307,7 @@ namespace Talos
 
 					//First moves after start up dont get compensation so dont set this flag until after the first axis
 					//moves are calculated.
-					if (!_persisted.bl_comp.get(15))
+					if (!_persisted.bl_comp.get(BIT_FOR_COMP_READY))
 					{
 						//clear the comp bits that might have been set on this block
 						motion_block->axis_data.bl_comp_bits._flag = 0;
@@ -496,6 +497,7 @@ namespace Talos
 					// Ensure last segment arrives at target location.
 					__plan_buffer_line(motion_block, hw_settings, prev_values, view);
 					//mc_line(target, pl_data);
+					return 1;
 				}
 
 				uint8_t Block::__convert_ngc_distance(
@@ -516,7 +518,7 @@ namespace Talos
 						motion_block->axis_data.steps[idx] = labs(target_steps[idx] - prev_values->system_position[idx]);
 
 						motion_block->axis_data.step_event_count = max(motion_block->axis_data.step_event_count, motion_block->axis_data.steps[idx]);
-						delta_mm = (target_steps[idx] - prev_values->system_position[idx]) / hw_settings.steps_per_mm[idx];
+						delta_mm = (target_steps[idx] - prev_values->system_position[idx]) / (float)hw_settings.steps_per_mm[idx];
 						unit_vectors[idx] = delta_mm;
 
 						//IF axis has a brake and there is movement, set the break flag.

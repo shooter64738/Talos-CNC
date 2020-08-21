@@ -33,7 +33,7 @@
 //NGC_RS274::Block_Assignor::Block_Assignor(){}
 //NGC_RS274::Block_Assignor::~Block_Assignor(){}
 
-e_parsing_errors NGC_RS274::Set_Targets::adjust(NGC_RS274::Block_View *v_new_block, NGC_RS274::Block_View *v_previous_block)
+uint32_t NGC_RS274::Set_Targets::adjust(NGC_RS274::Block_View *v_new_block, NGC_RS274::Block_View *v_previous_block)
 {
 
 	//now check crc if its needed
@@ -56,11 +56,11 @@ e_parsing_errors NGC_RS274::Set_Targets::adjust(NGC_RS274::Block_View *v_new_blo
 
 	uint16_t current_offset_mode = *v_new_block->current_g_codes.COORDINATE_SYSTEM_SELECTION;
 
-	return e_parsing_errors::OK;
+	return c_bit_errors::ok;
 
 }
 
-e_parsing_errors NGC_RS274::Set_Targets::find_ends(NGC_RS274::Block_View *v_new_block,       //!< pointer to a block of RS274/NGC instructions
+uint32_t NGC_RS274::Set_Targets::find_ends(NGC_RS274::Block_View *v_new_block,       //!< pointer to a block of RS274/NGC instructions
 	NGC_RS274::Block_View * ss,    //!< pointer to machine settings                 
 	double *px,        //!< pointer to end_x                            
 	double *py,        //!< pointer to end_y                            
@@ -403,7 +403,7 @@ e_parsing_errors NGC_RS274::Set_Targets::find_ends(NGC_RS274::Block_View *v_new_
 	//	*w_p = s->w_current;
 	//	if (v_new_block->is_word_defined(v_new_block->active_view_block, 'W')) *w_p += block->w_number;
 	//}
-	return e_parsing_errors::OK;
+	return c_bit_errors::ok;
 }
 
 void NGC_RS274::Set_Targets::rotate(double *x, double *y, double theta)
@@ -423,7 +423,7 @@ the sign of the commanded value in the gcode).  Modulo 360 positions
 of the axis are considered equivalent and we just need to find the
 nearest one. */
 
-e_parsing_errors NGC_RS274::Set_Targets::unwrap_rotary(double *r, double sign_of, double commanded, double current, char axis) {
+uint32_t NGC_RS274::Set_Targets::unwrap_rotary(double *r, double sign_of, double commanded, double current, char axis) {
 	double result;
 	int neg = copysign(1.0, sign_of) < 0.0;
 	//CHKS((sign_of <= -360.0 || sign_of >= 360.0), (EMC_I18N("Invalid absolute position %5.2f for wrapped rotary axis %c")), sign_of, axis);
@@ -434,5 +434,5 @@ e_parsing_errors NGC_RS274::Set_Targets::unwrap_rotary(double *r, double sign_of
 	if (neg && result > current) result -= 360.0;
 	*r = result;
 
-	return e_parsing_errors::OK;;
+	return c_bit_errors::ok;;
 }

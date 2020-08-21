@@ -14,7 +14,7 @@ namespace NGC_RS274
 		class Group5
 		{
 		public:
-			static e_parsing_errors feed_rate_mode_validate(NGC_RS274::Block_View * v_block, e_dialects dialect);
+			static uint32_t feed_rate_mode_validate(NGC_RS274::Block_View * v_block, e_dialects dialect);
 			
 		private:
 			/*
@@ -24,14 +24,14 @@ namespace NGC_RS274
 			static const unsigned int FEED_RATE_CONSTANT_SURFACE_SPEED = 96 * G_CODE_MULTIPLIER;
 			static const unsigned int FEED_RATE_RPM_MODE = 97 * G_CODE_MULTIPLIER;
 			*/
-			static e_parsing_errors _G093(NGC_RS274::Block_View * v_block, e_dialects dialect);
-			static e_parsing_errors _G094(NGC_RS274::Block_View * v_block, e_dialects dialect);
-			static e_parsing_errors _G095(NGC_RS274::Block_View * v_block, e_dialects dialect);
-			static e_parsing_errors _G096(NGC_RS274::Block_View * v_block, e_dialects dialect);
-			static e_parsing_errors _G097(NGC_RS274::Block_View * v_block, e_dialects dialect);
+			static uint32_t _G093(NGC_RS274::Block_View * v_block, e_dialects dialect);
+			static uint32_t _G094(NGC_RS274::Block_View * v_block, e_dialects dialect);
+			static uint32_t _G095(NGC_RS274::Block_View * v_block, e_dialects dialect);
+			static uint32_t _G096(NGC_RS274::Block_View * v_block, e_dialects dialect);
+			static uint32_t _G097(NGC_RS274::Block_View * v_block, e_dialects dialect);
 
-			static e_parsing_errors __common_feed_rate_check(NGC_RS274::Block_View * v_block, e_dialects dialect);
-			static e_parsing_errors __common_feed_define_check(NGC_RS274::Block_View * v_block, e_dialects dialect);
+			static uint32_t __common_feed_rate_check(NGC_RS274::Block_View * v_block, e_dialects dialect);
+			static uint32_t __common_feed_define_check(NGC_RS274::Block_View * v_block, e_dialects dialect);
 			
 			
 

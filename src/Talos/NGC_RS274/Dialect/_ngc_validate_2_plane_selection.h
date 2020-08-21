@@ -14,15 +14,15 @@ namespace NGC_RS274
 		class Group2
 		{
 		public:
-			static e_parsing_errors plane_validate(NGC_RS274::Block_View * v_block, e_dialects dialect);
+			static uint32_t plane_validate(NGC_RS274::Block_View * v_block, e_dialects dialect);
 			static uint16_t current_plane;
 		private:
-			static e_parsing_errors _G017(NGC_RS274::Block_View * v_block, e_dialects dialect);
-			static e_parsing_errors _G018(NGC_RS274::Block_View * v_block, e_dialects dialect);
-			static e_parsing_errors _G019(NGC_RS274::Block_View * v_block, e_dialects dialect);
-			static e_parsing_errors _G017_1(NGC_RS274::Block_View * v_block, e_dialects dialect);
-			static e_parsing_errors _G018_1(NGC_RS274::Block_View * v_block, e_dialects dialect);
-			static e_parsing_errors _G019_1(NGC_RS274::Block_View * v_block, e_dialects dialect);
+			static uint32_t _G017(NGC_RS274::Block_View * v_block, e_dialects dialect);
+			static uint32_t _G018(NGC_RS274::Block_View * v_block, e_dialects dialect);
+			static uint32_t _G019(NGC_RS274::Block_View * v_block, e_dialects dialect);
+			static uint32_t _G017_1(NGC_RS274::Block_View * v_block, e_dialects dialect);
+			static uint32_t _G018_1(NGC_RS274::Block_View * v_block, e_dialects dialect);
+			static uint32_t _G019_1(NGC_RS274::Block_View * v_block, e_dialects dialect);
 		};
 	};
 };

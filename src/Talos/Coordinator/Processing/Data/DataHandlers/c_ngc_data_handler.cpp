@@ -43,7 +43,7 @@ namespace Talos
 				//	Talos::Shared::c_cache_data::txt_record.pntr_record = Talos::Shared::c_cache_data::txt_record.record;
 				//
 				s_ngc_block new_block;
-				e_parsing_errors return_value = e_parsing_errors::OK;
+				uint32_t return_value = c_bit_errors::ok;
 
 				//Forward copy the previous blocks values so they will persist. This also clears whats in the block now.
 				//If the values need changed during processing it will happen in the assignor
@@ -58,7 +58,7 @@ namespace Talos
 				//Now process the gcode text line, and give us back a block of data in binary format.
 				if ((return_value = NGC_RS274::LineProcessor::_process_buffer(
 					data, &new_block, data_size))
-					!= e_parsing_errors::OK)
+					!= c_bit_errors::ok)
 				{
 					__raise_error(data);
 					return NULL;
@@ -68,37 +68,36 @@ namespace Talos
 			//
 			//	//Create a view of the old and new blocks. The view class is just a helper class
 			//	//to make the data easier to understand
-			NGC_RS274::Block_View v_new = NGC_RS274::Block_View(&new_block);
-			new_block.target_motion_position[0] = *v_new.axis_array[0];
-			//	NGC_RS274::Block_View v_previous = NGC_RS274::Block_View(&Talos::Shared::c_cache_data::ngc_block_record);
-			//	if ((return_value = NGC_RS274::Error_Check::error_check(&v_new, &v_previous))
-			//	!= e_parsing_errors::OK)
-			//	{
-			//	
-			//		__raise_error(Talos::Shared::c_cache_data::txt_record.record);
-			//		return;
-			//	}
-			//
-			//
-			//	//Add this block to the buffer
-			//
-			//	Talos::Shared::c_cache_data::pntr_write_ngc_block_record(&new_block);
-			//
-			//	//Now move the data from the new block back to the init block. This keeps
-			//	//the block modal values in synch
-			//	NGC_RS274::Block_View::copy_persisted_data(&new_block, &Talos::Shared::c_cache_data::ngc_block_record);
-			//	//We dont copy station numbers so set this here.
-			//	Talos::Shared::c_cache_data::ngc_block_record.__station__ = new_block.__station__;
-			//	
-			//	ngc_block_cache_count++;
-			//	
-			//	//Clear the block event that was set when the line was loaded waaaaayyyy back in the dataevent handler
-			////	Talos::Shared::FrameWork::StartUp::CpuCluster[Talos::Shared::FrameWork::StartUp::cpu_type.Host]
-			////		.host_events.Data.clear((int)e_system_message::messages::e_data::NgcDataLine);
-			////	
-			//	Talos::Shared::c_cache_data::txt_record.pntr_record = NULL;
+				NGC_RS274::Block_View v_new = NGC_RS274::Block_View(&new_block);
+				new_block.target_motion_position[0] = *v_new.axis_array[0];
+				NGC_RS274::Block_View v_previous = NGC_RS274::Block_View(&active_block);
+				if ((return_value = NGC_RS274::Error_Check::error_check(&v_new, &v_previous))
+					!= c_bit_errors::ok)
+				{
+					__raise_error(data);
+					return NULL;
+				}
+				//
+				//
+				//	//Add this block to the buffer
+				//
+				//	Talos::Shared::c_cache_data::pntr_write_ngc_block_record(&new_block);
+				//
+				//	//Now move the data from the new block back to the init block. This keeps
+				//	//the block modal values in synch
+				//	NGC_RS274::Block_View::copy_persisted_data(&new_block, &Talos::Shared::c_cache_data::ngc_block_record);
+				//	//We dont copy station numbers so set this here.
+				//	Talos::Shared::c_cache_data::ngc_block_record.__station__ = new_block.__station__;
+				//	
+				//	ngc_block_cache_count++;
+				//	
+				//	//Clear the block event that was set when the line was loaded waaaaayyyy back in the dataevent handler
+				////	Talos::Shared::FrameWork::StartUp::CpuCluster[Talos::Shared::FrameWork::StartUp::cpu_type.Host]
+				////		.host_events.Data.clear((int)e_system_message::messages::e_data::NgcDataLine);
+				////	
+				//	Talos::Shared::c_cache_data::txt_record.pntr_record = NULL;
 
-				//new block becomes active block now
+					//new block becomes active block now
 				memcpy(&active_block, &new_block, sizeof(s_ngc_block));
 				return &Ngc::active_block;
 			}

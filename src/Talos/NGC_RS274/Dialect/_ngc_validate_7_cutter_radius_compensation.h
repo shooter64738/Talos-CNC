@@ -16,18 +16,18 @@ namespace NGC_RS274
 		{
 		public:
 			static e_compensation_states Compensation_State;
-			static e_parsing_errors cutter_radius_comp_validate(NGC_RS274::Block_View * v_block, NGC_RS274::Block_View * v_previous_block, e_dialects dialect);
+			static uint32_t cutter_radius_comp_validate(NGC_RS274::Block_View * v_block, NGC_RS274::Block_View * v_previous_block, e_dialects dialect);
 
 			
 
 		private:
 			
-			static e_parsing_errors _G400(NGC_RS274::Block_View * v_block, NGC_RS274::Block_View * v_previous_block, e_dialects dialect);
-			static e_parsing_errors _G410(NGC_RS274::Block_View * v_block, NGC_RS274::Block_View * v_previous_block, e_dialects dialect);
-			static e_parsing_errors _G420(NGC_RS274::Block_View * v_block, NGC_RS274::Block_View * v_previous_block, e_dialects dialect);
-
-			static e_parsing_errors __check_state(NGC_RS274::Block_View * v_block);
-			static e_parsing_errors __check_dialect(NGC_RS274::Block_View * v_block, e_dialects dialect);
+			static uint32_t _G400(NGC_RS274::Block_View * v_block, NGC_RS274::Block_View * v_previous_block, e_dialects dialect);
+			static uint32_t _G410(NGC_RS274::Block_View * v_block, NGC_RS274::Block_View * v_previous_block, e_dialects dialect);
+			static uint32_t _G420(NGC_RS274::Block_View * v_block, NGC_RS274::Block_View * v_previous_block, e_dialects dialect);
+				   
+			static uint32_t __check_state(NGC_RS274::Block_View * v_block);
+			static uint32_t __check_dialect(NGC_RS274::Block_View * v_block, e_dialects dialect);
 		};
 	};
 };

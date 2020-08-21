@@ -55,25 +55,25 @@ namespace NGC_RS274
 		public:
 		//Error_Check();
 		//~Error_Check();
-			static e_parsing_errors error_check(NGC_RS274::Block_View *new_block, NGC_RS274::Block_View *previous_block);
+			static uint32_t error_check(NGC_RS274::Block_View *new_block, NGC_RS274::Block_View *previous_block);
 			//static e_parsing_errors(*dialect_verify[16])(NGC_RS274::Block_View * new_block, e_dialects dialect);
 
 	private:
 		static uint8_t __has_motion(NGC_RS274::Block_View * v_new_block, NGC_RS274::Block_View * v_previous_block);
 		
-		static e_parsing_errors __error_check_main(NGC_RS274::Block_View *new_block, NGC_RS274::Block_View *previous_block);
-		static e_parsing_errors __error_check_plane_select(NGC_RS274::Block_View *v_new_block, NGC_RS274::Block_View *v_previous_block);
-		static e_parsing_errors __error_check_arc(NGC_RS274::Block_View *v_new_block, NGC_RS274::Block_View *v_previous_block);
+		static uint32_t __error_check_main(NGC_RS274::Block_View *new_block, NGC_RS274::Block_View *previous_block);
+		static uint32_t __error_check_plane_select(NGC_RS274::Block_View *v_new_block, NGC_RS274::Block_View *v_previous_block);
+		static uint32_t __error_check_arc(NGC_RS274::Block_View *v_new_block, NGC_RS274::Block_View *v_previous_block);
 		
-		static e_parsing_errors __error_check_non_modal(NGC_RS274::Block_View *v_new_block, NGC_RS274::Block_View *v_previous_block);
-		static e_parsing_errors __error_check_tool_length_offset(NGC_RS274::Block_View *v_new_block, NGC_RS274::Block_View *v_previous_block);
-		static e_parsing_errors __error_check_cutter_compensation(NGC_RS274::Block_View *v_new_block, NGC_RS274::Block_View *v_previous_block);
+		static uint32_t __error_check_non_modal(NGC_RS274::Block_View *v_new_block, NGC_RS274::Block_View *v_previous_block);
+		static uint32_t __error_check_tool_length_offset(NGC_RS274::Block_View *v_new_block, NGC_RS274::Block_View *v_previous_block);
+		static uint32_t __error_check_cutter_compensation(NGC_RS274::Block_View *v_new_block, NGC_RS274::Block_View *v_previous_block);
 
 		static float __hypot_f(float x, float y);
 		static float __square(float X);
 
-		static e_parsing_errors ____error_check_center_format_arc(NGC_RS274::Block_View *v_new_block, NGC_RS274::Block_View *v_previous_block);
-		static e_parsing_errors ____error_check_radius_format_arc(NGC_RS274::Block_View *v_new_block, NGC_RS274::Block_View *v_previous_block);
+		static uint32_t ____error_check_center_format_arc(NGC_RS274::Block_View *v_new_block, NGC_RS274::Block_View *v_previous_block);
+		static uint32_t ____error_check_radius_format_arc(NGC_RS274::Block_View *v_new_block, NGC_RS274::Block_View *v_previous_block);
 
 		
 

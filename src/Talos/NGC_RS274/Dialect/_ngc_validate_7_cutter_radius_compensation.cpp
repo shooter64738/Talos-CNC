@@ -6,7 +6,7 @@
 //e_compensation_states NGC_RS274::Dialect::Group7::Compensation_State;
 
 
-e_parsing_errors NGC_RS274::Dialect::Group7::cutter_radius_comp_validate(NGC_RS274::Block_View * v_block, NGC_RS274::Block_View * v_previous_block, e_dialects dialect)
+uint32_t NGC_RS274::Dialect::Group7::cutter_radius_comp_validate(NGC_RS274::Block_View * v_block, NGC_RS274::Block_View * v_previous_block, e_dialects dialect)
 {
 	//was comp set on the line?
 	if (v_block->active_view_block->g_code_defined_in_block.get((int)NGC_RS274::Groups::G::Cutter_radius_compensation))
@@ -23,14 +23,14 @@ e_parsing_errors NGC_RS274::Dialect::Group7::cutter_radius_comp_validate(NGC_RS2
 			&& NGC_RS274::Compensation::comp_control.state == e_compensation_states::CurrentCompensationOffNotActivating)
 		{
 			//comp is off and turnign off. no change, just return
-			return e_parsing_errors::OK;
+			return c_bit_errors::ok;
 		}
 		//comp is turning on, and is already on
 		else if (*v_block->current_g_codes.Cutter_radius_compensation != 400
 			&& NGC_RS274::Compensation::comp_control.state == e_compensation_states::CurrentCompensationOnActive)
 		{
 			// it is an error because its not g40 and comp is already on.
-			return e_parsing_errors::CUTTER_RADIUS_COMP_ALREADY_ACTIVE;
+			return c_bit_errors::set(c_bit_errors::e_cutter_comp_error::CUTTER_RADIUS_COMP_ALREADY_ACTIVE);
 		}
 		//comp is turning on and is currently off
 		else if (*v_block->current_g_codes.Cutter_radius_compensation != 400
@@ -55,13 +55,13 @@ e_parsing_errors NGC_RS274::Dialect::Group7::cutter_radius_comp_validate(NGC_RS2
 		break;
 	case NGC_RS274::G_codes::START_CUTTER_RADIUS_COMPENSATION_LEFT_DYNAMIC:
 		if (!v_block->get_word_value('P', &NGC_RS274::Compensation::comp_control.tool_radius))
-			return e_parsing_errors::CUTTER_RADIUS_COMP_MISSING_P_VALUE;
+			return c_bit_errors::set(c_bit_errors::e_cutter_comp_error::CUTTER_RADIUS_COMP_MISSING_P_VALUE);
 	case NGC_RS274::G_codes::START_CUTTER_RADIUS_COMPENSATION_LEFT:
 		_G410(v_block, v_previous_block, dialect);
 		break;
 	case NGC_RS274::G_codes::START_CUTTER_RADIUS_COMPENSATION_RIGHT_DYNAMIC:
 		if (!v_block->get_word_value('P', &NGC_RS274::Compensation::comp_control.tool_radius))
-			return e_parsing_errors::CUTTER_RADIUS_COMP_MISSING_P_VALUE;
+			return c_bit_errors::set(c_bit_errors::e_cutter_comp_error::CUTTER_RADIUS_COMP_MISSING_P_VALUE);
 	case NGC_RS274::G_codes::START_CUTTER_RADIUS_COMPENSATION_RIGHT:
 		_G420(v_block, v_previous_block, dialect);
 		break;
@@ -69,16 +69,16 @@ e_parsing_errors NGC_RS274::Dialect::Group7::cutter_radius_comp_validate(NGC_RS2
 		break;
 	}
 
-	return e_parsing_errors::OK;
+	return c_bit_errors::ok;
 }
 
-e_parsing_errors NGC_RS274::Dialect::Group7::__check_state(NGC_RS274::Block_View * v_block)
+uint32_t NGC_RS274::Dialect::Group7::__check_state(NGC_RS274::Block_View * v_block)
 {
 
-	return e_parsing_errors::OK;
+	return c_bit_errors::ok;
 }
 
-e_parsing_errors NGC_RS274::Dialect::Group7::__check_dialect(NGC_RS274::Block_View * v_block, e_dialects dialect)
+uint32_t NGC_RS274::Dialect::Group7::__check_dialect(NGC_RS274::Block_View * v_block, e_dialects dialect)
 {
 	switch (dialect)
 	{
@@ -95,29 +95,29 @@ e_parsing_errors NGC_RS274::Dialect::Group7::__check_dialect(NGC_RS274::Block_Vi
 		break;
 	}
 
-	return e_parsing_errors::OK;
+	return c_bit_errors::ok;
 }
 
 //Cancel comp
-e_parsing_errors NGC_RS274::Dialect::Group7::_G400(NGC_RS274::Block_View * v_block, NGC_RS274::Block_View * v_previous_block, e_dialects dialect)
+uint32_t NGC_RS274::Dialect::Group7::_G400(NGC_RS274::Block_View * v_block, NGC_RS274::Block_View * v_previous_block, e_dialects dialect)
 {
 	//if comp is going off, but is already active, this is last move (lead out)
 	NGC_RS274::Compensation::process(v_block);
-	return e_parsing_errors::OK;
+	return c_bit_errors::ok;
 }
 
 //Left comp
-e_parsing_errors NGC_RS274::Dialect::Group7::_G410(NGC_RS274::Block_View * v_block, NGC_RS274::Block_View * v_previous_block, e_dialects dialect)
+uint32_t NGC_RS274::Dialect::Group7::_G410(NGC_RS274::Block_View * v_block, NGC_RS274::Block_View * v_previous_block, e_dialects dialect)
 {
 	//set compensation state to activating
 	//Compensation_State = e_compensation_states::CurrentCompensationOffActiving;
 	NGC_RS274::Compensation::comp_control.side = e_compensation_side::CompensatingLeft;
 	NGC_RS274::Compensation::process(v_block);
-	return e_parsing_errors::OK;
+	return c_bit_errors::ok;
 }
 
 //Right comp
-e_parsing_errors NGC_RS274::Dialect::Group7::_G420(NGC_RS274::Block_View * v_block, NGC_RS274::Block_View * v_previous_block, e_dialects dialect)
+uint32_t NGC_RS274::Dialect::Group7::_G420(NGC_RS274::Block_View * v_block, NGC_RS274::Block_View * v_previous_block, e_dialects dialect)
 {
 
 	//set compensation state to activating
@@ -125,5 +125,5 @@ e_parsing_errors NGC_RS274::Dialect::Group7::_G420(NGC_RS274::Block_View * v_blo
 	NGC_RS274::Compensation::comp_control.side = e_compensation_side::CompensatingRight;
 	NGC_RS274::Compensation::process(v_block);
 
-	return e_parsing_errors::OK;
+	return c_bit_errors::ok;
 }

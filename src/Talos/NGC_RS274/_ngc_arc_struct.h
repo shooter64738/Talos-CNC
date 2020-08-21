@@ -9,7 +9,7 @@ struct s_arc_values
 	s_axis_property horizontal_offset;
 	s_axis_property vertical_offset;
 	s_axis_property normal_offset;
-	e_parsing_errors plane_error;
+	c_bit_errors::e_general_error plane_error;
 	float *Radius;
 };
 

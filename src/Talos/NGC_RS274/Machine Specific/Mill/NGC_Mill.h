@@ -30,8 +30,8 @@ namespace NGC_RS274
 	class NGC_Machine_Specific
 	{
 		public:
-		static e_parsing_errors error_check_canned_cycle(NGC_RS274::Block_View *new_block, NGC_RS274::Block_View *previous_block);
-		static e_parsing_errors error_check_feed_mode(int gCode, NGC_RS274::Block_View *new_block, NGC_RS274::Block_View *previous_block);
+		static uint32_t error_check_canned_cycle(NGC_RS274::Block_View *new_block, NGC_RS274::Block_View *previous_block);
+		static uint32_t error_check_feed_mode(int gCode, NGC_RS274::Block_View *new_block, NGC_RS274::Block_View *previous_block);
 	};
 };
 #endif

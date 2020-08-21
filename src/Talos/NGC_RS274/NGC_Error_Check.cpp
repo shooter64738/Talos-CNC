@@ -40,37 +40,37 @@
 //NGC_RS274::Error_Check::Error_Check(){}
 //NGC_RS274::Error_Check::~Error_Check(){}
 
-e_parsing_errors NGC_RS274::Error_Check::error_check(NGC_RS274::Block_View *v_new_block, NGC_RS274::Block_View *v_previous_block)
+uint32_t NGC_RS274::Error_Check::error_check(NGC_RS274::Block_View *v_new_block, NGC_RS274::Block_View *v_previous_block)
 {
-	e_parsing_errors ret_code = e_parsing_errors::OK;
+	uint32_t ret_code = c_bit_errors::ok;
 
 	
 	//tool select should happen before non modals since it will effect non modals. 
 
 	
-	if ((ret_code =(NGC_RS274::Dialect::Group0::non_modal_validate(v_new_block, Talos::Configuration::Interpreter::Parameters.Settings.input_process.dialect))) != e_parsing_errors::OK) return ret_code;
+	if ((ret_code =(NGC_RS274::Dialect::Group0::non_modal_validate(v_new_block, Talos::Configuration::Interpreter::Parameters.Settings.input_process.dialect))) != c_bit_errors::ok) return ret_code;
 	//i think plane validation should be first because it effects so many other things
-	if ((ret_code = (NGC_RS274::Dialect::Group2::plane_validate(v_new_block, Talos::Configuration::Interpreter::Parameters.Settings.input_process.dialect))) != e_parsing_errors::OK) return ret_code;
+	if ((ret_code = (NGC_RS274::Dialect::Group2::plane_validate(v_new_block, Talos::Configuration::Interpreter::Parameters.Settings.input_process.dialect))) != c_bit_errors::ok) return ret_code;
 		
 	//rotation depends on plane, so set plane first. add all offsets (work, tool, radius) before rotating
-	if ((ret_code = (NGC_RS274::Dialect::Group16::rotation_validate(v_new_block, Talos::Configuration::Interpreter::Parameters.Settings.input_process.dialect))) != e_parsing_errors::OK) return ret_code;
+	if ((ret_code = (NGC_RS274::Dialect::Group16::rotation_validate(v_new_block, Talos::Configuration::Interpreter::Parameters.Settings.input_process.dialect))) != c_bit_errors::ok) return ret_code;
 
 	//Feed rate mode only needs validation if a motion is going to run. Do not call that here on its own. 
 	//CHK_CALL_RTN_ERROR_CODE(NGC_RS274::Dialect::Group5::feed_rate_validate(v_new_block, Talos::Confguration::Interpreter::Parameters.dialect));
 	//Distance mode is checked inside the motion validate. Do not call it here on its own.
 	//CHK_CALL_RTN_ERROR_CODE(NGC_RS274::Dialect::Group3::distance_mode_validate(v_new_block, Talos::Confguration::Interpreter::Parameters.dialect));
-	if ((ret_code = (NGC_RS274::Dialect::Group1::motion_validate(v_new_block, Talos::Configuration::Interpreter::Parameters.Settings.input_process.dialect))) != e_parsing_errors::OK) return ret_code;
+	if ((ret_code = (NGC_RS274::Dialect::Group1::motion_validate(v_new_block, Talos::Configuration::Interpreter::Parameters.Settings.input_process.dialect))) != c_bit_errors::ok) return ret_code;
 	
 	
 	//all offsets and motion should be valid before we get to cutter compensation
 	//CHK_CALL_RTN_ERROR_CODE(NGC_RS274::Dialect::Group7::cutter_radius_comp_validate(v_new_block, v_previous_block,Talos::Confguration::Interpreter::Parameters.dialect));
 
-	//if ((ret_code = __error_check_main(v_new_block, v_previous_block)) != e_parsing_errors::OK) return ret_code;
-	//if ((ret_code = __error_check_plane_select(v_new_block, v_previous_block)) != e_parsing_errors::OK) return ret_code;
-	//if ((ret_code = __error_check_arc(v_new_block, v_previous_block)) != e_parsing_errors::OK) return ret_code;
-	//if ((ret_code = __error_check_non_modal(v_new_block, v_previous_block)) != e_parsing_errors::OK) return ret_code;
-	//if ((ret_code = __error_check_tool_length_offset(v_new_block, v_previous_block)) != e_parsing_errors::OK) return ret_code;
-	//if ((ret_code = __error_check_cutter_compensation(v_new_block, v_previous_block)) != e_parsing_errors::OK) return ret_code;
+	//if ((ret_code = __error_check_main(v_new_block, v_previous_block)) != c_bit_errors::ok) return ret_code;
+	//if ((ret_code = __error_check_plane_select(v_new_block, v_previous_block)) != c_bit_errors::ok) return ret_code;
+	//if ((ret_code = __error_check_arc(v_new_block, v_previous_block)) != c_bit_errors::ok) return ret_code;
+	//if ((ret_code = __error_check_non_modal(v_new_block, v_previous_block)) != c_bit_errors::ok) return ret_code;
+	//if ((ret_code = __error_check_tool_length_offset(v_new_block, v_previous_block)) != c_bit_errors::ok) return ret_code;
+	//if ((ret_code = __error_check_cutter_compensation(v_new_block, v_previous_block)) != c_bit_errors::ok) return ret_code;
 
 	//if (!v_new_block->active_view_block->block_events.get((int)e_block_event::HoldBlockForCRC))
 	//{
@@ -85,10 +85,10 @@ e_parsing_errors NGC_RS274::Error_Check::error_check(NGC_RS274::Block_View *v_ne
 First error check method. Determine the type of motion and perform detailed error checks for that
 particular motion command.
 */
-e_parsing_errors NGC_RS274::Error_Check::__error_check_main(NGC_RS274::Block_View *v_new_block, NGC_RS274::Block_View *v_previous_block)
+uint32_t NGC_RS274::Error_Check::__error_check_main(NGC_RS274::Block_View *v_new_block, NGC_RS274::Block_View *v_previous_block)
 {
 
-	e_parsing_errors ReturnValue = e_parsing_errors::OK;
+	uint32_t ReturnValue = c_bit_errors::ok;
 
 	//float iAddress = 0;
 	/*
@@ -124,7 +124,7 @@ e_parsing_errors NGC_RS274::Error_Check::__error_check_main(NGC_RS274::Block_Vie
 			//pntr_error_check = __chk_Cutter_radius_compensation;
 
 			/*ReturnValue = NGC_RS274::Error_Check::__error_check_cutter_compensation(v_new_block, v_previous_block);
-			if (ReturnValue != e_parsing_errors::OK)
+			if (ReturnValue != c_bit_errors::ok)
 			{
 				return ReturnValue;
 			}*/
@@ -170,7 +170,7 @@ e_parsing_errors NGC_RS274::Error_Check::__error_check_main(NGC_RS274::Block_Vie
 			//pntr_error_check = __chk_NON_MODAL;
 
 			/*ReturnValue = __error_check_non_modal(v_new_block, v_previous_block);
-			if (ReturnValue != e_parsing_errors::OK)
+			if (ReturnValue != c_bit_errors::ok)
 			{
 				return ReturnValue;
 			}*/
@@ -244,7 +244,7 @@ e_parsing_errors NGC_RS274::Error_Check::__error_check_main(NGC_RS274::Block_Vie
 			//else
 
 	}
-	return  e_parsing_errors::OK;
+	return  c_bit_errors::ok;
 }
 
 uint8_t NGC_RS274::Error_Check::__has_motion(NGC_RS274::Block_View *v_new_block, NGC_RS274::Block_View *v_previous_block)
@@ -265,19 +265,19 @@ uint8_t NGC_RS274::Error_Check::__has_motion(NGC_RS274::Block_View *v_new_block,
 	return 0;
 }
 
-e_parsing_errors NGC_RS274::Error_Check::__error_check_plane_select(NGC_RS274::Block_View *v_new_block, NGC_RS274::Block_View *v_previous_block)
+uint32_t NGC_RS274::Error_Check::__error_check_plane_select(NGC_RS274::Block_View *v_new_block, NGC_RS274::Block_View *v_previous_block)
 {
-	return e_parsing_errors::OK;
+	return c_bit_errors::ok;
 }
 
 /*
 If an arc (g02/g03) command was specified, perform detailed parameter check that applies only to arcs.
 */
-e_parsing_errors NGC_RS274::Error_Check::__error_check_arc(NGC_RS274::Block_View *v_new_block, NGC_RS274::Block_View *v_previous_block)
+uint32_t NGC_RS274::Error_Check::__error_check_arc(NGC_RS274::Block_View *v_new_block, NGC_RS274::Block_View *v_previous_block)
 {
 	if (*v_new_block->current_g_codes.Motion != NGC_RS274::G_codes::CIRCULAR_INTERPOLATION_CW
 		&& *v_new_block->current_g_codes.Motion != NGC_RS274::G_codes::CIRCULAR_INTERPOLATION_CCW)
-		return e_parsing_errors::OK;
+		return c_bit_errors::ok;
 
 	/*The rules :
 	1. Center format arcs should not be more than 180 degrees.
@@ -299,7 +299,7 @@ e_parsing_errors NGC_RS274::Error_Check::__error_check_arc(NGC_RS274::Block_View
 	//Must have horizontal or vertical but we don't have to have both
 	if (!v_new_block->active_plane.horizontal_axis.is_defined(v_new_block->active_view_block) &&
 		!v_new_block->active_plane.vertical_axis.is_defined(v_new_block->active_view_block))
-		return v_new_block->active_plane.plane_error;
+		return c_bit_errors::set(v_new_block->active_plane.plane_error);
 
 	//Was radius specified?
 	if (!v_new_block->is_word_defined(v_new_block->active_view_block, 'R'))
@@ -307,7 +307,7 @@ e_parsing_errors NGC_RS274::Error_Check::__error_check_arc(NGC_RS274::Block_View
 		//Must have H or V, but we don't have to have both
 		if (!v_new_block->arc_values.horizontal_offset.is_defined(v_new_block->active_view_block) &&
 			!v_new_block->arc_values.vertical_offset.is_defined(v_new_block->active_view_block))
-			return v_new_block->arc_values.plane_error;
+			return c_bit_errors::set(v_new_block->arc_values.plane_error);
 
 		return ____error_check_center_format_arc(v_new_block, v_previous_block);
 	}
@@ -317,7 +317,7 @@ e_parsing_errors NGC_RS274::Error_Check::__error_check_arc(NGC_RS274::Block_View
 	}
 }
 
-e_parsing_errors NGC_RS274::Error_Check::____error_check_center_format_arc(NGC_RS274::Block_View *v_new_block, NGC_RS274::Block_View *v_previous_block)
+uint32_t NGC_RS274::Error_Check::____error_check_center_format_arc(NGC_RS274::Block_View *v_new_block, NGC_RS274::Block_View *v_previous_block)
 {
 	// Arc radius from center to target
 	float target_r = __hypot_f
@@ -336,21 +336,21 @@ e_parsing_errors NGC_RS274::Error_Check::____error_check_center_format_arc(NGC_R
 	{
 		//If the radius difference is more than .5mm we error
 		if (delta_r > 0.5)
-			return  e_parsing_errors::CENTER_FORMAT_ARC_RADIUS_ERROR_EXCEEDS_005; // [Arc definition error] > 0.5mm
+			return  c_bit_errors::set(c_bit_errors::e_general_error::CENTER_FORMAT_ARC_RADIUS_ERROR_EXCEEDS_005); // [Arc definition error] > 0.5mm
 
 																				  //If the radius difference is more than .001mm AND its a small arc, we error
 		if (delta_r > (0.001 * *v_new_block->arc_values.Radius))
-			return  e_parsing_errors::CENTER_FORMAT_ARC_RADIUS_ERROR_EXCEEDS_PERCENTAGE; // [Arc definition error] > 0.005mm AND 0.1% radius
+			return  c_bit_errors::set(c_bit_errors::e_general_error::CENTER_FORMAT_ARC_RADIUS_ERROR_EXCEEDS_PERCENTAGE); // [Arc definition error] > 0.005mm AND 0.1% radius
 	}
 
-	return  e_parsing_errors::OK;
+	return  c_bit_errors::ok;
 }
 
 /*
 These arc center calculations are pretty simple. I do not know who created it originaly
 but this is a near verbatim copy of it from the Grbl control 'gcode.c' file
 */
-e_parsing_errors NGC_RS274::Error_Check::____error_check_radius_format_arc(NGC_RS274::Block_View *v_new_block, NGC_RS274::Block_View *v_previous_block)
+uint32_t NGC_RS274::Error_Check::____error_check_radius_format_arc(NGC_RS274::Block_View *v_new_block, NGC_RS274::Block_View *v_previous_block)
 {
 	// Calculate the change in position along each selected axis
 	float horizontal_delta = *v_new_block->active_plane.horizontal_axis.value - *v_previous_block->active_plane.horizontal_axis.value;
@@ -363,7 +363,7 @@ e_parsing_errors NGC_RS274::Error_Check::____error_check_radius_format_arc(NGC_R
 		- __square(vertical_delta);
 
 	if (h_x2_div_d < 0)
-		return  e_parsing_errors::RADIUS_FORMAT_ARC_RADIUS_LESS_THAN_ZERO; // [Arc radius error]
+		return  c_bit_errors::set(c_bit_errors::e_general_error::RADIUS_FORMAT_ARC_RADIUS_LESS_THAN_ZERO); // [Arc radius error]
 
 																		   // Finish computing h_x2_div_d.
 	h_x2_div_d = -sqrt(h_x2_div_d) / __hypot_f(horizontal_delta, vertical_delta); // == -(h * 2 / d)
@@ -396,10 +396,10 @@ e_parsing_errors NGC_RS274::Error_Check::____error_check_radius_format_arc(NGC_R
 	//*NGC_RS274::Interpreter::Processor::stager_block->active_plane.vertical_axis.value
 	//+ NGC_RS274::Interpreter::Processor::local_block.arc_values.vertical_relative_offset;
 
-	return  e_parsing_errors::OK;
+	return  c_bit_errors::ok;
 }
 
-e_parsing_errors NGC_RS274::Error_Check::__error_check_non_modal(NGC_RS274::Block_View *v_new_block, NGC_RS274::Block_View *v_previous_block)
+uint32_t NGC_RS274::Error_Check::__error_check_non_modal(NGC_RS274::Block_View *v_new_block, NGC_RS274::Block_View *v_previous_block)
 {
 	/*
 
@@ -426,7 +426,7 @@ e_parsing_errors NGC_RS274::Error_Check::__error_check_non_modal(NGC_RS274::Bloc
 			&& v_new_block->active_view_block->g_code_defined_in_block.get((int)NGC_RS274::Groups::G::Motion)
 			&& v_new_block->any_axis_defined(v_new_block->active_view_block))
 		{
-			return  e_parsing_errors::G_CODE_GROUP_NON_MODAL_AXIS_CANNOT_BE_SPECIFIED_WITH_MOTION;
+			return  c_bit_errors::set(c_bit_errors::e_g_error::G_CODE_GROUP_NON_MODAL_AXIS_CANNOT_BE_SPECIFIED_WITH_MOTION);
 		}
 		/*
 		L1 - Tool offset,radius,orientation settings - requires P,Q,R,X,W,Z
@@ -438,7 +438,7 @@ e_parsing_errors NGC_RS274::Error_Check::__error_check_non_modal(NGC_RS274::Bloc
 
 		if (!v_new_block->get_word_value('L', &iAddress))
 		{
-			return  e_parsing_errors::COORDINATE_SETTING_MISSING_L_VALUE;
+			return  c_bit_errors::set(c_bit_errors::e_coordinate_error::COORDINATE_SETTING_MISSING_L_VALUE);
 		}
 		switch ((uint8_t)iAddress)
 		{
@@ -449,15 +449,15 @@ e_parsing_errors NGC_RS274::Error_Check::__error_check_non_modal(NGC_RS274::Bloc
 			//The P value should be defined AND be an integer between 0 and 255
 			if (!v_new_block->get_word_value('P', &iAddress))
 			{
-				return  e_parsing_errors::TOOL_OFFSET_SETTING_MISSING_PARAM_VALUE;
+				return  c_bit_errors::set(c_bit_errors::e_tool_error::TOOL_OFFSET_SETTING_MISSING_PARAM_VALUE);
 			}
 			if (iAddress < 0 || iAddress>255)
 			{
-				return  e_parsing_errors::TOOL_OFFSET_SETTING_PARAM_VALUE_OUT_OF_RANGE;
+				return  c_bit_errors::set(c_bit_errors::e_tool_error::TOOL_OFFSET_SETTING_PARAM_VALUE_OUT_OF_RANGE);
 			}
 			if (!v_new_block->any_axis_defined(v_new_block->active_view_block))
 			{
-				return  e_parsing_errors::COORDINATE_SETTING_MISSING_AXIS_VALUE;
+				return  c_bit_errors::set(c_bit_errors::e_coordinate_error::COORDINATE_SETTING_MISSING_AXIS_VALUE);
 			}
 			break;
 		}
@@ -468,21 +468,21 @@ e_parsing_errors NGC_RS274::Error_Check::__error_check_non_modal(NGC_RS274::Bloc
 			//The P value should be defined AND be an integer between 1 and 9
 			if (!v_new_block->get_word_value('P', &iAddress))
 			{
-				return  e_parsing_errors::COORDINATE_SETTING_MISSING_P_VALUE;
+				return  c_bit_errors::set(c_bit_errors::e_coordinate_error::COORDINATE_SETTING_MISSING_P_VALUE);
 			}
 			if (iAddress < 0 || iAddress>9)
 			{
-				return  e_parsing_errors::COORDINATE_SETTING_PARAM_VALUE_OUT_OF_RANGE;
+				return  c_bit_errors::set(c_bit_errors::e_coordinate_error::COORDINATE_SETTING_PARAM_VALUE_OUT_OF_RANGE);
 			}
 			if (!v_new_block->any_axis_defined(v_new_block->active_view_block))
 			{
-				return  e_parsing_errors::COORDINATE_SETTING_MISSING_AXIS_VALUE;
+				return  c_bit_errors::set(c_bit_errors::e_coordinate_error::COORDINATE_SETTING_MISSING_AXIS_VALUE);
 			}
 			break;
 		}
 		default:
 		{
-			return  e_parsing_errors::COORDINATE_SETTING_L_VALUE_OUT_OF_RANGE;
+			return  c_bit_errors::set(c_bit_errors::e_coordinate_error::COORDINATE_SETTING_L_VALUE_OUT_OF_RANGE);
 			break;
 		}
 		}
@@ -491,14 +491,14 @@ e_parsing_errors NGC_RS274::Error_Check::__error_check_non_modal(NGC_RS274::Bloc
 	}
 	}
 
-	return  e_parsing_errors::OK;
+	return  c_bit_errors::ok;
 }
 
-e_parsing_errors NGC_RS274::Error_Check::__error_check_tool_length_offset(NGC_RS274::Block_View *v_new_block, NGC_RS274::Block_View *v_previous_block)
+uint32_t NGC_RS274::Error_Check::__error_check_tool_length_offset(NGC_RS274::Block_View *v_new_block, NGC_RS274::Block_View *v_previous_block)
 {
 
 	if (*v_new_block->current_g_codes.Tool_length_offset == NGC_RS274::G_codes::CANCEL_TOOL_LENGTH_OFFSET)
-		return e_parsing_errors::OK;
+		return c_bit_errors::ok;
 
 	/*
 	H - an integer value between 1 and 99
@@ -510,7 +510,7 @@ e_parsing_errors NGC_RS274::Error_Check::__error_check_tool_length_offset(NGC_RS
 		if (!v_new_block->is_word_defined(v_new_block->active_view_block, 'H'))
 		{
 			//TODO:See if this is a strict error. IF H is missing can we assume zero?
-			return  e_parsing_errors::TOOL_OFFSET_MISSING_H_VALUE;
+			return  c_bit_errors::set(c_bit_errors::e_tool_error::TOOL_OFFSET_MISSING_H_VALUE);
 		}
 
 		//See if the H value is within permitted range
@@ -520,10 +520,10 @@ e_parsing_errors NGC_RS274::Error_Check::__error_check_tool_length_offset(NGC_RS
 		}*/
 	}
 	//If we get here, the H was specified and valid. We can carry on.
-	return  e_parsing_errors::OK;
+	return  c_bit_errors::ok;
 }
 
-e_parsing_errors NGC_RS274::Error_Check::__error_check_cutter_compensation(NGC_RS274::Block_View *v_new_block, NGC_RS274::Block_View *v_previous_block)
+uint32_t NGC_RS274::Error_Check::__error_check_cutter_compensation(NGC_RS274::Block_View *v_new_block, NGC_RS274::Block_View *v_previous_block)
 {
 	uint16_t current_comp_state = 0;
 	float iAddress = 0;
@@ -550,10 +550,10 @@ e_parsing_errors NGC_RS274::Error_Check::__error_check_cutter_compensation(NGC_R
 				*/
 
 				if (v_new_block->active_view_block->g_group[NGC_RS274::Groups::G::PLANE_SELECTION] == NGC_RS274::G_codes::XZ_PLANE_SELECTION)
-					return  e_parsing_errors::CUTTER_RADIUS_COMP_NOT_ALLOWED_XZ_PLANE;
+					return  c_bit_errors::set(c_bit_errors::e_cutter_comp_error::CUTTER_RADIUS_COMP_NOT_ALLOWED_XZ_PLANE);
 
 				if (v_new_block->active_view_block->g_group[NGC_RS274::Groups::G::Motion] == NGC_RS274::G_codes::MOTION_CANCELED)
-					return  e_parsing_errors::CUTTER_RADIUS_COMP_WHEN_MOTION_CANCELED;
+					return  c_bit_errors::set(c_bit_errors::e_cutter_comp_error::CUTTER_RADIUS_COMP_WHEN_MOTION_CANCELED);
 
 				//its currently off, we are activating it now
 				//NGC_RS274::Compensation::comp_control.state = e_compensation_states::CurrentCompensationOffActiving;
@@ -568,13 +568,13 @@ e_parsing_errors NGC_RS274::Error_Check::__error_check_cutter_compensation(NGC_R
 					if (!v_new_block->get_word_value('D', &iAddress))
 					{
 						//P and D were both left out. naughty naughty
-						return  e_parsing_errors::CUTTER_RADIUS_COMP_MISSING_D_P_VALUE;
+						return  c_bit_errors::set(c_bit_errors::e_cutter_comp_error::CUTTER_RADIUS_COMP_MISSING_D_P_VALUE);
 					}
 
 					//See if the D value is within permitted range
 					if (iAddress < 0 || iAddress>COUNT_OF_TOOL_TABLE - 1)
 					{
-						return  e_parsing_errors::CUTTER_RADIUS_COMP_D_VALUE_OUT_OF_RANGE;
+						return  c_bit_errors::set(c_bit_errors::e_cutter_comp_error::CUTTER_RADIUS_COMP_D_VALUE_OUT_OF_RANGE);
 					}
 				}
 				else
@@ -582,7 +582,7 @@ e_parsing_errors NGC_RS274::Error_Check::__error_check_cutter_compensation(NGC_R
 					//See if D word defined, since we know P already was
 					if (v_new_block->is_word_defined(v_new_block->active_view_block, 'D'))
 					{
-						return  e_parsing_errors::CUTTER_RADIUS_COMP_D_P_BOTH_ASSIGNED;
+						return  c_bit_errors::set(c_bit_errors::e_cutter_comp_error::CUTTER_RADIUS_COMP_D_P_BOTH_ASSIGNED);
 					}
 					//We pulled the value for P when we did the check so iAddress is already Ps value
 					NGC_RS274::Compensation::comp_control.tool_radius = iAddress;
@@ -590,7 +590,7 @@ e_parsing_errors NGC_RS274::Error_Check::__error_check_cutter_compensation(NGC_R
 			}
 			else
 			{
-				return  e_parsing_errors::CUTTER_RADIUS_COMP_ALREADY_ACTIVE;
+				return  c_bit_errors::set(c_bit_errors::e_cutter_comp_error::CUTTER_RADIUS_COMP_ALREADY_ACTIVE);
 			}
 		}
 		else
@@ -601,7 +601,7 @@ e_parsing_errors NGC_RS274::Error_Check::__error_check_cutter_compensation(NGC_R
 		}
 	}
 
-	return  e_parsing_errors::OK;
+	return  c_bit_errors::ok;
 
 
 }
@@ -636,7 +636,7 @@ float NGC_RS274::Error_Check::__square(float X)
 //
 //e_parsing_errors NGC_RS274::Error_Check::__chk_COORDINATE_SYSTEM_SELECTION(NGC_RS274::Block_View *v_new_block, NGC_RS274::Block_View *v_previous_block)
 //{
-//	return e_parsing_errors::OK;
+//	return c_bit_errors::ok;
 //}
 //
 //e_parsing_errors NGC_RS274::Error_Check::__chk_Cutter_radius_compensation(NGC_RS274::Block_View *v_new_block, NGC_RS274::Block_View *v_previous_block)
@@ -717,7 +717,7 @@ float NGC_RS274::Error_Check::__square(float X)
 //		}
 //	}
 //
-//	return  e_parsing_errors::OK;
+//	return  c_bit_errors::ok;
 //}
 //
 //e_parsing_errors NGC_RS274::Error_Check::__chk_Motion(NGC_RS274::Block_View *v_new_block, NGC_RS274::Block_View *v_previous_block)
@@ -726,7 +726,7 @@ float NGC_RS274::Error_Check::__square(float X)
 //	//There is also a startup/default configuration that the machine will start up with
 //	//and that default value could be whats set right now. 
 //	if (*v_new_block->current_g_codes.Motion == 0)
-//		return e_parsing_errors::OK;
+//		return c_bit_errors::ok;
 //
 //
 //	//if (!v_new_block->active_view_block->g_code_defined_in_block.get(NGC_RS274::Groups::G::Motion))
@@ -744,7 +744,7 @@ float NGC_RS274::Error_Check::__square(float X)
 //
 //	//Last check before we continue. If G80 is set, we just return from here. There is no motion mode
 //	if (*v_new_block->current_g_codes.Motion == NGC_RS274::G_codes::MOTION_CANCELED)
-//		return  e_parsing_errors::OK;
+//		return  c_bit_errors::ok;
 //
 //	//We must have at least one axis defined for a motion command
 //	//Quick test here, if NO WORD values were set in the block at all, then we know there couldn't be an axis defined
@@ -755,7 +755,7 @@ float NGC_RS274::Error_Check::__square(float X)
 //
 //	CHK_CALL_RTN_ERROR_CODE(error_check_feed_mode(gCode, v_new_block, v_previous_block));
 //	//ReturnValue = error_check_feed_mode(gCode, v_new_block, v_previous_block);
-//	//if (ReturnValue != e_parsing_errors::OK)
+//	//if (ReturnValue != c_bit_errors::ok)
 //	//{
 //	//	return ReturnValue;
 //	//}
@@ -771,7 +771,7 @@ float NGC_RS274::Error_Check::__square(float X)
 //
 //		CHK_CALL_RTN_ERROR_CODE(__error_check_arc(v_new_block, v_previous_block));
 //		//ReturnValue = __error_check_arc(v_new_block, v_previous_block);
-//		//if (ReturnValue != e_parsing_errors::OK)
+//		//if (ReturnValue != c_bit_errors::ok)
 //		//{
 //		//	return ReturnValue;
 //		//}
@@ -795,7 +795,7 @@ float NGC_RS274::Error_Check::__square(float X)
 //	case NGC_RS274::G_codes::CANNED_CYCLE_BORING_DWELL_FEED_OUT: //<--G89
 //	{
 //		//				ReturnValue = error_check_canned_cycle(v_new_block, v_previous_block);
-//		//if (ReturnValue != e_parsing_errors::OK)
+//		//if (ReturnValue != c_bit_errors::ok)
 //		//{
 //		//	return ReturnValue;
 //		//}
@@ -812,7 +812,7 @@ float NGC_RS274::Error_Check::__square(float X)
 //	//And lastly, lets see if this command actually produces motion
 //	__has_motion(v_new_block, v_previous_block);
 //
-//	return e_parsing_errors::OK;
+//	return c_bit_errors::ok;
 //}
 //
 //e_parsing_errors NGC_RS274::Error_Check::__chk_PLANE_SELECTION(NGC_RS274::Block_View *v_new_block, NGC_RS274::Block_View *v_previous_block)
@@ -831,9 +831,9 @@ float NGC_RS274::Error_Check::__square(float X)
 //e_parsing_errors NGC_RS274::Error_Check::__chk_Tool_length_offset(NGC_RS274::Block_View *v_new_block, NGC_RS274::Block_View *v_previous_block)
 //{
 //	if (!v_new_block->active_view_block->g_code_defined_in_block.get((int)NGC_RS274::Groups::G::Tool_length_offset))
-//		return e_parsing_errors::OK;
+//		return c_bit_errors::ok;
 //	if (*v_new_block->current_g_codes.Tool_length_offset == NGC_RS274::G_codes::CANCEL_TOOL_LENGTH_OFFSET)
-//		return e_parsing_errors::OK;
+//		return c_bit_errors::ok;
 //
 //
 //	CHK_CALL_RTN_ERROR_CODE(__error_check_tool_length_offset(v_new_block, v_previous_block));
@@ -842,7 +842,7 @@ float NGC_RS274::Error_Check::__square(float X)
 //
 //e_parsing_errors NGC_RS274::Error_Check::__chk_Units(NGC_RS274::Block_View *v_new_block, NGC_RS274::Block_View *v_previous_block)
 //{
-//	return e_parsing_errors::OK;
+//	return c_bit_errors::ok;
 //}
 //
 //e_parsing_errors NGC_RS274::Error_Check::__chk_PLANE_ROTATION(NGC_RS274::Block_View *v_new_block, NGC_RS274::Block_View *v_previous_block)
@@ -857,6 +857,6 @@ float NGC_RS274::Error_Check::__square(float X)
 //	else if (active_dialect == NGC_RS274::Dialect::e_dialects::Mach)
 //		NGC_RS274::Dialect::Fanuc::G68_Rotation(v_new_block->active_view_block);*/
 //
-//	return e_parsing_errors::OK;
+//	return c_bit_errors::ok;
 //}
 //

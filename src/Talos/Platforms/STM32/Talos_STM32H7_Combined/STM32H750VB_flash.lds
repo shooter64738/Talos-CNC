@@ -42,7 +42,7 @@ SECTIONS
 		. = ALIGN(4);
 		_etext = .;
 
-	} > FLASH
+	} > RAM_D1
 
 	.ARM.extab :
 	{
@@ -50,7 +50,7 @@ SECTIONS
 		*(.ARM.extab)
 		*(.gnu.linkonce.armextab.*)
 		. = ALIGN(4);
-	} > FLASH
+	} > RAM_D1
 
 	.exidx :
 	{
@@ -59,7 +59,7 @@ SECTIONS
 		*(.ARM.exidx*)
 		. = ALIGN(4);
 		PROVIDE(__exidx_end = .);
-	} > FLASH
+	} > RAM_D1
 
 	.ARM.attributes :
 	{
@@ -71,7 +71,7 @@ SECTIONS
 		PROVIDE(__preinit_array_start = .);
 		KEEP(*(.preinit_array*))
 		PROVIDE(__preinit_array_end = .);
-	} > FLASH
+	} > RAM_D1
 
 	.init_array :
 	{
@@ -79,7 +79,7 @@ SECTIONS
 		KEEP(*(SORT(.init_array.*)))
 		KEEP(*(.init_array*))
 		PROVIDE(__init_array_end = .);
-	} > FLASH
+	} > RAM_D1
 
 	.fini_array :
 	{
@@ -87,7 +87,7 @@ SECTIONS
 		KEEP(*(.fini_array*))
 		KEEP(*(SORT(.fini_array.*)))
 		PROVIDE(__fini_array_end = .);
-	} > FLASH
+	} > RAM_D1
 
 	.data :
 	{
@@ -101,7 +101,7 @@ SECTIONS
 		_edata = .;
 
 		PROVIDE(__data_end__ = _edata);
-	} > DTCMRAM AT >FLASH
+	} > DTCMRAM AT >RAM_D1
 
 	_sidata = LOADADDR(.data);
 

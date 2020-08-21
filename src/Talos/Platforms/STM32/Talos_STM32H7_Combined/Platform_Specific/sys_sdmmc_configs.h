@@ -14,7 +14,7 @@ static void sd_mmc1_config(void)
 	hsd1.Init.ClockPowerSave = SDMMC_CLOCK_POWER_SAVE_DISABLE;
 	hsd1.Init.BusWide = SDMMC_BUS_WIDE_4B; //SDMMC_BUS_WIDE_1B;
 	hsd1.Init.HardwareFlowControl = SDMMC_HARDWARE_FLOW_CONTROL_ENABLE;
-	hsd1.Init.ClockDiv = 16;
+	hsd1.Init.ClockDiv = 8;
 	hsd1.Init.TranceiverPresent = SDMMC_TRANSCEIVER_NOT_PRESENT;
 
 	//HAL_SD_Init(&hsd1);

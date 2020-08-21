@@ -96,15 +96,15 @@ only to canned cycles.
 //		&& !NGC_RS274::Interpreter::Processor::local_block.active_plane.normal_axis.is_defined())
 //	return  e_parsing_errors::CAN_CYCLE_LINEAR_AXIS_UNDEFINED;*/
 //
-//	return  e_parsing_errors::OK;
+//	return  c_bit_errors::ok;
 //}
 //
-e_parsing_errors NGC_RS274::NGC_Machine_Specific::error_check_feed_mode(int gCode, NGC_RS274::Block_View *new_block, NGC_RS274::Block_View *previous_block)
+uint32_t NGC_RS274::NGC_Machine_Specific::error_check_feed_mode(int gCode, NGC_RS274::Block_View *new_block, NGC_RS274::Block_View *previous_block)
 {
 	//When we are in time per unit feed rate mode (also known as inverse time), a feed rate must be set per line, for any motion command
 	if (*new_block->current_g_codes.Feed_rate_mode == NGC_RS274::G_codes::FEED_RATE_MINUTES_PER_UNIT_MODE
 		&& !new_block->is_word_defined(new_block->active_view_block,'F'))
-		return  e_parsing_errors::NO_FEED_RATE_SPECIFIED;
+		return c_bit_errors::set(c_bit_errors::e_feed_error::NO_FEED_RATE_SPECIFIED);
 	
 	float word_value = 0;
 	//When we are in unit per rotation feed rate mode, the spindle must already be active
@@ -114,14 +114,14 @@ e_parsing_errors NGC_RS274::NGC_Machine_Specific::error_check_feed_mode(int gCod
 		//Is the spindle on, or coming on at this line?
 		if (*new_block->current_m_codes.SPINDLE == NGC_RS274::M_codes::SPINDLE_STOP)
 		{
-			return  e_parsing_errors::NO_SPINDLE_MODE_FOR_UNIT_PER_ROTATION;
+			return  c_bit_errors::set(c_bit_errors::e_feed_error::NO_SPINDLE_MODE_FOR_UNIT_PER_ROTATION);
 		}
 		
 		new_block->get_word_value('S', &word_value);
 		//Was a spindle rpm set here or previously? It has to be on or coming on in order for this to not error
 		if (word_value)
 		{
-			return  e_parsing_errors::NO_SPINDLE_VALUE_FOR_UNIT_PER_ROTATION;
+			return  c_bit_errors::set(c_bit_errors::e_feed_error::NO_SPINDLE_VALUE_FOR_UNIT_PER_ROTATION);
 		}
 	}
 	new_block->get_word_value('F', &word_value);
@@ -129,9 +129,9 @@ e_parsing_errors NGC_RS274::NGC_Machine_Specific::error_check_feed_mode(int gCod
 	if (word_value == 0 && gCode > 0)
 	{
 		//feedrate is now a persisted value in a block. IF it was EVER set it will get carried forward to the next block
-		return  e_parsing_errors::NO_FEED_RATE_SPECIFIED;
+		return  c_bit_errors::set(c_bit_errors::e_feed_error::NO_FEED_RATE_SPECIFIED);
 	}
 
-	return  e_parsing_errors::OK;
+	return  c_bit_errors::ok;
 }
 #endif

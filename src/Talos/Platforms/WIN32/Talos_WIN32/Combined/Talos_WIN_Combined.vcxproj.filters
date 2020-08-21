@@ -143,6 +143,9 @@
     <ClCompile Include="..\..\..\..\NGC_RS274\NGC_Tool.cpp">
       <Filter>Ngc_Rs274</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\..\NGC_RS274\_ngc_errors_interpreter.cpp">
+      <Filter>Ngc_Rs274</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Platform_Specific">

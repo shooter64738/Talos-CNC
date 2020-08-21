@@ -43,13 +43,13 @@ namespace NGC_RS274
 		//Block_Assignor();
 		//~Block_Assignor();
 
-		static e_parsing_errors group_word(char Word, float Address, s_ngc_block *new_block);
+		static uint32_t group_word(char Word, float Address, s_ngc_block *new_block);
 
 	private:
-		static e_parsing_errors _gWord(float Address, s_ngc_block *new_block);
-		static e_parsing_errors _mWord(float Address, s_ngc_block *new_block);
-		static e_parsing_errors _pWord(char Word, float iAddress, s_ngc_block *new_block);
-		static e_parsing_errors _process_word_values(char Word, float iAddress, s_ngc_block *new_block);
+		static uint32_t _gWord(float Address, s_ngc_block *new_block);
+		static uint32_t _mWord(float Address, s_ngc_block *new_block);
+		static uint32_t _pWord(char Word, float iAddress, s_ngc_block *new_block);
+		static uint32_t _process_word_values(char Word, float iAddress, s_ngc_block *new_block);
 		//static bool _group_value_changed(uint16_t old_value, uint16_t new_value);
 	};
 };

@@ -78,10 +78,10 @@ namespace Talos
 				void  Hardware::Motion::direction(uint16_t* directions)
 				{
 					//directions may have changed here
-					/*if (_persisted.active_bresenham->direction_bits.get(0))
-						Hardware_Abstraction_Layer::MotionCore::Stepper::step_dir_high();
+					if (*directions)
+						hal_mtn::Stepper::step_dir_high();
 					else
-						Hardware_Abstraction_Layer::MotionCore::Stepper::step_dir_low();*/
+						hal_mtn::Stepper::step_dir_low();
 				}
 
 				void Hardware::Motion::brakes(uint16_t* brake_pins)

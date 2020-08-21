@@ -178,6 +178,7 @@
     <ClCompile Include="..\..\..\..\NGC_RS274\NGC_Set_Targets.cpp" />
     <ClCompile Include="..\..\..\..\NGC_RS274\NGC_System.cpp" />
     <ClCompile Include="..\..\..\..\NGC_RS274\NGC_Tool.cpp" />
+    <ClCompile Include="..\..\..\..\NGC_RS274\_ngc_errors_interpreter.cpp" />
     <ClCompile Include="..\..\..\..\Shared_Data\Kernel\Base\c_kernel_base.cpp" />
     <ClCompile Include="..\..\..\..\Shared_Data\Kernel\Comm\c_kernel_comm.cpp" />
     <ClCompile Include="..\..\..\..\Shared_Data\Kernel\CPU\c_cpu.cpp" />

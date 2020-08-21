@@ -7,7 +7,7 @@ bool NGC_RS274::Dialect::Group16::rotation_active = false;
 float rotation_angle = 0;
 s_point rotation_center;
 
-e_parsing_errors NGC_RS274::Dialect::Group16::rotation_validate(NGC_RS274::Block_View * v_block, e_dialects dialect)
+uint32_t NGC_RS274::Dialect::Group16::rotation_validate(NGC_RS274::Block_View * v_block, e_dialects dialect)
 {
 
 	//check to see if rotation was activated in this block
@@ -16,7 +16,7 @@ e_parsing_errors NGC_RS274::Dialect::Group16::rotation_validate(NGC_RS274::Block
 		//Rotation is activating in this block
 		_G0068(v_block, dialect);
 		rotation_active = true;
-		return e_parsing_errors::OK;
+		return c_bit_errors::ok;
 	}
 	else if (v_block->axis_rotation_stopped(v_block->active_view_block))
 	{
@@ -45,10 +45,10 @@ e_parsing_errors NGC_RS274::Dialect::Group16::rotation_validate(NGC_RS274::Block
 		*v_block->arc_values.vertical_offset.value = test_y + rotation_center.Y;
 
 	}
-	return e_parsing_errors::OK;
+	return c_bit_errors::ok;
 }
 
-e_parsing_errors NGC_RS274::Dialect::Group16::_G0068(NGC_RS274::Block_View * v_block, e_dialects dialect)
+uint32_t NGC_RS274::Dialect::Group16::_G0068(NGC_RS274::Block_View * v_block, e_dialects dialect)
 {
 	char center_axis_1 = v_block->active_plane.horizontal_axis.name;
 	char center_axis_2 = v_block->active_plane.vertical_axis.name;
@@ -76,24 +76,24 @@ e_parsing_errors NGC_RS274::Dialect::Group16::_G0068(NGC_RS274::Block_View * v_b
 	}
 
 	if (!v_block->get_word_value(center_axis_1, &rotation_angle))
-		return e_parsing_errors::PLANE_ROTATION_CENTER_MISSING_FIRST_AXIS_VALUE;
+		return c_bit_errors::set(c_bit_errors::e_plane_error::PLANE_ROTATION_CENTER_MISSING_FIRST_AXIS_VALUE);
 	rotation_center.X = rotation_angle;
 
 	if (!v_block->get_word_value(center_axis_2, &rotation_angle))
-		return e_parsing_errors::PLANE_ROTATION_CENTER_MISSING_SECOND_AXIS_VALUE;
+		return c_bit_errors::set(c_bit_errors::e_plane_error::PLANE_ROTATION_CENTER_MISSING_SECOND_AXIS_VALUE);
 	rotation_center.Y = rotation_angle;
 
 	if (!v_block->get_word_value('R', &rotation_angle))
-		return e_parsing_errors::PLANE_ROTATION_MISSING_R_VALUE;
+		return c_bit_errors::set(c_bit_errors::e_plane_error::PLANE_ROTATION_MISSING_R_VALUE);
 
 	if (rotation_angle > 360 || rotation_angle < -360)
 	{
-		return e_parsing_errors::PLANE_ROTATION_ANGLE_INVALID;
+		return c_bit_errors::set(c_bit_errors::e_plane_error::PLANE_ROTATION_ANGLE_INVALID);
 	}
 
 	//call rotation method here. 
 	//_rotate(v_block->active_plane.horizontal_axis.value, v_block->active_plane.vertical_axis.value, rotation_angle);
-	return e_parsing_errors::OK;
+	return c_bit_errors::ok;
 }
 
 uint8_t NGC_RS274::Dialect::Group16::_rotate(float *x, float *y, float angle)

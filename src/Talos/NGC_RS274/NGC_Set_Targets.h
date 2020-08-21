@@ -48,11 +48,11 @@ namespace NGC_RS274
 		
 
 	//private:
-		static e_parsing_errors adjust(NGC_RS274::Block_View * v_new_block, NGC_RS274::Block_View * v_previous_block);
-		static e_parsing_errors find_ends(NGC_RS274::Block_View * v_new_block, NGC_RS274::Block_View * ss, double * px, double * py, double * pz, double * AA_p, double * BB_p, double * CC_p, double * u_p, double * v_p, double * w_p);
+		static uint32_t adjust(NGC_RS274::Block_View * v_new_block, NGC_RS274::Block_View * v_previous_block);
+		static uint32_t find_ends(NGC_RS274::Block_View * v_new_block, NGC_RS274::Block_View * ss, double * px, double * py, double * pz, double * AA_p, double * BB_p, double * CC_p, double * u_p, double * v_p, double * w_p);
 		//static e_parsing_errors find_ends(NGC_RS274::Block_View * v_new_block, NGC_RS274::Block_View * s, double * px, double * py, double * pz, double * AA_p, double * BB_p, double * CC_p, double * u_p, double * v_p, double * w_p);
 		static void rotate(double * x, double * y, double theta);
-		static e_parsing_errors unwrap_rotary(double * r, double sign_of, double commanded, double current, char axis);
+		static uint32_t unwrap_rotary(double * r, double sign_of, double commanded, double current, char axis);
 		
 	};
 	

@@ -5,9 +5,9 @@
 #include "../NGC_System.h"
 #include "../_ngc_math_constants.h"
 
-e_parsing_errors NGC_RS274::Dialect::Group1::motion_validate(NGC_RS274::Block_View * v_block, e_dialects dialect)
+uint32_t NGC_RS274::Dialect::Group1::motion_validate(NGC_RS274::Block_View* v_block, e_dialects dialect)
 {
-	e_parsing_errors ret_code = e_parsing_errors::OK;
+	uint32_t ret_code = c_bit_errors::ok;
 	/*
 	Check to make sure this would be a valid motion command.
 	We need to either have just set a motion mode, or already have set
@@ -26,20 +26,20 @@ e_parsing_errors NGC_RS274::Dialect::Group1::motion_validate(NGC_RS274::Block_Vi
 		//If a motion command was explicitly set here, its an error
 		if (v_block->active_view_block->g_code_defined_in_block.get((int)NGC_RS274::Groups::G::Motion))
 		{
-			return e_parsing_errors::G_CODE_GROUP_NON_MODAL_AXIS_CANNOT_BE_SPECIFIED_WITH_MOTION;
+			return c_bit_errors::set(c_bit_errors::e_g_error::G_CODE_GROUP_NON_MODAL_AXIS_CANNOT_BE_SPECIFIED_WITH_MOTION);
 		}
 		//Return here. This is a non motion command, we are just updating a parameter.
-		return e_parsing_errors::OK;
+		return c_bit_errors::ok;
 	}
 	else if (v_block->axis_rotation_in_block(v_block->active_view_block))
 	{
 		//Return here. We are setting up axis rotation. The axis words are not for motion
-		return e_parsing_errors::OK;
+		return c_bit_errors::ok;
 	}
 	else if (!axis_word_defined && !v_block->active_view_block->g_code_defined_in_block.get((int)NGC_RS274::Groups::G::Motion))
 	{
 		//Return here. Motion mode is active, but no axis was defined. possibly changing a feed rate here. 
-		return e_parsing_errors::OK;
+		return c_bit_errors::ok;
 	}
 
 	//If motion mode is 80 (canceled) and:
@@ -49,22 +49,22 @@ e_parsing_errors NGC_RS274::Dialect::Group1::motion_validate(NGC_RS274::Block_Vi
 	{
 		if (axis_word_defined)
 		{
-			return e_parsing_errors::MOTION_CANCELED_AXIS_VALUES_INVALID;
+			return c_bit_errors::set(c_bit_errors::e_general_error::MOTION_CANCELED_AXIS_VALUES_INVALID); // (c_bit_errors::e_general_error::MOTION_CANCELED_AXIS_VALUES_INVALID);
 		}
 		//No motion specfied and no axis values sent. There is nothing to do
-		return e_parsing_errors::OK;
+		return c_bit_errors::ok;
 	}
 	else //there is a motion specified
 	{
 		//If no axis defined for motion it is an error
 		if (!axis_word_defined)
-			return  e_parsing_errors::NO_AXIS_DEFINED_FOR_MOTION;
+			return c_bit_errors::set(c_bit_errors::e_general_error::NO_AXIS_DEFINED_FOR_MOTION);
 	}
 
 	//G0,G1,G02,G03,G38.2,G80,G81,G82,G83,G84,G85,G86,G87.G88.G89
 
 	/*ReturnValue = error_check_feed_mode(*v_block->current_g_codes.Motion, v_block);
-	if (ReturnValue != e_parsing_errors::OK)
+	if (ReturnValue != c_bit_errors::ok)
 	{
 		return ReturnValue;
 	}*/
@@ -72,53 +72,53 @@ e_parsing_errors NGC_RS274::Dialect::Group1::motion_validate(NGC_RS274::Block_Vi
 	switch (*v_block->current_g_codes.Motion)
 	{
 	case NGC_RS274::G_codes::RAPID_POSITIONING:
-		if ((ret_code = _G000(v_block, dialect)) != e_parsing_errors::OK)return ret_code;
+		if ((ret_code = _G000(v_block, dialect)) != c_bit_errors::ok)return ret_code;
 		break;
 	case NGC_RS274::G_codes::LINEAR_INTERPOLATION:
-		if ((ret_code = _G001(v_block, dialect)) != e_parsing_errors::OK)return ret_code;
+		if ((ret_code = _G001(v_block, dialect)) != c_bit_errors::ok)return ret_code;
 		break;
 	case NGC_RS274::G_codes::CIRCULAR_INTERPOLATION_CW:
-		if ((ret_code = _G002_G003(v_block, dialect, 1)) != e_parsing_errors::OK)return ret_code;
+		if ((ret_code = _G002_G003(v_block, dialect, 1)) != c_bit_errors::ok)return ret_code;
 		break;
 	case NGC_RS274::G_codes::CIRCULAR_INTERPOLATION_CCW:
-		if ((ret_code = _G002_G003(v_block, dialect, -1)) != e_parsing_errors::OK)return ret_code;
+		if ((ret_code = _G002_G003(v_block, dialect, -1)) != c_bit_errors::ok)return ret_code;
 		break;
 	case NGC_RS274::G_codes::MOTION_CANCELED:
-		if ((ret_code = _G080(v_block, dialect)) != e_parsing_errors::OK)return ret_code;
+		if ((ret_code = _G080(v_block, dialect)) != c_bit_errors::ok)return ret_code;
 		break;
 	case NGC_RS274::G_codes::CANNED_CYCLE_DRILLING: //<--G81 drilling cycle
-		if ((ret_code = _G081(v_block, dialect)) != e_parsing_errors::OK)return ret_code;
+		if ((ret_code = _G081(v_block, dialect)) != c_bit_errors::ok)return ret_code;
 		break;
 	case NGC_RS274::G_codes::CANNED_CYCLE_DRILLING_WITH_DWELL: //<--G82
-		if ((ret_code = _G082(v_block, dialect)) != e_parsing_errors::OK)return ret_code;
+		if ((ret_code = _G082(v_block, dialect)) != c_bit_errors::ok)return ret_code;
 		break;
 	case NGC_RS274::G_codes::CANNED_CYCLE_PECK_DRILLING: //<--G83
-		if ((ret_code = _G083(v_block, dialect)) != e_parsing_errors::OK)return ret_code;
+		if ((ret_code = _G083(v_block, dialect)) != c_bit_errors::ok)return ret_code;
 		break;
 	case NGC_RS274::G_codes::CANNED_CYCLE_RIGHT_HAND_TAPPING: //<--G84
-		if ((ret_code = _G084(v_block, dialect)) != e_parsing_errors::OK)return ret_code;
+		if ((ret_code = _G084(v_block, dialect)) != c_bit_errors::ok)return ret_code;
 		break;
 	case NGC_RS274::G_codes::CANNED_CYCLE_BORING_NO_DWELL_FEED_OUT: //<--G85
-		if ((ret_code = _G085(v_block, dialect)) != e_parsing_errors::OK)return ret_code;
+		if ((ret_code = _G085(v_block, dialect)) != c_bit_errors::ok)return ret_code;
 		break;
 	case NGC_RS274::G_codes::CANNED_CYCLE_BORING_SPINDLE_STOP_RAPID_OUT: //<--G86
-		if ((ret_code = _G086(v_block, dialect)) != e_parsing_errors::OK)return ret_code;
+		if ((ret_code = _G086(v_block, dialect)) != c_bit_errors::ok)return ret_code;
 		break;
 	case NGC_RS274::G_codes::CANNED_CYCLE_BACK_BORING: //<--G87
-		if ((ret_code = _G087(v_block, dialect)) != e_parsing_errors::OK)return ret_code;
+		if ((ret_code = _G087(v_block, dialect)) != c_bit_errors::ok)return ret_code;
 		break;
 	case NGC_RS274::G_codes::CANNED_CYCLE_BORING_SPINDLE_STOP_MANUAL_OUT: //<--G88
-		if ((ret_code = _G088(v_block, dialect)) != e_parsing_errors::OK)return ret_code;
+		if ((ret_code = _G088(v_block, dialect)) != c_bit_errors::ok)return ret_code;
 		break;
 	case NGC_RS274::G_codes::CANNED_CYCLE_BORING_DWELL_FEED_OUT: //<--G89
-		if ((ret_code = _G089(v_block, dialect)) != e_parsing_errors::OK)return ret_code;
+		if ((ret_code = _G089(v_block, dialect)) != c_bit_errors::ok)return ret_code;
 		break;
 	default:
 		break;
 	}
 
 
-	if ((ret_code = (NGC_RS274::Dialect::Group3::distance_mode_validate(v_block, dialect))) != e_parsing_errors::OK) return ret_code;
+	if ((ret_code = (NGC_RS274::Dialect::Group3::distance_mode_validate(v_block, dialect))) != c_bit_errors::ok) return ret_code;
 
 	v_block->active_view_block->target_motion_position[HORIZONTAL_MOTION_AXIS] = *v_block->active_plane.horizontal_axis.value;
 	v_block->active_view_block->target_motion_position[HORIZONTAL_ROTARY_AXIS] = *v_block->active_plane.rotary_horizontal_axis.value;
@@ -134,69 +134,69 @@ e_parsing_errors NGC_RS274::Dialect::Group1::motion_validate(NGC_RS274::Block_Vi
 
 
 
-	return e_parsing_errors::OK;
+	return c_bit_errors::ok;
 }
 
-e_parsing_errors NGC_RS274::Dialect::Group1::_G000(NGC_RS274::Block_View * v_block, e_dialects dialect)
+uint32_t NGC_RS274::Dialect::Group1::_G000(NGC_RS274::Block_View* v_block, e_dialects dialect)
 {
 
-	return e_parsing_errors::OK;
+	return c_bit_errors::ok;
 }
-e_parsing_errors NGC_RS274::Dialect::Group1::_G001(NGC_RS274::Block_View * v_block, e_dialects dialect)
+uint32_t NGC_RS274::Dialect::Group1::_G001(NGC_RS274::Block_View* v_block, e_dialects dialect)
 {
 	return (NGC_RS274::Dialect::Group5::feed_rate_mode_validate(v_block, dialect));
 }
-e_parsing_errors NGC_RS274::Dialect::Group1::_G002_G003(NGC_RS274::Block_View * v_block, e_dialects dialect, int8_t direction)
+uint32_t NGC_RS274::Dialect::Group1::_G002_G003(NGC_RS274::Block_View* v_block, e_dialects dialect, int8_t direction)
 {
 	return(NGC_RS274::Dialect::Group5::feed_rate_mode_validate(v_block, dialect));
 	__error_check_arc(v_block);
 }
-e_parsing_errors NGC_RS274::Dialect::Group1::_G382(NGC_RS274::Block_View * v_block, e_dialects dialect)
+uint32_t NGC_RS274::Dialect::Group1::_G382(NGC_RS274::Block_View* v_block, e_dialects dialect)
 {
 	return(NGC_RS274::Dialect::Group5::feed_rate_mode_validate(v_block, dialect));
 }
-e_parsing_errors NGC_RS274::Dialect::Group1::_G080(NGC_RS274::Block_View * v_block, e_dialects dialect)
+uint32_t NGC_RS274::Dialect::Group1::_G080(NGC_RS274::Block_View* v_block, e_dialects dialect)
 {
 	return(NGC_RS274::Dialect::Group5::feed_rate_mode_validate(v_block, dialect));
 }
-e_parsing_errors NGC_RS274::Dialect::Group1::_G081(NGC_RS274::Block_View * v_block, e_dialects dialect)
+uint32_t NGC_RS274::Dialect::Group1::_G081(NGC_RS274::Block_View* v_block, e_dialects dialect)
 {
 	return(NGC_RS274::Dialect::Group5::feed_rate_mode_validate(v_block, dialect));
 }
-e_parsing_errors NGC_RS274::Dialect::Group1::_G082(NGC_RS274::Block_View * v_block, e_dialects dialect)
+uint32_t NGC_RS274::Dialect::Group1::_G082(NGC_RS274::Block_View* v_block, e_dialects dialect)
 {
 	return(NGC_RS274::Dialect::Group5::feed_rate_mode_validate(v_block, dialect));
 }
-e_parsing_errors NGC_RS274::Dialect::Group1::_G083(NGC_RS274::Block_View * v_block, e_dialects dialect)
+uint32_t NGC_RS274::Dialect::Group1::_G083(NGC_RS274::Block_View* v_block, e_dialects dialect)
 {
 	return(NGC_RS274::Dialect::Group5::feed_rate_mode_validate(v_block, dialect));
 }
-e_parsing_errors NGC_RS274::Dialect::Group1::_G084(NGC_RS274::Block_View * v_block, e_dialects dialect)
+uint32_t NGC_RS274::Dialect::Group1::_G084(NGC_RS274::Block_View* v_block, e_dialects dialect)
 {
 	return(NGC_RS274::Dialect::Group5::feed_rate_mode_validate(v_block, dialect));
 }
-e_parsing_errors NGC_RS274::Dialect::Group1::_G085(NGC_RS274::Block_View * v_block, e_dialects dialect)
+uint32_t NGC_RS274::Dialect::Group1::_G085(NGC_RS274::Block_View* v_block, e_dialects dialect)
 {
 	return(NGC_RS274::Dialect::Group5::feed_rate_mode_validate(v_block, dialect));
 }
-e_parsing_errors NGC_RS274::Dialect::Group1::_G086(NGC_RS274::Block_View * v_block, e_dialects dialect)
+uint32_t NGC_RS274::Dialect::Group1::_G086(NGC_RS274::Block_View* v_block, e_dialects dialect)
 {
 	return(NGC_RS274::Dialect::Group5::feed_rate_mode_validate(v_block, dialect));
 }
-e_parsing_errors NGC_RS274::Dialect::Group1::_G087(NGC_RS274::Block_View * v_block, e_dialects dialect)
+uint32_t NGC_RS274::Dialect::Group1::_G087(NGC_RS274::Block_View* v_block, e_dialects dialect)
 {
 	return (NGC_RS274::Dialect::Group5::feed_rate_mode_validate(v_block, dialect));
 }
-e_parsing_errors NGC_RS274::Dialect::Group1::_G088(NGC_RS274::Block_View * v_block, e_dialects dialect)
+uint32_t NGC_RS274::Dialect::Group1::_G088(NGC_RS274::Block_View* v_block, e_dialects dialect)
 {
 	return(NGC_RS274::Dialect::Group5::feed_rate_mode_validate(v_block, dialect));
 }
-e_parsing_errors NGC_RS274::Dialect::Group1::_G089(NGC_RS274::Block_View * v_block, e_dialects dialect)
+uint32_t NGC_RS274::Dialect::Group1::_G089(NGC_RS274::Block_View* v_block, e_dialects dialect)
 {
 	return(NGC_RS274::Dialect::Group5::feed_rate_mode_validate(v_block, dialect));
 }
 
-e_parsing_errors NGC_RS274::Dialect::Group1::__error_check_arc(NGC_RS274::Block_View *v_new_block)
+uint32_t NGC_RS274::Dialect::Group1::__error_check_arc(NGC_RS274::Block_View* v_new_block)
 {
 
 	/*The rules :
@@ -219,7 +219,7 @@ e_parsing_errors NGC_RS274::Dialect::Group1::__error_check_arc(NGC_RS274::Block_
 	//Must have horizontal or vertical but we don't have to have both
 	if (!v_new_block->active_plane.horizontal_axis.is_defined(v_new_block->active_view_block) &&
 		!v_new_block->active_plane.vertical_axis.is_defined(v_new_block->active_view_block))
-		return v_new_block->active_plane.plane_error;
+		return c_bit_errors::set(v_new_block->active_plane.plane_error);
 
 	//Was radius specified?
 	if (!v_new_block->is_word_defined(v_new_block->active_view_block, 'R'))
@@ -227,7 +227,7 @@ e_parsing_errors NGC_RS274::Dialect::Group1::__error_check_arc(NGC_RS274::Block_
 		//Must have H or V, but we don't have to have both
 		if (!v_new_block->arc_values.horizontal_offset.is_defined(v_new_block->active_view_block) &&
 			!v_new_block->arc_values.vertical_offset.is_defined(v_new_block->active_view_block))
-			return v_new_block->arc_values.plane_error;
+			return c_bit_errors::set(v_new_block->arc_values.plane_error);
 
 		return ____error_check_center_format_arc(v_new_block);
 	}
@@ -237,7 +237,7 @@ e_parsing_errors NGC_RS274::Dialect::Group1::__error_check_arc(NGC_RS274::Block_
 	}
 }
 
-e_parsing_errors NGC_RS274::Dialect::Group1::____error_check_center_format_arc(NGC_RS274::Block_View *v_new_block)
+uint32_t NGC_RS274::Dialect::Group1::____error_check_center_format_arc(NGC_RS274::Block_View* v_new_block)
 {
 	// Arc radius from center to target
 	float target_r = _hypot_f
@@ -256,21 +256,21 @@ e_parsing_errors NGC_RS274::Dialect::Group1::____error_check_center_format_arc(N
 	{
 		//If the radius difference is more than .5mm we error
 		if (delta_r > 0.5)
-			return  e_parsing_errors::CENTER_FORMAT_ARC_RADIUS_ERROR_EXCEEDS_005; // [Arc definition error] > 0.5mm
+			return c_bit_errors::set(c_bit_errors::e_general_error::CENTER_FORMAT_ARC_RADIUS_ERROR_EXCEEDS_005); // [Arc definition error] > 0.5mm
 
 																				  //If the radius difference is more than .001mm AND its a small arc, we error
 		if (delta_r > (0.001 * *v_new_block->arc_values.Radius))
-			return  e_parsing_errors::CENTER_FORMAT_ARC_RADIUS_ERROR_EXCEEDS_PERCENTAGE; // [Arc definition error] > 0.005mm AND 0.1% radius
+			return  c_bit_errors::set(c_bit_errors::e_general_error::CENTER_FORMAT_ARC_RADIUS_ERROR_EXCEEDS_PERCENTAGE); // [Arc definition error] > 0.005mm AND 0.1% radius
 	}
 
-	return  e_parsing_errors::OK;
+	return  c_bit_errors::ok;
 }
 
 /*
 These arc center calculations are pretty simple. I do not know who created it originaly
 but this is a near verbatim copy of it from the Grbl control 'gcode.c' file
 */
-e_parsing_errors NGC_RS274::Dialect::Group1::____error_check_radius_format_arc(NGC_RS274::Block_View *v_new_block)
+uint32_t NGC_RS274::Dialect::Group1::____error_check_radius_format_arc(NGC_RS274::Block_View* v_new_block)
 {
 	// Calculate the change in position along each selected axis
 	float horizontal_delta = *v_new_block->active_plane.horizontal_axis.value - NGC_RS274::System::Position.sys_axis.horizontal_axis.value;
@@ -283,7 +283,7 @@ e_parsing_errors NGC_RS274::Dialect::Group1::____error_check_radius_format_arc(N
 		- _square(vertical_delta);
 
 	if (h_x2_div_d < 0)
-		return  e_parsing_errors::RADIUS_FORMAT_ARC_RADIUS_LESS_THAN_ZERO; // [Arc radius error]
+		return  c_bit_errors::set(c_bit_errors::e_general_error::RADIUS_FORMAT_ARC_RADIUS_LESS_THAN_ZERO); // [Arc radius error]
 
 																		   // Finish computing h_x2_div_d.
 	h_x2_div_d = -sqrt(h_x2_div_d) / _hypot_f(horizontal_delta, vertical_delta); // == -(h * 2 / d)
@@ -316,5 +316,5 @@ e_parsing_errors NGC_RS274::Dialect::Group1::____error_check_radius_format_arc(N
 	//*NGC_RS274::Interpreter::Processor::stager_block->active_plane.vertical_axis.value
 	//+ NGC_RS274::Interpreter::Processor::local_block.arc_values.vertical_relative_offset;
 
-	return  e_parsing_errors::OK;
+	return  c_bit_errors::ok;
 }

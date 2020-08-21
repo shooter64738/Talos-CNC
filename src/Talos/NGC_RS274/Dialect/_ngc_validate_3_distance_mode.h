@@ -14,11 +14,11 @@ namespace NGC_RS274
 		class Group3
 		{
 		public:
-			static e_parsing_errors distance_mode_validate(NGC_RS274::Block_View * v_block, e_dialects dialect);
+			static uint32_t distance_mode_validate(NGC_RS274::Block_View * v_block, e_dialects dialect);
 
 		private:
-			static e_parsing_errors _G090(NGC_RS274::Block_View * v_block, e_dialects dialect);
-			static e_parsing_errors _G091(NGC_RS274::Block_View * v_block, e_dialects dialect);
+			static uint32_t _G090(NGC_RS274::Block_View * v_block, e_dialects dialect);
+			static uint32_t _G091(NGC_RS274::Block_View * v_block, e_dialects dialect);
 		};
 	};
 };

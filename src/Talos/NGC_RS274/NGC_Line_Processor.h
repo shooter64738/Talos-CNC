@@ -42,7 +42,7 @@ namespace NGC_RS274
 	public:
 		static int last_read_position;
 		static uint8_t initialize();
-		static e_parsing_errors  _process_buffer(char * buffer, s_ngc_block * block, uint8_t buff_len);
+		static uint32_t  _process_buffer(char * buffer, s_ngc_block * block, uint8_t buff_len);
 
 	private:
 
@@ -98,24 +98,24 @@ namespace NGC_RS274
 			Tan = 13
 		};
 	
-		static e_parsing_errors  _read_as_word(char * buffer, int * read_pos, char word, float * word_value, bool * has_decimal);
-		static e_parsing_errors  _read_as_class_type(char * buffer, int * read_pos, float * word_value, bool * has_decimal);
-		static e_parsing_errors  __read_class_numeric(char * buffer, int * read_pos, float * read_value, bool * has_decimal);
-		static e_parsing_errors  __read_class_expression(char * buffer, int * read_pos, float * read_value, bool * has_decimal);
-		static e_parsing_errors  __read_class_parameter(char * buffer, int * read_pos, float * read_value, bool * has_decimal);
-		static e_parsing_errors  ___read_integer_value(char * line, int * counter, int * integer_value, bool * has_decimal);
-		static e_parsing_errors  ___read_class_named_parameter(char * buffer, int * read_pos, float * read_value, bool * has_decimal);
+		static uint32_t  _read_as_word(char * buffer, int * read_pos, char word, float * word_value, bool * has_decimal);
+		static uint32_t  _read_as_class_type(char * buffer, int * read_pos, float * word_value, bool * has_decimal);
+		static uint32_t  __read_class_numeric(char * buffer, int * read_pos, float * read_value, bool * has_decimal);
+		static uint32_t  __read_class_expression(char * buffer, int * read_pos, float * read_value, bool * has_decimal);
+		static uint32_t  __read_class_parameter(char * buffer, int * read_pos, float * read_value, bool * has_decimal);
+		static uint32_t  ___read_integer_value(char * line, int * counter, int * integer_value, bool * has_decimal);
+		static uint32_t  ___read_class_named_parameter(char * buffer, int * read_pos, float * read_value, bool * has_decimal);
 		static e_value_class_types __get_value_class(char * buffer, int * read_pos, float * word_value, bool * has_decimal);
-		static e_parsing_errors  __read_class_unary(char * buffer, int * read_pos, float * read_value, bool * has_decimal);
-		static e_parsing_errors  ____get_named_parameter_name(char * buffer, int * read_pos, char * parameter_name);
-		static e_parsing_errors  __get_unary_operator_class
+		static uint32_t  __read_class_unary(char * buffer, int * read_pos, float * read_value, bool * has_decimal);
+		static uint32_t  ____get_named_parameter_name(char * buffer, int * read_pos, char * parameter_name);
+		static uint32_t  __get_unary_operator_class
 		(char * buffer, int * read_pos, e_unary_operator_class_types * operator_class);
-		static e_parsing_errors  __get_expression_operator_class
+		static uint32_t  __get_expression_operator_class
 		(char * buffer, int * read_pos, e_expression_operator_class_types * operator_class);
 		static int __get_operator_precedence(e_expression_operator_class_types operator_class);
-		static e_parsing_errors  ___execute_binary(float *left, e_expression_operator_class_types operator_class, float *right);
-		static e_parsing_errors  ___execute_atan(char * line, int * counter, float * double_ptr, bool * has_decimal);
-		static e_parsing_errors  ___execute_unary(float * double_ptr, e_unary_operator_class_types operation);
+		static uint32_t  ___execute_binary(float *left, e_expression_operator_class_types operator_class, float *right);
+		static uint32_t  ___execute_atan(char * line, int * counter, float * double_ptr, bool * has_decimal);
+		static uint32_t  ___execute_unary(float * double_ptr, e_unary_operator_class_types operation);
 	};
 };
 #endif

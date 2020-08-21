@@ -4,7 +4,7 @@
 
 uint16_t NGC_RS274::Dialect::Group2::current_plane = 0;
 
-e_parsing_errors NGC_RS274::Dialect::Group2::plane_validate(NGC_RS274::Block_View * v_block, e_dialects dialect)
+uint32_t NGC_RS274::Dialect::Group2::plane_validate(NGC_RS274::Block_View * v_block, e_dialects dialect)
 {
 	//if rotation is active we cannot change planes. rotation must be canceled first.
 	//haas will throw an error. do others?
@@ -21,7 +21,7 @@ e_parsing_errors NGC_RS274::Dialect::Group2::plane_validate(NGC_RS274::Block_Vie
 		//see if a plane was defined that is different than our current plane and rotation is active.
 		if ((current_plane != *v_block->current_g_codes.PLANE_SELECTION)
 			&& NGC_RS274::Dialect::Group16::rotation_active)
-			return e_parsing_errors::PLANE_SELECT_ILLEGAL_DURING_ACTIVE_ROTATION;
+			return c_bit_errors::set(c_bit_errors::e_plane_error::PLANE_SELECT_ILLEGAL_DURING_ACTIVE_ROTATION);
 		break;
 	default:
 		break;
@@ -52,35 +52,35 @@ e_parsing_errors NGC_RS274::Dialect::Group2::plane_validate(NGC_RS274::Block_Vie
 	default:
 		break;
 	}*/
-	return e_parsing_errors::OK;
+	return c_bit_errors::ok;
 }
 
-e_parsing_errors NGC_RS274::Dialect::Group2::_G017(NGC_RS274::Block_View * v_block, e_dialects dialect)
+uint32_t NGC_RS274::Dialect::Group2::_G017(NGC_RS274::Block_View * v_block, e_dialects dialect)
 {
-	return e_parsing_errors::OK;
+	return c_bit_errors::ok;
 }
 
-e_parsing_errors NGC_RS274::Dialect::Group2::_G018(NGC_RS274::Block_View * v_block, e_dialects dialect)
+uint32_t NGC_RS274::Dialect::Group2::_G018(NGC_RS274::Block_View * v_block, e_dialects dialect)
 {
-	return e_parsing_errors::OK;
+	return c_bit_errors::ok;
 }
 
-e_parsing_errors NGC_RS274::Dialect::Group2::_G019(NGC_RS274::Block_View * v_block, e_dialects dialect)
+uint32_t NGC_RS274::Dialect::Group2::_G019(NGC_RS274::Block_View * v_block, e_dialects dialect)
 {
-	return e_parsing_errors::OK;
+	return c_bit_errors::ok;
 }
 
-e_parsing_errors NGC_RS274::Dialect::Group2::_G017_1(NGC_RS274::Block_View * v_block, e_dialects dialect)
+uint32_t NGC_RS274::Dialect::Group2::_G017_1(NGC_RS274::Block_View * v_block, e_dialects dialect)
 {
-	return e_parsing_errors::OK;
+	return c_bit_errors::ok;
 }
 
-e_parsing_errors NGC_RS274::Dialect::Group2::_G018_1(NGC_RS274::Block_View * v_block, e_dialects dialect)
+uint32_t NGC_RS274::Dialect::Group2::_G018_1(NGC_RS274::Block_View * v_block, e_dialects dialect)
 {
-	return e_parsing_errors::OK;
+	return c_bit_errors::ok;
 }
 
-e_parsing_errors NGC_RS274::Dialect::Group2::_G019_1(NGC_RS274::Block_View * v_block, e_dialects dialect)
+uint32_t NGC_RS274::Dialect::Group2::_G019_1(NGC_RS274::Block_View * v_block, e_dialects dialect)
 {
-	return e_parsing_errors::OK;
+	return c_bit_errors::ok;
 }

@@ -15,7 +15,7 @@ struct s_plane_axis
 	s_axis_property normal_axis;
 	s_axis_property rotary_normal_axis;
 	s_axis_property inc_normal_axis;
-	e_parsing_errors plane_error;
+	c_bit_errors::e_general_error plane_error;
 };
 
 #endif

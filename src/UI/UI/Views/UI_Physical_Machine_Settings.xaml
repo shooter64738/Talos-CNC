@@ -81,74 +81,76 @@
                     <!--</StackPanel>-->
 
                     <Label Grid.Row="4" Grid.Column="0" Content="Axis Travel" VerticalAlignment="Center"/>
-                    <Grid Grid.Row="4" Grid.Column="1" Margin="0,25,0,0" VerticalAlignment="Stretch" >
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="20*"/>
-                            <ColumnDefinition Width="30*"/>
-                            <ColumnDefinition Width="40*"/>
-                            <!--<ColumnDefinition Width="50*"/>-->
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
-                        <TextBlock Grid.Row="0" Grid.Column="0"  VerticalAlignment="Center" Grid.ColumnSpan="3" TextWrapping="Wrap"
+                    <ScrollViewer Grid.Row="4" Grid.Column="1" VerticalScrollBarVisibility="Visible" >
+                        <Grid Grid.Row="4" Grid.Column="1" Margin="0,25,0,0" VerticalAlignment="Stretch" >
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="20*"/>
+                                <ColumnDefinition Width="30*"/>
+                                <ColumnDefinition Width="40*"/>
+                                <!--<ColumnDefinition Width="50*"/>-->
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <TextBlock Grid.Row="0" Grid.Column="0"  VerticalAlignment="Center" Grid.ColumnSpan="3" TextWrapping="Wrap"
                                Text="Specify travel distance and 'Name' of each axis. This is the distance the axis can physically travel from one end to the other. Do not wory about specifying a unit of inch or millimeter."/>
-                        <Label Grid.Row="1" Grid.Column="0" Content="Axis Number" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                        <Label Grid.Row="1" Grid.Column="1" Content="Axis G Code Name" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                        <Label Grid.Row="1" Grid.Column="2" Content="Allowed physical distance" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                            <Label Grid.Row="1" Grid.Column="0" Content="Axis Number" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                            <Label Grid.Row="1" Grid.Column="1" Content="Axis G Code Name" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                            <Label Grid.Row="1" Grid.Column="2" Content="Allowed physical distance" VerticalAlignment="Center" HorizontalAlignment="Center"/>
 
-                        <Label Grid.Row="2" Grid.Column="0" Content="1" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                        <ComboBox Grid.Row="2" Grid.Column="1" ItemsSource="{Binding Available_Axis_Names}" SelectedItem="{Binding Axis_List[0].Name}" Margin="5"/>
-                        <TextBox Grid.Row="2" Grid.Column="2" Text="{Binding Axis_List[0].Distance}" VerticalContentAlignment="Center"  Margin="5"/>
+                            <Label Grid.Row="2" Grid.Column="0" Content="1" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                            <ComboBox Grid.Row="2" Grid.Column="1" ItemsSource="{Binding Available_Axis_Names}" SelectedItem="{Binding Axis_List[0].Name}" Margin="5"/>
+                            <TextBox Grid.Row="2" Grid.Column="2" Text="{Binding Axis_List[0].Distance}" VerticalContentAlignment="Center"  Margin="5"/>
 
-                        <Label Grid.Row="3" Grid.Column="0" Content="2" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                        <ComboBox Grid.Row="3" Grid.Column="1" ItemsSource="{Binding Available_Axis_Names}" SelectedItem="{Binding Axis_List[1].Name}" Margin="5"/>
-                        <TextBox Grid.Row="3" Grid.Column="2" Text="{Binding Axis_List[1].Distance}" VerticalContentAlignment="Center"  Margin="5"/>
+                            <Label Grid.Row="3" Grid.Column="0" Content="2" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                            <ComboBox Grid.Row="3" Grid.Column="1" ItemsSource="{Binding Available_Axis_Names}" SelectedItem="{Binding Axis_List[1].Name}" Margin="5"/>
+                            <TextBox Grid.Row="3" Grid.Column="2" Text="{Binding Axis_List[1].Distance}" VerticalContentAlignment="Center"  Margin="5"/>
 
-                        <Label Grid.Row="4" Grid.Column="0" Content="3" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                        <ComboBox Grid.Row="4" Grid.Column="1" ItemsSource="{Binding Available_Axis_Names}" SelectedItem="{Binding Axis_List[2].Name}" Margin="5"/>
-                        <TextBox Grid.Row="4" Grid.Column="2" Text="{Binding Axis_List[2].Distance}" VerticalContentAlignment="Center"  Margin="5"/>
+                            <Label Grid.Row="4" Grid.Column="0" Content="3" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                            <ComboBox Grid.Row="4" Grid.Column="1" ItemsSource="{Binding Available_Axis_Names}" SelectedItem="{Binding Axis_List[2].Name}" Margin="5"/>
+                            <TextBox Grid.Row="4" Grid.Column="2" Text="{Binding Axis_List[2].Distance}" VerticalContentAlignment="Center"  Margin="5"/>
 
-                        <Label Grid.Row="5" Grid.Column="0" Content="4" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                        <ComboBox Grid.Row="5" Grid.Column="1" ItemsSource="{Binding Available_Axis_Names}" SelectedItem="{Binding Axis_List[3].Name}" Margin="5"/>
-                        <TextBox Grid.Row="5" Grid.Column="2" Text="{Binding Axis_List[3].Distance}" VerticalContentAlignment="Center"  Margin="5"/>
+                            <Label Grid.Row="5" Grid.Column="0" Content="4" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                            <ComboBox Grid.Row="5" Grid.Column="1" ItemsSource="{Binding Available_Axis_Names}" SelectedItem="{Binding Axis_List[3].Name}" Margin="5"/>
+                            <TextBox Grid.Row="5" Grid.Column="2" Text="{Binding Axis_List[3].Distance}" VerticalContentAlignment="Center"  Margin="5"/>
 
-                        <Label Grid.Row="6" Grid.Column="0" Content="5" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                        <ComboBox Grid.Row="6" Grid.Column="1" ItemsSource="{Binding Available_Axis_Names}" SelectedItem="{Binding Axis_List[4].Name}" Margin="5"/>
-                        <TextBox Grid.Row="6" Grid.Column="2" Text="{Binding Axis_List[4].Distance}" VerticalContentAlignment="Center"  Margin="5"/>
+                            <Label Grid.Row="6" Grid.Column="0" Content="5" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                            <ComboBox Grid.Row="6" Grid.Column="1" ItemsSource="{Binding Available_Axis_Names}" SelectedItem="{Binding Axis_List[4].Name}" Margin="5"/>
+                            <TextBox Grid.Row="6" Grid.Column="2" Text="{Binding Axis_List[4].Distance}" VerticalContentAlignment="Center"  Margin="5"/>
 
-                        <Label Grid.Row="7" Grid.Column="0" Content="6" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                        <ComboBox Grid.Row="7" Grid.Column="1" ItemsSource="{Binding Available_Axis_Names}" SelectedItem="{Binding Axis_List[5].Name}" Margin="5"/>
-                        <TextBox Grid.Row="7" Grid.Column="2" Text="{Binding Axis_List[5].Distance}" VerticalContentAlignment="Center"  Margin="5"/>
+                            <Label Grid.Row="7" Grid.Column="0" Content="6" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                            <ComboBox Grid.Row="7" Grid.Column="1" ItemsSource="{Binding Available_Axis_Names}" SelectedItem="{Binding Axis_List[5].Name}" Margin="5"/>
+                            <TextBox Grid.Row="7" Grid.Column="2" Text="{Binding Axis_List[5].Distance}" VerticalContentAlignment="Center"  Margin="5"/>
 
-                        <Label Grid.Row="8" Grid.Column="0" Content="7" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                        <ComboBox Grid.Row="8" Grid.Column="1" ItemsSource="{Binding Available_Axis_Names}" SelectedItem="{Binding Axis_List[6].Name}" Margin="5"/>
-                        <TextBox Grid.Row="8" Grid.Column="2" Text="{Binding Axis_List[6].Distance}" VerticalContentAlignment="Center"  Margin="5"/>
-                        
-                        <Label Grid.Row="9" Grid.Column="0" Content="8" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                        <ComboBox Grid.Row="9" Grid.Column="1" ItemsSource="{Binding Available_Axis_Names}" SelectedItem="{Binding Axis_List[7].Name}" Margin="5"/>
-                        <TextBox Grid.Row="9" Grid.Column="2" Text="{Binding Axis_List[7].Distance}" VerticalContentAlignment="Center"  Margin="5"/>
+                            <Label Grid.Row="8" Grid.Column="0" Content="7" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                            <ComboBox Grid.Row="8" Grid.Column="1" ItemsSource="{Binding Available_Axis_Names}" SelectedItem="{Binding Axis_List[6].Name}" Margin="5"/>
+                            <TextBox Grid.Row="8" Grid.Column="2" Text="{Binding Axis_List[6].Distance}" VerticalContentAlignment="Center"  Margin="5"/>
 
-                        <Label Grid.Row="10" Grid.Column="0" Content="9" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                        <ComboBox Grid.Row="10" Grid.Column="1" ItemsSource="{Binding Available_Axis_Names}" SelectedItem="{Binding Axis_List[8].Name}" Margin="5"/>
-                        <TextBox Grid.Row="10" Grid.Column="2" Text="{Binding Axis_List[8].Distance}" VerticalContentAlignment="Center"  Margin="5"/>
-                        
-                        <Label Grid.Row="11" Grid.Column="0" Content="10" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                        <ComboBox Grid.Row="11" Grid.Column="1" ItemsSource="{Binding Available_Axis_Names}" SelectedItem="{Binding Axis_List[9].Name}" Margin="5"/>
-                        <TextBox Grid.Row="11" Grid.Column="2" Text="{Binding Axis_List[9].Distance}" VerticalContentAlignment="Center"  Margin="5"/>
-                    </Grid>
+                            <Label Grid.Row="9" Grid.Column="0" Content="8" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                            <ComboBox Grid.Row="9" Grid.Column="1" ItemsSource="{Binding Available_Axis_Names}" SelectedItem="{Binding Axis_List[7].Name}" Margin="5"/>
+                            <TextBox Grid.Row="9" Grid.Column="2" Text="{Binding Axis_List[7].Distance}" VerticalContentAlignment="Center"  Margin="5"/>
+
+                            <Label Grid.Row="10" Grid.Column="0" Content="9" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                            <ComboBox Grid.Row="10" Grid.Column="1" ItemsSource="{Binding Available_Axis_Names}" SelectedItem="{Binding Axis_List[8].Name}" Margin="5"/>
+                            <TextBox Grid.Row="10" Grid.Column="2" Text="{Binding Axis_List[8].Distance}" VerticalContentAlignment="Center"  Margin="5"/>
+
+                            <Label Grid.Row="11" Grid.Column="0" Content="10" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                            <ComboBox Grid.Row="11" Grid.Column="1" ItemsSource="{Binding Available_Axis_Names}" SelectedItem="{Binding Axis_List[9].Name}" Margin="5"/>
+                            <TextBox Grid.Row="11" Grid.Column="2" Text="{Binding Axis_List[9].Distance}" VerticalContentAlignment="Center"  Margin="5"/>
+                        </Grid>
+                    </ScrollViewer>
                 </Grid>
             </Border>
         </Grid>

@@ -103,7 +103,7 @@ namespace Talos
 					if (Kernel::CPU::cluster[Kernel::CPU::host_id].host_events.Data.get_clr(e_system_message::messages::e_data::NgcDataLine))
 					{
 
-						__read_ngc_line(
+						uint8_t ret = __read_ngc_line(
 							Kernel::CPU::cluster[Kernel::CPU::host_id].dvc_source->active_rcv_buffer->overlays.text
 							, Kernel::CPU::cluster[Kernel::CPU::host_id].dvc_source->active_rcv_buffer->read_count);
 						//reset the buffer and be ready for the next line.
@@ -124,8 +124,9 @@ namespace Talos
 
 				}
 
-				void Process::__read_ngc_line(char* source, uint16_t data_size)
+				uint8_t Process::__read_ngc_line(char* source, uint16_t data_size)
 				{
+					uint8_t ret = 0;
 					//the flag for ngc data in the serial buffer is set. we need to load that data
 					//and run it through the interpreter.
 					//Also this should be the only place where motion, kernel, and coordinator connect.
@@ -138,13 +139,15 @@ namespace Talos
 					{
 						mtn_inp::Block::ngc_buffer.put(*new_block);
 						mtn_ctl_sta::Process::states.set(mtn_ctl_sta::Process::e_states::ngc_buffer_not_empty);
+						ret = 0;
 					}
 					else
 					{
 						Kernel::Report::ngc_status(e_block_process_State::ngc_block_rejected);
+						ret = 1;
 					}
-
-
+					
+					return ret;
 				}
 
 #pragma endregion

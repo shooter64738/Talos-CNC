@@ -11,10 +11,10 @@
 
 float _value = 0;
 
-e_parsing_errors NGC_RS274::Dialect::Group0::non_modal_validate(NGC_RS274::Block_View * v_block, e_dialects dialect)
+uint32_t NGC_RS274::Dialect::Group0::non_modal_validate(NGC_RS274::Block_View * v_block, e_dialects dialect)
 {
 	if (v_block->current_g_codes.Non_Modal == NULL)
-		return e_parsing_errors::OK;
+		return c_bit_errors::ok;
 
 	switch (*v_block->current_g_codes.Non_Modal)
 	{
@@ -27,10 +27,10 @@ e_parsing_errors NGC_RS274::Dialect::Group0::non_modal_validate(NGC_RS274::Block
 	default:
 		break;
 	}
-	return e_parsing_errors::OK;
+	return c_bit_errors::ok;
 }
 
-e_parsing_errors NGC_RS274::Dialect::Group0::_G004(NGC_RS274::Block_View * v_block, e_dialects dialect)
+uint32_t NGC_RS274::Dialect::Group0::_G004(NGC_RS274::Block_View * v_block, e_dialects dialect)
 {
 	/* fanuc
 	G04 X… (sec)
@@ -46,10 +46,10 @@ e_parsing_errors NGC_RS274::Dialect::Group0::_G004(NGC_RS274::Block_View * v_blo
 	G04 S3 (wait until the spindle revolves round 3 times)
 	*/
 
-	return e_parsing_errors::OK;
+	return c_bit_errors::ok;
 }
 
-e_parsing_errors NGC_RS274::Dialect::Group0::_G010(NGC_RS274::Block_View * v_block, e_dialects dialect)
+uint32_t NGC_RS274::Dialect::Group0::_G010(NGC_RS274::Block_View * v_block, e_dialects dialect)
 {
 	uint8_t L_value = 0;
 	uint8_t param_value = 0;
@@ -72,12 +72,12 @@ e_parsing_errors NGC_RS274::Dialect::Group0::_G010(NGC_RS274::Block_View * v_blo
 	case e_dialects::Haas:
 	case e_dialects::Siemens_ISO:
 		if (!v_block->get_word_value('P', &_value))
-			return e_parsing_errors::TOOL_OFFSET_SETTING_MISSING_PARAM_VALUE;
+			return c_bit_errors::set(c_bit_errors::e_tool_error::TOOL_OFFSET_SETTING_MISSING_PARAM_VALUE);
 		param_value = (int)_value;
 		break;
 	case e_dialects::Yasnac: //Yasnac get the offset number from J
 		if (!v_block->get_word_value('J', &_value))
-			return e_parsing_errors::TOOL_OFFSET_SETTING_MISSING_PARAM_VALUE;
+			return c_bit_errors::set(c_bit_errors::e_tool_error::TOOL_OFFSET_SETTING_MISSING_PARAM_VALUE);
 		param_value = (int)_value;
 		break;
 	default:
@@ -88,12 +88,12 @@ e_parsing_errors NGC_RS274::Dialect::Group0::_G010(NGC_RS274::Block_View * v_blo
 	{
 		//illegal with cutter comp active
 		if (*v_block->current_g_codes.Cutter_radius_compensation != NGC_RS274::G_codes::CANCEL_CUTTER_RADIUS_COMPENSATION)
-			return e_parsing_errors::COORDINATE_SETTING_INVALID_DURING_COMPENSATION;
+			return c_bit_errors::set(c_bit_errors::e_coordinate_error::COORDINATE_SETTING_INVALID_DURING_COMPENSATION);
 		
 		//P number cannot be 0
 		//P number is not a valid tool number
 		if (param_value < 1)
-			return e_parsing_errors::TOOL_OFFSET_SETTING_PARAM_VALUE_OUT_OF_RANGE;
+			return c_bit_errors::set(c_bit_errors::e_tool_error::TOOL_OFFSET_SETTING_PARAM_VALUE_OUT_OF_RANGE);
 
 		_L0010(v_block, param_value,L_value);
 	}
@@ -101,15 +101,15 @@ e_parsing_errors NGC_RS274::Dialect::Group0::_G010(NGC_RS274::Block_View * v_blo
 	{
 		//P must be between 0 and 9
 		if (param_value < 0)
-			return e_parsing_errors::COORDINATE_SETTING_PARAM_VALUE_OUT_OF_RANGE;
+			return  c_bit_errors::set(c_bit_errors::e_coordinate_error::COORDINATE_SETTING_PARAM_VALUE_OUT_OF_RANGE);
 		
 		_L0020(v_block, param_value, L_value);
 	}
 
-	return e_parsing_errors::OK;
+	return c_bit_errors::ok;
 }
 
-e_parsing_errors NGC_RS274::Dialect::Group0::_L0010(NGC_RS274::Block_View * v_block, uint16_t param_value, uint16_t L_value)
+uint32_t NGC_RS274::Dialect::Group0::_L0010(NGC_RS274::Block_View * v_block, uint16_t param_value, uint16_t L_value)
 {
 	//P is the tool number, but pocket is where that tool is in the tool changer
 	s_tool_definition updating_tool;
@@ -133,7 +133,7 @@ e_parsing_errors NGC_RS274::Dialect::Group0::_L0010(NGC_RS274::Block_View * v_bl
 		_value = (int)_value;
 
 		if ((_value > 9) || _value < 1)
-			return e_parsing_errors::TOOL_OFFSET_SETTING_Q_VALUE_OUT_OF_RANGE;
+			return  c_bit_errors::set(c_bit_errors::e_tool_error::TOOL_OFFSET_SETTING_Q_VALUE_OUT_OF_RANGE);
 
 		updating_tool.orientation = _value;
 	}
@@ -141,10 +141,10 @@ e_parsing_errors NGC_RS274::Dialect::Group0::_L0010(NGC_RS274::Block_View * v_bl
 	//save the updated tool value
 	Tool_Control::Table::save(&updating_tool);
 
-	return e_parsing_errors::OK;
+	return c_bit_errors::ok;
 }
 
-e_parsing_errors NGC_RS274::Dialect::Group0::_L0020(NGC_RS274::Block_View * v_block, uint16_t param_value, uint16_t L_value)
+uint32_t NGC_RS274::Dialect::Group0::_L0020(NGC_RS274::Block_View * v_block, uint16_t param_value, uint16_t L_value)
 {
 	//P is the tool number, but pocket is where that tool is in the tool changer
 	s_wcs updating_wcs;
@@ -175,7 +175,7 @@ e_parsing_errors NGC_RS274::Dialect::Group0::_L0020(NGC_RS274::Block_View * v_bl
 
 	//save the updated tool value
 	Coordinate_Control::WCS::save(&updating_wcs);
-	return e_parsing_errors::OK;
+	return c_bit_errors::ok;
 }
 
 void NGC_RS274::Dialect::Group0::_set_offsetting_value

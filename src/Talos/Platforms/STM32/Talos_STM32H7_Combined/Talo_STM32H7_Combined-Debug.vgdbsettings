@@ -96,7 +96,7 @@
       <InterfaceID>stlink-v2</InterfaceID>
       <InterfaceSerialNumber>6&amp;3B1541FF&amp;0&amp;1</InterfaceSerialNumber>
       <Configuration xsi:type="com.visualgdb.edp.openocd.settings">
-        <CommandLine>-f interface/stlink-v2.cfg -f target/stm32h7x.cfg -c init -c "reset init" -c "reset_config none separate"</CommandLine>
+        <CommandLine>-f interface/stlink-v2.cfg -f target/stm32h7x.cfg -c init  -c "reset_config none separate"</CommandLine>
         <ExtraParameters>
           <Frequency xsi:nil="true" />
           <BoostedFrequency xsi:nil="true" />

@@ -1180,6 +1180,9 @@
     <ClCompile Include="Platform_Specific\disk_support\SDMMC\Hardware\sd_card.c">
       <Filter>Platform_Specific\disk_support\SDMMC\Hardware</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\NGC_RS274\_ngc_errors_interpreter.cpp">
+      <Filter>Ngc_Rs274</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Shared_Data\Settings\Motion\_s_motion_axis_options.h">
@@ -1577,8 +1580,6 @@
     </Text>
   </ItemGroup>
   <ItemGroup>
-    <LinkerScript Include="STM32H750VB_flash.lds">
-      <Filter>__VIsualGDB\Source files</Filter>
-    </LinkerScript>
+    <LinkerScript Include="STM32H750VB_flash.lds" />
   </ItemGroup>
 </Project>

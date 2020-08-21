@@ -14,27 +14,27 @@ namespace NGC_RS274
 		class Group1
 		{
 		public:
-			static e_parsing_errors motion_validate(NGC_RS274::Block_View * v_block, e_dialects dialect);
+			static uint32_t motion_validate(NGC_RS274::Block_View * v_block, e_dialects dialect);
 			
 		private:
-			static e_parsing_errors _G000(NGC_RS274::Block_View * v_block, e_dialects dialect);
-			static e_parsing_errors _G001(NGC_RS274::Block_View * v_block, e_dialects dialect);
-			static e_parsing_errors _G002_G003(NGC_RS274::Block_View * v_block, e_dialects dialect, int8_t direction);
-			static e_parsing_errors _G382(NGC_RS274::Block_View * v_block, e_dialects dialect);
-			static e_parsing_errors _G080(NGC_RS274::Block_View * v_block, e_dialects dialect);
-			static e_parsing_errors _G081(NGC_RS274::Block_View * v_block, e_dialects dialect);
-			static e_parsing_errors _G082(NGC_RS274::Block_View * v_block, e_dialects dialect);
-			static e_parsing_errors _G083(NGC_RS274::Block_View * v_block, e_dialects dialect);
-			static e_parsing_errors _G084(NGC_RS274::Block_View * v_block, e_dialects dialect);
-			static e_parsing_errors _G085(NGC_RS274::Block_View * v_block, e_dialects dialect);
-			static e_parsing_errors _G086(NGC_RS274::Block_View * v_block, e_dialects dialect);
-			static e_parsing_errors _G087(NGC_RS274::Block_View * v_block, e_dialects dialect);
-			static e_parsing_errors _G088(NGC_RS274::Block_View * v_block, e_dialects dialect);
-			static e_parsing_errors _G089(NGC_RS274::Block_View * v_block, e_dialects dialect);
+			static uint32_t _G000(NGC_RS274::Block_View * v_block, e_dialects dialect);
+			static uint32_t _G001(NGC_RS274::Block_View * v_block, e_dialects dialect);
+			static uint32_t _G002_G003(NGC_RS274::Block_View * v_block, e_dialects dialect, int8_t direction);
+			static uint32_t _G382(NGC_RS274::Block_View * v_block, e_dialects dialect);
+			static uint32_t _G080(NGC_RS274::Block_View * v_block, e_dialects dialect);
+			static uint32_t _G081(NGC_RS274::Block_View * v_block, e_dialects dialect);
+			static uint32_t _G082(NGC_RS274::Block_View * v_block, e_dialects dialect);
+			static uint32_t _G083(NGC_RS274::Block_View * v_block, e_dialects dialect);
+			static uint32_t _G084(NGC_RS274::Block_View * v_block, e_dialects dialect);
+			static uint32_t _G085(NGC_RS274::Block_View * v_block, e_dialects dialect);
+			static uint32_t _G086(NGC_RS274::Block_View * v_block, e_dialects dialect);
+			static uint32_t _G087(NGC_RS274::Block_View * v_block, e_dialects dialect);
+			static uint32_t _G088(NGC_RS274::Block_View * v_block, e_dialects dialect);
+			static uint32_t _G089(NGC_RS274::Block_View * v_block, e_dialects dialect);
 
-			static e_parsing_errors __error_check_arc(NGC_RS274::Block_View * v_new_block);
-			static e_parsing_errors ____error_check_center_format_arc(NGC_RS274::Block_View * v_new_block);
-			static e_parsing_errors ____error_check_radius_format_arc(NGC_RS274::Block_View * v_new_block);
+			static uint32_t __error_check_arc(NGC_RS274::Block_View * v_new_block);
+			static uint32_t ____error_check_center_format_arc(NGC_RS274::Block_View * v_new_block);
+			static uint32_t ____error_check_radius_format_arc(NGC_RS274::Block_View * v_new_block);
 
 		};
 	};
