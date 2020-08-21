@@ -14,6 +14,7 @@
 #define BitSet_(arg,posn) ((arg) |= (1UL << (posn)))
 #define BitClr_(arg,posn) ((arg) &= ~(1UL << (posn)))
 #define BitTst(arg,posn) bool((arg) & (1UL << (posn)))
+#define BitXfer_(test,arg,posn) if (bool(test)) BitSet_(arg,posn); else BitClr_(arg,posn);
 #define BitLong(n) (1UL << (n))
 #define BitGet(p,m) bool((p) & (1UL << (m)))
 

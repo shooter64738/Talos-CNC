@@ -200,7 +200,7 @@ namespace Talos
 					}
 					//seems stable to here.
 					// Reset step out bits.
-					_persisted.step_outbits = 1;
+					_persisted.step_outbits = 0;
 
 					//This is ugly because its all single line, but its twice as fast as a for loop
 
@@ -262,6 +262,7 @@ namespace Talos
 						_persisted.seg = NULL;
 
 					}
+					hrd_out::Hardware::Motion::step(&_persisted.step_outbits);
 					return _persisted.step_outbits;
 				}
 

@@ -8,8 +8,16 @@ using namespace Talos;
 void run(void);
 int main2(int argc, char* argv[]);
 
+uint32_t test;
+#define PORTD test
+#define STEP_PIN 0
+#define DIRECTION_PIN 1
+
+uint32_t current_direction = 4;
+
 int main(void)
 {
+	test = test ^ (1 << DIRECTION_PIN);
 	//outputfilename[AvailableTime][DesPos][StrtSpeed][SpeedLimit][AccLimit]
 	//int main2(int argc, char* argv[])
 	char * args[7];
@@ -22,7 +30,7 @@ int main(void)
 	main2(4, args);
 
 	//Start the 'core'. 
-	//this will configure the board (unless you are runnign via windows)
+	//this will configure the board (unless you are running via windows)
 	//so that needed peripherals and io is ready.
 	Hardware_Abstraction_Layer::Core::initialize();
 

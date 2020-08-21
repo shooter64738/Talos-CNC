@@ -58,6 +58,7 @@ namespace Hardware_Abstraction_Layer
 			//if ((STEP_RST_TIMER->SR & 0x0001) != 0)                  // check interrupt source
 			//{
 			//	STEPPER_PUL_PORT_DIRECT_REGISTER = 0;
+			//STEPPER_PUL_PORT_DIRECT_REGISTER = (STEPPER_PUL_PORT_DIRECT_REGISTER & ~STEPPER_PUL_PORT_MASK);
 			//	STEP_RST_TIMER->ARR = 0;
 			//	STEP_RST_TIMER->SR &= ~(1 << 0);                          // clear UIF flag
 			//	STEP_RST_TIMER->CNT = 0;

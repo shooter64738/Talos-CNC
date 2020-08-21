@@ -42,6 +42,7 @@ namespace Talos
 						static void direction(uint16_t* directions);
 						static void brakes(uint16_t* brakes);;
 						static void step(uint16_t* outputs);
+						static void un_step(uint16_t* outputs);
 					};
 				protected:
 				private:
