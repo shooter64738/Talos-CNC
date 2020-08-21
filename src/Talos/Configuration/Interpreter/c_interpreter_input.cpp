@@ -29,7 +29,7 @@ s_interpreter_settings_encapsulation_configuration c_parameters::Settings;
 uint8_t c_parameters::initialize()
 {
 	Settings.input_process.dialect = e_dialects::Fanuc_A;
-	Settings.input_process.flags.set(e_config_bit_flags::DecimalPointInput);
+	//Settings.input_process.flags.set(e_config_bit_flags::DecimalPointInput);
 	return 0;
 }
 
