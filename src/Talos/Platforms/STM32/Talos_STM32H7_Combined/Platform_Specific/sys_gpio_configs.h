@@ -2,16 +2,40 @@
 #define _C_SYS_GPIO_CONFIG_
 #include <stm32h7xx_hal.h>
 #include <stm32_hal_legacy.h>
+#include "sys_gpio_pins.h"
 
 #define STEPPER_PUL_GPIO_ENABLER __GPIOD_CLK_ENABLE()
 #define STEPPER_PUL_PORT GPIOD
 #define STEPPER_PUL_PORT_DIRECT_REGISTER GPIOD->ODR
-#define STEPPER_PUL_PIN_0 GPIO_PIN_0
+#define STEPPER_PUL_PIN_0 PIN_D0
+#define STEPPER_PUL_PIN_1 PIN_D0
+#define STEPPER_PUL_PIN_2 PIN_D0
+#define STEPPER_PUL_PIN_3 PIN_D0
+#define STEPPER_PUL_PIN_4 PIN_D0
+#define STEPPER_PUL_PIN_5 PIN_D0
+#define STEPPER_PUL_PORT_MASK	( 1<<STEPPER_PUL_PIN_0 \
+								| 1<<STEPPER_PUL_PIN_1 \
+								| 1<<STEPPER_PUL_PIN_2 \
+								| 1<<STEPPER_PUL_PIN_3 \
+								| 1<<STEPPER_PUL_PIN_4 \
+								| 1<<STEPPER_PUL_PIN_5 )
 
 #define STEPPER_DIR_GPIO_ENABLER __GPIOD_CLK_ENABLE()
 #define STEPPER_DIR_PORT GPIOD
 #define STEPPER_DIR_PORT_DIRECT_REGISTER GPIOD->ODR
-#define STEPPER_DIR_PIN_0 GPIO_PIN_1
+#define STEPPER_DIR_PIN_0 PIN_D1
+#define STEPPER_DIR_PIN_1 PIN_D1
+#define STEPPER_DIR_PIN_2 PIN_D1
+#define STEPPER_DIR_PIN_3 PIN_D1
+#define STEPPER_DIR_PIN_4 PIN_D1
+#define STEPPER_DIR_PIN_5 PIN_D1
+
+#define STEPPER_DIR_PORT_MASK	( 1<<STEPPER_DIR_PIN_0 \
+								| 1<<STEPPER_DIR_PIN_1 \
+								| 1<<STEPPER_DIR_PIN_2 \
+								| 1<<STEPPER_DIR_PIN_3 \
+								| 1<<STEPPER_DIR_PIN_4 \
+								| 1<<STEPPER_DIR_PIN_5 )
 
 #define SDMMC_DAT_PORT GPIOC
 #define SDMMC1_D0 GPIO_PIN_8
@@ -20,7 +44,7 @@
 #define SDMMC1_D3 GPIO_PIN_11
 #define SDMMC1_CK GPIO_PIN_12
 #define SDMMC_CMD_PORT GPIOD
-#define SDMMC1_CMD GPIO_PIN_2
+#define SDMMC1_CMD PIN_D2
 
 static void step_pulse_config(void)
 {
